@@ -224,11 +224,8 @@ export function HabitJournal() {
 
     const handleCategoryChange = (newCategory: JournalCategory) => {
       setEditorState(prevState => ({
-        ...createNewEntryObject(),
-        id: prevState.id,
-        date: prevState.date,
+        ...prevState,
         category: newCategory,
-        frequency: getDefaultFrequency(),
       }));
     };
     
