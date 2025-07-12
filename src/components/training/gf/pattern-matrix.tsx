@@ -3,57 +3,98 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shapes, Check, X, BrainCircuit } from "lucide-react";
 import { useState, useMemo } from 'react';
 import { cn } from "@/lib/utils";
 
-// --- Puzzle Generation Logic ---
-const shapes = ['circle', 'square', 'triangle', 'diamond', 'star'];
-const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
-const transformations = ['rotate-45', 'scale-75', 'opacity-50', ''];
+// --- Puzzle Elements ---
+const shapes = ['circle', 'square', 'triangle', 'diamond'];
+const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500'];
+const rotations = [0, 90, 180, 270];
 
-const generateCell = () => ({
+const generateElement = () => ({
   shape: shapes[Math.floor(Math.random() * shapes.length)],
   color: colors[Math.floor(Math.random() * colors.length)],
-  transform: transformations[Math.floor(Math.random() * transformations.length)],
+  rotation: rotations[Math.floor(Math.random() * rotations.length)],
 });
 
+// --- Puzzle Generation Logic ---
+type Element = { shape: string; color: string; rotation: number; };
+type Grid = (Element | null)[];
+
+const rules = [
+  'row_progression', 
+  'column_progression',
+];
+
 const generatePuzzle = () => {
-  const grid = Array(9).fill(null).map(() => generateCell());
-  const missingIndex = Math.floor(Math.random() * 9);
-  const answer = grid[missingIndex];
+  const size = Math.random() > 0.5 ? 3 : 2; // 3x3 or 2x2 grid
+  const grid: Grid = Array(size * size).fill(null);
+  const rule = rules[Math.floor(Math.random() * rules.length)];
+  const missingIndex = Math.floor(Math.random() * (size * size));
+
+  let progressionProp: 'shape' | 'color' | 'rotation' = 'shape';
+  if (Math.random() > 0.66) progressionProp = 'rotation';
+  else if (Math.random() > 0.33) progressionProp = 'color';
   
+  const baseElement = generateElement();
+
+  const getNextInSequence = (val: any, prop: typeof progressionProp) => {
+    let collection = shapes;
+    if (prop === 'color') collection = colors as any[];
+    if (prop === 'rotation') collection = rotations as any[];
+    
+    const currentIndex = collection.indexOf(val as never);
+    return collection[(currentIndex + 1) % collection.length];
+  }
+
+  for (let i = 0; i < size * size; i++) {
+    const row = Math.floor(i / size);
+    const col = i % size;
+    let newElement = { ...baseElement };
+
+    if (rule === 'row_progression') {
+      for(let j=0; j < col; j++) {
+        (newElement[progressionProp] as any) = getNextInSequence(newElement[progressionProp], progressionProp);
+      }
+    } else if (rule === 'column_progression') {
+      for(let j=0; j < row; j++) {
+        (newElement[progressionProp] as any) = getNextInSequence(newElement[progressionProp], progressionProp);
+      }
+    }
+    grid[i] = newElement;
+  }
+
+  const answer = grid[missingIndex]!;
+  
+  // Generate decoy options
   const options = [answer];
   while(options.length < 6) {
-    const option = generateCell();
-    // Ensure no duplicate options
-    if (!options.some(o => o.shape === option.shape && o.color === option.color && o.transform === option.transform)) {
-      options.push(option);
+    const decoy = { ...answer };
+    const changeProp = ['shape', 'color', 'rotation'][Math.floor(Math.random()*3)] as 'shape' | 'color' | 'rotation';
+    decoy[changeProp] = getNextInSequence(decoy[changeProp], changeProp);
+    if (!options.some(o => JSON.stringify(o) === JSON.stringify(decoy))) {
+      options.push(decoy);
     }
   }
   
   // Shuffle options
-  for (let i = options.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [options[i], options[j]] = [options[j], options[i]];
-  }
+  options.sort(() => Math.random() - 0.5);
 
-  return { grid, missingIndex, answer, options };
+  return { grid, missingIndex, answer, options, size };
 };
-// --- End Puzzle Generation ---
 
-const ShapeComponent = ({ shape, color, transform }: { shape: string, color: string, transform: string }) => {
-  const baseClasses = "w-12 h-12 transition-all";
-  const transformClasses = transform;
+// --- Components ---
+const ShapeComponent = ({ shape, color, rotation }: Element) => {
+  const baseClasses = "w-10 h-10 transition-all";
+  const transformClasses = `rotate-${rotation}`;
   
   switch (shape) {
-    case 'circle': return <div className={cn(baseClasses, color, transformClasses, "rounded-full")} />;
-    case 'square': return <div className={cn(baseClasses, color, transformClasses, "rounded-md")} />;
+    case 'circle': return <div className={cn(baseClasses, color, "rounded-full")} />;
+    case 'square': return <div className={cn(baseClasses, color, "rounded-md")} />;
     case 'triangle':
-        const triangleColor = color.replace('bg-', '').replace('-500', '');
-        return <div className={cn(baseClasses, transformClasses)} style={{ width: 0, height: 0, backgroundColor: 'transparent', borderLeft: '30px solid transparent', borderRight: '30px solid transparent', borderBottom: `60px solid ${triangleColor}` }} />;
-    case 'diamond': return <div className={cn(baseClasses, color, "rotate-45 rounded-md")} />;
-    case 'star': return <div className={cn(baseClasses, transformClasses)}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={cn("w-12 h-12", color.replace('bg-','text-'))}><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg></div>;
+        const triangleColorName = color.replace('bg-', '').split('-')[0];
+        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottom: `40px solid var(--${triangleColorName}-500, ${triangleColorName})`}} className={cn(baseClasses, transformClasses, 'bg-transparent')} />;
+    case 'diamond': return <div className={cn(baseClasses, color, "rotate-45 rounded-sm")} />;
     default: return <div className={cn(baseClasses, color)} />;
   }
 };
@@ -61,16 +102,18 @@ const ShapeComponent = ({ shape, color, transform }: { shape: string, color: str
 
 export function PatternMatrix() {
   const [puzzleKey, setPuzzleKey] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<any | null>(null);
+  const [score, setScore] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<Element | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
 
   const puzzle = useMemo(() => generatePuzzle(), [puzzleKey]);
 
-  const handleSelectOption = (option: any) => {
+  const handleSelectOption = (option: Element) => {
     if (feedback) return;
     setSelectedOption(option);
-    if (option.shape === puzzle.answer.shape && option.color === puzzle.answer.color && option.transform === puzzle.answer.transform) {
+    if (JSON.stringify(option) === JSON.stringify(puzzle.answer)) {
       setFeedback('correct');
+      setScore(score + 1);
     } else {
       setFeedback('incorrect');
     }
@@ -82,37 +125,43 @@ export function PatternMatrix() {
     setFeedback('');
   };
 
+  const gridClass = puzzle.size === 3 ? "grid-cols-3" : "grid-cols-2";
+
   return (
-    <Card className="w-full max-w-2xl">
+    <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>Pattern Matrix</CardTitle>
         <CardDescription>Identify the logical rule and find the missing piece.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
-        <div className="grid grid-cols-3 gap-2 p-4 bg-muted rounded-lg">
+        <div className="flex justify-between w-full font-mono text-sm">
+            <span>Puzzle: {puzzleKey + 1}</span>
+            <span>Score: {score}</span>
+        </div>
+        <div className={cn("grid gap-2 p-3 bg-muted rounded-lg", gridClass)}>
           {puzzle.grid.map((cell, index) => (
             <div key={index} className="w-20 h-20 bg-background/50 rounded-md flex items-center justify-center">
               {index === puzzle.missingIndex ? (
-                 feedback === 'correct' ? <ShapeComponent {...puzzle.answer} /> : <span className="text-4xl font-bold text-primary">?</span>
+                 feedback === 'correct' ? <ShapeComponent {...puzzle.answer!} /> : <span className="text-4xl font-bold text-primary">?</span>
               ) : (
-                <ShapeComponent {...cell} />
+                <ShapeComponent {...cell!} />
               )}
             </div>
           ))}
         </div>
 
         <div className="w-full">
-          <h3 className="text-center font-semibold mb-3">Choose the correct piece:</h3>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+          <h3 className="text-center text-sm text-muted-foreground font-semibold mb-3">Choose the correct piece:</h3>
+          <div className="grid grid-cols-3 gap-3">
             {puzzle.options.map((option, index) => (
               <button 
                 key={index} 
                 onClick={() => handleSelectOption(option)}
                 className={cn(
-                  "h-24 rounded-lg flex items-center justify-center transition-all border-2",
+                  "h-24 bg-muted/50 rounded-lg flex items-center justify-center transition-all border-2",
                   selectedOption === option ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground/50',
-                  feedback && option === selectedOption && feedback === 'correct' && 'bg-green-500/20 border-green-500',
-                  feedback && option === selectedOption && feedback === 'incorrect' && 'bg-red-500/20 border-red-500',
+                  feedback && JSON.stringify(option) === JSON.stringify(puzzle.answer) && 'bg-green-500/20 border-green-500',
+                  feedback && selectedOption === option && feedback === 'incorrect' && 'bg-red-500/20 border-red-500',
                 )}
                 disabled={!!feedback}
               >
@@ -123,9 +172,9 @@ export function PatternMatrix() {
         </div>
 
         {feedback && (
-          <div className="flex flex-col items-center gap-4 mt-4 text-center">
-             {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct! You found the pattern.</p>}
-            {feedback === 'incorrect' && <p className="text-lg font-bold text-red-500">Not quite. Try to see another pattern.</p>}
+          <div className="flex flex-col items-center gap-4 mt-4 text-center animate-in fade-in">
+             {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct!</p>}
+            {feedback === 'incorrect' && <p className="text-lg font-bold text-red-500">Not quite. Look for another pattern.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>
           </div>
         )}
