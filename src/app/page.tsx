@@ -10,8 +10,21 @@ import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recomm
 import { AdaptiveDifficulty } from '@/components/dashboard/adaptive-difficulty';
 import { HabitJournal } from '@/components/dashboard/habit-journal';
 import { Header } from '@/components/header';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 function DashboardContent() {
+  const [triggerNewJournalEntry, setTriggerNewJournalEntry] = useState(false);
+  const journalRef = useRef<HTMLDivElement>(null);
+
+  const handleNewNoteClick = () => {
+    setTriggerNewJournalEntry(true);
+    journalRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Reset the trigger so it can be used again
+    setTimeout(() => setTriggerNewJournalEntry(false), 100);
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
@@ -35,12 +48,19 @@ function DashboardContent() {
             <WeakAreaRecommendations />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" ref={journalRef}>
             <AdaptiveDifficulty />
-            <HabitJournal />
+            <HabitJournal triggerNewEntry={triggerNewJournalEntry} />
           </div>
         </div>
       </main>
+      <Button 
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
+        onClick={handleNewNoteClick}
+        aria-label="Create new journal entry"
+      >
+        <Plus className="h-8 w-8" />
+      </Button>
     </div>
   );
 }

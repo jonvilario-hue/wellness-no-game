@@ -17,7 +17,7 @@ import {
   Trash2,
   ArchiveRestore,
 } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -42,7 +42,11 @@ import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/
 const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 type ViewMode = 'entries' | 'trash';
 
-export function HabitJournal() {
+interface HabitJournalProps {
+  triggerNewEntry?: boolean;
+}
+
+export function HabitJournal({ triggerNewEntry }: HabitJournalProps) {
   const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash } = useJournal();
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
@@ -78,6 +82,12 @@ export function HabitJournal() {
     setViewMode('entries');
     setSelectedEntry(createNewEntryObject());
   }, [createNewEntryObject]);
+
+  useEffect(() => {
+    if (triggerNewEntry) {
+      handleNewEntry();
+    }
+  }, [triggerNewEntry, handleNewEntry]);
 
   const handleSave = (entryToSave: JournalEntry) => {
     if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim()) {
@@ -124,7 +134,7 @@ export function HabitJournal() {
     if (selectedEntry?.id === id) {
        const remainingEntries = entries.filter(e => e.id !== id);
        if (remainingEntries.length > 0) {
-            const newIndex = Math.max(0, entryToDeleteIndex - 1);
+            const newIndex = Math.min(remainingEntries.length -1, Math.max(0, entryToDeleteIndex));
             setSelectedEntry(remainingEntries[newIndex]);
         } else {
             handleNewEntry();
@@ -145,10 +155,27 @@ export function HabitJournal() {
     onSave: (entry: JournalEntry) => void;
   }) => {
     const [editorState, setEditorState] = useState<JournalEntry>(entry);
+    const [isDirty, setIsDirty] = useState(false);
 
     useEffect(() => {
       setEditorState(entry);
+      setIsDirty(false); // Reset dirty state when a new entry is selected
     }, [entry]);
+
+    useEffect(() => {
+        // Debounced check for changes
+        const handler = setTimeout(() => {
+            if(JSON.stringify(entry) !== JSON.stringify(editorState)) {
+                setIsDirty(true);
+            } else {
+                setIsDirty(false);
+            }
+        }, 500);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [editorState, entry]);
     
     const getValidConfig = (category: JournalCategory | string) => {
         if (category && journalConfig[category as JournalCategory]) {
@@ -161,6 +188,11 @@ export function HabitJournal() {
     const { config, category } = getValidConfig(editorState.category);
 
     const isNewEntry = editorState.id.startsWith('new-');
+    
+    const handleLocalSave = () => {
+        onSave(editorState);
+        setIsDirty(false);
+    }
 
     const handleCategoryChange = (newCategory: JournalCategory) => {
       setEditorState(prevState => ({
@@ -194,8 +226,18 @@ export function HabitJournal() {
 
 
     return (
-      <div className="p-4 h-full flex flex-col gap-2">
-        <div className="flex justify-between items-center">
+      <div className="p-4 h-full flex flex-col gap-2 relative">
+        {isDirty && !isNewEntry && (
+            <div className="absolute top-0 left-0 right-0 p-2 bg-primary/10 border-b border-primary/20 z-10 animate-in fade-in slide-in-from-top-4">
+                <div className="flex justify-between items-center max-w-lg mx-auto px-2">
+                    <p className="text-sm font-semibold text-primary">You have unsaved changes.</p>
+                    <Button size="sm" onClick={handleLocalSave}>
+                        <Save className="mr-2 h-4 w-4" /> Update
+                    </Button>
+                </div>
+            </div>
+        )}
+        <div className="flex justify-between items-center pt-12">
           <h3 className="font-bold text-lg text-primary">
             {isNewEntry
               ? 'New Entry'
@@ -227,7 +269,7 @@ export function HabitJournal() {
                     </AlertDialogContent>
                 </AlertDialog>
             )}
-            <Button onClick={() => onSave(editorState)}>
+            <Button onClick={handleLocalSave}>
                 <Save className="mr-2 h-4 w-4" />{' '}
                 {isNewEntry ? 'Save Entry' : 'Update Entry'}
             </Button>
