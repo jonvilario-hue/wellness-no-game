@@ -92,13 +92,33 @@ export function HabitJournal() {
     const { toast } = useToast();
     const today = new Date().toISOString().split('T')[0];
 
+    const createNewEntryObject = (isToday: boolean): JournalEntry => {
+        const dateToUse = isToday ? today : new Date().toISOString().split('T')[0];
+        const defaultCategory: JournalCategory = 'Daily Reflection';
+        const config = journalConfig[defaultCategory];
+
+        return {
+            id: `new-${Date.now()}`,
+            date: dateToUse,
+            reflection: '',
+            tags: '',
+            effort: 7,
+            mood: null,
+            habits: {},
+            category: defaultCategory,
+            prompt: config.prompt,
+        };
+    };
+
     // Effect to select today's entry or create a new one on load
     useEffect(() => {
         const todayEntry = entries.find(e => e.date === today);
         if (todayEntry) {
             setSelectedEntryId(todayEntry.id);
         } else {
-            handleNewEntry(true);
+            const newEntry = createNewEntryObject(true);
+            setCurrentEntry(newEntry);
+            setSelectedEntryId(newEntry.id);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [entries, today]);
@@ -107,29 +127,23 @@ export function HabitJournal() {
     useEffect(() => {
         if (selectedEntryId) {
             const entry = entries.find(e => e.id === selectedEntryId);
-            setCurrentEntry(entry || null);
+            if (entry) {
+                 setCurrentEntry(entry);
+            } else if (selectedEntryId.startsWith('new-') && !currentEntry) {
+                // If a new entry was selected but currentEntry is null, create it
+                const newEntry = createNewEntryObject(selectedEntryId.includes(today));
+                setCurrentEntry(newEntry);
+            }
         } else {
             setCurrentEntry(null);
         }
-    }, [selectedEntryId, entries]);
+    }, [selectedEntryId, entries, currentEntry, today]);
 
-    const handleNewEntry = useCallback((isToday: boolean = false) => {
-        const dateToUse = isToday ? today : new Date().toISOString().split('T')[0];
-        const newEntry: JournalEntry = {
-            id: `new-${Date.now()}`,
-            date: dateToUse,
-            reflection: '',
-            tags: '',
-            effort: 7,
-            mood: null,
-            habits: {},
-            category: 'Daily Reflection',
-            prompt: journalConfig['Daily Reflection'].prompt,
-        };
+    const handleNewEntry = useCallback(() => {
+        const newEntry = createNewEntryObject(false);
         setCurrentEntry(newEntry);
         setSelectedEntryId(newEntry.id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [today]);
+    }, []);
 
     const handleFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
         if (!currentEntry) return;
@@ -231,11 +245,22 @@ export function HabitJournal() {
        const category = (entry.category as JournalCategory) || 'Daily Reflection';
        const config = journalConfig[category];
 
+       const handleCategoryChange = (newCategory: JournalCategory) => {
+            if (!currentEntry) return;
+            const newConfig = journalConfig[newCategory];
+            setCurrentEntry({
+                ...currentEntry,
+                category: newCategory,
+                prompt: newConfig.prompt,
+                mood: null, // Reset mood when category changes
+            });
+        };
+
        return (
             <div className="p-4 h-full flex flex-col gap-4">
                 <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg text-primary">
-                        {isNewEntry ? "Today's Entry" : `Editing: ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}`}
+                        {isNewEntry ? "New Entry" : `Editing: ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}`}
                     </h3>
                 </div>
                 <Separator/>
@@ -250,7 +275,7 @@ export function HabitJournal() {
                                     <Button
                                         key={catKey}
                                         variant={category === catKey ? 'default' : 'outline'}
-                                        onClick={() => handleFieldChange('category', catKey)}
+                                        onClick={() => handleCategoryChange(catKey)}
                                         className="flex items-center justify-center gap-2 h-auto py-2"
                                     >
                                         <CatIcon className="w-4 h-4" />
@@ -343,7 +368,7 @@ export function HabitJournal() {
                     <div className="lg:col-span-1 bg-muted/30 rounded-lg p-3">
                         <div className="flex justify-between items-center mb-2">
                             <h3 className="font-semibold">Entries</h3>
-                            <Button variant="ghost" size="sm" onClick={() => handleNewEntry()}>
+                            <Button variant="ghost" size="sm" onClick={handleNewEntry}>
                                 <PlusCircle className="mr-2 h-4 w-4"/> New
                             </Button>
                         </div>
@@ -373,5 +398,3 @@ export function HabitJournal() {
         </Card>
     );
 }
-
-    
