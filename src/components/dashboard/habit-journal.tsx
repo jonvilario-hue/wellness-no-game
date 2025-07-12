@@ -260,9 +260,8 @@ export function HabitJournal() {
         setEditorState(prevState => ({...prevState, affirmations: [...prevState.affirmations, '']}));
     }
     
-    const removeAffirmation = (index: number) => {
-        const newAffirmations = editorState.affirmations.filter((_, i) => i !== index);
-        setEditorState(prevState => ({...prevState, affirmations: newAffirmations}));
+    const removeLastAffirmation = () => {
+        setEditorState(prevState => ({...prevState, affirmations: prevState.affirmations.slice(0, -1)}));
     }
 
 
@@ -443,15 +442,20 @@ tags: ${entry.tags}
                           onChange={e => handleAffirmationChange(index, e.target.value)}
                           className="min-h-[60px] flex-grow"
                         />
-                        <Button variant="ghost" size="icon" onClick={() => removeAffirmation(index)}>
-                            <MinusCircle className="w-4 h-4 text-muted-foreground"/>
-                        </Button>
                     </div>
                  ))}
-                 <Button variant="ghost" size="sm" onClick={addAffirmation}>
-                    <PlusCircle className="mr-2 h-4 w-4"/>
-                    Add Affirmation
-                 </Button>
+                 <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" onClick={addAffirmation}>
+                        <PlusCircle className="mr-2 h-4 w-4"/>
+                        Add Affirmation
+                    </Button>
+                    {editorState.affirmations.length > 0 && (
+                        <Button variant="ghost" size="sm" onClick={removeLastAffirmation}>
+                            <MinusCircle className="mr-2 h-4 w-4"/>
+                            Remove
+                        </Button>
+                    )}
+                 </div>
             </div>
             
             <Separator/>
@@ -474,9 +478,8 @@ tags: ${entry.tags}
                     const habit = allHabits[habitId];
                     if (!habit) return null;
                     return (
-                      <Label
+                      <div
                         key={habit.id}
-                        htmlFor={habit.id}
                         className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md cursor-pointer hover:bg-muted"
                       >
                         <input
@@ -486,13 +489,14 @@ tags: ${entry.tags}
                           onChange={e => handleHabitChange(habit.id, e.target.checked)}
                           className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
                         />
-                        <div
-                          className="flex items-center gap-2 text-sm font-normal"
+                        <Label
+                          htmlFor={habit.id}
+                          className="flex items-center gap-2 text-sm font-normal cursor-pointer"
                         >
                           <habit.icon className="w-4 h-4 text-muted-foreground" />{' '}
                           {habit.label}
-                        </div>
-                      </Label>
+                        </Label>
+                      </div>
                     );
                   })}
                 </div>
