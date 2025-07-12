@@ -7,13 +7,13 @@ import { useState, useEffect } from "react";
 
 export function ToneGridChallenge() {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [gameState, setGameState] = useState('idle'); // idle, playing, feedback
+  const [gameState, setGameState] = useState('idle'); // idle, playing, answering, feedback
   const [sequence, setSequence] = useState<number[]>([]);
   const [userSequence, setUserSequence] = useState<number[]>([]);
   const [level, setLevel] = useState(1);
   const [message, setMessage] = useState('');
 
-  // Initialize AudioContext on client
+  // Initialize AudioContext on client-side only
   useEffect(() => {
     setAudioContext(new window.AudioContext());
   }, []);
@@ -63,20 +63,23 @@ export function ToneGridChallenge() {
   };
   
   const handleUserInput = (index: number) => {
+    if (gameState !== 'answering') return;
     playTone(frequencies[index]);
     const newAttempt = [...userSequence, index];
     setUserSequence(newAttempt);
     
     if (newAttempt.length === sequence.length) {
+      setGameState('feedback');
       if (JSON.stringify(newAttempt) === JSON.stringify(sequence)) {
         setMessage('Correct! Next level.');
-        setLevel(level + 1);
-        setTimeout(handleStartLevel, 1500);
+        setTimeout(() => {
+          setLevel(level + 1);
+          handleStartLevel();
+        }, 1500);
       } else {
         setMessage(`Incorrect. Let's try level ${level} again.`);
         setTimeout(handleStartLevel, 1500);
       }
-      setGameState('feedback');
     }
   };
 

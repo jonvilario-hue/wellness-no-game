@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,13 +52,17 @@ const generatePuzzle = () => {
     let newElement = { ...baseElement };
 
     if (rule === 'row_progression') {
+      let currentVal = newElement[progressionProp];
       for(let j=0; j < col; j++) {
-        (newElement[progressionProp] as any) = getNextInSequence(newElement[progressionProp], progressionProp);
+        currentVal = getNextInSequence(currentVal, progressionProp);
       }
+      (newElement[progressionProp] as any) = currentVal;
     } else if (rule === 'column_progression') {
+       let currentVal = newElement[progressionProp];
       for(let j=0; j < row; j++) {
-        (newElement[progressionProp] as any) = getNextInSequence(newElement[progressionProp], progressionProp);
+         currentVal = getNextInSequence(currentVal, progressionProp);
       }
+      (newElement[progressionProp] as any) = currentVal;
     }
     grid[i] = newElement;
   }
@@ -92,8 +95,8 @@ const ShapeComponent = ({ shape, color, rotation }: Element) => {
     case 'circle': return <div className={cn(baseClasses, color, "rounded-full")} />;
     case 'square': return <div className={cn(baseClasses, color, "rounded-md")} />;
     case 'triangle':
-        const triangleColorName = color.replace('bg-', '').split('-')[0];
-        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottom: `40px solid var(--${triangleColorName}-500, ${triangleColorName})`}} className={cn(baseClasses, transformClasses, 'bg-transparent')} />;
+        const triangleColorClass = color.replace('bg-','border-b-');
+        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid' }} className={cn(baseClasses, transformClasses, triangleColorClass, 'bg-transparent')} />;
     case 'diamond': return <div className={cn(baseClasses, color, "rotate-45 rounded-sm")} />;
     default: return <div className={cn(baseClasses, color)} />;
   }

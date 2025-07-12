@@ -2,26 +2,26 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
 import { useState, useEffect } from "react";
+
+// Maps color names to theme-based CSS classes
+const colorOptions = [
+    { name: 'RED', class: 'text-destructive' },
+    { name: 'BLUE', class: 'text-primary' },
+    { name: 'GREEN', class: 'text-green-500' }, // Using a direct color for distinction
+    { name: 'YELLOW', class: 'text-yellow-500' }, // Using a direct color for distinction
+];
 
 export function FocusSwitchReactor() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
   const [rule, setRule] = useState<'color' | 'word'>('word');
-  const [stimulus, setStimulus] = useState({ word: 'RED', color: 'text-blue-500' });
+  const [stimulus, setStimulus] = useState({ word: 'RED', color: 'text-primary' });
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
 
-  const colors = [
-    { name: 'RED', class: 'text-red-500' },
-    { name: 'BLUE', class: 'text-blue-500' },
-    { name: 'GREEN', class: 'text-green-500' },
-    { name: 'YELLOW', class: 'text-yellow-500' },
-  ];
-
   const generateStimulus = () => {
-    const randomWord = colors[Math.floor(Math.random() * colors.length)];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const randomWord = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+    const randomColor = colorOptions[Math.floor(Math.random() * colorOptions.length)];
     setStimulus({ word: randomWord.name, color: randomColor.class });
   };
   
@@ -51,9 +51,9 @@ export function FocusSwitchReactor() {
     let correctAnswer;
     if (rule === 'word') {
       correctAnswer = stimulus.word;
-    } else { // color
-       const colorName = stimulus.color.split('-')[1]; // e.g. "text-red-500" -> "red"
-       correctAnswer = colors.find(c => c.class.includes(colorName))?.name;
+    } else { // rule is 'color'
+       const correctOption = colorOptions.find(opt => opt.class === stimulus.color);
+       correctAnswer = correctOption?.name;
     }
     
     if (answer === correctAnswer) {
@@ -91,7 +91,7 @@ export function FocusSwitchReactor() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 w-full">
-              {colors.map(color => (
+              {colorOptions.map(color => (
                 <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg">
                   {color.name}
                 </Button>
