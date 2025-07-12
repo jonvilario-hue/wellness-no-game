@@ -49,7 +49,7 @@ export function HabitJournal() {
   const { toast } = useToast();
   const today = new Date().toISOString().split('T')[0];
 
-  const createNewEntryObject = (): JournalEntry => {
+  const createNewEntryObject = useCallback((): JournalEntry => {
     const defaultCategory: JournalCategory = 'Growth & Challenge Reflection';
     return {
       id: `new-${Date.now()}`,
@@ -67,7 +67,7 @@ export function HabitJournal() {
       habits: {},
       hasAffirmation: false,
     };
-  };
+  }, []);
 
   useEffect(() => {
     if (viewMode === 'entries') {
@@ -84,8 +84,7 @@ export function HabitJournal() {
     } else {
         setSelectedEntry(null);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entries, today, viewMode]);
+  }, [entries, today, viewMode, createNewEntryObject, selectedEntry]);
 
   const handleSelectEntry = (entry: JournalEntry) => {
     setViewMode('entries');
@@ -95,7 +94,7 @@ export function HabitJournal() {
   const handleNewEntry = useCallback(() => {
     setViewMode('entries');
     setSelectedEntry(createNewEntryObject());
-  }, []);
+  }, [createNewEntryObject]);
 
   const handleSave = (entryToSave: JournalEntry) => {
     if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim()) {
@@ -164,14 +163,20 @@ export function HabitJournal() {
     useEffect(() => {
       setEditorState(entry);
     }, [entry]);
-
-    const isNewEntry = editorState.id.startsWith('new-');
+    
     const category = (editorState.category as JournalCategory);
     const config = journalConfig[category];
 
+    if (!config) {
+        return <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+            <p>Error: Could not load journal category. Please select another entry or create a new one.</p>
+        </div>;
+    }
+
+    const isNewEntry = editorState.id.startsWith('new-');
+
     const handleCategoryChange = (newCategory: JournalCategory) => {
       setEditorState(prevState => ({
-        ...prevState,
         ...createNewEntryObject(), // Reset fields but keep date/id
         id: prevState.id,
         date: prevState.date,
