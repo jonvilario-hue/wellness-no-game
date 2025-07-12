@@ -6,11 +6,13 @@ import type { JournalCategory, HabitId } from '@/lib/journal-config';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
 export type HabitState = 'done' | null;
+export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
 
 export type JournalEntry = {
     id: string;
     date: string; // YYYY-MM-DD
     category: JournalCategory;
+    frequency: ReflectionFrequency;
     
     // Template fields
     field1: string;
@@ -117,5 +119,3 @@ const useJournal = () => {
 };
 
 export { useJournal };
-
-    

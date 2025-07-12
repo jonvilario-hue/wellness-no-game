@@ -64,7 +64,12 @@ export const journalConfig: Record<JournalCategory, {
   icon: LucideIcon;
   title: JournalCategory;
   purpose: string;
-  templateFields: [string, string, string, string];
+  prompts: {
+    daily: [string, string, string];
+    weekly: [string, string, string];
+    monthly: [string, string, string];
+  };
+  affirmationPrompt: string;
   guidance: string;
   suggestedTags: string;
   habits: HabitId[];
@@ -73,12 +78,12 @@ export const journalConfig: Record<JournalCategory, {
     icon: BrainCircuit,
     title: 'Growth & Challenge Reflection',
     purpose: "Reflect on difficulties, process effort, and build resilience.",
-    templateFields: [
-      "What challenge or difficulty did you face today?",
-      "How did you respond or feel in the moment?",
-      "What helped you get through it — or what might help next time?",
-      "Write one sentence affirming your resilience."
-    ],
+    prompts: {
+        daily: ["What was the hardest part of today?", "What helped you get through it?", "What can you try differently tomorrow?"],
+        weekly: ["What recurring challenges did you face?", "What strategies or mindsets helped most?", "What did you learn about your limits and strengths?"],
+        monthly: ["What’s changed in how you respond to pressure or setbacks?", "What challenge are you most proud of handling?", "What mindset do you want to carry forward next month?"],
+    },
+    affirmationPrompt: "Write one sentence affirming your resilience.",
     guidance: "Use this space to reflect on challenges you encountered. Focus on how you handled them, what you learned, or how you might grow from them.",
     suggestedTags: "#resilience, #learning, #problem-solving, #setback, #growth",
     habits: ['focus', 'meditation', 'rest']
@@ -87,12 +92,12 @@ export const journalConfig: Record<JournalCategory, {
     icon: Target,
     title: 'Goal & Identity Alignment',
     purpose: "Clarify intentions, set meaningful goals, and reinforce identity-aligned actions.",
-    templateFields: [
-      "What is a goal you're working toward?",
-      "Why does it matter to you?",
-      "What’s one small next step?",
-      "Write an affirmation that reflects who you’re becoming."
-    ],
+    prompts: {
+        daily: ["What’s your #1 priority today?", "What value does it serve?", "One small step you will take?"],
+        weekly: ["Which goals moved forward?", "What obstacles came up?", "How can your values guide your actions next week?"],
+        monthly: ["What identity are you growing into?", "Are your goals aligned with that?", "What will you let go of or focus on next?"],
+    },
+    affirmationPrompt: "Write an affirmation that reflects who you’re becoming.",
     guidance: "Use this section to connect your actions to what matters most. Define your goal clearly and focus on next steps that reflect your values.",
     suggestedTags: "#goal, #clarity, #values, #planning, #becoming",
     habits: ['planning', 'visualization', 'calendar']
@@ -101,12 +106,12 @@ export const journalConfig: Record<JournalCategory, {
     icon: Smile,
     title: 'Positivity & Strengths',
     purpose: "Reinforce gratitude, recognize progress, and increase optimism and self-efficacy.",
-    templateFields: [
-      "Name one thing that went well today.",
-      "What strength did you use or notice in yourself?",
-      "What are you grateful for?",
-      "Write an affirmation that reinforces that strength."
-    ],
+    prompts: {
+        daily: ["What went well today?", "What did you do that mattered?", "What are you grateful for?"],
+        weekly: ["What strengths did you use this week?", "What unexpected joy or win showed up?", "What are you proud of?"],
+        monthly: ["What patterns of progress are emerging?", "What strengths do you want to deepen?", "What are you thankful for that changed you this month?"],
+    },
+    affirmationPrompt: "Write an affirmation that reinforces that strength.",
     guidance: "Reflect on what’s working, even if small. Use this space to train your brain to recognize positive progress and personal strengths.",
     suggestedTags: "#gratitude, #small-wins, #confidence, #strength",
     habits: ['exercise', 'journaling', 'sleep', 'social']
@@ -115,12 +120,12 @@ export const journalConfig: Record<JournalCategory, {
     icon: Waves,
     title: 'Emotion & Mood Processing',
     purpose: "Label and regulate emotional states, reduce cognitive overload, and clarify patterns.",
-    templateFields: [
-      "What emotion are you feeling right now?",
-      "What triggered it?",
-      "What’s another way to view this situation?",
-      "What do you need right now — or what’s a kind thing to say to yourself?"
-    ],
+    prompts: {
+        daily: ["What emotion was strongest today?", "What triggered it?", "What helped or could help you manage it?"],
+        weekly: ["Which emotions showed up most?", "What patterns are forming?", "How do you want to respond differently next week?"],
+        monthly: ["What emotions are you handling better?", "Where are you still reactive or avoidant?", "What emotional need deserves more care?"],
+    },
+    affirmationPrompt: "What do you need right now — or what’s a kind thing to say to yourself?",
     guidance: "Use this space to name your emotions and reflect on their source. This helps reduce overwhelm and improve clarity.",
     suggestedTags: "#emotion, #stress, #processing, #mindfulness, #calm",
     habits: ['breathwork', 'rest', 'journaling', 'distraction']
@@ -129,16 +134,14 @@ export const journalConfig: Record<JournalCategory, {
     icon: Feather,
     title: 'Freeform Exploration',
     purpose: "Allow open, unstructured thought expression with optional guidance.",
-    templateFields: [
-      "Write whatever’s on your mind.",
-      "Want inspiration? Try this: What thought keeps looping lately?",
-      "Or this: What’s something you’ve been avoiding?",
-      "Write an affirmation for the day."
-    ],
+    prompts: {
+        daily: ["What thought won’t leave your mind?", "What would help you feel more grounded today?", "Write whatever comes to mind..."],
+        weekly: ["What themes keep showing up in your entries?", "What surprises came up in your thinking?", "Free write about your week..."],
+        monthly: ["What shifts have occurred in your beliefs, ideas, or focus?", "What creative or unexpected thoughts are worth revisiting?", "Reflect on the month as a whole..."],
+    },
+    affirmationPrompt: "Write an affirmation for the day.",
     guidance: "Use this space freely. No structure required. You can explore ideas, reflect on the day, or just release thoughts.",
     suggestedTags: "#thought-dump, #freewrite, #creative, #uncategorized",
     habits: []
   },
 };
-
-    

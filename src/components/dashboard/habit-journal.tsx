@@ -22,7 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
-import { useJournal, type JournalEntry } from '@/hooks/use-journal';
+import { useJournal, type JournalEntry, type ReflectionFrequency } from '@/hooks/use-journal';
 import { Separator } from '../ui/separator';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
@@ -56,6 +56,7 @@ export function HabitJournal() {
         .toISOString()
         .split('T')[0],
       category: defaultCategory,
+      frequency: 'daily',
       field1: '',
       field2: '',
       field3: '',
@@ -67,15 +68,6 @@ export function HabitJournal() {
       hasAffirmation: false,
     };
   }, []);
-
-  useEffect(() => {
-    if (viewMode === 'entries' && entries.length > 0 && !selectedEntry) {
-      setSelectedEntry(entries[0]);
-    } else if (viewMode === 'entries' && entries.length === 0) {
-      setSelectedEntry(createNewEntryObject());
-    }
-  }, [entries, selectedEntry, viewMode, createNewEntryObject]);
-
 
   const handleSelectEntry = (entry: JournalEntry) => {
     setViewMode('entries');
@@ -178,7 +170,12 @@ export function HabitJournal() {
         id: prevState.id,
         date: prevState.date,
         category: newCategory,
+        frequency: prevState.frequency, // Keep frequency
       }));
+    };
+    
+    const handleFrequencyChange = (newFrequency: ReflectionFrequency) => {
+        setEditorState(prevState => ({ ...prevState, frequency: newFrequency }));
     };
 
     const handleFieldChange = (
@@ -194,6 +191,9 @@ export function HabitJournal() {
         habits: { ...prevState.habits, [habitId]: checked ? 'done' : null },
       }));
     };
+    
+    const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
+
 
     return (
       <div className="p-4 h-full flex flex-col gap-2">
@@ -260,24 +260,35 @@ export function HabitJournal() {
               </div>
             </div>
             
+             <div>
+              <Label className="mb-2 block">Reflection Frequency</Label>
+                <div className="flex items-center gap-2">
+                    {(['daily', 'weekly', 'monthly'] as ReflectionFrequency[]).map(freq => (
+                        <Button key={freq} variant={editorState.frequency === freq ? 'default' : 'outline'} onClick={() => handleFrequencyChange(freq)} className="capitalize flex-1">
+                            {freq}
+                        </Button>
+                    ))}
+                </div>
+            </div>
+
             <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
-              {config.purpose}
+              {config.guidance}
             </div>
 
             <Textarea
-              placeholder={config.templateFields[0]}
+              placeholder={currentPrompts[0]}
               value={editorState.field1}
               onChange={e => handleFieldChange('field1', e.target.value)}
               className="min-h-[60px]"
             />
              <Textarea
-              placeholder={config.templateFields[1]}
+              placeholder={currentPrompts[1]}
               value={editorState.field2}
               onChange={e => handleFieldChange('field2', e.target.value)}
               className="min-h-[60px]"
             />
              <Textarea
-              placeholder={config.templateFields[2]}
+              placeholder={currentPrompts[2]}
               value={editorState.field3}
               onChange={e => handleFieldChange('field3', e.target.value)}
               className="min-h-[60px]"
@@ -291,7 +302,7 @@ export function HabitJournal() {
 
                 {editorState.hasAffirmation && (
                     <Textarea
-                      placeholder={config.templateFields[3]}
+                      placeholder={config.affirmationPrompt}
                       value={editorState.affirmation}
                       onChange={e => handleFieldChange('affirmation', e.target.value)}
                       className="mt-2 min-h-[60px]"
@@ -508,5 +519,3 @@ export function HabitJournal() {
     </Card>
   );
 }
-
-    
