@@ -19,6 +19,7 @@ import {
   Loader2,
   CheckCircle,
   Share,
+  MinusCircle,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -77,12 +78,11 @@ export function HabitJournal() {
       field1: '',
       field2: '',
       field3: '',
-      affirmation: '',
+      affirmations: [],
       tags: '',
       effort: 7,
       mood: null,
       habits: {},
-      hasAffirmation: false,
     };
   }, [getDefaultFrequency]);
 
@@ -250,6 +250,22 @@ export function HabitJournal() {
       }));
     };
 
+    const handleAffirmationChange = (index: number, value: string) => {
+        const newAffirmations = [...editorState.affirmations];
+        newAffirmations[index] = value;
+        setEditorState(prevState => ({...prevState, affirmations: newAffirmations}));
+    }
+
+    const addAffirmation = () => {
+        setEditorState(prevState => ({...prevState, affirmations: [...prevState.affirmations, '']}));
+    }
+    
+    const removeAffirmation = (index: number) => {
+        const newAffirmations = editorState.affirmations.filter((_, i) => i !== index);
+        setEditorState(prevState => ({...prevState, affirmations: newAffirmations}));
+    }
+
+
     const exportAsMarkdown = (entry: JournalEntry) => {
         const entryConfig = journalConfig[entry.category];
         const prompts = entryConfig.prompts[entry.frequency] || entryConfig.prompts.daily;
@@ -272,8 +288,8 @@ tags: ${entry.tags}
         if (entry.field2) markdown += `### ${prompts[1]}\n${entry.field2}\n\n`;
         if (entry.field3) markdown += `### ${prompts[2]}\n${entry.field3}\n\n`;
 
-        if (entry.hasAffirmation && entry.affirmation) {
-            markdown += `### Affirmation\n> ${entry.affirmation}\n\n`;
+        if (entry.affirmations && entry.affirmations.length > 0) {
+            markdown += `### Affirmations\n${entry.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
         }
         
         const completedHabits = Object.keys(entry.habits)
@@ -418,20 +434,24 @@ tags: ${entry.tags}
               className="min-h-[60px]"
             />
             
-            <div>
-                 <Button variant="ghost" size="sm" onClick={() => handleFieldChange('hasAffirmation', !editorState.hasAffirmation)}>
-                    <PlusCircle className={cn("mr-2 h-4 w-4 transition-transform", editorState.hasAffirmation && "rotate-45")}/>
-                    {editorState.hasAffirmation ? 'Remove Affirmation' : 'Add Affirmation'}
+            <div className="space-y-2">
+                 {editorState.affirmations.map((affirmation, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                         <Textarea
+                          placeholder={config.affirmationPrompt}
+                          value={affirmation}
+                          onChange={e => handleAffirmationChange(index, e.target.value)}
+                          className="min-h-[60px] flex-grow"
+                        />
+                        <Button variant="ghost" size="icon" onClick={() => removeAffirmation(index)}>
+                            <MinusCircle className="w-4 h-4 text-muted-foreground"/>
+                        </Button>
+                    </div>
+                 ))}
+                 <Button variant="ghost" size="sm" onClick={addAffirmation}>
+                    <PlusCircle className="mr-2 h-4 w-4"/>
+                    Add Affirmation
                  </Button>
-
-                {editorState.hasAffirmation && (
-                    <Textarea
-                      placeholder={config.affirmationPrompt}
-                      value={editorState.affirmation}
-                      onChange={e => handleFieldChange('affirmation', e.target.value)}
-                      className="mt-2 min-h-[60px]"
-                    />
-                )}
             </div>
             
             <Separator/>

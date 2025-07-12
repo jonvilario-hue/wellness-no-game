@@ -18,8 +18,7 @@ export type JournalEntry = {
     field1: string;
     field2: string;
     field3: string;
-    affirmation: string;
-    hasAffirmation: boolean;
+    affirmations: string[];
 
     tags: string;
     effort: number;
@@ -39,14 +38,37 @@ const useJournal = () => {
             if (savedEntries) {
                 const parsed = JSON.parse(savedEntries);
                 if (Array.isArray(parsed)) {
-                    setEntries(parsed);
+                    // Quick migration for old data structure
+                    const migratedEntries = parsed.map(entry => {
+                        if (typeof entry.affirmation === 'string') {
+                            entry.affirmations = entry.hasAffirmation ? [entry.affirmation] : [];
+                            delete entry.affirmation;
+                            delete entry.hasAffirmation;
+                        }
+                        if (!entry.affirmations) {
+                             entry.affirmations = [];
+                        }
+                        return entry;
+                    });
+                    setEntries(migratedEntries);
                 }
             }
              const savedTrashedEntries = window.localStorage.getItem('journalTrashedEntries');
             if (savedTrashedEntries) {
                 const parsed = JSON.parse(savedTrashedEntries);
                 if (Array.isArray(parsed)) {
-                    setTrashedEntries(parsed);
+                    const migratedTrashed = parsed.map(entry => {
+                         if (typeof entry.affirmation === 'string') {
+                            entry.affirmations = entry.hasAffirmation ? [entry.affirmation] : [];
+                            delete entry.affirmation;
+                            delete entry.hasAffirmation;
+                        }
+                         if (!entry.affirmations) {
+                             entry.affirmations = [];
+                        }
+                        return entry;
+                    });
+                    setTrashedEntries(migratedTrashed);
                 }
             }
         } catch (error) {
