@@ -3,16 +3,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Award, Flame, Shuffle, Repeat, TrendingUp, ShieldCheck, Gem, Compass } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const badges = [
-  { icon: Flame, color: 'text-primary', title: 'Neurogrit', description: 'Trained daily for 7 days in a row.' },
-  { icon: Shuffle, color: 'text-primary', title: 'Cognitive Flexer', description: 'Trained in 3+ different domains in a single day.' },
-  { icon: Repeat, color: 'text-primary', title: 'Retry Rebel', description: 'Replayed and improved on a previously challenging task.' },
-  { icon: TrendingUp, color: 'text-primary', title: 'Plateau Breaker', description: 'Achieved a new personal best after a performance plateau.' },
-  { icon: ShieldCheck, color: 'text-primary', title: 'Mistake Tamer', description: 'Recovered to a high score after 3+ early errors.' },
-  { icon: Gem, color: 'text-primary', title: 'Symbol Slayer', description: 'Mastered 5 Gs (Processing Speed) challenges.' },
-  { icon: Compass, color: 'text-primary', title: 'Curious Explorer', description: 'Tried every CHC domain at least once.' },
-  { icon: Award, color: 'text-primary', title: 'Balanced Brain', description: 'Maintained growth across 4+ domains this month.' },
+  { icon: Flame, title: 'Neurogrit', description: 'Trained daily for 7 days in a row.', locked: false },
+  { icon: Shuffle, title: 'Cognitive Flexer', description: 'Trained in 3+ different domains in a single day.', locked: false },
+  { icon: Repeat, title: 'Retry Rebel', description: 'Replayed and improved on a previously challenging task.', locked: true },
+  { icon: TrendingUp, title: 'Plateau Breaker', description: 'Achieved a new personal best after a performance plateau.', locked: false },
+  { icon: ShieldCheck, title: 'Mistake Tamer', description: 'Recovered to a high score after 3+ early errors.', locked: true },
+  { icon: Gem, title: 'Symbol Slayer', description: 'Mastered 5 Gs (Processing Speed) challenges.', locked: false },
+  { icon: Compass, title: 'Curious Explorer', description: 'Tried every CHC domain at least once.', locked: false },
+  { icon: Award, title: 'Balanced Brain', description: 'Maintained growth across 4+ domains this month.', locked: true },
 ];
 
 export function MilestoneBadges() {
@@ -30,13 +31,21 @@ export function MilestoneBadges() {
             {badges.map((badge, index) => (
               <Tooltip key={index} delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <div className="p-2 bg-muted/50 rounded-lg flex justify-center items-center aspect-square cursor-pointer transition-transform hover:scale-110">
-                    <badge.icon className={`w-8 h-8 ${badge.color}`} />
+                  <div className={cn(
+                    "p-2 rounded-lg flex justify-center items-center aspect-square cursor-pointer transition-transform hover:scale-110",
+                    badge.locked ? 'bg-muted/30' : 'bg-primary/10'
+                  )}>
+                    <badge.icon className={cn(
+                      "w-8 h-8",
+                      badge.locked ? 'text-muted-foreground/50' : 'text-primary'
+                    )} />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="font-bold">{badge.title}</p>
-                  <p className="text-sm text-muted-foreground">{badge.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {badge.locked ? `Hint: ${badge.description}` : badge.description}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             ))}
