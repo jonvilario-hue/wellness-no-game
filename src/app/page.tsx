@@ -6,6 +6,7 @@ import { HabitTracker } from '@/components/dashboard/habit-tracker';
 import { IqProxyProgress } from '@/components/dashboard/iq-proxy-progress';
 import { MilestoneBadges } from '@/components/dashboard/milestone-badges';
 import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recommendations';
+import { WeeklyReflection } from '@/components/dashboard/weekly-reflection';
 import { Header } from '@/components/header';
 
 export default function Home() {
@@ -27,11 +28,15 @@ export default function Home() {
             </aside>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <WeakAreaRecommendations />
-              <AdaptiveDifficulty />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <IqProxyProgress />
               <CognitiveEnergyMeter />
+              <WeakAreaRecommendations />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AdaptiveDifficulty />
+            <WeeklyReflection />
           </div>
         </div>
       </main>
