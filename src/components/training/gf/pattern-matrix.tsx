@@ -44,11 +44,12 @@ const generatePuzzle = () => {
 const ShapeComponent = ({ shape, color, transform }: { shape: string, color: string, transform: string }) => {
   const baseClasses = "w-12 h-12 transition-all";
   const transformClasses = transform;
+  const colorClass = color.replace('bg-', 'border-b-');
 
   switch (shape) {
     case 'circle': return <div className={cn(baseClasses, color, transformClasses, "rounded-full")} />;
     case 'square': return <div className={cn(baseClasses, color, transformClasses, "rounded-md")} />;
-    case 'triangle': return <div className={cn(baseClasses, transformClasses)} style={{ width: 0, height: 0, borderLeft: '30px solid transparent', borderRight: '30px solid transparent', borderBottom: `60px solid var(--${color.replace('bg-', '')})` }}><div className={color.replace('bg-', 'border-b-')} /></div>; // a bit hacky for color
+    case 'triangle': return <div className={cn(baseClasses, transformClasses, colorClass)} style={{ width: 0, height: 0, backgroundColor: 'transparent', borderLeft: '30px solid transparent', borderRight: '30px solid transparent', borderBottomWidth: '60px' }} />;
     case 'diamond': return <div className={cn(baseClasses, color, "rotate-45 rounded-md")} />;
     case 'star': return <div className={cn(baseClasses, transformClasses, "text-yellow-400")}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-12 h-12"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg></div>;
     default: return <div className={cn(baseClasses, color)} />;

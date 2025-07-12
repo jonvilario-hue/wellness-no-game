@@ -53,7 +53,7 @@ export function FocusSwitchReactor() {
       correctAnswer = stimulus.word;
     } else { // color
        const colorName = stimulus.color.split('-')[1]; // e.g. "text-red-500" -> "red"
-       correctAnswer = colorName.toUpperCase();
+       correctAnswer = colors.find(c => c.class.includes(colorName))?.name;
     }
     
     if (answer === correctAnswer) {

@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { BookOpenText } from "lucide-react";
 import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 const puzzles = [
   {
@@ -35,6 +36,7 @@ const puzzles = [
 export function VerbalInferenceBuilder() {
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState(''); // '', 'correct', 'incorrect'
   const [gameState, setGameState] = useState('playing'); // playing, finished
   
@@ -43,6 +45,7 @@ export function VerbalInferenceBuilder() {
   const handleAnswer = (option: string) => {
     if (feedback) return;
 
+    setSelectedAnswer(option);
     if (option === currentPuzzle.answer) {
       setScore(score + 1);
       setFeedback('correct');
@@ -54,6 +57,7 @@ export function VerbalInferenceBuilder() {
       if (currentPuzzleIndex < puzzles.length - 1) {
         setCurrentPuzzleIndex(currentPuzzleIndex + 1);
         setFeedback('');
+        setSelectedAnswer(null);
       } else {
         setGameState('finished');
       }
@@ -64,18 +68,22 @@ export function VerbalInferenceBuilder() {
     setCurrentPuzzleIndex(0);
     setScore(0);
     setFeedback('');
+    setSelectedAnswer(null);
     setGameState('playing');
   };
   
   const getButtonClass = (option: string) => {
-    if (!feedback) return "secondary";
-    if (option === currentPuzzle.answer) return "success";
-    if (option !== currentPuzzle.answer && feedback === 'incorrect') {
-        // This highlights the selected wrong answer
-        // A more advanced version could show which one was selected
-        return "destructive";
+    if (!feedback) return "secondary"; // Default state
+
+    if (option === currentPuzzle.answer) {
+      return "bg-green-600 hover:bg-green-700"; // Always show correct answer in green
     }
-    return "secondary";
+    
+    if (option === selectedAnswer && feedback === 'incorrect') {
+      return "bg-red-600 hover:bg-red-700"; // Show selected incorrect answer in red
+    }
+
+    return "secondary"; // Other non-selected, non-correct answers
   }
 
 
@@ -99,12 +107,11 @@ export function VerbalInferenceBuilder() {
                   onClick={() => handleAnswer(option)}
                   disabled={!!feedback}
                   size="lg"
-                  className={`
-                    h-auto py-3 whitespace-normal
-                    ${feedback && option === currentPuzzle.answer ? 'bg-green-600 hover:bg-green-700' : ''}
-                    ${feedback && option !== currentPuzzle.answer ? 'bg-muted hover:bg-muted' : ''}
-                  `}
-                  variant={feedback && option !== currentPuzzle.answer ? "outline" : "secondary"}
+                  className={cn(
+                    "h-auto py-3 whitespace-normal",
+                    feedback && getButtonClass(option)
+                  )}
+                  variant={!feedback || option === currentPuzzle.answer ? "secondary" : "outline"}
                 >
                   {option}
                 </Button>
