@@ -85,7 +85,10 @@ export function DynamicSequenceTransformer() {
   return (
     <Card className="w-full max-w-2xl text-center">
       <CardHeader>
-        <CardTitle>Dynamic Sequence Transformer</CardTitle>
+        <CardTitle className="flex items-center justify-center gap-2">
+            <MemoryStick />
+            Dynamic Sequence Transformer
+        </CardTitle>
         <CardDescription>Memorize the sequence, then transform it as instructed.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6 min-h-[250px] justify-center">

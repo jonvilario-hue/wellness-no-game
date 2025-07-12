@@ -161,7 +161,7 @@ export function VerbalInferenceBuilder() {
           </>
         ) : (
           <div className="text-center space-y-4 animate-in fade-in">
-            <h2 className="text-2xl font-bold">Puzzle Set Complete!</h2>
+            <div className="text-2xl font-bold">Puzzle Set Complete!</div>
             <p className="text-xl">Your final score is: <span className="font-bold text-primary">{score} out of {puzzles.length}</span></p>
             <Button onClick={handleRestart} size="lg">Play Again</Button>
           </div>

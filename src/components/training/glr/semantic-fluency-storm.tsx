@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Archive, Zap } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const prompts = [
@@ -92,7 +91,7 @@ export function SemanticFluencyStorm() {
 
         {gameState === 'finished' && (
           <div className="text-center space-y-4">
-            <h2 className="text-2xl font-bold">Time's Up!</h2>
+            <div className="text-2xl font-bold">Time's Up!</div>
             <p className="text-xl">You named <span className="font-bold text-primary">{responses.length}</span> items.</p>
             <div className="p-4 border rounded-lg max-h-48 overflow-y-auto w-full flex flex-wrap justify-center gap-2">
               {responses.map((res, index) => (

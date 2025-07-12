@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Ear, Music, Play, Volume2 } from "lucide-react";
+import { Volume2 } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function ToneGridChallenge() {

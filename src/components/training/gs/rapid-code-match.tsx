@@ -3,7 +3,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 
 const symbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
@@ -106,7 +105,7 @@ export function RapidCodeMatch() {
 
         {gameState === 'finished' && (
           <div className="flex flex-col items-center gap-4">
-            <h2 className="text-2xl font-bold">Game Over!</h2>
+            <div className="text-2xl font-bold">Game Over!</div>
             <p className="text-xl">Your final score is: <span className="text-primary font-bold">{score}</span></p>
             <Button onClick={handleStart} size="lg">Play Again</Button>
           </div>
