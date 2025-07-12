@@ -86,9 +86,7 @@ const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 
 export function HabitJournal() {
     const { entries, addEntry, updateEntry } = useJournal();
-    const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
-    const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
-    
+    const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
     const { toast } = useToast();
     const today = new Date().toISOString().split('T')[0];
 
@@ -114,74 +112,34 @@ export function HabitJournal() {
     useEffect(() => {
         const todayEntry = entries.find(e => e.date === today);
         if (todayEntry) {
-            setSelectedEntryId(todayEntry.id);
+            setSelectedEntry(todayEntry);
         } else {
             const newEntry = createNewEntryObject(true);
-            setCurrentEntry(newEntry);
-            setSelectedEntryId(newEntry.id);
+            setSelectedEntry(newEntry);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [entries, today]);
     
-    // Effect to update the editor when a new entry is selected
-    useEffect(() => {
-        if (selectedEntryId) {
-            const entry = entries.find(e => e.id === selectedEntryId);
-            if (entry) {
-                 setCurrentEntry(entry);
-            } else if (selectedEntryId.startsWith('new-') && !currentEntry) {
-                // If a new entry was selected but currentEntry is null, create it
-                const newEntry = createNewEntryObject(selectedEntryId.includes(today));
-                setCurrentEntry(newEntry);
-            } else if (selectedEntryId.startsWith('new-') && currentEntry?.id !== selectedEntryId) {
-                const newEntry = createNewEntryObject(false);
-                setCurrentEntry(newEntry);
-            }
-        } else {
-            setCurrentEntry(null);
-        }
-    }, [selectedEntryId, entries, currentEntry, today]);
 
     const handleNewEntry = useCallback(() => {
         const newEntry = createNewEntryObject(false);
-        setCurrentEntry(newEntry);
-        setSelectedEntryId(newEntry.id);
+        setSelectedEntry(newEntry);
     }, []);
-
-    const handleFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
-        if (!currentEntry) return;
-
-        let updatedEntry = { ...currentEntry, [field]: value };
-        
-        if (field === 'category') {
-            const category = value as JournalCategory;
-            const newConfig = journalConfig[category];
-            updatedEntry = { ...updatedEntry, prompt: newConfig.prompt, mood: null }; // Reset mood when category changes
-        }
-        
-        setCurrentEntry(updatedEntry);
-    };
     
-    const handleHabitChange = (habitId: HabitId, checked: boolean) => {
-        if (!currentEntry) return;
-        const newHabits = { ...currentEntry.habits, [habitId]: checked ? 'done' : null };
-        setCurrentEntry({ ...currentEntry, habits: newHabits });
-    };
-
-    const handleSave = () => {
-        if (!currentEntry || !currentEntry.reflection.trim()) {
+    const handleSave = (entryToSave: JournalEntry) => {
+        if (!entryToSave.reflection.trim()) {
             toast({ title: 'Empty Journal', description: 'Please write something before saving.', variant: 'destructive' });
             return;
         }
 
-        const isNew = currentEntry.id.startsWith('new-');
+        const isNew = entryToSave.id.startsWith('new-');
         if (isNew) {
-            const finalEntry = { ...currentEntry, id: `${currentEntry.date}-${Date.now()}` };
+            const finalEntry = { ...entryToSave, id: `${entryToSave.date}-${Date.now()}` };
             addEntry(finalEntry);
-            setSelectedEntryId(finalEntry.id);
+            setSelectedEntry(finalEntry); // Select the newly saved entry
             toast({ title: 'Journal Entry Saved', description: 'Your thoughts have been logged.' });
         } else {
-            updateEntry(currentEntry.id, currentEntry);
+            updateEntry(entryToSave.id, entryToSave);
             toast({ title: 'Journal Entry Updated', description: 'Your changes have been saved.' });
         }
     };
@@ -211,23 +169,23 @@ export function HabitJournal() {
     };
 
     const handleCopyToClipboard = () => {
-        if (!currentEntry || !currentEntry.reflection.trim()) {
+        if (!selectedEntry || !selectedEntry.reflection.trim()) {
             toast({ title: 'Nothing to copy', description: 'Please select an entry and write a reflection first.', variant: 'destructive' });
             return;
         }
-        navigator.clipboard.writeText(formatMarkdown(currentEntry));
+        navigator.clipboard.writeText(formatMarkdown(selectedEntry));
         toast({ title: 'Copied to Clipboard!', description: 'Your journal entry is ready to paste.' });
     };
 
     const handleExport = () => {
-        if (!currentEntry || !currentEntry.reflection.trim()) {
+        if (!selectedEntry || !selectedEntry.reflection.trim()) {
             toast({ title: 'Nothing to export', description: 'Please select an entry and write a reflection first.', variant: 'destructive' });
             return;
         }
-        const blob = new Blob([formatMarkdown(currentEntry)], { type: 'text/markdown' });
+        const blob = new Blob([formatMarkdown(selectedEntry)], { type: 'text/markdown' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.download = `cognitive-journal-${currentEntry.date}.md`;
+        link.download = `cognitive-journal-${selectedEntry.date}.md`;
         link.href = url;
         document.body.appendChild(link);
         link.click();
@@ -236,42 +194,41 @@ export function HabitJournal() {
         toast({ title: 'Export Successful', description: 'Your journal entry has been downloaded.' });
     };
 
-    const EntryEditor = ({ entry, setEntry }: { entry: JournalEntry | null; setEntry: (entry: JournalEntry) => void; }) => {
-       if (!entry) return (
-            <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-                <PlusCircle className="w-8 h-8 mb-2" />
-                <p>Select an entry from the list or create a new one.</p>
-            </div>
-       );
+    const EntryEditor = ({ entry, onSave }: { entry: JournalEntry; onSave: (entry: JournalEntry) => void; }) => {
+       const [editorState, setEditorState] = useState<JournalEntry>(entry);
 
-       const isNewEntry = entry.id.startsWith('new-');
-       const category = (entry.category as JournalCategory) || 'Daily Reflection';
+        useEffect(() => {
+            setEditorState(entry);
+        }, [entry]);
+
+       const isNewEntry = editorState.id.startsWith('new-');
+       const category = (editorState.category as JournalCategory) || 'Daily Reflection';
        const config = journalConfig[category];
 
        const handleCategoryChange = (newCategory: JournalCategory) => {
             const newConfig = journalConfig[newCategory];
-            setEntry({
-                ...entry,
+            setEditorState({
+                ...editorState,
                 category: newCategory,
                 prompt: newConfig.prompt,
                 mood: null, // Reset mood when category changes
             });
         };
         
-       const handleLocalFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
-            setEntry({ ...entry, [field]: value });
+       const handleFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
+            setEditorState({ ...editorState, [field]: value });
         };
     
-        const handleLocalHabitChange = (habitId: HabitId, checked: boolean) => {
-            const newHabits = { ...entry.habits, [habitId]: checked ? 'done' : null };
-            setEntry({ ...entry, habits: newHabits });
+        const handleHabitChange = (habitId: HabitId, checked: boolean) => {
+            const newHabits = { ...editorState.habits, [habitId]: checked ? 'done' : null };
+            setEditorState({ ...editorState, habits: newHabits });
         };
-
+        
        return (
             <div className="p-4 h-full flex flex-col gap-4">
                 <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg text-primary">
-                        {isNewEntry ? "New Entry" : `Editing: ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}`}
+                        {isNewEntry ? "New Entry" : `Editing: ${new Date(editorState.date + 'T00:00:00').toLocaleDateString()}`}
                     </h3>
                 </div>
                 <Separator/>
@@ -298,22 +255,22 @@ export function HabitJournal() {
                     </div>
 
 
-                    <p className="text-sm font-medium text-muted-foreground italic min-h-[40px] text-center flex items-center justify-center">{entry.prompt}</p>
+                    <p className="text-sm font-medium text-muted-foreground italic min-h-[40px] text-center flex items-center justify-center">{editorState.prompt}</p>
                     <Textarea
                         placeholder="Reflect on your day, your training, or anything on your mind..."
-                        value={entry.reflection}
-                        onChange={(e) => handleLocalFieldChange('reflection', e.target.value)}
+                        value={editorState.reflection}
+                        onChange={(e) => handleFieldChange('reflection', e.target.value)}
                         className="min-h-[120px]"
                     />
                     <div>
                         <Label htmlFor="tags-input">Tags (comma-separated)</Label>
-                        <Input id="tags-input" placeholder={config.suggestedTags} value={entry.tags} onChange={(e) => handleLocalFieldChange('tags', e.target.value)} />
+                        <Input id="tags-input" placeholder={config.suggestedTags} value={editorState.tags} onChange={(e) => handleFieldChange('tags', e.target.value)} />
                     </div>
                     {config.moods.length > 0 && <div>
                         <Label>Mood</Label>
                         <div className="flex gap-2 mt-1">
                             {config.moods.map(({mood, label, icon: MoodIcon}) => (
-                                <Button key={mood} variant={entry.mood === mood ? 'default' : 'outline'} size="sm" onClick={() => handleLocalFieldChange('mood', entry.mood === mood ? null : mood)} className="flex-1">
+                                <Button key={mood} variant={editorState.mood === mood ? 'default' : 'outline'} size="sm" onClick={() => handleFieldChange('mood', editorState.mood === mood ? null : mood)} className="flex-1">
                                     <MoodIcon className="mr-2 h-4 w-4" /> {label}
                                 </Button>
                             ))}
@@ -324,7 +281,7 @@ export function HabitJournal() {
                         <div className='grid grid-cols-2 gap-2 mt-1'>
                             {allHabits.filter(h => config.habits.includes(h.id)).map(habit => (
                                 <div key={habit.id} className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md">
-                                    <Checkbox id={habit.id} checked={!!entry.habits[habit.id]} onCheckedChange={(checked) => handleLocalHabitChange(habit.id, !!checked)} />
+                                    <Checkbox id={habit.id} checked={!!editorState.habits[habit.id]} onCheckedChange={(checked) => handleHabitChange(habit.id, !!checked)} />
                                     <Label htmlFor={habit.id} className='flex items-center gap-2 text-sm font-normal cursor-pointer'>
                                         <habit.icon className="w-4 h-4 text-muted-foreground"/> {habit.label}
                                     </Label>
@@ -335,16 +292,16 @@ export function HabitJournal() {
                     <div>
                         <Label htmlFor="effort-slider" className="flex justify-between">
                             <span>Effort / Focus</span>
-                            <span>{entry.effort}/10</span>
+                            <span>{editorState.effort}/10</span>
                         </Label>
-                        <Slider id="effort-slider" min={1} max={10} step={1} value={[entry.effort]} onValueChange={(value) => handleLocalFieldChange('effort', value[0])}/>
+                        <Slider id="effort-slider" min={1} max={10} step={1} value={[editorState.effort]} onValueChange={(value) => handleFieldChange('effort', value[0])}/>
                     </div>
                 </div>
 
                 <Separator/>
                 
                 <div className="flex-grow-0 pt-2 space-y-2">
-                    <Button onClick={handleSave} className="w-full">
+                    <Button onClick={() => onSave(editorState)} className="w-full">
                         <Save className="mr-2 h-4 w-4" /> {isNewEntry ? 'Save Entry' : 'Update Entry'}
                     </Button>
                      <div className="grid grid-cols-2 gap-2">
@@ -381,10 +338,10 @@ export function HabitJournal() {
                         <ScrollArea className="h-[420px] pr-3">
                             <div className="space-y-2 mt-2">
                             {entries.map(entry => (
-                                <button key={entry.id} onClick={() => setSelectedEntryId(entry.id)}
+                                <button key={entry.id} onClick={() => setSelectedEntry(entry)}
                                     className={cn(
                                         "w-full text-left p-2 rounded-md transition-colors",
-                                        selectedEntryId === entry.id ? 'bg-primary/10 text-primary-foreground' : 'hover:bg-muted'
+                                        selectedEntry?.id === entry.id ? 'bg-primary/10 text-primary-foreground' : 'hover:bg-muted'
                                     )}>
                                     <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{entry.category}</span></p>
                                     <p className="text-sm text-muted-foreground truncate">{entry.reflection || 'No reflection yet.'}</p>
@@ -396,7 +353,14 @@ export function HabitJournal() {
 
                     {/* Column 2: Editor */}
                     <div className="lg:col-span-2 bg-background rounded-lg border">
-                         <EntryEditor entry={currentEntry} setEntry={setCurrentEntry} />
+                         {selectedEntry ? (
+                            <EntryEditor entry={selectedEntry} onSave={handleSave} />
+                         ) : (
+                            <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                                <PlusCircle className="w-8 h-8 mb-2" />
+                                <p>Select an entry from the list or create a new one.</p>
+                            </div>
+                         )}
                     </div>
                 </div>
             </CardContent>
