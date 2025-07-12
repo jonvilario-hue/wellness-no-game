@@ -4,13 +4,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Clipboard, Download, PlusCircle, Smile, Meh, Frown, Bed, Dumbbell, Brain, BookOpen, UserCheck, Target, Lightbulb, Calendar, CheckSquare } from 'lucide-react';
-import { useState, useEffect, useMemo } from 'react';
+import { BookMarked, Save, Clipboard, Download, PlusCircle, Smile, Meh, Frown, Bed, Dumbbell, Brain, BookOpen, UserCheck, Target, Lightbulb, Calendar, CheckSquare, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
-import { useJournal, type JournalEntry, type MoodState } from '@/hooks/use-journal';
+import { useJournal, type JournalEntry, type MoodState, type HabitId } from '@/hooks/use-journal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Separator } from '../ui/separator';
 import { cn } from '@/lib/utils';
@@ -20,7 +20,7 @@ import { Checkbox } from '../ui/checkbox';
 type JournalCategory = 'Daily Reflection' | 'Cognitive Training' | 'Goal Setting' | 'Freeform Note';
 
 type HabitOption = {
-  id: 'sleep' | 'exercise' | 'meditation' | 'reading' | 'planning' | 'review';
+  id: HabitId;
   label: string;
   icon: React.ElementType;
 };
@@ -37,7 +37,7 @@ const allHabits: HabitOption[] = [
 const journalConfig: Record<JournalCategory, {
   prompt: string;
   suggestedTags: string;
-  habits: HabitOption['id'][];
+  habits: HabitId[];
   moods: { mood: MoodState, label: string, icon: React.ElementType }[];
   icon: React.ElementType;
 }> = {
@@ -82,6 +82,7 @@ const journalConfig: Record<JournalCategory, {
     icon: BookMarked,
   }
 };
+const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 
 
 export function HabitJournal() {
@@ -100,6 +101,7 @@ export function HabitJournal() {
         } else {
             handleNewEntry();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [entries, today]);
     
     // Effect to update the editor when a new entry is selected
@@ -112,7 +114,7 @@ export function HabitJournal() {
         }
     }, [selectedEntryId, entries]);
 
-    const handleNewEntry = () => {
+    const handleNewEntry = useCallback(() => {
         const newEntry: JournalEntry = {
             id: `new-${Date.now()}`,
             date: today,
@@ -126,7 +128,8 @@ export function HabitJournal() {
         };
         setCurrentEntry(newEntry);
         setSelectedEntryId(newEntry.id);
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [today]);
 
     const handleFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
         if (!currentEntry) return;
@@ -142,7 +145,7 @@ export function HabitJournal() {
         setCurrentEntry(updatedEntry);
     };
     
-    const handleHabitChange = (habitId: HabitOption['id'], checked: boolean) => {
+    const handleHabitChange = (habitId: HabitId, checked: boolean) => {
         if (!currentEntry) return;
         const newHabits = { ...currentEntry.habits, [habitId]: checked ? 'done' : null };
         setCurrentEntry({ ...currentEntry, habits: newHabits });
@@ -177,7 +180,7 @@ export function HabitJournal() {
         }
 
         const completedHabits = Object.entries(entry.habits).filter(([, state]) => state === 'done').map(([habitId]) => {
-            const habit = allHabits.find(h => h.id === habitId);
+            const habit = allHabits.find(h => h.id === habitId as HabitId);
             return habit ? habit.label : habitId;
         }).join(', ');
         let habitString = completedHabits ? `**Habits:** ${completedHabits}\n\n` : '';
@@ -228,6 +231,19 @@ export function HabitJournal() {
        const category = (entry.category as JournalCategory) || 'Daily Reflection';
        const config = journalConfig[category];
 
+       const handleCategoryChange = (direction: 'next' | 'prev') => {
+            const currentIndex = categoryKeys.indexOf(category);
+            let nextIndex;
+            if (direction === 'next') {
+                nextIndex = (currentIndex + 1) % categoryKeys.length;
+            } else {
+                nextIndex = (currentIndex - 1 + categoryKeys.length) % categoryKeys.length;
+            }
+            handleFieldChange('category', categoryKeys[nextIndex]);
+       };
+
+       const CatIcon = config.icon;
+
        return (
             <div className="p-4 h-full flex flex-col gap-4">
                 <div className="flex justify-between items-center">
@@ -237,32 +253,39 @@ export function HabitJournal() {
                 </div>
                 <Separator/>
                 <div className='space-y-4 flex-grow overflow-y-auto pr-2'>
-                    <Select value={category} onValueChange={(value) => handleFieldChange('category', value)}>
-                        <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-                        <SelectContent>
-                            {Object.keys(journalConfig).map(cat => {
-                                const CatIcon = journalConfig[cat as JournalCategory].icon;
-                                return (
-                                <SelectItem key={cat} value={cat}>
-                                    <div className="flex items-center gap-2">
-                                        <CatIcon className="w-4 h-4"/>
-                                        {cat}
-                                    </div>
-                                </SelectItem>
-                                )
-                            })}
-                        </SelectContent>
-                    </Select>
-                    <p className="text-sm font-medium text-muted-foreground italic min-h-[20px]">{entry.prompt}</p>
+
+                    <div className="flex items-center justify-between">
+                        <Button variant="ghost" size="icon" onClick={() => handleCategoryChange('prev')}>
+                            <ChevronLeft className="w-5 h-5"/>
+                        </Button>
+                        <div className="flex flex-col items-center text-center">
+                            <Label>Category</Label>
+                            <div className="flex items-center gap-2 font-semibold text-primary">
+                                <CatIcon className="w-4 h-4"/>
+                                <span>{category}</span>
+                            </div>
+                        </div>
+                        <Button variant="ghost" size="icon" onClick={() => handleCategoryChange('next')}>
+                            <ChevronRight className="w-5 h-5"/>
+                        </Button>
+                    </div>
+
+                    <p className="text-sm font-medium text-muted-foreground italic min-h-[20px] text-center">{entry.prompt}</p>
                     <Textarea
                         placeholder="Reflect on your day, your training, or anything on your mind..."
                         value={entry.reflection}
-                        onChange={(e) => handleFieldChange('reflection', e.target.value)}
+                        onChange={(e) => {
+                            if(!currentEntry) return;
+                            setCurrentEntry({...currentEntry, reflection: e.target.value});
+                        }}
                         className="min-h-[120px]"
                     />
                     <div>
                         <Label htmlFor="tags-input">Tags (comma-separated)</Label>
-                        <Input id="tags-input" placeholder={config.suggestedTags} value={entry.tags} onChange={(e) => handleFieldChange('tags', e.target.value)} />
+                        <Input id="tags-input" placeholder={config.suggestedTags} value={entry.tags} onChange={(e) => {
+                            if(!currentEntry) return;
+                             setCurrentEntry({...currentEntry, tags: e.target.value});
+                        }} />
                     </div>
                     {config.moods.length > 0 && <div>
                         <Label>Mood</Label>
@@ -280,7 +303,7 @@ export function HabitJournal() {
                             {allHabits.filter(h => config.habits.includes(h.id)).map(habit => (
                                 <div key={habit.id} className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md">
                                     <Checkbox id={habit.id} checked={!!entry.habits[habit.id]} onCheckedChange={(checked) => handleHabitChange(habit.id, !!checked)} />
-                                    <Label htmlFor={habit.id} className='flex items-center gap-2 text-sm font-normal'>
+                                    <Label htmlFor={habit.id} className='flex items-center gap-2 text-sm font-normal cursor-pointer'>
                                         <habit.icon className="w-4 h-4 text-muted-foreground"/> {habit.label}
                                     </Label>
                                 </div>
@@ -358,5 +381,3 @@ export function HabitJournal() {
         </Card>
     );
 }
-
-    
