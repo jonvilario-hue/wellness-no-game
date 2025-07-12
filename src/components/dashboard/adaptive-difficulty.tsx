@@ -21,9 +21,9 @@ export function AdaptiveDifficulty() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setResult(null); 
+    setError(null);
     startTransition(async () => {
-      setError(null);
-      setResult(null);
       const input: AdaptDifficultyInput = { chcDomain: domain, userSkillLevel: skillLevel };
       const res = await getAdaptiveDifficultyAction(input);
       if (res) {

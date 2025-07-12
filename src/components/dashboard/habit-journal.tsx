@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Smile, Meh, Frown, Check, Clipboard, Download, Heart, ChevronLeft, ChevronRight, Wand2, PlusCircle } from 'lucide-react';
+import { BookMarked, Save, Clipboard, Download, PlusCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
@@ -22,15 +22,6 @@ const journalPrompts = [
     "How did your energy level affect your focus?",
 ];
 
-const lifestyleHabits = [
-    { key: 'sleep', label: 'Sleep Quality' },
-    { key: 'exercise', label: 'Exercise' },
-    { key: 'meditation', label: 'Meditation' },
-    { key: 'reading', label: 'Reading' },
-];
-
-type HabitState = 'good' | 'neutral' | 'bad' | 'done' | null;
-
 export function HabitJournal() {
     const { entries, addEntry, updateEntry } = useJournal();
     const [api, setApi] = useState<CarouselApi>();
@@ -43,66 +34,49 @@ export function HabitJournal() {
         if (!api) return;
 
         const today = new Date().toISOString().split('T')[0];
-        const todayEntryIndex = entries.findIndex(e => e.date === today);
+        
+        const setupCurrentPage = () => {
+            if (!api) return;
+            const selectedIndex = api.selectedScrollSnap();
+            const todayEntryIndex = entries.findIndex(e => e.date === today);
 
-        if (todayEntryIndex !== -1) {
-            api.scrollTo(todayEntryIndex);
-            setCurrentEntry(entries[todayEntryIndex]);
-            setIsNewEntry(false);
-        } else {
-            const newPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)];
-            const newEntry: JournalEntry = {
-                id: today,
-                date: today,
-                reflection: '',
-                tags: '',
-                effort: 7,
-                prompt: newPrompt,
-                mood: null,
-                affirmation: '',
-                habits: { sleep: null, exercise: null, meditation: null, reading: null },
-                category: 'Daily Reflection'
-            };
-            setCurrentEntry(newEntry);
-            setIsNewEntry(true);
-            // If there are other entries, scroll to the end for the new one
-            if (entries.length > 0) {
-                 api.scrollTo(entries.length);
-            }
-        }
-
-        api.on("select", () => {
-             const selectedIndex = api.selectedScrollSnap();
-             if (selectedIndex < entries.length) {
-                setCurrentEntry(entries[selectedIndex]);
-                setIsNewEntry(false);
-             } else {
+            if (selectedIndex < entries.length) {
+                // Viewing an existing entry
+                const entry = entries[selectedIndex];
+                setCurrentEntry(entry);
+                setIsNewEntry(entry.date === today && todayEntryIndex === -1);
+            } else {
                 // We are on the "new entry" slide
-                 const todayEntry = entries.find(e => e.date === today);
-                 if (!todayEntry) {
-                     const newPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)];
-                     setCurrentEntry({
-                        id: today, date: today, reflection: '', tags: '', effort: 7,
-                        prompt: newPrompt, mood: null, affirmation: '',
-                        habits: { sleep: null, exercise: null, meditation: null, reading: null },
-                        category: 'Daily Reflection'
-                    });
-                 }
-                 setIsNewEntry(true);
-             }
-        });
+                 const newPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)];
+                 setCurrentEntry({
+                    id: today, date: today, reflection: '', tags: '', effort: 7,
+                    prompt: newPrompt, mood: null, affirmation: '',
+                    habits: { sleep: null, exercise: null, meditation: null, reading: null },
+                    category: 'Daily Reflection'
+                });
+                setIsNewEntry(true);
+            }
+        };
+
+        const todayEntryIndex = entries.findIndex(e => e.date === today);
+        if (todayEntryIndex !== -1) {
+            api.scrollTo(todayEntryIndex, true); // Jump without animation
+        } else if (entries.length > 0) {
+            api.scrollTo(entries.length, true);
+        }
+        
+        setupCurrentPage();
+        api.on("select", setupCurrentPage);
+        
+        return () => {
+            api.off("select", setupCurrentPage);
+        }
 
     }, [api, entries]);
 
     const handleFieldChange = (field: keyof JournalEntry, value: any) => {
         if (!currentEntry) return;
         setCurrentEntry(prev => prev ? { ...prev, [field]: value } : null);
-    };
-
-    const handleHabitClick = (habitKey: string, state: HabitState) => {
-        if (!currentEntry) return;
-        const newHabits = { ...currentEntry.habits, [habitKey]: currentEntry.habits[habitKey] === state ? null : state };
-        handleFieldChange('habits', newHabits);
     };
 
     const handleSave = () => {
@@ -261,7 +235,7 @@ export function HabitJournal() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <Carousel setApi={setApi} className="w-full">
+                <Carousel setApi={setApi} className="w-full" opts={{ align: "start" }}>
                     <CarouselContent>
                         {entries.map((entry) => (
                             <CarouselItem key={entry.id}>
@@ -270,7 +244,7 @@ export function HabitJournal() {
                                         <EntryPage entry={entry} />
                                     </div>
                                     <div className="bg-card rounded-r-lg">
-                                        <EditorPage entry={entry} />
+                                        <EditorPage entry={entries.find(e => e.id === entry.id) || null} />
                                     </div>
                                 </div>
                             </CarouselItem>
@@ -297,4 +271,3 @@ export function HabitJournal() {
         </Card>
     );
 }
-
