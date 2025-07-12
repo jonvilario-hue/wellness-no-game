@@ -1,0 +1,115 @@
+'use client';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Zap } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+
+const symbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
+const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+export function RapidCodeMatch() {
+  const [gameState, setGameState] = useState('idle'); // idle, running, finished
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [currentSymbol, setCurrentSymbol] = useState('');
+
+  // Memoize the key so it doesn't change on re-renders during a game
+  const keyMap = useMemo(() => {
+    const shuffledSymbols = [...symbols].sort(() => Math.random() - 0.5);
+    const map: { [key: string]: number } = {};
+    shuffledSymbols.slice(0, 5).forEach((symbol, index) => {
+      map[symbol] = digits[index];
+    });
+    return map;
+  }, [gameState === 'running']); // Re-shuffle when a new game starts
+
+  const keyEntries = useMemo(() => Object.entries(keyMap), [keyMap]);
+
+  useEffect(() => {
+    if (gameState === 'running' && timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+    if (timeLeft === 0) {
+      setGameState('finished');
+    }
+  }, [gameState, timeLeft]);
+  
+  useEffect(() => {
+    if (gameState === 'running') {
+      // Set the first symbol
+      const symbolsInKey = Object.keys(keyMap);
+      setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
+    }
+  }, [gameState, keyMap]);
+
+  const handleStart = () => {
+    setScore(0);
+    setTimeLeft(60);
+    setGameState('running');
+  };
+
+  const handleAnswer = (digit: number) => {
+    if (keyMap[currentSymbol] === digit) {
+      setScore(score + 1);
+    } else {
+      // Optional: penalty for wrong answer
+      setScore(Math.max(0, score - 1));
+    }
+    // Set next symbol
+    const symbolsInKey = Object.keys(keyMap);
+    setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
+  };
+
+  return (
+    <Card className="w-full max-w-2xl text-center">
+      <CardHeader>
+        <CardTitle>Rapid Code Match</CardTitle>
+        <CardDescription>Match the symbol to the correct digit using the key as fast as you can.</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col items-center gap-6">
+        {gameState === 'idle' && (
+          <Button onClick={handleStart} size="lg">Start Game</Button>
+        )}
+        
+        {gameState === 'running' && (
+          <div className="w-full">
+            <div className="flex justify-between w-full text-lg font-mono mb-4">
+              <span>Score: {score}</span>
+              <span>Time: {timeLeft}s</span>
+            </div>
+            <div className="flex justify-center gap-4 p-3 bg-muted rounded-lg mb-6">
+              {keyEntries.map(([symbol, digit]) => (
+                <div key={symbol} className="flex flex-col items-center">
+                  <span className="text-3xl font-bold text-primary">{symbol}</span>
+                  <span className="text-xl font-mono">{digit}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-8xl font-extrabold text-primary mb-6">
+              {currentSymbol}
+            </div>
+            
+            <div className="grid grid-cols-5 gap-2">
+              {keyEntries.map(([_, digit]) => (
+                <Button key={digit} onClick={() => handleAnswer(digit)} variant="secondary" size="lg" className="text-2xl h-16">
+                  {digit}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {gameState === 'finished' && (
+          <div className="flex flex-col items-center gap-4">
+            <h2 className="text-2xl font-bold">Time's Up!</h2>
+            <p className="text-xl">Your final score is: <span className="text-primary font-bold">{score}</span></p>
+            <Button onClick={handleStart} size="lg">Play Again</Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

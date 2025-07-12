@@ -5,6 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { chcDomains, type CHCDomain } from '@/types';
 import { domainIcons } from '@/components/icons';
 import { notFound } from 'next/navigation';
+import { PatternMatrix } from '@/components/training/gf/pattern-matrix';
+import { DynamicSequenceTransformer } from '@/components/training/gwm/dynamic-sequence-transformer';
+import { RapidCodeMatch } from '@/components/training/gs/rapid-code-match';
+import { MentalRotationLab } from '@/components/training/gv/mental-rotation-lab';
+import { ToneGridChallenge } from '@/components/training/ga/tone-grid-challenge';
+import { VerbalInferenceBuilder } from '@/components/training/gc/verbal-inference-builder';
+import { SemanticFluencyStorm } from '@/components/training/glr/semantic-fluency-storm';
+import { FocusSwitchReactor } from '@/components/training/ef/focus-switch-reactor';
+import { gameComponents } from '@/components/training/game-components';
 
 export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
   const domainInfo = chcDomains.find(d => d.key === params.domain);
@@ -13,15 +22,17 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
     notFound();
   }
 
-  const Icon = domainIcons[domainInfo.key];
+  const PageIcon = domainIcons[domainInfo.key];
+  const GameComponent = gameComponents[domainInfo.key] || (() => <p>Game not found</p>);
+  const gameTitle = domainInfo.gameTitle || domainInfo.name;
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card flex items-center justify-between">
+      <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
-          <Icon className="h-7 w-7 text-primary" />
+          <PageIcon className="h-7 w-7 text-primary" />
           <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
-            {domainInfo.name} Training
+            {gameTitle}
           </h1>
         </div>
         <Button asChild variant="outline">
@@ -32,19 +43,7 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
         </Button>
       </header>
       <main className="flex-1 p-4 sm:p-6 md:p-8 flex items-center justify-center">
-        <Card className="w-full max-w-2xl">
-          <CardHeader>
-            <CardTitle>Game Area</CardTitle>
-            <CardDescription>{domainInfo.description}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-              <p className="text-muted-foreground">
-                [Game for {domainInfo.name} will be here]
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <GameComponent />
       </main>
     </div>
   );
