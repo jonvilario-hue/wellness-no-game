@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Smile, Meh, Frown, Check, Clipboard, Download, Wand2 } from 'lucide-react';
+import { BookMarked, Save, Smile, Meh, Frown, Check, Clipboard, Download } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
@@ -37,6 +37,7 @@ export function HabitJournal() {
   const [habits, setHabits] = useState<Record<string, HabitState>>({ sleep: null, exercise: null, meditation: null, reading: null });
 
   useEffect(() => {
+    // Select prompt on the client-side to avoid hydration mismatch
     setPrompt(journalPrompts[Math.floor(Math.random() * journalPrompts.length)]);
   }, []);
 
@@ -62,7 +63,7 @@ export function HabitJournal() {
     return `## ${today} - Cognitive Reflection\n\n` +
            `**Prompt:** ${prompt}\n\n` +
            `**Reflection:**\n${reflection}\n\n` +
-           `**Effort:** ${effort}/10\n` +
+           `**Effort/Focus:** ${effort}/10\n` +
            `**Tags:** ${tagString}`;
   };
 
