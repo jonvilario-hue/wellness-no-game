@@ -129,23 +129,23 @@ export function HabitJournal() {
     };
 
     const handleFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
-        setCurrentEntry(prev => {
-            if (!prev) return null;
-            if (field === 'category') {
-                const category = value as JournalCategory;
-                const newPrompt = journalConfig[category].prompt;
-                return { ...prev, [field]: value, prompt: newPrompt };
-            }
-            return { ...prev, [field]: value };
-        });
+        if (!currentEntry) return;
+
+        let updatedEntry = { ...currentEntry, [field]: value };
+        
+        if (field === 'category') {
+            const category = value as JournalCategory;
+            const newPrompt = journalConfig[category].prompt;
+            updatedEntry = { ...updatedEntry, prompt: newPrompt };
+        }
+        
+        setCurrentEntry(updatedEntry);
     };
     
     const handleHabitChange = (habitId: HabitOption['id'], checked: boolean) => {
-        setCurrentEntry(prev => {
-            if (!prev) return null;
-            const newHabits = { ...prev.habits, [habitId]: checked ? 'done' : null };
-            return { ...prev, habits: newHabits };
-        });
+        if (!currentEntry) return;
+        const newHabits = { ...currentEntry.habits, [habitId]: checked ? 'done' : null };
+        setCurrentEntry({ ...currentEntry, habits: newHabits });
     };
 
     const handleSave = () => {
@@ -358,3 +358,5 @@ export function HabitJournal() {
         </Card>
     );
 }
+
+    
