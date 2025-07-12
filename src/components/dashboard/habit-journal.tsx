@@ -470,8 +470,8 @@ tags: ${entry.tags}
 
             {config.habits.length > 0 && (
               <div>
-                <Label>Supporting Habits</Label>
-                <div className="grid grid-cols-2 gap-2 mt-1">
+                <Label>Supportive Habits</Label>
+                <div className="space-y-2 mt-1">
                   {config.habits.map(habitId => {
                     const habit = allHabits[habitId];
                     if (!habit) return null;
@@ -480,19 +480,19 @@ tags: ${entry.tags}
                         key={habit.id}
                         className="flex items-center space-x-2"
                       >
-                         <input
-                          type="checkbox"
-                          id={`habit-${habit.id}-${entry.id}`}
-                          checked={!!editorState.habits[habit.id]}
-                          onChange={e => handleHabitChange(habit.id, e.target.checked)}
-                          className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
-                        />
                         <Label
                           htmlFor={`habit-${habit.id}-${entry.id}`}
-                          className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted"
+                          className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
                         >
-                          <habit.icon className="w-4 h-4 text-muted-foreground" />{' '}
-                          {habit.label}
+                          <input
+                            type="checkbox"
+                            id={`habit-${habit.id}-${entry.id}`}
+                            checked={!!editorState.habits[habit.id]}
+                            onChange={e => handleHabitChange(habit.id, e.target.checked)}
+                            className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
+                          />
+                          <habit.icon className="w-4 h-4 text-muted-foreground" />
+                          <span>{habit.label}</span>
                         </Label>
                       </div>
                     );
@@ -676,3 +676,5 @@ tags: ${entry.tags}
     </Card>
   );
 }
+
+    
