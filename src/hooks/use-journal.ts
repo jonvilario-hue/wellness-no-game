@@ -89,11 +89,12 @@ const useJournal = () => {
     const saveTrashedEntries = (newTrashedEntries: JournalEntry[]) => {
          try {
             // Enforce max trash size
-            while (newTrashedEntries.length > MAX_TRASH_ITEMS) {
-                newTrashedEntries.shift(); // Remove the oldest item
+            let updatedTrashedEntries = [...newTrashedEntries];
+            while (updatedTrashedEntries.length > MAX_TRASH_ITEMS) {
+                updatedTrashedEntries.shift(); // Remove the oldest item
             }
-            setTrashedEntries(newTrashedEntries);
-            window.localStorage.setItem('journalTrashedEntries', JSON.stringify(newTrashedEntries));
+            setTrashedEntries(updatedTrashedEntries);
+            window.localStorage.setItem('journalTrashedEntries', JSON.stringify(updatedTrashedEntries));
         } catch (error) {
             console.error("Failed to save trashed entries to localStorage", error);
         }
@@ -141,3 +142,5 @@ const useJournal = () => {
 };
 
 export { useJournal };
+
+    
