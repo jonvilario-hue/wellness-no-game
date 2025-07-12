@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { useState, useMemo } from 'react';
 import { cn } from "@/lib/utils";
+import { BrainCircuit } from "lucide-react";
 
 // --- Puzzle Elements ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
@@ -84,21 +85,22 @@ const generatePuzzle = () => {
   // Shuffle options
   options.sort(() => Math.random() - 0.5);
 
+  grid[missingIndex] = null; // Set missing cell to null after generating options
+
   return { grid, missingIndex, answer, options, size };
 };
 
 // --- Components ---
 const ShapeComponent = ({ shape, color, rotation }: Element) => {
   const baseClasses = "w-10 h-10 transition-all";
-  const transformClass = `transform rotate-[${rotation}deg]`;
   
   switch (shape) {
-    case 'circle': return <div className={cn(baseClasses, color, "rounded-full")} />;
-    case 'square': return <div className={cn(baseClasses, color, "rounded-md", transformClass)} />;
+    case 'circle': return <div className={cn(baseClasses, color, "rounded-full")} style={{ transform: `rotate(${rotation}deg)` }} />;
+    case 'square': return <div className={cn(baseClasses, color, "rounded-md")} style={{ transform: `rotate(${rotation}deg)` }} />;
     case 'triangle':
         const triangleColorClass = color.replace('bg-','border-b-');
-        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid' }} className={cn(baseClasses, transformClass, triangleColorClass, 'bg-transparent')} />;
-    case 'diamond': return <div className={cn(baseClasses, color, "transform rotate-45 rounded-sm")} />;
+        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid', transform: `rotate(${rotation}deg)` }} className={cn("bg-transparent", triangleColorClass, 'h-auto w-auto')} />;
+    case 'diamond': return <div className={cn(baseClasses, color, "transform rotate-45 rounded-sm")} style={{ transform: `rotate(${rotation + 45}deg)` }}/>;
     default: return <div className={cn(baseClasses, color)} />;
   }
 };
@@ -134,7 +136,10 @@ export function PatternMatrix() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Pattern Matrix</CardTitle>
+        <CardTitle className="flex items-center justify-center gap-2">
+            <BrainCircuit />
+            Pattern Matrix
+        </CardTitle>
         <CardDescription>Identify the logical rule and find the missing piece.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">

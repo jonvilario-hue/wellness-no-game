@@ -1,17 +1,28 @@
+
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Archive, BrainCircuit, Goal, Zap, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
+const challenges = [
+    { domain: "Glr", icon: Archive, text: "Boosts retrieval speed", link: "/training/Glr" },
+    { domain: "Gf", icon: BrainCircuit, text: "Sharpens logical problem-solving", link: "/training/Gf" },
+    { domain: "EF", icon: Goal, text: "Improves task-switching", link: "/training/EF" },
+    { domain: "Gs", icon: Zap, text: "Increases reaction time", link: "/training/Gs" },
+];
 
 export function DailyChallenge() {
-    const challenges = [
-        { domain: "Glr", icon: Archive, text: "Boosts retrieval speed", link: "/training/Glr" },
-        { domain: "Gf", icon: BrainCircuit, text: "Sharpens logical problem-solving", link: "/training/Gf" },
-        { domain: "EF", icon: Goal, text: "Improves task-switching", link: "/training/EF" },
-        { domain: "Gs", icon: Zap, text: "Increases reaction time", link: "/training/Gs" },
-    ];
+    const [challenge, setChallenge] = useState(challenges[0]);
 
-    const challenge = challenges[new Date().getDate() % challenges.length];
+    useEffect(() => {
+        // Select challenge on the client-side to avoid hydration mismatch
+        const dayIndex = new Date().getDate() % challenges.length;
+        setChallenge(challenges[dayIndex]);
+    }, []);
+
     const Icon = challenge.icon;
 
     return (
