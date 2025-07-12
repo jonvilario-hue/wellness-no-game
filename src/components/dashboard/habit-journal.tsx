@@ -181,6 +181,7 @@ export function HabitJournal() {
 
     useEffect(() => {
         const isNew = editorState.id.startsWith('new-');
+        // Do not auto-save new entries. Only auto-save existing entries.
         if (isNew || JSON.stringify(entry) === JSON.stringify(editorState)) {
           return;
         }
@@ -230,7 +231,7 @@ export function HabitJournal() {
     };
     
     const handleFrequencyChange = (newFrequency: ReflectionFrequency) => {
-        setEditorState(prevState => ({ ...prevState, frequency: newFrequency }));
+      setEditorState(prevState => ({ ...prevState, frequency: newFrequency }));
     };
 
     const handleFieldChange = (
