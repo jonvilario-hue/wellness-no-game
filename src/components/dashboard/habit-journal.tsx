@@ -18,6 +18,7 @@ import {
   ArchiveRestore,
   Loader2,
   CheckCircle,
+  Share,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -80,6 +81,15 @@ export function HabitJournal() {
     setViewMode('entries');
     setSelectedEntry(createNewEntryObject());
   }, [createNewEntryObject]);
+
+  // Set initial entry on load
+  useEffect(() => {
+    if (!selectedEntry && entries.length > 0) {
+      setSelectedEntry(entries[0]);
+    } else if (!selectedEntry && entries.length === 0) {
+      handleNewEntry();
+    }
+  }, [entries, selectedEntry, handleNewEntry]);
 
   const handleSave = useCallback((entryToSave: JournalEntry) => {
     if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim()) {
@@ -225,6 +235,49 @@ export function HabitJournal() {
         habits: { ...prevState.habits, [habitId]: checked ? 'done' : null },
       }));
     };
+
+    const exportAsMarkdown = (entry: JournalEntry) => {
+        const entryConfig = journalConfig[entry.category];
+        const prompts = entryConfig.prompts[entry.frequency] || entryConfig.prompts.daily;
+
+        let markdown = `---
+date: ${entry.date}
+category: "${entry.category}"
+frequency: ${entry.frequency}
+effort: ${entry.effort}
+tags: ${entry.tags}
+---
+
+# Journal Entry: ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}
+
+## ${entry.category} (${entry.frequency})
+
+`;
+
+        if (entry.field1) markdown += `### ${prompts[0]}\n${entry.field1}\n\n`;
+        if (entry.field2) markdown += `### ${prompts[1]}\n${entry.field2}\n\n`;
+        if (entry.field3) markdown += `### ${prompts[2]}\n${entry.field3}\n\n`;
+
+        if (entry.hasAffirmation && entry.affirmation) {
+            markdown += `### Affirmation\n> ${entry.affirmation}\n\n`;
+        }
+        
+        const completedHabits = Object.keys(entry.habits)
+            .filter(key => entry.habits[key as HabitId] === 'done')
+            .map(key => allHabits[key as HabitId]?.label);
+
+        if (completedHabits.length > 0) {
+            markdown += `### Supporting Habits\n${completedHabits.map(h => `- [x] ${h}`).join('\n')}\n\n`;
+        }
+
+        const element = document.createElement("a");
+        const file = new Blob([markdown], {type: 'text/plain'});
+        element.href = URL.createObjectURL(file);
+        element.download = `journal-${entry.date}.md`;
+        document.body.appendChild(element); // Required for this to work in FireFox
+        element.click();
+        document.body.removeChild(element);
+    }
     
     const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
 
@@ -258,6 +311,10 @@ export function HabitJournal() {
           </h3>
            <div className="flex items-center gap-2">
             {!isNewEntry && (
+                <>
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => exportAsMarkdown(editorState)}>
+                    <Share className="w-4 h-4"/>
+                </Button>
                  <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
@@ -279,6 +336,7 @@ export function HabitJournal() {
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
+                </>
             )}
             {isNewEntry && (
                 <Button onClick={handleManualSave}>
@@ -554,8 +612,17 @@ export function HabitJournal() {
               <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 {viewMode === 'entries' ? (
                     <>
-                        <PlusCircle className="w-8 h-8 mb-2" />
-                        <p>Select an entry or create a new one.</p>
+                        {entries.length === 0 && !selectedEntry ? (
+                            <>
+                                <PlusCircle className="w-8 h-8 mb-2" />
+                                <p>Create your first journal entry.</p>
+                            </>
+                        ) : (
+                             <>
+                                <BookMarked className="w-8 h-8 mb-2" />
+                                <p>Select an entry or create a new one.</p>
+                            </>
+                        )}
                     </>
                 ) : (
                     <>
@@ -571,3 +638,5 @@ export function HabitJournal() {
     </Card>
   );
 }
+
+    
