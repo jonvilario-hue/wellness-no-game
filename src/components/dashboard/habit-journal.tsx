@@ -42,11 +42,7 @@ import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/
 const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 type ViewMode = 'entries' | 'trash';
 
-interface HabitJournalProps {
-  triggerNewEntry?: boolean;
-}
-
-export function HabitJournal({ triggerNewEntry }: HabitJournalProps) {
+export function HabitJournal() {
   const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash } = useJournal();
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
@@ -83,12 +79,6 @@ export function HabitJournal({ triggerNewEntry }: HabitJournalProps) {
     setSelectedEntry(createNewEntryObject());
   }, [createNewEntryObject]);
 
-  useEffect(() => {
-    if (triggerNewEntry) {
-      handleNewEntry();
-    }
-  }, [triggerNewEntry, handleNewEntry]);
-
   const handleSave = (entryToSave: JournalEntry) => {
     if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim()) {
       toast({
@@ -111,10 +101,8 @@ export function HabitJournal({ triggerNewEntry }: HabitJournalProps) {
   };
 
   const handleDelete = (id: string) => {
-    const entryToDelete = entries.find(e => e.id === id);
-    if (!entryToDelete) return;
-
     const entryToDeleteIndex = entries.findIndex(e => e.id === id);
+    if (entryToDeleteIndex === -1) return;
 
     deleteEntry(id);
     toast({
@@ -131,10 +119,12 @@ export function HabitJournal({ triggerNewEntry }: HabitJournalProps) {
       ),
     });
     
+    // After deleting, select the next available entry or create a new one
     if (selectedEntry?.id === id) {
        const remainingEntries = entries.filter(e => e.id !== id);
        if (remainingEntries.length > 0) {
-            const newIndex = Math.min(remainingEntries.length -1, Math.max(0, entryToDeleteIndex));
+            // Try to select the next item, or the previous one if it was the last
+            const newIndex = Math.min(entryToDeleteIndex, remainingEntries.length - 1);
             setSelectedEntry(remainingEntries[newIndex]);
         } else {
             handleNewEntry();
@@ -559,5 +549,3 @@ export function HabitJournal({ triggerNewEntry }: HabitJournalProps) {
     </Card>
   );
 }
-
-    

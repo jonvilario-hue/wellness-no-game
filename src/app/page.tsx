@@ -12,17 +12,15 @@ import { HabitJournal } from '@/components/dashboard/habit-journal';
 import { Header } from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 function DashboardContent() {
-  const [triggerNewJournalEntry, setTriggerNewJournalEntry] = useState(false);
   const journalRef = useRef<HTMLDivElement>(null);
 
   const handleNewNoteClick = () => {
-    setTriggerNewJournalEntry(true);
     journalRef.current?.scrollIntoView({ behavior: 'smooth' });
-    // Reset the trigger so it can be used again
-    setTimeout(() => setTriggerNewJournalEntry(false), 100);
+    // The HabitJournal component itself will handle the logic
+    // for creating a new note via its own "New" button.
   }
 
   return (
@@ -50,7 +48,7 @@ function DashboardContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6" ref={journalRef}>
             <AdaptiveDifficulty />
-            <HabitJournal triggerNewEntry={triggerNewJournalEntry} />
+            <HabitJournal />
           </div>
         </div>
       </main>
