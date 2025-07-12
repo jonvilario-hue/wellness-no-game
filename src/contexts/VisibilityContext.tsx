@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -38,40 +39,46 @@ interface VisibilityContextType {
 const VisibilityContext = createContext<VisibilityContextType | undefined>(undefined);
 
 export const VisibilityProvider = ({ children }: { children: ReactNode }) => {
-  const [visibleComponents, setVisibleComponents] = useState<VisibilityState>(() => {
-    if (typeof window === 'undefined') {
-      return defaultVisibility;
-    }
+  const [visibleComponents, setVisibleComponents] = useState<VisibilityState>(defaultVisibility);
+
+  // This effect runs only on the client, after the initial render.
+  // This prevents hydration mismatch.
+  useEffect(() => {
     try {
       const item = window.localStorage.getItem('dashboardVisibility');
-      return item ? JSON.parse(item) : defaultVisibility;
-    } catch (error) {
-      console.error(error);
-      return defaultVisibility;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem('dashboardVisibility', JSON.stringify(visibleComponents));
-    } catch (error) {
-      console.error(error);
-    }
-  }, [visibleComponents]);
-  
-  // This effect handles the case where localStorage might be populated after initial render
-  useEffect(() => {
-    const item = window.localStorage.getItem('dashboardVisibility');
-    if (item) {
+      if (item) {
         setVisibleComponents(JSON.parse(item));
+      }
+    } catch (error) {
+      console.error("Failed to load visibility settings from localStorage", error);
     }
   }, []);
 
+  useEffect(() => {
+    try {
+      // Avoid writing to localStorage on the very first render.
+      if (JSON.stringify(visibleComponents) !== JSON.stringify(defaultVisibility)) {
+        window.localStorage.setItem('dashboardVisibility', JSON.stringify(visibleComponents));
+      }
+    } catch (error) {
+      console.error("Failed to save visibility settings to localStorage", error);
+    }
+  }, [visibleComponents]);
+  
   const toggleComponent = (key: ComponentKey) => {
-    setVisibleComponents((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setVisibleComponents((prev) => {
+        const newState = {
+            ...prev,
+            [key]: !prev[key],
+        };
+        // Also save to localStorage immediately on toggle
+        try {
+            window.localStorage.setItem('dashboardVisibility', JSON.stringify(newState));
+        } catch (error) {
+            console.error("Failed to save visibility settings to localStorage on toggle", error);
+        }
+        return newState;
+    });
   };
 
   return (
