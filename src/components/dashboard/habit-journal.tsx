@@ -47,8 +47,7 @@ export function HabitJournal() {
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
   const { toast } = useToast();
-  const today = new Date().toISOString().split('T')[0];
-
+  
   const createNewEntryObject = useCallback((): JournalEntry => {
     const defaultCategory: JournalCategory = 'Growth & Challenge Reflection';
     return {
@@ -70,19 +69,13 @@ export function HabitJournal() {
   }, []);
 
   useEffect(() => {
-    if (viewMode === 'entries') {
-      const todayEntry = entries.find(e => e.date === today);
-      if (todayEntry) {
-        setSelectedEntry(todayEntry);
-      } else if (entries.length > 0 && !selectedEntry) {
-         setSelectedEntry(entries[0]);
-      } else if (entries.length === 0) {
-        setSelectedEntry(createNewEntryObject());
-      }
-    } else {
-        setSelectedEntry(null);
+    if (viewMode === 'entries' && !selectedEntry && entries.length > 0) {
+      setSelectedEntry(entries[0]);
+    } else if (viewMode === 'entries' && entries.length === 0) {
+      setSelectedEntry(createNewEntryObject());
     }
-  }, [entries, today, viewMode, createNewEntryObject, selectedEntry]);
+  }, [entries, selectedEntry, viewMode, createNewEntryObject]);
+
 
   const handleSelectEntry = (entry: JournalEntry) => {
     setViewMode('entries');
@@ -116,8 +109,8 @@ export function HabitJournal() {
   };
 
   const handleDelete = (id: string) => {
-    const entryToDelete = entries.find(e => e.id === id);
-    if (!entryToDelete) return;
+    const entryToDeleteIndex = entries.findIndex(e => e.id === id);
+    if (entryToDeleteIndex === -1) return;
 
     deleteEntry(id);
     toast({
@@ -126,10 +119,10 @@ export function HabitJournal() {
       action: (
         <Button
           onClick={() => {
-            restoreEntry(id);
-            toast({ title: 'Entry Restored' });
+            handleRestore(id);
           }}
-          className="bg-transparent border border-white/50 text-white rounded-md px-3 py-1.5 text-sm hover:bg-white/10"
+          variant="outline"
+          size="sm"
         >
           Undo
         </Button>
@@ -139,8 +132,8 @@ export function HabitJournal() {
     const remainingEntries = entries.filter(e => e.id !== id);
     if (selectedEntry?.id === id) {
        if (remainingEntries.length > 0) {
-            const entryIndex = entries.findIndex(e => e.id === id);
-            setSelectedEntry(remainingEntries[Math.max(0, entryIndex - 1)]);
+            const newIndex = Math.max(0, entryToDeleteIndex -1);
+            setSelectedEntry(remainingEntries[newIndex]);
         } else {
             handleNewEntry();
         }
@@ -210,10 +203,35 @@ export function HabitJournal() {
                   editorState.date + 'T00:00:00'
                 ).toLocaleDateString()}`}
           </h3>
-          <Button onClick={() => onSave(editorState)}>
-            <Save className="mr-2 h-4 w-4" />{' '}
-            {isNewEntry ? 'Save Entry' : 'Update Entry'}
-          </Button>
+           <div className="flex items-center gap-2">
+            {!isNewEntry && (
+                 <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="icon" className="h-9 w-9">
+                            <Trash2 className="w-4 h-4"/>
+                        </Button>
+                    </AlertDialogTrigger>
+                     <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This will move the entry to the trash. You can restore it later.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(editorState.id)}>
+                                Move to Trash
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
+            <Button onClick={() => onSave(editorState)}>
+                <Save className="mr-2 h-4 w-4" />{' '}
+                {isNewEntry ? 'Save Entry' : 'Update Entry'}
+            </Button>
+           </div>
         </div>
         <Separator />
         <ScrollArea className="flex-grow pr-2 -mr-2">
@@ -485,3 +503,5 @@ export function HabitJournal() {
     </Card>
   );
 }
+
+    
