@@ -62,7 +62,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
     return { Icon: Minus, color: 'text-primary', text: 'Holding steady' };
   };
 
-  const { Icon: TrendIcon, color: trendColor } = getTrendInfo();
+  const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo();
 
 
   return (
@@ -102,7 +102,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
                 </span>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Your performance change over the last 7 days.</p>
+                <p>{trendText}</p>
               </TooltipContent>
             </Tooltip>
             <div className={`flex items-center font-bold ${trendColor}`}>
