@@ -15,7 +15,6 @@ import {
   Save,
   PlusCircle,
   Trash2,
-  Undo,
   ArchiveRestore,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
@@ -38,7 +37,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
-import { journalConfig, type JournalCategory, type HabitId } from '@/lib/journal-config';
+import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/lib/journal-config';
 
 const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 type ViewMode = 'entries' | 'trash';
@@ -52,7 +51,6 @@ export function HabitJournal() {
 
   const createNewEntryObject = (): JournalEntry => {
     const defaultCategory: JournalCategory = 'Growth & Challenge Reflection';
-    const config = journalConfig[defaultCategory];
     return {
       id: `new-${Date.now()}`,
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -172,17 +170,17 @@ export function HabitJournal() {
     const config = journalConfig[category];
 
     const handleCategoryChange = (newCategory: JournalCategory) => {
-      const newConfig = journalConfig[newCategory];
       setEditorState(prevState => ({
         ...prevState,
+        ...createNewEntryObject(), // Reset fields but keep date/id
+        id: prevState.id,
+        date: prevState.date,
         category: newCategory,
-        mood: null, // Reset mood when category changes
-        hasAffirmation: false,
       }));
     };
 
     const handleFieldChange = (
-      field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>,
+      field: keyof Omit<JournalEntry, 'id' | 'date'>,
       value: any
     ) => {
       setEditorState(prevState => ({ ...prevState, [field]: value }));
@@ -290,27 +288,31 @@ export function HabitJournal() {
               <div>
                 <Label>Supporting Habits</Label>
                 <div className="grid grid-cols-2 gap-2 mt-1">
-                  {config.habits.map(habit => (
-                    <div
-                      key={habit.id}
-                      className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md"
-                    >
-                      <input
-                        type="checkbox"
-                        id={habit.id}
-                        checked={!!editorState.habits[habit.id]}
-                        onChange={e => handleHabitChange(habit.id, e.target.checked)}
-                        className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
-                      />
-                      <Label
-                        htmlFor={habit.id}
-                        className="flex items-center gap-2 text-sm font-normal cursor-pointer"
+                  {config.habits.map(habitId => {
+                    const habit = allHabits[habitId];
+                    if (!habit) return null;
+                    return (
+                      <div
+                        key={habit.id}
+                        className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md"
                       >
-                        <habit.icon className="w-4 h-4 text-muted-foreground" />{' '}
-                        {habit.label}
-                      </Label>
-                    </div>
-                  ))}
+                        <input
+                          type="checkbox"
+                          id={habit.id}
+                          checked={!!editorState.habits[habit.id]}
+                          onChange={e => handleHabitChange(habit.id, e.target.checked)}
+                          className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
+                        />
+                        <Label
+                          htmlFor={habit.id}
+                          className="flex items-center gap-2 text-sm font-normal cursor-pointer"
+                        >
+                          <habit.icon className="w-4 h-4 text-muted-foreground" />{' '}
+                          {habit.label}
+                        </Label>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
