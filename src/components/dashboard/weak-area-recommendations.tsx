@@ -14,10 +14,13 @@ export function WeakAreaRecommendations() {
   const [isPending, startTransition] = useTransition();
   const [recommendations, setRecommendations] = useState<WeakAreaRecommendationOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [wasClicked, setWasClicked] = useState(false);
 
   const handleGetRecommendations = () => {
+    setWasClicked(true);
     startTransition(async () => {
       setError(null);
+      setRecommendations(null);
       const result = await getWeakAreaRecommendationsAction();
       if (result) {
         setRecommendations(result);
@@ -39,19 +42,22 @@ export function WeakAreaRecommendations() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {isPending ? (
+        {!wasClicked ? (
+          <Button onClick={handleGetRecommendations} className="w-full">
+            Get Recommendations
+          </Button>
+        ) : isPending ? (
           <div className="flex items-center justify-center h-24">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <p className="ml-2">Analyzing performance...</p>
           </div>
+        ) : error ? (
+           <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         ) : recommendations ? (
           <div className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
             <h3 className="font-semibold">Your Training Plan:</h3>
             <ul className="space-y-4">
               {recommendations.recommendations.map((rec, index) => {
@@ -73,11 +79,7 @@ export function WeakAreaRecommendations() {
               })}
             </ul>
           </div>
-        ) : (
-          <Button onClick={handleGetRecommendations} className="w-full">
-            Get Recommendations
-          </Button>
-        )}
+        ) : null}
       </CardContent>
     </Card>
   );
