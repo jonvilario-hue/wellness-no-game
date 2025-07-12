@@ -51,6 +51,20 @@ export function HabitJournal() {
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
   const { toast } = useToast();
   
+  const getDefaultFrequency = useCallback((): ReflectionFrequency => {
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+    const dayOfWeek = today.getDay(); // 0 = Sunday
+
+    if (dayOfMonth === 1) {
+      return 'monthly';
+    }
+    if (dayOfWeek === 0) {
+      return 'weekly';
+    }
+    return 'daily';
+  }, []);
+
   const createNewEntryObject = useCallback((): JournalEntry => {
     const defaultCategory: JournalCategory = 'Growth & Challenge Reflection';
     return {
@@ -59,7 +73,7 @@ export function HabitJournal() {
         .toISOString()
         .split('T')[0],
       category: defaultCategory,
-      frequency: 'daily',
+      frequency: getDefaultFrequency(),
       field1: '',
       field2: '',
       field3: '',
@@ -70,7 +84,7 @@ export function HabitJournal() {
       habits: {},
       hasAffirmation: false,
     };
-  }, []);
+  }, [getDefaultFrequency]);
 
   const handleSelectEntry = (entry: JournalEntry) => {
     setViewMode('entries');
@@ -107,7 +121,6 @@ export function HabitJournal() {
       const finalEntry = { ...entryToSave, id: `${entryToSave.date}-${Date.now()}` };
       addEntry(finalEntry);
       setSelectedEntry(finalEntry);
-      toast({ title: 'Journal Entry Saved' });
     } else {
       updateEntry(entryToSave.id, entryToSave);
     }
@@ -205,6 +218,7 @@ export function HabitJournal() {
     const handleManualSave = () => {
         if(onSave(editorState)) {
            setSaveStatus('saved');
+           toast({ title: 'Journal Entry Saved' });
         }
     }
 
@@ -214,7 +228,7 @@ export function HabitJournal() {
         id: prevState.id,
         date: prevState.date,
         category: newCategory,
-        frequency: prevState.frequency,
+        frequency: getDefaultFrequency(),
       }));
     };
     
@@ -536,17 +550,19 @@ tags: ${entry.tags}
      <div className='h-full flex flex-col'>
         <ScrollArea className="flex-grow pr-3 -mr-3">
             <div className="space-y-2 mt-2">
-            {trashedEntries.length > 0 ? trashedEntries.map(entry => (
-                <div key={entry.id} className="group flex items-center gap-2 p-2 rounded-md bg-muted/50">
-                    <div className='flex-grow'>
-                        <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{journalConfig[entry.category as JournalCategory]?.title || entry.category}</span></p>
-                        <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
-                    </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleRestore(entry.id)}>
-                        <ArchiveRestore className="w-4 h-4 text-muted-foreground"/>
-                    </Button>
-                </div>
-            )) : (
+            {trashedEntries.length > 0 ? trashedEntries.map(entry => {
+                return (
+                  <div key={entry.id} className="group flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                      <div className='flex-grow'>
+                          <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{journalConfig[entry.category as JournalCategory]?.title || entry.category}</span></p>
+                          <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleRestore(entry.id)}>
+                          <ArchiveRestore className="w-4 h-4 text-muted-foreground"/>
+                      </Button>
+                  </div>
+                );
+            }) : (
                 <div className="text-center text-muted-foreground pt-10">Trash is empty.</div>
             )}
             </div>
@@ -638,5 +654,3 @@ tags: ${entry.tags}
     </Card>
   );
 }
-
-    
