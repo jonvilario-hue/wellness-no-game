@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +28,7 @@ function SettingsContent() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
        <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card sticky top-0 z-10">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
-            <div className="w-40 flex justify-start">
+            <div className="flex-1 flex justify-start">
               <Button asChild variant="outline">
                   <Link href="/">
                   <ArrowLeft className="mr-2" />
@@ -41,7 +42,7 @@ function SettingsContent() {
                 Settings
                 </h1>
             </div>
-             <div className="w-40"></div>
+             <div className="flex-1"></div>
         </div>
       </header>
       <main className="flex-1 p-4 sm:p-6 md:p-8">

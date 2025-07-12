@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -38,7 +39,7 @@ export function MilestoneBadges() {
                 <TooltipContent>
                   <p className="font-bold">{badge.title}</p>
                   <p className="text-sm text-muted-foreground">
-                    {badge.locked ? `Hint: ${badge.description}` : badge.description}
+                    {badge.description}
                   </p>
                 </TooltipContent>
               </Tooltip>

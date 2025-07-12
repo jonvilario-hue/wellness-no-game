@@ -1,18 +1,10 @@
+
 import Link from 'next/link';
 import { ArrowLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { chcDomains, type CHCDomain } from '@/types';
 import { domainIcons } from '@/components/icons';
 import { notFound } from 'next/navigation';
-import { PatternMatrix } from '@/components/training/gf/pattern-matrix';
-import { DynamicSequenceTransformer } from '@/components/training/gwm/dynamic-sequence-transformer';
-import { RapidCodeMatch } from '@/components/training/gs/rapid-code-match';
-import { MentalRotationLab } from '@/components/training/gv/mental-rotation-lab';
-import { ToneGridChallenge } from '@/components/training/ga/tone-grid-challenge';
-import { VerbalInferenceBuilder } from '@/components/training/gc/verbal-inference-builder';
-import { SemanticFluencyStorm } from '@/components/training/glr/semantic-fluency-storm';
-import { FocusSwitchReactor } from '@/components/training/ef/focus-switch-reactor';
 import { gameComponents } from '@/components/training/game-components';
 
 export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
