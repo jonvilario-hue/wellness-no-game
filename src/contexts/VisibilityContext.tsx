@@ -39,19 +39,21 @@ interface VisibilityContextType {
 const VisibilityContext = createContext<VisibilityContextType | undefined>(undefined);
 
 export const VisibilityProvider = ({ children }: { children: ReactNode }) => {
-  const [visibleComponents, setVisibleComponents] = useState<VisibilityState>(() => {
-    if (typeof window === 'undefined') {
-      return defaultVisibility;
-    }
+  const [visibleComponents, setVisibleComponents] = useState<VisibilityState>(defaultVisibility);
+
+  // Load state from localStorage on the client, after initial render
+  useEffect(() => {
     try {
       const item = window.localStorage.getItem('dashboardVisibility');
-      return item ? JSON.parse(item) : defaultVisibility;
+      if (item) {
+        setVisibleComponents(JSON.parse(item));
+      }
     } catch (error) {
       console.error("Failed to load visibility settings from localStorage", error);
-      return defaultVisibility;
     }
-  });
+  }, []);
 
+  // Save state to localStorage whenever it changes
   useEffect(() => {
     try {
       window.localStorage.setItem('dashboardVisibility', JSON.stringify(visibleComponents));
