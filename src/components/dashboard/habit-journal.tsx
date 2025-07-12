@@ -4,8 +4,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Clipboard, Download, PlusCircle, Smile, Meh, Frown, Bed, Dumbbell, Brain, BookOpen } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { BookMarked, Save, Clipboard, Download, PlusCircle, Smile, Meh, Frown, Bed, Dumbbell, Brain, BookOpen, UserCheck, Target, Lightbulb, Calendar, CheckSquare } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -17,22 +17,72 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Checkbox } from '../ui/checkbox';
 
-const journalPrompts = [
-    "What cognitive strategy felt strongest today?",
-    "Did you notice a real-world moment where your training helped?",
-    "What was the biggest distraction during your sessions?",
-    "How did your energy level affect your focus?",
-    "What's one thing you learned or realized today?",
-    "Describe a problem you solved. What was your approach?",
+type JournalCategory = 'Daily Reflection' | 'Cognitive Training' | 'Goal Setting' | 'Freeform Note';
+
+type HabitOption = {
+  id: 'sleep' | 'exercise' | 'meditation' | 'reading' | 'planning' | 'review';
+  label: string;
+  icon: React.ElementType;
+};
+
+const allHabits: HabitOption[] = [
+  { id: 'sleep', label: 'Good Sleep', icon: Bed },
+  { id: 'exercise', label: 'Exercise', icon: Dumbbell },
+  { id: 'meditation', label: 'Meditation', icon: Brain },
+  { id: 'reading', label: 'Reading', icon: BookOpen },
+  { id: 'planning', label: 'Planning', icon: Calendar },
+  { id: 'review', label: 'Review', icon: CheckSquare },
 ];
 
-const habitOptions = [
-    { id: 'sleep', label: 'Good Sleep', icon: Bed },
-    { id: 'exercise', label: 'Exercise', icon: Dumbbell },
-    { id: 'meditation', label: 'Meditation', icon: Brain },
-    { id: 'reading', label: 'Reading', icon: BookOpen },
-] as const;
-type HabitId = typeof habitOptions[number]['id'];
+const journalConfig: Record<JournalCategory, {
+  prompt: string;
+  suggestedTags: string;
+  habits: HabitOption['id'][];
+  moods: { mood: MoodState, label: string, icon: React.ElementType }[];
+  icon: React.ElementType;
+}> = {
+  'Daily Reflection': {
+    prompt: "How did today go? What was a high point or a low point? What emotions did you notice?",
+    suggestedTags: "e.g. gratitude, challenge, learning",
+    habits: ['sleep', 'exercise', 'meditation', 'reading'],
+    moods: [
+      { mood: 'happy', label: 'Happy', icon: Smile },
+      { mood: 'neutral', label: 'Neutral', icon: Meh },
+      { mood: 'sad', label: 'Sad', icon: Frown },
+    ],
+    icon: Lightbulb,
+  },
+  'Cognitive Training': {
+    prompt: "What task did you train today? What specific strategy did you use? How did your focus feel?",
+    suggestedTags: "e.g. Gwm, focus, strategy, fatigue",
+    habits: ['sleep', 'meditation'],
+    moods: [
+        { mood: 'happy', label: 'Focused', icon: Brain },
+        { mood: 'neutral', label: 'Distracted', icon: Meh },
+        { mood: 'sad', label: 'Fatigued', icon: Frown },
+    ],
+    icon: Brain,
+  },
+  'Goal Setting': {
+    prompt: "What is your primary goal for this week? What is one action you can take tomorrow to move toward it?",
+    suggestedTags: "e.g. planning, priority, confidence",
+    habits: ['planning', 'review'],
+    moods: [
+      { mood: 'happy', label: 'Motivated', icon: Target },
+      { mood: 'neutral', label: 'Unsure', icon: Meh },
+      { mood: 'sad', label: 'Overwhelmed', icon: Frown },
+    ],
+    icon: Target,
+  },
+  'Freeform Note': {
+    prompt: "What's on your mind? Capture any thought, idea, or observation here.",
+    suggestedTags: "e.g. idea, reminder, observation",
+    habits: [],
+    moods: [],
+    icon: BookMarked,
+  }
+};
+
 
 export function HabitJournal() {
     const { entries, addEntry, updateEntry } = useJournal();
@@ -63,28 +113,34 @@ export function HabitJournal() {
     }, [selectedEntryId, entries]);
 
     const handleNewEntry = () => {
-        const newPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)];
         const newEntry: JournalEntry = {
             id: `new-${Date.now()}`,
             date: today,
             reflection: '',
             tags: '',
             effort: 7,
-            prompt: newPrompt,
             mood: null,
-            affirmation: '',
-            habits: { sleep: null, exercise: null, meditation: null, reading: null },
-            category: 'Daily Reflection'
+            habits: {},
+            category: 'Daily Reflection',
+            prompt: journalConfig['Daily Reflection'].prompt,
         };
         setCurrentEntry(newEntry);
         setSelectedEntryId(newEntry.id);
     };
 
     const handleFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
-        setCurrentEntry(prev => prev ? { ...prev, [field]: value } : null);
+        setCurrentEntry(prev => {
+            if (!prev) return null;
+            if (field === 'category') {
+                const category = value as JournalCategory;
+                const newPrompt = journalConfig[category].prompt;
+                return { ...prev, [field]: value, prompt: newPrompt };
+            }
+            return { ...prev, [field]: value };
+        });
     };
-
-    const handleHabitChange = (habitId: HabitId, checked: boolean) => {
+    
+    const handleHabitChange = (habitId: HabitOption['id'], checked: boolean) => {
         setCurrentEntry(prev => {
             if (!prev) return null;
             const newHabits = { ...prev.habits, [habitId]: checked ? 'done' : null };
@@ -113,9 +169,15 @@ export function HabitJournal() {
     const formatMarkdown = (entry: JournalEntry) => {
         const entryDate = new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         const tagString = entry.tags.split(',').map(t => t.trim() ? `#${t.trim()}` : '').join(' ');
-        let moodString = entry.mood ? `**Mood:** ${entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}\n` : '';
+        
+        let moodString = '';
+        if (entry.mood) {
+            const moodConfig = journalConfig[entry.category as JournalCategory]?.moods.find(m => m.mood === entry.mood);
+            moodString = moodConfig ? `**Mood:** ${moodConfig.label}\n` : '';
+        }
+
         const completedHabits = Object.entries(entry.habits).filter(([, state]) => state === 'done').map(([habitId]) => {
-            const habit = habitOptions.find(h => h.id === habitId);
+            const habit = allHabits.find(h => h.id === habitId);
             return habit ? habit.label : habitId;
         }).join(', ');
         let habitString = completedHabits ? `**Habits:** ${completedHabits}\n\n` : '';
@@ -163,6 +225,8 @@ export function HabitJournal() {
        );
 
        const isNewEntry = entry.id.startsWith('new-');
+       const category = (entry.category as JournalCategory) || 'Daily Reflection';
+       const config = journalConfig[category];
 
        return (
             <div className="p-4 h-full flex flex-col gap-4">
@@ -173,13 +237,20 @@ export function HabitJournal() {
                 </div>
                 <Separator/>
                 <div className='space-y-4 flex-grow overflow-y-auto pr-2'>
-                    <Select value={entry.category} onValueChange={(value) => handleFieldChange('category', value)}>
+                    <Select value={category} onValueChange={(value) => handleFieldChange('category', value)}>
                         <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="Daily Reflection">Daily Reflection</SelectItem>
-                            <SelectItem value="Cognitive Training">Cognitive Training</SelectItem>
-                            <SelectItem value="Goal Setting">Goal Setting</SelectItem>
-                            <SelectItem value="Freeform Note">Freeform Note</SelectItem>
+                            {Object.keys(journalConfig).map(cat => {
+                                const CatIcon = journalConfig[cat as JournalCategory].icon;
+                                return (
+                                <SelectItem key={cat} value={cat}>
+                                    <div className="flex items-center gap-2">
+                                        <CatIcon className="w-4 h-4"/>
+                                        {cat}
+                                    </div>
+                                </SelectItem>
+                                )
+                            })}
                         </SelectContent>
                     </Select>
                     <p className="text-sm font-medium text-muted-foreground italic min-h-[20px]">{entry.prompt}</p>
@@ -191,33 +262,31 @@ export function HabitJournal() {
                     />
                     <div>
                         <Label htmlFor="tags-input">Tags (comma-separated)</Label>
-                        <Input id="tags-input" placeholder="e.g. Gwm, strategy, focus" value={entry.tags} onChange={(e) => handleFieldChange('tags', e.target.value)} />
+                        <Input id="tags-input" placeholder={config.suggestedTags} value={entry.tags} onChange={(e) => handleFieldChange('tags', e.target.value)} />
                     </div>
-                     <div>
+                    {config.moods.length > 0 && <div>
                         <Label>Mood</Label>
                         <div className="flex gap-2 mt-1">
-                            {(['happy', 'neutral', 'sad'] as MoodState[]).map(mood => (
-                                <Button key={mood} variant={entry.mood === mood ? 'default' : 'outline'} size="icon" onClick={() => handleFieldChange('mood', entry.mood === mood ? null : mood)}>
-                                    {mood === 'happy' && <Smile />}
-                                    {mood === 'neutral' && <Meh />}
-                                    {mood === 'sad' && <Frown />}
+                            {config.moods.map(({mood, label, icon: MoodIcon}) => (
+                                <Button key={mood} variant={entry.mood === mood ? 'default' : 'outline'} size="sm" onClick={() => handleFieldChange('mood', entry.mood === mood ? null : mood)} className="flex-1">
+                                    <MoodIcon className="mr-2 h-4 w-4" /> {label}
                                 </Button>
                             ))}
                         </div>
-                    </div>
-                    <div>
+                    </div>}
+                    {config.habits.length > 0 && <div>
                         <Label>Supporting Habits</Label>
                         <div className='grid grid-cols-2 gap-2 mt-1'>
-                            {habitOptions.map(habit => (
+                            {allHabits.filter(h => config.habits.includes(h.id)).map(habit => (
                                 <div key={habit.id} className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md">
-                                    <Checkbox id={habit.id} checked={entry.habits[habit.id] === 'done'} onCheckedChange={(checked) => handleHabitChange(habit.id, !!checked)} />
+                                    <Checkbox id={habit.id} checked={!!entry.habits[habit.id]} onCheckedChange={(checked) => handleHabitChange(habit.id, !!checked)} />
                                     <Label htmlFor={habit.id} className='flex items-center gap-2 text-sm font-normal'>
                                         <habit.icon className="w-4 h-4 text-muted-foreground"/> {habit.label}
                                     </Label>
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </div>}
                     <div>
                         <Label htmlFor="effort-slider" className="flex justify-between">
                             <span>Effort / Focus</span>
@@ -272,7 +341,7 @@ export function HabitJournal() {
                                         "w-full text-left p-2 rounded-md transition-colors",
                                         selectedEntryId === entry.id ? 'bg-primary/10 text-primary-foreground' : 'hover:bg-muted'
                                     )}>
-                                    <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                    <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{entry.category}</span></p>
                                     <p className="text-sm text-muted-foreground truncate">{entry.reflection || 'No reflection yet.'}</p>
                                 </button>
                             ))}
@@ -289,5 +358,3 @@ export function HabitJournal() {
         </Card>
     );
 }
-
-    

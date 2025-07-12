@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
 export type HabitState = 'done' | null;
+export type HabitId = 'sleep' | 'exercise' | 'meditation' | 'reading' | 'planning' | 'review';
 
 export type JournalEntry = {
     id: string;
@@ -14,8 +15,7 @@ export type JournalEntry = {
     effort: number;
     prompt: string;
     mood: MoodState;
-    affirmation: string;
-    habits: Record<string, HabitState>;
+    habits: Partial<Record<HabitId, HabitState>>;
     category: string;
 };
 
