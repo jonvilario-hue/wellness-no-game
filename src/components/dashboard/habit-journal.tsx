@@ -16,6 +16,8 @@ import {
   PlusCircle,
   Trash2,
   ArchiveRestore,
+  Loader2,
+  CheckCircle,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -79,14 +81,16 @@ export function HabitJournal() {
     setSelectedEntry(createNewEntryObject());
   }, [createNewEntryObject]);
 
-  const handleSave = (entryToSave: JournalEntry) => {
+  const handleSave = useCallback((entryToSave: JournalEntry) => {
     if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim()) {
-      toast({
-        title: 'Empty Journal',
-        description: 'Please write something before saving.',
-        variant: 'destructive',
-      });
-      return;
+      if (entryToSave.id.startsWith('new-')) {
+          toast({
+            title: 'Empty Journal',
+            description: 'Please write something before saving.',
+            variant: 'destructive',
+          });
+      }
+      return false;
     }
     const isNew = entryToSave.id.startsWith('new-');
     if (isNew) {
@@ -96,9 +100,9 @@ export function HabitJournal() {
       toast({ title: 'Journal Entry Saved' });
     } else {
       updateEntry(entryToSave.id, entryToSave);
-      toast({ title: 'Journal Entry Updated' });
     }
-  };
+    return true;
+  }, [addEntry, updateEntry, toast]);
 
   const handleDelete = (id: string) => {
     const entryToDeleteIndex = entries.findIndex(e => e.id === id);
@@ -142,30 +146,39 @@ export function HabitJournal() {
     onSave,
   }: {
     entry: JournalEntry;
-    onSave: (entry: JournalEntry) => void;
+    onSave: (entry: JournalEntry) => boolean;
   }) => {
     const [editorState, setEditorState] = useState<JournalEntry>(entry);
-    const [isDirty, setIsDirty] = useState(false);
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
     useEffect(() => {
       setEditorState(entry);
-      setIsDirty(false); // Reset dirty state when a new entry is selected
+      setSaveStatus('idle');
     }, [entry]);
 
     useEffect(() => {
-        // Debounced check for changes
+        const isNew = editorState.id.startsWith('new-');
+        if (isNew || JSON.stringify(entry) === JSON.stringify(editorState)) {
+          return;
+        }
+
+        setSaveStatus('saving');
         const handler = setTimeout(() => {
-            if(JSON.stringify(entry) !== JSON.stringify(editorState)) {
-                setIsDirty(true);
-            } else {
-                setIsDirty(false);
-            }
-        }, 500);
+          onSave(editorState);
+          setSaveStatus('saved');
+        }, 1500); // Debounce time for auto-save
 
         return () => {
             clearTimeout(handler);
         };
-    }, [editorState, entry]);
+    }, [editorState, entry, onSave]);
+
+    useEffect(() => {
+        if (saveStatus === 'saved') {
+            const timer = setTimeout(() => setSaveStatus('idle'), 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [saveStatus]);
     
     const getValidConfig = (category: JournalCategory | string) => {
         if (category && journalConfig[category as JournalCategory]) {
@@ -179,9 +192,10 @@ export function HabitJournal() {
 
     const isNewEntry = editorState.id.startsWith('new-');
     
-    const handleLocalSave = () => {
-        onSave(editorState);
-        setIsDirty(false);
+    const handleManualSave = () => {
+        if(onSave(editorState)) {
+           setSaveStatus('saved');
+        }
     }
 
     const handleCategoryChange = (newCategory: JournalCategory) => {
@@ -217,17 +231,24 @@ export function HabitJournal() {
 
     return (
       <div className="p-4 h-full flex flex-col gap-2 relative">
-        {isDirty && !isNewEntry && (
-            <div className="absolute top-0 left-0 right-0 p-2 bg-primary/10 border-b border-primary/20 z-10 animate-in fade-in slide-in-from-top-4">
-                <div className="flex justify-between items-center max-w-lg mx-auto px-2">
-                    <p className="text-sm font-semibold text-primary">You have unsaved changes.</p>
-                    <Button size="sm" onClick={handleLocalSave}>
-                        <Save className="mr-2 h-4 w-4" /> Update
-                    </Button>
+          <div className="absolute top-0 left-0 right-0 p-2 z-10 text-center">
+              {saveStatus !== 'idle' && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm font-semibold transition-all animate-in fade-in">
+                    {saveStatus === 'saving' ? (
+                        <>
+                            <Loader2 className="w-4 h-4 animate-spin"/>
+                            <span>Saving...</span>
+                        </>
+                    ) : (
+                        <>
+                             <CheckCircle className="w-4 h-4 text-green-500"/>
+                            <span>Saved</span>
+                        </>
+                    )}
                 </div>
-            </div>
-        )}
-        <div className="flex justify-between items-center pt-12">
+              )}
+          </div>
+        <div className="flex justify-between items-center pt-8">
           <h3 className="font-bold text-lg text-primary">
             {isNewEntry
               ? 'New Entry'
@@ -259,10 +280,11 @@ export function HabitJournal() {
                     </AlertDialogContent>
                 </AlertDialog>
             )}
-            <Button onClick={handleLocalSave}>
-                <Save className="mr-2 h-4 w-4" />{' '}
-                {isNewEntry ? 'Save Entry' : 'Update Entry'}
-            </Button>
+            {isNewEntry && (
+                <Button onClick={handleManualSave}>
+                    <Save className="mr-2 h-4 w-4" /> Save Entry
+                </Button>
+            )}
            </div>
         </div>
         <Separator />
