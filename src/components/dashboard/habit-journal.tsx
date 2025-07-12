@@ -82,7 +82,7 @@ export function HabitJournal() {
     } else {
         setSelectedEntry(null);
     }
-  }, [entries, today, viewMode, createNewEntryObject]);
+  }, [entries, today, viewMode, createNewEntryObject, selectedEntry]);
 
   const handleSelectEntry = (entry: JournalEntry) => {
     setViewMode('entries');
@@ -124,12 +124,15 @@ export function HabitJournal() {
       title: 'Entry Moved to Trash',
       description: 'You can restore it from the trash.',
       action: (
-        <button
-          onClick={() => restoreEntry(id)}
+        <Button
+          onClick={() => {
+            restoreEntry(id);
+            toast({ title: 'Entry Restored' });
+          }}
           className="bg-transparent border border-white/50 text-white rounded-md px-3 py-1.5 text-sm hover:bg-white/10"
         >
           Undo
-        </button>
+        </Button>
       ),
     });
 
@@ -162,14 +165,15 @@ export function HabitJournal() {
       setEditorState(entry);
     }, [entry]);
     
-    const category = (editorState.category as JournalCategory);
-    const config = journalConfig[category];
-
-    if (!config) {
-        return <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-            <p>Error: Could not load journal category. Please select another entry or create a new one.</p>
-        </div>;
+    const getValidConfig = (category: JournalCategory | string) => {
+        if (category && journalConfig[category as JournalCategory]) {
+            return { config: journalConfig[category as JournalCategory], category: category as JournalCategory};
+        }
+        const defaultCategory = 'Growth & Challenge Reflection';
+        return { config: journalConfig[defaultCategory], category: defaultCategory };
     }
+    
+    const { config, category } = getValidConfig(editorState.category);
 
     const isNewEntry = editorState.id.startsWith('new-');
 
