@@ -1,14 +1,19 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Award, Star, Trophy, BrainCircuit } from 'lucide-react';
+import { Award, Star, Trophy, BrainCircuit, BookOpen, View, Ear, Goal, Archive } from 'lucide-react';
+import { domainIcons } from '../icons';
 
 const badges = [
-  { icon: Trophy, color: 'text-amber-400', title: 'Gf Master', description: 'Reached level 10 in Fluid Reasoning' },
-  { icon: Award, color: 'text-sky-500', title: 'Memory Marathon', description: 'Completed 20 Gwm sessions' },
-  { icon: Star, color: 'text-rose-500', title: 'Speed Demon', description: 'Top 10% in a Gs task' },
-  { icon: BrainCircuit, color: 'text-green-500', title: 'Perfect Week', description: 'Trained every day for 7 days' },
-  { icon: Trophy, color: 'text-slate-400', title: 'Novice Explorer', description: 'Completed first session in all domains' },
-  { icon: Star, color: 'text-indigo-500', title: 'Consistent Learner', description: 'Maintained a 14-day streak' },
+  { icon: domainIcons.Gf, color: 'text-amber-400', title: 'Gf Adept', description: 'Mastered 10 Gf puzzles' },
+  { icon: domainIcons.Gc, color: 'text-sky-400', title: 'Gc Scholar', description: 'Reached level 5 in Crystallized Intelligence' },
+  { icon: domainIcons.Gwm, color: 'text-rose-400', title: 'Gwm Specialist', description: 'Completed 20 Gwm sessions' },
+  { icon: domainIcons.Gs, color: 'text-violet-400', title: 'Gs Sprinter', description: 'Achieved a top 10% score in a Gs task' },
+  { icon: domainIcons.Gv, color: 'text-emerald-400', title: 'Gv Visionary', description: 'Solved 15 visual processing challenges' },
+  { icon: domainIcons.Ga, color: 'text-orange-400', title: 'Ga Listener', description: 'Perfected 5 auditory puzzles in a row' },
+  { icon: domainIcons.Glr, color: 'text-teal-400', title: 'Glr Archivist', description: 'Recalled over 50 items in retrieval tasks' },
+  { icon: domainIcons.EF, color: 'text-cyan-400', title: 'EF Captain', description: 'Maintained high focus for 3 consecutive EF sessions' },
 ];
 
 export function MilestoneBadges() {
