@@ -1,5 +1,5 @@
 
-import { Award, Flame, Shuffle, Repeat, TrendingUp, ShieldCheck, Gem, Compass, Swords } from 'lucide-react';
+import { Award, Flame, Shuffle, Repeat, TrendingUp, ShieldCheck, Gem, Compass } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export type Badge = {
