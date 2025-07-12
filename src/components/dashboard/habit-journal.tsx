@@ -26,27 +26,26 @@ export function HabitJournal() {
     const { entries, addEntry, updateEntry } = useJournal();
     const [api, setApi] = useState<CarouselApi>();
     const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
-    const [isNewEntry, setIsNewEntry] = useState(false);
     
     const { toast } = useToast();
-    
+
+    const today = new Date().toISOString().split('T')[0];
+    const todayEntryExists = entries.some(e => e.date === today);
+    const todayEntryIndex = entries.findIndex(e => e.date === today);
+
     useEffect(() => {
         if (!api) return;
 
-        const today = new Date().toISOString().split('T')[0];
-        
         const setupCurrentPage = () => {
             if (!api) return;
             const selectedIndex = api.selectedScrollSnap();
-            const todayEntryIndex = entries.findIndex(e => e.date === today);
+            const totalSlides = entries.length + (todayEntryExists ? 0 : 1);
 
             if (selectedIndex < entries.length) {
                 // Viewing an existing entry
-                const entry = entries[selectedIndex];
-                setCurrentEntry(entry);
-                setIsNewEntry(entry.date === today && todayEntryIndex === -1);
-            } else {
-                // We are on the "new entry" slide
+                setCurrentEntry(entries[selectedIndex]);
+            } else if (selectedIndex === entries.length && !todayEntryExists) {
+                 // We are on the "new entry" slide
                  const newPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)];
                  setCurrentEntry({
                     id: today, date: today, reflection: '', tags: '', effort: 7,
@@ -54,14 +53,12 @@ export function HabitJournal() {
                     habits: { sleep: null, exercise: null, meditation: null, reading: null },
                     category: 'Daily Reflection'
                 });
-                setIsNewEntry(true);
             }
         };
 
-        const todayEntryIndex = entries.findIndex(e => e.date === today);
         if (todayEntryIndex !== -1) {
-            api.scrollTo(todayEntryIndex, true); // Jump without animation
-        } else if (entries.length > 0) {
+            api.scrollTo(todayEntryIndex, true); 
+        } else {
             api.scrollTo(entries.length, true);
         }
         
@@ -72,10 +69,9 @@ export function HabitJournal() {
             api.off("select", setupCurrentPage);
         }
 
-    }, [api, entries]);
+    }, [api, entries, today, todayEntryExists, todayEntryIndex]);
 
     const handleFieldChange = (field: keyof JournalEntry, value: any) => {
-        if (!currentEntry) return;
         setCurrentEntry(prev => prev ? { ...prev, [field]: value } : null);
     };
 
@@ -85,17 +81,19 @@ export function HabitJournal() {
             return;
         }
 
-        if (isNewEntry) {
-            addEntry(currentEntry);
-        } else {
+        const entryExists = entries.some(e => e.id === currentEntry.id);
+
+        if (entryExists) {
             updateEntry(currentEntry.id, currentEntry);
+             toast({ title: 'Journal Entry Updated', description: 'Your changes have been saved.' });
+        } else {
+            addEntry(currentEntry);
+            toast({ title: 'Journal Entry Saved', description: 'Your thoughts have been logged.' });
         }
-        
-        toast({ title: 'Journal Entry Saved', description: 'Your thoughts have been logged.' });
     };
 
     const formatMarkdown = (entry: JournalEntry) => {
-        const entryDate = new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const entryDate = new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         const tagString = entry.tags.split(',').map(t => t.trim() ? `#${t.trim()}` : '').join(' ');
         let moodString = entry.mood ? `**Mood:** ${entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}\n\n` : '';
         let affirmationString = entry.affirmation.trim() ? `**Affirmation:** "${entry.affirmation.trim()}"\n\n` : '';
@@ -137,7 +135,7 @@ export function HabitJournal() {
 
     const EntryPage = ({ entry }: { entry: JournalEntry }) => (
         <div className="p-6 h-full flex flex-col">
-            <h3 className="font-bold text-lg">{new Date(entry.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h3>
+            <h3 className="font-bold text-lg">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h3>
             <p className="text-sm text-muted-foreground mb-2">{entry.category}</p>
             <Separator className="mb-4"/>
             <div className="prose prose-sm dark:prose-invert overflow-y-auto flex-grow">
@@ -151,13 +149,15 @@ export function HabitJournal() {
     );
     
     const EditorPage = ({ entry }: { entry: JournalEntry | null }) => {
-       if (!entry) return <div className="p-6">Loading...</div>;
+       if (!entry) return <div className="p-6 flex items-center justify-center h-full">Loading...</div>;
+
+       const isNewEntry = !entries.some(e => e.id === entry.id);
 
        return (
             <div className="p-6 h-full flex flex-col gap-4">
                 <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg">
-                        {isNewEntry ? "Today's Entry" : `Editing: ${new Date(entry.date).toLocaleDateString()}`}
+                        {isNewEntry ? "Today's Entry" : `Editing: ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}`}
                     </h3>
                     <Select value={entry.category} onValueChange={(value) => handleFieldChange('category', value)}>
                         <SelectTrigger className="w-[180px]">
@@ -220,9 +220,6 @@ export function HabitJournal() {
        )
     };
     
-    // Add a slide for "New Entry" only if today's entry doesn't exist
-    const todayEntryExists = entries.some(e => e.date === new Date().toISOString().split('T')[0]);
-
     return (
         <Card className="hover:shadow-lg transition-shadow duration-300 col-span-1 md:col-span-2">
             <CardHeader>
@@ -244,7 +241,7 @@ export function HabitJournal() {
                                         <EntryPage entry={entry} />
                                     </div>
                                     <div className="bg-card rounded-r-lg">
-                                        <EditorPage entry={entries.find(e => e.id === entry.id) || null} />
+                                        <EditorPage entry={currentEntry} />
                                     </div>
                                 </div>
                             </CarouselItem>
