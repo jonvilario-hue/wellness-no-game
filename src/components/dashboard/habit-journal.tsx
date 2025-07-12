@@ -4,13 +4,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Smile, Meh, Frown, Check, Clipboard, Download, Heart } from 'lucide-react';
+import { BookMarked, Save, Smile, Meh, Frown, Check, Clipboard, Download, Heart, ChevronLeft, ChevronRight, Wand2, PlusCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
+import { useJournal, type JournalEntry } from '@/hooks/use-journal';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '../ui/carousel';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Separator } from '../ui/separator';
 
 const journalPrompts = [
     "What cognitive strategy felt strongest today?",
@@ -27,213 +30,271 @@ const lifestyleHabits = [
 ];
 
 type HabitState = 'good' | 'neutral' | 'bad' | 'done' | null;
-type MoodState = 'happy' | 'neutral' | 'sad' | null;
 
 export function HabitJournal() {
-  const [reflection, setReflection] = useState('');
-  const [tags, setTags] = useState('');
-  const [effort, setEffort] = useState(7);
-  const [prompt, setPrompt] = useState('');
-  const [mood, setMood] = useState<MoodState>(null);
-  const [affirmation, setAffirmation] = useState('');
-  const { toast } = useToast();
-  const [habits, setHabits] = useState<Record<string, HabitState>>({ sleep: null, exercise: null, meditation: null, reading: null });
+    const { entries, addEntry, updateEntry } = useJournal();
+    const [api, setApi] = useState<CarouselApi>();
+    const [currentEntry, setCurrentEntry] = useState<JournalEntry | null>(null);
+    const [isNewEntry, setIsNewEntry] = useState(false);
+    
+    const { toast } = useToast();
+    
+    useEffect(() => {
+        if (!api) return;
 
-  useEffect(() => {
-    // Select prompt on the client-side to avoid hydration mismatch
-    setPrompt(journalPrompts[Math.floor(Math.random() * journalPrompts.length)]);
-  }, []);
+        const today = new Date().toISOString().split('T')[0];
+        const todayEntryIndex = entries.findIndex(e => e.date === today);
 
-  const handleSave = () => {
-    if (reflection.trim()) {
-      toast({
-        title: 'Journal Entry Saved',
-        description: 'Your thoughts have been logged.',
-      });
-    } else {
-        toast({
-            title: 'Empty Journal',
-            description: 'Please write something before saving.',
-            variant: 'destructive'
-        })
-    }
-  };
+        if (todayEntryIndex !== -1) {
+            api.scrollTo(todayEntryIndex);
+            setCurrentEntry(entries[todayEntryIndex]);
+            setIsNewEntry(false);
+        } else {
+            const newPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)];
+            const newEntry: JournalEntry = {
+                id: today,
+                date: today,
+                reflection: '',
+                tags: '',
+                effort: 7,
+                prompt: newPrompt,
+                mood: null,
+                affirmation: '',
+                habits: { sleep: null, exercise: null, meditation: null, reading: null },
+                category: 'Daily Reflection'
+            };
+            setCurrentEntry(newEntry);
+            setIsNewEntry(true);
+            // If there are other entries, scroll to the end for the new one
+            if (entries.length > 0) {
+                 api.scrollTo(entries.length);
+            }
+        }
 
-  const formatMarkdown = () => {
-    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const tagString = tags.split(',').map(t => t.trim() ? `#${t.trim()}` : '').join(' ');
-    let moodString = '';
-    if (mood) {
-        moodString = `**Mood:** ${mood.charAt(0).toUpperCase() + mood.slice(1)}\n\n`;
-    }
-    let affirmationString = '';
-    if (affirmation.trim()) {
-        affirmationString = `**Affirmation:** "${affirmation.trim()}"\n\n`;
-    }
+        api.on("select", () => {
+             const selectedIndex = api.selectedScrollSnap();
+             if (selectedIndex < entries.length) {
+                setCurrentEntry(entries[selectedIndex]);
+                setIsNewEntry(false);
+             } else {
+                // We are on the "new entry" slide
+                 const todayEntry = entries.find(e => e.date === today);
+                 if (!todayEntry) {
+                     const newPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)];
+                     setCurrentEntry({
+                        id: today, date: today, reflection: '', tags: '', effort: 7,
+                        prompt: newPrompt, mood: null, affirmation: '',
+                        habits: { sleep: null, exercise: null, meditation: null, reading: null },
+                        category: 'Daily Reflection'
+                    });
+                 }
+                 setIsNewEntry(true);
+             }
+        });
 
+    }, [api, entries]);
 
-    return `## ${today} - Cognitive Reflection\n\n` +
-           moodString +
-           affirmationString +
-           `**Prompt:** ${prompt}\n\n` +
-           `**Reflection:**\n${reflection}\n\n` +
-           `**Effort/Focus:** ${effort}/10\n` +
-           `**Tags:** ${tagString}`;
-  };
+    const handleFieldChange = (field: keyof JournalEntry, value: any) => {
+        if (!currentEntry) return;
+        setCurrentEntry(prev => prev ? { ...prev, [field]: value } : null);
+    };
 
-  const handleCopyToClipboard = () => {
-    if (!reflection.trim()) {
-      toast({ title: 'Nothing to copy', description: 'Please write a reflection first.', variant: 'destructive' });
-      return;
-    }
-    const markdown = formatMarkdown();
-    navigator.clipboard.writeText(markdown);
-    toast({ title: 'Copied to Clipboard!', description: 'Your journal entry is ready to paste.' });
-  };
-  
-  const handleExport = () => {
-     if (!reflection.trim()) {
-      toast({ title: 'Nothing to export', description: 'Please write a reflection first.', variant: 'destructive' });
-      return;
-    }
-    const markdown = formatMarkdown();
-    const blob = new Blob([markdown], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    const today = new Date().toISOString().split('T')[0];
-    link.download = `cognitive-journal-${today}.md`;
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    toast({ title: 'Export Successful', description: 'Your journal entry has been downloaded.' });
-  }
-  
-  const handleHabitClick = (habitKey: string, state: HabitState) => {
-    setHabits(prev => ({ ...prev, [habitKey]: prev[habitKey] === state ? null : state }));
-  };
+    const handleHabitClick = (habitKey: string, state: HabitState) => {
+        if (!currentEntry) return;
+        const newHabits = { ...currentEntry.habits, [habitKey]: currentEntry.habits[habitKey] === state ? null : state };
+        handleFieldChange('habits', newHabits);
+    };
 
-  const handleMoodClick = (newMood: MoodState) => {
-    setMood(prev => (prev === newMood ? null : newMood));
-  };
-  
-  const handleSaveAffirmation = () => {
-    if (affirmation.trim()) {
-      toast({ title: 'Affirmation Saved', description: 'Your intention for the day is set.' });
-    }
-  }
+    const handleSave = () => {
+        if (!currentEntry || !currentEntry.reflection.trim()) {
+            toast({ title: 'Empty Journal', description: 'Please write something before saving.', variant: 'destructive' });
+            return;
+        }
 
+        if (isNewEntry) {
+            addEntry(currentEntry);
+        } else {
+            updateEntry(currentEntry.id, currentEntry);
+        }
+        
+        toast({ title: 'Journal Entry Saved', description: 'Your thoughts have been logged.' });
+    };
 
-  return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-headline">
-          <BookMarked className="w-5 h-5 text-primary" />
-          Habit & Journal
-        </CardTitle>
-        <CardDescription>
-          Connect training to daily life and track key lifestyle factors.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="journal" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="journal">Journal</TabsTrigger>
-            <TabsTrigger value="habits">Lifestyle Habits</TabsTrigger>
-            <TabsTrigger value="mood">Mood & Affirmations</TabsTrigger>
-          </TabsList>
-          <TabsContent value="journal" className="pt-4 space-y-4">
-            <p className="text-sm font-medium text-muted-foreground italic min-h-[20px]">
-             {prompt}
-            </p>
-            <Textarea
-              placeholder="For example: 'I used a chunking strategy in the memory game...' or 'I noticed I was less distracted at work after my EF training...'"
-              value={reflection}
-              onChange={(e) => setReflection(e.target.value)}
-              className="min-h-[100px]"
-            />
-            <div className="space-y-2">
-              <Label htmlFor="tags-input">Tags (comma-separated)</Label>
-              <Input 
-                id="tags-input"
-                placeholder="e.g. Gwm, strategy, focus"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
+    const formatMarkdown = (entry: JournalEntry) => {
+        const entryDate = new Date(entry.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const tagString = entry.tags.split(',').map(t => t.trim() ? `#${t.trim()}` : '').join(' ');
+        let moodString = entry.mood ? `**Mood:** ${entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}\n\n` : '';
+        let affirmationString = entry.affirmation.trim() ? `**Affirmation:** "${entry.affirmation.trim()}"\n\n` : '';
+    
+        return `## ${entryDate} - ${entry.category}\n\n` +
+               moodString +
+               affirmationString +
+               `**Prompt:** ${entry.prompt}\n\n` +
+               `**Reflection:**\n${entry.reflection}\n\n` +
+               `**Effort/Focus:** ${entry.effort}/10\n` +
+               `**Tags:** ${tagString}`;
+    };
+
+    const handleCopyToClipboard = () => {
+        if (!currentEntry || !currentEntry.reflection.trim()) {
+            toast({ title: 'Nothing to copy', description: 'Please write a reflection first.', variant: 'destructive' });
+            return;
+        }
+        navigator.clipboard.writeText(formatMarkdown(currentEntry));
+        toast({ title: 'Copied to Clipboard!', description: 'Your journal entry is ready to paste.' });
+    };
+
+    const handleExport = () => {
+        if (!currentEntry || !currentEntry.reflection.trim()) {
+            toast({ title: 'Nothing to export', description: 'Please write a reflection first.', variant: 'destructive' });
+            return;
+        }
+        const blob = new Blob([formatMarkdown(currentEntry)], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `cognitive-journal-${currentEntry.date}.md`;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast({ title: 'Export Successful', description: 'Your journal entry has been downloaded.' });
+    };
+
+    const EntryPage = ({ entry }: { entry: JournalEntry }) => (
+        <div className="p-6 h-full flex flex-col">
+            <h3 className="font-bold text-lg">{new Date(entry.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h3>
+            <p className="text-sm text-muted-foreground mb-2">{entry.category}</p>
+            <Separator className="mb-4"/>
+            <div className="prose prose-sm dark:prose-invert overflow-y-auto flex-grow">
+                <p className="italic text-muted-foreground">{entry.prompt}</p>
+                <p>{entry.reflection}</p>
+                {entry.affirmation && <p><strong>Affirmation:</strong> {entry.affirmation}</p>}
+                <p><strong>Effort:</strong> {entry.effort}/10</p>
+                {entry.tags && <p><strong>Tags:</strong> {entry.tags}</p>}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="effort-slider" className="flex justify-between">
-                <span>Effort / Focus Level</span>
-                <span>{effort}/10</span>
-              </Label>
-              <Slider 
-                id="effort-slider"
-                min={1} max={10} step={1}
-                value={[effort]}
-                onValueChange={(value) => setEffort(value[0])}
-              />
-            </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-              <Button onClick={handleSave} className="lg:col-span-3">
-                <Save className="mr-2 h-4 w-4" />
-                Save Entry
-              </Button>
-              <Button onClick={handleCopyToClipboard} variant="outline">
-                <Clipboard className="mr-2 h-4 w-4" />
-                Copy
-              </Button>
-              <Button onClick={handleExport} variant="outline">
-                <Download className="mr-2 h-4 w-4" />
-                Export (.md)
-              </Button>
-            </div>
-          </TabsContent>
-          <TabsContent value="habits" className="pt-4 space-y-3">
-              {lifestyleHabits.map(({key, label}) => (
-                <div key={key} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <span className="font-medium">{label}</span>
-                  <div className="flex gap-1 sm:gap-2">
-                    {key === 'sleep' ? (
-                        <>
-                            <Button variant={habits[key] === 'good' ? 'default' : 'outline'} size="icon" onClick={() => handleHabitClick(key, 'good')}><Smile className="h-4 w-4"/></Button>
-                            <Button variant={habits[key] === 'neutral' ? 'default' : 'outline'} size="icon" onClick={() => handleHabitClick(key, 'neutral')}><Meh className="h-4 w-4"/></Button>
-                            <Button variant={habits[key] === 'bad' ? 'default' : 'outline'} size="icon" onClick={() => handleHabitClick(key, 'bad')}><Frown className="h-4 w-4"/></Button>
-                        </>
-                    ) : (
-                        <Button variant={habits[key] === 'done' ? 'default' : 'outline'} size="icon" onClick={() => handleHabitClick(key, 'done')}><Check className="h-4 w-4"/></Button>
-                    )}
-                  </div>
+        </div>
+    );
+    
+    const EditorPage = ({ entry }: { entry: JournalEntry | null }) => {
+       if (!entry) return <div className="p-6">Loading...</div>;
+
+       return (
+            <div className="p-6 h-full flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                    <h3 className="font-bold text-lg">
+                        {isNewEntry ? "Today's Entry" : `Editing: ${new Date(entry.date).toLocaleDateString()}`}
+                    </h3>
+                    <Select value={entry.category} onValueChange={(value) => handleFieldChange('category', value)}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Daily Reflection">Daily Reflection</SelectItem>
+                            <SelectItem value="Cognitive Training">Cognitive Training</SelectItem>
+                            <SelectItem value="Goal Setting">Goal Setting</SelectItem>
+                            <SelectItem value="Freeform Note">Freeform Note</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
-              ))}
-          </TabsContent>
-          <TabsContent value="mood" className="pt-4 space-y-6">
-            <div className="space-y-3">
-                <Label className="text-base font-medium">How are you feeling today?</Label>
-                <div className="flex justify-around p-3 bg-muted/50 rounded-lg">
-                    <Button variant={mood === 'happy' ? 'default' : 'ghost'} size="icon" className="h-12 w-12" onClick={() => handleMoodClick('happy')}><Smile className="h-6 w-6"/></Button>
-                    <Button variant={mood === 'neutral' ? 'default' : 'ghost'} size="icon" className="h-12 w-12" onClick={() => handleMoodClick('neutral')}><Meh className="h-6 w-6"/></Button>
-                    <Button variant={mood === 'sad' ? 'default' : 'ghost'} size="icon" className="h-12 w-12" onClick={() => handleMoodClick('sad')}><Frown className="h-6 w-6"/></Button>
+                 <p className="text-sm font-medium text-muted-foreground italic min-h-[20px]">
+                    {entry.prompt}
+                </p>
+                <Textarea
+                    placeholder="Reflect on your day, your training, or anything on your mind..."
+                    value={entry.reflection}
+                    onChange={(e) => handleFieldChange('reflection', e.target.value)}
+                    className="min-h-[120px] flex-grow"
+                />
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <Label htmlFor="tags-input">Tags (comma-separated)</Label>
+                        <Input
+                            id="tags-input"
+                            placeholder="e.g. Gwm, strategy, focus"
+                            value={entry.tags}
+                            onChange={(e) => handleFieldChange('tags', e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <Label htmlFor="effort-slider" className="flex justify-between">
+                            <span>Effort / Focus</span>
+                            <span>{entry.effort}/10</span>
+                        </Label>
+                        <Slider
+                            id="effort-slider"
+                            min={1} max={10} step={1}
+                            value={[entry.effort]}
+                            onValueChange={(value) => handleFieldChange('effort', value[0])}
+                        />
+                    </div>
+                </div>
+                <div className="flex-grow-0 pt-2">
+                    <Button onClick={handleSave} className="w-full">
+                        <Save className="mr-2 h-4 w-4" /> {isNewEntry ? 'Save Entry' : 'Update Entry'}
+                    </Button>
+                     <div className="grid grid-cols-2 gap-2 mt-2">
+                        <Button onClick={handleCopyToClipboard} variant="outline">
+                            <Clipboard className="mr-2 h-4 w-4" /> Copy
+                        </Button>
+                        <Button onClick={handleExport} variant="outline">
+                            <Download className="mr-2 h-4 w-4" /> Export
+                        </Button>
+                    </div>
                 </div>
             </div>
-             <div className="space-y-3">
-                <Label htmlFor="affirmation-input" className="text-base font-medium">Daily Affirmation</Label>
-                 <Textarea
-                    id="affirmation-input"
-                    placeholder="e.g., 'I embrace challenges as opportunities for growth.'"
-                    value={affirmation}
-                    onChange={(e) => setAffirmation(e.target.value)}
-                    className="min-h-[80px]"
-                    />
-                <Button onClick={handleSaveAffirmation} className="w-full">
-                    <Heart className="mr-2 h-4 w-4" />
-                    Save Affirmation
-                </Button>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
+       )
+    };
+    
+    // Add a slide for "New Entry" only if today's entry doesn't exist
+    const todayEntryExists = entries.some(e => e.date === new Date().toISOString().split('T')[0]);
+
+    return (
+        <Card className="hover:shadow-lg transition-shadow duration-300 col-span-1 md:col-span-2">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-headline">
+                    <BookMarked className="w-5 h-5 text-primary" />
+                    My Journal
+                </CardTitle>
+                <CardDescription>
+                    Track reflections, habits, and cognitive strategies. Use arrows to navigate entries.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Carousel setApi={setApi} className="w-full">
+                    <CarouselContent>
+                        {entries.map((entry) => (
+                            <CarouselItem key={entry.id}>
+                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                                    <div className="bg-muted/30 rounded-l-lg border-r border-border">
+                                        <EntryPage entry={entry} />
+                                    </div>
+                                    <div className="bg-card rounded-r-lg">
+                                        <EditorPage entry={entry} />
+                                    </div>
+                                </div>
+                            </CarouselItem>
+                        ))}
+                         {!todayEntryExists && (
+                            <CarouselItem>
+                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                                    <div className="bg-muted/30 rounded-l-lg border-r border-border p-6 flex flex-col items-center justify-center text-center">
+                                       <PlusCircle className="w-16 h-16 text-muted-foreground/50 mb-4"/>
+                                       <h3 className="font-bold text-lg">New Page</h3>
+                                       <p className="text-sm text-muted-foreground">Fill out the page on the right to create today's entry.</p>
+                                    </div>
+                                    <div className="bg-card rounded-r-lg">
+                                        <EditorPage entry={currentEntry} />
+                                    </div>
+                                </div>
+                            </CarouselItem>
+                        )}
+                    </CarouselContent>
+                    <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
+                    <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
+                </Carousel>
+            </CardContent>
+        </Card>
+    );
 }
 
