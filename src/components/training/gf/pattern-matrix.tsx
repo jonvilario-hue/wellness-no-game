@@ -98,8 +98,8 @@ const ShapeComponent = ({ shape, color, rotation }: Element) => {
     case 'circle': return <div className={cn(baseClasses, color, "rounded-full")} style={{ transform: `rotate(${rotation}deg)` }} />;
     case 'square': return <div className={cn(baseClasses, color, "rounded-md")} style={{ transform: `rotate(${rotation}deg)` }} />;
     case 'triangle':
-        const triangleColorClass = color.replace('bg-','border-b-');
-        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid', transform: `rotate(${rotation}deg)` }} className={cn("bg-transparent", triangleColorClass, 'h-auto w-auto')} />;
+        const triangleColorClass = color.replace('bg-', 'border-b-');
+        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid', transform: `rotate(${rotation}deg)` }} className={cn("!bg-transparent", triangleColorClass, 'h-auto w-auto')} />;
     case 'diamond': return <div className={cn(baseClasses, color, "transform rotate-45 rounded-sm")} style={{ transform: `rotate(${rotation + 45}deg)` }}/>;
     default: return <div className={cn(baseClasses, color)} />;
   }

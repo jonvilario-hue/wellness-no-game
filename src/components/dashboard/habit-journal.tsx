@@ -133,6 +133,9 @@ export function HabitJournal() {
                 // If a new entry was selected but currentEntry is null, create it
                 const newEntry = createNewEntryObject(selectedEntryId.includes(today));
                 setCurrentEntry(newEntry);
+            } else if (selectedEntryId.startsWith('new-') && currentEntry?.id !== selectedEntryId) {
+                const newEntry = createNewEntryObject(false);
+                setCurrentEntry(newEntry);
             }
         } else {
             setCurrentEntry(null);
@@ -152,8 +155,8 @@ export function HabitJournal() {
         
         if (field === 'category') {
             const category = value as JournalCategory;
-            const newPrompt = journalConfig[category].prompt;
-            updatedEntry = { ...updatedEntry, prompt: newPrompt, mood: null }; // Reset mood when category changes
+            const newConfig = journalConfig[category];
+            updatedEntry = { ...updatedEntry, prompt: newConfig.prompt, mood: null }; // Reset mood when category changes
         }
         
         setCurrentEntry(updatedEntry);
@@ -233,7 +236,7 @@ export function HabitJournal() {
         toast({ title: 'Export Successful', description: 'Your journal entry has been downloaded.' });
     };
 
-    const EntryEditor = ({ entry }: { entry: JournalEntry | null }) => {
+    const EntryEditor = ({ entry, setEntry }: { entry: JournalEntry | null; setEntry: (entry: JournalEntry) => void; }) => {
        if (!entry) return (
             <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 <PlusCircle className="w-8 h-8 mb-2" />
@@ -246,14 +249,22 @@ export function HabitJournal() {
        const config = journalConfig[category];
 
        const handleCategoryChange = (newCategory: JournalCategory) => {
-            if (!currentEntry) return;
             const newConfig = journalConfig[newCategory];
-            setCurrentEntry({
-                ...currentEntry,
+            setEntry({
+                ...entry,
                 category: newCategory,
                 prompt: newConfig.prompt,
                 mood: null, // Reset mood when category changes
             });
+        };
+        
+       const handleLocalFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
+            setEntry({ ...entry, [field]: value });
+        };
+    
+        const handleLocalHabitChange = (habitId: HabitId, checked: boolean) => {
+            const newHabits = { ...entry.habits, [habitId]: checked ? 'done' : null };
+            setEntry({ ...entry, habits: newHabits });
         };
 
        return (
@@ -291,24 +302,18 @@ export function HabitJournal() {
                     <Textarea
                         placeholder="Reflect on your day, your training, or anything on your mind..."
                         value={entry.reflection}
-                        onChange={(e) => {
-                            if(!currentEntry) return;
-                            setCurrentEntry({...currentEntry, reflection: e.target.value});
-                        }}
+                        onChange={(e) => handleLocalFieldChange('reflection', e.target.value)}
                         className="min-h-[120px]"
                     />
                     <div>
                         <Label htmlFor="tags-input">Tags (comma-separated)</Label>
-                        <Input id="tags-input" placeholder={config.suggestedTags} value={entry.tags} onChange={(e) => {
-                            if(!currentEntry) return;
-                             setCurrentEntry({...currentEntry, tags: e.target.value});
-                        }} />
+                        <Input id="tags-input" placeholder={config.suggestedTags} value={entry.tags} onChange={(e) => handleLocalFieldChange('tags', e.target.value)} />
                     </div>
                     {config.moods.length > 0 && <div>
                         <Label>Mood</Label>
                         <div className="flex gap-2 mt-1">
                             {config.moods.map(({mood, label, icon: MoodIcon}) => (
-                                <Button key={mood} variant={entry.mood === mood ? 'default' : 'outline'} size="sm" onClick={() => handleFieldChange('mood', entry.mood === mood ? null : mood)} className="flex-1">
+                                <Button key={mood} variant={entry.mood === mood ? 'default' : 'outline'} size="sm" onClick={() => handleLocalFieldChange('mood', entry.mood === mood ? null : mood)} className="flex-1">
                                     <MoodIcon className="mr-2 h-4 w-4" /> {label}
                                 </Button>
                             ))}
@@ -319,7 +324,7 @@ export function HabitJournal() {
                         <div className='grid grid-cols-2 gap-2 mt-1'>
                             {allHabits.filter(h => config.habits.includes(h.id)).map(habit => (
                                 <div key={habit.id} className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md">
-                                    <Checkbox id={habit.id} checked={!!entry.habits[habit.id]} onCheckedChange={(checked) => handleHabitChange(habit.id, !!checked)} />
+                                    <Checkbox id={habit.id} checked={!!entry.habits[habit.id]} onCheckedChange={(checked) => handleLocalHabitChange(habit.id, !!checked)} />
                                     <Label htmlFor={habit.id} className='flex items-center gap-2 text-sm font-normal cursor-pointer'>
                                         <habit.icon className="w-4 h-4 text-muted-foreground"/> {habit.label}
                                     </Label>
@@ -332,7 +337,7 @@ export function HabitJournal() {
                             <span>Effort / Focus</span>
                             <span>{entry.effort}/10</span>
                         </Label>
-                        <Slider id="effort-slider" min={1} max={10} step={1} value={[entry.effort]} onValueChange={(value) => handleFieldChange('effort', value[0])}/>
+                        <Slider id="effort-slider" min={1} max={10} step={1} value={[entry.effort]} onValueChange={(value) => handleLocalFieldChange('effort', value[0])}/>
                     </div>
                 </div>
 
@@ -391,7 +396,7 @@ export function HabitJournal() {
 
                     {/* Column 2: Editor */}
                     <div className="lg:col-span-2 bg-background rounded-lg border">
-                         <EntryEditor entry={currentEntry} />
+                         <EntryEditor entry={currentEntry} setEntry={setCurrentEntry} />
                     </div>
                 </div>
             </CardContent>
