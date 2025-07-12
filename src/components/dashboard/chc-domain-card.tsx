@@ -14,17 +14,9 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { domainIcons } from '@/components/icons';
 import type { CHCDomain } from '@/types';
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from 'recharts';
 import { useState, useEffect } from 'react';
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info } from 'lucide-react';
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface ChcDomainCardProps {
   domain: {
@@ -61,7 +53,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   }, [domain.key]);
 
   const TrendIcon = trend >= 0 ? ArrowUp : ArrowDown;
-  const trendColor = trend >= 0 ? 'text-green-500' : 'text-muted-foreground';
+  const trendColor = trend >= 0 ? 'text-primary' : 'text-muted-foreground';
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
@@ -75,22 +67,40 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-2">
+        <TooltipProvider>
         <div>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-sm font-medium text-muted-foreground">
-              Current Score
-            </span>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <span className="text-sm font-medium text-muted-foreground flex items-center gap-1 cursor-help">
+                    Current Score <Info className="w-3 h-3"/>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Your current skill level based on recent performance.</p>
+                </TooltipContent>
+              </Tooltip>
             <span className="text-sm font-bold text-primary">{Math.round(score)}</span>
           </div>
           <Progress value={score} aria-label={`Score for ${domain.name} is ${score}`} />
         </div>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>Weekly Trend</span>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <span className="flex items-center gap-1 cursor-help">
+                  Weekly Trend <Info className="w-3 h-3"/>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Your performance change over the last 7 days.</p>
+              </TooltipContent>
+            </Tooltip>
             <div className={`flex items-center font-bold ${trendColor}`}>
                 <TrendIcon className="w-4 h-4 mr-1"/>
                 {Math.abs(trend).toFixed(1)}%
             </div>
         </div>
+        </TooltipProvider>
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full">

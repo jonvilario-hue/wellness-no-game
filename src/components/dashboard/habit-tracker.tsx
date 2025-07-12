@@ -13,14 +13,14 @@ export function HabitTracker() {
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
           <div className="flex items-center gap-3">
-            <Flame className="w-6 h-6 text-amber-500" />
+            <Flame className="w-6 h-6 text-primary" />
             <span className="font-medium">Current Streak</span>
           </div>
           <span className="font-bold text-lg">14 Days</span>
         </div>
         <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
           <div className="flex items-center gap-3">
-            <CalendarCheck2 className="w-6 h-6 text-green-500" />
+            <CalendarCheck2 className="w-6 h-6 text-accent" />
             <span className="font-medium">Sessions this week</span>
           </div>
           <span className="font-bold text-lg">5 / 7</span>
