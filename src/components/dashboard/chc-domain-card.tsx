@@ -24,6 +24,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useState, useEffect } from 'react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
 interface ChcDomainCardProps {
   domain: {
@@ -38,6 +39,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
 
   const [score, setScore] = useState(0);
   const [trendData, setTrendData] = useState<{ week: string; score: number }[]>([]);
+  const [trend, setTrend] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -52,6 +54,14 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
     
     setScore(generatedScore);
     setTrendData(generatedTrendData);
+
+    const startScore = generatedTrendData[0].score;
+    const endScore = generatedTrendData[generatedTrendData.length - 1].score;
+    if(startScore > 0) {
+        const pctChange = ((endScore - startScore) / startScore) * 100;
+        setTrend(pctChange);
+    }
+    
     setIsClient(true);
   }, [domain.key]);
 
@@ -59,18 +69,18 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
     // Render a placeholder or skeleton while waiting for client-side rendering
     return (
       <Card className="flex flex-col h-full">
-        <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+        <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
            <div className="p-3 bg-primary/10 rounded-lg">
              <Icon className="w-6 h-6 text-primary" />
            </div>
            <div>
-             <CardTitle className="font-headline">{domain.name}</CardTitle>
+             <CardTitle className="font-headline text-lg">{domain.name}</CardTitle>
              <CardDescription>{domain.description}</CardDescription>
            </div>
          </CardHeader>
-        <CardContent className="flex-grow space-y-4">
+        <CardContent className="flex-grow space-y-2">
           <div className="animate-pulse bg-muted/50 rounded-md h-8 w-full"></div>
-          <div className="animate-pulse bg-muted/50 rounded-md h-24 w-full"></div>
+          <div className="animate-pulse bg-muted/50 rounded-md h-16 w-full"></div>
         </CardContent>
         <CardFooter>
           <Button className="w-full" disabled>Start Training</Button>
@@ -79,18 +89,21 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
     );
   }
 
+  const TrendIcon = trend >= 0 ? ArrowUp : ArrowDown;
+  const trendColor = trend >= 0 ? 'text-green-500' : 'text-red-500';
+
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
-      <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+      <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
         <div className="p-3 bg-primary/10 rounded-lg">
           <Icon className="w-6 h-6 text-primary" />
         </div>
         <div>
-          <CardTitle className="font-headline">{domain.name}</CardTitle>
+          <CardTitle className="font-headline text-lg">{domain.name}</CardTitle>
           <CardDescription>{domain.description}</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow space-y-4">
+      <CardContent className="flex-grow space-y-2">
         <div>
           <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-muted-foreground">
@@ -100,28 +113,12 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
           </div>
           <Progress value={score} aria-label={`Score for ${domain.name} is ${score}`} />
         </div>
-        <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-2">
-            Weekly Improvement
-          </h4>
-          <div className="h-24 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={trendData} margin={{ top: 5, right: 0, left: -20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} domain={[0, 100]} />
-                <Tooltip
-                  cursor={{ fill: 'hsl(var(--muted))' }}
-                  contentStyle={{
-                    background: 'hsl(var(--card))',
-                    borderColor: 'hsl(var(--border))',
-                    borderRadius: 'var(--radius)',
-                  }}
-                />
-                <Bar dataKey="score" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>Weekly Trend</span>
+            <div className={`flex items-center font-bold ${trendColor}`}>
+                <TrendIcon className="w-4 h-4 mr-1"/>
+                {Math.abs(trend).toFixed(1)}%
+            </div>
         </div>
       </CardContent>
       <CardFooter>
