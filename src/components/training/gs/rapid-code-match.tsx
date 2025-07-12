@@ -16,13 +16,14 @@ export function RapidCodeMatch() {
 
   // Memoize the key so it doesn't change on re-renders during a game
   const keyMap = useMemo(() => {
+    if (gameState !== 'running') return {};
     const shuffledSymbols = [...symbols].sort(() => Math.random() - 0.5);
     const map: { [key: string]: number } = {};
     shuffledSymbols.slice(0, 5).forEach((symbol, index) => {
       map[symbol] = digits[index];
     });
     return map;
-  }, [gameState === 'running']); // Re-shuffle when a new game starts
+  }, [gameState]); // Re-shuffle when a new game starts
 
   const keyEntries = useMemo(() => Object.entries(keyMap), [keyMap]);
 
@@ -37,12 +38,12 @@ export function RapidCodeMatch() {
   }, [gameState, timeLeft]);
   
   useEffect(() => {
-    if (gameState === 'running') {
+    if (gameState === 'running' && keyEntries.length > 0) {
       // Set the first symbol
       const symbolsInKey = Object.keys(keyMap);
       setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
     }
-  }, [gameState, keyMap]);
+  }, [gameState, keyMap, keyEntries]);
 
   const handleStart = () => {
     setScore(0);
@@ -104,7 +105,7 @@ export function RapidCodeMatch() {
 
         {gameState === 'finished' && (
           <div className="flex flex-col items-center gap-4">
-            <h2 className="text-2xl font-bold">Time's Up!</h2>
+            <h2 className="text-2xl font-bold">Game Over!</h2>
             <p className="text-xl">Your final score is: <span className="text-primary font-bold">{score}</span></p>
             <Button onClick={handleStart} size="lg">Play Again</Button>
           </div>

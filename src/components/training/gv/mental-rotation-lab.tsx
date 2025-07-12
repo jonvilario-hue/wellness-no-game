@@ -84,10 +84,12 @@ const ShapeGrid = ({ grid }: { grid: number[][] }) => (
 
 
 export function MentalRotationLab() {
-  const [puzzle, setPuzzle] = useState(generatePuzzle());
+  const [puzzleKey, setPuzzleKey] = useState(0); // Add a key to force re-memoization
   const [selectedOption, setSelectedOption] = useState<number[][] | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
   
+  const puzzle = useMemo(() => generatePuzzle(), [puzzleKey]);
+
   const handleSelectOption = (option: number[][]) => {
     if (feedback) return;
     setSelectedOption(option);
@@ -99,7 +101,7 @@ export function MentalRotationLab() {
   };
 
   const handleNextPuzzle = () => {
-    setPuzzle(generatePuzzle());
+    setPuzzleKey(prevKey => prevKey + 1);
     setSelectedOption(null);
     setFeedback('');
   };

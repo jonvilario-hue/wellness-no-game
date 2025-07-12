@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 const puzzles = [
@@ -65,8 +65,8 @@ export function VerbalInferenceBuilder() {
   const [feedback, setFeedback] = useState(''); // '', 'correct', 'incorrect'
   const [gameState, setGameState] = useState('playing'); // playing, finished
   
-  // Shuffle puzzles on initial load and restart
-  const [shuffledPuzzles, setShuffledPuzzles] = useState(() => [...puzzles].sort(() => Math.random() - 0.5));
+  // Shuffle puzzles once on initial load
+  const shuffledPuzzles = useMemo(() => [...puzzles].sort(() => Math.random() - 0.5), []);
 
   const currentPuzzle = shuffledPuzzles[currentPuzzleIndex];
 
@@ -93,7 +93,6 @@ export function VerbalInferenceBuilder() {
   };
   
   const handleRestart = () => {
-    setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5));
     setCurrentPuzzleIndex(0);
     setScore(0);
     setFeedback('');

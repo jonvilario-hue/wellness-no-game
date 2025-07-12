@@ -44,12 +44,11 @@ const generatePuzzle = () => {
 const ShapeComponent = ({ shape, color, transform }: { shape: string, color: string, transform: string }) => {
   const baseClasses = "w-12 h-12 transition-all";
   const transformClasses = transform;
-  const colorClass = color.replace('bg-', 'border-b-');
-
+  
   switch (shape) {
     case 'circle': return <div className={cn(baseClasses, color, transformClasses, "rounded-full")} />;
     case 'square': return <div className={cn(baseClasses, color, transformClasses, "rounded-md")} />;
-    case 'triangle': return <div className={cn(baseClasses, transformClasses, colorClass)} style={{ width: 0, height: 0, backgroundColor: 'transparent', borderLeft: '30px solid transparent', borderRight: '30px solid transparent', borderBottomWidth: '60px' }} />;
+    case 'triangle': return <div className={cn(baseClasses, transformClasses)} style={{ width: 0, height: 0, backgroundColor: 'transparent', borderLeft: '30px solid transparent', borderRight: '30px solid transparent', borderBottom: `60px solid var(--triangle-color, ${color.replace('bg-', 'hsl(var(--'))})` }} />;
     case 'diamond': return <div className={cn(baseClasses, color, "rotate-45 rounded-md")} />;
     case 'star': return <div className={cn(baseClasses, transformClasses, "text-yellow-400")}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-12 h-12"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg></div>;
     default: return <div className={cn(baseClasses, color)} />;
@@ -58,9 +57,11 @@ const ShapeComponent = ({ shape, color, transform }: { shape: string, color: str
 
 
 export function PatternMatrix() {
-  const [puzzle, setPuzzle] = useState(generatePuzzle());
+  const [puzzleKey, setPuzzleKey] = useState(0);
   const [selectedOption, setSelectedOption] = useState<any | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
+
+  const puzzle = useMemo(() => generatePuzzle(), [puzzleKey]);
 
   const handleSelectOption = (option: any) => {
     if (feedback) return;
@@ -73,7 +74,7 @@ export function PatternMatrix() {
   };
 
   const handleNextPuzzle = () => {
-    setPuzzle(generatePuzzle());
+    setPuzzleKey(prevKey => prevKey + 1);
     setSelectedOption(null);
     setFeedback('');
   };
