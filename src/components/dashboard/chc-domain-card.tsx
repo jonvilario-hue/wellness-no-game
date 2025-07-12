@@ -15,7 +15,7 @@ import { Progress } from '@/components/ui/progress';
 import { domainIcons } from '@/components/icons';
 import type { CHCDomain } from '@/types';
 import { useState, useEffect } from 'react';
-import { ArrowDown, ArrowUp, Info } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info, Minus } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface ChcDomainCardProps {
@@ -52,8 +52,18 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
     }
   }, [domain.key]);
 
-  const TrendIcon = trend >= 0 ? ArrowUp : ArrowDown;
-  const trendColor = trend >= 0 ? 'text-green-500' : 'text-muted-foreground';
+  const getTrendInfo = () => {
+    if (trend > 2) {
+      return { Icon: ArrowUp, color: 'text-green-500', text: 'Trending upward' };
+    }
+    if (trend < -2) {
+      return { Icon: ArrowDown, color: 'text-muted-foreground', text: 'Natural fluctuation' };
+    }
+    return { Icon: Minus, color: 'text-primary', text: 'Holding steady' };
+  };
+
+  const { Icon: TrendIcon, color: trendColor } = getTrendInfo();
+
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
@@ -77,7 +87,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Your current skill level based on recent performance.</p>
+                  <p>Adaptive skill rating (50 = average, 100 = high mastery)</p>
                 </TooltipContent>
               </Tooltip>
             <span className="text-sm font-bold text-primary">{Math.round(score)}</span>
@@ -97,7 +107,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
             </Tooltip>
             <div className={`flex items-center font-bold ${trendColor}`}>
                 <TrendIcon className="w-4 h-4 mr-1"/>
-                {Math.abs(trend).toFixed(1)}%
+                {trend.toFixed(1)}%
             </div>
         </div>
         </TooltipProvider>
