@@ -4,14 +4,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Clipboard, Download, PlusCircle, Smile, Meh, Frown, Bed, Dumbbell, Brain, BookOpen, UserCheck, Target, Lightbulb, Calendar, CheckSquare, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { BookMarked, Save, Clipboard, Download, PlusCircle, Smile, Meh, Frown, Bed, Dumbbell, Brain, BookOpen, UserCheck, Target, Lightbulb, Calendar, CheckSquare } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
 import { useJournal, type JournalEntry, type MoodState, type HabitId } from '@/hooks/use-journal';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Separator } from '../ui/separator';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
@@ -99,7 +98,7 @@ export function HabitJournal() {
         if (todayEntry) {
             setSelectedEntryId(todayEntry.id);
         } else {
-            handleNewEntry();
+            handleNewEntry(true);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [entries, today]);
@@ -114,10 +113,11 @@ export function HabitJournal() {
         }
     }, [selectedEntryId, entries]);
 
-    const handleNewEntry = useCallback(() => {
+    const handleNewEntry = useCallback((isToday: boolean = false) => {
+        const dateToUse = isToday ? today : new Date().toISOString().split('T')[0];
         const newEntry: JournalEntry = {
             id: `new-${Date.now()}`,
-            date: today,
+            date: dateToUse,
             reflection: '',
             tags: '',
             effort: 7,
@@ -139,7 +139,7 @@ export function HabitJournal() {
         if (field === 'category') {
             const category = value as JournalCategory;
             const newPrompt = journalConfig[category].prompt;
-            updatedEntry = { ...updatedEntry, prompt: newPrompt };
+            updatedEntry = { ...updatedEntry, prompt: newPrompt, mood: null }; // Reset mood when category changes
         }
         
         setCurrentEntry(updatedEntry);
@@ -231,19 +231,6 @@ export function HabitJournal() {
        const category = (entry.category as JournalCategory) || 'Daily Reflection';
        const config = journalConfig[category];
 
-       const handleCategoryChange = (direction: 'next' | 'prev') => {
-            const currentIndex = categoryKeys.indexOf(category);
-            let nextIndex;
-            if (direction === 'next') {
-                nextIndex = (currentIndex + 1) % categoryKeys.length;
-            } else {
-                nextIndex = (currentIndex - 1 + categoryKeys.length) % categoryKeys.length;
-            }
-            handleFieldChange('category', categoryKeys[nextIndex]);
-       };
-
-       const CatIcon = config.icon;
-
        return (
             <div className="p-4 h-full flex flex-col gap-4">
                 <div className="flex justify-between items-center">
@@ -254,23 +241,28 @@ export function HabitJournal() {
                 <Separator/>
                 <div className='space-y-4 flex-grow overflow-y-auto pr-2'>
 
-                    <div className="flex items-center justify-between">
-                        <Button variant="ghost" size="icon" onClick={() => handleCategoryChange('prev')}>
-                            <ChevronLeft className="w-5 h-5"/>
-                        </Button>
-                        <div className="flex flex-col items-center text-center">
-                            <Label>Category</Label>
-                            <div className="flex items-center gap-2 font-semibold text-primary">
-                                <CatIcon className="w-4 h-4"/>
-                                <span>{category}</span>
-                            </div>
+                    <div>
+                        <Label className="mb-2 block">Category</Label>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                            {categoryKeys.map((catKey) => {
+                                const CatIcon = journalConfig[catKey].icon;
+                                return (
+                                    <Button
+                                        key={catKey}
+                                        variant={category === catKey ? 'default' : 'outline'}
+                                        onClick={() => handleFieldChange('category', catKey)}
+                                        className="flex items-center justify-center gap-2 h-auto py-2"
+                                    >
+                                        <CatIcon className="w-4 h-4" />
+                                        <span className="text-xs">{catKey}</span>
+                                    </Button>
+                                )
+                            })}
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => handleCategoryChange('next')}>
-                            <ChevronRight className="w-5 h-5"/>
-                        </Button>
                     </div>
 
-                    <p className="text-sm font-medium text-muted-foreground italic min-h-[20px] text-center">{entry.prompt}</p>
+
+                    <p className="text-sm font-medium text-muted-foreground italic min-h-[40px] text-center flex items-center justify-center">{entry.prompt}</p>
                     <Textarea
                         placeholder="Reflect on your day, your training, or anything on your mind..."
                         value={entry.reflection}
@@ -351,7 +343,7 @@ export function HabitJournal() {
                     <div className="lg:col-span-1 bg-muted/30 rounded-lg p-3">
                         <div className="flex justify-between items-center mb-2">
                             <h3 className="font-semibold">Entries</h3>
-                            <Button variant="ghost" size="sm" onClick={handleNewEntry}>
+                            <Button variant="ghost" size="sm" onClick={() => handleNewEntry()}>
                                 <PlusCircle className="mr-2 h-4 w-4"/> New
                             </Button>
                         </div>
@@ -381,3 +373,5 @@ export function HabitJournal() {
         </Card>
     );
 }
+
+    
