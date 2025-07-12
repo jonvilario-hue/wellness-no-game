@@ -4,8 +4,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Clipboard, Download, PlusCircle, Smile, Meh, Frown, Bed, Dumbbell, Brain, BookOpen, UserCheck, Target, Lightbulb, Calendar, CheckSquare } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { BookMarked, Save, Clipboard, Download, PlusCircle, Smile, Meh, Frown, Bed, Dumbbell, Brain, BookOpen, UserCheck, Target, Lightbulb, Calendar, CheckSquare, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -15,6 +15,8 @@ import { Separator } from '../ui/separator';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Checkbox } from '../ui/checkbox';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
+
 
 type JournalCategory = 'Daily Reflection' | 'Cognitive Training' | 'Goal Setting' | 'Freeform Note';
 
@@ -85,13 +87,13 @@ const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 
 
 export function HabitJournal() {
-    const { entries, addEntry, updateEntry } = useJournal();
+    const { entries, addEntry, updateEntry, deleteEntry } = useJournal();
     const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
     const { toast } = useToast();
     const today = new Date().toISOString().split('T')[0];
 
     const createNewEntryObject = (isToday: boolean): JournalEntry => {
-        const dateToUse = isToday ? today : new Date().toISOString().split('T')[0];
+        const dateToUse = isToday ? today : new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
         const defaultCategory: JournalCategory = 'Daily Reflection';
         const config = journalConfig[defaultCategory];
 
@@ -120,11 +122,14 @@ export function HabitJournal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [entries, today]);
     
-
     const handleNewEntry = useCallback(() => {
         const newEntry = createNewEntryObject(false);
+        // Ensure date is unique if creating a new one on a day that already has one
+        if (entries.some(e => e.date === newEntry.date)) {
+          newEntry.date = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        }
         setSelectedEntry(newEntry);
-    }, []);
+    }, [entries]);
     
     const handleSave = (entryToSave: JournalEntry) => {
         if (!entryToSave.reflection.trim()) {
@@ -141,6 +146,21 @@ export function HabitJournal() {
         } else {
             updateEntry(entryToSave.id, entryToSave);
             toast({ title: 'Journal Entry Updated', description: 'Your changes have been saved.' });
+        }
+    };
+    
+    const handleDelete = (id: string) => {
+        const entryIndex = entries.findIndex(e => e.id === id);
+        deleteEntry(id);
+        toast({ title: 'Entry Deleted', description: 'Your journal entry has been removed.' });
+        
+        const remainingEntries = entries.filter(e => e.id !== id);
+        if(remainingEntries.length === 0) {
+            handleNewEntry();
+        } else if (entryIndex > 0) {
+            setSelectedEntry(remainingEntries[entryIndex - 1]);
+        } else {
+            setSelectedEntry(remainingEntries[0]);
         }
     };
 
@@ -194,7 +214,7 @@ export function HabitJournal() {
         toast({ title: 'Export Successful', description: 'Your journal entry has been downloaded.' });
     };
 
-    const EntryEditor = ({ entry, onSave }: { entry: JournalEntry; onSave: (entry: JournalEntry) => void; }) => {
+    const EntryEditor = ({ entry, onSave, onDelete }: { entry: JournalEntry; onSave: (entry: JournalEntry) => void; onDelete: (id: string) => void; }) => {
        const [editorState, setEditorState] = useState<JournalEntry>(entry);
 
         useEffect(() => {
@@ -204,24 +224,26 @@ export function HabitJournal() {
        const isNewEntry = editorState.id.startsWith('new-');
        const category = (editorState.category as JournalCategory) || 'Daily Reflection';
        const config = journalConfig[category];
-
+       
        const handleCategoryChange = (newCategory: JournalCategory) => {
             const newConfig = journalConfig[newCategory];
-            setEditorState({
-                ...editorState,
+            setEditorState(prevState => ({
+                ...prevState,
                 category: newCategory,
                 prompt: newConfig.prompt,
                 mood: null, // Reset mood when category changes
-            });
+            }));
         };
         
        const handleFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
-            setEditorState({ ...editorState, [field]: value });
+            setEditorState(prevState => ({ ...prevState, [field]: value }));
         };
     
         const handleHabitChange = (habitId: HabitId, checked: boolean) => {
-            const newHabits = { ...editorState.habits, [habitId]: checked ? 'done' : null };
-            setEditorState({ ...editorState, habits: newHabits });
+            setEditorState(prevState => {
+              const newHabits = { ...prevState.habits, [habitId]: checked ? 'done' : null };
+              return { ...prevState, habits: newHabits };
+            });
         };
         
        return (
@@ -253,7 +275,6 @@ export function HabitJournal() {
                             })}
                         </div>
                     </div>
-
 
                     <p className="text-sm font-medium text-muted-foreground italic min-h-[40px] text-center flex items-center justify-center">{editorState.prompt}</p>
                     <Textarea
@@ -301,9 +322,34 @@ export function HabitJournal() {
                 <Separator/>
                 
                 <div className="flex-grow-0 pt-2 space-y-2">
-                    <Button onClick={() => onSave(editorState)} className="w-full">
-                        <Save className="mr-2 h-4 w-4" /> {isNewEntry ? 'Save Entry' : 'Update Entry'}
-                    </Button>
+                    <div className="grid grid-cols-2 gap-2">
+                        <Button onClick={() => onSave(editorState)}>
+                            <Save className="mr-2 h-4 w-4" /> {isNewEntry ? 'Save Entry' : 'Update Entry'}
+                        </Button>
+                        {!isNewEntry && (
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive">
+                                        <Trash2 className="mr-2 h-4 w-4" /> Delete
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone. This will permanently delete this journal entry.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => onDelete(editorState.id)}>
+                                            Continue
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        )}
+                    </div>
                      <div className="grid grid-cols-2 gap-2">
                         <Button onClick={handleCopyToClipboard} variant="outline"><Clipboard className="mr-2 h-4 w-4" /> Copy</Button>
                         <Button onClick={handleExport} variant="outline"><Download className="mr-2 h-4 w-4" /> Export</Button>
@@ -354,7 +400,7 @@ export function HabitJournal() {
                     {/* Column 2: Editor */}
                     <div className="lg:col-span-2 bg-background rounded-lg border">
                          {selectedEntry ? (
-                            <EntryEditor entry={selectedEntry} onSave={handleSave} />
+                            <EntryEditor entry={selectedEntry} onSave={handleSave} onDelete={handleDelete} />
                          ) : (
                             <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                                 <PlusCircle className="w-8 h-8 mb-2" />

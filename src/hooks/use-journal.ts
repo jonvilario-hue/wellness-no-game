@@ -57,11 +57,16 @@ const useJournal = () => {
         saveEntries(newEntries);
     };
 
+    const deleteEntry = (id: string) => {
+        const newEntries = entries.filter(entry => entry.id !== id);
+        saveEntries(newEntries);
+    };
+
     const getEntry = (id: string) => {
         return entries.find(entry => entry.id === id);
     };
 
-    return { entries, addEntry, updateEntry, getEntry };
+    return { entries, addEntry, updateEntry, deleteEntry, getEntry };
 };
 
 export { useJournal };
