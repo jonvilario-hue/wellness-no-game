@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Smile, Meh, Frown, Check, Clipboard, Download } from 'lucide-react';
+import { BookMarked, Save, Smile, Meh, Frown, Check, Clipboard, Download, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
@@ -27,12 +27,15 @@ const lifestyleHabits = [
 ];
 
 type HabitState = 'good' | 'neutral' | 'bad' | 'done' | null;
+type MoodState = 'happy' | 'neutral' | 'sad' | null;
 
 export function HabitJournal() {
   const [reflection, setReflection] = useState('');
   const [tags, setTags] = useState('');
   const [effort, setEffort] = useState(7);
   const [prompt, setPrompt] = useState('');
+  const [mood, setMood] = useState<MoodState>(null);
+  const [affirmation, setAffirmation] = useState('');
   const { toast } = useToast();
   const [habits, setHabits] = useState<Record<string, HabitState>>({ sleep: null, exercise: null, meditation: null, reading: null });
 
@@ -59,8 +62,19 @@ export function HabitJournal() {
   const formatMarkdown = () => {
     const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     const tagString = tags.split(',').map(t => t.trim() ? `#${t.trim()}` : '').join(' ');
+    let moodString = '';
+    if (mood) {
+        moodString = `**Mood:** ${mood.charAt(0).toUpperCase() + mood.slice(1)}\n\n`;
+    }
+    let affirmationString = '';
+    if (affirmation.trim()) {
+        affirmationString = `**Affirmation:** "${affirmation.trim()}"\n\n`;
+    }
+
 
     return `## ${today} - Cognitive Reflection\n\n` +
+           moodString +
+           affirmationString +
            `**Prompt:** ${prompt}\n\n` +
            `**Reflection:**\n${reflection}\n\n` +
            `**Effort/Focus:** ${effort}/10\n` +
@@ -100,6 +114,17 @@ export function HabitJournal() {
     setHabits(prev => ({ ...prev, [habitKey]: prev[habitKey] === state ? null : state }));
   };
 
+  const handleMoodClick = (newMood: MoodState) => {
+    setMood(prev => (prev === newMood ? null : newMood));
+  };
+  
+  const handleSaveAffirmation = () => {
+    if (affirmation.trim()) {
+      toast({ title: 'Affirmation Saved', description: 'Your intention for the day is set.' });
+    }
+  }
+
+
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
@@ -112,10 +137,11 @@ export function HabitJournal() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="journal">
-          <TabsList className="grid w-full grid-cols-2">
+        <Tabs defaultValue="journal" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="journal">Journal</TabsTrigger>
             <TabsTrigger value="habits">Lifestyle Habits</TabsTrigger>
+            <TabsTrigger value="mood">Mood & Affirmations</TabsTrigger>
           </TabsList>
           <TabsContent value="journal" className="pt-4 space-y-4">
             <p className="text-sm font-medium text-muted-foreground italic min-h-[20px]">
@@ -181,8 +207,33 @@ export function HabitJournal() {
                 </div>
               ))}
           </TabsContent>
+          <TabsContent value="mood" className="pt-4 space-y-6">
+            <div className="space-y-3">
+                <Label className="text-base font-medium">How are you feeling today?</Label>
+                <div className="flex justify-around p-3 bg-muted/50 rounded-lg">
+                    <Button variant={mood === 'happy' ? 'default' : 'ghost'} size="icon" className="h-12 w-12" onClick={() => handleMoodClick('happy')}><Smile className="h-6 w-6"/></Button>
+                    <Button variant={mood === 'neutral' ? 'default' : 'ghost'} size="icon" className="h-12 w-12" onClick={() => handleMoodClick('neutral')}><Meh className="h-6 w-6"/></Button>
+                    <Button variant={mood === 'sad' ? 'default' : 'ghost'} size="icon" className="h-12 w-12" onClick={() => handleMoodClick('sad')}><Frown className="h-6 w-6"/></Button>
+                </div>
+            </div>
+             <div className="space-y-3">
+                <Label htmlFor="affirmation-input" className="text-base font-medium">Daily Affirmation</Label>
+                 <Textarea
+                    id="affirmation-input"
+                    placeholder="e.g., 'I embrace challenges as opportunities for growth.'"
+                    value={affirmation}
+                    onChange={(e) => setAffirmation(e.target.value)}
+                    className="min-h-[80px]"
+                    />
+                <Button onClick={handleSaveAffirmation} className="w-full">
+                    <Heart className="mr-2 h-4 w-4" />
+                    Save Affirmation
+                </Button>
+            </div>
+          </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
   );
 }
+
