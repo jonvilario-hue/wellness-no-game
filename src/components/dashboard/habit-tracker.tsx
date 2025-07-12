@@ -18,7 +18,12 @@ const domainStreaksData: DomainStreakProps[] = [
     { domainKey: 'Gwm', name: 'Working Memory', streak: 8, isTop: false },
     { domainKey: 'Gs', name: 'Processing Speed', streak: 5, isTop: false },
     { domainKey: 'EF', name: 'Executive Function', streak: 3, isTop: false },
-];
+    { domainKey: 'Gc', name: 'Crystallized Intelligence', streak: 7, isTop: false },
+    { domainKey: 'Gv', name: 'Visual Processing', streak: 4, isTop: false },
+    { domainKey: 'Ga', name: 'Auditory Processing', streak: 2, isTop: false },
+    { domainKey: 'Glr', name: 'Long-Term Retrieval', streak: 9, isTop: false },
+].sort((a, b) => b.streak - a.streak);
+
 
 export function HabitTracker() {
     const [insight, setInsight] = useState('');
