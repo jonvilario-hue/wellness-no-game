@@ -1,6 +1,8 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, Sun } from 'lucide-react';
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 export function CognitiveEnergyMeter() {
   return (
@@ -21,7 +23,9 @@ export function CognitiveEnergyMeter() {
         <p className="text-sm text-muted-foreground">
             Morning sessions tend to show sharper <span className="font-bold text-primary">Executive Functioning</span>.
         </p>
-        <Button variant="outline" size="sm">Schedule Another</Button>
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/training/EF">Train EF Now</Link>
+        </Button>
       </CardContent>
     </Card>
   );
