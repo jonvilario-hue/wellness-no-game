@@ -112,9 +112,7 @@ export function HabitJournal() {
       description: 'You can restore it from the trash.',
       action: (
         <Button
-          onClick={() => {
-            handleRestore(id);
-          }}
+          onClick={() => handleRestore(id)}
           variant="outline"
           size="sm"
         >
@@ -122,9 +120,9 @@ export function HabitJournal() {
         </Button>
       ),
     });
-
-    const remainingEntries = entries.filter(e => e.id !== id);
+    
     if (selectedEntry?.id === id) {
+       const remainingEntries = entries.filter(e => e.id !== id);
        if (remainingEntries.length > 0) {
             const newIndex = Math.max(0, entryToDeleteIndex - 1);
             setSelectedEntry(remainingEntries[newIndex]);
@@ -166,11 +164,11 @@ export function HabitJournal() {
 
     const handleCategoryChange = (newCategory: JournalCategory) => {
       setEditorState(prevState => ({
-        ...createNewEntryObject(), // Reset fields but keep date/id
+        ...createNewEntryObject(),
         id: prevState.id,
         date: prevState.date,
         category: newCategory,
-        frequency: prevState.frequency, // Keep frequency
+        frequency: prevState.frequency,
       }));
     };
     
@@ -519,3 +517,5 @@ export function HabitJournal() {
     </Card>
   );
 }
+
+    
