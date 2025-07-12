@@ -2,18 +2,17 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Award, Star, Trophy, BrainCircuit, BookOpen, View, Ear, Goal, Archive } from 'lucide-react';
-import { domainIcons } from '../icons';
+import { Award, Flame, Shuffle, Repeat, TrendingUp, ShieldCheck, Gem, Compass } from 'lucide-react';
 
 const badges = [
-  { icon: domainIcons.Gf, color: 'text-primary', title: 'Gf Adept', description: 'Mastered 10 Gf puzzles' },
-  { icon: domainIcons.Gc, color: 'text-primary', title: 'Gc Scholar', description: 'Reached level 5 in Crystallized Intelligence' },
-  { icon: domainIcons.Gwm, color: 'text-primary', title: 'Gwm Specialist', description: 'Completed 20 Gwm sessions' },
-  { icon: domainIcons.Gs, color: 'text-primary', title: 'Gs Sprinter', description: 'Achieved a top 10% score in a Gs task' },
-  { icon: domainIcons.Gv, color: 'text-primary', title: 'Gv Visionary', description: 'Solved 15 visual processing challenges' },
-  { icon: domainIcons.Ga, color: 'text-primary', title: 'Ga Listener', description: 'Perfected 5 auditory puzzles in a row' },
-  { icon: domainIcons.Glr, color: 'text-primary', title: 'Glr Archivist', description: 'Recalled over 50 items in retrieval tasks' },
-  { icon: domainIcons.EF, color: 'text-primary', title: 'EF Captain', description: 'Maintained high focus for 3 consecutive EF sessions' },
+  { icon: Flame, color: 'text-primary', title: 'Neurogrit', description: 'Trained daily for 7 days in a row.' },
+  { icon: Shuffle, color: 'text-primary', title: 'Cognitive Flexer', description: 'Trained in 3+ different domains in a single day.' },
+  { icon: Repeat, color: 'text-primary', title: 'Retry Rebel', description: 'Replayed and improved on a previously challenging task.' },
+  { icon: TrendingUp, color: 'text-primary', title: 'Plateau Breaker', description: 'Achieved a new personal best after a performance plateau.' },
+  { icon: ShieldCheck, color: 'text-primary', title: 'Mistake Tamer', description: 'Recovered to a high score after 3+ early errors.' },
+  { icon: Gem, color: 'text-primary', title: 'Symbol Slayer', description: 'Mastered 5 Gs (Processing Speed) challenges.' },
+  { icon: Compass, color: 'text-primary', title: 'Curious Explorer', description: 'Tried every CHC domain at least once.' },
+  { icon: Award, color: 'text-primary', title: 'Balanced Brain', description: 'Maintained growth across 4+ domains this month.' },
 ];
 
 export function MilestoneBadges() {
