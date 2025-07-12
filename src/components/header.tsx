@@ -13,11 +13,7 @@ export function Header() {
             Cognitive Crucible
             </h1>
         </Link>
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/settings">
-            <Settings />
-          </Link>
-        </Button>
+        <div className="w-10"></div>
       </div>
     </header>
   );
