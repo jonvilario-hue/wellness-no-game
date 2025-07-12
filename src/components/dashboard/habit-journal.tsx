@@ -477,18 +477,18 @@ tags: ${entry.tags}
                     return (
                       <div
                         key={habit.id}
-                        className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md cursor-pointer hover:bg-muted"
+                        className="flex items-center space-x-2"
                       >
-                        <input
+                         <input
                           type="checkbox"
-                          id={habit.id}
+                          id={`habit-${habit.id}-${entry.id}`}
                           checked={!!editorState.habits[habit.id]}
                           onChange={e => handleHabitChange(habit.id, e.target.checked)}
                           className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
                         />
                         <Label
-                          htmlFor={habit.id}
-                          className="flex items-center gap-2 text-sm font-normal cursor-pointer"
+                          htmlFor={`habit-${habit.id}-${entry.id}`}
+                          className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted"
                         >
                           <habit.icon className="w-4 h-4 text-muted-foreground" />{' '}
                           {habit.label}
@@ -675,5 +675,3 @@ tags: ${entry.tags}
     </Card>
   );
 }
-
-    
