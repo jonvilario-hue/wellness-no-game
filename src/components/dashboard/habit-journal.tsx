@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
-import { useJournal, type JournalEntry, type MoodState, type HabitState } from '@/hooks/use-journal';
+import { useJournal, type JournalEntry, type MoodState } from '@/hooks/use-journal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Separator } from '../ui/separator';
 import { cn } from '@/lib/utils';
@@ -58,15 +58,13 @@ export function HabitJournal() {
             const entry = entries.find(e => e.id === selectedEntryId);
             setCurrentEntry(entry || null);
         } else {
-            // This case handles when 'new entry' is clicked
-            handleNewEntry();
+            setCurrentEntry(null);
         }
     }, [selectedEntryId, entries]);
 
     const handleNewEntry = () => {
-        setSelectedEntryId(null); // Deselect any existing entry
         const newPrompt = journalPrompts[Math.floor(Math.random() * journalPrompts.length)];
-        setCurrentEntry({
+        const newEntry: JournalEntry = {
             id: `new-${Date.now()}`,
             date: today,
             reflection: '',
@@ -77,10 +75,12 @@ export function HabitJournal() {
             affirmation: '',
             habits: { sleep: null, exercise: null, meditation: null, reading: null },
             category: 'Daily Reflection'
-        });
+        };
+        setCurrentEntry(newEntry);
+        setSelectedEntryId(newEntry.id);
     };
 
-    const handleFieldChange = (field: keyof JournalEntry, value: any) => {
+    const handleFieldChange = (field: keyof Omit<JournalEntry, 'id' | 'date' | 'habits'>, value: any) => {
         setCurrentEntry(prev => prev ? { ...prev, [field]: value } : null);
     };
 
@@ -114,7 +114,10 @@ export function HabitJournal() {
         const entryDate = new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         const tagString = entry.tags.split(',').map(t => t.trim() ? `#${t.trim()}` : '').join(' ');
         let moodString = entry.mood ? `**Mood:** ${entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}\n` : '';
-        const completedHabits = Object.entries(entry.habits).filter(([, state]) => state === 'done').map(([habit]) => habit).join(', ');
+        const completedHabits = Object.entries(entry.habits).filter(([, state]) => state === 'done').map(([habitId]) => {
+            const habit = habitOptions.find(h => h.id === habitId);
+            return habit ? habit.label : habitId;
+        }).join(', ');
         let habitString = completedHabits ? `**Habits:** ${completedHabits}\n\n` : '';
 
         return `## ${entryDate} - ${entry.category}\n\n` +
@@ -153,7 +156,7 @@ export function HabitJournal() {
 
     const EntryEditor = ({ entry }: { entry: JournalEntry | null }) => {
        if (!entry) return (
-            <div className="p-6 flex items-center justify-center h-full text-center text-muted-foreground">
+            <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 <PlusCircle className="w-8 h-8 mb-2" />
                 <p>Select an entry from the list or create a new one.</p>
             </div>
@@ -194,7 +197,7 @@ export function HabitJournal() {
                         <Label>Mood</Label>
                         <div className="flex gap-2 mt-1">
                             {(['happy', 'neutral', 'sad'] as MoodState[]).map(mood => (
-                                <Button key={mood} variant={entry.mood === mood ? 'default' : 'outline'} size="icon" onClick={() => handleFieldChange('mood', mood)}>
+                                <Button key={mood} variant={entry.mood === mood ? 'default' : 'outline'} size="icon" onClick={() => handleFieldChange('mood', entry.mood === mood ? null : mood)}>
                                     {mood === 'happy' && <Smile />}
                                     {mood === 'neutral' && <Meh />}
                                     {mood === 'sad' && <Frown />}
@@ -286,3 +289,5 @@ export function HabitJournal() {
         </Card>
     );
 }
+
+    
