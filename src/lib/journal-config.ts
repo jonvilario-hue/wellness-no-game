@@ -140,3 +140,5 @@ export const journalConfig: Record<JournalCategory, {
     habits: []
   },
 };
+
+    

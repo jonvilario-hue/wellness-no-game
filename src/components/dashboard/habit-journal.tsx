@@ -69,7 +69,7 @@ export function HabitJournal() {
   }, []);
 
   useEffect(() => {
-    if (viewMode === 'entries' && !selectedEntry && entries.length > 0) {
+    if (viewMode === 'entries' && entries.length > 0 && !selectedEntry) {
       setSelectedEntry(entries[0]);
     } else if (viewMode === 'entries' && entries.length === 0) {
       setSelectedEntry(createNewEntryObject());
@@ -109,8 +109,10 @@ export function HabitJournal() {
   };
 
   const handleDelete = (id: string) => {
+    const entryToDelete = entries.find(e => e.id === id);
+    if (!entryToDelete) return;
+
     const entryToDeleteIndex = entries.findIndex(e => e.id === id);
-    if (entryToDeleteIndex === -1) return;
 
     deleteEntry(id);
     toast({
@@ -132,7 +134,7 @@ export function HabitJournal() {
     const remainingEntries = entries.filter(e => e.id !== id);
     if (selectedEntry?.id === id) {
        if (remainingEntries.length > 0) {
-            const newIndex = Math.max(0, entryToDeleteIndex -1);
+            const newIndex = Math.max(0, entryToDeleteIndex - 1);
             setSelectedEntry(remainingEntries[newIndex]);
         } else {
             handleNewEntry();
@@ -207,7 +209,7 @@ export function HabitJournal() {
             {!isNewEntry && (
                  <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="icon" className="h-9 w-9">
+                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
                             <Trash2 className="w-4 h-4"/>
                         </Button>
                     </AlertDialogTrigger>
@@ -368,39 +370,42 @@ export function HabitJournal() {
     <div className='h-full flex flex-col'>
         <ScrollArea className="flex-grow pr-3 -mr-3">
             <div className="space-y-2 mt-2">
-            {entries.map(entry => (
-                <div key={entry.id} className="group flex items-center gap-2">
-                    <button onClick={() => handleSelectEntry(entry)}
-                        className={cn(
-                            "flex-grow text-left p-2 rounded-md transition-colors",
-                            selectedEntry?.id === entry.id ? 'bg-primary/10 text-primary-foreground' : 'hover:bg-muted'
-                        )}>
-                        <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{journalConfig[entry.category as JournalCategory]?.title || entry.category}</span></p>
-                        <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
-                    </button>
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Trash2 className="w-4 h-4 text-muted-foreground"/>
-                            </Button>
-                        </AlertDialogTrigger>
-                         <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This will move the entry to the trash. You can restore it later.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(entry.id)}>
-                                    Move to Trash
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                </div>
-            ))}
+            {entries.map(entry => {
+                const categoryTitle = journalConfig[entry.category as JournalCategory]?.title || entry.category;
+                return (
+                    <div key={entry.id} className="group flex items-center gap-2">
+                        <button onClick={() => handleSelectEntry(entry)}
+                            className={cn(
+                                "flex-grow text-left p-2 rounded-md transition-colors",
+                                selectedEntry?.id === entry.id ? 'bg-primary/10 text-primary-foreground' : 'hover:bg-muted'
+                            )}>
+                            <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{categoryTitle}</span></p>
+                            <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
+                        </button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Trash2 className="w-4 h-4 text-muted-foreground"/>
+                                </Button>
+                            </AlertDialogTrigger>
+                             <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This will move the entry to the trash. You can restore it later.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDelete(entry.id)}>
+                                        Move to Trash
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
+                );
+            })}
             </div>
         </ScrollArea>
     </div>
