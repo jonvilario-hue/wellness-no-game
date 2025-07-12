@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,9 +49,11 @@ const ShapeComponent = ({ shape, color, transform }: { shape: string, color: str
   switch (shape) {
     case 'circle': return <div className={cn(baseClasses, color, transformClasses, "rounded-full")} />;
     case 'square': return <div className={cn(baseClasses, color, transformClasses, "rounded-md")} />;
-    case 'triangle': return <div className={cn(baseClasses, transformClasses)} style={{ width: 0, height: 0, backgroundColor: 'transparent', borderLeft: '30px solid transparent', borderRight: '30px solid transparent', borderBottom: `60px solid var(--triangle-color, ${color.replace('bg-', 'hsl(var(--'))})` }} />;
+    case 'triangle':
+        const triangleColor = color.replace('bg-', '').replace('-500', '');
+        return <div className={cn(baseClasses, transformClasses)} style={{ width: 0, height: 0, backgroundColor: 'transparent', borderLeft: '30px solid transparent', borderRight: '30px solid transparent', borderBottom: `60px solid ${triangleColor}` }} />;
     case 'diamond': return <div className={cn(baseClasses, color, "rotate-45 rounded-md")} />;
-    case 'star': return <div className={cn(baseClasses, transformClasses, "text-yellow-400")}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-12 h-12"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg></div>;
+    case 'star': return <div className={cn(baseClasses, transformClasses)}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={cn("w-12 h-12", color.replace('bg-','text-'))}><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg></div>;
     default: return <div className={cn(baseClasses, color)} />;
   }
 };
