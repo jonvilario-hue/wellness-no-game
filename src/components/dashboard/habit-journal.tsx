@@ -17,10 +17,10 @@ const journalPrompts = [
 ];
 
 const lifestyleHabits = [
-    { key: 'sleep', label: 'Sleep Quality', icon: Smile },
-    { key: 'exercise', label: 'Exercise', icon: Check },
-    { key: 'meditation', label: 'Meditation', icon: Check },
-    { key: 'reading', label: 'Reading', icon: Check },
+    { key: 'sleep', label: 'Sleep Quality' },
+    { key: 'exercise', label: 'Exercise' },
+    { key: 'meditation', label: 'Meditation' },
+    { key: 'reading', label: 'Reading' },
 ];
 
 type HabitState = 'good' | 'neutral' | 'bad' | 'done' | null;
