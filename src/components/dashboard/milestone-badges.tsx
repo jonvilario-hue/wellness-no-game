@@ -10,7 +10,7 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 
 export function MilestoneBadges() {
-  const displayedBadges = badges;
+  const displayedBadges = badges.slice(0, 8);
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
