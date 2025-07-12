@@ -133,7 +133,7 @@ export function DynamicSequenceTransformer() {
 
         {gameState === 'feedback' && (
           <div className="mt-4 text-center text-xl font-bold animate-in fade-in">
-            <p className={feedback.startsWith('Correct') ? 'text-green-500' : 'text-red-500'}>{feedback}</p>
+            <p className={feedback.startsWith('Correct') ? 'text-green-500' : 'text-destructive'}>{feedback}</p>
           </div>
         )}
 

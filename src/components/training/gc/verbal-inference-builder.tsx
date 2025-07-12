@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -108,7 +107,7 @@ export function VerbalInferenceBuilder() {
     }
     
     if (option === selectedAnswer && feedback === 'incorrect') {
-      return "bg-red-600 hover:bg-red-700 text-white";
+      return "bg-destructive hover:bg-destructive/90 text-destructive-foreground";
     }
 
     return "secondary";
@@ -153,7 +152,7 @@ export function VerbalInferenceBuilder() {
               )}
               {feedback === 'incorrect' && (
                 <div className="animate-in fade-in">
-                    <p className="text-lg font-bold text-red-500">Not quite.</p>
+                    <p className="text-lg font-bold text-destructive">Not quite.</p>
                     <p className="text-sm text-muted-foreground">The correct answer is <span className="font-bold text-primary">{currentPuzzle.answer}</span>. {currentPuzzle.explanation}</p>
                 </div>
               )}
@@ -161,7 +160,7 @@ export function VerbalInferenceBuilder() {
           </>
         ) : (
           <div className="text-center space-y-4 animate-in fade-in">
-            <div className="text-2xl font-bold">Puzzle Set Complete!</div>
+            <CardTitle>Puzzle Set Complete!</CardTitle>
             <p className="text-xl">Your final score is: <span className="font-bold text-primary">{score} out of {puzzles.length}</span></p>
             <Button onClick={handleRestart} size="lg">Play Again</Button>
           </div>

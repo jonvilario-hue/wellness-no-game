@@ -130,7 +130,7 @@ export function MentalRotationLab() {
                   "p-4 rounded-lg flex items-center justify-center transition-all border-2",
                   selectedOption === option ? 'border-primary scale-105 bg-muted' : 'border-transparent hover:border-muted-foreground/50 bg-muted/50',
                   feedback && areGridsEqual(option, puzzle.answer) && 'bg-green-500/20 border-green-500',
-                  feedback && selectedOption === option && !areGridsEqual(option, puzzle.answer) && 'bg-red-500/20 border-red-500',
+                  feedback && selectedOption === option && !areGridsEqual(option, puzzle.answer) && 'bg-destructive/20 border-destructive',
                 )}
                 disabled={!!feedback}
               >
@@ -143,7 +143,7 @@ export function MentalRotationLab() {
         {feedback && (
           <div className="flex flex-col items-center gap-4 mt-4 text-center">
              {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct! Perfect rotation.</p>}
-            {feedback === 'incorrect' && <p className="text-lg font-bold text-red-500">That's not a pure rotation.</p>}
+            {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">That's not a pure rotation.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>
           </div>
         )}

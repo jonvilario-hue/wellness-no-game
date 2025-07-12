@@ -15,8 +15,8 @@ export function CognitiveEnergyMeter() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col justify-center items-center text-center space-y-3">
-        <div className="p-3 bg-amber-400/10 rounded-full">
-            <Sun className="w-8 h-8 text-amber-500" />
+        <div className="p-3 bg-primary/10 rounded-full">
+            <Sun className="w-8 h-8 text-primary" />
         </div>
         <p className="text-sm text-muted-foreground">
             Morning sessions tend to show sharper <span className="font-bold text-primary">Executive Functioning</span>.

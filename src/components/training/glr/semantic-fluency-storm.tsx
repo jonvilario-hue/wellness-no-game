@@ -91,7 +91,7 @@ export function SemanticFluencyStorm() {
 
         {gameState === 'finished' && (
           <div className="text-center space-y-4">
-            <div className="text-2xl font-bold">Time's Up!</div>
+            <CardTitle>Time's Up!</CardTitle>
             <p className="text-xl">You named <span className="font-bold text-primary">{responses.length}</span> items.</p>
             <div className="p-4 border rounded-lg max-h-48 overflow-y-auto w-full flex flex-wrap justify-center gap-2">
               {responses.map((res, index) => (

@@ -30,21 +30,25 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card sticky top-0 z-10">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
-          <Button asChild variant="outline" className="w-40 justify-start">
-            <Link href="/">
-              <ArrowLeft className="mr-2" />
-              Back to Dashboard
-            </Link>
-          </Button>
+          <div className="flex-1 flex justify-start">
+            <Button asChild variant="outline">
+              <Link href="/">
+                <ArrowLeft className="mr-2" />
+                Back to Dashboard
+              </Link>
+            </Button>
+          </div>
           <div className="flex items-center gap-3">
             <PageIcon className="h-7 w-7 text-primary" />
             <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
               {gameTitle}
             </h1>
           </div>
-          <Button variant="ghost" size="icon" className="w-40 justify-end">
-            <Settings />
-          </Button>
+          <div className="flex-1 flex justify-end">
+            <Button variant="ghost" size="icon">
+              <Settings />
+            </Button>
+          </div>
         </div>
       </header>
       <main className="flex-1 p-4 sm:p-6 md:p-8 flex items-center justify-center">

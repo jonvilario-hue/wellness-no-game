@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,7 +104,7 @@ export function RapidCodeMatch() {
 
         {gameState === 'finished' && (
           <div className="flex flex-col items-center gap-4">
-            <div className="text-2xl font-bold">Game Over!</div>
+            <CardTitle>Game Over!</CardTitle>
             <p className="text-xl">Your final score is: <span className="text-primary font-bold">{score}</span></p>
             <Button onClick={handleStart} size="lg">Play Again</Button>
           </div>

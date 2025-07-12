@@ -6,16 +6,16 @@ import { useState, useEffect } from "react";
 
 // Maps color names to theme-based CSS classes
 const colorOptions = [
-    { name: 'RED', class: 'text-destructive' },
-    { name: 'BLUE', class: 'text-primary' },
-    { name: 'GREEN', class: 'text-green-500' }, // Using a direct color for distinction
-    { name: 'YELLOW', class: 'text-yellow-500' }, // Using a direct color for distinction
+    { name: 'DESTRUCTIVE', class: 'text-destructive' },
+    { name: 'PRIMARY', class: 'text-primary' },
+    { name: 'ACCENT', class: 'text-accent' },
+    { name: 'GREEN', class: 'text-green-500' },
 ];
 
 export function FocusSwitchReactor() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
   const [rule, setRule] = useState<'color' | 'word'>('word');
-  const [stimulus, setStimulus] = useState({ word: 'RED', color: 'text-primary' });
+  const [stimulus, setStimulus] = useState({ word: 'PRIMARY', color: 'text-primary' });
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
 
@@ -102,7 +102,7 @@ export function FocusSwitchReactor() {
 
         {gameState === 'finished' && (
           <div className="flex flex-col items-center gap-4">
-            <div className="text-2xl font-bold">Game Over!</div>
+            <CardTitle>Game Over!</CardTitle>
             <p className="text-xl">Your final score is: <span className="text-primary font-bold">{score}</span></p>
             <Button onClick={handleStart} size="lg">Play Again</Button>
           </div>

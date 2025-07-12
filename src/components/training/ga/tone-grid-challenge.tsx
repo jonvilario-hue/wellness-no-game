@@ -15,7 +15,10 @@ export function ToneGridChallenge() {
 
   // Initialize AudioContext on client-side only
   useEffect(() => {
-    setAudioContext(new window.AudioContext());
+    // Check if window is defined (runs only on client)
+    if (typeof window !== 'undefined') {
+      setAudioContext(new window.AudioContext());
+    }
   }, []);
 
   const playTone = (freq: number) => {

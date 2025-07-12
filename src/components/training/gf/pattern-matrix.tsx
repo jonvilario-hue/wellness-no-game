@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 // --- Puzzle Elements ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
-const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500'];
+const colors = ['bg-primary', 'bg-accent', 'bg-green-500', 'bg-yellow-500'];
 const rotations = [0, 90, 180, 270];
 
 const generateElement = () => ({
@@ -89,15 +89,15 @@ const generatePuzzle = () => {
 // --- Components ---
 const ShapeComponent = ({ shape, color, rotation }: Element) => {
   const baseClasses = "w-10 h-10 transition-all";
-  const transformClasses = `rotate-${rotation}`;
+  const transformClass = `transform rotate-[${rotation}deg]`;
   
   switch (shape) {
     case 'circle': return <div className={cn(baseClasses, color, "rounded-full")} />;
-    case 'square': return <div className={cn(baseClasses, color, "rounded-md")} />;
+    case 'square': return <div className={cn(baseClasses, color, "rounded-md", transformClass)} />;
     case 'triangle':
         const triangleColorClass = color.replace('bg-','border-b-');
-        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid' }} className={cn(baseClasses, transformClasses, triangleColorClass, 'bg-transparent')} />;
-    case 'diamond': return <div className={cn(baseClasses, color, "rotate-45 rounded-sm")} />;
+        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid' }} className={cn(baseClasses, transformClass, triangleColorClass, 'bg-transparent')} />;
+    case 'diamond': return <div className={cn(baseClasses, color, "transform rotate-45 rounded-sm")} />;
     default: return <div className={cn(baseClasses, color)} />;
   }
 };
@@ -164,7 +164,7 @@ export function PatternMatrix() {
                   "h-24 bg-muted/50 rounded-lg flex items-center justify-center transition-all border-2",
                   selectedOption === option ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground/50',
                   feedback && JSON.stringify(option) === JSON.stringify(puzzle.answer) && 'bg-green-500/20 border-green-500',
-                  feedback && selectedOption === option && feedback === 'incorrect' && 'bg-red-500/20 border-red-500',
+                  feedback && selectedOption === option && feedback === 'incorrect' && 'bg-destructive/20 border-destructive',
                 )}
                 disabled={!!feedback}
               >
@@ -177,7 +177,7 @@ export function PatternMatrix() {
         {feedback && (
           <div className="flex flex-col items-center gap-4 mt-4 text-center animate-in fade-in">
              {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct!</p>}
-            {feedback === 'incorrect' && <p className="text-lg font-bold text-red-500">Not quite. Look for another pattern.</p>}
+            {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">Not quite. Look for another pattern.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>
           </div>
         )}
