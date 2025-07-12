@@ -72,19 +72,17 @@ export function HabitJournal() {
   useEffect(() => {
     if (viewMode === 'entries') {
       const todayEntry = entries.find(e => e.date === today);
-      if (todayEntry && selectedEntry?.id !== todayEntry.id) {
+      if (todayEntry) {
         setSelectedEntry(todayEntry);
-      } else if (!todayEntry && (!selectedEntry || !selectedEntry.id.startsWith('new-'))) {
-        setSelectedEntry(createNewEntryObject());
       } else if (entries.length > 0 && !selectedEntry) {
          setSelectedEntry(entries[0]);
-      } else if (entries.length === 0 && !selectedEntry) {
+      } else if (entries.length === 0) {
         setSelectedEntry(createNewEntryObject());
       }
     } else {
         setSelectedEntry(null);
     }
-  }, [entries, today, viewMode, createNewEntryObject, selectedEntry]);
+  }, [entries, today, viewMode, createNewEntryObject]);
 
   const handleSelectEntry = (entry: JournalEntry) => {
     setViewMode('entries');
@@ -127,7 +125,7 @@ export function HabitJournal() {
       description: 'You can restore it from the trash.',
       action: (
         <button
-          onClick={() => handleRestore(id)}
+          onClick={() => restoreEntry(id)}
           className="bg-transparent border border-white/50 text-white rounded-md px-3 py-1.5 text-sm hover:bg-white/10"
         >
           Undo
@@ -297,9 +295,10 @@ export function HabitJournal() {
                     const habit = allHabits[habitId];
                     if (!habit) return null;
                     return (
-                      <div
+                      <Label
                         key={habit.id}
-                        className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md"
+                        htmlFor={habit.id}
+                        className="flex items-center space-x-2 p-2 bg-muted/50 rounded-md cursor-pointer hover:bg-muted"
                       >
                         <input
                           type="checkbox"
@@ -308,14 +307,13 @@ export function HabitJournal() {
                           onChange={e => handleHabitChange(habit.id, e.target.checked)}
                           className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
                         />
-                        <Label
-                          htmlFor={habit.id}
-                          className="flex items-center gap-2 text-sm font-normal cursor-pointer"
+                        <div
+                          className="flex items-center gap-2 text-sm font-normal"
                         >
                           <habit.icon className="w-4 h-4 text-muted-foreground" />{' '}
                           {habit.label}
-                        </Label>
-                      </div>
+                        </div>
+                      </Label>
                     );
                   })}
                 </div>
