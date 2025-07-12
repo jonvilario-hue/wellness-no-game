@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import {
   Card,
   CardContent,
@@ -21,7 +22,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 interface ChcDomainCardProps {
   domain: {
@@ -34,18 +35,54 @@ interface ChcDomainCardProps {
 export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   const Icon = domainIcons[domain.key];
 
+  const [score, setScore] = useState(0);
+  const [trendData, setTrendData] = useState<{ week: string; score: number }[]>([]);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Using useMemo to prevent re-calculation on every render.
-  const { score, trendData } = useMemo(() => {
-    // Generate static, but unique-looking data for each card to avoid hydration errors.
-    const score = (domain.key.charCodeAt(0) * 3) % 40 + 50;
-    const trendData = [
-      { week: 'W1', score: score - 15 + Math.random() * 5 },
-      { week: 'W2', score: score - 10 + Math.random() * 5 },
-      { week: 'W3', score: score - 5 + Math.random() * 5 },
-      { week: 'W4', score: score },
-    ].map(d => ({...d, score: Math.max(0, Math.min(100, d.score))}));
-    return { score, trendData };
-  }, [domain.key]);
+  useEffect(() => {
+    if (isClient) {
+      // Generate static, but unique-looking data for each card to avoid hydration errors.
+      const generatedScore = (domain.key.charCodeAt(0) * 3) % 40 + 50;
+      const generatedTrendData = [
+        { week: 'W1', score: generatedScore - 15 + Math.random() * 5 },
+        { week: 'W2', score: generatedScore - 10 + Math.random() * 5 },
+        { week: 'W3', score: generatedScore - 5 + Math.random() * 5 },
+        { week: 'W4', score: generatedScore },
+      ].map(d => ({ ...d, score: Math.max(0, Math.min(100, d.score)) }));
+      
+      setScore(generatedScore);
+      setTrendData(generatedTrendData);
+    }
+  }, [domain.key, isClient]);
+
+  if (!isClient) {
+    // Render a placeholder or skeleton while waiting for client-side rendering
+    return (
+      <Card className="flex flex-col h-full">
+        <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+           <div className="p-3 bg-primary/10 rounded-lg">
+             <Icon className="w-6 h-6 text-primary" />
+           </div>
+           <div>
+             <CardTitle className="font-headline">{domain.name}</CardTitle>
+             <CardDescription>{domain.description}</CardDescription>
+           </div>
+         </CardHeader>
+        <CardContent className="flex-grow space-y-4">
+          <div className="animate-pulse bg-muted/50 rounded-md h-8 w-full"></div>
+          <div className="animate-pulse bg-muted/50 rounded-md h-24 w-full"></div>
+        </CardContent>
+        <CardFooter>
+          <Button className="w-full" disabled>Start Training</Button>
+        </CardFooter>
+      </Card>
+    );
+  }
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
@@ -93,7 +130,9 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">Start Training</Button>
+        <Button asChild className="w-full">
+          <Link href={`/training/${domain.key}`}>Start Training</Link>
+        </Button>
       </CardFooter>
     </Card>
   );
