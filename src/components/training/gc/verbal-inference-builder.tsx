@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { BookOpenText } from "lucide-react";
 
 const puzzles = [
   {
@@ -117,8 +118,11 @@ export function VerbalInferenceBuilder() {
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
-        <CardTitle>Verbal Inference Builder</CardTitle>
-        <CardDescription>Deduce the meaning or relationship from the context provided.</CardDescription>
+        <CardTitle className="flex items-center justify-center gap-2">
+            <BookOpenText />
+            Verbal Inference Builder
+        </CardTitle>
+        <CardDescription className="text-center">Deduce the meaning or relationship from the context provided.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         {gameState === 'playing' ? (

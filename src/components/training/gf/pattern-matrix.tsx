@@ -146,7 +146,7 @@ export function PatternMatrix() {
           {puzzle.grid.map((cell, index) => (
             <div key={index} className="w-20 h-20 bg-background/50 rounded-md flex items-center justify-center">
               {index === puzzle.missingIndex ? (
-                 feedback === 'correct' ? <ShapeComponent {...puzzle.answer!} /> : <span className="text-4xl font-bold text-primary">?</span>
+                 feedback === 'correct' ? <ShapeComponent {...puzzle.answer} /> : <span className="text-4xl font-bold text-primary">?</span>
               ) : (
                 <ShapeComponent {...cell!} />
               )}
@@ -165,7 +165,7 @@ export function PatternMatrix() {
                   "h-24 bg-muted/50 rounded-lg flex items-center justify-center transition-all border-2",
                   selectedOption === option ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground/50',
                   feedback && JSON.stringify(option) === JSON.stringify(puzzle.answer) && 'bg-green-500/20 border-green-500',
-                  feedback && selectedOption === option && feedback === 'incorrect' && 'bg-destructive/20 border-destructive',
+                  feedback === 'incorrect' && selectedOption === option && 'bg-destructive/20 border-destructive',
                 )}
                 disabled={!!feedback}
               >

@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { View } from "lucide-react";
 
 // --- Shape Definitions ---
 const shapes = [
@@ -108,7 +109,10 @@ export function MentalRotationLab() {
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader className="text-center">
-        <CardTitle>Mental Rotation Lab</CardTitle>
+        <CardTitle className="flex items-center justify-center gap-2">
+            <View />
+            Mental Rotation Lab
+        </CardTitle>
         <CardDescription>Which of the shapes below is a rotated version of the target shape?</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
@@ -130,7 +134,7 @@ export function MentalRotationLab() {
                   "p-4 rounded-lg flex items-center justify-center transition-all border-2",
                   selectedOption === option ? 'border-primary scale-105 bg-muted' : 'border-transparent hover:border-muted-foreground/50 bg-muted/50',
                   feedback && areGridsEqual(option, puzzle.answer) && 'bg-green-500/20 border-green-500',
-                  feedback && selectedOption === option && !areGridsEqual(option, puzzle.answer) && 'bg-destructive/20 border-destructive',
+                  feedback === 'incorrect' && selectedOption === option && !areGridsEqual(option, puzzle.answer) && 'bg-destructive/20 border-destructive',
                 )}
                 disabled={!!feedback}
               >
