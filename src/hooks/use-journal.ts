@@ -3,8 +3,8 @@
 
 import { useState, useEffect } from 'react';
 
-type MoodState = 'happy' | 'neutral' | 'sad' | null;
-type HabitState = 'good' | 'neutral' | 'bad' | 'done' | null;
+export type MoodState = 'happy' | 'neutral' | 'sad' | null;
+export type HabitState = 'done' | null;
 
 export type JournalEntry = {
     id: string;
@@ -26,7 +26,11 @@ const useJournal = () => {
         try {
             const savedEntries = window.localStorage.getItem('journalEntries');
             if (savedEntries) {
-                setEntries(JSON.parse(savedEntries));
+                const parsed = JSON.parse(savedEntries);
+                // Basic validation
+                if (Array.isArray(parsed)) {
+                    setEntries(parsed);
+                }
             }
         } catch (error) {
             console.error("Failed to load journal entries from localStorage", error);
@@ -35,8 +39,8 @@ const useJournal = () => {
 
     const saveEntries = (newEntries: JournalEntry[]) => {
         try {
-            // Sort entries by date before saving
-            const sortedEntries = newEntries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            // Sort entries by date (most recent first) before saving
+            const sortedEntries = newEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
             setEntries(sortedEntries);
             window.localStorage.setItem('journalEntries', JSON.stringify(sortedEntries));
         } catch (error) {
