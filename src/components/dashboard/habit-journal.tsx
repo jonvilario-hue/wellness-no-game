@@ -1,13 +1,13 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookMarked, Save, Smile, Meh, Frown, Check, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { BookMarked, Save, Smile, Meh, Frown, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { cn } from '@/lib/utils';
 
 const journalPrompts = [
     "What cognitive strategy felt strongest today?",
@@ -27,9 +27,14 @@ type HabitState = 'good' | 'neutral' | 'bad' | 'done' | null;
 
 export function HabitJournal() {
   const [reflection, setReflection] = useState('');
-  const [prompt, setPrompt] = useState(journalPrompts[0]);
+  const [prompt, setPrompt] = useState('');
   const { toast } = useToast();
   const [habits, setHabits] = useState<Record<string, HabitState>>({ sleep: null, exercise: null, meditation: null, reading: null });
+
+  useEffect(() => {
+    // Select a random prompt only on the client-side after hydration
+    setPrompt(journalPrompts[Math.floor(Math.random() * journalPrompts.length)]);
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const handleSave = () => {
     if (reflection.trim()) {
@@ -68,7 +73,7 @@ export function HabitJournal() {
             <TabsTrigger value="habits">Lifestyle Habits</TabsTrigger>
           </TabsList>
           <TabsContent value="journal" className="pt-4 space-y-4">
-            <p className="text-sm font-medium text-muted-foreground italic">
+            <p className="text-sm font-medium text-muted-foreground italic min-h-[20px]">
              {prompt}
             </p>
             <Textarea
