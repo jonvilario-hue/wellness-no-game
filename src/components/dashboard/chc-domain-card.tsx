@@ -53,7 +53,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   }, [domain.key]);
 
   const TrendIcon = trend >= 0 ? ArrowUp : ArrowDown;
-  const trendColor = trend >= 0 ? 'text-primary' : 'text-muted-foreground';
+  const trendColor = trend >= 0 ? 'text-green-500' : 'text-muted-foreground';
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
