@@ -3,8 +3,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MemoryStick, RefreshCw } from "lucide-react";
-import { useState, useEffect } from "react";
+import { MemoryStick } from "lucide-react";
+import { useState } from "react";
 
 const generateSequence = (length: number) => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -17,8 +17,8 @@ const generateSequence = (length: number) => {
 
 const tasks = [
   { id: 'reverse', label: "Repeat the sequence backward." },
-  { id: 'alpha_only', label: "Repeat only the letters in order." },
-  { id: 'numeric_only', label: "Repeat only the numbers in order." },
+  { id: 'alpha_only', label: "Repeat only the letters, in order." },
+  { id: 'numeric_only', label: "Repeat only the numbers, in order." },
   { id: 'remove_first', label: "Repeat the sequence, removing the first character." },
 ];
 
@@ -61,48 +61,55 @@ export function DynamicSequenceTransformer() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (gameState !== 'answering') return;
+    
     setGameState('feedback');
     const correctAnswer = getCorrectAnswer();
-    if (userAnswer.toUpperCase() === correctAnswer) {
+    
+    if (userAnswer.toUpperCase().trim() === correctAnswer) {
       setFeedback('Correct! Next level.');
       setTimeout(() => {
         setLevel(level + 1);
-        setGameState('start');
+        startLevel();
       }, 2000);
     } else {
-      setFeedback(`Incorrect. The answer was ${correctAnswer}. Let's try again.`);
+      setFeedback(`Incorrect. The answer was: ${correctAnswer}. Let's try again.`);
       setTimeout(() => {
-        setGameState('start');
+        // Restart the same level
+        startLevel();
       }, 3000);
     }
   };
 
 
   return (
-    <Card className="w-full max-w-2xl">
-      <CardHeader className="text-center">
+    <Card className="w-full max-w-2xl text-center">
+      <CardHeader>
         <CardTitle>Dynamic Sequence Transformer</CardTitle>
         <CardDescription>Memorize the sequence, then transform it as instructed.</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center gap-6">
-        <div className="w-full text-center font-mono text-lg">Level: {level}</div>
+      <CardContent className="flex flex-col items-center gap-6 min-h-[250px] justify-center">
         
         {gameState === 'start' && (
-            <Button onClick={startLevel} size="lg">Start Level {level}</Button>
+            <div className="flex flex-col items-center gap-4">
+                <div className="font-mono text-lg">Level: {level}</div>
+                <Button onClick={startLevel} size="lg">Start Level {level}</Button>
+            </div>
         )}
 
         {gameState === 'memorizing' && (
-          <div className="text-center space-y-4">
-            <h3 className="font-semibold">Memorize this sequence:</h3>
+          <div className="text-center space-y-4 animate-in fade-in">
+            <p className="font-semibold text-muted-foreground">Memorize this sequence:</p>
             <div className="p-4 bg-muted rounded-lg">
                 <p className="text-4xl font-mono tracking-widest">{sequence}</p>
             </div>
-            <p className="text-primary text-xl font-bold animate-pulse">Time remaining to answer...</p>
+            <p className="text-sm text-primary animate-pulse">Prepare to answer...</p>
           </div>
         )}
 
         {(gameState === 'answering' || gameState === 'feedback') && (
-          <div className="w-full space-y-4 text-center">
+          <div className="w-full space-y-4 text-center animate-in fade-in">
+             <div className="font-mono text-lg">Level: {level}</div>
             <div className="p-4 bg-muted rounded-lg">
                 <p className="text-xl font-semibold">{task.label}</p>
             </div>
@@ -122,7 +129,7 @@ export function DynamicSequenceTransformer() {
         )}
 
         {gameState === 'feedback' && (
-          <div className="mt-4 text-center text-xl font-bold">
+          <div className="mt-4 text-center text-xl font-bold animate-in fade-in">
             <p className={feedback.startsWith('Correct') ? 'text-green-500' : 'text-red-500'}>{feedback}</p>
           </div>
         )}
