@@ -8,7 +8,7 @@ import { IqProxyProgress } from '@/components/dashboard/iq-proxy-progress';
 import { CognitiveEnergyMeter } from '@/components/dashboard/cognitive-energy-meter';
 import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recommendations';
 import { AdaptiveDifficulty } from '@/components/dashboard/adaptive-difficulty';
-import { WeeklyReflection } from '@/components/dashboard/weekly-reflection';
+import { HabitJournal } from '@/components/dashboard/habit-journal';
 import { Header } from '@/components/header';
 import { VisibilityProvider, useVisibility } from '@/contexts/VisibilityContext';
 
@@ -40,7 +40,7 @@ function DashboardContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {visibleComponents.adaptiveDifficulty && <AdaptiveDifficulty />}
-            {visibleComponents.weeklyReflection && <WeeklyReflection />}
+            {visibleComponents.habitJournal && <HabitJournal />}
           </div>
         </div>
       </main>

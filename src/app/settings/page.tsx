@@ -18,7 +18,7 @@ const componentLabels: Record<ComponentKey, string> = {
   cognitiveEnergyMeter: 'Performance Insights',
   weakAreaRecommendations: 'Weak Area Targeting',
   adaptiveDifficulty: 'Adaptive Difficulty',
-  weeklyReflection: 'Weekly Reflection',
+  habitJournal: 'Habit & Journal',
 };
 
 function SettingsContent() {

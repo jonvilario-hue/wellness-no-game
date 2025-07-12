@@ -11,7 +11,7 @@ const componentKeys = [
   'cognitiveEnergyMeter',
   'weakAreaRecommendations',
   'adaptiveDifficulty',
-  'weeklyReflection',
+  'habitJournal',
 ] as const;
 
 export type ComponentKey = typeof componentKeys[number];
@@ -27,7 +27,7 @@ const defaultVisibility: VisibilityState = {
   cognitiveEnergyMeter: true,
   weakAreaRecommendations: true,
   adaptiveDifficulty: true,
-  weeklyReflection: true,
+  habitJournal: true,
 };
 
 interface VisibilityContextType {
