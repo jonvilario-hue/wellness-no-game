@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -22,7 +23,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from 'recharts';
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ChcDomainCardProps {
   domain: {
@@ -40,25 +41,19 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // This effect runs only once on the client after mounting
+    const generatedScore = (domain.key.charCodeAt(0) * 3) % 40 + 50;
+    const generatedTrendData = [
+      { week: 'W1', score: generatedScore - 15 + Math.random() * 5 },
+      { week: 'W2', score: generatedScore - 10 + Math.random() * 5 },
+      { week: 'W3', score: generatedScore - 5 + Math.random() * 5 },
+      { week: 'W4', score: generatedScore },
+    ].map(d => ({ ...d, score: Math.max(0, Math.min(100, d.score)) }));
+    
+    setScore(generatedScore);
+    setTrendData(generatedTrendData);
     setIsClient(true);
-  }, []);
-
-  // Using useMemo to prevent re-calculation on every render.
-  useEffect(() => {
-    if (isClient) {
-      // Generate static, but unique-looking data for each card to avoid hydration errors.
-      const generatedScore = (domain.key.charCodeAt(0) * 3) % 40 + 50;
-      const generatedTrendData = [
-        { week: 'W1', score: generatedScore - 15 + Math.random() * 5 },
-        { week: 'W2', score: generatedScore - 10 + Math.random() * 5 },
-        { week: 'W3', score: generatedScore - 5 + Math.random() * 5 },
-        { week: 'W4', score: generatedScore },
-      ].map(d => ({ ...d, score: Math.max(0, Math.min(100, d.score)) }));
-      
-      setScore(generatedScore);
-      setTrendData(generatedTrendData);
-    }
-  }, [domain.key, isClient]);
+  }, [domain.key]);
 
   if (!isClient) {
     // Render a placeholder or skeleton while waiting for client-side rendering
