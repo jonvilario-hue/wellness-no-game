@@ -65,7 +65,7 @@ export function HabitTracker() {
                 <p className="text-sm font-bold text-primary">{todaysHabits.size} / {allHabitList.length} Done</p>
             </div>
             <ScrollArea className="pr-3 -mr-3">
-                <Accordion type="multiple" defaultValue={habitCategories} className="w-full">
+                <Accordion type="multiple" defaultValue={[]} className="w-full">
                 {habitCategories.map(category => {
                     const categoryConfig = journalConfig[category];
                     const categoryHabits = categoryConfig.habits.map(habitId => allHabits[habitId]);
