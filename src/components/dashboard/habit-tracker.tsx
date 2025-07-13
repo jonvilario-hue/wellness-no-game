@@ -22,14 +22,14 @@ const overallStats = {
 };
 
 const domainStreaksData: DomainStreakProps[] = [
-    { domainKey: 'Gf', name: 'Fluid Reasoning', streak: 12, isTop: true },
-    { domainKey: 'Gwm', name: 'Working Memory', streak: 8, isTop: false },
-    { domainKey: 'Gs', name: 'Processing Speed', streak: 5, isTop: false },
-    { domainKey: 'EF', name: 'Executive Function', streak: 3, isTop: false },
-    { domainKey: 'Gc', name: 'Crystallized Intelligence', streak: 7, isTop: false },
-    { domainKey: 'Gv', name: 'Visual Processing', streak: 4, isTop: false },
-    { domainKey: 'Ga', name: 'Auditory Processing', streak: 2, isTop: false },
-    { domainKey: 'Glr', name: 'Long-Term Retrieval', streak: 9, isTop: false },
+    { domainKey: 'Gf', name: '(Gf) Fluid Reasoning', streak: 12, isTop: true },
+    { domainKey: 'Gwm', name: '(Gwm) Working Memory', streak: 8, isTop: false },
+    { domainKey: 'Gs', name: '(Gs) Processing Speed', streak: 5, isTop: false },
+    { domainKey: 'EF', name: '(EF) Executive Function', streak: 3, isTop: false },
+    { domainKey: 'Gc', name: '(Gc) Crystallized Intelligence', streak: 7, isTop: false },
+    { domainKey: 'Gv', name: '(Gv) Visual Processing', streak: 4, isTop: false },
+    { domainKey: 'Ga', name: '(Ga) Auditory Processing', streak: 2, isTop: false },
+    { domainKey: 'Glr', name: '(Glr) Long-Term Retrieval', streak: 9, isTop: false },
 ].sort((a, b) => b.streak - a.streak);
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
@@ -155,8 +155,8 @@ export function HabitTracker() {
               <TabsContent value="streaks" className="space-y-3 pt-4">
                    <ScrollArea className="h-64 pr-3 -mr-3">
                       <div className="space-y-2">
-                           {domainStreaksData.map((streak, index) => (
-                              <DomainStreak key={index} {...streak} />
+                           {domainStreaksData.map((streak) => (
+                              <DomainStreak key={streak.domainKey} {...streak} />
                            ))}
                       </div>
                   </ScrollArea>
