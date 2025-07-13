@@ -36,6 +36,11 @@ export const useFocusBuilder = () => {
     const diffDays = (today.getTime() - cycleStartDate.getTime()) / (1000 * 3600 * 24);
 
     if (!storedState || diffDays >= CYCLE_LENGTH) {
+      // If cycle is over, determine the next domain in the sequence
+      const lastFocus = storedState?.manualOverrideDomain || getFocusDomainForDate(cycleStartDate);
+      const lastIndex = focusRotation.indexOf(lastFocus);
+      const nextIndex = (lastIndex + 1) % focusRotation.length;
+      
       const newState: FocusBuilderState = {
         cycleStartDate: today.toISOString(),
         manualOverrideDomain: null, // Reset manual override on new cycle
@@ -53,15 +58,15 @@ export const useFocusBuilder = () => {
   }, []);
 
   const getFocusDomainForDate = (date: Date): CHCDomain => {
-    // This provides a consistent rotation based on the month
     const monthIndex = date.getMonth(); // 0-11
     return focusRotation[monthIndex % focusRotation.length];
   };
 
   const setManualFocus = useCallback((domainKey: CHCDomain) => {
+    // When a user manually selects a focus, we reset the cycle start date to today
+    // and store their choice as the manual override.
     const newState: FocusBuilderState = {
-      // Keep the original cycle start date unless we want to reset the timer on manual change
-      cycleStartDate: state?.cycleStartDate || new Date().toISOString(),
+      cycleStartDate: new Date().toISOString(),
       manualOverrideDomain: domainKey,
     };
     setState(newState);
@@ -70,14 +75,24 @@ export const useFocusBuilder = () => {
     } catch (error) {
       console.error('Failed to save manual focus state', error);
     }
-  }, [state?.cycleStartDate]);
+  }, []);
 
+  const getAutomaticFocus = (startDate: Date): CHCDomain => {
+     if (!state) return focusRotation[0];
+     // Find the last domain to determine the next one
+     const lastStoredState = state;
+     const lastFocus = lastStoredState.manualOverrideDomain || getFocusDomainForDate(new Date(lastStoredState.cycleStartDate));
+     const lastIndex = focusRotation.indexOf(lastFocus);
+     const nextIndex = (lastIndex + 1) % focusRotation.length;
+     return focusRotation[nextIndex];
+  }
 
-  const currentFocusKey = state?.manualOverrideDomain || getFocusDomainForDate(new Date(state?.cycleStartDate || Date.now()));
+  const cycleStartDate = new Date(state?.cycleStartDate || Date.now());
+
+  const currentFocusKey = state?.manualOverrideDomain || getAutomaticFocus(cycleStartDate);
   const currentFocus = chcDomains.find(d => d.key === currentFocusKey) || chcDomains[0];
   
   const today = new Date();
-  const cycleStartDate = new Date(state?.cycleStartDate || Date.now());
   const daysCompleted = Math.floor((today.getTime() - cycleStartDate.getTime()) / (1000 * 3600 * 24));
   const progress = Math.min(100, (daysCompleted / CYCLE_LENGTH) * 100);
   
