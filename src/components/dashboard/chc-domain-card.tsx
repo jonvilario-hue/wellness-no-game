@@ -72,9 +72,9 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         <div className="p-3 bg-primary/10 rounded-lg">
           <Icon className="w-6 h-6 text-primary" />
         </div>
-        <div>
-          <CardTitle className="font-headline text-lg">{domain.name}</CardTitle>
-          <CardDescription className="text-sm">{domain.gameTitle}</CardDescription>
+        <div className="flex-1">
+          <CardTitle className="font-headline text-lg">{domain.gameTitle}</CardTitle>
+          <CardDescription className="text-sm">{domain.description}</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-2">
