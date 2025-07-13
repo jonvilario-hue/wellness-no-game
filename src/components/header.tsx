@@ -37,7 +37,7 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>Training Focus</DropdownMenuLabel>
+                <DropdownMenuLabel>Global Training Focus</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={focus} onValueChange={handleFocusChange}>
                   <DropdownMenuRadioItem value="neutral">Core Thinking</DropdownMenuRadioItem>

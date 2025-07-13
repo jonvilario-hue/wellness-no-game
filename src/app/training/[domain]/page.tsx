@@ -14,9 +14,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { use } from 'react';
 import { useTrainingOverride } from '@/hooks/use-training-override';
 
-export default function TrainingPage({ params }: { params: Promise<{ domain: CHCDomain }> }) {
-  const resolvedParams = use(params);
-  const domainInfo = chcDomains.find(d => d.key === resolvedParams.domain);
+export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
+  const { domain } = use(Promise.resolve(params));
+  const domainInfo = chcDomains.find(d => d.key === domain);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
 

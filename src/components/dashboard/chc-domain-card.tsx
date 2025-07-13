@@ -48,10 +48,6 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient) return;
 
     const keySeed = domain.key.charCodeAt(0) + domain.key.charCodeAt(1);
     const pseudoRandom = (seed: number) => {
@@ -71,7 +67,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         trend = ((endScore - startScore) / startScore) * 100;
     }
     setData({ score: Math.round(generatedScore), trend });
-  }, [domain.key, isClient]);
+  }, [domain.key]);
 
 
   const getTrendInfo = () => {
