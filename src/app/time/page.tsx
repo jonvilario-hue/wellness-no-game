@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, Clock, AlarmClock as AlarmClockIcon, Timer as TimerIcon, Hourglass, CirclePlay } from 'lucide-react';
+import { ArrowLeft, Clock, AlarmClock as AlarmClockIcon, Timer as TimerIcon, Hourglass, CirclePlay, Settings, CalendarDays } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,7 +29,18 @@ export default function TimePage() {
                     Time Tools
                     </h1>
                 </div>
-                 <div className="flex-1"></div>
+                 <div className="flex-1 flex justify-end items-center gap-2">
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/calendar">
+                        <CalendarDays className="h-5 w-5" />
+                        </Link>
+                    </Button>
+                    <Button asChild variant="ghost" size="icon">
+                        <Link href="/settings">
+                        <Settings className="h-5 w-5" />
+                        </Link>
+                    </Button>
+                 </div>
             </div>
           </header>
           <main className="flex-1 p-4 sm:p-6 md:p-8 flex justify-center">
