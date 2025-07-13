@@ -82,7 +82,7 @@ const HabitItem = ({
 const HabitDialog = ({
     open,
     onOpenChange,
-    onSave,
+    onSave: onSaveProp,
     habitToEdit
 }: {
     open: boolean,
@@ -111,7 +111,7 @@ const HabitDialog = ({
             // For now, custom icons are not supported, so we default one
             icon: Target,
         };
-        onSave(newHabitData, habitToEdit?.id);
+        onSaveProp(newHabitData, habitToEdit?.id);
         onOpenChange(false);
     }
     
