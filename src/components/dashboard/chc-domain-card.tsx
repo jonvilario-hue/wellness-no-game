@@ -24,6 +24,7 @@ interface ChcDomainCardProps {
     name: string;
     description: string;
     gameTitle: string;
+    tasks: string[];
   };
 }
 

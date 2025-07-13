@@ -285,5 +285,3 @@ const useJournal = () => {
 };
 
 export { useJournal };
-
-    
