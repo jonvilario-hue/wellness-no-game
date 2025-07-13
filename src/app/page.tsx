@@ -2,10 +2,8 @@
 'use client';
 
 import { DailyChallenge } from '@/components/dashboard/daily-challenge';
-import { ChcDomainDashboard } from '@/components/dashboard/chc-domain-dashboard';
 import { HabitTracker } from '@/components/dashboard/habit-tracker';
 import { MilestoneBadges } from '@/components/dashboard/milestone-badges';
-import { CognitiveEfficiency } from '@/components/dashboard/cognitive-efficiency';
 import { PerformanceInsights } from '@/components/dashboard/performance-insights';
 import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recommendations';
 import { AdaptiveDifficulty } from '@/components/dashboard/adaptive-difficulty';
@@ -14,6 +12,7 @@ import { Header } from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useRef } from 'react';
+import { MainDashboardView } from '@/components/dashboard/main-dashboard-view';
 
 function DashboardContent() {
   const journalRef = useRef<HTMLDivElement>(null);
@@ -33,7 +32,7 @@ function DashboardContent() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <ChcDomainDashboard />
+              <MainDashboardView />
             </div>
             <aside className="lg:col-span-1 flex flex-col gap-6">
               <HabitTracker />
@@ -42,12 +41,11 @@ function DashboardContent() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <CognitiveEfficiency />
             <PerformanceInsights />
             <WeakAreaRecommendations />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" ref={journalRef}>
+          <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalRef}>
             <AdaptiveDifficulty />
             <HabitJournal />
           </div>

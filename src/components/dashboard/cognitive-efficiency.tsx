@@ -73,17 +73,7 @@ export function CognitiveEfficiency() {
   const trendColor = currentData.trend > 0 ? 'text-green-500' : 'text-amber-500';
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-headline">
-          <TrendingUp className="w-5 h-5 text-primary" />
-          Cognitive Efficiency
-        </CardTitle>
-        <CardDescription>
-          Your complexity-adjusted performance trend.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <CardContent>
         <TooltipProvider>
           <Tabs defaultValue="weekly" onValueChange={(value) => setTimeframe(value as Timeframe)}>
             <TabsList className="grid w-full grid-cols-3 mb-4">
@@ -135,7 +125,7 @@ export function CognitiveEfficiency() {
               <Separator />
 
               <div className="p-3 bg-primary/10 rounded-lg text-center">
-                  <p className="text-sm text-primary-foreground/90 flex items-start gap-2">
+                  <p className="text-sm flex items-start gap-2">
                       <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
                       <span className="text-foreground"><span className="font-bold">Insight:</span> {currentData.insight}</span>
                   </p>
@@ -144,6 +134,5 @@ export function CognitiveEfficiency() {
           </Tabs>
         </TooltipProvider>
       </CardContent>
-    </Card>
   );
 }
