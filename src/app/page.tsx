@@ -21,13 +21,13 @@ import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
 
 function DashboardContent() {
-  const journalRef = useRef<HTMLDivElement>(null);
+  const journalContainerRef = useRef<HTMLDivElement>(null);
   const { settings } = useDashboardSettings();
   const { setSelectedEntry, createNewEntry } = useJournal();
 
 
   const handleNewNoteClick = () => {
-    journalRef.current?.scrollIntoView({ behavior: 'smooth' });
+    journalContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
     setSelectedEntry(createNewEntry());
   }
 
@@ -60,9 +60,9 @@ function DashboardContent() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalRef}>
+          <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalContainerRef}>
             {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
-            {settings.habitJournal && <HabitJournal ref={journalRef} />}
+            {settings.habitJournal && <HabitJournal />}
           </div>
         </div>
       </main>

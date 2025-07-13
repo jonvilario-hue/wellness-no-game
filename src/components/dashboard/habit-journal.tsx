@@ -24,7 +24,7 @@ import {
   ArrowDownUp,
   AlertTriangle,
 } from 'lucide-react';
-import { useState, useEffect, useCallback, useMemo, forwardRef, useRef, useImperativeHandle } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -622,8 +622,8 @@ const TrashView = ({
 
 const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 
-export const HabitJournal = forwardRef((props, ref) => {
-  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, findOrCreateEntry, isLoaded } = useJournal();
+export function HabitJournal() {
+  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, findOrCreateEntry, isLoaded, setSelectedEntry, createNewEntry } = useJournal();
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortMode, setSortMode] = useState<SortMode>('date-desc');
@@ -633,17 +633,23 @@ export const HabitJournal = forwardRef((props, ref) => {
   const [currentDate, setCurrentDate] = useState(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]);
   const [currentCategory, setCurrentCategory] = useState<JournalCategory>('Growth & Challenge Reflection');
   const [currentFrequency, setCurrentFrequency] = useState<ReflectionFrequency>('daily');
-  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+  const [selectedEntry, _setSelectedEntry] = useState<JournalEntry | null>(null);
 
-  useImperativeHandle(ref, () => ({
-    createNewEntry: () => {
-        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-        setCurrentDate(today);
-        setCurrentCategory('Growth & Challenge Reflection');
-        setCurrentFrequency(getFrequencyForDate(new Date()));
-        setViewMode('entries');
-    },
-  }));
+  const setSelectedEntryRef = useRef(_setSelectedEntry);
+  setSelectedEntryRef.current = _setSelectedEntry;
+
+  useEffect(() => {
+    // This hook is for external updates to useJournal's selectedEntry
+    const unsubscribe = useJournal.subscribe((journalState) => {
+        if (journalState.selectedEntry) {
+            setViewMode('entries');
+            setCurrentDate(journalState.selectedEntry.date);
+            setCurrentCategory(journalState.selectedEntry.category);
+            setCurrentFrequency(journalState.selectedEntry.frequency);
+        }
+    });
+    return unsubscribe;
+  }, []);
   
   useEffect(() => {
     if (isLoaded) {
@@ -654,7 +660,7 @@ export const HabitJournal = forwardRef((props, ref) => {
   useEffect(() => {
     if(isLoaded) {
       const entry = findOrCreateEntry(currentDate, currentCategory, currentFrequency);
-      setSelectedEntry(entry);
+      _setSelectedEntry(entry);
     }
   }, [isLoaded, currentDate, currentCategory, currentFrequency, findOrCreateEntry]);
 
@@ -685,7 +691,7 @@ export const HabitJournal = forwardRef((props, ref) => {
       updateEntry(entryToSave.id, entryToSave);
     }
     
-    setSelectedEntry(savedEntry);
+    _setSelectedEntry(savedEntry);
     return { success: true, entry: savedEntry };
   }, [addEntry, updateEntry, toast]);
   
@@ -722,7 +728,7 @@ export const HabitJournal = forwardRef((props, ref) => {
     
     if (selectedEntry?.id === id) {
        const newEntry = findOrCreateEntry(currentDate, currentCategory, currentFrequency);
-       setSelectedEntry(newEntry);
+       _setSelectedEntry(newEntry);
     }
   }, [deleteEntry, restoreEntry, toast, selectedEntry, entries, findOrCreateEntry, currentDate, currentCategory, currentFrequency]);
 
@@ -742,7 +748,7 @@ export const HabitJournal = forwardRef((props, ref) => {
     return filtered.sort((a, b) => {
         switch (sortMode) {
             case 'date-asc':
-                return new Date(a.date).getTime() - new Date(b.date).getTime();
+                return new Date(a.date).getTime() - new Date(a.date).getTime();
             case 'category':
                 return a.category.localeCompare(b.category);
             case 'date-desc':
@@ -837,6 +843,6 @@ export const HabitJournal = forwardRef((props, ref) => {
       </CardContent>
     </Card>
   );
-});
+};
 
 HabitJournal.displayName = 'HabitJournal';

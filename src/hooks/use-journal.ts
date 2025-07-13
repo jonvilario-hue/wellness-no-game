@@ -65,7 +65,7 @@ const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits } => {
                 field3: 'Next time I start something new, I\'ll give myself more time to just explore without pressure to be productive right away.',
                 affirmations: ['I am capable of learning new things.'],
                 tags: '#onboarding, #learning, #growth',
-                effort: 5,
+                effort: 7,
                 mood: null,
             },
         ],
@@ -79,26 +79,32 @@ let memoryState: {
     entries: JournalEntry[];
     trashedEntries: TrashedJournalEntry[];
     completedHabits: DailyHabits;
+    selectedEntry: JournalEntry | null; // For external components to set the current entry
 } = {
     entries: [],
     trashedEntries: [],
     completedHabits: {},
+    selectedEntry: null,
 };
 
 const listeners: Set<Function> = new Set();
+const subscribe = (callback: Function) => {
+    listeners.add(callback);
+    return () => listeners.delete(callback);
+}
+
+const dispatch = (newState: Partial<typeof memoryState>) => {
+    memoryState = { ...memoryState, ...newState };
+    listeners.forEach(listener => listener(memoryState));
+};
 
 const useJournal = () => {
     const [state, setState] = useState(memoryState);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    const dispatch = useCallback((newState: Partial<typeof memoryState>) => {
-        memoryState = { ...memoryState, ...newState };
-        listeners.forEach(listener => listener(memoryState));
-    }, []);
-
     useEffect(() => {
-        listeners.add(setState);
-        return () => { listeners.delete(setState) };
+        const unsubscribe = subscribe(setState);
+        return unsubscribe;
     }, []);
 
     useEffect(() => {
@@ -157,7 +163,7 @@ const useJournal = () => {
 
         setIsLoaded(true);
 
-    }, [dispatch]);
+    }, []);
 
     const saveEntries = useCallback((newEntries: JournalEntry[]) => {
         try {
@@ -167,7 +173,7 @@ const useJournal = () => {
         } catch (error) {
             console.error("Failed to save entries to localStorage", error);
         }
-    }, [dispatch]);
+    }, []);
     
     const saveTrashedEntries = useCallback((newTrashedEntries: TrashedJournalEntry[]) => {
          try {
@@ -180,7 +186,7 @@ const useJournal = () => {
         } catch (error) {
             console.error("Failed to save trashed entries to localStorage", error);
         }
-    }, [dispatch]);
+    }, []);
     
     const saveCompletedHabits = useCallback((newHabits: DailyHabits) => {
         try {
@@ -193,7 +199,7 @@ const useJournal = () => {
         } catch (error) {
             console.error("Failed to save habits to localStorage", error);
         }
-    }, [dispatch]);
+    }, []);
     
     const createNewEntryObject = useCallback((date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
         return {
@@ -283,7 +289,18 @@ const useJournal = () => {
         }
         
         saveCompletedHabits(newHabits);
-    }, [saveCompletedHabits, state.completedHabits]);
+    }, [saveCompletedHabits]);
+
+    const createNewEntry = useCallback(() => {
+        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        const newEntry = createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
+        dispatch({ selectedEntry: newEntry });
+        return newEntry;
+    }, [createNewEntryObject]);
+
+    const setSelectedEntry = useCallback((entry: JournalEntry) => {
+        dispatch({ selectedEntry: entry });
+    }, []);
 
     const stableFns = useMemo(() => ({
         addEntry,
@@ -294,10 +311,14 @@ const useJournal = () => {
         emptyTrash,
         toggleHabitForDay,
         findOrCreateEntry,
-    }), [addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, toggleHabitForDay, findOrCreateEntry]);
+        createNewEntry,
+        setSelectedEntry,
+    }), [addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, toggleHabitForDay, findOrCreateEntry, createNewEntry, setSelectedEntry]);
 
 
     return { ...state, ...stableFns, isLoaded };
 };
+
+useJournal.subscribe = subscribe;
 
 export { useJournal };
