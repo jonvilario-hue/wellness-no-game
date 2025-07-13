@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, BrainCircuit, MemoryStick, Shuffle, Lightbulb, Info } from 'lucide-react';
+import { TrendingUp, BrainCircuit, MemoryStick, Shuffle, Lightbulb, Info, Zap } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { Separator } from '../ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
@@ -11,9 +11,10 @@ const efficiencyData = {
   overallScore: 78,
   trend: 14,
   subMetrics: [
-    { name: 'Problem-Solving Depth (Gf)', value: 85, icon: BrainCircuit, description: "Ability to resolve multi-step problems." },
-    { name: 'Working Memory Span (Gwm)', value: 72, icon: MemoryStick, description: "Dynamic memory span under distraction." },
-    { name: 'Cognitive Switching (EF)', value: 77, icon: Shuffle, description: "Speed and accuracy when switching tasks." },
+    { name: 'Problem-Solving Depth (Gf)', value: 85, icon: BrainCircuit, description: "Ability to resolve multi-step problems without hints." },
+    { name: 'Working Memory Span (Gwm)', value: 72, icon: MemoryStick, description: "Dynamic memory span under distraction or dual-tasking." },
+    { name: 'Cognitive Switching (EF)', value: 77, icon: Shuffle, description: "Speed and accuracy when switching between tasks." },
+    { name: 'Processing Speed (Gs)', value: 88, icon: Zap, description: "How fast simple cognitive tasks can be done accurately." },
   ],
   insight: "Your gains were driven by better interference control during complex tasks."
 };
