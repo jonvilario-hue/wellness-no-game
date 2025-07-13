@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,9 +34,9 @@ export function ToneGridChallenge() {
   
   const frequencies = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
 
-  const generateSequence = () => {
+  const generateSequence = (currentLevel: number) => {
     const newSequence = [];
-    for (let i = 0; i < level + 2; i++) {
+    for (let i = 0; i < currentLevel + 2; i++) {
       newSequence.push(Math.floor(Math.random() * frequencies.length));
     }
     setSequence(newSequence);
@@ -51,11 +52,11 @@ export function ToneGridChallenge() {
     });
   };
   
-  const handleStartLevel = () => {
+  const startLevel = (currentLevel: number) => {
     setUserSequence([]);
     setMessage('Listen carefully...');
     setGameState('playing');
-    const newSeq = generateSequence();
+    const newSeq = generateSequence(currentLevel);
     setTimeout(() => {
       playSequence(newSeq);
       setTimeout(() => {
@@ -65,6 +66,20 @@ export function ToneGridChallenge() {
     }, 1000);
   };
   
+  useEffect(() => {
+    if (gameState === 'idle' || level === 0) return;
+    startLevel(level);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level]);
+
+  const handleStart = () => {
+    if (level === 1) {
+      startLevel(1);
+    } else {
+      setLevel(1);
+    }
+  }
+
   const handleUserInput = (index: number) => {
     if (gameState !== 'answering') return;
     playTone(frequencies[index]);
@@ -77,15 +92,15 @@ export function ToneGridChallenge() {
         setMessage('Correct! Next level.');
         setTimeout(() => {
           setLevel(level + 1);
-          handleStartLevel();
         }, 1500);
       } else {
         setMessage(`Incorrect. Let's try level ${level} again.`);
-        setTimeout(handleStartLevel, 1500);
+        setTimeout(() => {
+            startLevel(level);
+        }, 1500);
       }
     }
   };
-
 
   return (
     <Card className="w-full max-w-2xl text-center">
@@ -96,7 +111,7 @@ export function ToneGridChallenge() {
       <CardContent className="flex flex-col items-center gap-6">
         <div className="text-xl font-mono">Level: {level}</div>
         
-        {gameState === 'idle' && <Button onClick={handleStartLevel} size="lg">Start</Button>}
+        {gameState === 'idle' && <Button onClick={handleStart} size="lg">Start</Button>}
         
         {gameState !== 'idle' && (
           <div className="w-full">
