@@ -11,9 +11,11 @@ import { gameComponents } from '@/components/training/game-components';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { use } from 'react';
 
-export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
-  const domainInfo = chcDomains.find(d => d.key === params.domain);
+export default function TrainingPage({ params }: { params: Promise<{ domain: CHCDomain }> }) {
+  const resolvedParams = use(params);
+  const domainInfo = chcDomains.find(d => d.key === resolvedParams.domain);
   const { focus: trainingFocus, isLoaded } = useTrainingFocus();
 
   if (!domainInfo) {
