@@ -154,6 +154,14 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
     } else {
       setFeedback(`Incorrect. The answer was: ${correctAnswer}. Let's try again.`);
       logGameResult('Gwm', currentMode, { score: 0, time });
+      
+      if(onComplete) {
+        setTimeout(() => {
+            startLevel(level);
+        }, 3000);
+        return;
+      }
+
       setTimeout(() => {
         startLevel(level);
       }, 3000);

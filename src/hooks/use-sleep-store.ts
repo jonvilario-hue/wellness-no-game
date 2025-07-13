@@ -2,7 +2,6 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
@@ -121,4 +120,3 @@ export const useSleepStore = create<SleepState>()(
         },
     })
 );
-
