@@ -43,7 +43,6 @@ export function ThemeProvider({
     return themes.find(t => t.key === defaultThemeKey) || defaultInitialTheme;
   });
 
-  // Helper to convert hex to HSL string
   const hexToHslString = useCallback((hex: string): string | null => {
     if (!hex.startsWith('#')) return null;
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -77,20 +76,20 @@ export function ThemeProvider({
     root.classList.remove('dark', 'light');
     root.classList.add(theme.colorScheme.isDark ? 'dark' : 'light');
 
-    const backgroundHsl = hexToHslString(theme.colorScheme.background);
-    const textHsl = hexToHslString(theme.colorScheme.successProgressText);
-
-    if (backgroundHsl) {
-        root.style.setProperty('--background-hsl', backgroundHsl);
-        root.style.setProperty('--card-hsl', backgroundHsl);
-        root.style.setProperty('--popover-hsl', backgroundHsl);
-    }
-    if (textHsl) {
-        root.style.setProperty('--foreground-hsl', textHsl);
-        root.style.setProperty('--card-foreground-hsl', textHsl);
-        root.style.setProperty('--popover-foreground-hsl', textHsl);
-        root.style.setProperty('--primary-hsl', textHsl);
-        root.style.setProperty('--ring-hsl', textHsl);
+    const themeColors = {
+        '--theme-bg': hexToHslString(theme.colorScheme.background),
+        '--theme-panel': hexToHslString(theme.colorScheme.panels),
+        '--theme-text-primary': hexToHslString(theme.colorScheme.textPrimary),
+        '--theme-text-secondary': hexToHslString(theme.colorScheme.textSecondary),
+        '--theme-accent': hexToHslString(theme.colorScheme.accent),
+        '--theme-accent-fg': hexToHslString(theme.colorScheme.accentForeground),
+        '--theme-success': hexToHslString(theme.colorScheme.success),
+    };
+    
+    for (const [key, value] of Object.entries(themeColors)) {
+        if (value) {
+            root.style.setProperty(key, value);
+        }
     }
     
     try {

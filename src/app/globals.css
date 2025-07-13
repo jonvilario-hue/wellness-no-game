@@ -4,26 +4,44 @@
 
 @layer base {
   :root {
-    --background-hsl: 220 20% 95%;
-    --foreground-hsl: 220 10% 20%;
-    --card-hsl: 220 20% 95%;
-    --card-foreground-hsl: 220 10% 20%;
-    --popover-hsl: 220 20% 95%;
-    --popover-foreground-hsl: 220 10% 20%;
-    --primary-hsl: 220 70% 50%;
-    --primary-foreground-hsl: 220 20% 98%;
-    --secondary-hsl: 220 10% 85%;
-    --secondary-foreground-hsl: 220 10% 20%;
-    --muted-hsl: 220 10% 90%;
-    --muted-foreground-hsl: 220 10% 45%;
-    --accent-hsl: 190 70% 50%;
-    --accent-foreground-hsl: 220 10% 20%;
-    --destructive-hsl: 0 84.2% 60.2%;
-    --destructive-foreground-hsl: 0 0% 98%;
-    --border-hsl: 220 10% 85%;
-    --input-hsl: 220 10% 85%;
-    --ring-hsl: 220 70% 50%;
+    /* Define a default theme here (e.g., light mode) */
+    --theme-bg: 240 10% 98%;
+    --theme-panel: 0 0% 100%;
+    --theme-text-primary: 240 10% 3.9%;
+    --theme-text-secondary: 240 5.9% 10%;
+    --theme-accent: 240 5.9% 10%;
+    --theme-accent-fg: 0 0% 98%;
+    --theme-success: 142.1 76.2% 36.3%;
+    --theme-destructive: 0 84.2% 60.2%;
     
+    --background: var(--theme-bg);
+    --foreground: var(--theme-text-primary);
+    
+    --card: var(--theme-panel);
+    --card-foreground: var(--theme-text-primary);
+    
+    --popover: var(--theme-panel);
+    --popover-foreground: var(--theme-text-primary);
+
+    --primary: var(--theme-accent);
+    --primary-foreground: var(--theme-accent-fg);
+
+    --secondary: var(--theme-panel);
+    --secondary-foreground: var(--theme-text-primary);
+    
+    --muted: var(--theme-panel);
+    --muted-foreground: var(--theme-text-secondary);
+
+    --accent: var(--theme-accent);
+    --accent-foreground: var(--theme-accent-fg);
+
+    --destructive: var(--theme-destructive);
+    --destructive-foreground: 0 0% 98%;
+
+    --border: var(--theme-text-primary) / 0.1;
+    --input: var(--theme-text-primary) / 0.1;
+    --ring: var(--theme-accent);
+
     --radius: 0.5rem;
 
     --chart-1: 12 76% 61%;
@@ -34,31 +52,18 @@
   }
 
   .dark {
-    --background-hsl: 224 71.4% 4.1%;
-    --foreground-hsl: 210 20% 98%;
-    --card-hsl: 224 71.4% 4.1%;
-    --card-foreground-hsl: 210 20% 98%;
-    --popover-hsl: 224 71.4% 4.1%;
-    --popover-foreground-hsl: 210 20% 98%;
-    --primary-hsl: 210 40% 98%;
-    --primary-foreground-hsl: 222.2 47.4% 11.2%;
-    --secondary-hsl: 217.2 32.6% 17.5%;
-    --secondary-foreground-hsl: 210 40% 98%;
-    --muted-hsl: 217.2 32.6% 17.5%;
-    --muted-foreground-hsl: 215 20.2% 65.1%;
-    --accent-hsl: 217.2 32.6% 17.5%;
-    --accent-foreground-hsl: 210 40% 98%;
-    --destructive-hsl: 0 62.8% 30.6%;
-    --destructive-foreground-hsl: 210 40% 98%;
-    --border-hsl: 217.2 32.6% 17.5%;
-    --input-hsl: 217.2 32.6% 17.5%;
-    --ring-hsl: 212.7 26.8% 83.9%;
-
-    --chart-1: 220 70% 50%;
-    --chart-2: 190 70% 50%;
-    --chart-3: 160 60% 45%;
-    --chart-4: 30 80% 55%;
-    --chart-5: 0 90% 60%;
+    /* Define default dark theme variables */
+    --theme-bg: 240 10% 3.9%;
+    --theme-panel: 240 3.7% 15.9%;
+    --theme-text-primary: 0 0% 98%;
+    --theme-text-secondary: 240 5% 64.9%;
+    --theme-accent: 0 0% 98%;
+    --theme-accent-fg: 240 5.9% 10%;
+    --theme-success: 142.1 76.2% 36.3%;
+    --theme-destructive: 0 62.8% 30.6%;
+    
+    --border: var(--theme-text-primary) / 0.1;
+    --input: var(--theme-text-primary) / 0.1;
   }
 }
 
