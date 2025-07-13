@@ -294,12 +294,10 @@ const useJournal = () => {
     
         const createNewEntry = () => {
             const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-            const newEntry = createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
-            dispatch({ selectedEntry: newEntry });
-            return newEntry;
+            return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
         };
     
-        const setSelectedEntry = (entry: JournalEntry) => {
+        const setSelectedEntry = (entry: JournalEntry | null) => {
             dispatch({ selectedEntry: entry });
         };
         
@@ -325,5 +323,3 @@ useJournal.getState = () => memoryState;
 useJournal.subscribe = subscribe;
 
 export { useJournal };
-
-      

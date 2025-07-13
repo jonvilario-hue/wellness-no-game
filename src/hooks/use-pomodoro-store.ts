@@ -61,10 +61,10 @@ export const usePomodoroStore = create<PomodoroState>()(
             
             setMode: (newMode) => {
                 const { preset } = get();
-                let newTime = 0;
+                let newTime;
                 if (newMode === 'work') newTime = preset.focusMinutes * 60;
                 else if (newMode === 'shortBreak') newTime = preset.shortBreakMinutes * 60;
-                else if (newMode === 'longBreak') newTime = preset.longBreakMinutes * 60;
+                else newTime = preset.longBreakMinutes * 60;
                 set({ mode: newMode, timeLeft: newTime, isActive: true });
             },
 
@@ -78,10 +78,10 @@ export const usePomodoroStore = create<PomodoroState>()(
 
             resetTimer: () => {
                 const { preset, mode } = get();
-                let timeToReset = 0;
+                let timeToReset;
                 if (mode === 'work') timeToReset = preset.focusMinutes * 60;
                 else if (mode === 'shortBreak') timeToReset = preset.shortBreakMinutes * 60;
-                else if (mode === 'longBreak') timeToReset = preset.longBreakMinutes * 60;
+                else timeToReset = preset.longBreakMinutes * 60;
                 set({ isActive: false, timeLeft: timeToReset });
             },
             
@@ -117,5 +117,3 @@ export const usePomodoroStore = create<PomodoroState>()(
         }
     )
 );
-
-      

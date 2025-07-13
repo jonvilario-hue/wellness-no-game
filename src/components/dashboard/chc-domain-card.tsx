@@ -28,15 +28,8 @@ interface ChcDomainCardProps {
   };
 }
 
-export function ChcDomainCard({ domain }: ChcDomainCardProps) {
-  const Icon = domainIcons[domain.key];
-
-  const [score, setScore] = useState(0);
-  const [trend, setTrend] = useState(0);
-
-  useEffect(() => {
-    // This effect runs only once on the client after mounting
-    const generatedScore = (domain.key.charCodeAt(0) * 3) % 40 + 50;
+const generateInitialData = (domainKey: CHCDomain) => {
+    const generatedScore = (domainKey.charCodeAt(0) * 3) % 40 + 50;
     const generatedTrendData = [
       { week: 'W1', score: generatedScore - 15 + Math.random() * 5 },
       { week: 'W2', score: generatedScore - 10 + Math.random() * 5 },
@@ -44,29 +37,37 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
       { week: 'W4', score: generatedScore },
     ].map(d => ({ ...d, score: Math.max(0, Math.min(100, d.score)) }));
     
-    setScore(generatedScore);
-
+    let trend = 0;
     const startScore = generatedTrendData[0].score;
     const endScore = generatedTrendData[generatedTrendData.length - 1].score;
     if(startScore > 0) {
         const pctChange = ((endScore - startScore) / startScore) * 100;
-        setTrend(pctChange);
+        trend = pctChange;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return { score: generatedScore, trend };
+}
+
+
+export function ChcDomainCard({ domain }: ChcDomainCardProps) {
+  const Icon = domainIcons[domain.key];
+  const [isClient, setIsClient] = useState(false);
+  const [data] = useState(() => generateInitialData(domain.key));
+
+  useEffect(() => {
+    setIsClient(true);
   }, []);
 
   const getTrendInfo = () => {
-    if (trend > 2) {
+    if (data.trend > 2) {
       return { Icon: ArrowUp, color: 'text-green-500', text: 'Trending upward' };
     }
-    if (trend < -2) {
+    if (data.trend < -2) {
       return { Icon: ArrowDown, color: 'text-muted-foreground', text: 'Natural fluctuation' };
     }
     return { Icon: Minus, color: 'text-primary', text: 'Holding steady' };
   };
 
   const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo();
-
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
@@ -93,9 +94,9 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
                   <p>Adaptive skill rating (50 = average, 100 = high mastery)</p>
                 </TooltipContent>
               </Tooltip>
-            <span className="text-sm font-bold text-primary">{score > 0 ? Math.round(score) : '...'}</span>
+            <span className="text-sm font-bold text-primary">{isClient ? Math.round(data.score) : '...'}</span>
           </div>
-          <Progress value={score} />
+          <Progress value={isClient ? data.score : 0} />
         </div>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
             <Tooltip delayDuration={0}>
@@ -109,10 +110,10 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
               </TooltipContent>
             </Tooltip>
             <div className={`flex items-center font-bold ${trendColor}`}>
-                {score > 0 ? (
+                {isClient ? (
                   <>
                     <TrendIcon className="w-4 h-4 mr-1"/>
-                    {trend.toFixed(1)}%
+                    {data.trend.toFixed(1)}%
                   </>
                 ) : (
                   <span>...</span>
@@ -128,3 +129,4 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
       </CardFooter>
     </Card>
   );
+}

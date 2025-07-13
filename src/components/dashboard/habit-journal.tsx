@@ -90,8 +90,7 @@ const JournalEditor = memo(({
       return { success: false, entry: null };
     }
 
-    const originalEntry = entry;
-    const hasChanged = JSON.stringify(originalEntry) !== JSON.stringify(updatedEntry);
+    const hasChanged = JSON.stringify(entry) !== JSON.stringify(updatedEntry);
 
     if(!hasChanged && !isNew) {
       setSaveStatus('idle');
@@ -119,8 +118,7 @@ const JournalEditor = memo(({
 
       return () => clearTimeout(handler);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorState, handleSave]);
+  }, [editorState, entry, handleSave]);
 
 
   useEffect(() => {
@@ -150,26 +148,14 @@ const JournalEditor = memo(({
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
     if (editorState.category !== newCategory) {
-        const isNew = editorState.id.startsWith('new-');
-        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
-        if (isNew && !hasContent) {
-           // Don't save, just switch
-        } else {
-            handleSave(editorState, { isFinal: true });
-        }
+        handleSave(editorState, { isFinal: true });
         onCategoryChange(newCategory);
     }
   };
   
   const handleFrequencyButtonClick = (newFrequency: ReflectionFrequency) => {
     if (editorState.frequency !== newFrequency) {
-        const isNew = editorState.id.startsWith('new-');
-        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
-        if (isNew && !hasContent) {
-            // Don't save, just switch
-        } else {
-           handleSave(editorState, { isFinal: true });
-        }
+        handleSave(editorState, { isFinal: true });
         onFrequencyChange(newFrequency);
     }
   };
@@ -721,46 +707,60 @@ JournalSidebar.displayName = 'JournalSidebar';
 
 
 export function HabitJournal() {
-  const { entries, addEntry, updateEntry, deleteEntry, findOrCreateEntry, isLoaded, setSelectedEntry, selectedEntry } = useJournal();
-
-  useEffect(() => {
-    if (isLoaded && !selectedEntry) {
+  const { isLoaded, findOrCreateEntry, setSelectedEntry, selectedEntry, createNewEntry } = useJournal();
+  
+  // Memoize the initial entry to avoid re-running findOrCreateEntry on every render
+  const initialEntry = useMemo(() => {
+    if (isLoaded) {
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-      const entry = findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
-      setSelectedEntry(entry);
+      return findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
     }
-  }, [isLoaded, findOrCreateEntry, selectedEntry, setSelectedEntry]);
+    return null;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded]);
+
+  // Set the selected entry only once when the component is loaded or when the initial entry is ready
+  useEffect(() => {
+    if (initialEntry && !selectedEntry) {
+      setSelectedEntry(initialEntry);
+    }
+  }, [initialEntry, selectedEntry, setSelectedEntry]);
+  
+  // Memoize active entry for editor to prevent re-renders
+  const activeEntry = useMemo(() => {
+    if (selectedEntry) return selectedEntry;
+    if (isLoaded) return createNewEntry();
+    return null;
+  }, [selectedEntry, isLoaded, createNewEntry]);
   
   const { toast } = useToast();
+  const { addEntry, updateEntry, deleteEntry, entries } = useJournal();
 
   const handleSelectFromList = useCallback((entry: JournalEntry) => {
     setSelectedEntry(entry);
   }, [setSelectedEntry]);
 
   const handleCategoryChange = useCallback((newCategory: JournalCategory) => {
-    if (selectedEntry) {
-      const newEntry = findOrCreateEntry(selectedEntry.date, newCategory, selectedEntry.frequency);
+    if (activeEntry) {
+      const newEntry = findOrCreateEntry(activeEntry.date, newCategory, activeEntry.frequency);
       setSelectedEntry(newEntry);
     }
-  }, [selectedEntry, findOrCreateEntry, setSelectedEntry]);
+  }, [activeEntry, findOrCreateEntry, setSelectedEntry]);
 
   const handleFrequencyChange = useCallback((newFrequency: ReflectionFrequency) => {
-    if (selectedEntry) {
-      const newEntry = findOrCreateEntry(selectedEntry.date, selectedEntry.category, newFrequency);
+    if (activeEntry) {
+      const newEntry = findOrCreateEntry(activeEntry.date, activeEntry.category, newFrequency);
       setSelectedEntry(newEntry);
     }
-  }, [selectedEntry, findOrCreateEntry, setSelectedEntry]);
+  }, [activeEntry, findOrCreateEntry, setSelectedEntry]);
   
   const handleSave = useCallback((entryToSave: JournalEntry, options?: { isFinal?: boolean }) => {
     let savedEntry = entryToSave;
     const isNew = entryToSave.id.startsWith('new-');
     
-    // Only save if it's a "final" save or if it's an existing entry being modified
-    if (isNew && !options?.isFinal) {
-        const hasContent = entryToSave.field1 || entryToSave.field2 || entryToSave.field3 || entryToSave.affirmations.some(a => a);
-        if (!hasContent) {
-            return { success: false, entry: null };
-        }
+    const hasContent = entryToSave.field1 || entryToSave.field2 || entryToSave.field3 || entryToSave.affirmations.some(a => a);
+    if(isNew && !hasContent && !options?.isFinal) {
+        return { success: false, entry: null };
     }
     
     if (isNew) {
@@ -769,13 +769,11 @@ export function HabitJournal() {
       updateEntry(entryToSave.id, entryToSave);
     }
     
-    // If the currently active entry was the one we just saved (especially a new one),
-    // update the global selection to the final, saved version.
-    if (selectedEntry?.id === entryToSave.id || isNew) {
+    if (activeEntry?.id === entryToSave.id || isNew) {
         setSelectedEntry(savedEntry);
     }
     return { success: true, entry: savedEntry };
-  }, [addEntry, updateEntry, setSelectedEntry, selectedEntry]);
+  }, [addEntry, updateEntry, setSelectedEntry, activeEntry]);
 
   const handleDelete = useCallback((id: string) => {
     const entryData = entries.find(e => e.id === id);
@@ -798,12 +796,12 @@ export function HabitJournal() {
       ) : undefined,
     });
     
-    if (selectedEntry?.id === id) {
+    if (activeEntry?.id === id) {
        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
        const newEntry = findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
        setSelectedEntry(newEntry);
     }
-  }, [deleteEntry, toast, selectedEntry, entries, findOrCreateEntry, setSelectedEntry]);
+  }, [deleteEntry, toast, activeEntry, entries, findOrCreateEntry, setSelectedEntry]);
 
   
   return (
@@ -822,13 +820,13 @@ export function HabitJournal() {
             <JournalSidebar 
                 onSelectEntry={handleSelectFromList} 
                 onDeleteEntry={handleDelete}
-                selectedEntry={selectedEntry}
+                selectedEntry={activeEntry}
             />
 
           <div className="lg:col-span-2 bg-background rounded-lg border">
-            {selectedEntry ? (
+            {activeEntry ? (
               <JournalEditor 
-                entry={selectedEntry} 
+                entry={activeEntry} 
                 onSave={handleSave} 
                 onDelete={handleDelete}
                 onCategoryChange={handleCategoryChange}
@@ -848,5 +846,3 @@ export function HabitJournal() {
 };
 
 HabitJournal.displayName = 'HabitJournal';
-
-      
