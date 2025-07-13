@@ -91,8 +91,9 @@ export const JournalEditor = memo(({
   }, [entry, onSave]);
 
   useEffect(() => {
-    // This effect handles auto-saving
-    if (entry.id === editorState.id && JSON.stringify(entry) !== JSON.stringify(editorState)) {
+    const hasChanged = JSON.stringify(entry) !== JSON.stringify(editorState);
+
+    if (entry.id === editorState.id && hasChanged) {
       const handler = setTimeout(() => {
         handleSave(editorState);
       }, 1500);
@@ -220,8 +221,9 @@ tags: ${entryToExport.tags}
   const relevantHabits = habits.filter(h => h.category === category);
 
   const handleLabelSave = (newLabel: string) => {
-    handleFieldChange('label', newLabel);
-    handleSave({...editorState, label: newLabel}, { isFinal: true });
+    const updatedEntry = { ...editorState, label: newLabel };
+    setEditorState(updatedEntry);
+    handleSave(updatedEntry, { isFinal: true });
   }
 
   return (
