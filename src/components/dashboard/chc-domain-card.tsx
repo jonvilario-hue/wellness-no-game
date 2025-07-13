@@ -15,8 +15,10 @@ import { Progress } from '@/components/ui/progress';
 import { domainIcons } from '@/components/icons';
 import type { CHCDomain } from '@/types';
 import { useState, useEffect } from 'react';
-import { ArrowDown, ArrowUp, Info, Minus } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Sigma } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { useTrainingFocus } from '@/hooks/use-training-focus';
+import { cn } from '@/lib/utils';
 
 interface ChcDomainCardProps {
   domain: {
@@ -25,6 +27,7 @@ interface ChcDomainCardProps {
     description: string;
     gameTitle: string;
     tasks: string[];
+    supportsMath: boolean;
   };
 }
 
@@ -52,6 +55,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   const Icon = domainIcons[domain.key];
   const [isClient, setIsClient] = useState(false);
   const [data] = useState(() => generateInitialData(domain.key));
+  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
 
   useEffect(() => {
     setIsClient(true);
@@ -68,6 +72,10 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   };
 
   const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo();
+  
+  const isMathMode = isLoaded && trainingFocus === 'math' && domain.supportsMath;
+  const ModeIcon = isMathMode ? Sigma : BrainCircuit;
+  const modeTooltip = isMathMode ? 'Training Mode: Math Reasoning' : 'Training Mode: Core Thinking';
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
@@ -122,10 +130,22 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         </div>
         </TooltipProvider>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex items-center gap-2">
         <Button asChild className="w-full">
           <Link href={`/training/${domain.key}`}>{domain.gameTitle}</Link>
         </Button>
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="shrink-0">
+                  <ModeIcon className={cn("w-5 h-5", isMathMode ? "text-accent" : "text-muted-foreground")} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{modeTooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </CardFooter>
     </Card>
   );
