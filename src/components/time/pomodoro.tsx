@@ -4,10 +4,24 @@
 import { useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, RotateCcw, Forward } from 'lucide-react';
+import { Play, Pause, RotateCcw, Forward, Zap, Coffee, XSquare } from 'lucide-react';
 import { usePomodoroStore } from '@/hooks/use-pomodoro-store';
 import { pomodoroPresets } from '@/data/pomodoro-presets';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Label } from '../ui/label';
+import { Switch } from '../ui/switch';
+import Link from 'next/link';
+import { Separator } from '../ui/separator';
 
 const formatTime = (totalSeconds: number) => {
     const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -22,6 +36,10 @@ export function PomodoroTimer() {
     timeLeft,
     cycles,
     isActive,
+    showGameSuggestion,
+    suggestGameEnabled,
+    setSuggestGameEnabled,
+    handleGameSuggestion,
     setPreset,
     tick,
     toggleIsActive,
@@ -51,6 +69,30 @@ export function PomodoroTimer() {
 
   return (
     <Card>
+      <AlertDialog open={showGameSuggestion}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Zap className="w-6 h-6 text-primary" />
+              Focus Session Complete!
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Nice work staying focused! Would you like a short cognitive boost before your break?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+             <AlertDialogAction asChild>
+                <Link href="/training/daily-challenge" onClick={() => handleGameSuggestion('play')}>
+                    <Zap className="w-4 h-4 mr-2" /> Play 5-Min Game
+                </Link>
+            </AlertDialogAction>
+            <AlertDialogCancel onClick={() => handleGameSuggestion('break')}>
+              <Coffee className="w-4 h-4 mr-2" /> Start Break
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
@@ -87,6 +129,14 @@ export function PomodoroTimer() {
                 <Forward className="w-8 h-8 text-muted-foreground"/>
             </Button>
         </div>
+        
+        <Separator className="my-4" />
+        
+        <div className="flex items-center space-x-2">
+          <Switch id="suggest-game-switch" checked={suggestGameEnabled} onCheckedChange={setSuggestGameEnabled}/>
+          <Label htmlFor="suggest-game-switch">Suggest a game after each focus session</Label>
+        </div>
+
       </CardContent>
        <CardFooter className="flex-col gap-2 text-center text-muted-foreground">
         <p className="font-semibold">
@@ -97,5 +147,3 @@ export function PomodoroTimer() {
     </Card>
   );
 }
-
-    
