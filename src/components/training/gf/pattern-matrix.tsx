@@ -31,9 +31,9 @@ const generateNeutralElement = (): NeutralElement => ({
 // --- Math Mode Components ---
 type MathElement = { value: number };
 const mathOperators = [
-    { name: 'add', op: (a: number, b: number) => a + b, decoy: (a: number, b: number) => a - b },
-    { name: 'subtract', op: (a: number, b: number) => a - b, decoy: (a: number, b: number) => a + b },
-    { name: 'multiply', op: (a: number, b: number) => a * b, decoy: (a: number, b: number) => a + b },
+    { name: 'add', op: (a: number, b: number) => a + b, decoyOp: (a: number, b: number) => a - b },
+    { name: 'subtract', op: (a: number, b: number) => a - b, decoyOp: (a: number, b: number) => a + b },
+    { name: 'multiply', op: (a: number, b: number) => a * b, decoyOp: (a: number, b: number) => a + b },
 ];
 const generateMathElement = (): MathElement => ({ value: Math.floor(Math.random() * 10) + 1 });
 
@@ -72,7 +72,7 @@ const generatePuzzle = (mode: 'neutral' | 'math'): Puzzle => {
   } else { // Math Mode
     const rules = ['row_op', 'col_op'];
     const rule = rules[Math.floor(Math.random() * rules.length)];
-    const { op, decoy } = mathOperators[Math.floor(Math.random() * mathOperators.length)];
+    const { op } = mathOperators[Math.floor(Math.random() * mathOperators.length)];
     
     for (let i = 0; i < size; i++) {
       const a = Math.floor(Math.random() * 10) + 1;
@@ -105,8 +105,11 @@ const generatePuzzle = (mode: 'neutral' | 'math'): Puzzle => {
     const isRowRule = col === 2;
     const firstVal = (grid[isRowRule ? row * size : col] as MathElement).value;
     const secondVal = (grid[isRowRule ? row * size + 1 : col + size] as MathElement).value;
-    const { decoy } = mathOperators.find(o => o.op(firstVal, secondVal) === (answer as MathElement).value)!;
-    options.push({ value: decoy(firstVal, secondVal) });
+    // Find the correct operator, then use its decoy for a logical distractor
+    const correctOperator = mathOperators.find(o => o.op(firstVal, secondVal) === (answer as MathElement).value);
+    if (correctOperator) {
+        options.push({ value: correctOperator.decoyOp(firstVal, secondVal) });
+    }
   }
 
   while(options.length < 6) {

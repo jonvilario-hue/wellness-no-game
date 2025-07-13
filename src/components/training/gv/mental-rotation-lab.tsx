@@ -121,10 +121,12 @@ export function MentalRotationLab() {
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
   
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
-  // This game does not have a math mode, so we default to neutral
+  // This game does not have a math mode, so we default to neutral.
+  // The global focus (math/neutral) does not affect this game's logic.
   const currentMode = 'neutral';
 
   useEffect(() => {
+    // Puzzle generation is client-side only to prevent hydration errors.
     setPuzzle(generatePuzzle());
     setStartTime(Date.now());
   }, [puzzleKey]);
