@@ -1,25 +1,23 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getWeakAreaRecommendationsAction } from '@/app/actions';
 import type { WeakAreaRecommendationOutput } from '@/ai/flows';
-import { Lightbulb, Loader2, Info } from 'lucide-react';
+import { Lightbulb, Loader2, Info, ArrowRight } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { domainIcons } from '../icons';
-import { Separator } from '../ui/separator';
+import { chcDomains } from '@/types';
+import Link from 'next/link';
+import { Skeleton } from '../ui/skeleton';
 
 export function WeakAreaRecommendations() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<WeakAreaRecommendationOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [wasClicked, setWasClicked] = useState(false);
 
-  const handleGetRecommendations = () => {
-    setWasClicked(true);
-    setError(null);
-    setResult(null);
+  useEffect(() => {
     startTransition(async () => {
       const res = await getWeakAreaRecommendationsAction();
       if (res) {
@@ -28,22 +26,15 @@ export function WeakAreaRecommendations() {
         setError('Failed to get recommendations. Please try again.');
       }
     });
-  };
+  }, []);
 
   const renderContent = () => {
-    if (!wasClicked) {
-      return (
-        <Button onClick={handleGetRecommendations} className="w-full">
-          Get Recommendations
-        </Button>
-      );
-    }
-
     if (isPending) {
       return (
-        <div className="flex items-center justify-center h-24">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="ml-2">Analyzing performance...</p>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-10 w-full mt-2" />
         </div>
       );
     }
@@ -64,41 +55,39 @@ export function WeakAreaRecommendations() {
              <Info className="h-4 w-4" />
             <AlertTitle>Not Enough Data Yet</AlertTitle>
             <AlertDescription>
-              {result.message}
+              {result.message} Try a few different training games first.
             </AlertDescription>
           </Alert>
         );
       }
 
       if (result.recommendations.length > 0) {
+        const weakestDomainRec = result.recommendations[0];
+        const domainInfo = chcDomains.find(d => d.key === weakestDomainRec.domain);
+        const Icon = domainIcons[weakestDomainRec.domain];
+
         return (
-          <div className="space-y-4">
-            <h3 className="font-semibold">Your Training Plan:</h3>
-            <ul className="space-y-4">
-              {result.recommendations.map((rec, index) => {
-                const Icon = domainIcons[rec.domain];
-                return (
-                  <li key={index}>
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 bg-primary/10 rounded-full mt-1">
-                        <Icon className="w-4 h-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">{rec.exercise}</p>
-                        <p className="text-sm text-muted-foreground">{rec.reason}</p>
-                      </div>
-                    </div>
-                    {index < result.recommendations.length - 1 && <Separator className="my-3" />}
-                  </li>
-                );
-              })}
-            </ul>
+          <div className="space-y-3 text-center">
+             <div className="p-3 bg-primary/10 rounded-full inline-block">
+                <Icon className="w-8 h-8 text-primary" />
+            </div>
+            <p className="font-semibold text-lg">
+              Today's Growth Focus: {domainInfo?.name}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {weakestDomainRec.reason}
+            </p>
+            <Button asChild className="w-full">
+              <Link href={`/training/${weakestDomainRec.domain}`}>
+                Train {domainInfo?.name} <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         );
       }
     }
     
-    return null;
+    return <p className="text-muted-foreground text-sm">Could not load recommendation.</p>;
   };
 
   return (
@@ -109,7 +98,7 @@ export function WeakAreaRecommendations() {
           Weak Area Targeting
         </CardTitle>
         <CardDescription>
-          Let AI analyze your performance and suggest focus areas.
+          AI-driven suggestions to turn your weaknesses into strengths.
         </CardDescription>
       </CardHeader>
       <CardContent>

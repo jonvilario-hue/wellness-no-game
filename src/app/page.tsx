@@ -6,7 +6,7 @@ import { ChcDomainDashboard } from '@/components/dashboard/chc-domain-dashboard'
 import { HabitTracker } from '@/components/dashboard/habit-tracker';
 import { MilestoneBadges } from '@/components/dashboard/milestone-badges';
 import { CognitiveEfficiency } from '@/components/dashboard/cognitive-efficiency';
-import { CognitiveEnergyMeter } from '@/components/dashboard/cognitive-energy-meter';
+import { PerformanceInsights } from '@/components/dashboard/performance-insights';
 import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recommendations';
 import { AdaptiveDifficulty } from '@/components/dashboard/adaptive-difficulty';
 import { HabitJournal } from '@/components/dashboard/habit-journal';
@@ -43,7 +43,7 @@ function DashboardContent() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <CognitiveEfficiency />
-            <CognitiveEnergyMeter />
+            <PerformanceInsights />
             <WeakAreaRecommendations />
           </div>
 

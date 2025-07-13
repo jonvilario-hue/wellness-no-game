@@ -69,14 +69,14 @@ const prompt = ai.definePrompt({
   name: 'weakAreaRecommendationPrompt',
   input: {schema: WeakAreaRecommendationInputSchema},
   output: {schema: WeakAreaRecommendationOutputSchema},
-  prompt: `You are an AI-powered cognitive training assistant. Your task is to analyze a user's performance data and suggest focus areas for improvement.
+  prompt: `You are an AI-powered cognitive training assistant. Your task is to analyze a user's performance data and suggest ONE focus area for improvement.
 
 Follow these steps:
-1.  Review the user's performance data. Check if the user has completed at least 5 sessions in at least three different domains.
+1.  Review the user's performance data. Check if the user has completed at least 5 sessions in at least one domain.
 2.  If the user has NOT met this criteria, do not provide any recommendations. Instead, set the "recommendations" array to be empty and provide a friendly "message" explaining that more training data is needed. For example: "I need a little more data to find your weak spots. Try completing a few more different training sessions!".
-3.  If the user HAS met the criteria, identify the 2-3 domains with the lowest scores. These are the user's weak areas.
-4.  For each weak area, recommend a specific, engaging training exercise or puzzle. Explain concisely why this exercise is suitable for improving that specific cognitive domain.
-5.  Format the output as a JSON object with a "recommendations" array. If you provided a message in step 2, include the "message" field.
+3.  If the user HAS met the criteria, identify the single domain with the lowest score. This is the user's primary weak area.
+4.  For this weak area, recommend its specific, engaging training exercise or puzzle. Explain concisely and motivationally why this exercise is suitable for improving that specific cognitive domain, framing it as a growth opportunity. Example reason: "Improving your Fluid Reasoning will help you solve novel problems more effectively."
+5.  Format the output as a JSON object with a "recommendations" array containing just ONE recommendation. If you provided a message in step 2, include the "message" field.
 
 User Performance Data:
 {{#each performanceData}}
