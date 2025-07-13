@@ -64,7 +64,7 @@ export const usePomodoroStore = create<PomodoroState>((set, get) => ({
   },
   
   skipMode: () => {
-    const { mode, cycles, preset } = get();
+    const { setMode, mode, cycles, preset } = get();
     let nextMode: PomodoroMode;
     let nextCycles = cycles;
 
@@ -78,12 +78,10 @@ export const usePomodoroStore = create<PomodoroState>((set, get) => ({
     } else { // shortBreak or longBreak
       nextMode = 'work';
     }
-
-    let nextTime = 0;
-    if (nextMode === 'work') nextTime = preset.focusMinutes * 60;
-    else if (nextMode === 'shortBreak') nextTime = preset.shortBreakMinutes * 60;
-    else if (nextMode === 'longBreak') nextTime = preset.longBreakMinutes * 60;
-
-    set({ mode: nextMode, cycles: nextCycles, timeLeft: nextTime, isActive: true });
+    
+    set({ cycles: nextCycles });
+    setMode(nextMode);
   }
 }));
+
+    

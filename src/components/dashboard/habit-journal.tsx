@@ -57,7 +57,7 @@ import {
 import { Badge } from '../ui/badge';
 import { Checkbox } from '../ui/checkbox';
 
-const JournalEditor = ({
+const JournalEditor = memo(({
   entry,
   onSave,
   onDelete,
@@ -65,7 +65,7 @@ const JournalEditor = ({
   onFrequencyChange,
 }: {
   entry: JournalEntry;
-  onSave: (entry: JournalEntry, options?: { isFinal: boolean }) => { success: boolean; entry: JournalEntry | null };
+  onSave: (entry: JournalEntry, options?: { isFinal?: boolean }) => { success: boolean; entry: JournalEntry | null };
   onDelete: (id: string) => void;
   onCategoryChange: (newCategory: JournalCategory) => void;
   onFrequencyChange: (newFrequency: ReflectionFrequency) => void;
@@ -82,20 +82,20 @@ const JournalEditor = ({
     setSaveStatus('idle');
   }, [entry]);
   
-  const handleSave = useCallback((updatedEntry: JournalEntry, options: { isFinal: boolean } = { isFinal: false }) => {
+  const handleSave = useCallback((updatedEntry: JournalEntry, options: { isFinal?: boolean } = { isFinal: false }) => {
     const isNew = updatedEntry.id.startsWith('new-');
     const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a);
     
-    // Don't auto-save if it's a new, untouched entry
-    if(isNew && !hasContent && !options.isFinal) return;
+    if(isNew && !hasContent && !options.isFinal) {
+      return { success: false, entry: null };
+    }
 
-    // Check for actual changes before saving
     const originalEntry = entry;
     const hasChanged = JSON.stringify(originalEntry) !== JSON.stringify(updatedEntry);
 
     if(!hasChanged && !isNew) {
       setSaveStatus('idle');
-      return;
+      return { success: true, entry: updatedEntry };
     }
     
     setSaveStatus('saving');
@@ -107,6 +107,7 @@ const JournalEditor = ({
     } else if (!result.success) {
         setSaveStatus('idle');
     }
+    return result;
   }, [entry, onSave]);
 
   useEffect(() => {
@@ -137,8 +138,10 @@ const JournalEditor = ({
   const isNewEntry = editorState.id.startsWith('new-');
   
   const handleManualSave = () => {
-    handleSave(editorState, { isFinal: true });
-    toast({ title: 'Journal Entry Saved' });
+    const result = handleSave(editorState, { isFinal: true });
+    if(result.success) {
+      toast({ title: 'Journal Entry Saved' });
+    }
   }
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
@@ -434,7 +437,9 @@ tags: ${entryToExport.tags}
       </ScrollArea>
     </div>
   );
-};
+});
+JournalEditor.displayName = 'JournalEditor';
+
 
 const JournalSidebar = memo(({ 
     onSelectEntry, 
@@ -702,14 +707,8 @@ JournalSidebar.displayName = 'JournalSidebar';
 export function HabitJournal() {
   const { entries, addEntry, updateEntry, deleteEntry, findOrCreateEntry, isLoaded, setSelectedEntry: setGlobalSelectedEntry, selectedEntry: globalSelectedEntry } = useJournal();
   
-  const [activeEntry, setActiveEntry] = useState<JournalEntry | null>(null);
+  const activeEntry = useMemo(() => globalSelectedEntry, [globalSelectedEntry]);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (globalSelectedEntry) {
-      setActiveEntry(globalSelectedEntry);
-    }
-  }, [globalSelectedEntry]);
   
   useEffect(() => {
     if (isLoaded && !globalSelectedEntry) {
@@ -738,15 +737,19 @@ export function HabitJournal() {
     }
   }, [activeEntry, findOrCreateEntry, setGlobalSelectedEntry]);
   
-  const handleSave = useCallback((entryToSave: JournalEntry) => {
+  const handleSave = useCallback((entryToSave: JournalEntry, options?: { isFinal?: boolean }) => {
     let savedEntry = entryToSave;
     const isNew = entryToSave.id.startsWith('new-');
     
+    // Only save if it's a "final" save or if it's an existing entry
+    if (isNew && !options?.isFinal) {
+        const hasContent = entryToSave.field1 || entryToSave.field2 || entryToSave.field3 || entryToSave.affirmations.some(a => a);
+        if (!hasContent) {
+            return { success: false, entry: null };
+        }
+    }
+    
     if (isNew) {
-      const hasContent = entryToSave.field1 || entryToSave.field2 || entryToSave.field3 || entryToSave.affirmations.some(a => a);
-      if (!hasContent) {
-          return { success: false, entry: null };
-      }
       savedEntry = addEntry(entryToSave);
     } else {
       updateEntry(entryToSave.id, entryToSave);
@@ -829,3 +832,5 @@ export function HabitJournal() {
 };
 
 HabitJournal.displayName = 'HabitJournal';
+
+    
