@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -6,25 +7,33 @@ import { Button } from '@/components/ui/button';
 import { getAdaptiveDifficultyAction } from '@/app/actions';
 import type { AdaptDifficultyOutput, AdaptDifficultyInput } from '@/ai/flows';
 import { SlidersHorizontal, Loader2, Wand2 } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { chcDomains, type CHCDomain } from '@/types';
+import { efficiencyData } from '@/data/efficiency-data';
+import type { ChcFactor } from '@/data/efficiency-data';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+
+const domainMap: Record<ChcFactor, string> = {
+  'Gf': 'Problem-Solving Depth (Gf)',
+  'Gwm': 'Working Memory Span (Gwm)',
+  'EF': 'Cognitive Switching (EF)',
+  'Gs': 'Processing Speed (Gs)',
+  'Glr': 'Long-Term Retrieval (Glr)',
+};
 
 export function AdaptiveDifficulty() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<AdaptDifficultyOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [skillLevel, setSkillLevel] = useState(50);
-  const [domain, setDomain] = useState<CHCDomain>('Gf');
+  const [selectedFactor, setSelectedFactor] = useState<ChcFactor>('Gf');
+  
+  const skillLevel = efficiencyData.weekly.subMetrics.find(m => m.key === selectedFactor)?.value || 50;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setResult(null); 
     setError(null);
     startTransition(async () => {
-      const input: AdaptDifficultyInput = { chcDomain: domain, userSkillLevel: skillLevel };
+      const input: AdaptDifficultyInput = { chcDomain: selectedFactor, userSkillLevel: skillLevel };
       const res = await getAdaptiveDifficultyAction(input);
       if (res) {
         setResult(res);
@@ -42,38 +51,28 @@ export function AdaptiveDifficulty() {
           Adaptive Difficulty
         </CardTitle>
         <CardDescription>
-          Find the right puzzle difficulty for your skill level.
+          Find the right puzzle difficulty based on your current skill level.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="chc-domain-select">Cognitive Domain</Label>
-            <Select onValueChange={(value: CHCDomain) => setDomain(value)} defaultValue={domain}>
+            <label htmlFor="chc-domain-select" className="text-sm font-medium text-muted-foreground">Cognitive Factor</label>
+            <Select onValueChange={(value: ChcFactor) => setSelectedFactor(value)} defaultValue={selectedFactor}>
               <SelectTrigger id="chc-domain-select">
-                <SelectValue placeholder="Select a domain" />
+                <SelectValue placeholder="Select a factor" />
               </SelectTrigger>
               <SelectContent>
-                {chcDomains.map(d => (
-                  <SelectItem key={d.key} value={d.key}>{d.name}</SelectItem>
+                {Object.entries(domainMap).map(([key, name]) => (
+                  <SelectItem key={key} value={key}>{name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          <div>
-            <Label htmlFor="skill-level-slider" className="flex justify-between">
-              <span>Skill Level</span>
-              <span>{skillLevel}</span>
-            </Label>
-            <Slider
-              id="skill-level-slider"
-              min={0}
-              max={100}
-              step={1}
-              value={[skillLevel]}
-              onValueChange={(value) => setSkillLevel(value[0])}
-            />
+          <div className="p-3 bg-muted/50 rounded-lg text-center">
+            <p className="text-sm text-muted-foreground">Your Current Skill Level</p>
+            <p className="text-2xl font-bold text-primary">{skillLevel}</p>
           </div>
           
           <Button type="submit" className="w-full" disabled={isPending}>
