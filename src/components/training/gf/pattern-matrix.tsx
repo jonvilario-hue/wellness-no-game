@@ -268,7 +268,7 @@ export function PatternMatrix() {
                 className={cn(
                   "h-24 bg-muted/50 rounded-lg flex items-center justify-center transition-all border-2",
                   selectedOption === option && !feedback ? 'border-primary scale-105' : 'border-transparent hover:border-muted-foreground/50',
-                  feedback && JSON.stringify(option) === JSON.stringify(puzzle.answer) && 'bg-green-500/20 border-green-500',
+                  feedback && JSON.stringify(option) === JSON.stringify(puzzle.answer) && 'bg-green-500/20 border-green-500 animate-pulse',
                   feedback === 'incorrect' && selectedOption === option && 'bg-destructive/20 border-destructive',
                 )}
                 disabled={!!feedback}

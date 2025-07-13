@@ -177,9 +177,9 @@ export function MentalRotationLab() {
                 onClick={() => handleSelectOption(option)}
                 className={cn(
                   "p-4 rounded-lg flex items-center justify-center transition-all border-2",
-                  selectedOption === option ? 'border-primary scale-105 bg-muted' : 'border-transparent hover:border-muted-foreground/50 bg-muted/50',
-                  feedback && areGridsEqual(option, puzzle.answer) && 'bg-green-500/20 border-green-500',
-                  feedback === 'incorrect' && selectedOption === option && !areGridsEqual(option, puzzle.answer) && 'bg-destructive/20 border-destructive',
+                  selectedOption === option && !feedback ? 'border-primary scale-105 bg-muted' : 'border-transparent hover:border-muted-foreground/50 bg-muted/50',
+                  feedback && areGridsEqual(option, puzzle.answer) && 'bg-green-500/20 border-green-500 animate-pulse',
+                  feedback === 'incorrect' && selectedOption === option && 'bg-destructive/20 border-destructive',
                 )}
                 disabled={!!feedback}
               >

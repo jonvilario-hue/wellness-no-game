@@ -190,16 +190,10 @@ export function VerbalInferenceBuilder() {
               ))}
             </div>
             <div className="h-16 mt-2 text-center">
-              {feedback === 'correct' && (
+              {feedback && (
                 <div className="animate-in fade-in">
-                    <p className="text-lg font-bold text-green-500">Correct!</p>
+                    <p className="text-lg font-bold text-green-500">{feedback === 'correct' ? 'Correct!' : 'Not quite.'}</p>
                     <p className="text-sm text-muted-foreground">{currentPuzzle.explanation}</p>
-                </div>
-              )}
-              {feedback === 'incorrect' && (
-                <div className="animate-in fade-in">
-                    <p className="text-lg font-bold text-destructive">Not quite.</p>
-                    <p className="text-sm text-muted-foreground">The correct answer is <span className="font-bold text-primary">{currentPuzzle.answer}</span>. {currentPuzzle.explanation}</p>
                 </div>
               )}
             </div>
