@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MemoryStick } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
+import { useTrainingOverride } from "@/hooks/use-training-override";
 
 const generateNeutralSequence = (length: number) => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -43,12 +44,14 @@ export function DynamicSequenceTransformer() {
   const [userAnswer, setUserAnswer] = useState('');
   const [gameState, setGameState] = useState('start'); // start, memorizing, answering, feedback
   const [feedback, setFeedback] = useState('');
-  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
 
-  const currentMode = isLoaded && trainingFocus === 'math' ? 'math' : 'neutral';
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
   
-  const startLevel = () => {
-    const seqLength = level + 3;
+  const startLevel = (newLevel: number) => {
+    const seqLength = newLevel + 3;
     const newSequence = currentMode === 'math' ? generateMathSequence(seqLength) : generateNeutralSequence(seqLength);
     const newTask = currentMode === 'math' ? mathTasks[Math.floor(Math.random() * mathTasks.length)] : neutralTasks[Math.floor(Math.random() * neutralTasks.length)];
     
@@ -62,6 +65,13 @@ export function DynamicSequenceTransformer() {
       setGameState('answering');
     }, 4000); // 4 seconds to memorize
   };
+  
+  useEffect(() => {
+    if (isLoaded) {
+      startLevel(level);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, currentMode]);
 
   const correctAnswer = useMemo(() => {
     if (!sequence || !task) return '';
@@ -105,13 +115,14 @@ export function DynamicSequenceTransformer() {
     if (userAnswer.toUpperCase().trim() === correctAnswer) {
       setFeedback('Correct! Next level.');
       setTimeout(() => {
-        setLevel(level + 1);
-        startLevel();
+        const nextLevel = level + 1;
+        setLevel(nextLevel);
+        startLevel(nextLevel);
       }, 2000);
     } else {
       setFeedback(`Incorrect. The answer was: ${correctAnswer}. Let's try again.`);
       setTimeout(() => {
-        startLevel();
+        startLevel(level);
       }, 3000);
     }
   };
@@ -131,7 +142,7 @@ export function DynamicSequenceTransformer() {
         {gameState === 'start' && (
             <div className="flex flex-col items-center gap-4">
                 <div className="font-mono text-lg">Level: {level}</div>
-                <Button onClick={startLevel} size="lg" disabled={!isLoaded}>
+                <Button onClick={() => startLevel(level)} size="lg" disabled={!isLoaded}>
                   {isLoaded ? `Start Level ${level}` : "Loading..."}
                 </Button>
             </div>

@@ -60,14 +60,9 @@ const generateInitialData = (domainKey: CHCDomain) => {
 
 export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   const Icon = domainIcons[domain.key];
-  const [isClient, setIsClient] = useState(false);
   const [data] = useState(() => generateInitialData(domain.key));
   const { focus: globalFocus, isLoaded } = useTrainingFocus();
   const { setOverride } = useTrainingOverride();
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const getTrendInfo = () => {
     if (data.trend > 2) {
@@ -114,9 +109,9 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
                   <p>Adaptive skill rating (50 = average, 100 = high mastery)</p>
                 </TooltipContent>
               </Tooltip>
-            <span className="text-sm font-bold text-primary">{isClient ? Math.round(data.score) : '...'}</span>
+            <span className="text-sm font-bold text-primary">{Math.round(data.score)}</span>
           </div>
-          <Progress value={isClient ? data.score : 0} />
+          <Progress value={data.score} />
         </div>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
             <Tooltip delayDuration={0}>
@@ -130,14 +125,8 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
               </TooltipContent>
             </Tooltip>
             <div className={`flex items-center font-bold ${trendColor}`}>
-                {isClient ? (
-                  <>
-                    <TrendIcon className="w-4 h-4 mr-1"/>
-                    {data.trend.toFixed(1)}%
-                  </>
-                ) : (
-                  <span>...</span>
-                )}
+                <TrendIcon className="w-4 h-4 mr-1"/>
+                {data.trend.toFixed(1)}%
             </div>
         </div>
         </TooltipProvider>

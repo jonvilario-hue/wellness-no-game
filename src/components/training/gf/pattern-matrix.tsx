@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { cn } from "@/lib/utils";
 import { BrainCircuit } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
+import { useTrainingOverride } from "@/hooks/use-training-override";
 
 // --- Neutral Mode Components ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
@@ -165,14 +166,33 @@ export function PatternMatrix() {
   const [score, setScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState<PuzzleElement | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
-  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
-  const currentMode = trainingFocus === 'math' ? 'math' : 'neutral';
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
+
+  const restartGame = () => {
+    setPuzzle(generatePuzzle(currentMode));
+    setPuzzleKey(0);
+    setScore(0);
+    setSelectedOption(null);
+    setFeedback('');
+  };
+
+  const handleNextPuzzle = () => {
+    setPuzzle(generatePuzzle(currentMode));
+    setPuzzleKey(prevKey => prevKey + 1);
+    setSelectedOption(null);
+    setFeedback('');
+  };
 
   useEffect(() => {
     if (isLoaded) {
-      setPuzzle(generatePuzzle(currentMode));
+      restartGame();
     }
-  }, [puzzleKey, isLoaded, currentMode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, currentMode]);
 
   const handleSelectOption = (option: PuzzleElement) => {
     if (feedback || !puzzle) return;
@@ -183,12 +203,6 @@ export function PatternMatrix() {
     } else {
       setFeedback('incorrect');
     }
-  };
-
-  const handleNextPuzzle = () => {
-    setPuzzleKey(prevKey => prevKey + 1);
-    setSelectedOption(null);
-    setFeedback('');
   };
 
   if (!puzzle || !isLoaded) {

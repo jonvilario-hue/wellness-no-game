@@ -26,7 +26,7 @@ export default function TrainingPage({ params }: { params: Promise<{ domain: CHC
   
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   // Determine the effective training focus: override > global
-  const trainingFocus = override || globalFocus;
+  const trainingFocus = isLoaded ? (override || globalFocus) : 'neutral';
 
   const PageIcon = domainIcons[domainInfo.key];
   const GameComponent = gameComponents[domainInfo.key] || (() => <p>Game not found</p>);

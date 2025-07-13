@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
+import { useTrainingOverride } from "@/hooks/use-training-override";
 
 const neutralPuzzles = [
   {
@@ -79,21 +80,27 @@ export function VerbalInferenceBuilder() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState(''); // '', 'correct', 'incorrect'
   const [gameState, setGameState] = useState('playing'); // playing, finished
-  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
 
-  const currentMode = isLoaded && trainingFocus === 'math' ? 'math' : 'neutral';
+  const restartGame = () => {
+    const puzzleSet = currentMode === 'math' ? mathPuzzles : neutralPuzzles;
+    setShuffledPuzzles([...puzzleSet].sort(() => Math.random() - 0.5));
+    setCurrentPuzzleIndex(0);
+    setScore(0);
+    setFeedback('');
+    setSelectedAnswer(null);
+    setGameState('playing');
+  };
   
   useEffect(() => {
-    // This effect runs on client mount and when mode changes
     if (isLoaded) {
-      const puzzleSet = currentMode === 'math' ? mathPuzzles : neutralPuzzles;
-      setShuffledPuzzles([...puzzleSet].sort(() => Math.random() - 0.5));
-      setCurrentPuzzleIndex(0);
-      setScore(0);
-      setFeedback('');
-      setSelectedAnswer(null);
-      setGameState('playing');
+      restartGame();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMode, isLoaded]);
 
   const currentPuzzle = shuffledPuzzles[currentPuzzleIndex];
@@ -118,16 +125,6 @@ export function VerbalInferenceBuilder() {
         setGameState('finished');
       }
     }, 2500);
-  };
-  
-  const handleRestart = () => {
-    const puzzleSet = currentMode === 'math' ? mathPuzzles : neutralPuzzles;
-    setShuffledPuzzles([...puzzleSet].sort(() => Math.random() - 0.5));
-    setCurrentPuzzleIndex(0);
-    setScore(0);
-    setFeedback('');
-    setSelectedAnswer(null);
-    setGameState('playing');
   };
   
   const getButtonClass = (option: string) => {
@@ -205,7 +202,7 @@ export function VerbalInferenceBuilder() {
           <div className="text-center space-y-4 animate-in fade-in">
             <CardTitle>Puzzle Set Complete!</CardTitle>
             <p className="text-xl">Your final score is: <span className="font-bold text-primary">{score} out of {shuffledPuzzles.length}</span></p>
-            <Button onClick={handleRestart} size="lg">Play Again</Button>
+            <Button onClick={restartGame} size="lg">Play Again</Button>
           </div>
         )}
       </CardContent>
