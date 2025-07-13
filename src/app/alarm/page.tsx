@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { AlarmClock, Loader2, Zap, ThumbsUp, Sparkles, BrainCircuit } from 'lucide-react';
+import { AlarmClock, Loader2, ThumbsUp, BrainCircuit } from 'lucide-react';
 import { DynamicSequenceTransformer } from '@/components/training/gwm/dynamic-sequence-transformer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
