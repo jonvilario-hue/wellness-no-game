@@ -21,9 +21,17 @@ export function ToneGridChallenge() {
   const [targetTone, setTargetTone] = useState<number | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setAudioContext(new window.AudioContext());
+    // This effect runs only on the client
+    if (typeof window !== 'undefined' && !audioContext) {
+      setAudioContext(new (window.AudioContext || (window as any).webkitAudioContext)());
     }
+    // Cleanup function to close the audio context
+    return () => {
+        if (audioContext && audioContext.state !== 'closed') {
+            audioContext.close();
+        }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const playTone = (freq: number, duration = 0.3) => {
@@ -98,6 +106,9 @@ export function ToneGridChallenge() {
   };
   
   const handleStart = () => {
+    if (audioContext?.state === 'suspended') {
+        audioContext.resume();
+    }
     setLevel(1);
     startLevel(1);
   };

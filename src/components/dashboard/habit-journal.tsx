@@ -56,7 +56,6 @@ import {
 import { Badge } from '../ui/badge';
 import { Checkbox } from '../ui/checkbox';
 
-const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 type ViewMode = 'entries' | 'trash';
 type SortMode = 'date-desc' | 'date-asc' | 'category';
 
@@ -71,8 +70,499 @@ const groupEntriesByDate = (entries: JournalEntry[]) => {
   }, {} as Record<string, JournalEntry[]>);
 };
 
+const EntryEditor = ({
+  entry,
+  onSave,
+  onDelete,
+}: {
+  entry: JournalEntry;
+  onSave: (entry: JournalEntry) => { success: boolean; entry: JournalEntry | null };
+  onDelete: (id: string) => void;
+}) => {
+  const [editorState, setEditorState] = useState<JournalEntry>(entry);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const { toast } = useToast();
+  const { completedHabits, toggleHabitForDay } = useJournal();
+  
+  const todaysHabits = completedHabits[editorState.date] || new Set();
+
+  useEffect(() => {
+    setEditorState(entry);
+    setSaveStatus('idle');
+  }, [entry]);
+
+  useEffect(() => {
+      const isNew = editorState.id.startsWith('new-');
+      if (isNew || JSON.stringify(entry) === JSON.stringify(editorState)) {
+        return;
+      }
+
+      setSaveStatus('saving');
+      const handler = setTimeout(() => {
+        onSave(editorState);
+        setSaveStatus('saved');
+      }, 1500); 
+
+      return () => {
+          clearTimeout(handler);
+      };
+  }, [editorState, entry, onSave]);
+
+  useEffect(() => {
+      if (saveStatus === 'saved') {
+          const timer = setTimeout(() => setSaveStatus('idle'), 2000);
+          return () => clearTimeout(timer);
+      }
+  }, [saveStatus]);
+  
+  const getValidConfig = (category: JournalCategory | string) => {
+      if (category && journalConfig[category as JournalCategory]) {
+          return { config: journalConfig[category as JournalCategory], category: category as JournalCategory};
+      }
+      const defaultCategory = 'Growth & Challenge Reflection';
+      return { config: journalConfig[defaultCategory], category: defaultCategory };
+  }
+  
+  const { config, category } = getValidConfig(editorState.category);
+
+  const isNewEntry = editorState.id.startsWith('new-');
+  
+  const handleManualSave = () => {
+      const result = onSave(editorState);
+      if(result.success) {
+         if (result.entry) {
+           setEditorState(result.entry); 
+         }
+         setSaveStatus('saved');
+         toast({ title: 'Journal Entry Saved' });
+      }
+  }
+
+  const handleCategoryChange = (newCategory: JournalCategory) => {
+    setEditorState(prevState => ({
+      ...prevState,
+      category: newCategory,
+    }));
+  };
+  
+  const handleFrequencyChange = (newFrequency: ReflectionFrequency) => {
+    setEditorState(prevState => ({ ...prevState, frequency: newFrequency }));
+  };
+
+  const handleFieldChange = (
+    field: keyof Omit<JournalEntry, 'id' | 'date'>,
+    value: any
+  ) => {
+    setEditorState(prevState => ({ ...prevState, [field]: value }));
+  };
+
+  const handleHabitChange = (habitId: HabitId, checked: boolean) => {
+    toggleHabitForDay(editorState.date, habitId);
+  };
+
+  const handleAffirmationChange = (index: number, value: string) => {
+      const newAffirmations = [...editorState.affirmations];
+      newAffirmations[index] = value;
+      setEditorState(prevState => ({...prevState, affirmations: newAffirmations}));
+  }
+
+  const addAffirmation = () => {
+      setEditorState(prevState => ({...prevState, affirmations: [...prevState.affirmations, '']}));
+  }
+  
+  const removeLastAffirmation = () => {
+      setEditorState(prevState => ({...prevState, affirmations: prevState.affirmations.slice(0, -1)}));
+  }
+
+
+  const exportAsMarkdown = (entry: JournalEntry) => {
+      const entryConfig = journalConfig[entry.category as JournalCategory];
+      const prompts = entryConfig.prompts[entry.frequency] || entryConfig.prompts.daily;
+
+      let markdown = `---
+date: ${entry.date}
+category: "${entry.category}"
+frequency: ${entry.frequency}
+effort: ${entry.effort}
+tags: ${entry.tags}
+---
+
+# Journal Entry: ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}
+
+## ${entry.category} (${entry.frequency})
+
+`;
+
+      if (entry.field1) markdown += `### ${prompts[0]}\n${entry.field1}\n\n`;
+      if (entry.field2) markdown += `### ${prompts[1]}\n${entry.field2}\n\n`;
+      if (entry.field3) markdown += `### ${prompts[2]}\n${entry.field3}\n\n`;
+
+      if (entry.affirmations && entry.affirmations.length > 0) {
+          markdown += `### Affirmations\n${entry.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
+      }
+      
+      const completedHabitsForEntry = Object.values(allHabits)
+          .filter(habit => todaysHabits.has(habit.id))
+          .map(h => h?.label);
+
+      if (completedHabitsForEntry.length > 0) {
+          markdown += `### Supporting Habits\n${completedHabitsForEntry.map(h => `- [x] ${h}`).join('\n')}\n\n`;
+      }
+
+      const element = document.createElement("a");
+      const file = new Blob([markdown], {type: 'text/plain'});
+      element.href = URL.createObjectURL(file);
+      element.download = `journal-${entry.date}.md`;
+      document.body.appendChild(element); 
+      element.click();
+      document.body.removeChild(element);
+  }
+  
+  const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
+
+
+  return (
+    <div className="p-4 h-full flex flex-col gap-2 relative">
+        <div className="absolute top-0 left-0 right-0 p-2 z-10 text-center">
+            {saveStatus !== 'idle' && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm font-semibold transition-all animate-in fade-in">
+                  {saveStatus === 'saving' ? (
+                      <>
+                          <Loader2 className="w-4 h-4 animate-spin"/>
+                          <span>Saving...</span>
+                      </>
+                  ) : (
+                      <>
+                           <CheckCircle className="w-4 h-4 text-green-500"/>
+                          <span>Saved</span>
+                      </>
+                  )}
+              </div>
+            )}
+        </div>
+      <div className="flex justify-between items-center pt-8">
+        <h3 className="font-bold text-lg text-primary">
+          {isNewEntry
+            ? 'New Entry'
+            : `Editing: ${new Date(
+                editorState.date + 'T00:00:00'
+              ).toLocaleDateString()}`}
+        </h3>
+         <div className="flex items-center gap-2">
+          {!isNewEntry && (
+              <>
+              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => exportAsMarkdown(editorState)}>
+                  <Share className="w-4 h-4"/>
+              </Button>
+               <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                          <Trash2 className="w-4 h-4"/>
+                      </Button>
+                  </AlertDialogTrigger>
+                   <AlertDialogContent>
+                      <AlertDialogHeader>
+                          <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                              This will move the entry to the trash. You can restore it later.
+                          </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => onDelete(editorState.id)}>
+                              Move to Trash
+                          </AlertDialogAction>
+                      </AlertDialogFooter>
+                  </AlertDialogContent>
+              </AlertDialog>
+              </>
+          )}
+          {isNewEntry && (
+              <Button onClick={handleManualSave}>
+                  <Save className="mr-2 h-4 w-4" /> Save Entry
+              </Button>
+          )}
+         </div>
+      </div>
+      <Separator />
+      <ScrollArea className="flex-grow pr-2 -mr-2">
+        <div className="space-y-4 pr-2">
+          <div>
+            <Label className="mb-2 block">Journal Type</Label>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+              {categoryKeys.map(catKey => {
+                const CatIcon = journalConfig[catKey].icon;
+                return (
+                  <Button
+                    key={catKey}
+                    variant={category === catKey ? 'default' : 'outline'}
+                    onClick={() => handleCategoryChange(catKey)}
+                    className="flex items-center justify-start gap-2 h-auto py-2"
+                  >
+                    <CatIcon className="w-4 h-4 shrink-0" />
+                    <span className="text-xs text-left whitespace-normal leading-tight">
+                      {journalConfig[catKey].title}
+                    </span>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+          
+           <div>
+            <Label className="mb-2 block">Reflection Frequency</Label>
+              <div className="flex items-center gap-2">
+                  {(['daily', 'weekly', 'monthly'] as ReflectionFrequency[]).map(freq => (
+                      <Button key={freq} variant={editorState.frequency === freq ? 'default' : 'outline'} onClick={() => handleFrequencyChange(freq)} className="capitalize flex-1">
+                          {freq}
+                      </Button>
+                  ))}
+              </div>
+          </div>
+
+          <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+            {config.guidance}
+          </div>
+
+          <Textarea
+            placeholder={currentPrompts[0]}
+            value={editorState.field1}
+            onChange={e => handleFieldChange('field1', e.target.value)}
+            className="min-h-[60px]"
+          />
+           <Textarea
+            placeholder={currentPrompts[1]}
+            value={editorState.field2}
+            onChange={e => handleFieldChange('field2', e.target.value)}
+            className="min-h-[60px]"
+          />
+           <Textarea
+            placeholder={currentPrompts[2]}
+            value={editorState.field3}
+            onChange={e => handleFieldChange('field3', e.target.value)}
+            className="min-h-[60px]"
+          />
+          
+          <div className="space-y-2">
+               {editorState.affirmations.map((affirmation, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                       <Textarea
+                        placeholder={config.affirmationPrompt}
+                        value={affirmation}
+                        onChange={e => handleAffirmationChange(index, e.target.value)}
+                        className="min-h-[60px] flex-grow"
+                      />
+                  </div>
+               ))}
+               <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" onClick={addAffirmation}>
+                      <PlusCircle className="mr-2 h-4 w-4"/>
+                      Add Affirmation
+                  </Button>
+                  {editorState.affirmations.length > 0 && (
+                      <Button variant="ghost" size="sm" onClick={removeLastAffirmation}>
+                          <MinusCircle className="mr-2 h-4 w-4"/>
+                          Remove
+                      </Button>
+                  )}
+               </div>
+          </div>
+          
+          <Separator/>
+          
+          <div>
+              <Label htmlFor="tags-input">Tags (comma-separated)</Label>
+              <Input
+                id="tags-input"
+                placeholder={config.suggestedTags}
+                value={editorState.tags}
+                onChange={e => handleFieldChange('tags', e.target.value)}
+              />
+          </div>
+
+          {config.habits.length > 0 && (
+            <div>
+              <Label>Supporting Habits</Label>
+              <div className="space-y-1 mt-1">
+                {config.habits.map(habitId => {
+                  const habit = allHabits[habitId];
+                  if (!habit) return null;
+                  const habitCheckboxId = `habit-${habit.id}-${entry.id}`;
+                  return (
+                     <div key={habit.id} className="flex items-center">
+                      <Label
+                        htmlFor={habitCheckboxId}
+                        className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
+                      >
+                         <Checkbox 
+                          id={habitCheckboxId}
+                          checked={todaysHabits.has(habit.id)}
+                          onCheckedChange={checked => handleHabitChange(habit.id, !!checked)}
+                         />
+                        <habit.icon className="w-4 h-4 text-muted-foreground" />
+                        <span>{habit.label}</span>
+                      </Label>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+           <div>
+            <Label
+              htmlFor="effort-slider"
+              className="flex justify-between"
+            >
+              <span>Effort / Focus</span>
+              <span>{editorState.effort}/10</span>
+            </Label>
+            <Slider
+              id="effort-slider"
+              min={1}
+              max={10}
+              step={1}
+              value={[editorState.effort]}
+              onValueChange={value => handleFieldChange('effort', value[0])}
+            />
+          </div>
+        </div>
+      </ScrollArea>
+    </div>
+  );
+};
+
+const ListView = ({ entries, selectedEntry, onSelect, onDelete }: { entries: JournalEntry[], selectedEntry: JournalEntry | null, onSelect: (entry: JournalEntry) => void, onDelete: (id: string) => void }) => {
+  const groupedEntries = groupEntriesByDate(entries);
+  const sortedDates = Object.keys(groupedEntries).sort((a,b) => new Date(b).getTime() - new Date(a).getTime());
+  
+  return (
+      <div className='h-full flex flex-col'>
+          <ScrollArea className="flex-grow pr-3 -mr-3">
+              <div className="space-y-4 mt-2">
+                  {sortedDates.map(date => (
+                      <div key={date}>
+                          <h4 className="font-bold text-sm text-muted-foreground px-2">
+                              {new Date(date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                          </h4>
+                          <Separator className="my-1"/>
+                          <div className="space-y-1">
+                              {groupedEntries[date].map(entry => {
+                                  const isSelected = selectedEntry?.id === entry.id;
+                                  const categoryTitle = journalConfig[entry.category as JournalCategory]?.title || entry.category;
+                                  const preview = (entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.').substring(0, 100);
+                                  const tags = entry.tags.split(',').map(t => t.trim()).filter(Boolean);
+
+                                  return (
+                                      <div key={entry.id} className="group flex items-center gap-1">
+                                          <button onClick={() => onSelect(entry)}
+                                              className={cn(
+                                                  "flex-grow text-left p-2 rounded-md transition-colors",
+                                                  isSelected ? 'bg-primary/10' : 'hover:bg-muted'
+                                              )}>
+                                              <p className={cn(
+                                                  "font-semibold text-sm",
+                                                  isSelected ? "text-primary font-bold" : "text-foreground"
+                                              )}>
+                                                {categoryTitle}
+                                              </p>
+                                              <p className={cn(
+                                                  "text-xs truncate",
+                                                  isSelected ? "text-foreground/90" : "text-muted-foreground"
+                                              )}>
+                                                  {preview}{preview.length === 100 && '...'}
+                                              </p>
+                                              {tags.length > 0 && (
+                                                  <div className="flex flex-wrap gap-1 mt-1">
+                                                      {tags.map(tag => <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>)}
+                                                  </div>
+                                              )}
+                                          </button>
+                                          <AlertDialog>
+                                              <AlertDialogTrigger asChild>
+                                                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                      <Trash2 className="w-4 h-4 text-muted-foreground"/>
+                                                  </Button>
+                                              </AlertDialogTrigger>
+                                               <AlertDialogContent>
+                                                  <AlertDialogHeader>
+                                                      <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
+                                                      <AlertDialogDescription>
+                                                          This will move the entry to the trash. You can restore it later.
+                                                      </AlertDialogDescription>
+                                                  </AlertDialogHeader>
+                                                  <AlertDialogFooter>
+                                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                      <AlertDialogAction onClick={() => onDelete(entry.id)}>
+                                                          Move to Trash
+                                                      </AlertDialogAction>
+                                                  </AlertDialogFooter>
+                                              </AlertDialogContent>
+                                          </AlertDialog>
+                                      </div>
+                                  )
+                              })}
+                          </div>
+                      </div>
+                  ))}
+              </div>
+          </ScrollArea>
+      </div>
+  )
+};
+
+const TrashView = ({ trashedEntries, onRestore, onEmptyTrash }: { trashedEntries: JournalEntry[], onRestore: (id: string) => void, onEmptyTrash: () => void }) => (
+   <div className='h-full flex flex-col'>
+      <ScrollArea className="flex-grow pr-3 -mr-3">
+          <div className="space-y-2 mt-2">
+          {trashedEntries.length > 0 ? trashedEntries.map(entry => {
+              const config = journalConfig[entry.category as JournalCategory];
+              const categoryTitle = config ? config.title : entry.category;
+              return (
+                <div key={entry.id} className="group flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                    <div className='flex-grow'>
+                        <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{categoryTitle}</span></p>
+                        <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => onRestore(entry.id)}>
+                        <ArchiveRestore className="w-4 h-4 text-muted-foreground"/>
+                    </Button>
+                </div>
+              );
+          }) : (
+              <div className="text-center text-muted-foreground pt-10">Trash is empty.</div>
+          )}
+          </div>
+      </ScrollArea>
+      {trashedEntries.length > 0 && (
+          <div className="mt-2 flex-shrink-0">
+              <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                       <Button variant="destructive" className="w-full">Empty Trash</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                      <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete {trashedEntries.length} item(s).
+                          </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={onEmptyTrash}>
+                              Yes, Empty Trash
+                          </AlertDialogAction>
+                      </AlertDialogFooter>
+                  </AlertDialogContent>
+              </AlertDialog>
+          </div>
+      )}
+  </div>
+);
+
+const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
+
 export const HabitJournal = forwardRef((props, ref) => {
-  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash, completedHabits, toggleHabitForDay, selectedEntry, setSelectedEntry, createNewEntry } = useJournal();
+  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash, selectedEntry, setSelectedEntry, createNewEntry } = useJournal();
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortMode, setSortMode] = useState<SortMode>('date-desc');
@@ -82,10 +572,10 @@ export const HabitJournal = forwardRef((props, ref) => {
     createNewEntry: handleNewEntry,
   }));
   
-  const handleSelectEntry = (entry: JournalEntry) => {
+  const handleSelectEntry = useCallback((entry: JournalEntry) => {
     setViewMode('entries');
     setSelectedEntry(entry);
-  }
+  }, [setSelectedEntry]);
 
   const handleNewEntry = useCallback(() => {
     setViewMode('entries');
@@ -124,12 +614,12 @@ export const HabitJournal = forwardRef((props, ref) => {
     return { success: true, entry: savedEntry };
   }, [addEntry, updateEntry, toast, setSelectedEntry]);
   
-  const handleRestore = (id: string) => {
+  const handleRestore = useCallback((id: string) => {
     restoreEntry(id);
     toast({ title: 'Entry Restored' });
-  };
+  }, [restoreEntry, toast]);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = useCallback((id: string) => {
     const entryWasSelected = selectedEntry?.id === id;
     const entryData = entries.find(e => e.id === id);
     const entryToDeleteIndex = entries.findIndex(e => e.id === id);
@@ -162,7 +652,7 @@ export const HabitJournal = forwardRef((props, ref) => {
             handleNewEntry();
         }
     }
-  };
+  }, [deleteEntry, restoreEntry, toast, selectedEntry, entries, setSelectedEntry, handleNewEntry]);
 
   const filteredAndSortedEntries = useMemo(() => {
     const filtered = entries.filter(entry => {
@@ -189,492 +679,6 @@ export const HabitJournal = forwardRef((props, ref) => {
     });
   }, [entries, searchQuery, sortMode]);
   
-  const EntryEditor = ({
-    entry,
-    onSave,
-  }: {
-    entry: JournalEntry;
-    onSave: (entry: JournalEntry) => { success: boolean; entry: JournalEntry | null };
-  }) => {
-    const [editorState, setEditorState] = useState<JournalEntry>(entry);
-    const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
-    
-    const todaysHabits = completedHabits[editorState.date] || new Set();
-
-    useEffect(() => {
-      setEditorState(entry);
-      setSaveStatus('idle');
-    }, [entry]);
-
-    useEffect(() => {
-        const isNew = editorState.id.startsWith('new-');
-        // Do not autosave for new entries or if nothing has changed.
-        if (isNew || JSON.stringify(entry) === JSON.stringify(editorState)) {
-          return;
-        }
-
-        setSaveStatus('saving');
-        const handler = setTimeout(() => {
-          onSave(editorState);
-          setSaveStatus('saved');
-        }, 1500); 
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [editorState, entry, onSave]);
-
-    useEffect(() => {
-        if (saveStatus === 'saved') {
-            const timer = setTimeout(() => setSaveStatus('idle'), 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [saveStatus]);
-    
-    const getValidConfig = (category: JournalCategory | string) => {
-        if (category && journalConfig[category as JournalCategory]) {
-            return { config: journalConfig[category as JournalCategory], category: category as JournalCategory};
-        }
-        const defaultCategory = 'Growth & Challenge Reflection';
-        return { config: journalConfig[defaultCategory], category: defaultCategory };
-    }
-    
-    const { config, category } = getValidConfig(editorState.category);
-
-    const isNewEntry = editorState.id.startsWith('new-');
-    
-    const handleManualSave = () => {
-        const result = onSave(editorState);
-        if(result.success) {
-           if (result.entry) {
-             setEditorState(result.entry); // Update editor with permanent ID
-           }
-           setSaveStatus('saved');
-           toast({ title: 'Journal Entry Saved' });
-        }
-    }
-
-    const handleCategoryChange = (newCategory: JournalCategory) => {
-      setEditorState(prevState => ({
-        ...prevState,
-        category: newCategory,
-      }));
-    };
-    
-    const handleFrequencyChange = (newFrequency: ReflectionFrequency) => {
-      setEditorState(prevState => ({ ...prevState, frequency: newFrequency }));
-    };
-
-    const handleFieldChange = (
-      field: keyof Omit<JournalEntry, 'id' | 'date'>,
-      value: any
-    ) => {
-      setEditorState(prevState => ({ ...prevState, [field]: value }));
-    };
-
-    const handleHabitChange = (habitId: HabitId, checked: boolean) => {
-      toggleHabitForDay(editorState.date, habitId);
-    };
-
-    const handleAffirmationChange = (index: number, value: string) => {
-        const newAffirmations = [...editorState.affirmations];
-        newAffirmations[index] = value;
-        setEditorState(prevState => ({...prevState, affirmations: newAffirmations}));
-    }
-
-    const addAffirmation = () => {
-        setEditorState(prevState => ({...prevState, affirmations: [...prevState.affirmations, '']}));
-    }
-    
-    const removeLastAffirmation = () => {
-        setEditorState(prevState => ({...prevState, affirmations: prevState.affirmations.slice(0, -1)}));
-    }
-
-
-    const exportAsMarkdown = (entry: JournalEntry) => {
-        const entryConfig = journalConfig[entry.category as JournalCategory];
-        const prompts = entryConfig.prompts[entry.frequency] || entryConfig.prompts.daily;
-
-        let markdown = `---
-date: ${entry.date}
-category: "${entry.category}"
-frequency: ${entry.frequency}
-effort: ${entry.effort}
-tags: ${entry.tags}
----
-
-# Journal Entry: ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}
-
-## ${entry.category} (${entry.frequency})
-
-`;
-
-        if (entry.field1) markdown += `### ${prompts[0]}\n${entry.field1}\n\n`;
-        if (entry.field2) markdown += `### ${prompts[1]}\n${entry.field2}\n\n`;
-        if (entry.field3) markdown += `### ${prompts[2]}\n${entry.field3}\n\n`;
-
-        if (entry.affirmations && entry.affirmations.length > 0) {
-            markdown += `### Affirmations\n${entry.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
-        }
-        
-        const completedHabitsForEntry = Object.values(allHabits)
-            .filter(habit => todaysHabits.has(habit.id))
-            .map(h => h?.label);
-
-        if (completedHabitsForEntry.length > 0) {
-            markdown += `### Supporting Habits\n${completedHabitsForEntry.map(h => `- [x] ${h}`).join('\n')}\n\n`;
-        }
-
-        const element = document.createElement("a");
-        const file = new Blob([markdown], {type: 'text/plain'});
-        element.href = URL.createObjectURL(file);
-        element.download = `journal-${entry.date}.md`;
-        document.body.appendChild(element); // Required for this to work in FireFox
-        element.click();
-        document.body.removeChild(element);
-    }
-    
-    const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
-
-
-    return (
-      <div className="p-4 h-full flex flex-col gap-2 relative">
-          <div className="absolute top-0 left-0 right-0 p-2 z-10 text-center">
-              {saveStatus !== 'idle' && (
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm font-semibold transition-all animate-in fade-in">
-                    {saveStatus === 'saving' ? (
-                        <>
-                            <Loader2 className="w-4 h-4 animate-spin"/>
-                            <span>Saving...</span>
-                        </>
-                    ) : (
-                        <>
-                             <CheckCircle className="w-4 h-4 text-green-500"/>
-                            <span>Saved</span>
-                        </>
-                    )}
-                </div>
-              )}
-          </div>
-        <div className="flex justify-between items-center pt-8">
-          <h3 className="font-bold text-lg text-primary">
-            {isNewEntry
-              ? 'New Entry'
-              : `Editing: ${new Date(
-                  editorState.date + 'T00:00:00'
-                ).toLocaleDateString()}`}
-          </h3>
-           <div className="flex items-center gap-2">
-            {!isNewEntry && (
-                <>
-                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => exportAsMarkdown(editorState)}>
-                    <Share className="w-4 h-4"/>
-                </Button>
-                 <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
-                            <Trash2 className="w-4 h-4"/>
-                        </Button>
-                    </AlertDialogTrigger>
-                     <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This will move the entry to the trash. You can restore it later.
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(editorState.id)}>
-                                Move to Trash
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-                </>
-            )}
-            {isNewEntry && (
-                <Button onClick={handleManualSave}>
-                    <Save className="mr-2 h-4 w-4" /> Save Entry
-                </Button>
-            )}
-           </div>
-        </div>
-        <Separator />
-        <ScrollArea className="flex-grow pr-2 -mr-2">
-          <div className="space-y-4 pr-2">
-            <div>
-              <Label className="mb-2 block">Journal Type</Label>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                {categoryKeys.map(catKey => {
-                  const CatIcon = journalConfig[catKey].icon;
-                  return (
-                    <Button
-                      key={catKey}
-                      variant={category === catKey ? 'default' : 'outline'}
-                      onClick={() => handleCategoryChange(catKey)}
-                      className="flex items-center justify-start gap-2 h-auto py-2"
-                    >
-                      <CatIcon className="w-4 h-4 shrink-0" />
-                      <span className="text-xs text-left whitespace-normal leading-tight">
-                        {journalConfig[catKey].title}
-                      </span>
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-            
-             <div>
-              <Label className="mb-2 block">Reflection Frequency</Label>
-                <div className="flex items-center gap-2">
-                    {(['daily', 'weekly', 'monthly'] as ReflectionFrequency[]).map(freq => (
-                        <Button key={freq} variant={editorState.frequency === freq ? 'default' : 'outline'} onClick={() => handleFrequencyChange(freq)} className="capitalize flex-1">
-                            {freq}
-                        </Button>
-                    ))}
-                </div>
-            </div>
-
-            <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
-              {config.guidance}
-            </div>
-
-            <Textarea
-              placeholder={currentPrompts[0]}
-              value={editorState.field1}
-              onChange={e => handleFieldChange('field1', e.target.value)}
-              className="min-h-[60px]"
-            />
-             <Textarea
-              placeholder={currentPrompts[1]}
-              value={editorState.field2}
-              onChange={e => handleFieldChange('field2', e.target.value)}
-              className="min-h-[60px]"
-            />
-             <Textarea
-              placeholder={currentPrompts[2]}
-              value={editorState.field3}
-              onChange={e => handleFieldChange('field3', e.target.value)}
-              className="min-h-[60px]"
-            />
-            
-            <div className="space-y-2">
-                 {editorState.affirmations.map((affirmation, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                         <Textarea
-                          placeholder={config.affirmationPrompt}
-                          value={affirmation}
-                          onChange={e => handleAffirmationChange(index, e.target.value)}
-                          className="min-h-[60px] flex-grow"
-                        />
-                    </div>
-                 ))}
-                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" onClick={addAffirmation}>
-                        <PlusCircle className="mr-2 h-4 w-4"/>
-                        Add Affirmation
-                    </Button>
-                    {editorState.affirmations.length > 0 && (
-                        <Button variant="ghost" size="sm" onClick={removeLastAffirmation}>
-                            <MinusCircle className="mr-2 h-4 w-4"/>
-                            Remove
-                        </Button>
-                    )}
-                 </div>
-            </div>
-            
-            <Separator/>
-            
-            <div>
-                <Label htmlFor="tags-input">Tags (comma-separated)</Label>
-                <Input
-                  id="tags-input"
-                  placeholder={config.suggestedTags}
-                  value={editorState.tags}
-                  onChange={e => handleFieldChange('tags', e.target.value)}
-                />
-            </div>
-
-            {config.habits.length > 0 && (
-              <div>
-                <Label>Supporting Habits</Label>
-                <div className="space-y-1 mt-1">
-                  {config.habits.map(habitId => {
-                    const habit = allHabits[habitId];
-                    if (!habit) return null;
-                    const habitCheckboxId = `habit-${habit.id}-${entry.id}`;
-                    return (
-                       <div key={habit.id} className="flex items-center">
-                        <Label
-                          htmlFor={habitCheckboxId}
-                          className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
-                        >
-                           <Checkbox 
-                            id={habitCheckboxId}
-                            checked={todaysHabits.has(habit.id)}
-                            onCheckedChange={checked => handleHabitChange(habit.id, !!checked)}
-                           />
-                          <habit.icon className="w-4 h-4 text-muted-foreground" />
-                          <span>{habit.label}</span>
-                        </Label>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-             <div>
-              <Label
-                htmlFor="effort-slider"
-                className="flex justify-between"
-              >
-                <span>Effort / Focus</span>
-                <span>{editorState.effort}/10</span>
-              </Label>
-              <Slider
-                id="effort-slider"
-                min={1}
-                max={10}
-                step={1}
-                value={[editorState.effort]}
-                onValueChange={value => handleFieldChange('effort', value[0])}
-              />
-            </div>
-          </div>
-        </ScrollArea>
-      </div>
-    );
-  };
-  
-  const ListView = () => {
-    const groupedEntries = groupEntriesByDate(filteredAndSortedEntries);
-    const sortedDates = Object.keys(groupedEntries).sort((a,b) => new Date(b).getTime() - new Date(a).getTime());
-    
-    return (
-        <div className='h-full flex flex-col'>
-            <ScrollArea className="flex-grow pr-3 -mr-3">
-                <div className="space-y-4 mt-2">
-                    {sortedDates.map(date => (
-                        <div key={date}>
-                            <h4 className="font-bold text-sm text-muted-foreground px-2">
-                                {new Date(date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                            </h4>
-                            <Separator className="my-1"/>
-                            <div className="space-y-1">
-                                {groupedEntries[date].map(entry => {
-                                    const isSelected = selectedEntry?.id === entry.id;
-                                    const categoryTitle = journalConfig[entry.category as JournalCategory]?.title || entry.category;
-                                    const preview = (entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.').substring(0, 100);
-                                    const tags = entry.tags.split(',').map(t => t.trim()).filter(Boolean);
-
-                                    return (
-                                        <div key={entry.id} className="group flex items-center gap-1">
-                                            <button onClick={() => handleSelectEntry(entry)}
-                                                className={cn(
-                                                    "flex-grow text-left p-2 rounded-md transition-colors",
-                                                    isSelected ? 'bg-primary/10' : 'hover:bg-muted'
-                                                )}>
-                                                <p className={cn(
-                                                    "font-semibold text-sm",
-                                                    isSelected ? "text-primary font-bold" : "text-foreground"
-                                                )}>
-                                                  {categoryTitle}
-                                                </p>
-                                                <p className={cn(
-                                                    "text-xs truncate",
-                                                    isSelected ? "text-foreground/90" : "text-muted-foreground"
-                                                )}>
-                                                    {preview}{preview.length === 100 && '...'}
-                                                </p>
-                                                {tags.length > 0 && (
-                                                    <div className="flex flex-wrap gap-1 mt-1">
-                                                        {tags.map(tag => <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>)}
-                                                    </div>
-                                                )}
-                                            </button>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Trash2 className="w-4 h-4 text-muted-foreground"/>
-                                                    </Button>
-                                                </AlertDialogTrigger>
-                                                 <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            This will move the entry to the trash. You can restore it later.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={() => handleDelete(entry.id)}>
-                                                            Move to Trash
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </ScrollArea>
-        </div>
-    )
-  };
-
-  const TrashView = () => (
-     <div className='h-full flex flex-col'>
-        <ScrollArea className="flex-grow pr-3 -mr-3">
-            <div className="space-y-2 mt-2">
-            {trashedEntries.length > 0 ? trashedEntries.map(entry => {
-                const config = journalConfig[entry.category as JournalCategory];
-                const categoryTitle = config ? config.title : entry.category;
-                return (
-                  <div key={entry.id} className="group flex items-center gap-2 p-2 rounded-md bg-muted/50">
-                      <div className='flex-grow'>
-                          <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{categoryTitle}</span></p>
-                          <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
-                      </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleRestore(entry.id)}>
-                          <ArchiveRestore className="w-4 h-4 text-muted-foreground"/>
-                      </Button>
-                  </div>
-                );
-            }) : (
-                <div className="text-center text-muted-foreground pt-10">Trash is empty.</div>
-            )}
-            </div>
-        </ScrollArea>
-        {trashedEntries.length > 0 && (
-            <div className="mt-2 flex-shrink-0">
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                         <Button variant="destructive" className="w-full">Empty Trash</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete {trashedEntries.length} item(s).
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={emptyTrash}>
-                                Yes, Empty Trash
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </div>
-        )}
-    </div>
-  );
-
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 col-span-1 md:col-span-2">
       <CardHeader>
@@ -731,12 +735,12 @@ tags: ${entry.tags}
             </div>
             <Separator className="my-2"/>
             <div className="flex-grow mt-2 min-h-0">
-                {viewMode === 'entries' ? <ListView /> : <TrashView />}
+                {viewMode === 'entries' ? <ListView entries={filteredAndSortedEntries} selectedEntry={selectedEntry} onSelect={handleSelectEntry} onDelete={handleDelete} /> : <TrashView trashedEntries={trashedEntries} onRestore={handleRestore} onEmptyTrash={emptyTrash} />}
             </div>
           </div>
           <div className="lg:col-span-2 bg-background rounded-lg border">
             {selectedEntry && viewMode === 'entries' ? (
-              <EntryEditor entry={selectedEntry} onSave={handleSave} />
+              <EntryEditor entry={selectedEntry} onSave={handleSave} onDelete={handleDelete} />
             ) : (
               <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 {viewMode === 'entries' ? (
