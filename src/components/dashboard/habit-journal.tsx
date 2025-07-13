@@ -264,7 +264,7 @@ tags: ${entry.tags}
                       <AlertDialogHeader>
                           <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
                           <AlertDialogDescription>
-                              This will move the entry to the trash. You can restore it later.
+                              This entry will be moved to the trash and can be restored within 30 days.
                           </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
