@@ -1,30 +1,15 @@
 
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, SlidersHorizontal, RefreshCw } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useDashboardSettings, type DashboardComponent } from '@/hooks/use-dashboard-settings';
-import { Separator } from '@/components/ui/separator';
-
-const componentLabels: Record<DashboardComponent, string> = {
-  dailyChallenge: 'Daily Challenge',
-  allGames: 'All Training Games',
-  mainDashboard: 'Main Dashboard (Efficiency/Strength)',
-  habitTracker: 'Habit Tracker',
-  milestoneBadges: 'Milestone Badges',
-  performanceInsights: 'Performance Insights',
-  weakAreaRecommendations: 'Weak Area Targeting',
-  adaptiveDifficulty: 'Adaptive Difficulty',
-  habitJournal: 'Habit Journal',
-};
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DashboardLayoutSettings } from '@/components/settings/dashboard-layout-settings';
+import { TrainingSettings } from '@/components/settings/training-settings';
+import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
 
 export default function SettingsPage() {
-    const { settings, toggleSetting, resetSettings } = useDashboardSettings();
-
     return (
         <div className="flex flex-col min-h-screen bg-background text-foreground">
            <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card sticky top-0 z-10">
@@ -44,42 +29,43 @@ export default function SettingsPage() {
                     </h1>
                 </div>
                  <div className="flex-1 flex justify-end">
-                    <Button variant="ghost" onClick={resetSettings}>
-                        <RefreshCw className="mr-2 h-4 w-4"/>
-                        Reset Layout
-                    </Button>
+                    {/* Placeholder for future actions */}
                  </div>
             </div>
           </header>
           <main className="flex-1 p-4 sm:p-6 md:p-8">
-            <div className="mx-auto max-w-2xl space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Customize Dashboard</CardTitle>
-                  <CardDescription>
-                    Toggle the visibility of components on your main dashboard.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {Object.keys(settings).map((key) => {
-                      const componentKey = key as DashboardComponent;
-                      return (
-                        <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                          <Label htmlFor={`switch-${key}`} className="font-medium">
-                            {componentLabels[componentKey]}
-                          </Label>
-                          <Switch
-                            id={`switch-${key}`}
-                            checked={settings[componentKey]}
-                            onCheckedChange={() => toggleSetting(componentKey)}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="mx-auto max-w-5xl">
+                <Tabs defaultValue="layout" orientation="vertical" className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <TabsList className="flex flex-col h-auto justify-start items-stretch p-2 space-y-1 bg-muted/50 rounded-lg w-full">
+                        <TabsTrigger value="layout" className="justify-start gap-2">
+                           <LayoutDashboard className="h-4 w-4"/> Dashboard Layout
+                        </TabsTrigger>
+                        <TabsTrigger value="training" className="justify-start gap-2">
+                           <Sliders className="h-4 w-4"/> Training
+                        </TabsTrigger>
+                        <TabsTrigger value="account" className="justify-start gap-2" disabled>
+                           <User className="h-4 w-4"/> Account
+                        </TabsTrigger>
+                         <TabsTrigger value="appearance" className="justify-start gap-2" disabled>
+                           <Palette className="h-4 w-4"/> Appearance
+                        </TabsTrigger>
+                    </TabsList>
+
+                    <div className="col-span-1 md:col-span-3">
+                        <TabsContent value="layout">
+                           <DashboardLayoutSettings />
+                        </TabsContent>
+                        <TabsContent value="training">
+                           <TrainingSettings />
+                        </TabsContent>
+                         <TabsContent value="account">
+                           <PlaceholderSettings title="Account Settings" description="Manage your profile, subscription, and data."/>
+                        </TabsContent>
+                        <TabsContent value="appearance">
+                           <PlaceholderSettings title="Appearance Settings" description="Customize the look and feel of the app."/>
+                        </TabsContent>
+                    </div>
+                </Tabs>
             </div>
           </main>
         </div>
