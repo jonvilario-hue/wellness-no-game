@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Bell, Puzzle, Trash2 } from 'lucide-react';
+import { PlusCircle, Bell, Puzzle, Trash2, ExternalLink } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import {
@@ -22,6 +22,7 @@ import { useState } from 'react';
 import { useAlarmStore } from '@/hooks/use-alarm-store';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export function AlarmClock() {
   const { alarms, addAlarm, toggleAlarm, removeAlarm, toggleAlarmPuzzle } = useAlarmStore();
@@ -134,6 +135,17 @@ export function AlarmClock() {
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
+         <div className="p-4 bg-muted/50 rounded-lg text-center">
+            <h3 className="font-semibold">Test the Alarm Dismissal Flow</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+                Experience how a cognitive puzzle is used to dismiss an alarm.
+            </p>
+            <Button asChild>
+                <Link href="/alarm" target="_blank">
+                    Simulate Alarm <ExternalLink className="w-4 h-4 ml-2"/>
+                </Link>
+            </Button>
+        </div>
       </CardContent>
     </Card>
   );

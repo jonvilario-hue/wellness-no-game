@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, Clock, AlarmClock as AlarmClockIcon, Timer as TimerIcon, Hourglass, CirclePlay, Settings, CalendarDays, ExternalLink, Moon } from 'lucide-react';
+import { ArrowLeft, Clock, Timer as TimerIcon, Hourglass, CirclePlay, Settings, CalendarDays, Moon, BarChart2 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,37 +9,7 @@ import { AlarmClock } from '@/components/time/alarm-clock';
 import { Stopwatch } from '@/components/time/stopwatch';
 import { Timer } from '@/components/time/timer';
 import { PomodoroTimer } from '@/components/time/pomodoro';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-function AlarmTabContent() {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Moon className="w-5 h-5 text-primary"/>
-                    Cognitive Alarms
-                </CardTitle>
-                <CardDescription>
-                    Set puzzle-based alarms to wake up your mind or structure your day.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                <div className="p-4 bg-muted/50 rounded-lg text-center">
-                    <h3 className="font-semibold">Test the Alarm Dismissal</h3>
-                    <p className="text-muted-foreground text-sm mb-4">
-                        Experience the puzzle-based alarm dismissal flow.
-                    </p>
-                    <Button asChild>
-                        <Link href="/alarm" target="_blank">
-                            Simulate Alarm <ExternalLink className="w-4 h-4 ml-2"/>
-                        </Link>
-                    </Button>
-                </div>
-                <AlarmClock />
-            </CardContent>
-        </Card>
-    );
-}
+import { SleepCycleTracker } from '@/components/time/sleep-cycle-tracker';
 
 export default function TimePage() {
     return (
@@ -76,15 +46,19 @@ export default function TimePage() {
           </header>
           <main className="flex-1 p-4 sm:p-6 md:p-8 flex justify-center">
             <div className="w-full max-w-4xl">
-                <Tabs defaultValue="alarm" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
-                        <TabsTrigger value="alarm"><Moon className="w-4 h-4 mr-2"/>Sleep & Alarms</TabsTrigger>
+                <Tabs defaultValue="sleep-cycle" className="w-full">
+                    <TabsList className="grid w-full grid-cols-5">
+                        <TabsTrigger value="sleep-cycle"><BarChart2 className="w-4 h-4 mr-2"/>Sleep Cycle</TabsTrigger>
+                        <TabsTrigger value="alarms"><Moon className="w-4 h-4 mr-2"/>Alarms</TabsTrigger>
                         <TabsTrigger value="stopwatch"><Hourglass className="w-4 h-4 mr-2"/>Stopwatch</TabsTrigger>
                         <TabsTrigger value="timer"><TimerIcon className="w-4 h-4 mr-2"/>Timer</TabsTrigger>
                         <TabsTrigger value="pomodoro"><CirclePlay className="w-4 h-4 mr-2"/>Pomodoro</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="alarm" className="mt-6">
-                       <AlarmTabContent />
+                    <TabsContent value="sleep-cycle" className="mt-6">
+                       <SleepCycleTracker />
+                    </TabsContent>
+                    <TabsContent value="alarms" className="mt-6">
+                       <AlarmClock />
                     </TabsContent>
                     <TabsContent value="stopwatch" className="mt-6">
                        <Stopwatch />
