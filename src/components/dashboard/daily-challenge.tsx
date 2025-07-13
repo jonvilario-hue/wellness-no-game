@@ -1,8 +1,9 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Zap } from 'lucide-react';
+import { ArrowRight, Zap, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useTransition } from 'react';
 import { getDailyCircuitAction } from '@/app/actions';
@@ -47,9 +48,7 @@ export function DailyChallenge() {
                  <div className="space-y-2 flex-1 w-full mt-2">
                     <Skeleton className="h-5 w-3/4 mx-auto" />
                     <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-5/6 mx-auto" />
                  </div>
-                 <Skeleton className="h-8 w-24 mt-2" />
               </Card>
             ))}
           </div>
@@ -82,8 +81,6 @@ export function DailyChallenge() {
     return null; // Don't render anything if there's no circuit and no error
   }
 
-  const firstGameDomain = circuit.segments[0].domain;
-
   return (
     <Card className="bg-primary/5 border-primary/20 hover:shadow-lg transition-shadow duration-300">
       <CardHeader className="text-center">
@@ -108,18 +105,12 @@ export function DailyChallenge() {
                   <h4 className="font-bold text-lg text-foreground">{segment.title}</h4>
                   <p className="text-sm text-muted-foreground">{segment.transferAnchor}</p>
                 </div>
-                <Button variant="ghost" size="sm" asChild>
-                    <Link href={`/training/${segment.domain}`}>
-                        Train: {segment.gameTitle}
-                    </Link>
-                </Button>
               </Card>
             );
           })}
         </div>
         <Button asChild size="lg" className="w-full">
-          {/* This button could eventually launch a special "circuit" mode */}
-          <Link href={`/training/${firstGameDomain}`}>
+          <Link href={`/training/daily-challenge`}>
             Start Daily Circuit <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
