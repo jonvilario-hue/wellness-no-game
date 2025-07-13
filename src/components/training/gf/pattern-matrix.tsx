@@ -3,11 +3,12 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { cn } from "@/lib/utils";
 import { BrainCircuit } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
+import { usePerformanceStore } from "@/hooks/use-performance-store";
 
 // --- Neutral Mode Components ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
@@ -171,35 +172,42 @@ export function PatternMatrix() {
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [puzzleKey, setPuzzleKey] = useState(0);
   const [score, setScore] = useState(0);
+  const [startTime, setStartTime] = useState(Date.now());
   const [selectedOption, setSelectedOption] = useState<PuzzleElement | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  const { logGameResult } = usePerformanceStore();
 
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
 
-  const restartGame = () => {
+  const restartGame = useCallback(() => {
     setPuzzle(generatePuzzle(currentMode));
     setPuzzleKey(0);
     setScore(0);
     setSelectedOption(null);
     setFeedback('');
-  };
+    setStartTime(Date.now());
+  }, [currentMode]);
 
   const handleNextPuzzle = () => {
+    const puzzleScore = feedback === 'correct' ? 10 : 0;
+    const time = (Date.now() - startTime) / 1000;
+    logGameResult('Gf', currentMode, { score: puzzleScore, time });
+    
     setPuzzle(generatePuzzle(currentMode));
     setPuzzleKey(prevKey => prevKey + 1);
     setSelectedOption(null);
     setFeedback('');
+    setStartTime(Date.now());
   };
 
   useEffect(() => {
     if (isLoaded) {
       restartGame();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, currentMode]);
+  }, [isLoaded, restartGame]);
 
   const handleSelectOption = (option: PuzzleElement) => {
     if (feedback || !puzzle) return;

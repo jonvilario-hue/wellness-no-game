@@ -1,9 +1,12 @@
+
 'use server';
+
 import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit } from '@/ai/flows';
 import type { WeakAreaRecommendationInput, AdaptDifficultyInput, TrainingRecommendationInput } from '@/ai/flows';
 
 export async function getWeakAreaRecommendationsAction() {
-  // Mock performance data to simulate a real user with a clear weak area
+  // In a real app, this data would be fetched from a DB.
+  // For now, we simulate a user with some performance history.
   const performanceData: WeakAreaRecommendationInput['performanceData'] = [
     { domain: 'Gf', score: 65, sessions: 10 },
     { domain: 'Gc', score: 80, sessions: 15 },
@@ -34,7 +37,7 @@ export async function getAdaptiveDifficultyAction(input: AdaptDifficultyInput) {
 }
 
 export async function getTrainingRecommendationAction() {
-   // Mock performance data to simulate a real user where a specific insight can be triggered.
+   // This mock data simulates a real user where a specific insight can be triggered.
   const performanceData: TrainingRecommendationInput['performanceData'] = [
     { domain: 'Gf', score: 70, trend: 2 },
     { domain: 'Gc', score: 80, trend: 5 },
@@ -56,7 +59,12 @@ export async function getTrainingRecommendationAction() {
   };
 
   try {
-    return await getTrainingRecommendation(input);
+    const result = await getTrainingRecommendation(input);
+    // Ensure performanceData is passed through if the flow doesn't add it.
+    if (!result.performanceData) {
+      result.performanceData = performanceData;
+    }
+    return result;
   } catch (error) {
     console.error('Error getting training recommendation:', error);
     return null;

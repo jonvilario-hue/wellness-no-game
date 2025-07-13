@@ -3,9 +3,13 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { View } from "lucide-react";
+import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { useTrainingFocus } from "@/hooks/use-training-focus";
+import { useTrainingOverride } from "@/hooks/use-training-override";
+
 
 const shapes = [
   // L-shape
@@ -62,7 +66,7 @@ const generatePuzzle = (): Puzzle => {
     mirrorImage = rotateGrid(mirrorImage);
   }
   // Ensure the mirror image is not identical to the target shape
-  if (!areGridsEqual(mirrorImage, targetShape)) {
+  if (!options.some(opt => areGridsEqual(opt, mirrorImage))) {
     options.push(mirrorImage);
   }
 
@@ -106,9 +110,19 @@ const ShapeGrid = ({ grid }: { grid: Grid }) => (
 
 export function MentalRotationLab() {
   const [puzzleKey, setPuzzleKey] = useState(0);
+  const [score, setScore] = useState(0);
+  const [startTime, setStartTime] = useState(Date.now());
   const [selectedOption, setSelectedOption] = useState<Grid | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
   
+  const { logGameResult } = usePerformanceStore();
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  // This game does not have a math mode, so we default to neutral
+  const currentMode = 'neutral';
+
   const puzzle = useMemo(() => generatePuzzle(), [puzzleKey]);
 
   const handleSelectOption = (option: Grid) => {
@@ -116,15 +130,21 @@ export function MentalRotationLab() {
     setSelectedOption(option);
     if (areGridsEqual(option, puzzle.answer)) {
       setFeedback('correct');
+      setScore(prev => prev + 1);
     } else {
       setFeedback('incorrect');
     }
   };
 
   const handleNextPuzzle = () => {
+    const time = (Date.now() - startTime) / 1000;
+    const puzzleScore = feedback === 'correct' ? 100 : 0;
+    logGameResult('Gv', currentMode, { score: puzzleScore, time });
+
     setPuzzleKey(prevKey => prevKey + 1);
     setSelectedOption(null);
     setFeedback('');
+    setStartTime(Date.now());
   };
 
   return (
@@ -137,6 +157,10 @@ export function MentalRotationLab() {
         <CardDescription>Which of the shapes below is a rotated version of the target shape?</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
+        <div className="w-full flex justify-between font-mono">
+          <span>Puzzle: {puzzleKey + 1}</span>
+          <span>Score: {score}</span>
+        </div>
         <div>
           <h3 className="text-center font-semibold mb-2">Target Shape</h3>
           <div className="p-4 bg-muted rounded-lg inline-block">

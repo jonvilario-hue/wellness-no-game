@@ -3,8 +3,11 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
+import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { useTrainingFocus } from "@/hooks/use-training-focus";
+import { useTrainingOverride } from "@/hooks/use-training-override";
 
 const symbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
 const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -20,18 +23,27 @@ export function RapidCodeMatch() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
+  const [startTime, setStartTime] = useState(0);
   const [currentSymbol, setCurrentSymbol] = useState('');
+  
+  const { logGameResult } = usePerformanceStore();
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  // This game does not have a math mode, so we default to neutral
+  const currentMode = 'neutral';
 
-  const keyMap = useMemo(() => {
-    if (gameState !== 'running') return {};
+  const generateKeyMap = useCallback(() => {
     const shuffledSymbols = [...symbols].sort(() => Math.random() - 0.5);
     const map: { [key: string]: number } = {};
     shuffledSymbols.slice(0, 7).forEach((symbol, index) => {
       map[symbol] = digits[index];
     });
     return map;
-  }, [gameState]);
+  }, []);
 
+  const [keyMap, setKeyMap] = useState<{ [key: string]: number }>(generateKeyMap);
   const keyEntries = useMemo(() => Object.entries(keyMap), [keyMap]);
 
   useEffect(() => {
@@ -39,25 +51,27 @@ export function RapidCodeMatch() {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     }
-    if (timeLeft === 0) {
+    if (timeLeft === 0 && gameState === 'running') {
       setGameState('finished');
+      const time = (Date.now() - startTime) / 1000;
+      logGameResult('Gs', currentMode, { score, time });
     }
-  }, [gameState, timeLeft]);
+  }, [gameState, timeLeft, score, startTime, currentMode, logGameResult]);
   
-  useEffect(() => {
-    if (gameState === 'running' && keyEntries.length > 0) {
-      const symbolsInKey = Object.keys(keyMap);
-      setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
-    }
-  }, [gameState, keyMap, keyEntries]);
-
   const handleStart = () => {
     setScore(0);
     setTimeLeft(60);
+    const newKeyMap = generateKeyMap();
+    setKeyMap(newKeyMap);
+    const symbolsInKey = Object.keys(newKeyMap);
+    setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
+    setStartTime(Date.now());
     setGameState('running');
   };
 
   const handleAnswer = (digit: number) => {
+    if (gameState !== 'running') return;
+
     if (keyMap[currentSymbol] === digit) {
       setScore(score + 1);
     } else {

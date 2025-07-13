@@ -6,26 +6,39 @@ import { Button } from "@/components/ui/button";
 import { Volume2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { useTrainingFocus } from "@/hooks/use-training-focus";
+import { useTrainingOverride } from "@/hooks/use-training-override";
 
 type GameMode = 'mimic' | 'find';
 
 export function ToneGridChallenge() {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [gameState, setGameState] = useState('idle'); // idle, playing, answering, feedback
+  const [gameState, setGameState] = useState('idle'); // idle, playing, answering, feedback, finished
   const [sequence, setSequence] = useState<number[]>([]);
   const [userSequence, setUserSequence] = useState<number[]>([]);
   const [level, setLevel] = useState(1);
+  const [score, setScore] = useState(0);
+  const [lives, setLives] = useState(3);
   const [message, setMessage] = useState('');
   const [highlightedNote, setHighlightedNote] = useState<number | null>(null);
   const [gameMode, setGameMode] = useState<GameMode>('mimic');
   const [targetTone, setTargetTone] = useState<number | null>(null);
+  const [startTime, setStartTime] = useState(0);
+
+  const { logGameResult } = usePerformanceStore();
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  // This game does not have a math mode, so we default to neutral
+  const currentMode = 'neutral';
 
   useEffect(() => {
-    // This effect runs only on the client
     if (typeof window !== 'undefined' && !audioContext) {
-      setAudioContext(new (window.AudioContext || (window as any).webkitAudioContext)());
+      const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+      setAudioContext(context);
     }
-    // Cleanup function to close the audio context
     return () => {
         if (audioContext && audioContext.state !== 'closed') {
             audioContext.close();
@@ -35,7 +48,7 @@ export function ToneGridChallenge() {
   }, []);
 
   const playTone = (freq: number, duration = 0.3) => {
-    if (!audioContext) return;
+    if (!audioContext || audioContext.state === 'closed') return;
     const oscillator = audioContext.createOscillator();
     oscillator.type = 'sine';
     oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
@@ -68,6 +81,13 @@ export function ToneGridChallenge() {
   };
   
   const startLevel = (currentLevel: number) => {
+    if (lives <= 0) {
+      setGameState('finished');
+      const time = (Date.now() - startTime) / 1000;
+      logGameResult('Ga', currentMode, { score, time });
+      return;
+    }
+    
     setUserSequence([]);
     const newMode = Math.random() > 0.4 ? 'mimic' : 'find';
     setGameMode(newMode);
@@ -110,20 +130,25 @@ export function ToneGridChallenge() {
         audioContext.resume();
     }
     setLevel(1);
+    setScore(0);
+    setLives(3);
+    setStartTime(Date.now());
     startLevel(1);
   };
   
   const handleNextLevel = () => {
+    setScore(prev => prev + (level * 10));
     const nextLevel = level + 1;
     setLevel(nextLevel);
     startLevel(nextLevel);
   };
 
   const handleIncorrect = () => {
-    setMessage(`Not quite. Let's try level ${level} again.`);
+    setLives(prev => prev - 1);
+    setMessage(`Not quite. ${lives - 1} lives left. Let's try level ${level} again.`);
     setTimeout(() => {
         startLevel(level);
-    }, 1500);
+    }, 2000);
   };
 
   const handleUserInput = (index: number) => {
@@ -160,6 +185,20 @@ export function ToneGridChallenge() {
     }
   };
 
+  if (gameState === 'finished') {
+    return (
+      <Card className="w-full max-w-2xl text-center">
+        <CardHeader>
+          <CardTitle>Game Over</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center gap-6">
+          <p className="text-xl">Your final score is: <span className="font-bold text-primary">{score}</span></p>
+          <Button onClick={handleStart} size="lg">Play Again</Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full max-w-2xl text-center">
       <CardHeader>
@@ -167,7 +206,11 @@ export function ToneGridChallenge() {
         <CardDescription>Listen to the sequence of tones, then follow the instructions.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
-        <div className="text-xl font-mono">Level: {level}</div>
+        <div className="w-full flex justify-between font-mono text-lg">
+          <span>Level: {level}</span>
+          <span>Score: {score}</span>
+          <span>Lives: {lives}</span>
+        </div>
         
         {gameState === 'idle' && <Button onClick={handleStart} size="lg">Start</Button>}
         

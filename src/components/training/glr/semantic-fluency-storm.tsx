@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
+import { useTrainingOverride } from "@/hooks/use-training-override";
+import { usePerformanceStore } from "@/hooks/use-performance-store";
 
 const neutralPrompts = [
   "Things you find in a kitchen",
@@ -34,10 +36,15 @@ export function SemanticFluencyStorm() {
   const [currentInput, setCurrentInput] = useState('');
   const [responses, setResponses] = useState<string[]>([]);
   const [switched, setSwitched] = useState(false);
+  const [startTime, setStartTime] = useState(0);
   const promptHistory = useRef<string[]>([]);
-  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
+  
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  const { logGameResult } = usePerformanceStore();
 
-  const currentMode = isLoaded && trainingFocus === 'math' ? 'math' : 'neutral';
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
   const prompts = currentMode === 'math' ? mathPrompts : neutralPrompts;
 
   useEffect(() => {
@@ -58,9 +65,11 @@ export function SemanticFluencyStorm() {
       }, 1000);
     } else if (timeLeft === 0 && gameState === 'running') {
       setGameState('finished');
+      const time = (Date.now() - startTime) / 1000;
+      logGameResult('Glr', currentMode, { score: responses.length, time });
     }
     return () => clearTimeout(timer);
-  }, [gameState, timeLeft, switched, prompts]);
+  }, [gameState, timeLeft, switched, prompts, responses.length, currentMode, logGameResult, startTime]);
 
   const handleStart = () => {
     let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
@@ -72,6 +81,7 @@ export function SemanticFluencyStorm() {
     setResponses([]);
     setCurrentInput('');
     setSwitched(false);
+    setStartTime(Date.now());
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -3,11 +3,12 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
+import { usePerformanceStore } from "@/hooks/use-performance-store";
 
 const neutralPuzzles = [
   {
@@ -77,20 +78,23 @@ export function VerbalInferenceBuilder() {
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [shuffledPuzzles, setShuffledPuzzles] = useState<Puzzle[]>([]);
   const [score, setScore] = useState(0);
+  const [startTime, setStartTime] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState(''); // '', 'correct', 'incorrect'
   const [gameState, setGameState] = useState('playing'); // playing, finished
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  const { logGameResult } = usePerformanceStore();
   
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
 
-  const restartGame = useMemo(() => () => {
+  const restartGame = useCallback(() => {
     const puzzleSet = currentMode === 'math' ? mathPuzzles : neutralPuzzles;
     setShuffledPuzzles([...puzzleSet].sort(() => Math.random() - 0.5));
     setCurrentPuzzleIndex(0);
     setScore(0);
+    setStartTime(Date.now());
     setFeedback('');
     setSelectedAnswer(null);
     setGameState('playing');
@@ -122,6 +126,9 @@ export function VerbalInferenceBuilder() {
         setSelectedAnswer(null);
       } else {
         setGameState('finished');
+        const time = (Date.now() - startTime) / 1000;
+        const finalScore = option === currentPuzzle.answer ? score + 1 : score;
+        logGameResult('Gc', currentMode, { score: finalScore, time });
       }
     }, 2500);
   };

@@ -8,6 +8,7 @@ import { MemoryStick } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
+import { usePerformanceStore } from "@/hooks/use-performance-store";
 
 const generateNeutralSequence = (length: number) => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -44,8 +45,10 @@ export function DynamicSequenceTransformer() {
   const [userAnswer, setUserAnswer] = useState('');
   const [gameState, setGameState] = useState('start'); // start, memorizing, answering, feedback
   const [feedback, setFeedback] = useState('');
+  const [startTime, setStartTime] = useState(0);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  const { logGameResult } = usePerformanceStore();
 
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
@@ -60,6 +63,7 @@ export function DynamicSequenceTransformer() {
     setUserAnswer('');
     setFeedback('');
     setGameState('memorizing');
+    setStartTime(Date.now());
 
     setTimeout(() => {
       setGameState('answering');
@@ -111,9 +115,11 @@ export function DynamicSequenceTransformer() {
     if (gameState !== 'answering') return;
     
     setGameState('feedback');
+    const time = (Date.now() - startTime) / 1000;
     
     if (userAnswer.toUpperCase().trim() === correctAnswer) {
       setFeedback('Correct! Next level.');
+      logGameResult('Gwm', currentMode, { score: level * 10, time });
       setTimeout(() => {
         const nextLevel = level + 1;
         setLevel(nextLevel);
@@ -121,6 +127,7 @@ export function DynamicSequenceTransformer() {
       }, 2000);
     } else {
       setFeedback(`Incorrect. The answer was: ${correctAnswer}. Let's try again.`);
+      logGameResult('Gwm', currentMode, { score: 0, time });
       setTimeout(() => {
         startLevel(level);
       }, 3000);

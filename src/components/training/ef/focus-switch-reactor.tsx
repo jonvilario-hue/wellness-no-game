@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
+import { usePerformanceStore } from "@/hooks/use-performance-store";
 
 // --- Neutral Mode Config ---
 const colorOptions = [
@@ -35,6 +36,7 @@ const isPrime = (num: number) => {
 export function FocusSwitchReactor() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
   const [score, setScore] = useState(0);
+  const [startTime, setStartTime] = useState(0);
   const [timeLeft, setTimeLeft] = useState(45);
   const [rule, setRule] = useState<NeutralRule | MathRule>('word');
   const [stimulus, setStimulus] = useState<any>({ word: 'PRIMARY', color: 'text-primary', value: 7 });
@@ -42,6 +44,7 @@ export function FocusSwitchReactor() {
   const ruleRef = useRef(rule);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  const { logGameResult } = usePerformanceStore();
   
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
@@ -86,9 +89,16 @@ export function FocusSwitchReactor() {
   const restartGame = () => {
     setScore(0);
     setTimeLeft(45);
+    setStartTime(Date.now());
     setGameState('running');
     generateStimulus();
     generateRule();
+  }
+
+  const finishGame = () => {
+    setGameState('finished');
+    const time = (Date.now() - startTime) / 1000;
+    logGameResult('EF', currentMode, { score, time });
   }
 
   useEffect(() => {
@@ -97,7 +107,7 @@ export function FocusSwitchReactor() {
       return () => clearTimeout(timer);
     }
     if (timeLeft === 0 && gameState === 'running') {
-      setGameState('finished');
+      finishGame();
     }
   }, [gameState, timeLeft]);
   
@@ -119,8 +129,10 @@ export function FocusSwitchReactor() {
   }
 
   const handleAnswer = (answer: string) => {
-    if (gameState !== 'running' || rule === 'no_go') {
-      if(rule === 'no_go') processNextTurn(false); // Penalty for responding on a no-go trial
+    if (gameState !== 'running') return;
+    
+    if (rule === 'no_go') {
+      processNextTurn(false); // Penalty for responding on a no-go trial
       return;
     }
     
