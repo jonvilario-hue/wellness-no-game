@@ -23,11 +23,11 @@ export function EditableLabel({
   inputClassName
 }: EditableLabelProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState(initialValue || '');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setValue(initialValue);
+    setValue(initialValue || '');
   }, [initialValue]);
 
   useEffect(() => {
@@ -38,8 +38,8 @@ export function EditableLabel({
   }, [isEditing]);
 
   const handleSave = () => {
-    if (value.trim() !== initialValue) {
-      onSave(value.trim());
+    if ((value || '').trim() !== (initialValue || '').trim()) {
+      onSave((value || '').trim());
     }
     setIsEditing(false);
   };
@@ -48,7 +48,7 @@ export function EditableLabel({
     if (e.key === 'Enter') {
       handleSave();
     } else if (e.key === 'Escape') {
-      setValue(initialValue);
+      setValue(initialValue || '');
       setIsEditing(false);
     }
   };
