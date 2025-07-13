@@ -101,9 +101,14 @@ export default function AlarmPage() {
                     {showPuzzle && (
                         <div className="animate-in fade-in zoom-in-95">
                             <DynamicSequenceTransformer />
-                            <Button onClick={handleDismiss} size="lg" variant="default" className="mt-4">
-                                Dismiss Alarm
-                            </Button>
+                             <div className="flex flex-col items-center gap-2 mt-4">
+                                <Button onClick={handleDismiss} size="lg" variant="default" className="w-full sm:w-auto">
+                                    Dismiss Alarm
+                                </Button>
+                                <Button onClick={handleDismiss} variant="link" className="text-muted-foreground">
+                                    Skip Puzzle
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </CardContent>
