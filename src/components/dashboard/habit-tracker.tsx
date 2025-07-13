@@ -234,7 +234,7 @@ export function HabitTracker() {
                 <p className="text-sm font-bold text-primary">{todaysHabits.length} / {habits.length} Done</p>
             </div>
             <ScrollArea className="pr-3 -mr-3 flex-grow">
-                <Accordion type="multiple" defaultValue={habitCategories.map(c => journalConfig[c].title)} className="w-full">
+                <Accordion type="multiple" className="w-full">
                 {habitCategories.map(categoryKey => {
                     const category = journalConfig[categoryKey];
                     const categoryHabits = habits.filter(h => h.category === category.title);
