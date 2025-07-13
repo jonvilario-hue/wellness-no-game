@@ -769,3 +769,5 @@ tags: ${entry.tags}
 });
 
 HabitJournal.displayName = 'HabitJournal';
+
+    
