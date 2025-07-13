@@ -8,6 +8,8 @@ import {
   BarChart,
   ResponsiveContainer,
   Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 import { Card } from '../ui/card';
 import { cn } from '@/lib/utils';
@@ -20,23 +22,26 @@ const generateMockData = (timeframe: Timeframe) => {
   let numPoints = 5;
   let scoreMultiplier = 2;
   let trendBonus = 5;
+  let labelPrefix = 'D';
 
   if (timeframe === 'monthly') {
     numPoints = 4; // 4 weeks
     scoreMultiplier = 4;
     trendBonus = 10;
+    labelPrefix = 'W';
   } else if (timeframe === 'overall') {
     numPoints = 6; // 6 months
     scoreMultiplier = 6;
     trendBonus = 25;
+    labelPrefix = 'M';
   }
 
-  for (let i = numPoints - 1; i >= 0; i--) {
-    const score = 60 + Math.random() * 15 - i * scoreMultiplier + trendBonus;
+  for (let i = 0; i < numPoints; i++) {
+    const score = 60 + Math.random() * 15 + i * scoreMultiplier - (numPoints * scoreMultiplier) / 2 + trendBonus;
     const barColor = `hsl(var(--chart-${(i % 5) + 1}))`;
     data.push({
-      name: `P${numPoints - i}`,
-      score: Math.max(0, Math.min(100, score)),
+      name: `${labelPrefix}${i + 1}`,
+      score: Math.max(10, Math.min(100, score)),
       fill: barColor,
     });
   }
@@ -111,8 +116,11 @@ export function ChcProfileOverview() {
                   borderRadius: 'var(--radius)',
                 }}
                 labelStyle={{ color: 'hsl(var(--foreground))' }}
+                cursor={{ fill: 'hsl(var(--muted))' }}
               />
               <Bar dataKey="score" radius={[4, 4, 0, 0]} />
+               <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis hide={true} domain={[0, 100]}/>
             </BarChart>
           </ResponsiveContainer>
         </div>
