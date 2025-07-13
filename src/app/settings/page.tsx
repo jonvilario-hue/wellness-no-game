@@ -38,7 +38,7 @@ const AlarmSettings = () => {
       <CardHeader>
         <CardTitle>Cognitive Alarms</CardTitle>
         <CardDescription>
-          Set alarms that require solving a puzzle to dismiss, turning your wake-up routine into a cognitive warm-up.
+          Customize your alarms, which can require solving a puzzle to dismiss. Manage your alarms in the Time Tools section.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -108,9 +108,12 @@ const AlarmSettings = () => {
               </SelectContent>
             </Select>
           </div>
-
-        <PlaceholderSettings title="Set New Alarm" description="This feature is in development. Soon you'll be able to set and customize your cognitive alarms here."/>
       </CardContent>
+       <CardFooter>
+          <Button asChild className="w-full">
+            <Link href="/time">Manage Alarms</Link>
+          </Button>
+        </CardFooter>
     </Card>
   )
 }
