@@ -35,7 +35,7 @@ export function MainDashboardView() {
                   <TooltipTrigger asChild>
                     <TabsTrigger 
                         value="efficiency"
-                        className={cn(view === 'profile' && 'bg-muted/60 text-foreground/80 shadow-none')}
+                        className={cn(view === 'profile' && 'bg-background text-foreground shadow-sm')}
                     >
                         Cognitive Efficiency
                     </TabsTrigger>
@@ -48,7 +48,6 @@ export function MainDashboardView() {
                   <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="profile"
-                        className={cn(view === 'profile' && 'bg-background text-foreground shadow-sm')}
                       >
                         My Full Strength
                       </TabsTrigger>
