@@ -16,15 +16,17 @@ import { MainDashboardView } from '@/components/dashboard/main-dashboard-view';
 import { AllGames } from '@/components/dashboard/all-games';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { GameProgressTracker } from '@/components/dashboard/game-progress-tracker';
+import { useJournal } from '@/hooks/use-journal';
 
 function DashboardContent() {
   const journalRef = useRef<HTMLDivElement>(null);
   const { settings } = useDashboardSettings();
+  const { setSelectedEntry, createNewEntry } = useJournal();
+
 
   const handleNewNoteClick = () => {
     journalRef.current?.scrollIntoView({ behavior: 'smooth' });
-    // The HabitJournal component itself will handle the logic
-    // for creating a new note via its own "New" button.
+    setSelectedEntry(createNewEntry());
   }
 
   return (
@@ -56,7 +58,7 @@ function DashboardContent() {
 
           <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalRef}>
             {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
-            {settings.habitJournal && <HabitJournal />}
+            {settings.habitJournal && <HabitJournal ref={journalRef} />}
           </div>
         </div>
       </main>

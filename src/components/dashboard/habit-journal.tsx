@@ -23,7 +23,7 @@ import {
   Search,
   ArrowDownUp,
 } from 'lucide-react';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -71,47 +71,17 @@ const groupEntriesByDate = (entries: JournalEntry[]) => {
   }, {} as Record<string, JournalEntry[]>);
 };
 
-export function HabitJournal() {
-  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash, completedHabits, toggleHabitForDay } = useJournal();
-  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+export const HabitJournal = forwardRef((props, ref) => {
+  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash, completedHabits, toggleHabitForDay, selectedEntry, setSelectedEntry, createNewEntry } = useJournal();
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortMode, setSortMode] = useState<SortMode>('date-desc');
   const { toast } = useToast();
+
+  useImperativeHandle(ref, () => ({
+    createNewEntry: handleNewEntry,
+  }));
   
-  const getDefaultFrequency = useCallback((): ReflectionFrequency => {
-    const today = new Date();
-    const dayOfMonth = today.getDate();
-    const dayOfWeek = today.getDay(); // 0 = Sunday
-
-    if (dayOfMonth === 1) {
-      return 'monthly';
-    }
-    if (dayOfWeek === 0) {
-      return 'weekly';
-    }
-    return 'daily';
-  }, []);
-
-  const createNewEntryObject = useCallback((): JournalEntry => {
-    const defaultCategory: JournalCategory = 'Growth & Challenge Reflection';
-    return {
-      id: `new-${Date.now()}`,
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .split('T')[0],
-      category: defaultCategory,
-      frequency: getDefaultFrequency(),
-      field1: '',
-      field2: '',
-      field3: '',
-      affirmations: [],
-      tags: '',
-      effort: 7,
-      mood: null,
-    };
-  }, [getDefaultFrequency]);
-
   const handleSelectEntry = (entry: JournalEntry) => {
     setViewMode('entries');
     setSelectedEntry(entry);
@@ -119,17 +89,16 @@ export function HabitJournal() {
 
   const handleNewEntry = useCallback(() => {
     setViewMode('entries');
-    setSelectedEntry(createNewEntryObject());
-  }, [createNewEntryObject]);
+    setSelectedEntry(createNewEntry());
+  }, [createNewEntry, setSelectedEntry]);
 
-  // Set initial entry on load
   useEffect(() => {
     if (!selectedEntry && entries.length > 0) {
       setSelectedEntry(entries[0]);
     } else if (!selectedEntry && entries.length === 0) {
       handleNewEntry();
     }
-  }, [entries, selectedEntry, handleNewEntry]);
+  }, [entries, selectedEntry, handleNewEntry, setSelectedEntry]);
 
   const handleSave = useCallback((entryToSave: JournalEntry) => {
     if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim()) {
@@ -150,7 +119,7 @@ export function HabitJournal() {
       updateEntry(entryToSave.id, entryToSave);
        return { success: true, entry: entryToSave };
     }
-  }, [addEntry, updateEntry, toast]);
+  }, [addEntry, updateEntry, toast, setSelectedEntry]);
   
   const handleRestore = (id: string) => {
     restoreEntry(id);
@@ -791,6 +760,6 @@ tags: ${entry.tags}
       </CardContent>
     </Card>
   );
-}
+});
 
-  
+HabitJournal.displayName = 'HabitJournal';

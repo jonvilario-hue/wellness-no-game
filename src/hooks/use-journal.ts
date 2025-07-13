@@ -64,21 +64,41 @@ const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits } => {
     };
 };
 
+// Share state across components that use this hook
+let memoryState: {
+    entries: JournalEntry[];
+    trashedEntries: TrashedJournalEntry[];
+    completedHabits: DailyHabits;
+    selectedEntry: JournalEntry | null;
+} = {
+    entries: [],
+    trashedEntries: [],
+    completedHabits: {},
+    selectedEntry: null,
+};
+const listeners: Set<Function> = new Set();
+
 const useJournal = () => {
-    const [entries, setEntries] = useState<JournalEntry[]>([]);
-    const [trashedEntries, setTrashedEntries] = useState<TrashedJournalEntry[]>([]);
-    const [completedHabits, setCompletedHabits] = useState<DailyHabits>({});
+    const [state, setState] = useState(memoryState);
     const [isLoaded, setIsLoaded] = useState(false);
+
+    const dispatch = (newState: Partial<typeof memoryState>) => {
+        memoryState = { ...memoryState, ...newState };
+        listeners.forEach(listener => listener(memoryState));
+    }
+
+    useEffect(() => {
+        listeners.add(setState);
+        return () => { listeners.delete(setState) };
+    }, []);
 
     useEffect(() => {
         let savedEntries: JournalEntry[] = [];
         let savedTrashedEntries: TrashedJournalEntry[] = [];
         let savedHabits: DailyHabits = {};
         let entriesExist = false;
-        let habitsExist = false;
 
         try {
-            // Load Journal Entries
             const savedEntriesStr = window.localStorage.getItem('journalEntries');
             if (savedEntriesStr !== null) {
                 entriesExist = true;
@@ -88,7 +108,6 @@ const useJournal = () => {
                 }
             }
 
-            // Load Trashed Entries
             const savedTrashedEntriesStr = window.localStorage.getItem('journalTrashedEntries');
             if (savedTrashedEntriesStr) {
                  const parsed = JSON.parse(savedTrashedEntriesStr);
@@ -98,12 +117,9 @@ const useJournal = () => {
                 }
             }
             
-            // Load Completed Habits
             const savedHabitsStr = window.localStorage.getItem('journalCompletedHabits');
             if (savedHabitsStr !== null) {
-                habitsExist = true;
                 const parsed = JSON.parse(savedHabitsStr);
-                // Convert arrays back to Sets
                 Object.keys(parsed).forEach(date => {
                     parsed[date] = new Set(parsed[date]);
                 });
@@ -114,22 +130,24 @@ const useJournal = () => {
             console.error("Failed to load journal from localStorage", error);
         }
         
-        const isFirstTimeUser = !entriesExist && !habitsExist;
-
-        if (isFirstTimeUser) {
+        if (!entriesExist && window.localStorage.getItem('journalInitialized') !== 'true') {
             const { entries: seedEntries, habits: seedHabits } = createSeedData();
-            setEntries(seedEntries);
-            setCompletedHabits(seedHabits);
+            savedEntries = seedEntries;
+            savedHabits = seedHabits;
             window.localStorage.setItem('journalEntries', JSON.stringify(seedEntries));
-            // For habits, we need to convert Set to array for JSON serialization
             const serializableHabits = { [Object.keys(seedHabits)[0]]: Array.from(Object.values(seedHabits)[0]) };
             window.localStorage.setItem('journalCompletedHabits', JSON.stringify(serializableHabits));
-        } else {
-            setEntries(savedEntries);
-            setCompletedHabits(savedHabits);
         }
+
+        window.localStorage.setItem('journalInitialized', 'true');
         
-        setTrashedEntries(savedTrashedEntries);
+        dispatch({
+            entries: savedEntries,
+            trashedEntries: savedTrashedEntries,
+            completedHabits: savedHabits,
+            selectedEntry: savedEntries.length > 0 ? savedEntries[0] : null
+        });
+
         setIsLoaded(true);
 
     }, []);
@@ -137,7 +155,7 @@ const useJournal = () => {
     const saveEntries = (newEntries: JournalEntry[]) => {
         try {
             const sortedEntries = newEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-            setEntries(sortedEntries);
+            dispatch({ entries: sortedEntries });
             window.localStorage.setItem('journalEntries', JSON.stringify(sortedEntries));
         } catch (error) {
             console.error("Failed to save entries to localStorage", error);
@@ -150,7 +168,7 @@ const useJournal = () => {
             while (updatedTrashedEntries.length > MAX_TRASH_ITEMS) {
                 updatedTrashedEntries.shift();
             }
-            setTrashedEntries(updatedTrashedEntries);
+            dispatch({ trashedEntries: updatedTrashedEntries });
             window.localStorage.setItem('journalTrashedEntries', JSON.stringify(updatedTrashedEntries));
         } catch (error) {
             console.error("Failed to save trashed entries to localStorage", error);
@@ -159,8 +177,7 @@ const useJournal = () => {
     
     const saveCompletedHabits = (newHabits: DailyHabits) => {
         try {
-            setCompletedHabits(newHabits);
-            // Convert sets to arrays for JSON serialization
+            dispatch({ completedHabits: newHabits });
             const serializableHabits: Record<string, HabitId[]> = {};
             for (const date in newHabits) {
                 serializableHabits[date] = Array.from(newHabits[date]);
@@ -170,33 +187,66 @@ const useJournal = () => {
             console.error("Failed to save habits to localStorage", error);
         }
     };
+    
+    const getDefaultFrequency = useCallback((): ReflectionFrequency => {
+        const today = new Date();
+        const dayOfMonth = today.getDate();
+        const dayOfWeek = today.getDay(); // 0 = Sunday
+
+        if (dayOfMonth === 1) {
+          return 'monthly';
+        }
+        if (dayOfWeek === 0) {
+          return 'weekly';
+        }
+        return 'daily';
+    }, []);
+
+    const createNewEntry = useCallback(() => {
+        const defaultCategory: JournalCategory = 'Growth & Challenge Reflection';
+        return {
+          id: `new-${Date.now()}`,
+          date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+            .toISOString()
+            .split('T')[0],
+          category: defaultCategory,
+          frequency: getDefaultFrequency(),
+          field1: '',
+          field2: '',
+          field3: '',
+          affirmations: [],
+          tags: '',
+          effort: 7,
+          mood: null,
+        };
+    }, [getDefaultFrequency]);
 
     const addEntry = (newEntry: JournalEntry) => {
-        saveEntries([...entries, newEntry]);
+        saveEntries([...state.entries, newEntry]);
     };
 
     const updateEntry = (id: string, updatedEntry: JournalEntry) => {
-        const newEntries = entries.map(entry => (entry.id === id ? updatedEntry : entry));
+        const newEntries = state.entries.map(entry => (entry.id === id ? updatedEntry : entry));
         saveEntries(newEntries);
     };
 
     const deleteEntry = (id: string) => {
-        const entryToTrash = entries.find(entry => entry.id === id);
+        const entryToTrash = state.entries.find(entry => entry.id === id);
         if (entryToTrash) {
-            const newEntries = entries.filter(entry => entry.id !== id);
+            const newEntries = state.entries.filter(entry => entry.id !== id);
             const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
-            const newTrashedEntries = [trashedEntry, ...trashedEntries];
+            const newTrashedEntries = [trashedEntry, ...state.trashedEntries];
             saveEntries(newEntries);
             saveTrashedEntries(newTrashedEntries);
         }
     };
     
     const restoreEntry = (id: string) => {
-        const entryToRestore = trashedEntries.find(entry => entry.id === id);
+        const entryToRestore = state.trashedEntries.find(entry => entry.id === id);
         if (entryToRestore) {
-            const newTrashedEntries = trashedEntries.filter(entry => entry.id !== id);
+            const newTrashedEntries = state.trashedEntries.filter(entry => entry.id !== id);
             const { deletedAt, ...originalEntry } = entryToRestore;
-            const newEntries = [...entries, originalEntry];
+            const newEntries = [...state.entries, originalEntry];
             saveTrashedEntries(newTrashedEntries);
             saveEntries(newEntries);
         }
@@ -207,11 +257,11 @@ const useJournal = () => {
     };
 
     const getEntry = (id: string) => {
-        return entries.find(entry => entry.id === id);
+        return state.entries.find(entry => entry.id === id);
     };
 
     const toggleHabitForDay = useCallback((date: string, habitId: HabitId) => {
-        const newHabits = { ...completedHabits };
+        const newHabits = { ...state.completedHabits };
         if (!newHabits[date]) {
             newHabits[date] = new Set();
         }
@@ -224,12 +274,13 @@ const useJournal = () => {
         }
         
         saveCompletedHabits(newHabits);
-    }, [completedHabits, saveCompletedHabits]);
+    }, [state.completedHabits]);
 
+    const setSelectedEntry = (entry: JournalEntry | null) => {
+        dispatch({ selectedEntry: entry });
+    }
 
-    return { entries, trashedEntries, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash, completedHabits, toggleHabitForDay, isLoaded };
+    return { ...state, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash, toggleHabitForDay, isLoaded, setSelectedEntry, createNewEntry };
 };
 
 export { useJournal };
-
-  

@@ -91,7 +91,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
                   <p>Adaptive skill rating (50 = average, 100 = high mastery)</p>
                 </TooltipContent>
               </Tooltip>
-            <span className="text-sm font-bold text-primary">{Math.round(score)}</span>
+            <span className="text-sm font-bold text-primary">{score > 0 ? Math.round(score) : '...'}</span>
           </div>
           <Progress value={score} aria-label={`Score for ${domain.name} is ${score}`} />
         </div>
@@ -107,8 +107,14 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
               </TooltipContent>
             </Tooltip>
             <div className={`flex items-center font-bold ${trendColor}`}>
-                <TrendIcon className="w-4 h-4 mr-1"/>
-                {trend.toFixed(1)}%
+                {score > 0 ? (
+                  <>
+                    <TrendIcon className="w-4 h-4 mr-1"/>
+                    {trend.toFixed(1)}%
+                  </>
+                ) : (
+                  <span>...</span>
+                )}
             </div>
         </div>
         </TooltipProvider>
