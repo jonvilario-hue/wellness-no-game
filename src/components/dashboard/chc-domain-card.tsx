@@ -23,6 +23,7 @@ interface ChcDomainCardProps {
     key: CHCDomain;
     name: string;
     description: string;
+    gameTitle: string;
   };
 }
 
@@ -73,7 +74,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         </div>
         <div>
           <CardTitle className="font-headline text-lg">{domain.name}</CardTitle>
-          <CardDescription>{domain.description}</CardDescription>
+          <CardDescription className="text-sm">{domain.gameTitle}</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-2">

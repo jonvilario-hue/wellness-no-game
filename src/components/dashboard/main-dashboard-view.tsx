@@ -3,16 +3,17 @@
 
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChcDomainDashboard } from './chc-domain-dashboard';
 import { CognitiveEfficiency } from './cognitive-efficiency';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ChcProfileOverview } from './chc-profile-overview';
+import { chcDomains } from '@/types';
+import { ChcDomainCard } from './chc-domain-card';
 
-type ViewMode = 'efficiency' | 'profile';
 
 export function MainDashboardView() {
   const [view, setView] = useState<ViewMode>('efficiency');
+  type ViewMode = 'efficiency' | 'profile';
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
@@ -56,7 +57,11 @@ export function MainDashboardView() {
         <TabsContent value="profile" key="profile">
           <CardContent className="space-y-4">
             <ChcProfileOverview />
-            <ChcDomainDashboard />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {chcDomains.map((domain) => (
+                <ChcDomainCard key={domain.key} domain={domain} />
+              ))}
+            </div>
           </CardContent>
         </TabsContent>
       </Tabs>

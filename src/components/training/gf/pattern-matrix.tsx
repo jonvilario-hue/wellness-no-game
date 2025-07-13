@@ -140,7 +140,7 @@ export function PatternMatrix() {
             <BrainCircuit />
             Pattern Matrix
         </CardTitle>
-        <CardDescription>Identify the logical rule and find the missing piece.</CardDescription>
+        <CardDescription className="text-center">Identify the logical rule and find the missing piece.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         <div className="flex justify-between w-full font-mono text-sm">
@@ -183,7 +183,7 @@ export function PatternMatrix() {
         {feedback && (
           <div className="flex flex-col items-center gap-4 mt-4 text-center animate-in fade-in">
              {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct!</p>}
-            {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">Not quite. Look for another pattern.</p>}
+             {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">Not quite. Look for another pattern.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>
           </div>
         )}

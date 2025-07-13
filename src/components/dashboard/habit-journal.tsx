@@ -138,17 +138,18 @@ export function HabitJournal() {
         description: 'Please write something before saving.',
         variant: 'destructive',
       });
-      return false;
+      return { success: false, entry: null };
     }
     const isNew = entryToSave.id.startsWith('new-');
     if (isNew) {
       const finalEntry = { ...entryToSave, id: `${entryToSave.date}-${Date.now()}` };
       addEntry(finalEntry);
       setSelectedEntry(finalEntry);
+       return { success: true, entry: finalEntry };
     } else {
       updateEntry(entryToSave.id, entryToSave);
+       return { success: true, entry: entryToSave };
     }
-    return true;
   }, [addEntry, updateEntry, toast]);
   
   const handleRestore = (id: string) => {
@@ -221,7 +222,7 @@ export function HabitJournal() {
     onSave,
   }: {
     entry: JournalEntry;
-    onSave: (entry: JournalEntry) => boolean;
+    onSave: (entry: JournalEntry) => { success: boolean; entry: JournalEntry | null };
   }) => {
     const [editorState, setEditorState] = useState<JournalEntry>(entry);
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -270,7 +271,11 @@ export function HabitJournal() {
     const isNewEntry = editorState.id.startsWith('new-');
     
     const handleManualSave = () => {
-        if(onSave(editorState)) {
+        const result = onSave(editorState);
+        if(result.success) {
+           if (result.entry) {
+             setEditorState(result.entry); // Update editor with permanent ID
+           }
            setSaveStatus('saved');
            toast({ title: 'Journal Entry Saved' });
         }
@@ -339,12 +344,12 @@ tags: ${entry.tags}
             markdown += `### Affirmations\n${entry.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
         }
         
-        const completedHabits = Object.values(allHabits)
+        const completedHabitsForEntry = Object.values(allHabits)
             .filter(habit => todaysHabits.has(habit.id))
             .map(h => h?.label);
 
-        if (completedHabits.length > 0) {
-            markdown += `### Supporting Habits\n${completedHabits.map(h => `- [x] ${h}`).join('\n')}\n\n`;
+        if (completedHabitsForEntry.length > 0) {
+            markdown += `### Supporting Habits\n${completedHabitsForEntry.map(h => `- [x] ${h}`).join('\n')}\n\n`;
         }
 
         const element = document.createElement("a");
