@@ -71,14 +71,17 @@ const useJournal = () => {
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        let savedEntries: JournalEntry[] | null = null;
+        let savedEntries: JournalEntry[] = [];
         let savedTrashedEntries: TrashedJournalEntry[] = [];
-        let savedHabits: DailyHabits | null = null;
+        let savedHabits: DailyHabits = {};
+        let entriesExist = false;
+        let habitsExist = false;
 
         try {
             // Load Journal Entries
             const savedEntriesStr = window.localStorage.getItem('journalEntries');
-            if (savedEntriesStr) {
+            if (savedEntriesStr !== null) {
+                entriesExist = true;
                 const parsed = JSON.parse(savedEntriesStr);
                 if (Array.isArray(parsed)) {
                     savedEntries = parsed;
@@ -97,7 +100,8 @@ const useJournal = () => {
             
             // Load Completed Habits
             const savedHabitsStr = window.localStorage.getItem('journalCompletedHabits');
-            if (savedHabitsStr) {
+            if (savedHabitsStr !== null) {
+                habitsExist = true;
                 const parsed = JSON.parse(savedHabitsStr);
                 // Convert arrays back to Sets
                 Object.keys(parsed).forEach(date => {
@@ -110,7 +114,7 @@ const useJournal = () => {
             console.error("Failed to load journal from localStorage", error);
         }
         
-        const isFirstTimeUser = savedEntries === null && savedHabits === null;
+        const isFirstTimeUser = !entriesExist && !habitsExist;
 
         if (isFirstTimeUser) {
             const { entries: seedEntries, habits: seedHabits } = createSeedData();
@@ -121,8 +125,8 @@ const useJournal = () => {
             const serializableHabits = { [Object.keys(seedHabits)[0]]: Array.from(Object.values(seedHabits)[0]) };
             window.localStorage.setItem('journalCompletedHabits', JSON.stringify(serializableHabits));
         } else {
-            setEntries(savedEntries || []);
-            setCompletedHabits(savedHabits || {});
+            setEntries(savedEntries);
+            setCompletedHabits(savedHabits);
         }
         
         setTrashedEntries(savedTrashedEntries);
@@ -220,7 +224,7 @@ const useJournal = () => {
         }
         
         saveCompletedHabits(newHabits);
-    }, [completedHabits]);
+    }, [completedHabits, saveCompletedHabits]);
 
 
     return { entries, trashedEntries, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash, completedHabits, toggleHabitForDay, isLoaded };
