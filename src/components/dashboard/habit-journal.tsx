@@ -26,7 +26,7 @@ export function HabitJournal() {
   const initialEntry = useMemo(() => {
     if (hasHydrated) {
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-      return findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
+      return findOrCreateEntry({ date: today, category: 'Growth & Challenge Reflection', frequency: getFrequencyForDate(new Date(today))});
     }
     return null;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,14 +59,26 @@ export function HabitJournal() {
 
   const handleCategoryChange = useCallback((newCategory: JournalCategory) => {
     if (activeEntry) {
-      const newEntry = findOrCreateEntry(activeEntry.date, newCategory, activeEntry.frequency);
+      const isNew = activeEntry.id.startsWith('new-');
+      const newEntry = findOrCreateEntry({
+          date: activeEntry.date, 
+          category: newCategory, 
+          frequency: activeEntry.frequency,
+          forceNew: isNew, // Force a new blank entry if we're in the new entry flow
+      });
       setSelectedEntry(newEntry);
     }
   }, [activeEntry, findOrCreateEntry, setSelectedEntry]);
 
   const handleFrequencyChange = useCallback((newFrequency: ReflectionFrequency) => {
     if (activeEntry) {
-      const newEntry = findOrCreateEntry(activeEntry.date, activeEntry.category, newFrequency);
+      const isNew = activeEntry.id.startsWith('new-');
+      const newEntry = findOrCreateEntry({
+          date: activeEntry.date, 
+          category: activeEntry.category, 
+          frequency: newFrequency,
+          forceNew: isNew,
+      });
       setSelectedEntry(newEntry);
     }
   }, [activeEntry, findOrCreateEntry, setSelectedEntry]);
@@ -115,7 +127,7 @@ export function HabitJournal() {
     
     if (activeEntry?.id === id) {
        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-       const newEntry = findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
+       const newEntry = findOrCreateEntry({date: today, category: 'Growth & Challenge Reflection', frequency: getFrequencyForDate(new Date(today))});
        setSelectedEntry(newEntry);
     }
   }, [deleteEntry, toast, activeEntry, entries, findOrCreateEntry, setSelectedEntry]);
@@ -139,6 +151,7 @@ export function HabitJournal() {
                 onDeleteEntry={handleDelete}
                 onNewEntry={handleNewEntry}
                 selectedEntry={activeEntry}
+                onUpdateEntry={updateEntry}
             />
 
           <div className="lg:col-span-2 bg-background rounded-lg border">

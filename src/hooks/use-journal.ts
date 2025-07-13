@@ -1,10 +1,11 @@
 
+
 'use client';
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { JournalCategory } from '@/lib/journal-config';
-import { allHabits as defaultHabits } from '@/lib/journal-config';
+import { allHabits as defaultHabits, journalConfig } from '@/lib/journal-config';
 import type { LucideIcon } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 
@@ -21,6 +22,7 @@ export type Habit = {
 
 export type JournalEntry = {
     id: string;
+    label: string;
     date: string; // YYYY-MM-DD
     category: JournalCategory;
     frequency: ReflectionFrequency;
@@ -63,6 +65,7 @@ const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits, habit
         entries: [
             {
                 id: `${today}-${category}-${frequency}`,
+                label: `Today's Reflection`,
                 date: today,
                 category: category,
                 frequency: frequency,
@@ -94,7 +97,7 @@ interface JournalState {
 
     // Actions
     setHasHydrated: (hydrated: boolean) => void;
-    findOrCreateEntry: (date: string, category: JournalCategory, frequency: ReflectionFrequency) => JournalEntry;
+    findOrCreateEntry: (options: { date: string, category: JournalCategory, frequency: ReflectionFrequency, forceNew?: boolean }) => JournalEntry;
     addEntry: (newEntry: JournalEntry) => JournalEntry;
     updateEntry: (id: string, updatedEntry: JournalEntry) => void;
     deleteEntry: (id: string) => void;
@@ -112,6 +115,7 @@ interface JournalState {
 
 const createNewEntryObject = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => ({
     id: `new-${Date.now()}`,
+    label: journalConfig[category]?.title || 'New Entry',
     date,
     category,
     frequency,
@@ -136,12 +140,37 @@ export const useJournal = create<JournalState>()(
 
         setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
         
-        findOrCreateEntry: (date, category, frequency) => {
+        findOrCreateEntry: ({ date, category, frequency, forceNew = false }) => {
+            if (forceNew) {
+                return createNewEntryObject(date, category, frequency);
+            }
             const state = get();
             const existingEntry = state.entries.find(
                 (e) => e.date === date && e.category === category && e.frequency === frequency
             );
-            return existingEntry || createNewEntryObject(date, category, frequency);
+            
+            if (existingEntry) {
+                 const hasContent = existingEntry.field1 || existingEntry.field2 || existingEntry.field3 || existingEntry.affirmations.some(a => a);
+                 if (hasContent) {
+                    return existingEntry;
+                 }
+            }
+            
+            // If no existing entry, or existing entry is blank, return a new object but with a persistent ID
+            return {
+                id: `${date}-${category}-${frequency}`,
+                label: journalConfig[category]?.title || 'New Entry',
+                date,
+                category,
+                frequency,
+                field1: '',
+                field2: '',
+                field3: '',
+                affirmations: [],
+                tags: '',
+                effort: 7,
+                mood: null,
+            };
         },
 
         addEntry: (newEntry) => {
@@ -284,7 +313,7 @@ export const useHydratedJournalStore = () => {
             hasHydrated: false,
             // Return dummy functions to prevent errors during SSR
             setHasHydrated: () => {},
-            findOrCreateEntry: (date: string, category: JournalCategory, frequency: ReflectionFrequency) => createNewEntryObject(date, category, frequency),
+            findOrCreateEntry: (opts: { date: string, category: JournalCategory, frequency: ReflectionFrequency, forceNew?: boolean }) => createNewEntryObject(opts.date, opts.category, opts.frequency),
             addEntry: (entry: JournalEntry) => entry,
             updateEntry: () => {},
             deleteEntry: () => {},
@@ -305,4 +334,3 @@ export const useHydratedJournalStore = () => {
 
     return state;
 };
-

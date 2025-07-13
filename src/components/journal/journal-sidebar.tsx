@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { memo, useCallback, useMemo, useState } from 'react';
@@ -9,6 +10,7 @@ import {
     ArrowDownUp,
     AlertTriangle,
     PlusCircle,
+    Edit,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -39,17 +41,20 @@ import { useToast } from '@/hooks/use-toast';
 import { useHydratedJournalStore as useJournal, type JournalEntry } from '@/hooks/use-journal';
 import { journalConfig, type JournalCategory } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
+import { Label } from '../ui/label';
 
 export const JournalSidebar = memo(({ 
     onSelectEntry, 
     onDeleteEntry,
     onNewEntry,
     selectedEntry,
+    onUpdateEntry,
 }: {
     onSelectEntry: (entry: JournalEntry) => void,
     onDeleteEntry: (id: string) => void,
     onNewEntry: () => void,
     selectedEntry: JournalEntry | null,
+    onUpdateEntry: (id: string, updatedEntry: JournalEntry) => void,
 }) => {
     const [viewMode, setViewMode] = useState<'entries' | 'trash'>('entries');
     type SortMode = 'date-desc' | 'date-asc' | 'category';
@@ -57,6 +62,8 @@ export const JournalSidebar = memo(({
     const { entries, trashedEntries, restoreEntry, deleteFromTrashPermanently, emptyTrash } = useJournal();
     const [searchQuery, setSearchQuery] = useState('');
     const [sortMode, setSortMode] = useState<SortMode>('date-desc');
+    const [isRenaming, setIsRenaming] = useState<string | null>(null);
+    const [renameValue, setRenameValue] = useState('');
     const { toast } = useToast();
 
     const handleRestore = useCallback((id: string) => {
@@ -74,6 +81,7 @@ export const JournalSidebar = memo(({
             if (entry.id.startsWith('new-')) return false;
             const query = searchQuery.toLowerCase();
             return (
+                entry.label.toLowerCase().includes(query) ||
                 entry.category.toLowerCase().includes(query) ||
                 entry.field1.toLowerCase().includes(query) ||
                 entry.field2.toLowerCase().includes(query) ||
@@ -104,6 +112,18 @@ export const JournalSidebar = memo(({
         acc[date].push(entry);
         return acc;
       }, {} as Record<string, JournalEntry[]>);
+    };
+
+    const handleStartRename = (entry: JournalEntry) => {
+      setIsRenaming(entry.id);
+      setRenameValue(entry.label);
+    };
+
+    const handleSaveRename = (entry: JournalEntry) => {
+      onUpdateEntry(entry.id, { ...entry, label: renameValue });
+      setIsRenaming(null);
+      setRenameValue('');
+      toast({ title: 'Entry renamed' });
     };
 
     const ListView = () => {
@@ -137,7 +157,7 @@ export const JournalSidebar = memo(({
                                                     "font-semibold text-sm",
                                                     isSelected ? "text-primary font-bold" : "text-foreground"
                                                 )}>
-                                                  {categoryTitle}
+                                                  {entry.label || categoryTitle}
                                                 </p>
                                                 <p className={cn(
                                                     "text-xs truncate",
@@ -151,6 +171,28 @@ export const JournalSidebar = memo(({
                                                     </div>
                                                 )}
                                             </button>
+                                            
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => { e.stopPropagation(); handleStartRename(entry)}}>
+                                                        <Edit className="w-4 h-4 text-muted-foreground"/>
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Rename Entry</AlertDialogTitle>
+                                                    </AlertDialogHeader>
+                                                    <div>
+                                                        <Label htmlFor='rename-input'>New Title</Label>
+                                                        <Input id="rename-input" value={renameValue} onChange={e => setRenameValue(e.target.value)} />
+                                                    </div>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={() => handleSaveRename(entry)}>Save</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
                                                     <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -193,7 +235,7 @@ export const JournalSidebar = memo(({
                     return (
                       <div key={entry.id} className="group flex items-center gap-1 p-2 rounded-md bg-muted/50">
                           <div className='flex-grow'>
-                              <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{categoryTitle}</span></p>
+                              <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{entry.label || categoryTitle}</span></p>
                               <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
                           </div>
                           <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleRestore(entry.id)} title="Restore">

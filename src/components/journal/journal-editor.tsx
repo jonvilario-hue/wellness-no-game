@@ -36,6 +36,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit } from '@/hooks/use-journal';
 import { journalConfig, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
+import { EditableLabel } from '../time/editable-label';
 
 export const JournalEditor = memo(({
   entry,
@@ -128,7 +129,6 @@ export const JournalEditor = memo(({
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
     if (editorState.category !== newCategory) {
-        // Only save if it's a new entry with content, or an existing entry.
         const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
         if (!isNewEntry || hasContent) {
           handleSave(editorState, { isFinal: true });
@@ -219,6 +219,11 @@ tags: ${entryToExport.tags}
   const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
   const relevantHabits = habits.filter(h => h.category === category);
 
+  const handleLabelSave = (newLabel: string) => {
+    handleFieldChange('label', newLabel);
+    handleSave({...editorState, label: newLabel}, { isFinal: true });
+  }
+
   return (
     <div className="p-4 h-full flex flex-col gap-2 relative">
         <div className="absolute top-0 left-0 right-0 p-2 z-10 text-center">
@@ -238,15 +243,20 @@ tags: ${entryToExport.tags}
               </div>
             )}
         </div>
-      <div className="flex justify-between items-center pt-8">
-        <h3 className="font-bold text-lg text-primary">
-          {isNewEntry
-            ? 'New Entry'
-            : `Editing: ${new Date(
-                editorState.date + 'T00:00:00'
-              ).toLocaleDateString()}`}
-        </h3>
-         <div className="flex items-center gap-2">
+      <div className="flex justify-between items-start pt-8">
+        <div className="flex-grow mr-4">
+            <EditableLabel 
+                initialValue={editorState.label}
+                onSave={handleLabelSave}
+                placeholder="Click to add a title..."
+                className="w-full"
+                inputClassName="text-lg font-bold"
+            />
+            <p className="text-sm text-muted-foreground ml-3">
+                 {new Date(editorState.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+        </div>
+         <div className="flex items-center gap-2 flex-shrink-0">
           {!isNewEntry && (
               <>
               <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => exportAsMarkdown(editorState)}>
