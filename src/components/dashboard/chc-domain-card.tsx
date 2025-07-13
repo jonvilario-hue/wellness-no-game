@@ -95,7 +95,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
     : `Global Focus: ${globalFocus === 'math' ? 'Math Reasoning' : 'Core Thinking'}`;
 
 
-  const handleTrainClick = (mode: 'neutral' | 'math' | null) => {
+  const handleModeSelect = (mode: 'neutral' | 'math' | null) => {
     setOverride(mode);
   };
 
@@ -156,7 +156,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         )}
       </CardContent>
       <CardFooter className="flex items-center gap-2">
-        <Button asChild className="w-full" onClick={() => handleTrainClick(null)}>
+        <Button asChild className="w-full">
           <Link href={`/training/${domain.key}`}>{domain.gameTitle}</Link>
         </Button>
         <TooltipProvider>
@@ -174,15 +174,15 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
               </TooltipContent>
             </Tooltip>
              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleTrainClick('neutral')}>
+                <DropdownMenuItem onClick={() => handleModeSelect('neutral')}>
                   <BrainCircuit className="mr-2 h-4 w-4" />
                   <span>Train Core Thinking</span>
-                  {globalFocus === 'neutral' && !override && <Check className="ml-auto h-4 w-4" />}
+                  {effectiveFocus === 'neutral' && <Check className="ml-auto h-4 w-4" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleTrainClick('math')} disabled={!domain.supportsMath}>
+                <DropdownMenuItem onClick={() => handleModeSelect('math')} disabled={!domain.supportsMath}>
                   <Sigma className="mr-2 h-4 w-4" />
                    <span>Train Math Reasoning</span>
-                   {globalFocus === 'math' && !override && <Check className="ml-auto h-4 w-4" />}
+                   {effectiveFocus === 'math' && <Check className="ml-auto h-4 w-4" />}
                 </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
