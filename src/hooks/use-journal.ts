@@ -4,9 +4,9 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { JournalCategory } from '@/lib/journal-config';
-import { allHabits as defaultHabits, journalConfig } from '@/lib/journal-config';
+import { allHabits as defaultHabits } from '@/lib/journal-config';
 import type { LucideIcon } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
 export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
@@ -103,9 +103,10 @@ interface JournalState {
     deleteFromTrashPermanently: (id: string) => void;
     emptyTrash: () => void;
     toggleHabitForDay: (date: string, habitId: HabitId) => void;
-    addHabit: (habitData: Omit<Habit, 'id'>) => void;
-    updateHabit: (id: HabitId, habitData: Partial<Omit<Habit, 'id'>>) => void;
+    addHabit: (habitData: Omit<Habit, 'id' | 'icon'>) => void;
+    updateHabit: (id: HabitId, habitData: Partial<Omit<Habit, 'id' | 'icon'>>) => void;
     removeHabit: (id: HabitId) => void;
+    resetHabits: () => void;
     createNewEntry: () => JournalEntry;
     setSelectedEntry: (entry: JournalEntry | null) => void;
 }
@@ -207,9 +208,16 @@ export const useJournal = create<JournalState>()(
         },
         
         addHabit: (habitData) => {
-            set(state => ({
-                habits: [...state.habits, { ...habitData, id: `custom-${Date.now()}` }]
-            }));
+            set(state => {
+                const newHabit: Habit = { 
+                    ...habitData, 
+                    id: `custom-${Date.now()}`,
+                    icon: defaultHabits['reflect_challenge'].icon, // Placeholder, will be ignored in UI
+                };
+                return {
+                    habits: [...state.habits, newHabit]
+                };
+            });
         },
 
         updateHabit: (id, habitData) => {
@@ -223,6 +231,10 @@ export const useJournal = create<JournalState>()(
                 habits: state.habits.filter(h => h.id !== id)
             }));
         },
+
+        resetHabits: () => {
+            set({ habits: Object.values(defaultHabits) });
+        },
         
         createNewEntry: () => {
             const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
@@ -235,21 +247,20 @@ export const useJournal = create<JournalState>()(
       name: 'journal-storage',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
-          if (state) {
-              // Check if seed data needs to be added
-              if (!state.habits || state.habits.length === 0) {
-                  const { entries, habits, habitConfig } = createSeedData();
-                  state.entries = entries;
-                  state.completedHabits = habits;
-                  state.habits = habitConfig;
-              }
-              
-              // Cleanup expired trash
-              const thirtyDaysAgo = Date.now() - TRASH_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
-              state.trashedEntries = state.trashedEntries.filter(item => item.deletedAt > thirtyDaysAgo);
-
-              state.setHasHydrated(true);
+          if (!state) return;
+          // Check if seed data needs to be added
+          if (!state.habits || state.habits.length === 0) {
+              const { entries, habits, habitConfig } = createSeedData();
+              state.entries = entries;
+              state.completedHabits = habits;
+              state.habits = habitConfig;
           }
+          
+          // Cleanup expired trash
+          const thirtyDaysAgo = Date.now() - TRASH_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
+          state.trashedEntries = (state.trashedEntries || []).filter(item => item.deletedAt > thirtyDaysAgo);
+
+          state.setHasHydrated(true);
       },
     }
   )
@@ -257,28 +268,15 @@ export const useJournal = create<JournalState>()(
 
 // Custom hook to safely access the store's state only after hydration
 export const useHydratedJournalStore = () => {
-    const storeState = useJournal();
-    const [hydratedState, setHydratedState] = useState(storeState);
+    const store = useJournal();
+    const [hydrated, setHydrated] = useState(false);
 
     useEffect(() => {
-        const unsubscribe = useJournal.subscribe(
-            (currentState) => {
-                if (currentState.hasHydrated) {
-                    setHydratedState(currentState);
-                    unsubscribe();
-                }
-            }
-        );
-
-        if (useJournal.getState().hasHydrated) {
-            setHydratedState(useJournal.getState());
-        }
-
-        return unsubscribe;
+      setHydrated(true);
     }, []);
-    
-    // On the server and before hydration, return the initial state
-    if (typeof window === "undefined" || !hydratedState.hasHydrated) {
+
+    const state = useMemo(() => {
+      if (typeof window === "undefined" || !hydrated) {
         return {
             entries: [],
             trashedEntries: [],
@@ -299,10 +297,13 @@ export const useHydratedJournalStore = () => {
             addHabit: () => {},
             updateHabit: () => {},
             removeHabit: () => {},
+            resetHabits: () => {},
             createNewEntry: () => createNewEntryObject(new Date().toISOString().split('T')[0], 'Growth & Challenge Reflection', 'daily'),
             setSelectedEntry: () => {},
         };
-    }
+      }
+      return store;
+    }, [hydrated, store]);
 
-    return hydratedState;
+    return state;
 };

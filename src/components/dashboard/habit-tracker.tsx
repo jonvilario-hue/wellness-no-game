@@ -49,7 +49,7 @@ const HabitItem = ({
   onEdit: () => void,
   onDelete: () => void
 }) => {
-  const Icon = allHabits[habit.id]?.icon || Target;
+  const Icon = allHabits[habit.id]?.icon || journalConfig[habit.category]?.icon || Target;
   const checkboxId = `habit-tracker-${habit.id}`;
   return (
     <div className="flex items-center group">
@@ -72,9 +72,25 @@ const HabitItem = ({
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEdit}>
             <Edit className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onDelete}>
-            <Trash2 className="w-4 h-4" />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Trash2 className="w-4 h-4" />
+                </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Habit?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Are you sure you want to delete the habit "{habit.label}"? This cannot be undone.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onDelete} variant="destructive">Delete</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
     </div>
   );
@@ -88,14 +104,14 @@ const HabitDialog = ({
 }: {
     open: boolean,
     onOpenChange: (open: boolean) => void,
-    onSave: (habit: Omit<Habit, 'id'>, id?: HabitId) => void,
+    onSave: (habit: Omit<Habit, 'id' | 'icon'>, id?: HabitId) => void,
     habitToEdit: Habit | null
 }) => {
     const [label, setLabel] = useState('');
     const [category, setCategory] = useState<JournalCategory | ''>('');
 
     useEffect(() => {
-        if(habitToEdit) {
+        if(habitToEdit && open) {
             setLabel(habitToEdit.label);
             setCategory(habitToEdit.category);
         } else {
@@ -109,7 +125,6 @@ const HabitDialog = ({
         const newHabitData = {
             label,
             category,
-            icon: journalConfig[category]?.icon || Target,
         };
         onSave(newHabitData, habitToEdit?.id);
         onOpenChange(false);
@@ -154,7 +169,7 @@ const HabitDialog = ({
 
 
 export function HabitTracker() {
-    const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit, hasHydrated } = useJournal();
+    const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit, resetHabits, hasHydrated } = useJournal();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
 
@@ -170,7 +185,7 @@ export function HabitTracker() {
         setIsDialogOpen(true);
     };
 
-    const handleSaveHabit = (habitData: Omit<Habit, 'id'>, id?: HabitId) => {
+    const handleSaveHabit = (habitData: Omit<Habit, 'id' | 'icon'>, id?: HabitId) => {
         if(id) {
             updateHabit(id, habitData);
         } else {
@@ -213,7 +228,7 @@ export function HabitTracker() {
           </CardTitle>
           <CardDescription>Track your consistency and build lasting cognitive habits.</CardDescription>
         </CardHeader>
-        <CardContent className="flex-grow flex flex-col">
+        <CardContent className="flex-grow flex flex-col min-h-[300px]">
             <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold">Today's Progress</h3>
                 <p className="text-sm font-bold text-primary">{todaysHabits.length} / {habits.length} Done</p>
@@ -257,11 +272,30 @@ export function HabitTracker() {
                 })}
                 </Accordion>
             </ScrollArea>
-             <div className="mt-4 pt-4 border-t">
+             <div className="mt-4 pt-4 border-t space-y-2">
                  <Button variant="outline" className="w-full" onClick={() => handleOpenDialog(null)}>
                     <PlusCircle className="mr-2 h-4 w-4"/>
                     Add Custom Habit
                 </Button>
+                 <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                         <Button variant="ghost" className="w-full text-muted-foreground">
+                            Reset to Default Habits
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Reset Habits?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This will remove any custom habits you've created and restore the original set. This action cannot be undone.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={resetHabits} variant="destructive">Reset Habits</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
             {todaysHabits.length === habits.length && habits.length > 0 && (
                 <p className="text-center text-green-500 font-bold mt-4">All habits completed for today!</p>
