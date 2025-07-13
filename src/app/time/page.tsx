@@ -27,7 +27,7 @@ export default function TimePage() {
                 <div className="flex items-center gap-3">
                     <Clock className="h-7 w-7 text-primary" />
                     <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
-                    Time & Sleep Tools
+                    Clock Tools
                     </h1>
                 </div>
                  <div className="flex-1 flex justify-end items-center gap-2">
@@ -46,19 +46,19 @@ export default function TimePage() {
           </header>
           <main className="flex-1 p-4 sm:p-6 md:p-8 flex justify-center">
             <div className="w-full max-w-4xl">
-                <Tabs defaultValue="sleep-cycle" className="w-full">
+                <Tabs defaultValue="alarms" className="w-full">
                     <TabsList className="grid w-full grid-cols-5">
-                        <TabsTrigger value="sleep-cycle"><BarChart2 className="w-4 h-4 mr-2"/>Sleep Cycle</TabsTrigger>
                         <TabsTrigger value="alarms"><Moon className="w-4 h-4 mr-2"/>Alarms</TabsTrigger>
+                        <TabsTrigger value="sleep-cycle"><BarChart2 className="w-4 h-4 mr-2"/>Sleep Cycle</TabsTrigger>
                         <TabsTrigger value="stopwatch"><Hourglass className="w-4 h-4 mr-2"/>Stopwatch</TabsTrigger>
                         <TabsTrigger value="timer"><TimerIcon className="w-4 h-4 mr-2"/>Timer</TabsTrigger>
                         <TabsTrigger value="pomodoro"><CirclePlay className="w-4 h-4 mr-2"/>Pomodoro</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="sleep-cycle" className="mt-6">
-                       <SleepCycleTracker />
-                    </TabsContent>
                     <TabsContent value="alarms" className="mt-6">
                        <AlarmClock />
+                    </TabsContent>
+                    <TabsContent value="sleep-cycle" className="mt-6">
+                       <SleepCycleTracker />
                     </TabsContent>
                     <TabsContent value="stopwatch" className="mt-6">
                        <Stopwatch />

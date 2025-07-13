@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlarmClock, ArrowRight, CirclePlay, Hourglass } from 'lucide-react';
+import { AlarmClock, ArrowRight, CirclePlay, Hourglass, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from '@/hooks/use-theme';
 import { GrowthDecoration } from '../ui/growth-decoration';
@@ -16,8 +16,8 @@ export function TimeToolsCard() {
       {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
-          <AlarmClock className="w-5 h-5 text-primary" />
-          Time & Sleep Tools
+          <Clock className="w-5 h-5 text-primary" />
+          Clock Tools
         </CardTitle>
         <CardDescription>
           Access tools to structure your work, rest, and cognitive warm-ups.
@@ -45,7 +45,7 @@ export function TimeToolsCard() {
       <CardFooter>
         <Button asChild className="w-full">
           <Link href="/time">
-            Open Time Tools <ArrowRight className="ml-2 h-4 w-4" />
+            Open Clock Tools <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
       </CardFooter>
