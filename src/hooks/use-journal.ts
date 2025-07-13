@@ -224,10 +224,12 @@ const useJournal = () => {
         }
         
         saveCompletedHabits(newHabits);
-    }, [completedHabits]);
+    }, [completedHabits, saveCompletedHabits]);
 
 
     return { entries, trashedEntries, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash, completedHabits, toggleHabitForDay, isLoaded };
 };
 
 export { useJournal };
+
+  

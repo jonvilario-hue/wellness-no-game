@@ -166,3 +166,5 @@ export const journalConfig: Record<JournalCategory, {
 };
 
     
+
+  
