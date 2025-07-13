@@ -133,7 +133,7 @@ export function DynamicSequenceTransformer() {
       <CardHeader>
         <CardTitle className="flex items-center justify-center gap-2">
             <MemoryStick />
-            (Gwm) Dynamic Sequence Transformer
+            (Gwm) Sequence Dynamics
         </CardTitle>
         <CardDescription>Memorize the sequence, then transform it as instructed.</CardDescription>
       </CardHeader>

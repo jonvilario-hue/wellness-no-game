@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlarmClock, Loader2, Zap, ThumbsUp, ThumbsDown } from 'lucide-react';
-import { DynamicSequenceTransformer } from '@/components/training/gwm/dynamic-sequence-transformer';
+import { DynamicSequenceTransformer as SequenceDynamics } from '@/components/training/gwm/dynamic-sequence-transformer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Slider } from '@/components/ui/slider';
@@ -54,7 +54,7 @@ export default function AlarmPage() {
                     {!showPuzzle && <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />}
                     {showPuzzle && (
                         <div className="animate-in fade-in zoom-in-95">
-                            <DynamicSequenceTransformer />
+                            <SequenceDynamics />
                              <div className="flex flex-col items-center gap-2 mt-4">
                                 <Button onClick={handleDismiss} size="lg" variant="default" className="w-full sm:w-auto">
                                     Dismiss Alarm
