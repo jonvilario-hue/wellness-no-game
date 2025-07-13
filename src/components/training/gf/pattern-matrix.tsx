@@ -57,10 +57,10 @@ const generatePuzzle = (mode: 'neutral' | 'math'): Puzzle => {
       const progressionIndex = rule === 'row_progression' ? col : row;
       
       let currentVal: any = newElement[progressionProp];
-      const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[progressionProp];
+      const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[progressionProp as keyof typeof collection] as any[];
 
       for (let j = 0; j < progressionIndex; j++) {
-        currentVal = getNextInSequence(currentVal, collection as any[]);
+        currentVal = getNextInSequence(currentVal, collection);
       }
       (newElement[progressionProp] as any) = currentVal;
       grid[i] = newElement;
@@ -111,11 +111,13 @@ const generatePuzzle = (mode: 'neutral' | 'math'): Puzzle => {
     if(mode === 'neutral') {
       const tempDecoy = { ...(answer as NeutralElement) };
       const changeProp = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as keyof NeutralElement;
-      const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[changeProp];
-      (tempDecoy[changeProp] as any) = getNextInSequence(tempDecoy[changeProp], collection as any[]);
+      const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[changeProp as keyof typeof collection] as any[];
+      (tempDecoy[changeProp] as any) = getNextInSequence(tempDecoy[changeProp], collection);
       decoy = tempDecoy;
     } else { // Math mode decoy
-      decoy = { value: (answer as MathElement).value + (Math.floor(Math.random() * 5) - 2) * (Math.random() > 0.5 ? 1 : -1) || 1 };
+      const value = (answer as MathElement).value;
+      const offset = (Math.floor(Math.random() * 3) + 1) * (Math.random() > 0.5 ? 1 : -1);
+      decoy = { value: value + offset };
     }
     
     if (!options.some(o => JSON.stringify(o) === JSON.stringify(decoy))) {
