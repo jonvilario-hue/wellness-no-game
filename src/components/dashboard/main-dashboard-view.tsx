@@ -10,7 +10,6 @@ import { ChcProfileOverview } from './chc-profile-overview';
 import { chcDomains } from '@/types';
 import { ChcDomainCard } from './chc-domain-card';
 
-
 export function MainDashboardView() {
   const [view, setView] = useState<ViewMode>('efficiency');
   type ViewMode = 'efficiency' | 'profile';
