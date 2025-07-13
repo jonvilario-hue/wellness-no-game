@@ -27,7 +27,11 @@ const getMockTrainingData = (date: Date): CHCDomain[] => {
 
 export function CalendarView() {
   const { entries, isLoaded } = useJournal();
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [date, setDate] = React.useState<Date | undefined>(undefined);
+
+  React.useEffect(() => {
+    setDate(new Date());
+  }, []);
 
   const journalEntriesByDate = React.useMemo(() => {
     const map = new Map<string, JournalEntry[]>();
@@ -139,7 +143,7 @@ export function CalendarView() {
                     </div>
                 )}
               
-                {trainingDataForSelectedDate.length === 0 && journalEntriesForSelectedDate.length === 0 && (
+                {date && trainingDataForSelectedDate.length === 0 && journalEntriesForSelectedDate.length === 0 && (
                   <div className="text-center text-muted-foreground pt-16">
                     <p>No activity logged for this day.</p>
                   </div>
