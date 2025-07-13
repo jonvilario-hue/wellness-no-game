@@ -9,11 +9,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { ChcProfileOverview } from './chc-profile-overview';
 import { chcDomains } from '@/types';
 import { ChcDomainCard } from './chc-domain-card';
-import { CalendarView } from '../calendar/calendar-view';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import Link from 'next/link';
-import { Button } from '../ui/button';
-import { Expand, CalendarDays } from 'lucide-react';
 
 
 export function MainDashboardView() {
@@ -67,37 +62,6 @@ export function MainDashboardView() {
                 <ChcDomainCard key={domain.key} domain={domain} />
               ))}
             </div>
-             <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="calendar">
-                    <AccordionTrigger>
-                        <div className="flex justify-between items-center w-full pr-2">
-                             <div className="flex items-center gap-2">
-                                <CalendarDays className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-semibold text-muted-foreground">My Cognitive Calendar</span>
-                            </div>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <div className="relative">
-                            <CalendarView />
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                         <Button variant="ghost" size="icon" className="absolute top-2 right-2" asChild>
-                                            <Link href="/calendar">
-                                                <Expand className="w-4 h-4"/>
-                                            </Link>
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>View Fullscreen Calendar</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
           </CardContent>
         </TabsContent>
       </Tabs>

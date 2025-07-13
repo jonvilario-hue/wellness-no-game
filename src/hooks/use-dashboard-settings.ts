@@ -15,6 +15,7 @@ const defaultSettings = {
   weakAreaRecommendations: true,
   adaptiveDifficulty: true,
   habitJournal: true,
+  cognitiveCalendar: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;

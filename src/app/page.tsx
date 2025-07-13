@@ -18,6 +18,7 @@ import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { GameProgressTracker } from '@/components/dashboard/game-progress-tracker';
 import { useJournal } from '@/hooks/use-journal';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
+import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
 
 function DashboardContent() {
   const journalRef = useRef<HTMLDivElement>(null);
@@ -51,6 +52,8 @@ function DashboardContent() {
             </aside>
           </div>
           
+          {settings.cognitiveCalendar && <CognitiveCalendar />}
+
           {(settings.performanceInsights || settings.weakAreaRecommendations) && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
               {settings.performanceInsights && <PerformanceInsights />}

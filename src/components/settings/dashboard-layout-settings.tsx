@@ -20,6 +20,7 @@ const componentLabels: Record<DashboardComponent, string> = {
   weakAreaRecommendations: 'Weak Area Targeting',
   adaptiveDifficulty: 'Adaptive Difficulty',
   habitJournal: 'Habit Journal',
+  cognitiveCalendar: 'Cognitive Calendar',
 };
 
 export function DashboardLayoutSettings() {
