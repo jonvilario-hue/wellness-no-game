@@ -4,8 +4,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
-// Maps color names to theme-based CSS classes
 const colorOptions = [
     { name: 'DESTRUCTIVE', class: 'text-destructive' },
     { name: 'PRIMARY', class: 'text-primary' },
@@ -13,12 +13,15 @@ const colorOptions = [
     { name: 'CHART-3', class: 'text-chart-3' },
 ];
 
+type Rule = 'color' | 'word' | 'no_go';
+const rules: Rule[] = ['color', 'word', 'no_go'];
+
 export function FocusSwitchReactor() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
-  const [rule, setRule] = useState<'color' | 'word'>('word');
+  const [rule, setRule] = useState<Rule>('word');
   const [stimulus, setStimulus] = useState({ word: 'PRIMARY', color: 'text-primary' });
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(45);
 
   const generateStimulus = () => {
     const randomWord = colorOptions[Math.floor(Math.random() * colorOptions.length)];
@@ -27,7 +30,11 @@ export function FocusSwitchReactor() {
   };
   
   const generateRule = () => {
-    setRule(Math.random() > 0.5 ? 'color' : 'word');
+    // Make 'no_go' less frequent
+    const ruleIndex = Math.floor(Math.random() * 5); // 0,1,2,3,4
+    if (ruleIndex < 2) setRule('color'); // 40%
+    else if (ruleIndex < 4) setRule('word'); // 40%
+    else setRule('no_go'); // 20%
   };
 
   useEffect(() => {
@@ -42,13 +49,26 @@ export function FocusSwitchReactor() {
   
   const handleStart = () => {
     setScore(0);
-    setTimeLeft(30);
+    setTimeLeft(45);
     setGameState('running');
     generateStimulus();
     generateRule();
   };
+  
+  const processNextTurn = (correct: boolean) => {
+    setScore(prev => correct ? prev + 1 : Math.max(0, prev - 1));
+    if (Math.random() < 0.4) { // Switch rule ~40% of the time
+      generateRule();
+    }
+    generateStimulus();
+  }
 
   const handleAnswer = (answer: string) => {
+    if (rule === 'no_go') {
+      processNextTurn(false); // Penalty for responding on a no-go trial
+      return;
+    }
+    
     let correctAnswer;
     if (rule === 'word') {
       correctAnswer = stimulus.word;
@@ -57,16 +77,30 @@ export function FocusSwitchReactor() {
        correctAnswer = correctOption?.name;
     }
     
-    if (answer === correctAnswer) {
-      setScore(score + 1);
-    }
-    
-    // Switch rule ~30% of the time
-    if(Math.random() < 0.3) {
-      generateRule();
-    }
-    generateStimulus();
+    processNextTurn(answer === correctAnswer);
   };
+  
+  // This function is for when the user correctly waits on a "no_go" trial
+  useEffect(() => {
+    if (gameState === 'running' && rule === 'no_go') {
+        const noGoTimer = setTimeout(() => {
+            // Check again to make sure the rule hasn't changed by a fast click
+            if(rule === 'no_go') {
+               processNextTurn(true); // Reward for correctly inhibiting response
+            }
+        }, 1500); // 1.5 seconds to wait
+        return () => clearTimeout(noGoTimer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rule, stimulus, gameState]);
+
+
+  const getRuleText = () => {
+      if (rule === 'color') return 'Respond to the COLOR';
+      if (rule === 'word') return 'Respond to the WORD';
+      if (rule === 'no_go') return "DON'T RESPOND";
+      return '';
+  }
 
   return (
     <Card className="w-full max-w-2xl text-center">
@@ -85,15 +119,15 @@ export function FocusSwitchReactor() {
               <span>Score: {score}</span>
               <span>Time: {timeLeft}s</span>
             </div>
-            <div className="p-8 bg-muted rounded-lg w-full">
-              <p className="text-xl mb-4">Rule: Respond to the <span className="font-bold text-primary uppercase">{rule}</span></p>
+            <div className={cn("p-8 bg-muted rounded-lg w-full transition-colors", rule === 'no_go' && 'bg-destructive/10')}>
+              <p className="text-xl mb-4">Rule: <span className="font-bold text-primary uppercase">{getRuleText()}</span></p>
               <div className="text-6xl font-extrabold" >
                 <span className={stimulus.color}>{stimulus.word}</span>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 w-full">
               {colorOptions.map(color => (
-                <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg">
+                <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg" disabled={rule === 'no_go'}>
                   {color.name}
                 </Button>
               ))}

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +21,7 @@ const tasks = [
   { id: 'alpha_only', label: "Repeat only the letters, in order." },
   { id: 'numeric_only', label: "Repeat only the numbers, in order." },
   { id: 'remove_first', label: "Repeat the sequence, removing the first character." },
+  { id: 'alpha_shift', label: "Repeat the letters, shifting each forward by one (A->B, Z->A)." },
 ];
 
 export function DynamicSequenceTransformer() {
@@ -54,6 +56,11 @@ export function DynamicSequenceTransformer() {
         return sequence.replace(/[^0-9]/g, '');
       case 'remove_first':
         return sequence.substring(1);
+      case 'alpha_shift':
+        return sequence.replace(/[^A-Z]/g, '').split('').map(char => {
+          if (char === 'Z') return 'A';
+          return String.fromCharCode(char.charCodeAt(0) + 1);
+        }).join('');
       default:
         return '';
     }

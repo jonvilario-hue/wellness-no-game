@@ -1,10 +1,12 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 const prompts = [
   "Things you find in a kitchen",
@@ -12,31 +14,52 @@ const prompts = [
   "Animals that live in the jungle",
   "Words that start with 'C'",
   "Things that are cold",
+  "Musical instruments",
+  "Things you can fly in",
+  "Types of fish"
 ];
 
 export function SemanticFluencyStorm() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
   const [prompt, setPrompt] = useState('');
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(45);
   const [currentInput, setCurrentInput] = useState('');
   const [responses, setResponses] = useState<string[]>([]);
+  const [switched, setSwitched] = useState(false);
+  const promptHistory = useRef<string[]>([]);
   
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (gameState === 'running' && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-    if (timeLeft === 0) {
+      timer = setTimeout(() => {
+        setTimeLeft(timeLeft - 1);
+        // Category switch halfway through
+        if (timeLeft === 23 && !switched) {
+          setSwitched(true);
+          let newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+          while (promptHistory.current.includes(newPrompt)) {
+            newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+          }
+          setPrompt(newPrompt);
+          promptHistory.current.push(newPrompt);
+        }
+      }, 1000);
+    } else if (timeLeft === 0 && gameState === 'running') {
       setGameState('finished');
     }
-  }, [gameState, timeLeft]);
+    return () => clearTimeout(timer);
+  }, [gameState, timeLeft, switched]);
 
   const handleStart = () => {
+    let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+    promptHistory.current = [initialPrompt];
+    setPrompt(initialPrompt);
+    
     setGameState('running');
-    setTimeLeft(30);
+    setTimeLeft(45);
     setResponses([]);
     setCurrentInput('');
-    setPrompt(prompts[Math.floor(Math.random() * prompts.length)]);
+    setSwitched(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +91,7 @@ export function SemanticFluencyStorm() {
               <span>Time: {timeLeft}s</span>
               <span>Score: {responses.length}</span>
             </div>
-            <div className="p-4 bg-muted rounded-lg w-full text-center">
+            <div className={cn("p-4 bg-muted rounded-lg w-full text-center transition-all", switched && timeLeft > 20 && "bg-primary/20 animate-pulse")}>
               <p className="text-xl font-semibold">{prompt}</p>
             </div>
             <form onSubmit={handleSubmit} className="flex gap-2">

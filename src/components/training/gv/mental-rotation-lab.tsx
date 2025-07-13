@@ -7,7 +7,6 @@ import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { View } from "lucide-react";
 
-// --- Shape Definitions ---
 const shapes = [
   // L-shape
   [[1,0,0], [1,0,0], [1,1,0]],
@@ -17,10 +16,16 @@ const shapes = [
   [[0,1,1], [1,1,0], [0,0,0]],
   // Plus-shape
   [[0,1,0], [1,1,1], [0,1,0]],
+  // Asymmetric U
+  [[1,0,1], [1,1,1], [0,0,0]],
+  // Skew shape
+  [[1,1,0], [0,1,1], [0,0,0]],
 ];
 
-// --- Transformation Logic ---
-const rotateGrid = (grid: number[][]) => {
+type Grid = number[][];
+type Puzzle = { baseShape: Grid; answer: Grid; options: Grid[] };
+
+const rotateGrid = (grid: Grid): Grid => {
   const n = grid.length;
   const newGrid = Array(n).fill(0).map(() => Array(n).fill(0));
   for (let i = 0; i < n; i++) {
@@ -31,45 +36,57 @@ const rotateGrid = (grid: number[][]) => {
   return newGrid;
 };
 
-const flipGridHorizontal = (grid: number[][]) => {
+const flipGridHorizontal = (grid: Grid): Grid => {
   return grid.map(row => [...row].reverse());
 };
 
-const areGridsEqual = (grid1: number[][], grid2: number[][]) => {
+const areGridsEqual = (grid1: Grid, grid2: Grid) => {
   return JSON.stringify(grid1) === JSON.stringify(grid2);
 };
 
-const generatePuzzle = () => {
+const generatePuzzle = (): Puzzle => {
   const baseShape = shapes[Math.floor(Math.random() * shapes.length)];
   
   let targetShape = baseShape;
-  const rotations = Math.floor(Math.random() * 4); // 0, 1, 2, or 3 rotations
+  const rotations = Math.floor(Math.random() * 4);
   for (let i = 0; i < rotations; i++) {
     targetShape = rotateGrid(targetShape);
   }
 
   const options = [targetShape];
-  // Add distractors (flipped versions or different shapes)
-  options.push(flipGridHorizontal(targetShape));
-  options.push(rotateGrid(flipGridHorizontal(targetShape)));
   
-  let otherShape = shapes[Math.floor(Math.random() * shapes.length)];
-  while(areGridsEqual(otherShape, baseShape)) {
-    otherShape = shapes[Math.floor(Math.random() * shapes.length)];
+  // Add a mirror image distractor
+  let mirrorImage = flipGridHorizontal(baseShape);
+  const mirrorRotations = Math.floor(Math.random() * 4);
+  for (let i = 0; i < mirrorRotations; i++) {
+    mirrorImage = rotateGrid(mirrorImage);
   }
-  options.push(otherShape);
+  options.push(mirrorImage);
+
+  // Add different shape distractors
+  while (options.length < 4) {
+    let distractor = shapes[Math.floor(Math.random() * shapes.length)];
+    // Ensure distractor is not the same as the base shape
+    if (areGridsEqual(distractor, baseShape)) continue;
+    
+    const distractorRotations = Math.floor(Math.random() * 4);
+     for (let i = 0; i < distractorRotations; i++) {
+        distractor = rotateGrid(distractor);
+    }
+    
+    // Ensure we don't accidentally create the answer or a duplicate
+    const isDuplicate = options.some(opt => areGridsEqual(opt, distractor));
+    if (!isDuplicate) {
+        options.push(distractor);
+    }
+  }
   
-  // Shuffle options
-  for (let i = options.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [options[i], options[j]] = [options[j], options[i]];
-  }
+  options.sort(() => Math.random() - 0.5);
   
   return { baseShape, answer: targetShape, options: options.slice(0, 4) };
 };
 
-// --- Component to render a grid ---
-const ShapeGrid = ({ grid }: { grid: number[][] }) => (
+const ShapeGrid = ({ grid }: { grid: Grid }) => (
   <div className="grid grid-cols-3 gap-1">
     {grid.flat().map((cell, index) => (
       <div 
@@ -83,15 +100,14 @@ const ShapeGrid = ({ grid }: { grid: number[][] }) => (
   </div>
 );
 
-
 export function MentalRotationLab() {
-  const [puzzleKey, setPuzzleKey] = useState(0); // Add a key to force re-memoization
-  const [selectedOption, setSelectedOption] = useState<number[][] | null>(null);
+  const [puzzleKey, setPuzzleKey] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<Grid | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
   
   const puzzle = useMemo(() => generatePuzzle(), [puzzleKey]);
 
-  const handleSelectOption = (option: number[][]) => {
+  const handleSelectOption = (option: Grid) => {
     if (feedback) return;
     setSelectedOption(option);
     if (areGridsEqual(option, puzzle.answer)) {
@@ -148,7 +164,7 @@ export function MentalRotationLab() {
         {feedback && (
           <div className="flex flex-col items-center gap-4 mt-4 text-center">
              {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct! Perfect rotation.</p>}
-            {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">That's not a pure rotation.</p>}
+            {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">That's not a pure rotation. It might be a mirror image.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>
           </div>
         )}

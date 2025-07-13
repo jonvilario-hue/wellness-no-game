@@ -3,105 +3,115 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 import { BrainCircuit } from "lucide-react";
 
-// --- Puzzle Elements ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
 const colors = ['bg-primary', 'bg-accent', 'bg-chart-3', 'bg-chart-4'];
 const rotations = [0, 90, 180, 270];
+const fills = ['fill', 'outline'];
 
-const generateElement = () => ({
-  shape: shapes[Math.floor(Math.random() * shapes.length)],
-  color: colors[Math.floor(Math.random() * colors.length)],
-  rotation: rotations[Math.floor(Math.random() * rotations.length)],
-});
-
-// --- Puzzle Generation Logic ---
-type Element = { shape: string; color: string; rotation: number; };
+type Element = { shape: string; color: string; rotation: number; fill: 'fill' | 'outline' };
 type Grid = (Element | null)[];
-type Puzzle = { grid: Grid, missingIndex: number, answer: Element, options: Element[], size: number };
+type Puzzle = { grid: Grid; missingIndex: number; answer: Element; options: Element[]; size: number };
 
 const generatePuzzle = (): Puzzle => {
-  const size = Math.random() > 0.5 ? 3 : 2; // 3x3 or 2x2 grid
+  const size = 3;
   const grid: Grid = Array(size * size).fill(null);
-  const rules = ['row_progression', 'column_progression'];
+  const rules = ['row_progression', 'column_progression', 'cell_combination'];
   const rule = rules[Math.floor(Math.random() * rules.length)];
   const missingIndex = Math.floor(Math.random() * (size * size));
 
-  let progressionProp: 'shape' | 'color' | 'rotation' = 'shape';
-  if (Math.random() > 0.66) progressionProp = 'rotation';
-  else if (Math.random() > 0.33) progressionProp = 'color';
-  
-  const baseElement = generateElement();
-
-  const getNextInSequence = (val: any, prop: typeof progressionProp) => {
-    let collection = shapes;
-    if (prop === 'color') collection = colors as any[];
-    if (prop === 'rotation') collection = rotations as any[];
-    
-    const currentIndex = collection.indexOf(val as never);
+  const getNextInSequence = <T,>(val: T, collection: T[]) => {
+    const currentIndex = collection.indexOf(val);
     return collection[(currentIndex + 1) % collection.length];
   }
 
-  for (let i = 0; i < size * size; i++) {
-    const row = Math.floor(i / size);
-    const col = i % size;
-    let newElement = { ...baseElement };
+  const baseElement = {
+    shape: shapes[Math.floor(Math.random() * shapes.length)],
+    color: colors[Math.floor(Math.random() * colors.length)],
+    rotation: rotations[Math.floor(Math.random() * rotations.length)],
+    fill: fills[Math.floor(Math.random() * fills.length)] as 'fill' | 'outline',
+  };
 
-    if (rule === 'row_progression') {
-      let currentVal = newElement[progressionProp];
-      for(let j=0; j < col; j++) {
-        currentVal = getNextInSequence(currentVal, progressionProp);
+  if (rule === 'row_progression' || rule === 'column_progression') {
+    const progressionProp: keyof Omit<Element, 'toString'> = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as any;
+    
+    for (let i = 0; i < size * size; i++) {
+      const row = Math.floor(i / size);
+      const col = i % size;
+      let newElement = { ...baseElement };
+      const progressionIndex = rule === 'row_progression' ? col : row;
+      
+      let currentVal: any = newElement[progressionProp];
+      const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[progressionProp];
+
+      for (let j = 0; j < progressionIndex; j++) {
+        currentVal = getNextInSequence(currentVal, collection as any[]);
       }
       (newElement[progressionProp] as any) = currentVal;
-    } else if (rule === 'column_progression') {
-       let currentVal = newElement[progressionProp];
-      for(let j=0; j < row; j++) {
-         currentVal = getNextInSequence(currentVal, progressionProp);
-      }
-      (newElement[progressionProp] as any) = currentVal;
+      grid[i] = newElement;
     }
-    grid[i] = newElement;
+  } else { // cell_combination
+    // Rule: Cell[2] is a combination of Cell[0] and Cell[1]
+    const prop1: keyof Element = 'shape';
+    const prop2: keyof Element = 'color';
+    for (let row = 0; row < size; row++) {
+      const i = row * size;
+      grid[i] = generateElement();
+      grid[i+1] = generateElement();
+      grid[i+2] = {
+        ...generateElement(),
+        [prop1]: grid[i]![prop1],
+        [prop2]: grid[i+1]![prop2],
+      };
+    }
   }
 
   const answer = grid[missingIndex]!;
   
-  // Generate decoy options
   const options = [answer];
   while(options.length < 6) {
     const decoy = { ...answer };
-    const changeProp = ['shape', 'color', 'rotation'][Math.floor(Math.random()*3)] as 'shape' | 'color' | 'rotation';
-    decoy[changeProp] = getNextInSequence(decoy[changeProp], changeProp);
+    const changeProp = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as keyof Element;
+    const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[changeProp];
+    (decoy[changeProp] as any) = getNextInSequence(decoy[changeProp], collection as any[]);
+    
     if (!options.some(o => JSON.stringify(o) === JSON.stringify(decoy))) {
       options.push(decoy);
     }
   }
   
-  // Shuffle options
   options.sort(() => Math.random() - 0.5);
-
-  grid[missingIndex] = null; // Set missing cell to null after generating options
-
+  grid[missingIndex] = null;
   return { grid, missingIndex, answer, options, size };
 };
 
-// --- Components ---
-const ShapeComponent = ({ shape, color, rotation }: Element) => {
+const generateElement = (): Element => ({
+  shape: shapes[Math.floor(Math.random() * shapes.length)],
+  color: colors[Math.floor(Math.random() * colors.length)],
+  rotation: rotations[Math.floor(Math.random() * rotations.length)],
+  fill: fills[Math.floor(Math.random() * fills.length)] as 'fill' | 'outline',
+});
+
+const ShapeComponent = ({ shape, color, rotation, fill }: Element) => {
   const baseClasses = "w-10 h-10 transition-all";
-  
+  const style = { transform: `rotate(${rotation}deg)` };
+  const outlineClasses = `bg-transparent border-4 ${color.replace('bg-','border-')}`;
+
   switch (shape) {
-    case 'circle': return <div className={cn(baseClasses, color, "rounded-full")} style={{ transform: `rotate(${rotation}deg)` }} />;
-    case 'square': return <div className={cn(baseClasses, color, "rounded-md")} style={{ transform: `rotate(${rotation}deg)` }} />;
+    case 'circle': return <div className={cn(baseClasses, "rounded-full", fill === 'fill' ? color : outlineClasses)} style={style} />;
+    case 'square': return <div className={cn(baseClasses, "rounded-md", fill === 'fill' ? color : outlineClasses)} style={style} />;
     case 'triangle':
         const triangleColorClass = color.replace('bg-', 'border-b-');
-        return <div style={{width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid', transform: `rotate(${rotation}deg)` }} className={cn("!bg-transparent", triangleColorClass, 'h-auto w-auto')} />;
-    case 'diamond': return <div className={cn(baseClasses, color, "transform rotate-45 rounded-sm")} style={{ transform: `rotate(${rotation + 45}deg)` }}/>;
+        const triangleStyle = { ...style, width: 0, height: 0, borderLeft: '20px solid transparent', borderRight: '20px solid transparent', borderBottomWidth: '40px', borderBottomStyle: 'solid' };
+        if (fill === 'fill') return <div style={triangleStyle} className={cn("!bg-transparent", triangleColorClass, 'h-auto w-auto')} />;
+        return <div className="w-10 h-10" style={style}> <svg viewBox="0 0 100 100" className={`fill-transparent ${color.replace('bg-', 'stroke-')}`} strokeWidth="10"><polygon points="50,10 90,90 10,90" /></svg></div>
+    case 'diamond': return <div className={cn(baseClasses, "transform rotate-45 rounded-sm", fill === 'fill' ? color : outlineClasses)} style={{ transform: `rotate(${rotation + 45}deg)` }}/>;
     default: return <div className={cn(baseClasses, color)} />;
   }
 };
-
 
 export function PatternMatrix() {
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
@@ -111,10 +121,8 @@ export function PatternMatrix() {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
 
   useEffect(() => {
-    // Generate puzzle on client mount to avoid hydration mismatch
     setPuzzle(generatePuzzle());
   }, [puzzleKey]);
-
 
   const handleSelectOption = (option: Element) => {
     if (feedback || !puzzle) return;
@@ -143,7 +151,7 @@ export function PatternMatrix() {
     );
   }
 
-  const gridClass = puzzle.size === 3 ? "grid-cols-3" : "grid-cols-2";
+  const gridClass = "grid-cols-3";
 
   return (
     <Card className="w-full max-w-md">

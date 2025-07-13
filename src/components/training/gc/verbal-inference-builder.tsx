@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
 
@@ -57,6 +57,20 @@ const puzzles = [
     answer: "Melancholy",
     explanation: "Jubilant, ecstatic, and elated are all synonyms for being very happy. Melancholy means sad."
   },
+  {
+    type: 'analogy',
+    question: "Flippant is to serious as ephemeral is to ____.",
+    options: ["Fleeting", "Permanent", "Trivial", "Bright"],
+    answer: "Permanent",
+    explanation: "Flippant is an antonym for serious, just as ephemeral (short-lived) is an antonym for permanent."
+  },
+  {
+    type: 'relationship',
+    question: "Which category includes all the others?",
+    options: ["Furniture", "Table", "Chair", "Desk"],
+    answer: "Furniture",
+    explanation: "Table, chair, and desk are all types of furniture, making it the broadest category."
+  },
 ];
 
 type Puzzle = (typeof puzzles)[0];
@@ -70,7 +84,6 @@ export function VerbalInferenceBuilder() {
   const [gameState, setGameState] = useState('playing'); // playing, finished
   
   useEffect(() => {
-    // Shuffle puzzles once on client-side mount to avoid hydration mismatch
     setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5));
   }, []);
 
@@ -100,7 +113,7 @@ export function VerbalInferenceBuilder() {
   
   const handleRestart = () => {
     setCurrentPuzzleIndex(0);
-    setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5)); // Re-shuffle for new game
+    setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5));
     setScore(0);
     setFeedback('');
     setSelectedAnswer(null);
@@ -143,7 +156,7 @@ export function VerbalInferenceBuilder() {
       <CardContent className="flex flex-col items-center gap-6">
         {gameState === 'playing' ? (
           <>
-            <div className="w-full text-right font-mono">Score: {score} / {puzzles.length}</div>
+            <div className="w-full text-right font-mono">Score: {score} / {shuffledPuzzles.length}</div>
             <div className="p-6 bg-muted rounded-lg w-full text-center min-h-[100px] flex items-center justify-center">
               <p className="text-lg md:text-xl font-medium">{currentPuzzle.question}</p>
             </div>
@@ -181,7 +194,7 @@ export function VerbalInferenceBuilder() {
         ) : (
           <div className="text-center space-y-4 animate-in fade-in">
             <CardTitle>Puzzle Set Complete!</CardTitle>
-            <p className="text-xl">Your final score is: <span className="font-bold text-primary">{score} out of {puzzles.length}</span></p>
+            <p className="text-xl">Your final score is: <span className="font-bold text-primary">{score} out of {shuffledPuzzles.length}</span></p>
             <Button onClick={handleRestart} size="lg">Play Again</Button>
           </div>
         )}
