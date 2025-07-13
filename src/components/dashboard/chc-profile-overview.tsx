@@ -33,9 +33,11 @@ const generateMockData = (timeframe: Timeframe) => {
 
   for (let i = numPoints - 1; i >= 0; i--) {
     const score = 60 + Math.random() * 15 - i * scoreMultiplier + trendBonus;
+    const barColor = `hsl(var(--chart-${(i % 5) + 1}))`;
     data.push({
       name: `P${numPoints - i}`,
       score: Math.max(0, Math.min(100, score)),
+      fill: barColor,
     });
   }
   return data;
@@ -110,7 +112,7 @@ export function ChcProfileOverview() {
                 }}
                 labelStyle={{ color: 'hsl(var(--foreground))' }}
               />
-              <Bar dataKey="score" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="score" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
