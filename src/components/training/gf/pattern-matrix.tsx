@@ -153,7 +153,7 @@ export function PatternMatrix() {
               {index === puzzle.missingIndex ? (
                  feedback === 'correct' ? <ShapeComponent {...puzzle.answer} /> : <span className="text-4xl font-bold text-primary">?</span>
               ) : (
-                <ShapeComponent {...cell!} />
+                cell ? <ShapeComponent {...cell} /> : null
               )}
             </div>
           ))}
