@@ -11,17 +11,27 @@ import { cn } from '@/lib/utils';
 export default function AlarmPage() {
   const [alarmState, setAlarmState] = useState('ringing'); // ringing, solving, dismissed
   const [showPuzzle, setShowPuzzle] = useState(false);
-  let audio: HTMLAudioElement | null = null;
+  
+  // Use a ref to hold the audio object to avoid re-creation
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // This effect runs only on the client
-    audio = new Audio('/alarm.mp3'); 
-    audio.loop = true;
+    if (!audioRef.current) {
+        audioRef.current = new Audio('/alarm.mp3'); 
+        audioRef.current.loop = true;
+    }
     
+    const audio = audioRef.current;
+
     if (alarmState === 'ringing') {
         audio.play().catch(e => console.error("Audio playback failed:", e));
+    } else {
+        audio.pause();
+        audio.currentTime = 0;
     }
 
+    // Cleanup on component unmount
     return () => {
         if (audio) {
             audio.pause();
@@ -42,7 +52,7 @@ export default function AlarmPage() {
 
   return (
     <div className={cn(
-        "flex flex-col min-h-screen bg-background text-foreground items-center justify-center transition-all duration-1000",
+        "flex flex-col min-h-screen bg-background text-foreground items-center justify-center transition-all duration-1000 p-4",
         alarmState === 'ringing' && 'bg-destructive animate-pulse'
     )}>
         <Card className="w-full max-w-2xl text-center">
@@ -50,7 +60,7 @@ export default function AlarmPage() {
                 <div className="flex justify-center mb-4">
                     <AlarmClock className={cn("h-16 w-16", alarmState === 'ringing' ? 'text-destructive-foreground' : 'text-primary')} />
                 </div>
-                <CardTitle className={cn(alarmState === 'ringing' && 'text-destructive-foreground')}>
+                <CardTitle className={cn("text-3xl", alarmState === 'ringing' && 'text-destructive-foreground')}>
                     {alarmState === 'ringing' ? "WAKE UP!" : "Cognitive Warm-up"}
                 </CardTitle>
                 <CardDescription className={cn(alarmState === 'ringing' && 'text-destructive-foreground/80')}>
@@ -61,8 +71,8 @@ export default function AlarmPage() {
             </CardHeader>
             <CardContent>
                 {alarmState === 'ringing' && (
-                    <Button onClick={handleStartPuzzle} size="lg" variant="secondary">
-                        Start Puzzle
+                    <Button onClick={handleStartPuzzle} size="lg" variant="secondary" className="text-lg">
+                        Start Puzzle to Silence
                     </Button>
                 )}
 

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,6 +9,34 @@ import { DashboardLayoutSettings } from '@/components/settings/dashboard-layout-
 import { TrainingSettings } from '@/components/settings/training-settings';
 import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+const AlarmSettings = () => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Cognitive Alarms</CardTitle>
+        <CardDescription>
+          Set alarms that require solving a puzzle to dismiss, turning your wake-up routine into a cognitive warm-up.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="p-8 bg-muted/50 rounded-lg text-center">
+            <h3 className="font-semibold">Test the Alarm</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+                Experience the puzzle-based alarm dismissal flow.
+            </p>
+            <Button asChild>
+                <Link href="/alarm" target="_blank">
+                    Simulate Alarm <ExternalLink className="w-4 h-4 ml-2"/>
+                </Link>
+            </Button>
+        </div>
+        <PlaceholderSettings title="Set New Alarm" description="This feature is in development. Soon you'll be able to set and customize your cognitive alarms here."/>
+      </CardContent>
+    </Card>
+  )
+}
 
 export default function SettingsPage() {
     return (
@@ -66,7 +94,7 @@ export default function SettingsPage() {
                            <AppearanceSettings />
                         </TabsContent>
                          <TabsContent value="alarms">
-                           <PlaceholderSettings title="Cognitive Alarms" description="Set alarms that require solving a puzzle to dismiss."/>
+                           <AlarmSettings />
                         </TabsContent>
                          <TabsContent value="account">
                            <PlaceholderSettings title="Account Settings" description="Manage your profile, subscription, and data."/>
