@@ -3,13 +3,13 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { cn } from "@/lib/utils";
 import { BrainCircuit } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 // --- Neutral Mode Components ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
@@ -179,6 +179,7 @@ export function PatternMatrix() {
   const [startTime, setStartTime] = useState(Date.now());
   const [selectedOption, setSelectedOption] = useState<PuzzleElement | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
+  const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
   const { logGameResult } = usePerformanceStore();
@@ -192,6 +193,7 @@ export function PatternMatrix() {
     setScore(0);
     setSelectedOption(null);
     setFeedback('');
+    setInlineFeedback({ message: '', type: '' });
     setStartTime(Date.now());
   }, [currentMode]);
 
@@ -204,6 +206,7 @@ export function PatternMatrix() {
     setPuzzleKey(prevKey => prevKey + 1);
     setSelectedOption(null);
     setFeedback('');
+    setInlineFeedback({ message: '', type: '' });
     setStartTime(Date.now());
   };
 
@@ -219,10 +222,10 @@ export function PatternMatrix() {
     if (JSON.stringify(option) === JSON.stringify(puzzle.answer)) {
       setFeedback('correct');
       setScore(score + 1);
-      showSuccessFeedback('Gf');
+      setInlineFeedback({ message: getSuccessFeedback('Gf'), type: 'success' });
     } else {
       setFeedback('incorrect');
-      showFailureFeedback('Gf');
+      setInlineFeedback({ message: getFailureFeedback('Gf'), type: 'failure' });
     }
   };
 
@@ -265,7 +268,17 @@ export function PatternMatrix() {
         </div>
 
         <div className="w-full">
-          <h3 className="text-center text-sm text-muted-foreground font-semibold mb-3">Choose the correct piece:</h3>
+          <h3 className="text-center text-sm text-muted-foreground font-semibold mb-2">Choose the correct piece:</h3>
+          <div className="h-6 text-sm font-semibold mb-2">
+            {inlineFeedback.message && (
+              <p className={cn(
+                "animate-in fade-in text-center",
+                inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600'
+              )}>
+                {inlineFeedback.message}
+              </p>
+            )}
+          </div>
           <div className="grid grid-cols-3 gap-3">
             {puzzle.options.map((option, index) => (
               <button 

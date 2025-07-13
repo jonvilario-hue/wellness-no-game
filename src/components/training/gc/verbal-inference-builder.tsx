@@ -3,13 +3,13 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 const neutralPuzzles = [
   {
@@ -138,6 +138,7 @@ export function VerbalInferenceBuilder() {
   const [startTime, setStartTime] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState(''); // '', 'correct', 'incorrect'
+  const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
   const [gameState, setGameState] = useState('playing'); // playing, finished
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
@@ -153,6 +154,7 @@ export function VerbalInferenceBuilder() {
     setScore(0);
     setStartTime(Date.now());
     setFeedback('');
+    setInlineFeedback({ message: '', type: '' });
     setSelectedAnswer(null);
     setGameState('playing');
   }, [currentMode]);
@@ -172,16 +174,17 @@ export function VerbalInferenceBuilder() {
     if (option === currentPuzzle.answer) {
       setScore(score + 1);
       setFeedback('correct');
-      showSuccessFeedback('Gc');
+      setInlineFeedback({ message: getSuccessFeedback('Gc'), type: 'success' });
     } else {
       setFeedback('incorrect');
-      showFailureFeedback('Gc');
+      setInlineFeedback({ message: getFailureFeedback('Gc'), type: 'failure' });
     }
 
     setTimeout(() => {
       if (currentPuzzleIndex < shuffledPuzzles.length - 1) {
         setCurrentPuzzleIndex(currentPuzzleIndex + 1);
         setFeedback('');
+        setInlineFeedback({ message: '', type: '' });
         setSelectedAnswer(null);
       } else {
         setGameState('finished');
@@ -249,6 +252,16 @@ export function VerbalInferenceBuilder() {
               ))}
             </div>
             <div className="h-16 mt-2 text-center">
+             <div className="h-6 text-sm font-semibold">
+              {inlineFeedback.message && (
+                <p className={cn(
+                  "animate-in fade-in",
+                  inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600'
+                )}>
+                  {inlineFeedback.message}
+                </p>
+              )}
+            </div>
               {feedback && (
                 <div className="animate-in fade-in">
                     <p className="text-sm text-muted-foreground">{currentPuzzle.explanation}</p>

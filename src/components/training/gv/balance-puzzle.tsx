@@ -3,11 +3,11 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
-import { Scale, RefreshCw } from 'lucide-react';
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { Scale } from 'lucide-react';
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 const shapes = [
     { id: 'circle', symbol: '●', color: 'text-chart-1' },
@@ -81,14 +81,14 @@ const ShapeDisplay = ({ shape, size = 'text-5xl' }: { shape: Shape, size?: strin
 
 export function BalancePuzzle() {
     const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
-    const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
+    const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [startTime, setStartTime] = useState(0);
     const { logGameResult } = usePerformanceStore();
 
     const generateNewPuzzle = useCallback(() => {
         setPuzzle(generatePuzzle());
-        setFeedback('');
+        setInlineFeedback({ message: '', type: '' });
         setSelectedAnswer(null);
         setStartTime(Date.now());
     }, []);
@@ -98,20 +98,18 @@ export function BalancePuzzle() {
     }, [generateNewPuzzle]);
 
     const handleAnswer = (option: number) => {
-        if (feedback || !puzzle) return;
+        if (inlineFeedback.message || !puzzle) return;
 
         setSelectedAnswer(option);
         const time = (Date.now() - startTime) / 1000;
         let score = 0;
 
         if (option === puzzle.answer) {
-            setFeedback('correct');
+            setInlineFeedback({ message: getSuccessFeedback('Gv'), type: 'success' });
             score = 100;
-            showSuccessFeedback('Gv');
         } else {
-            setFeedback('incorrect');
+            setInlineFeedback({ message: getFailureFeedback('Gv'), type: 'failure' });
             score = 0;
-            showFailureFeedback('Gv');
         }
         logGameResult('Gv', 'math', { score, time });
 
@@ -157,12 +155,12 @@ export function BalancePuzzle() {
                         <Button
                             key={index}
                             onClick={() => handleAnswer(option)}
-                            disabled={!!feedback}
+                            disabled={!!inlineFeedback.message}
                             size="lg"
                             className={cn(
                                 "h-16 text-2xl transition-all duration-300",
-                                feedback && option === puzzle.answer && "bg-green-600 hover:bg-green-700",
-                                feedback === 'incorrect' && selectedAnswer === option && "bg-destructive hover:bg-destructive/90"
+                                inlineFeedback.message && option === puzzle.answer && "bg-green-600 hover:bg-green-700",
+                                inlineFeedback.type === 'failure' && selectedAnswer === option && "bg-destructive hover:bg-destructive/90"
                             )}
                         >
                             {option}
@@ -172,10 +170,10 @@ export function BalancePuzzle() {
 
                 {/* Feedback */}
                 <div className="h-10 mt-2 text-center">
-                    {feedback === 'incorrect' && (
-                        <div className="animate-in fade-in">
-                            <p className="text-lg font-bold text-destructive">
-                                {`Not quite. The answer was ${puzzle.answer}.`}
+                    {inlineFeedback.message && (
+                        <div className={cn("animate-in fade-in", inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600')}>
+                            <p className="text-lg font-bold">
+                                {inlineFeedback.message}
                             </p>
                         </div>
                     )}

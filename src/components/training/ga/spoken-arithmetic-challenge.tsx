@@ -8,7 +8,8 @@ import { Volume2, Loader2, Lightbulb } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useToast } from "@/hooks/use-toast";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
+import { cn } from "@/lib/utils";
 
 type Operation = '+' | '-' | '*';
 const numberWords: { [key: number]: string } = {
@@ -55,6 +56,7 @@ export function SpokenArithmeticChallenge() {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [startTime, setStartTime] = useState(0);
+  const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
   const { toast } = useToast();
   const { logGameResult } = usePerformanceStore();
   const synthRef = useRef<SpeechSynthesis | null>(null);
@@ -92,6 +94,7 @@ export function SpokenArithmeticChallenge() {
     setScore(0);
     setLives(3);
     setGameState('generating');
+    setInlineFeedback({ message: '', type: '' });
     const q = generateQuestion(1);
     setQuestion(q);
     setGameState('speaking');
@@ -102,6 +105,7 @@ export function SpokenArithmeticChallenge() {
   const nextLevel = useCallback((currentLevel: number) => {
     setUserAnswer('');
     setGameState('generating');
+    setInlineFeedback({ message: '', type: '' });
     const q = generateQuestion(currentLevel);
     setQuestion(q);
     setGameState('speaking');
@@ -120,7 +124,7 @@ export function SpokenArithmeticChallenge() {
     if (isCorrect) {
       setScore(prev => prev + (level * 10));
       logGameResult('Ga', 'math', { score: level * 10, time });
-      showSuccessFeedback('Ga');
+      setInlineFeedback({ message: getSuccessFeedback('Ga'), type: 'success' });
       setTimeout(() => {
         const nextLvl = level + 1;
         setLevel(nextLvl);
@@ -130,12 +134,8 @@ export function SpokenArithmeticChallenge() {
       const newLives = lives - 1;
       setLives(newLives);
       logGameResult('Ga', 'math', { score: 0, time });
-      showFailureFeedback('Ga');
-      toast({
-        title: "Not quite.",
-        description: `The correct answer was ${question.answer}. You have ${newLives} lives left.`,
-        variant: "destructive",
-      });
+      setInlineFeedback({ message: `Correct answer: ${question.answer}. ${getFailureFeedback('Ga')}`, type: 'failure' });
+      
       setTimeout(() => {
         if (newLives > 0) {
           nextLevel(level);
@@ -203,6 +203,16 @@ export function SpokenArithmeticChallenge() {
               />
               <Button type="submit" size="lg" disabled={gameState !== 'answering'}>Submit</Button>
             </form>
+             <div className="h-6 text-sm font-semibold">
+              {inlineFeedback.message && (
+                <p className={cn(
+                  "animate-in fade-in",
+                  inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600'
+                )}>
+                  {inlineFeedback.message}
+                </p>
+              )}
+            </div>
              <div className="p-3 bg-muted rounded-lg text-left text-sm text-muted-foreground flex items-start gap-2">
                 <Lightbulb className="w-5 h-5 mt-0.5 shrink-0 text-primary" />
                 <span>This exercise strengthens auditory working memory and mental math skills by forcing you to hold and manipulate numbers you hear, not see.</span>

@@ -3,12 +3,12 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 // --- Neutral Mode Config ---
 const colorOptions = [
@@ -41,6 +41,7 @@ export function FocusSwitchReactor() {
   const [timeLeft, setTimeLeft] = useState(45);
   const [rule, setRule] = useState<NeutralRule | MathRule>('word');
   const [stimulus, setStimulus] = useState<any>({ word: 'PRIMARY', color: 'text-primary', value: 7 });
+  const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
 
   const ruleRef = useRef(rule);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
@@ -92,6 +93,7 @@ export function FocusSwitchReactor() {
     setTimeLeft(45);
     setStartTime(Date.now());
     setGameState('running');
+    setInlineFeedback({ message: '', type: '' });
     generateStimulus();
     generateRule();
   }
@@ -123,11 +125,11 @@ export function FocusSwitchReactor() {
   
   const processNextTurn = (correct: boolean) => {
     setScore(prev => correct ? prev + 1 : Math.max(0, prev - 1));
-    if (correct) {
-        showSuccessFeedback('EF');
-    } else {
-        showFailureFeedback('EF');
-    }
+    const feedbackMessage = correct ? getSuccessFeedback('EF') : getFailureFeedback('EF');
+    setInlineFeedback({ message: feedbackMessage, type: correct ? 'success' : 'failure' });
+    
+    setTimeout(() => setInlineFeedback({ message: '', type: '' }), 1500);
+
     if (Math.random() < 0.3) { 
       generateRule();
     }
@@ -225,16 +227,26 @@ export function FocusSwitchReactor() {
                 )}
               </div>
             </div>
+             <div className="h-6 text-sm font-semibold">
+              {inlineFeedback.message && (
+                <p className={cn(
+                  "animate-in fade-in",
+                  inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600'
+                )}>
+                  {inlineFeedback.message}
+                </p>
+              )}
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
               {currentMode === 'neutral' ? (
                 colorOptions.map(color => (
-                    <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg">
+                    <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg" disabled={!!inlineFeedback.message}>
                     {color.name}
                     </Button>
                 ))
               ) : (
                  mathAnswerOptions.map(option => (
-                     <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg">
+                     <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg" disabled={!!inlineFeedback.message}>
                          {option}
                      </Button>
                  ))

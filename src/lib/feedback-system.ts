@@ -1,7 +1,6 @@
 
 'use client';
 
-import { toast } from "@/hooks/use-toast";
 import type { CHCDomain } from "@/types";
 
 type FeedbackType = 'success' | 'failure';
@@ -105,20 +104,16 @@ const feedbackLibrary: Record<CHCDomain, Record<FeedbackType, Feedback[]>> = {
     },
 };
 
-const showFeedback = (domain: CHCDomain, type: FeedbackType) => {
+const getFeedback = (domain: CHCDomain, type: FeedbackType): string => {
     const messages = feedbackLibrary[domain]?.[type] || feedbackLibrary.Gf[type];
     const feedback = messages[Math.floor(Math.random() * messages.length)];
-    
-    toast({
-        description: feedback.message,
-        variant: type === 'failure' ? 'destructive' : 'default',
-    });
+    return feedback.message;
 };
 
-export const showSuccessFeedback = (domain: CHCDomain) => {
-    showFeedback(domain, 'success');
+export const getSuccessFeedback = (domain: CHCDomain) => {
+    return getFeedback(domain, 'success');
 };
 
-export const showFailureFeedback = (domain: CHCDomain) => {
-    showFeedback(domain, 'failure');
+export const getFailureFeedback = (domain: CHCDomain) => {
+    return getFeedback(domain, 'failure');
 };

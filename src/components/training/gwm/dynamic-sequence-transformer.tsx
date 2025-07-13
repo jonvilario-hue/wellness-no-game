@@ -9,7 +9,8 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
+import { cn } from "@/lib/utils";
 
 const generateNeutralSequence = (length: number) => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -137,25 +138,23 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
     
     if (userAnswer.toUpperCase().trim() === correctAnswer) {
       logGameResult('Gwm', currentMode, { score: level * 10, time });
-      showSuccessFeedback('Gwm');
       
       if(onComplete) {
-        setFeedback('Correct! Alarm dismissed.');
+        setFeedback(getSuccessFeedback('Gwm'));
         setTimeout(() => {
             onComplete();
         }, 1500)
         return;
       }
       
-      setFeedback('Correct! Next level.');
+      setFeedback(getSuccessFeedback('Gwm'));
       setTimeout(() => {
         const nextLevel = level + 1;
         setLevel(nextLevel);
         startLevel(nextLevel);
       }, 2000);
     } else {
-      setFeedback(`Incorrect. The answer was: ${correctAnswer}. Let's try again.`);
-      showFailureFeedback('Gwm');
+      setFeedback(`Incorrect. The answer was: ${correctAnswer}. ${getFailureFeedback('Gwm')}`);
       logGameResult('Gwm', currentMode, { score: 0, time });
       
       if(onComplete) {
@@ -225,7 +224,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
 
         {gameState === 'feedback' && (
           <div className="mt-4 text-center text-xl font-bold animate-in fade-in">
-            <p className={feedback.startsWith('Correct') ? 'text-green-500' : 'text-destructive'}>{feedback}</p>
+            <p className={cn(feedback.includes('Incorrect') ? 'text-amber-600' : 'text-green-600')}>{feedback}</p>
           </div>
         )}
 

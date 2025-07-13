@@ -9,7 +9,7 @@ import { View } from "lucide-react";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 
 const shapes = [
@@ -125,6 +125,7 @@ export function MentalRotationLab() {
   const [startTime, setStartTime] = useState(0);
   const [selectedOption, setSelectedOption] = useState<Grid | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
+  const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
   
   const { logGameResult } = usePerformanceStore();
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
@@ -146,10 +147,10 @@ export function MentalRotationLab() {
     if (areGridsEqual(option, puzzle.answer)) {
       setFeedback('correct');
       setScore(prev => prev + 1);
-      showSuccessFeedback('Gv');
+      setInlineFeedback({ message: getSuccessFeedback('Gv'), type: 'success' });
     } else {
       setFeedback('incorrect');
-      showFailureFeedback('Gv');
+      setInlineFeedback({ message: getFailureFeedback('Gv'), type: 'failure' });
     }
   };
 
@@ -161,6 +162,7 @@ export function MentalRotationLab() {
     setPuzzleKey(prevKey => prevKey + 1);
     setSelectedOption(null);
     setFeedback('');
+    setInlineFeedback({ message: '', type: '' });
     setStartTime(Date.now());
   };
   
@@ -193,6 +195,17 @@ export function MentalRotationLab() {
           <div className="p-4 bg-muted rounded-lg inline-block">
              <ShapeGrid grid={puzzle.baseShape} />
           </div>
+        </div>
+        
+        <div className="h-6 text-sm font-semibold">
+          {inlineFeedback.message && (
+            <p className={cn(
+              "animate-in fade-in",
+              inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600'
+            )}>
+              {inlineFeedback.message}
+            </p>
+          )}
         </div>
 
         <div className="w-full">

@@ -5,13 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useToast } from "@/hooks/use-toast";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 type Prompt = {
     text: string;
@@ -54,6 +54,7 @@ export function SemanticFluencyStorm() {
   const [responses, setResponses] = useState<string[]>([]);
   const [switched, setSwitched] = useState(false);
   const [startTime, setStartTime] = useState(0);
+  const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
   const promptHistory = useRef<string[]>([]);
   const { toast } = useToast();
   
@@ -104,6 +105,7 @@ export function SemanticFluencyStorm() {
     setCurrentInput('');
     setSwitched(false);
     setStartTime(Date.now());
+    setInlineFeedback({ message: '', type: '' });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,14 +128,14 @@ export function SemanticFluencyStorm() {
         if (prompt.answers.includes(cleanInput)) {
             isValid = true;
         } else {
-            showFailureFeedback('Glr');
+             setInlineFeedback({ message: getFailureFeedback('Glr'), type: 'failure' });
         }
     } else { // Neutral mode
         isValid = true;
     }
     
     if (isValid) {
-        showSuccessFeedback('Glr');
+        setInlineFeedback({ message: getSuccessFeedback('Glr'), type: 'success' });
         const newResponses = [...responses, cleanInput];
         setResponses(newResponses);
 
@@ -144,6 +146,7 @@ export function SemanticFluencyStorm() {
         }
     }
     
+    setTimeout(() => setInlineFeedback({ message: '', type: '' }), 1500);
     setCurrentInput('');
   };
 
@@ -187,6 +190,16 @@ export function SemanticFluencyStorm() {
               />
               <Button type="submit">Enter</Button>
             </form>
+            <div className="h-6 text-sm font-semibold">
+              {inlineFeedback.message && (
+                <p className={cn(
+                  "animate-in fade-in text-center",
+                  inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600'
+                )}>
+                  {inlineFeedback.message}
+                </p>
+              )}
+            </div>
             <div className="p-4 border rounded-lg min-h-[100px] w-full flex flex-wrap gap-2">
               {responses.map((res, index) => (
                 <Badge key={index} variant="secondary">{res}</Badge>

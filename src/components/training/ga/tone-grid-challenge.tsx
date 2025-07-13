@@ -7,7 +7,7 @@ import { Volume2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 type GameMode = 'mimic' | 'find';
 
@@ -20,6 +20,7 @@ export function ToneGridChallenge() {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [message, setMessage] = useState('');
+  const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
   const [gameMode, setGameMode] = useState<GameMode>('mimic');
   const [targetTone, setTargetTone] = useState<number | null>(null);
   const [startTime, setStartTime] = useState(0);
@@ -80,6 +81,7 @@ export function ToneGridChallenge() {
     }
     
     setUserSequence([]);
+    setInlineFeedback({ message: '', type: '' });
     const newMode = Math.random() > 0.3 ? 'mimic' : 'find';
     setGameMode(newMode);
     
@@ -136,8 +138,8 @@ export function ToneGridChallenge() {
 
   const handleIncorrect = () => {
     setLives(prev => prev - 1);
-    showFailureFeedback('Ga');
     setMessage(`Not quite. ${lives - 1} lives left. Let's try level ${level} again.`);
+    setInlineFeedback({ message: getFailureFeedback('Ga'), type: 'failure' });
     setTimeout(() => {
         startLevel(level);
     }, 2000);
@@ -152,7 +154,7 @@ export function ToneGridChallenge() {
     if (newAttempt.length === sequence.length) {
       setGameState('feedback');
       if (JSON.stringify(newAttempt) === JSON.stringify(sequence)) {
-        showSuccessFeedback('Ga');
+        setInlineFeedback({ message: getSuccessFeedback('Ga'), type: 'success' });
         setMessage('Correct! Next level.');
         setTimeout(handleNextLevel, 1500);
       } else {
@@ -170,7 +172,7 @@ export function ToneGridChallenge() {
     setGameState('feedback');
     const isCorrect = sequence.includes(targetTone) === wasPresent;
     if (isCorrect) {
-        showSuccessFeedback('Ga');
+        setInlineFeedback({ message: getSuccessFeedback('Ga'), type: 'success' });
         setMessage('Correct! Next level.');
         setTimeout(handleNextLevel, 1500);
     } else {
@@ -210,7 +212,17 @@ export function ToneGridChallenge() {
         
         {gameState !== 'idle' && (
           <div className="w-full">
-            <p className="h-10 text-lg text-primary mb-4 flex items-center justify-center">{message}</p>
+            <p className="h-10 text-lg text-primary mb-2 flex items-center justify-center">{message}</p>
+             <div className="h-6 text-sm font-semibold mb-2">
+              {inlineFeedback.message && (
+                <p className={cn(
+                  "animate-in fade-in",
+                  inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600'
+                )}>
+                  {inlineFeedback.message}
+                </p>
+              )}
+            </div>
             {gameMode === 'mimic' && (
               <>
                 <div className="grid grid-cols-4 gap-4">

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
-import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
+import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 const symbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
 const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -26,6 +26,7 @@ export function RapidCodeMatch() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [startTime, setStartTime] = useState(0);
   const [currentSymbol, setCurrentSymbol] = useState('');
+  const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
   
   const { logGameResult } = usePerformanceStore();
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
@@ -68,6 +69,7 @@ export function RapidCodeMatch() {
     setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
     setStartTime(Date.now());
     setGameState('running');
+    setInlineFeedback({ message: '', type: '' });
   };
 
   const handleAnswer = (digit: number) => {
@@ -76,11 +78,13 @@ export function RapidCodeMatch() {
     if (keyMap[currentSymbol] === digit) {
       setScore(score + 1);
       if (score > 0 && score % 5 === 0) {
-        showSuccessFeedback('Gs');
+        setInlineFeedback({ message: getSuccessFeedback('Gs'), type: 'success' });
+        setTimeout(() => setInlineFeedback({ message: '', type: '' }), 1500);
       }
     } else {
       setScore(Math.max(0, score - 1));
-      showFailureFeedback('Gs');
+      setInlineFeedback({ message: getFailureFeedback('Gs'), type: 'failure' });
+      setTimeout(() => setInlineFeedback({ message: '', type: '' }), 1500);
     }
     const symbolsInKey = Object.keys(keyMap);
     setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
@@ -110,6 +114,17 @@ export function RapidCodeMatch() {
                   <span className="text-xl font-mono">{digit}</span>
                 </div>
               ))}
+            </div>
+            
+            <div className="h-6 text-sm font-semibold mb-2">
+              {inlineFeedback.message && (
+                <p className={cn(
+                  "animate-in fade-in",
+                  inlineFeedback.type === 'success' ? 'text-green-600' : 'text-amber-600'
+                )}>
+                  {inlineFeedback.message}
+                </p>
+              )}
             </div>
 
             <div className="relative inline-block mb-6">
