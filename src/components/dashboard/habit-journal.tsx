@@ -75,18 +75,26 @@ const JournalEditor = ({
   const { toast } = useToast();
   const { completedHabits, toggleHabitForDay } = useJournal();
   const editorStateRef = useRef(editorState);
+  const onSaveRef = useRef(onSave);
+  const originalEntryRef = useRef(entry);
+
 
   const todaysHabits = completedHabits[editorState.date] || new Set();
 
   useEffect(() => {
+    onSaveRef.current = onSave;
+  });
+
+  useEffect(() => {
     setEditorState(entry);
+    originalEntryRef.current = entry;
     setSaveStatus('idle');
   }, [entry]);
   
   useEffect(() => {
     editorStateRef.current = editorState;
   }, [editorState]);
-
+  
   const handleSave = useCallback((options: { isFinal: boolean } = { isFinal: false }) => {
     const currentEntry = editorStateRef.current;
     
@@ -96,18 +104,18 @@ const JournalEditor = ({
     if(isNew && !hasContent && !options.isFinal) return;
     
     setSaveStatus('saving');
-    const result = onSave(currentEntry, options);
+    const result = onSaveRef.current(currentEntry, options);
     if (result.success && result.entry) {
         setEditorState(result.entry);
+        originalEntryRef.current = result.entry;
         setTimeout(() => setSaveStatus('saved'), 500);
     } else if (!result.success) {
         setSaveStatus('idle');
     }
-  }, [onSave]);
-
+  }, []);
 
   useEffect(() => {
-    const hasChanged = JSON.stringify(entry) !== JSON.stringify(editorStateRef.current);
+    const hasChanged = JSON.stringify(originalEntryRef.current) !== JSON.stringify(editorStateRef.current);
     if (!hasChanged) {
       setSaveStatus('idle');
       return;
@@ -117,12 +125,10 @@ const JournalEditor = ({
       handleSave();
     }, 1500);
     
-    // Save on unmount
     return () => {
       clearTimeout(handler);
-      handleSave({ isFinal: true });
     };
-  }, [editorState, entry, handleSave]);
+  }, [editorState, handleSave]);
 
 
   useEffect(() => {
@@ -443,17 +449,6 @@ tags: ${entryToExport.tags}
   );
 };
 
-const groupEntriesByDate = (entries: JournalEntry[]) => {
-  return entries.reduce((acc, entry) => {
-    const date = entry.date;
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(entry);
-    return acc;
-  }, {} as Record<string, JournalEntry[]>);
-};
-
 const JournalSidebar = memo(({ 
     onSelectEntry, 
     onDeleteEntry,
@@ -463,11 +458,10 @@ const JournalSidebar = memo(({
     onDeleteEntry: (id: string) => void,
     selectedEntry: JournalEntry | null,
 }) => {
-    type ViewMode = 'entries' | 'trash';
+    const [viewMode, setViewMode] = useState<'entries' | 'trash'>('entries');
     type SortMode = 'date-desc' | 'date-asc' | 'category';
 
     const { entries, trashedEntries, restoreEntry, deleteFromTrashPermanently, emptyTrash } = useJournal();
-    const [viewMode, setViewMode] = useState<ViewMode>('entries');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortMode, setSortMode] = useState<SortMode>('date-desc');
     const { toast } = useToast();
@@ -706,6 +700,18 @@ const JournalSidebar = memo(({
 });
 JournalSidebar.displayName = 'JournalSidebar';
 
+
+const groupEntriesByDate = (entries: JournalEntry[]) => {
+  return entries.reduce((acc, entry) => {
+    const date = entry.date;
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(entry);
+    return acc;
+  }, {} as Record<string, JournalEntry[]>);
+};
+
 export function HabitJournal() {
   const { entries, addEntry, updateEntry, deleteEntry, findOrCreateEntry, isLoaded, setSelectedEntry: setGlobalSelectedEntry, selectedEntry: globalSelectedEntry } = useJournal();
   
@@ -722,28 +728,28 @@ export function HabitJournal() {
     if (isLoaded && !globalSelectedEntry) {
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
       const entry = findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
-      setActiveEntry(entry);
+      setGlobalSelectedEntry(entry);
     }
-  }, [isLoaded, findOrCreateEntry, globalSelectedEntry]);
+  }, [isLoaded, findOrCreateEntry, globalSelectedEntry, setGlobalSelectedEntry]);
 
 
   const handleSelectFromList = useCallback((entry: JournalEntry) => {
     setGlobalSelectedEntry(entry);
   }, [setGlobalSelectedEntry]);
 
-  const handleCategoryChange = (newCategory: JournalCategory) => {
+  const handleCategoryChange = useCallback((newCategory: JournalCategory) => {
     if (activeEntry) {
       const newEntry = findOrCreateEntry(activeEntry.date, newCategory, activeEntry.frequency);
       setGlobalSelectedEntry(newEntry);
     }
-  };
+  }, [activeEntry, findOrCreateEntry, setGlobalSelectedEntry]);
 
-  const handleFrequencyChange = (newFrequency: ReflectionFrequency) => {
+  const handleFrequencyChange = useCallback((newFrequency: ReflectionFrequency) => {
     if (activeEntry) {
       const newEntry = findOrCreateEntry(activeEntry.date, activeEntry.category, newFrequency);
       setGlobalSelectedEntry(newEntry);
     }
-  };
+  }, [activeEntry, findOrCreateEntry, setGlobalSelectedEntry]);
   
   const handleSave = useCallback((entryToSave: JournalEntry) => {
     let savedEntry = entryToSave;
@@ -752,8 +758,6 @@ export function HabitJournal() {
     if (isNew) {
       const hasContent = entryToSave.field1 || entryToSave.field2 || entryToSave.field3 || entryToSave.affirmations.some(a => a);
       if (!hasContent) {
-          // It's a new, empty entry. Don't add it to the main list.
-          // The editor will hold its state. If the user navigates away, it's lost, which is OK.
           return { success: false, entry: null };
       }
       savedEntry = addEntry(entryToSave);
@@ -761,9 +765,11 @@ export function HabitJournal() {
       updateEntry(entryToSave.id, entryToSave);
     }
     
-    setGlobalSelectedEntry(savedEntry);
+    if (activeEntry?.id === entryToSave.id || isNew) {
+        setGlobalSelectedEntry(savedEntry);
+    }
     return { success: true, entry: savedEntry };
-  }, [addEntry, updateEntry, setGlobalSelectedEntry]);
+  }, [addEntry, updateEntry, setGlobalSelectedEntry, activeEntry]);
 
   const handleDelete = useCallback((id: string) => {
     const entryData = entries.find(e => e.id === id);
