@@ -1,5 +1,5 @@
 'use server';
-import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation } from '@/ai/flows';
+import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit } from '@/ai/flows';
 import type { WeakAreaRecommendationInput, AdaptDifficultyInput, TrainingRecommendationInput } from '@/ai/flows';
 
 export async function getWeakAreaRecommendationsAction() {
@@ -48,16 +48,25 @@ export async function getTrainingRecommendationAction() {
 
   const input: TrainingRecommendationInput = {
     performanceData,
-    sessionStreak: 0,
-    hoursSinceLastSession: 30,
-    timeOfDay: 'morning',
-    recentFailures: 3,
+    sessionStreak: 3,
+    hoursSinceLastSession: 18,
+    timeOfDay: 'afternoon',
+    recentFailures: 1,
   };
 
   try {
     return await getTrainingRecommendation(input);
   } catch (error) {
     console.error('Error getting training recommendation:', error);
+    return null;
+  }
+}
+
+export async function getDailyCircuitAction() {
+  try {
+    return await getDailyCircuit();
+  } catch (error) {
+    console.error('Error getting daily circuit:', error);
     return null;
   }
 }
