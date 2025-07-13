@@ -205,6 +205,7 @@ export const HabitJournal = forwardRef((props, ref) => {
 
     useEffect(() => {
         const isNew = editorState.id.startsWith('new-');
+        // Do not autosave for new entries or if nothing has changed.
         if (isNew || JSON.stringify(entry) === JSON.stringify(editorState)) {
           return;
         }
