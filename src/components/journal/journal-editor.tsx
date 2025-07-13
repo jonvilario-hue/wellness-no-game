@@ -1,0 +1,422 @@
+
+'use client';
+
+import { memo, useCallback, useEffect, useState } from 'react';
+import {
+    Save,
+    Trash2,
+    Loader2,
+    CheckCircle,
+    Share,
+    PlusCircle,
+    MinusCircle,
+} from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../ui/alert-dialog';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { ScrollArea } from '../ui/scroll-area';
+import { Separator } from '../ui/separator';
+import { Slider } from '../ui/slider';
+import { Textarea } from '../ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId } from '@/hooks/use-journal';
+import { journalConfig, allHabits } from '@/lib/journal-config';
+import { cn } from '@/lib/utils';
+
+export const JournalEditor = memo(({
+  entry,
+  onSave,
+  onDelete,
+  onCategoryChange,
+  onFrequencyChange,
+}: {
+  entry: JournalEntry;
+  onSave: (entry: JournalEntry, options?: { isFinal?: boolean }) => { success: boolean; entry: JournalEntry | null };
+  onDelete: (id: string) => void;
+  onCategoryChange: (newCategory: JournalCategory) => void;
+  onFrequencyChange: (newFrequency: ReflectionFrequency) => void;
+}) => {
+  const [editorState, setEditorState] = useState<JournalEntry>(entry);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const { toast } = useToast();
+  const { completedHabits, toggleHabitForDay } = useJournal();
+  
+  const todaysHabits = completedHabits[editorState.date] || new Set();
+
+  useEffect(() => {
+    setEditorState(entry);
+    setSaveStatus('idle');
+  }, [entry]);
+  
+  const handleSave = useCallback((updatedEntry: JournalEntry, options: { isFinal?: boolean } = { isFinal: false }) => {
+    const isNew = updatedEntry.id.startsWith('new-');
+    const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a);
+    
+    if(isNew && !hasContent && !options.isFinal) {
+      return { success: false, entry: null };
+    }
+
+    const hasChanged = JSON.stringify(entry) !== JSON.stringify(updatedEntry);
+
+    if(!hasChanged && !isNew) {
+      setSaveStatus('idle');
+      return { success: true, entry: updatedEntry };
+    }
+    
+    setSaveStatus('saving');
+    const result = onSave(updatedEntry, options);
+    
+    if (result.success && result.entry) {
+        setEditorState(prev => ({...prev, ...result.entry}));
+        setTimeout(() => setSaveStatus('saved'), 500);
+    } else if (!result.success) {
+        setSaveStatus('idle');
+    }
+    return result;
+  }, [entry, onSave]);
+
+  useEffect(() => {
+    // This effect handles auto-saving
+    if (entry.id === editorState.id && JSON.stringify(entry) !== JSON.stringify(editorState)) {
+      const handler = setTimeout(() => {
+        handleSave(editorState);
+      }, 1500);
+
+      return () => clearTimeout(handler);
+    }
+  }, [editorState, entry, handleSave]);
+
+
+  useEffect(() => {
+      if (saveStatus === 'saved') {
+          const timer = setTimeout(() => setSaveStatus('idle'), 2000);
+          return () => clearTimeout(timer);
+      }
+  }, [saveStatus]);
+  
+  const getValidConfig = (category: JournalCategory | string) => {
+      if (category && journalConfig[category as JournalCategory]) {
+          return { config: journalConfig[category as JournalCategory], category: category as JournalCategory};
+      }
+      const defaultCategory = 'Growth & Challenge Reflection';
+      return { config: journalConfig[defaultCategory], category: defaultCategory };
+  }
+  
+  const { config, category } = getValidConfig(editorState.category);
+  const isNewEntry = editorState.id.startsWith('new-');
+  
+  const handleManualSave = () => {
+    const result = handleSave(editorState, { isFinal: true });
+    if(result.success) {
+      toast({ title: 'Journal Entry Saved' });
+    }
+  }
+
+  const handleCategoryButtonClick = (newCategory: JournalCategory) => {
+    if (editorState.category !== newCategory) {
+        handleSave(editorState, { isFinal: true });
+        onCategoryChange(newCategory);
+    }
+  };
+  
+  const handleFrequencyButtonClick = (newFrequency: ReflectionFrequency) => {
+    if (editorState.frequency !== newFrequency) {
+        handleSave(editorState, { isFinal: true });
+        onFrequencyChange(newFrequency);
+    }
+  };
+
+  const handleFieldChange = (
+    field: keyof Omit<JournalEntry, 'id' | 'date'>,
+    value: any
+  ) => {
+    setEditorState(prevState => ({ ...prevState, [field]: value }));
+  };
+
+  const handleHabitChange = (habitId: HabitId, checked: boolean) => {
+    toggleHabitForDay(editorState.date, habitId);
+  };
+
+  const handleAffirmationChange = (index: number, value: string) => {
+      const newAffirmations = [...editorState.affirmations];
+      newAffirmations[index] = value;
+      setEditorState(prevState => ({...prevState, affirmations: newAffirmations}));
+  }
+
+  const addAffirmation = () => {
+      setEditorState(prevState => ({...prevState, affirmations: [...prevState.affirmations, '']}));
+  }
+  
+  const removeLastAffirmation = () => {
+      setEditorState(prevState => ({...prevState, affirmations: prevState.affirmations.slice(0, -1)}));
+  }
+
+  const exportAsMarkdown = (entryToExport: JournalEntry) => {
+      const entryConfig = journalConfig[entryToExport.category as JournalCategory];
+      const prompts = entryConfig.prompts[entryToExport.frequency] || entryConfig.prompts.daily;
+
+      let markdown = `---
+date: ${entryToExport.date}
+category: "${entryToExport.category}"
+frequency: ${entryToExport.frequency}
+effort: ${entryToExport.effort}
+tags: ${entryToExport.tags}
+---
+
+# Journal Entry: ${new Date(entryToExport.date + 'T00:00:00').toLocaleDateString()}
+
+## ${entryToExport.category} (${entryToExport.frequency})
+
+`;
+
+      if (entryToExport.field1) markdown += `### ${prompts[0]}\n${entryToExport.field1}\n\n`;
+      if (entryToExport.field2) markdown += `### ${prompts[1]}\n${entryToExport.field2}\n\n`;
+      if (entryToExport.field3) markdown += `### ${prompts[2]}\n${entryToExport.field3}\n\n`;
+
+      if (entryToExport.affirmations && entryToExport.affirmations.length > 0) {
+          markdown += `### Affirmations\n${entryToExport.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
+      }
+      
+      const completedHabitsForEntry = Object.values(allHabits)
+          .filter(habit => todaysHabits.has(habit.id))
+          .map(h => h?.label);
+
+      if (completedHabitsForEntry.length > 0) {
+          markdown += `### Supporting Habits\n${completedHabitsForEntry.map(h => `- [x] ${h}`).join('\n')}\n\n`;
+      }
+
+      const element = document.createElement("a");
+      const file = new Blob([markdown], {type: 'text/plain'});
+      element.href = URL.createObjectURL(file);
+      element.download = `journal-${entryToExport.date}.md`;
+      document.body.appendChild(element); 
+      element.click();
+      document.body.removeChild(element);
+  }
+  
+  const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
+  const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
+
+  return (
+    <div className="p-4 h-full flex flex-col gap-2 relative">
+        <div className="absolute top-0 left-0 right-0 p-2 z-10 text-center">
+            {saveStatus !== 'idle' && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-sm font-semibold transition-all animate-in fade-in">
+                  {saveStatus === 'saving' ? (
+                      <>
+                          <Loader2 className="w-4 h-4 animate-spin"/>
+                          <span>Saving...</span>
+                      </>
+                  ) : (
+                      <>
+                           <CheckCircle className="w-4 h-4 text-green-500"/>
+                          <span>Saved at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </>
+                  )}
+              </div>
+            )}
+        </div>
+      <div className="flex justify-between items-center pt-8">
+        <h3 className="font-bold text-lg text-primary">
+          {isNewEntry
+            ? 'New Entry'
+            : `Editing: ${new Date(
+                editorState.date + 'T00:00:00'
+              ).toLocaleDateString()}`}
+        </h3>
+         <div className="flex items-center gap-2">
+          {!isNewEntry && (
+              <>
+              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => exportAsMarkdown(editorState)}>
+                  <Share className="w-4 h-4"/>
+              </Button>
+               <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                          <Trash2 className="w-4 h-4"/>
+                      </Button>
+                  </AlertDialogTrigger>
+                   <AlertDialogContent>
+                      <AlertDialogHeader>
+                          <AlertDialogTitle>Move to Trash?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                              This entry will be moved to the trash and can be restored within 30 days.
+                          </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => onDelete(editorState.id)}>
+                              Move to Trash
+                          </AlertDialogAction>
+                      </AlertDialogFooter>
+                  </AlertDialogContent>
+              </AlertDialog>
+              </>
+          )}
+          {isNewEntry && (
+              <Button onClick={handleManualSave}>
+                  <Save className="mr-2 h-4 w-4" /> Save Entry
+              </Button>
+          )}
+         </div>
+      </div>
+      <Separator />
+      <ScrollArea className="flex-grow pr-2 -mr-2">
+        <div className="space-y-4 pr-2">
+          <div>
+            <Label className="mb-2 block">Journal Type</Label>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+              {categoryKeys.map(catKey => {
+                const CatIcon = journalConfig[catKey].icon;
+                return (
+                  <Button
+                    key={catKey}
+                    variant={category === catKey ? 'default' : 'outline'}
+                    onClick={() => handleCategoryButtonClick(catKey)}
+                    className="flex items-center justify-start gap-2 h-auto py-2"
+                  >
+                    <CatIcon className="w-4 h-4 shrink-0" />
+                    <span className="text-xs text-left whitespace-normal leading-tight">
+                      {journalConfig[catKey].title}
+                    </span>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+          
+           <div>
+            <Label className="mb-2 block">Reflection Frequency</Label>
+              <div className="flex items-center gap-2">
+                  {(['daily', 'weekly', 'monthly'] as ReflectionFrequency[]).map(freq => (
+                      <Button key={freq} variant={editorState.frequency === freq ? 'default' : 'outline'} onClick={() => handleFrequencyButtonClick(freq)} className="capitalize flex-1">
+                          {freq}
+                      </Button>
+                  ))}
+              </div>
+          </div>
+
+          <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+            {config.guidance}
+          </div>
+
+          <Textarea
+            placeholder={currentPrompts[0]}
+            value={editorState.field1}
+            onChange={e => handleFieldChange('field1', e.target.value)}
+            className="min-h-[60px]"
+          />
+           <Textarea
+            placeholder={currentPrompts[1]}
+            value={editorState.field2}
+            onChange={e => handleFieldChange('field2', e.target.value)}
+            className="min-h-[60px]"
+          />
+           <Textarea
+            placeholder={currentPrompts[2]}
+            value={editorState.field3}
+            onChange={e => handleFieldChange('field3', e.target.value)}
+            className="min-h-[60px]"
+          />
+          
+          <div className="space-y-2">
+               {editorState.affirmations.map((affirmation, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                       <Textarea
+                        placeholder={config.affirmationPrompt}
+                        value={affirmation}
+                        onChange={e => handleAffirmationChange(index, e.target.value)}
+                        className="min-h-[60px] flex-grow"
+                      />
+                  </div>
+               ))}
+               <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" onClick={addAffirmation}>
+                      <PlusCircle className="mr-2 h-4 w-4"/>
+                      Add Affirmation
+                  </Button>
+                  {editorState.affirmations.length > 0 && (
+                      <Button variant="ghost" size="sm" onClick={removeLastAffirmation}>
+                          <MinusCircle className="mr-2 h-4 w-4"/>
+                          Remove
+                      </Button>
+                  )}
+               </div>
+          </div>
+          
+          <Separator/>
+          
+          <div>
+              <Label htmlFor="tags-input">Tags (comma-separated)</Label>
+              <Input
+                id="tags-input"
+                placeholder={config.suggestedTags}
+                value={editorState.tags}
+                onChange={e => handleFieldChange('tags', e.target.value)}
+              />
+          </div>
+
+          {config.habits.length > 0 && (
+            <div>
+              <Label>Supporting Habits</Label>
+              <div className="space-y-1 mt-1">
+                {config.habits.map(habitId => {
+                  const habit = allHabits[habitId];
+                  if (!habit) return null;
+                  const habitCheckboxId = `habit-${habit.id}-${entry.id}`;
+                  return (
+                     <div key={habit.id} className="flex items-center">
+                      <Label
+                        htmlFor={habitCheckboxId}
+                        className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
+                      >
+                         <Checkbox 
+                          id={habitCheckboxId}
+                          checked={todaysHabits.has(habit.id)}
+                          onCheckedChange={checked => handleHabitChange(habit.id, !!checked)}
+                         />
+                        <habit.icon className="w-4 h-4 text-muted-foreground" />
+                        <span>{habit.label}</span>
+                      </Label>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+           <div>
+            <Label
+              htmlFor="effort-slider"
+              className="flex justify-between"
+            >
+              <span>Effort / Focus</span>
+              <span>{editorState.effort}/10</span>
+            </Label>
+            <Slider
+              id="effort-slider"
+              min={1}
+              max={10}
+              step={1}
+              value={[editorState.effort]}
+              onValueChange={value => handleFieldChange('effort', value[0])}
+            />
+          </div>
+        </div>
+      </ScrollArea>
+    </div>
+  );
+});
+JournalEditor.displayName = 'JournalEditor';
