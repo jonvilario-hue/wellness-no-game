@@ -18,7 +18,7 @@ const progressData = {
   puzzlesGoal: 100,
   sessionStreak: 5,
   effortAverage: 7.8,
-  topDomain: 'Fluid Reasoning',
+  topDomain: '(Gf)',
 };
 
 const domainStreaksData: DomainStreakProps[] = [
