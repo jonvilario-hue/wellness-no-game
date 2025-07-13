@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock, ExternalLink, Brain, Zap, Moon, Check } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock, ExternalLink, Brain, Zap, Moon, Check, Music } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,14 +12,23 @@ import { PlaceholderSettings } from '@/components/settings/placeholder-settings'
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type AlarmPreset = 'quick' | 'deep' | 'gentle';
 
-const presets: { id: AlarmPreset, title: string, icon: LucideIcon, description: string }[] = [
-    { id: 'quick', title: 'Quick Boost', icon: Zap, description: '1 short EF puzzle, low fallback time.' },
-    { id: 'deep', title: 'Deep Wake', icon: Brain, description: '2 puzzles, no skip, XP bonus for completion.' },
-    { id: 'gentle', title: 'Gentle Start', icon: Moon, description: 'Warm-up puzzle, soft tone, feedback delay.' },
+const presets: { id: AlarmPreset, title: string, icon: LucideIcon, description: string, sound: string }[] = [
+    { id: 'quick', title: 'Quick Boost', icon: Zap, description: '1 short EF puzzle, low fallback time.', sound: 'Digital' },
+    { id: 'deep', title: 'Deep Wake', icon: Brain, description: '2 puzzles, no skip, XP bonus for completion.', sound: 'Classic' },
+    { id: 'gentle', title: 'Gentle Start', icon: Moon, description: 'Warm-up puzzle, soft tone, feedback delay.', sound: 'Chimes' },
 ];
+
+const alarmSounds = [
+    { id: 'classic', name: 'Classic' },
+    { id: 'digital', name: 'Digital' },
+    { id: 'chimes', name: 'Chimes' },
+    { id: 'nature', name: 'Nature' },
+]
 
 const AlarmSettings = () => {
   const [selectedPreset, setSelectedPreset] = useState<AlarmPreset>('quick');
@@ -75,12 +84,30 @@ const AlarmSettings = () => {
                             </CardHeader>
                             <CardContent className="text-xs text-muted-foreground">
                                {preset.description}
+                               <div className="flex items-center gap-2 mt-2 text-xs font-semibold">
+                                 <Music className="w-3 h-3" />
+                                 <span>{preset.sound}</span>
+                               </div>
                             </CardContent>
                         </Card>
                     );
                 })}
             </div>
         </div>
+
+         <div className="space-y-2">
+            <Label htmlFor="alarm-sound">Default Alarm Sound</Label>
+            <Select defaultValue="classic">
+              <SelectTrigger id="alarm-sound">
+                <SelectValue placeholder="Select a sound" />
+              </SelectTrigger>
+              <SelectContent>
+                {alarmSounds.map(sound => (
+                    <SelectItem key={sound.id} value={sound.id}>{sound.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
         <PlaceholderSettings title="Set New Alarm" description="This feature is in development. Soon you'll be able to set and customize your cognitive alarms here."/>
       </CardContent>
