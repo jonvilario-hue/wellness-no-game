@@ -35,7 +35,7 @@ export function TrainingSettings() {
                             <div className='-mt-1'>
                                 <div className="font-semibold flex items-center gap-2">
                                     <BrainCircuit className="w-4 h-4" />
-                                    Neutral Training
+                                    Core Thinking
                                 </div>
                                 <p className="text-xs text-muted-foreground">Classic abstract and symbolic puzzles to train core cognitive functions.</p>
                             </div>
@@ -47,7 +47,7 @@ export function TrainingSettings() {
                                      <Sigma className="w-4 h-4" />
                                     Math Reasoning
                                 </div>
-                                <p className="text-xs text-muted-foreground">Adapt games to use number patterns and algebraic logic instead of abstract symbols.</p>
+                                <p className="text-xs text-muted-foreground">Adapt games to use number patterns and logic to train both cognition and math skills.</p>
                             </div>
                         </Label>
                     </RadioGroup>

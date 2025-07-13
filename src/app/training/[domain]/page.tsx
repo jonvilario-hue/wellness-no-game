@@ -47,10 +47,10 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
               {isLoaded && focusSupportsMath ? (
                  <Badge variant="secondary" className="capitalize">
                   {trainingFocus === 'math' ? <Sigma className="w-3 h-3 mr-1.5"/> : <BrainCircuit className="w-3 h-3 mr-1.5"/>}
-                  {trainingFocus} Mode
+                  {trainingFocus === 'math' ? 'Math Reasoning' : 'Core Thinking'}
                 </Badge>
               ) : (
-                <Skeleton className="h-5 w-24" />
+                isLoaded && !focusSupportsMath ? null : <Skeleton className="h-5 w-24" />
               )}
             </div>
           </div>
