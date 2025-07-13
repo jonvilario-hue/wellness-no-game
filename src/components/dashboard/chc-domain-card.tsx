@@ -169,7 +169,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
                 <DropdownMenuTrigger asChild>
                   <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" className="shrink-0" disabled={!isLoaded}>
-                        <ModeIcon className={cn("w-5 h-5", isMathMode ? "text-accent" : "text-muted-foreground")} />
+                        <ModeIcon className={cn("w-5 h-5", isMathMode ? "text-energize" : "text-muted-foreground")} />
                     </Button>
                   </TooltipTrigger>
                 </DropdownMenuTrigger>
