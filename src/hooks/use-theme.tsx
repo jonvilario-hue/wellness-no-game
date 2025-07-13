@@ -7,41 +7,67 @@ import { themes, type Theme } from '@/data/themes';
 type ThemeProviderState = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  organicGrowth: boolean;
+  setOrganicGrowth: (enabled: boolean) => void;
 };
 
 const defaultInitialTheme = themes.find((t) => t.key === 'focus') || themes[0];
+const UI_SETTINGS_KEY = 'polymath-lab-ui-settings';
 
 const initialState: ThemeProviderState = {
   theme: defaultInitialTheme,
   setTheme: () => null,
+  organicGrowth: true,
+  setOrganicGrowth: () => null,
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultThemeKey = 'focus',
-  storageKey = 'vite-ui-theme',
 }: {
   children: React.ReactNode;
-  defaultThemeKey?: string;
-  storageKey?: string;
 }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-      return defaultInitialTheme;
-    }
+  const [theme, setThemeState] = useState<Theme>(defaultInitialTheme);
+  const [organicGrowth, setOrganicGrowthState] = useState(true);
+
+  useEffect(() => {
+    // Load settings from localStorage on initial client render
     try {
-      const item = window.localStorage.getItem(storageKey);
-      if (item) {
-        const foundTheme = themes.find((t) => t.key === item);
-        if (foundTheme) return foundTheme;
+      const savedSettings = window.localStorage.getItem(UI_SETTINGS_KEY);
+      if (savedSettings) {
+        const { themeKey, growthEnabled } = JSON.parse(savedSettings);
+        const foundTheme = themes.find((t) => t.key === themeKey) || defaultInitialTheme;
+        setThemeState(foundTheme);
+        setOrganicGrowthState(typeof growthEnabled === 'boolean' ? growthEnabled : true);
       }
     } catch (e) {
-      // Local storage not available
+      // Local storage not available or error parsing
+      console.error("Failed to load UI settings from localStorage", e);
     }
-    return themes.find(t => t.key === defaultThemeKey) || defaultInitialTheme;
-  });
+  }, []);
+
+  const setTheme = useCallback((newTheme: Theme) => {
+    setThemeState(newTheme);
+    try {
+      const currentSettings = JSON.parse(window.localStorage.getItem(UI_SETTINGS_KEY) || '{}');
+      const newSettings = { ...currentSettings, themeKey: newTheme.key };
+      window.localStorage.setItem(UI_SETTINGS_KEY, JSON.stringify(newSettings));
+    } catch (e) {
+        console.error("Failed to save theme setting", e);
+    }
+  }, []);
+  
+  const setOrganicGrowth = useCallback((enabled: boolean) => {
+    setOrganicGrowthState(enabled);
+     try {
+      const currentSettings = JSON.parse(window.localStorage.getItem(UI_SETTINGS_KEY) || '{}');
+      const newSettings = { ...currentSettings, growthEnabled: enabled };
+      window.localStorage.setItem(UI_SETTINGS_KEY, JSON.stringify(newSettings));
+    } catch (e) {
+        console.error("Failed to save organic growth setting", e);
+    }
+  }, []);
 
   const hexToHslString = useCallback((hex: string): string | null => {
     if (!hex.startsWith('#')) return null;
@@ -92,18 +118,14 @@ export function ThemeProvider({
         }
     }
     
-    try {
-      window.localStorage.setItem(storageKey, theme.key);
-    } catch (e) {
-      // Local storage not available
-    }
-    
-  }, [theme, storageKey, hexToHslString]);
+  }, [theme, hexToHslString]);
 
   const value = useMemo(() => ({
     theme,
-    setTheme: setThemeState,
-  }), [theme]);
+    setTheme,
+    organicGrowth,
+    setOrganicGrowth,
+  }), [theme, setTheme, organicGrowth, setOrganicGrowth]);
 
   return (
     <ThemeProviderContext.Provider value={value}>

@@ -15,9 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { chcDomains } from '@/types';
+import { GrowthDecoration } from '../ui/growth-decoration';
+import { useTheme } from '@/hooks/use-theme';
 
 export function HyperfocusBuilder() {
   const { currentFocus, daysCompleted, cycleLength, progress, isLoaded, setManualFocus } = useFocusBuilder();
+  const { organicGrowth } = useTheme();
 
   if (!isLoaded) {
     return (
@@ -44,7 +47,8 @@ export function HyperfocusBuilder() {
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col bg-primary/5 border-primary/20">
+    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col bg-primary/5 border-primary/20 relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <BrainCircuit className="w-5 h-5 text-primary" />
