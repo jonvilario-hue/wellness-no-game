@@ -123,113 +123,122 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
     mood: null,
 });
 
-export const useJournal = create<JournalState>()(
-    persist(
-        (set, get) => ({
-            entries: [],
-            trashedEntries: [],
-            habits: [],
-            completedHabits: {},
-            selectedEntry: null,
-            isLoaded: false,
+const useJournalStore = (set: any, get: any): JournalState => ({
+    entries: [],
+    trashedEntries: [],
+    habits: [],
+    completedHabits: {},
+    selectedEntry: null,
+    isLoaded: false,
 
-            setLoaded: (loaded) => set({ isLoaded: loaded }),
-            
-            findOrCreateEntry: (date, category, frequency) => {
-                const state = get();
-                const existingEntry = state.entries.find(
-                    (e) => e.date === date && e.category === category && e.frequency === frequency
-                );
-                return existingEntry || createNewEntryObject(date, category, frequency);
-            },
+    setLoaded: (loaded) => set({ isLoaded: loaded }),
+    
+    findOrCreateEntry: (date, category, frequency) => {
+        const state = get();
+        const existingEntry = state.entries.find(
+            (e) => e.date === date && e.category === category && e.frequency === frequency
+        );
+        return existingEntry || createNewEntryObject(date, category, frequency);
+    },
 
-            addEntry: (newEntry) => {
-                const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
-                const entryWithFinalId = { ...newEntry, id: finalId };
-                set(state => ({
-                    entries: [...state.entries.filter(e => e.id !== finalId), entryWithFinalId].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                }));
-                return entryWithFinalId;
-            },
+    addEntry: (newEntry) => {
+        const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
+        const entryWithFinalId = { ...newEntry, id: finalId };
+        set(state => ({
+            entries: [...state.entries.filter(e => e.id !== finalId), entryWithFinalId].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        }));
+        return entryWithFinalId;
+    },
 
-            updateEntry: (id, updatedEntry) => {
-                set(state => ({
-                    entries: state.entries.map(entry => (entry.id === id ? updatedEntry : entry))
-                }));
-            },
+    updateEntry: (id, updatedEntry) => {
+        set(state => ({
+            entries: state.entries.map(entry => (entry.id === id ? updatedEntry : entry))
+        }));
+    },
 
-            deleteEntry: (id) => {
-                const entryToTrash = get().entries.find(entry => entry.id === id);
-                if (entryToTrash) {
-                    const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
-                    set(state => ({
-                        entries: state.entries.filter(entry => entry.id !== id),
-                        trashedEntries: [trashedEntry, ...state.trashedEntries].slice(0, MAX_TRASH_ITEMS)
-                    }));
+    deleteEntry: (id) => {
+        const entryToTrash = get().entries.find(entry => entry.id === id);
+        if (entryToTrash) {
+            const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
+            set(state => ({
+                entries: state.entries.filter(entry => entry.id !== id),
+                trashedEntries: [trashedEntry, ...state.trashedEntries].slice(0, MAX_TRASH_ITEMS)
+            }));
+        }
+    },
+
+    restoreEntry: (id) => {
+        const entryToRestore = get().trashedEntries.find(entry => entry.id === id);
+        if (entryToRestore) {
+            const { deletedAt, ...originalEntry } = entryToRestore;
+            set(state => ({
+                trashedEntries: state.trashedEntries.filter(entry => entry.id !== id),
+                entries: [...state.entries.filter(e => e.id !== originalEntry.id), originalEntry].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            }));
+        }
+    },
+
+    deleteFromTrashPermanently: (id) => {
+        set(state => ({
+            trashedEntries: state.trashedEntries.filter(entry => entry.id !== id)
+        }));
+    },
+
+    emptyTrash: () => set({ trashedEntries: [] }),
+
+    toggleHabitForDay: (date, habitId) => {
+        set(state => {
+            const habitsForDay = new Set(state.completedHabits[date] || []);
+            if (habitsForDay.has(habitId)) {
+                habitsForDay.delete(habitId);
+            } else {
+                habitsForDay.add(habitId);
+            }
+            return {
+                completedHabits: {
+                    ...state.completedHabits,
+                    [date]: Array.from(habitsForDay)
                 }
-            },
+            };
+        });
+    },
+    
+    addHabit: (habitData) => {
+        set(state => ({
+            habits: [...state.habits, { ...habitData, id: `custom-${Date.now()}` }]
+        }));
+    },
 
-            restoreEntry: (id) => {
-                const entryToRestore = get().trashedEntries.find(entry => entry.id === id);
-                if (entryToRestore) {
-                    const { deletedAt, ...originalEntry } = entryToRestore;
-                    set(state => ({
-                        trashedEntries: state.trashedEntries.filter(entry => entry.id !== id),
-                        entries: [...state.entries.filter(e => e.id !== originalEntry.id), originalEntry].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                    }));
-                }
-            },
+    updateHabit: (id, habitData) => {
+        set(state => ({
+            habits: state.habits.map(h => h.id === id ? { ...h, ...habitData } : h)
+        }));
+    },
 
-            deleteFromTrashPermanently: (id) => {
-                set(state => ({
-                    trashedEntries: state.trashedEntries.filter(entry => entry.id !== id)
-                }));
-            },
+    removeHabit: (id) => {
+        set(state => ({
+            habits: state.habits.filter(h => h.id !== id)
+        }));
+    },
+    
+    createNewEntry: () => {
+        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
+    },
 
-            emptyTrash: () => set({ trashedEntries: [] }),
+    setSelectedEntry: (entry) => set({ selectedEntry: entry }),
+});
 
-            toggleHabitForDay: (date, habitId) => {
-                set(state => {
-                    const habitsForDay = new Set(state.completedHabits[date] || []);
-                    if (habitsForDay.has(habitId)) {
-                        habitsForDay.delete(habitId);
-                    } else {
-                        habitsForDay.add(habitId);
-                    }
-                    return {
-                        completedHabits: {
-                            ...state.completedHabits,
-                            [date]: Array.from(habitsForDay)
-                        }
-                    };
-                });
-            },
-            
-            addHabit: (habitData) => {
-                set(state => ({
-                    habits: [...state.habits, { ...habitData, id: `custom-${Date.now()}` }]
-                }));
-            },
+const useServerSafeJournalStore = (set: any, get: any): JournalState => ({
+    ...useJournalStore(set, get),
+    isLoaded: true, // On server, it's always "loaded" with empty state
+});
 
-            updateHabit: (id, habitData) => {
-                set(state => ({
-                    habits: state.habits.map(h => h.id === id ? { ...h, ...habitData } : h)
-                }));
-            },
-
-            removeHabit: (id) => {
-                set(state => ({
-                    habits: state.habits.filter(h => h.id !== id)
-                }));
-            },
-            
-            createNewEntry: () => {
-                const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-                return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
-            },
-
-            setSelectedEntry: (entry) => set({ selectedEntry: entry }),
-        }),
+export const useJournal = typeof window === 'undefined'
+  ? create<JournalState>(useServerSafeJournalStore)
+  : create<JournalState>()(
+      persist(
+        useJournalStore,
         {
             name: 'journal-storage',
             storage: createJSONStorage(() => localStorage),

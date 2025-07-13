@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Target, PlusCircle, Trash2, Edit } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useJournal, type Habit } from '@/hooks/use-journal';
-import { allHabits as defaultHabits, journalConfig, type JournalCategory, type HabitId } from '@/lib/journal-config';
+import { journalConfig, type JournalCategory, type HabitId } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -154,7 +154,7 @@ const HabitDialog = ({
 
 
 export function HabitTracker() {
-    const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit } = useJournal();
+    const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit, isLoaded } = useJournal();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
 
@@ -181,6 +181,23 @@ export function HabitTracker() {
     const handleDeleteHabit = (id: HabitId) => {
         removeHabit(id);
     };
+    
+    if (!isLoaded) {
+      return (
+        <Card>
+          <CardHeader>
+             <CardTitle className="flex items-center gap-2 font-headline">
+              <Target className="w-5 h-5 text-primary" />
+              Habit Tracker
+            </CardTitle>
+            <CardDescription>Loading habits...</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-48 animate-pulse bg-muted rounded-md"></div>
+          </CardContent>
+        </Card>
+      );
+    }
 
     return (
       <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
