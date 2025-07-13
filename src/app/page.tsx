@@ -52,17 +52,10 @@ function DashboardContent() {
             </aside>
           </div>
 
-          {settings.performanceInsights && (
-             <div className="grid grid-cols-1 gap-6">
-                <PerformanceInsights />
-            </div>
-          )}
-
-          {settings.adaptiveDifficulty && (
-            <div className="grid grid-cols-1 gap-6">
-              <AdaptiveDifficulty />
-            </div>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {settings.performanceInsights && <PerformanceInsights />}
+            {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {settings.habitTracker && <HabitTracker />}
