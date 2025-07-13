@@ -127,14 +127,21 @@ export const JournalEditor = memo(({
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
     if (editorState.category !== newCategory) {
-        handleSave(editorState, { isFinal: true });
+        // Only save if it's a new entry with content, or an existing entry.
+        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
+        if (!isNewEntry || hasContent) {
+          handleSave(editorState, { isFinal: true });
+        }
         onCategoryChange(newCategory);
     }
   };
   
   const handleFrequencyButtonClick = (newFrequency: ReflectionFrequency) => {
     if (editorState.frequency !== newFrequency) {
-        handleSave(editorState, { isFinal: true });
+        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
+        if (!isNewEntry || hasContent) {
+          handleSave(editorState, { isFinal: true });
+        }
         onFrequencyChange(newFrequency);
     }
   };
