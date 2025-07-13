@@ -1,5 +1,7 @@
 import type {Config} from 'tailwindcss';
 const {fontFamily} = require('tailwindcss/defaultTheme');
+import plugin from 'tailwindcss/plugin';
+import { themes } from './src/data/themes';
 
 export default {
   darkMode: ['class'],
@@ -85,5 +87,64 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    plugin(function({ addBase }) {
+      addBase({
+        ':root': {
+          '--background': 'hsl(220 20% 95%)',
+          '--foreground': 'hsl(220 10% 20%)',
+          '--card': 'hsl(220 20% 95%)',
+          '--card-foreground': 'hsl(220 10% 20%)',
+          '--popover': 'hsl(220 20% 95%)',
+          '--popover-foreground': 'hsl(220 10% 20%)',
+          '--primary': 'hsl(220 70% 50%)',
+          '--primary-foreground': 'hsl(220 20% 98%)',
+          '--secondary': 'hsl(220 10% 85%)',
+          '--secondary-foreground': 'hsl(220 10% 20%)',
+          '--muted': 'hsl(220 10% 90%)',
+          '--muted-foreground': 'hsl(220 10% 45%)',
+          '--accent': 'hsl(190 70% 50%)',
+          '--accent-foreground': 'hsl(220 10% 20%)',
+          '--destructive': 'hsl(0 84.2% 60.2%)',
+          '--destructive-foreground': 'hsl(0 0% 98%)',
+          '--border': 'hsl(220 10% 85%)',
+          '--input': 'hsl(220 10% 85%)',
+          '--ring': 'hsl(220 70% 50%)',
+          '--radius': '0.5rem',
+          '--chart-1': 'hsl(220 70% 50%)',
+          '--chart-2': 'hsl(190 70% 50%)',
+          '--chart-3': 'hsl(160 60% 45%)',
+          '--chart-4': 'hsl(30 80% 55%)',
+          '--chart-5': 'hsl(280 65% 60%)',
+        },
+        '.dark': {
+          '--background': 'hsl(224 71.4% 4.1%)',
+          '--foreground': 'hsl(210 20% 98%)',
+          '--card': 'hsl(224 71.4% 4.1%)',
+          '--card-foreground': 'hsl(210 20% 98%)',
+          '--popover': 'hsl(224 71.4% 4.1%)',
+          '--popover-foreground': 'hsl(210 20% 98%)',
+          '--primary': 'hsl(48 96% 50%)',
+          '--primary-foreground': 'hsl(48 9% 19%)',
+          '--secondary': 'hsl(215 27.9% 16.9%)',
+          '--secondary-foreground': 'hsl(210 20% 98%)',
+          '--muted': 'hsl(215 27.9% 16.9%)',
+          '--muted-foreground': 'hsl(217.2 32.6% 74.5%)',
+          '--accent': 'hsl(215 27.9% 16.9%)',
+          '--accent-foreground': 'hsl(210 20% 98%)',
+          '--destructive': 'hsl(0 62.8% 30.6%)',
+          '--destructive-foreground': 'hsl(210 20% 98%)',
+          '--border': 'hsl(215 27.9% 16.9%)',
+          '--input': 'hsl(215 27.9% 16.9%)',
+          '--ring': 'hsl(48 96% 50%)',
+          '--chart-1': 'hsl(48 96% 50%)',
+          '--chart-2': 'hsl(215 27.9% 16.9%)',
+          '--chart-3': 'hsl(190 70% 50%)',
+          '--chart-4': 'hsl(12 76% 61%)',
+          '--chart-5': 'hsl(173 58% 39%)',
+        },
+      });
+    })
+  ]
 } satisfies Config;
