@@ -33,10 +33,7 @@ export function MainDashboardView() {
               <TabsList>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <TabsTrigger 
-                        value="efficiency"
-                        className={cn(view === 'profile' && 'bg-background text-foreground shadow-sm')}
-                    >
+                    <TabsTrigger value="efficiency">
                         Cognitive Efficiency
                     </TabsTrigger>
                   </TooltipTrigger>
@@ -46,9 +43,7 @@ export function MainDashboardView() {
                 </Tooltip>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                      <TabsTrigger 
-                        value="profile"
-                      >
+                      <TabsTrigger value="profile">
                         My Full Strength
                       </TabsTrigger>
                   </TooltipTrigger>
