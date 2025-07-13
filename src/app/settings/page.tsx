@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DashboardLayoutSettings } from '@/components/settings/dashboard-layout-settings';
 import { TrainingSettings } from '@/components/settings/training-settings';
 import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
+import { AppearanceSettings } from '@/components/settings/appearance-settings';
 
 export default function SettingsPage() {
     return (
@@ -43,11 +44,11 @@ export default function SettingsPage() {
                         <TabsTrigger value="training" className="justify-start gap-2">
                            <Sliders className="h-4 w-4"/> Training
                         </TabsTrigger>
+                         <TabsTrigger value="appearance" className="justify-start gap-2">
+                           <Palette className="h-4 w-4"/> Appearance
+                        </TabsTrigger>
                         <TabsTrigger value="account" className="justify-start gap-2" disabled>
                            <User className="h-4 w-4"/> Account
-                        </TabsTrigger>
-                         <TabsTrigger value="appearance" className="justify-start gap-2" disabled>
-                           <Palette className="h-4 w-4"/> Appearance
                         </TabsTrigger>
                     </TabsList>
 
@@ -58,11 +59,11 @@ export default function SettingsPage() {
                         <TabsContent value="training">
                            <TrainingSettings />
                         </TabsContent>
+                         <TabsContent value="appearance">
+                           <AppearanceSettings />
+                        </TabsContent>
                          <TabsContent value="account">
                            <PlaceholderSettings title="Account Settings" description="Manage your profile, subscription, and data."/>
-                        </TabsContent>
-                        <TabsContent value="appearance">
-                           <PlaceholderSettings title="Appearance Settings" description="Customize the look and feel of the app."/>
                         </TabsContent>
                     </div>
                 </Tabs>
