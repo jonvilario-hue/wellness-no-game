@@ -15,17 +15,10 @@ import { Progress } from '@/components/ui/progress';
 import { domainIcons } from '@/components/icons';
 import type { CHCDomain } from '@/types';
 import { useState, useEffect } from 'react';
-import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Sigma, Check } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Sigma } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { cn } from '@/lib/utils';
-import { useTrainingOverride } from '@/hooks/use-training-override';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Skeleton } from '../ui/skeleton';
 
 interface ChcDomainCardProps {
@@ -44,7 +37,6 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   const [data, setData] = useState<{ score: number; trend: number } | null>(null);
   const [isClient, setIsClient] = useState(false);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
-  const { override, setOverride, isLoaded: isOverrideLoaded } = useTrainingOverride();
 
   useEffect(() => {
     setIsClient(true);
@@ -83,21 +75,10 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
 
   const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo();
   
-  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  const isLoaded = isGlobalFocusLoaded;
   
-  // Determine the effective focus: override > global
-  const effectiveFocus = isLoaded ? (override || globalFocus) : 'neutral';
-  const isMathMode = effectiveFocus === 'math' && domain.supportsMath;
-
+  const isMathMode = isLoaded && globalFocus === 'math' && domain.supportsMath;
   const ModeIcon = isMathMode ? Sigma : BrainCircuit;
-  const modeTooltip = override
-    ? `Session Override: ${override === 'math' ? 'Math Reasoning' : 'Core Thinking'}`
-    : `Global Focus: ${globalFocus === 'math' ? 'Math Reasoning' : 'Core Thinking'}`;
-
-
-  const handleModeSelect = (mode: 'neutral' | 'math' | null) => {
-    setOverride(mode);
-  };
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
@@ -109,6 +90,18 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
           <CardTitle className="font-headline text-base">{domain.name}</CardTitle>
           <CardDescription className="text-xs">{domain.description}</CardDescription>
         </div>
+        {isLoaded && domain.supportsMath && (
+           <TooltipProvider>
+             <Tooltip delayDuration={0}>
+               <TooltipTrigger>
+                  <ModeIcon className={cn("w-5 h-5", isMathMode ? "text-energize" : "text-muted-foreground")} />
+               </TooltipTrigger>
+               <TooltipContent>
+                 <p>Mode: {isMathMode ? 'Math Reasoning' : 'Core Thinking'}</p>
+               </TooltipContent>
+             </Tooltip>
+           </TooltipProvider>
+        )}
       </CardHeader>
       <CardContent className="space-y-2 h-24">
         {!isClient || !data ? (
@@ -159,34 +152,6 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         <Button asChild className="w-full">
           <Link href={`/training/${domain.key}`}>{domain.gameTitle}</Link>
         </Button>
-        <TooltipProvider>
-          <DropdownMenu>
-            <Tooltip delayDuration={0}>
-                <DropdownMenuTrigger asChild>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="shrink-0" disabled={!isLoaded}>
-                        <ModeIcon className={cn("w-5 h-5", isMathMode ? "text-energize" : "text-muted-foreground")} />
-                    </Button>
-                  </TooltipTrigger>
-                </DropdownMenuTrigger>
-              <TooltipContent>
-                <p>{modeTooltip}. Click to override for one session.</p>
-              </TooltipContent>
-            </Tooltip>
-             <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleModeSelect('neutral')}>
-                  <BrainCircuit className="mr-2 h-4 w-4" />
-                  <span>Train Core Thinking</span>
-                  {effectiveFocus === 'neutral' && <Check className="ml-auto h-4 w-4" />}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleModeSelect('math')} disabled={!domain.supportsMath}>
-                  <Sigma className="mr-2 h-4 w-4" />
-                   <span>Train Math Reasoning</span>
-                   {effectiveFocus === 'math' && <Check className="ml-auto h-4 w-4" />}
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TooltipProvider>
       </CardFooter>
     </Card>
   );
