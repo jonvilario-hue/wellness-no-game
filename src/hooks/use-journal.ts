@@ -16,7 +16,6 @@ export type HabitId = string;
 export type Habit = {
   id: HabitId;
   label: string;
-  icon: LucideIcon;
   category: JournalCategory;
 };
 
@@ -67,17 +66,17 @@ const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits, habit
                 date: today,
                 category: category,
                 frequency: frequency,
-                field1: 'My main challenge today was getting started with this new app and figuring out all its features!',
-                field2: 'I learned that taking a moment to explore and read the descriptions helps a lot. It feels less overwhelming now.',
-                field3: 'Next time I start something new, I\'ll give myself more time to just explore without pressure to be productive right away.',
-                affirmations: ['I am capable of learning new things.'],
-                tags: '#onboarding, #learning, #growth',
+                field1: '',
+                field2: '',
+                field3: '',
+                affirmations: [],
+                tags: '',
                 effort: 7,
                 mood: null,
             },
         ],
         habits: {
-            [today]: ['reflect_challenge', 'learn_from_discomfort']
+            [today]: []
         },
         habitConfig: initialHabits,
     };
@@ -212,7 +211,6 @@ export const useJournal = create<JournalState>()(
                 const newHabit: Habit = { 
                     ...habitData, 
                     id: `custom-${Date.now()}`,
-                    icon: defaultHabits['reflect_challenge'].icon, // Placeholder, will be ignored in UI
                 };
                 return {
                     habits: [...state.habits, newHabit]
@@ -307,3 +305,4 @@ export const useHydratedJournalStore = () => {
 
     return state;
 };
+
