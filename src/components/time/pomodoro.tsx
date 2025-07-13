@@ -30,13 +30,6 @@ export function PomodoroTimer() {
   } = usePomodoroStore();
   
   const timerRef = useRef<NodeJS.Timeout>();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !audioRef.current) {
-        audioRef.current = new Audio('/alarm.mp3'); 
-    }
-  }, []);
 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
@@ -44,7 +37,6 @@ export function PomodoroTimer() {
         tick();
       }, 1000);
     } else if (isActive && timeLeft <= 0) {
-      if(audioRef.current) audioRef.current.play();
       skipMode();
     }
     return () => clearInterval(timerRef.current);

@@ -218,103 +218,104 @@ const useJournal = () => {
     }, []);
     
 
-    const findOrCreateEntry = useCallback((date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
-        const existingEntry = memoryState.entries.find(
-          (e) => e.date === date && e.category === category && e.frequency === frequency
-        );
-    
-        if (existingEntry) {
-          return existingEntry;
-        }
-    
-        return createNewEntryObject(date, category, frequency);
-    }, []);
-
-
-    const addEntry = useCallback((newEntry: JournalEntry) => {
-        const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
-        const entryWithFinalId = { ...newEntry, id: finalId };
+    const stableFns = useMemo(() => {
+        const findOrCreateEntry = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
+            const existingEntry = memoryState.entries.find(
+              (e) => e.date === date && e.category === category && e.frequency === frequency
+            );
         
-        const newEntries = [...memoryState.entries.filter(e => e.id !== finalId), entryWithFinalId];
-        saveEntries(newEntries);
-        return entryWithFinalId;
-    }, [saveEntries]);
-
-    const updateEntry = useCallback((id: string, updatedEntry: JournalEntry) => {
-        const newEntries = memoryState.entries.map(entry => (entry.id === id ? updatedEntry : entry));
-        saveEntries(newEntries);
-    }, [saveEntries]);
-
-    const deleteEntry = useCallback((id: string) => {
-        const entryToTrash = memoryState.entries.find(entry => entry.id === id);
-        if (entryToTrash) {
-            const newEntries = memoryState.entries.filter(entry => entry.id !== id);
-            const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
-            const newTrashedEntries = [trashedEntry, ...memoryState.trashedEntries];
-            saveEntries(newEntries);
-            saveTrashedEntries(newTrashedEntries);
-        }
-    }, [saveEntries, saveTrashedEntries]);
+            if (existingEntry) {
+              return existingEntry;
+            }
+        
+            return createNewEntryObject(date, category, frequency);
+        };
     
-    const restoreEntry = useCallback((id: string) => {
-        const entryToRestore = memoryState.trashedEntries.find(entry => entry.id === id);
-        if (entryToRestore) {
+        const addEntry = (newEntry: JournalEntry) => {
+            const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
+            const entryWithFinalId = { ...newEntry, id: finalId };
+            
+            const newEntries = [...memoryState.entries.filter(e => e.id !== finalId), entryWithFinalId];
+            saveEntries(newEntries);
+            return entryWithFinalId;
+        };
+    
+        const updateEntry = (id: string, updatedEntry: JournalEntry) => {
+            const newEntries = memoryState.entries.map(entry => (entry.id === id ? updatedEntry : entry));
+            saveEntries(newEntries);
+        };
+    
+        const deleteEntry = (id: string) => {
+            const entryToTrash = memoryState.entries.find(entry => entry.id === id);
+            if (entryToTrash) {
+                const newEntries = memoryState.entries.filter(entry => entry.id !== id);
+                const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
+                const newTrashedEntries = [trashedEntry, ...memoryState.trashedEntries];
+                saveEntries(newEntries);
+                saveTrashedEntries(newTrashedEntries);
+            }
+        };
+        
+        const restoreEntry = (id: string) => {
+            const entryToRestore = memoryState.trashedEntries.find(entry => entry.id === id);
+            if (entryToRestore) {
+                const newTrashedEntries = memoryState.trashedEntries.filter(entry => entry.id !== id);
+                const { deletedAt, ...originalEntry } = entryToRestore;
+                const newEntries = [...memoryState.entries.filter(e => e.id !== originalEntry.id), originalEntry];
+                saveTrashedEntries(newTrashedEntries);
+                saveEntries(newEntries);
+            }
+        };
+    
+        const deleteFromTrashPermanently = (id: string) => {
             const newTrashedEntries = memoryState.trashedEntries.filter(entry => entry.id !== id);
-            const { deletedAt, ...originalEntry } = entryToRestore;
-            const newEntries = [...memoryState.entries.filter(e => e.id !== originalEntry.id), originalEntry];
             saveTrashedEntries(newTrashedEntries);
-            saveEntries(newEntries);
-        }
-    }, [saveEntries, saveTrashedEntries]);
-
-    const deleteFromTrashPermanently = useCallback((id: string) => {
-        const newTrashedEntries = memoryState.trashedEntries.filter(entry => entry.id !== id);
-        saveTrashedEntries(newTrashedEntries);
-    }, [saveTrashedEntries]);
+        };
+        
+        const emptyTrash = () => {
+            saveTrashedEntries([]);
+        };
     
-    const emptyTrash = useCallback(() => {
-        saveTrashedEntries([]);
-    }, [saveTrashedEntries]);
-
-    const toggleHabitForDay = useCallback((date: string, habitId: HabitId) => {
-        const newHabits = { ...memoryState.completedHabits };
-        if (!newHabits[date]) {
-            newHabits[date] = new Set();
-        }
+        const toggleHabitForDay = (date: string, habitId: HabitId) => {
+            const newHabits = { ...memoryState.completedHabits };
+            if (!newHabits[date]) {
+                newHabits[date] = new Set();
+            }
+            
+            const dateHabits = newHabits[date];
+            if (dateHabits.has(habitId)) {
+                dateHabits.delete(habitId);
+            } else {
+                dateHabits.add(habitId);
+            }
+            
+            saveCompletedHabits(newHabits);
+        };
+    
+        const createNewEntry = () => {
+            const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+            const newEntry = createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
+            dispatch({ selectedEntry: newEntry });
+            return newEntry;
+        };
+    
+        const setSelectedEntry = (entry: JournalEntry) => {
+            dispatch({ selectedEntry: entry });
+        };
         
-        const dateHabits = newHabits[date];
-        if (dateHabits.has(habitId)) {
-            dateHabits.delete(habitId);
-        } else {
-            dateHabits.add(habitId);
-        }
-        
-        saveCompletedHabits(newHabits);
-    }, [saveCompletedHabits]);
-
-    const createNewEntry = useCallback(() => {
-        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-        const newEntry = createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
-        dispatch({ selectedEntry: newEntry });
-        return newEntry;
-    }, []);
-
-    const setSelectedEntry = useCallback((entry: JournalEntry) => {
-        dispatch({ selectedEntry: entry });
-    }, []);
-
-    const stableFns = useMemo(() => ({
-        addEntry,
-        updateEntry,
-        deleteEntry,
-        restoreEntry,
-        deleteFromTrashPermanently,
-        emptyTrash,
-        toggleHabitForDay,
-        findOrCreateEntry,
-        createNewEntry,
-        setSelectedEntry,
-    }), [addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, toggleHabitForDay, findOrCreateEntry, createNewEntry, setSelectedEntry]);
+        return {
+            addEntry,
+            updateEntry,
+            deleteEntry,
+            restoreEntry,
+            deleteFromTrashPermanently,
+            emptyTrash,
+            toggleHabitForDay,
+            findOrCreateEntry,
+            createNewEntry,
+            setSelectedEntry,
+        };
+    }, [saveEntries, saveTrashedEntries, saveCompletedHabits]);
 
 
     return { ...state, ...stableFns, isLoaded };
@@ -323,5 +324,3 @@ const useJournal = () => {
 useJournal.subscribe = subscribe;
 
 export { useJournal };
-
-    

@@ -19,52 +19,6 @@ export default function AlarmPage() {
   const [showPuzzle, setShowPuzzle] = useState(false);
   const [sleepQuality, setSleepQuality] = useState([3]);
   const [selectedWakefulness, setSelectedWakefulness] = useState<Wakefulness | null>(null);
-  
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !audioRef.current) {
-        try {
-            audioRef.current = new Audio('/alarm.mp3'); 
-            audioRef.current.loop = true;
-        } catch (e) {
-            console.error("Could not create audio element", e);
-        }
-    }
-  }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (alarmState === 'ringing') {
-        audio.play().catch(e => console.error("Audio playback failed:", e));
-    } else {
-        // Fade out audio instead of stopping abruptly
-        let vol = audio.volume;
-        if (vol > 0) {
-            const fadeOut = setInterval(() => {
-                if (vol > 0.1) {
-                    vol -= 0.1;
-                    audio.volume = vol;
-                } else {
-                    clearInterval(fadeOut);
-                    audio.pause();
-                    audio.currentTime = 0;
-                    audio.volume = 1; // Reset for next time
-                }
-            }, 50);
-        }
-    }
-
-    return () => {
-        if (audio && !audio.paused) {
-            audio.pause();
-            audio.currentTime = 0;
-        }
-    }
-  }, [alarmState]);
-
 
   const handleStartPuzzle = () => {
     setAlarmState('solving');

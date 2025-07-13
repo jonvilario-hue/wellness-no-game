@@ -52,7 +52,8 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         const pctChange = ((endScore - startScore) / startScore) * 100;
         setTrend(pctChange);
     }
-  }, [domain.key]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getTrendInfo = () => {
     if (trend > 2) {
