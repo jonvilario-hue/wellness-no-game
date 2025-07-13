@@ -22,6 +22,7 @@ import {
   MinusCircle,
   Search,
   ArrowDownUp,
+  AlertTriangle,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -510,7 +511,17 @@ const ListView = ({ entries, selectedEntry, onSelect, onDelete }: { entries: Jou
   )
 };
 
-const TrashView = ({ trashedEntries, onRestore, onEmptyTrash }: { trashedEntries: JournalEntry[], onRestore: (id: string) => void, onEmptyTrash: () => void }) => (
+const TrashView = ({ 
+  trashedEntries, 
+  onRestore, 
+  onDeletePermanently, 
+  onEmptyTrash 
+}: { 
+  trashedEntries: JournalEntry[], 
+  onRestore: (id: string) => void, 
+  onDeletePermanently: (id: string) => void,
+  onEmptyTrash: () => void 
+}) => (
    <div className='h-full flex flex-col'>
       <ScrollArea className="flex-grow pr-3 -mr-3">
           <div className="space-y-2 mt-2">
@@ -518,14 +529,35 @@ const TrashView = ({ trashedEntries, onRestore, onEmptyTrash }: { trashedEntries
               const config = journalConfig[entry.category as JournalCategory];
               const categoryTitle = config ? config.title : entry.category;
               return (
-                <div key={entry.id} className="group flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                <div key={entry.id} className="group flex items-center gap-1 p-2 rounded-md bg-muted/50">
                     <div className='flex-grow'>
                         <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{categoryTitle}</span></p>
                         <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => onRestore(entry.id)}>
-                        <ArchiveRestore className="w-4 h-4 text-muted-foreground"/>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => onRestore(entry.id)} title="Restore">
+                        <ArchiveRestore className="w-4 h-4 text-muted-foreground hover:text-primary"/>
                     </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" title="Delete Permanently">
+                                <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive"/>
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Permanently?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete this journal entry.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => onDeletePermanently(entry.id)} variant="destructive">
+                                    Delete
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
               );
           }) : (
@@ -534,10 +566,13 @@ const TrashView = ({ trashedEntries, onRestore, onEmptyTrash }: { trashedEntries
           </div>
       </ScrollArea>
       {trashedEntries.length > 0 && (
-          <div className="mt-2 flex-shrink-0">
+          <div className="mt-2 pt-2 border-t flex-shrink-0">
               <AlertDialog>
                   <AlertDialogTrigger asChild>
-                       <Button variant="destructive" className="w-full">Empty Trash</Button>
+                       <Button variant="outline" className="w-full">
+                          <AlertTriangle className="mr-2 h-4 w-4" />
+                          Empty Entire Trash
+                        </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                       <AlertDialogHeader>
@@ -548,7 +583,7 @@ const TrashView = ({ trashedEntries, onRestore, onEmptyTrash }: { trashedEntries
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={onEmptyTrash}>
+                          <AlertDialogAction onClick={onEmptyTrash} variant="destructive">
                               Yes, Empty Trash
                           </AlertDialogAction>
                       </AlertDialogFooter>
@@ -562,7 +597,7 @@ const TrashView = ({ trashedEntries, onRestore, onEmptyTrash }: { trashedEntries
 const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 
 export const HabitJournal = forwardRef((props, ref) => {
-  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash, selectedEntry, setSelectedEntry, createNewEntry } = useJournal();
+  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, selectedEntry, setSelectedEntry, createNewEntry } = useJournal();
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortMode, setSortMode] = useState<SortMode>('date-desc');
@@ -618,6 +653,11 @@ export const HabitJournal = forwardRef((props, ref) => {
     restoreEntry(id);
     toast({ title: 'Entry Restored' });
   }, [restoreEntry, toast]);
+  
+  const handleDeleteFromTrash = useCallback((id: string) => {
+    deleteFromTrashPermanently(id);
+    toast({ title: 'Entry Permanently Deleted', variant: 'destructive' });
+  }, [deleteFromTrashPermanently, toast]);
 
   const handleDelete = useCallback((id: string) => {
     const entryWasSelected = selectedEntry?.id === id;
@@ -735,7 +775,7 @@ export const HabitJournal = forwardRef((props, ref) => {
             </div>
             <Separator className="my-2"/>
             <div className="flex-grow mt-2 min-h-0">
-                {viewMode === 'entries' ? <ListView entries={filteredAndSortedEntries} selectedEntry={selectedEntry} onSelect={handleSelectEntry} onDelete={handleDelete} /> : <TrashView trashedEntries={trashedEntries} onRestore={handleRestore} onEmptyTrash={emptyTrash} />}
+                {viewMode === 'entries' ? <ListView entries={filteredAndSortedEntries} selectedEntry={selectedEntry} onSelect={handleSelectEntry} onDelete={handleDelete} /> : <TrashView trashedEntries={trashedEntries} onRestore={handleRestore} onDeletePermanently={handleDeleteFromTrash} onEmptyTrash={emptyTrash} />}
             </div>
           </div>
           <div className="lg:col-span-2 bg-background rounded-lg border">
@@ -773,3 +813,5 @@ export const HabitJournal = forwardRef((props, ref) => {
 });
 
 HabitJournal.displayName = 'HabitJournal';
+
+    

@@ -246,11 +246,17 @@ const useJournal = () => {
         const entryToRestore = state.trashedEntries.find(entry => entry.id === id);
         if (entryToRestore) {
             const newTrashedEntries = state.trashedEntries.filter(entry => entry.id !== id);
+            // remove deletedAt before restoring
             const { deletedAt, ...originalEntry } = entryToRestore;
             const newEntries = [...state.entries, originalEntry];
             saveTrashedEntries(newTrashedEntries);
             saveEntries(newEntries);
         }
+    };
+
+    const deleteFromTrashPermanently = (id: string) => {
+        const newTrashedEntries = state.trashedEntries.filter(entry => entry.id !== id);
+        saveTrashedEntries(newTrashedEntries);
     };
     
     const emptyTrash = () => {
@@ -281,7 +287,9 @@ const useJournal = () => {
         dispatch({ selectedEntry: entry });
     }
 
-    return { ...state, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash, toggleHabitForDay, isLoaded, setSelectedEntry, createNewEntry };
+    return { ...state, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, toggleHabitForDay, isLoaded, setSelectedEntry, createNewEntry };
 };
 
 export { useJournal };
+
+    
