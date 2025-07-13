@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock, ExternalLink } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock, ExternalLink, Brain, Zap, Moon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,7 +9,7 @@ import { DashboardLayoutSettings } from '@/components/settings/dashboard-layout-
 import { TrainingSettings } from '@/components/settings/training-settings';
 import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 
 const AlarmSettings = () => {
   return (
@@ -20,7 +20,7 @@ const AlarmSettings = () => {
           Set alarms that require solving a puzzle to dismiss, turning your wake-up routine into a cognitive warm-up.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         <div className="p-8 bg-muted/50 rounded-lg text-center">
             <h3 className="font-semibold">Test the Alarm</h3>
             <p className="text-muted-foreground text-sm mb-4">
@@ -32,6 +32,40 @@ const AlarmSettings = () => {
                 </Link>
             </Button>
         </div>
+        
+        <div>
+            <h3 className="font-semibold text-lg mb-2">Alarm Mode Presets</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+                Choose a preset to quickly configure your alarm's behavior. (Feature in development)
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-base"><Zap className="w-4 h-4 text-primary"/>Quick Boost</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-xs text-muted-foreground">
+                        1 short EF puzzle, low fallback time.
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-base"><Brain className="w-4 h-4 text-primary"/>Deep Wake</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-xs text-muted-foreground">
+                       2 puzzles, no skip, XP bonus for completion.
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-base"><Moon className="w-4 h-4 text-primary"/>Gentle Start</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-xs text-muted-foreground">
+                        Warm-up puzzle, soft tone, feedback delay.
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+
         <PlaceholderSettings title="Set New Alarm" description="This feature is in development. Soon you'll be able to set and customize your cognitive alarms here."/>
       </CardContent>
     </Card>
