@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target, Zap, TrendingUp, Lightbulb, CheckSquare } from 'lucide-react';
+import { Target, Zap, TrendingUp, Lightbulb, CheckSquare, X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DomainStreak, type DomainStreakProps } from './domain-streak';
 import { useState, useEffect } from 'react';
@@ -13,6 +13,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
+import { Button } from '../ui/button';
 
 const overallStats = {
   totalSessions: 42,
@@ -32,6 +33,7 @@ const domainStreaksData: DomainStreakProps[] = [
 ].sort((a, b) => b.streak - a.streak);
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
+const INSIGHT_KEY = 'habitTrackerInsightDismissed';
 
 const HabitItem = ({ habit, isDone, onToggle }: { habit: Habit; isDone: boolean, onToggle: (checked: boolean) => void }) => {
   const Icon = habit.icon;
@@ -49,7 +51,7 @@ const HabitItem = ({ habit, isDone, onToggle }: { habit: Habit; isDone: boolean,
         <div className={cn("p-1.5 rounded-md", isDone ? 'bg-primary/20' : 'bg-background/50')}>
           <Icon className={cn("w-5 h-5", isDone ? 'text-primary' : 'text-muted-foreground')} />
         </div>
-        <span className={cn("flex-grow font-medium text-sm", isDone ? 'text-primary-foreground' : 'text-muted-foreground')}>
+        <span className={cn("flex-grow font-medium text-sm", isDone ? 'text-foreground' : 'text-muted-foreground')}>
           {habit.label}
         </span>
       </Label>
@@ -59,6 +61,7 @@ const HabitItem = ({ habit, isDone, onToggle }: { habit: Habit; isDone: boolean,
 
 export function HabitTracker() {
     const [insight, setInsight] = useState('');
+    const [isInsightVisible, setIsInsightVisible] = useState(false);
     const { completedHabits, toggleHabitForDay } = useJournal();
 
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
@@ -70,10 +73,19 @@ export function HabitTracker() {
         if (topStreak) {
             setInsight(`Your ${topStreak.name} streak is on fire! This consistency sharpens your logical decision-making skills.`);
         }
+        const dismissed = localStorage.getItem(INSIGHT_KEY);
+        if (dismissed !== 'true') {
+            setIsInsightVisible(true);
+        }
     }, []);
 
     const handleToggleHabit = (habitId: string) => {
       toggleHabitForDay(today, habitId);
+    };
+
+    const handleDismissInsight = () => {
+      setIsInsightVisible(false);
+      localStorage.setItem(INSIGHT_KEY, 'true');
     };
 
     return (
@@ -163,12 +175,23 @@ export function HabitTracker() {
                       </div>
                       <span className="font-bold text-lg">{overallStats.totalSessions}</span>
                   </div>
-                   <div className="p-3 bg-primary/10 rounded-lg text-center">
-                      <p className="text-sm text-primary-foreground/80 flex items-start gap-2">
-                          <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
-                          <span><span className="font-bold text-primary-foreground">Insight:</span> {insight}</span>
-                      </p>
-                  </div>
+                  {isInsightVisible && (
+                     <div className="p-3 bg-primary/10 rounded-lg text-center relative">
+                        <p className="text-sm flex items-start gap-2 pr-6">
+                            <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
+                            <span className="text-foreground text-left"><span className="font-bold">Insight:</span> {insight}</span>
+                        </p>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="absolute top-1 right-1 h-6 w-6"
+                            onClick={handleDismissInsight}
+                            aria-label="Dismiss insight"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                  )}
               </TabsContent>
           </Tabs>
         </CardContent>

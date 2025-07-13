@@ -2,9 +2,11 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Award, Puzzle, TrendingUp, Zap, Calendar, Target, BrainCircuit, Info } from 'lucide-react';
+import { Award, Puzzle, TrendingUp, Zap, Calendar, Target, BrainCircuit, Info, Lightbulb, X } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { useState, useEffect } from 'react';
+import { Button } from '../ui/button';
 
 const progressData = {
   puzzlesToday: 12,
@@ -15,8 +17,23 @@ const progressData = {
   topDomain: 'Fluid Reasoning',
 };
 
+const INSIGHT_KEY = 'gameProgressInsightDismissed';
+
 export function GameProgressTracker() {
   const weeklyProgress = (progressData.puzzlesWeekly / progressData.puzzlesGoal) * 100;
+  const [isInsightVisible, setIsInsightVisible] = useState(false);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem(INSIGHT_KEY);
+    if (dismissed !== 'true') {
+      setIsInsightVisible(true);
+    }
+  }, []);
+
+  const handleDismissInsight = () => {
+    setIsInsightVisible(false);
+    localStorage.setItem(INSIGHT_KEY, 'true');
+  };
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
@@ -30,6 +47,23 @@ export function GameProgressTracker() {
       <CardContent>
         <TooltipProvider>
             <div className="space-y-4">
+                {isInsightVisible && (
+                  <div className="p-3 bg-primary/10 rounded-lg text-center relative">
+                      <p className="text-sm flex items-start gap-2 pr-6">
+                          <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
+                          <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This panel tracks your performance, like weekly goals and session streaks.</span>
+                      </p>
+                      <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute top-1 right-1 h-6 w-6"
+                          onClick={handleDismissInsight}
+                          aria-label="Dismiss insight"
+                      >
+                          <X className="h-4 w-4" />
+                      </Button>
+                  </div>
+                )}
                 <div>
                     <div className="flex justify-between items-center mb-1">
                         <Tooltip delayDuration={0}>

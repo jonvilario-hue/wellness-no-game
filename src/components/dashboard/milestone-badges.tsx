@@ -3,12 +3,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Award, ArrowRight } from 'lucide-react';
+import { Award, ArrowRight, Lightbulb, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { badges } from '@/data/badges';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 const top8BadgeKeys = [
   'neurogrit',
@@ -21,7 +21,23 @@ const top8BadgeKeys = [
   'curious-explorer',
 ];
 
+const INSIGHT_KEY = 'milestoneBadgesInsightDismissed';
+
 export function MilestoneBadges() {
+  const [isInsightVisible, setIsInsightVisible] = useState(false);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem(INSIGHT_KEY);
+    if (dismissed !== 'true') {
+      setIsInsightVisible(true);
+    }
+  }, []);
+
+  const handleDismissInsight = () => {
+    setIsInsightVisible(false);
+    localStorage.setItem(INSIGHT_KEY, 'true');
+  };
+
   const displayedBadges = useMemo(() => {
     return top8BadgeKeys.map(key => badges.find(b => b.key === key)).filter(Boolean);
   }, []);
@@ -34,7 +50,24 @@ export function MilestoneBadges() {
           Milestone Badges
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow">
+      <CardContent className="flex-grow space-y-4">
+        {isInsightVisible && (
+          <div className="p-3 bg-primary/10 rounded-lg text-center relative">
+              <p className="text-sm flex items-start gap-2 pr-6">
+                  <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
+                  <span className="text-foreground text-left"><span className="font-bold">Insight:</span> Earn badges by completing streaks, trying new games, and hitting training milestones.</span>
+              </p>
+              <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-1 right-1 h-6 w-6"
+                  onClick={handleDismissInsight}
+                  aria-label="Dismiss insight"
+              >
+                  <X className="h-4 w-4" />
+              </Button>
+          </div>
+        )}
         <TooltipProvider>
           <div className="grid grid-cols-4 gap-4 text-center">
             {displayedBadges.map((badge, index) => (
