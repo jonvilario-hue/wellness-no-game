@@ -8,9 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DashboardLayoutSettings } from '@/components/settings/dashboard-layout-settings';
 import { TrainingSettings } from '@/components/settings/training-settings';
-import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -29,6 +28,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { PomodoroTimer } from '@/components/time/pomodoro';
+import { Timer } from '@/components/time/timer';
+import { Stopwatch } from '@/components/time/stopwatch';
 
 type AlarmPreset = 'quick' | 'deep' | 'gentle';
 
@@ -227,18 +229,6 @@ const AlarmSettings = () => {
   )
 }
 
-const PomodoroSettings = () => {
-    return <PlaceholderSettings title="Pomodoro Settings" description="Configure Pomodoro presets, sounds, and behavior."/>
-}
-
-const TimerSettings = () => {
-    return <PlaceholderSettings title="Timer Settings" description="Set default countdown timer durations and sounds."/>
-}
-
-const StopwatchSettings = () => {
-    return <PlaceholderSettings title="Stopwatch Settings" description="Adjust stopwatch display and lap preferences."/>
-}
-
 export default function SettingsPage() {
     return (
         <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -307,16 +297,24 @@ export default function SettingsPage() {
                            <AlarmSettings />
                         </TabsContent>
                         <TabsContent value="pomodoro">
-                           <PomodoroSettings />
+                           <PomodoroTimer />
                         </TabsContent>
                         <TabsContent value="timer">
-                           <TimerSettings />
+                           <Timer />
                         </TabsContent>
                         <TabsContent value="stopwatch">
-                           <StopwatchSettings />
+                           <Stopwatch />
                         </TabsContent>
                          <TabsContent value="account">
-                           <PlaceholderSettings title="Account Settings" description="Manage your profile, subscription, and data."/>
+                           <Card>
+                                <CardHeader>
+                                    <CardTitle>Account Settings</CardTitle>
+                                    <CardDescription>Manage your profile, subscription, and data.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>Account settings are not yet implemented.</p>
+                                </CardContent>
+                           </Card>
                         </TabsContent>
                     </div>
                 </Tabs>
