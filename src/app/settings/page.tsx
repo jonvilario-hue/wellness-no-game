@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock, ExternalLink, Brain, Zap, Moon, Check, Music, PlusCircle, Trash2 } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock as AlarmClockIcon, ExternalLink, Brain, Zap, Moon, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -122,7 +122,7 @@ const AlarmSettings = () => {
                       </div>
                       <div className="flex items-center gap-3">
                           {alarm.puzzle && (
-                              <AlarmClock className="w-5 h-5 text-primary" title="Puzzle required"/>
+                              <AlarmClockIcon className="w-5 h-5 text-primary" title="Puzzle required"/>
                           )}
                           <Switch checked={alarm.active} onCheckedChange={() => toggleAlarm(alarm.id)} aria-label={`Toggle alarm for ${alarm.time} ${alarm.period}`} />
                           <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100" onClick={() => removeAlarm(alarm.id)}>
@@ -227,6 +227,18 @@ const AlarmSettings = () => {
   )
 }
 
+const PomodoroSettings = () => {
+    return <PlaceholderSettings title="Pomodoro Settings" description="Configure Pomodoro presets, sounds, and behavior."/>
+}
+
+const TimerSettings = () => {
+    return <PlaceholderSettings title="Timer Settings" description="Set default countdown timer durations and sounds."/>
+}
+
+const StopwatchSettings = () => {
+    return <PlaceholderSettings title="Stopwatch Settings" description="Adjust stopwatch display and lap preferences."/>
+}
+
 export default function SettingsPage() {
     return (
         <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -256,7 +268,7 @@ export default function SettingsPage() {
                 <Tabs defaultValue="layout" orientation="vertical" className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <TabsList className="flex flex-col h-auto justify-start items-stretch p-2 space-y-1 bg-muted/50 rounded-lg w-full">
                         <TabsTrigger value="layout" className="justify-start gap-2">
-                           <LayoutDashboard className="h-4 w-4"/> Dashboard Layout
+                           <LayoutDashboard className="h-4 w-4"/> Dashboard
                         </TabsTrigger>
                         <TabsTrigger value="training" className="justify-start gap-2">
                            <Sliders className="h-4 w-4"/> Training
@@ -264,8 +276,17 @@ export default function SettingsPage() {
                          <TabsTrigger value="appearance" className="justify-start gap-2">
                            <Palette className="h-4 w-4"/> Appearance
                         </TabsTrigger>
-                        <TabsTrigger value="alarms" className="justify-start gap-2">
-                           <AlarmClock className="h-4 w-4"/> Alarms
+                         <TabsTrigger value="alarms" className="justify-start gap-2">
+                           <AlarmClockIcon className="h-4 w-4"/> Alarms
+                        </TabsTrigger>
+                        <TabsTrigger value="pomodoro" className="justify-start gap-2">
+                           <CirclePlay className="h-4 w-4"/> Pomodoro
+                        </TabsTrigger>
+                        <TabsTrigger value="timer" className="justify-start gap-2">
+                           <TimerIcon className="h-4 w-4"/> Timer
+                        </TabsTrigger>
+                        <TabsTrigger value="stopwatch" className="justify-start gap-2">
+                           <Hourglass className="h-4 w-4"/> Stopwatch
                         </TabsTrigger>
                         <TabsTrigger value="account" className="justify-start gap-2" disabled>
                            <User className="h-4 w-4"/> Account
@@ -284,6 +305,15 @@ export default function SettingsPage() {
                         </TabsContent>
                          <TabsContent value="alarms">
                            <AlarmSettings />
+                        </TabsContent>
+                        <TabsContent value="pomodoro">
+                           <PomodoroSettings />
+                        </TabsContent>
+                        <TabsContent value="timer">
+                           <TimerSettings />
+                        </TabsContent>
+                        <TabsContent value="stopwatch">
+                           <StopwatchSettings />
                         </TabsContent>
                          <TabsContent value="account">
                            <PlaceholderSettings title="Account Settings" description="Manage your profile, subscription, and data."/>
