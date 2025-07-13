@@ -29,7 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Slider } from '../ui/slider';
-import { useJournal, type JournalEntry, type ReflectionFrequency } from '@/hooks/use-journal';
+import { useJournal, type JournalEntry, type ReflectionFrequency, getFrequencyForDate } from '@/hooks/use-journal';
 import { Separator } from '../ui/separator';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
@@ -75,10 +75,14 @@ const EntryEditor = ({
   entry,
   onSave,
   onDelete,
+  onCategoryChange,
+  onFrequencyChange,
 }: {
   entry: JournalEntry;
-  onSave: (entry: JournalEntry) => { success: boolean; entry: JournalEntry | null };
+  onSave: (entry: JournalEntry, options?: { isFinal: boolean }) => { success: boolean; entry: JournalEntry | null };
   onDelete: (id: string) => void;
+  onCategoryChange: (newCategory: JournalCategory) => void;
+  onFrequencyChange: (newFrequency: ReflectionFrequency) => void;
 }) => {
   const [editorState, setEditorState] = useState<JournalEntry>(entry);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -97,29 +101,39 @@ const EntryEditor = ({
     editorStateRef.current = editorState;
   }, [editorState]);
 
+  const handleSave = useCallback((options: { isFinal: boolean } = { isFinal: false }) => {
+    const currentEntry = editorStateRef.current;
+    // Don't save if it's a new, untouched entry
+    const isNew = currentEntry.id.startsWith('new-');
+    const hasContent = currentEntry.field1 || currentEntry.field2 || currentEntry.field3 || currentEntry.affirmations.some(a => a);
+    if(isNew && !hasContent && !options.isFinal) return;
+    
+    setSaveStatus('saving');
+    const result = onSave(currentEntry, options);
+    if (result.success && result.entry) {
+        setEditorState(prev => ({...result.entry!, affirmations: prev.affirmations}));
+        setTimeout(() => setSaveStatus('saved'), 500);
+    } else if (!result.success) {
+        setSaveStatus('idle');
+    }
+  }, [onSave]);
+
+
   useEffect(() => {
-      const isNew = editorStateRef.current.id.startsWith('new-');
-      const hasChanged = JSON.stringify(entry) !== JSON.stringify(editorStateRef.current);
+    const hasChanged = JSON.stringify(entry) !== JSON.stringify(editorStateRef.current);
+    if (!hasChanged) {
+      setSaveStatus('idle');
+      return;
+    }
 
-      if (isNew || !hasChanged) {
-        return;
-      }
-      
-      setSaveStatus('saving');
-      const handler = setTimeout(() => {
-        onSave(editorStateRef.current);
-        setSaveStatus('saved');
-      }, 1500); 
+    const handler = setTimeout(() => {
+      handleSave();
+    }, 1500);
 
-      return () => {
-          clearTimeout(handler);
-          // Save on unmount if there are pending changes
-          if (JSON.stringify(entry) !== JSON.stringify(editorStateRef.current)) {
-              onSave(editorStateRef.current);
-          }
-      };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorState, entry.id]);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [editorState, entry, handleSave]);
 
 
   useEffect(() => {
@@ -142,25 +156,22 @@ const EntryEditor = ({
   const isNewEntry = editorState.id.startsWith('new-');
   
   const handleManualSave = () => {
-      const result = onSave(editorState);
-      if(result.success) {
-         if (result.entry) {
-           setEditorState(result.entry); 
-         }
-         setSaveStatus('saved');
-         toast({ title: 'Journal Entry Saved' });
-      }
+    handleSave({ isFinal: true });
+    toast({ title: 'Journal Entry Saved' });
   }
 
-  const handleCategoryChange = (newCategory: JournalCategory) => {
-    setEditorState(prevState => ({
-      ...prevState,
-      category: newCategory,
-    }));
+  const handleCategoryButtonClick = (newCategory: JournalCategory) => {
+    if (editorState.category !== newCategory) {
+        handleSave({ isFinal: true });
+        onCategoryChange(newCategory);
+    }
   };
   
-  const handleFrequencyChange = (newFrequency: ReflectionFrequency) => {
-    setEditorState(prevState => ({ ...prevState, frequency: newFrequency }));
+  const handleFrequencyButtonClick = (newFrequency: ReflectionFrequency) => {
+    if (editorState.frequency !== newFrequency) {
+        handleSave({ isFinal: true });
+        onFrequencyChange(newFrequency);
+    }
   };
 
   const handleFieldChange = (
@@ -248,7 +259,7 @@ tags: ${entryToExport.tags}
                   ) : (
                       <>
                            <CheckCircle className="w-4 h-4 text-green-500"/>
-                          <span>Saved</span>
+                          <span>Saved at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </>
                   )}
               </div>
@@ -310,7 +321,7 @@ tags: ${entryToExport.tags}
                   <Button
                     key={catKey}
                     variant={category === catKey ? 'default' : 'outline'}
-                    onClick={() => handleCategoryChange(catKey)}
+                    onClick={() => handleCategoryButtonClick(catKey)}
                     className="flex items-center justify-start gap-2 h-auto py-2"
                   >
                     <CatIcon className="w-4 h-4 shrink-0" />
@@ -327,7 +338,7 @@ tags: ${entryToExport.tags}
             <Label className="mb-2 block">Reflection Frequency</Label>
               <div className="flex items-center gap-2">
                   {(['daily', 'weekly', 'monthly'] as ReflectionFrequency[]).map(freq => (
-                      <Button key={freq} variant={editorState.frequency === freq ? 'default' : 'outline'} onClick={() => handleFrequencyChange(freq)} className="capitalize flex-1">
+                      <Button key={freq} variant={editorState.frequency === freq ? 'default' : 'outline'} onClick={() => handleFrequencyButtonClick(freq)} className="capitalize flex-1">
                           {freq}
                       </Button>
                   ))}
@@ -610,34 +621,49 @@ const TrashView = ({
 const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 
 export const HabitJournal = forwardRef((props, ref) => {
-  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, selectedEntry, setSelectedEntry, createNewEntry } = useJournal();
+  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, findOrCreateEntry, isLoaded } = useJournal();
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortMode, setSortMode] = useState<SortMode>('date-desc');
   const { toast } = useToast();
+  
+  // Editor state
+  const [currentDate, setCurrentDate] = useState(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]);
+  const [currentCategory, setCurrentCategory] = useState<JournalCategory>('Growth & Challenge Reflection');
+  const [currentFrequency, setCurrentFrequency] = useState<ReflectionFrequency>('daily');
+  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
 
   useImperativeHandle(ref, () => ({
-    createNewEntry: handleNewEntry,
+    createNewEntry: () => {
+        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        setCurrentDate(today);
+        setCurrentCategory('Growth & Challenge Reflection');
+        setCurrentFrequency(getFrequencyForDate(new Date()));
+        setViewMode('entries');
+    },
   }));
   
-  const handleSelectEntry = useCallback((entry: JournalEntry) => {
-    setViewMode('entries');
-    setSelectedEntry(entry);
-  }, [setSelectedEntry]);
-
-  const handleNewEntry = useCallback(() => {
-    setViewMode('entries');
-    setSelectedEntry(createNewEntry());
-  }, [createNewEntry, setSelectedEntry]);
+  useEffect(() => {
+    if (isLoaded) {
+      setCurrentFrequency(getFrequencyForDate(new Date(currentDate)));
+    }
+  }, [currentDate, isLoaded]);
 
   useEffect(() => {
-    if (!selectedEntry && entries.length > 0) {
-      setSelectedEntry(entries.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]);
-    } else if (!selectedEntry && entries.length === 0) {
-      handleNewEntry();
+    if(isLoaded) {
+      const entry = findOrCreateEntry(currentDate, currentCategory, currentFrequency);
+      setSelectedEntry(entry);
     }
-  }, [entries, selectedEntry, handleNewEntry, setSelectedEntry]);
+  }, [isLoaded, currentDate, currentCategory, currentFrequency, findOrCreateEntry, entries]);
 
+
+  const handleSelectFromList = useCallback((entry: JournalEntry) => {
+    setViewMode('entries');
+    setCurrentDate(entry.date);
+    setCurrentCategory(entry.category);
+    setCurrentFrequency(entry.frequency);
+  }, []);
+  
   const handleSave = useCallback((entryToSave: JournalEntry) => {
     if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim() && !entryToSave.affirmations.some(a => a.trim())) {
       toast({
@@ -652,8 +678,7 @@ export const HabitJournal = forwardRef((props, ref) => {
     const isNew = entryToSave.id.startsWith('new-');
     
     if (isNew) {
-      savedEntry = { ...entryToSave, id: `${entryToSave.date}-${Date.now()}` };
-      addEntry(savedEntry);
+      savedEntry = addEntry(entryToSave);
     } else {
       updateEntry(entryToSave.id, entryToSave);
     }
@@ -673,10 +698,7 @@ export const HabitJournal = forwardRef((props, ref) => {
   }, [deleteFromTrashPermanently, toast]);
 
   const handleDelete = useCallback((id: string) => {
-    const entryWasSelected = selectedEntry?.id === id;
     const entryData = entries.find(e => e.id === id);
-    const entryToDeleteIndex = entries.findIndex(e => e.id === id);
-
     deleteEntry(id);
     
     toast({
@@ -696,19 +718,15 @@ export const HabitJournal = forwardRef((props, ref) => {
       ) : undefined,
     });
     
-    if (entryWasSelected) {
-       const remainingEntries = entries.filter(e => e.id !== id);
-       if (remainingEntries.length > 0) {
-            const newIndex = Math.min(entryToDeleteIndex, remainingEntries.length - 1);
-            setSelectedEntry(remainingEntries[newIndex]);
-        } else {
-            handleNewEntry();
-        }
+    if (selectedEntry?.id === id) {
+       const newEntry = findOrCreateEntry(currentDate, currentCategory, currentFrequency);
+       setSelectedEntry(newEntry);
     }
-  }, [deleteEntry, restoreEntry, toast, selectedEntry, entries, setSelectedEntry, handleNewEntry]);
+  }, [deleteEntry, restoreEntry, toast, selectedEntry, entries, findOrCreateEntry, currentDate, currentCategory, currentFrequency]);
 
   const filteredAndSortedEntries = useMemo(() => {
     const filtered = entries.filter(entry => {
+        if (entry.id.startsWith('new-')) return false; // Don't show unsaved drafts
         const query = searchQuery.toLowerCase();
         return (
             entry.category.toLowerCase().includes(query) ||
@@ -752,9 +770,6 @@ export const HabitJournal = forwardRef((props, ref) => {
                         <Button variant="ghost" size="sm" onClick={() => setViewMode('entries')} className={cn(viewMode === 'entries' && 'bg-background font-semibold')}>Entries</Button>
                         <Button variant="ghost" size="sm" onClick={() => setViewMode('trash')} className={cn(viewMode === 'trash' && 'bg-background font-semibold')}>Trash ({trashedEntries.length})</Button>
                     </div>
-                  <Button variant="ghost" size="sm" onClick={handleNewEntry}>
-                    <PlusCircle className="mr-2 h-4 w-4" /> New
-                  </Button>
                 </div>
                 {viewMode === 'entries' && (
                     <div className='flex gap-2 items-center'>
@@ -788,27 +803,24 @@ export const HabitJournal = forwardRef((props, ref) => {
             </div>
             <Separator className="my-2"/>
             <div className="flex-grow mt-2 min-h-0">
-                {viewMode === 'entries' ? <ListView entries={filteredAndSortedEntries} selectedEntry={selectedEntry} onSelect={handleSelectEntry} onDelete={handleDelete} /> : <TrashView trashedEntries={trashedEntries} onRestore={handleRestore} onDeletePermanently={handleDeleteFromTrash} onEmptyTrash={emptyTrash} />}
+                {viewMode === 'entries' ? <ListView entries={filteredAndSortedEntries} selectedEntry={selectedEntry} onSelect={handleSelectFromList} onDelete={handleDelete} /> : <TrashView trashedEntries={trashedEntries} onRestore={handleRestore} onDeletePermanently={handleDeleteFromTrash} onEmptyTrash={emptyTrash} />}
             </div>
           </div>
           <div className="lg:col-span-2 bg-background rounded-lg border">
             {selectedEntry && viewMode === 'entries' ? (
-              <EntryEditor entry={selectedEntry} onSave={handleSave} onDelete={handleDelete} />
+              <EntryEditor 
+                entry={selectedEntry} 
+                onSave={handleSave} 
+                onDelete={handleDelete}
+                onCategoryChange={setCurrentCategory}
+                onFrequencyChange={setCurrentFrequency}
+               />
             ) : (
               <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 {viewMode === 'entries' ? (
                     <>
-                        {entries.length === 0 && !selectedEntry ? (
-                            <>
-                                <PlusCircle className="w-8 h-8 mb-2" />
-                                <p>Create your first journal entry.</p>
-                            </>
-                        ) : (
-                             <>
-                                <BookMarked className="w-8 h-8 mb-2" />
-                                <p>Select an entry or create a new one.</p>
-                            </>
-                        )}
+                        <BookMarked className="w-8 h-8 mb-2" />
+                        <p>Select an entry to view or edit.</p>
                     </>
                 ) : (
                     <>
