@@ -34,7 +34,7 @@ import { Slider } from '../ui/slider';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit } from '@/hooks/use-journal';
-import { journalConfig } from '@/lib/journal-config';
+import { journalConfig, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 
 export const JournalEditor = memo(({
@@ -385,6 +385,9 @@ tags: ${entryToExport.tags}
                 {relevantHabits.map(habit => {
                   if (!habit) return null;
                   const habitCheckboxId = `habit-${habit.id}-${entry.id}`;
+                  const Icon = allHabits[habit.id]?.icon;
+                  if (!Icon) return null;
+
                   return (
                      <div key={habit.id} className="flex items-center">
                       <Label
@@ -396,7 +399,7 @@ tags: ${entryToExport.tags}
                           checked={todaysHabits.includes(habit.id)}
                           onCheckedChange={checked => handleHabitChange(habit.id, !!checked)}
                          />
-                        <habit.icon className="w-4 h-4 text-muted-foreground" />
+                        <Icon className="w-4 h-4 text-muted-foreground" />
                         <span>{habit.label}</span>
                       </Label>
                     </div>
