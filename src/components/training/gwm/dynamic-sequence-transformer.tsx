@@ -38,7 +38,14 @@ const mathTasks = [
   { id: 'differences', label: "State the difference between each consecutive pair of numbers." }
 ];
 
-export function DynamicSequenceTransformer() {
+type Difficulty = 'Easy' | 'Medium' | 'Hard';
+
+interface Props {
+  difficulty?: Difficulty;
+  onComplete?: () => void;
+}
+
+export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }: Props) {
   const [level, setLevel] = useState(1);
   const [sequence, setSequence] = useState('');
   const [task, setTask] = useState<(typeof neutralTasks)[0] | (typeof mathTasks)[0]>(neutralTasks[0]);
@@ -52,9 +59,19 @@ export function DynamicSequenceTransformer() {
 
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
+
+  const getSequenceLength = useCallback((currentLevel: number) => {
+    const baseLength = currentLevel + 2;
+    switch(difficulty) {
+        case 'Easy': return baseLength;
+        case 'Medium': return baseLength + 1;
+        case 'Hard': return baseLength + 2;
+        default: return baseLength + 1;
+    }
+  }, [difficulty]);
   
   const startLevel = useCallback((newLevel: number) => {
-    const seqLength = newLevel + 3;
+    const seqLength = getSequenceLength(newLevel);
     const newSequence = currentMode === 'math' ? generateMathSequence(seqLength) : generateNeutralSequence(seqLength);
     const newTask = currentMode === 'math' ? mathTasks[Math.floor(Math.random() * mathTasks.length)] : neutralTasks[Math.floor(Math.random() * neutralTasks.length)];
     
@@ -68,7 +85,7 @@ export function DynamicSequenceTransformer() {
     setTimeout(() => {
       setGameState('answering');
     }, 4000); // 4 seconds to memorize
-  }, [currentMode]);
+  }, [currentMode, getSequenceLength]);
   
   useEffect(() => {
     if (isLoaded) {
@@ -118,8 +135,17 @@ export function DynamicSequenceTransformer() {
     const time = (Date.now() - startTime) / 1000;
     
     if (userAnswer.toUpperCase().trim() === correctAnswer) {
-      setFeedback('Correct! Next level.');
       logGameResult('Gwm', currentMode, { score: level * 10, time });
+      
+      if(onComplete) {
+        setFeedback('Correct! Alarm dismissed.');
+        setTimeout(() => {
+            onComplete();
+        }, 1500)
+        return;
+      }
+      
+      setFeedback('Correct! Next level.');
       setTimeout(() => {
         const nextLevel = level + 1;
         setLevel(nextLevel);
