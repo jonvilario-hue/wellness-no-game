@@ -11,11 +11,14 @@ import type { DailyCircuitOutput } from '@/ai/flows';
 import { domainIcons } from '../icons';
 import { Skeleton } from '../ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 export function DailyChallenge() {
   const [circuit, setCircuit] = useState<DailyCircuitOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { organicGrowth } = useTheme();
 
   useEffect(() => {
     startTransition(async () => {
@@ -82,7 +85,8 @@ export function DailyChallenge() {
   }
 
   return (
-    <Card className="bg-primary/5 border-primary/20 hover:shadow-lg transition-shadow duration-300">
+    <Card className="bg-primary/5 border-primary/20 hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader className="text-center">
         <CardTitle className="font-headline text-2xl flex items-center justify-center gap-2">
             <Zap className="w-6 h-6 text-primary"/>
