@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass, BarChart2 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +14,7 @@ import { Timer } from '@/components/time/timer';
 import { Stopwatch } from '@/components/time/stopwatch';
 import { AlarmClock } from '@/components/time/alarm-clock';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { SleepCycleTracker } from '@/components/time/sleep-cycle-tracker';
 
 export default function SettingsPage() {
     return (
@@ -53,7 +54,10 @@ export default function SettingsPage() {
                            <Palette className="h-4 w-4"/> Appearance
                         </TabsTrigger>
                          <TabsTrigger value="sleep" className="justify-start gap-2">
-                           <Moon className="h-4 w-4"/> Sleep & Alarms
+                           <BarChart2 className="h-4 w-4"/> Sleep
+                        </TabsTrigger>
+                         <TabsTrigger value="alarms" className="justify-start gap-2">
+                           <Moon className="h-4 w-4"/> Alarms
                         </TabsTrigger>
                         <TabsTrigger value="pomodoro" className="justify-start gap-2">
                            <CirclePlay className="h-4 w-4"/> Pomodoro
@@ -80,6 +84,9 @@ export default function SettingsPage() {
                            <AppearanceSettings />
                         </TabsContent>
                          <TabsContent value="sleep">
+                           <SleepCycleTracker />
+                        </TabsContent>
+                        <TabsContent value="alarms">
                            <AlarmClock />
                         </TabsContent>
                         <TabsContent value="pomodoro">
