@@ -1,67 +1,106 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, RotateCcw, Forward, Coffee } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Play, Pause, RotateCcw, Forward, Settings, Check } from 'lucide-react';
+import { usePomodoroStore, type PomodoroMode } from '@/hooks/use-pomodoro-store';
+import { pomodoroPresets, type PomodoroPreset } from '@/data/pomodoro-presets';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-type PomodoroMode = 'work' | 'shortBreak' | 'longBreak';
+const formatTime = (totalSeconds: number) => {
+    const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+};
 
 export function PomodoroTimer() {
-    const [mode, setMode] = useState<PomodoroMode>('work');
-    const [cycles, setCycles] = useState(0);
-    const [isActive, setIsActive] = useState(false);
-    
-    const timeForMode: Record<PomodoroMode, number> = {
-        work: 25 * 60,
-        shortBreak: 5 * 60,
-        longBreak: 15 * 60,
-    };
-    
-    const [timeLeft, setTimeLeft] = useState(timeForMode[mode]);
-    
-    const formatTime = (totalSeconds: number) => {
-        const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-        const seconds = (totalSeconds % 60).toString().padStart(2, '0');
-        return `${minutes}:${seconds}`;
-    };
+  const {
+    preset,
+    mode,
+    timeLeft,
+    cycles,
+    isActive,
+    setPreset,
+    tick,
+    toggleIsActive,
+    resetTimer,
+    skipMode
+  } = usePomodoroStore();
+  
+  const timerRef = useRef<NodeJS.Timeout>();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !audioRef.current) {
+        audioRef.current = new Audio('/alarm.mp3'); 
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isActive && timeLeft > 0) {
+      timerRef.current = setInterval(() => {
+        tick();
+      }, 1000);
+    } else if (isActive && timeLeft <= 0) {
+      if(audioRef.current) audioRef.current.play();
+      skipMode();
+    }
+    return () => clearInterval(timerRef.current);
+  }, [isActive, timeLeft, tick, skipMode]);
+  
+  const handlePresetChange = (presetName: string) => {
+    const newPreset = pomodoroPresets.find(p => p.name === presetName);
+    if(newPreset) {
+      setPreset(newPreset);
+    }
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pomodoro Timer</CardTitle>
-        <CardDescription>Break down your work into focused intervals, separated by short breaks.</CardDescription>
+        <div className="flex justify-between items-start">
+            <div>
+                <CardTitle>Pomodoro Timer</CardTitle>
+                <CardDescription>Break down your work into focused intervals.</CardDescription>
+            </div>
+            <Select value={preset.name} onValueChange={handlePresetChange}>
+                <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Select a preset" />
+                </SelectTrigger>
+                <SelectContent>
+                    {pomodoroPresets.map(p => (
+                        <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6 flex flex-col items-center">
         
-         <Tabs value={mode} onValueChange={(value) => setMode(value as PomodoroMode)} className="w-full max-w-sm">
-            <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="work">Focus</TabsTrigger>
-                <TabsTrigger value="shortBreak">Short Break</TabsTrigger>
-                <TabsTrigger value="longBreak">Long Break</TabsTrigger>
-            </TabsList>
-        </Tabs>
-
         <div className="font-mono text-8xl md:text-9xl tracking-tighter w-full text-center py-4 rounded-lg">
             {formatTime(timeLeft)}
         </div>
 
         <div className="flex gap-4">
-            <Button onClick={() => setIsActive(!isActive)} size="lg" className="w-40 text-2xl h-16 rounded-2xl">
+            <Button onClick={toggleIsActive} size="lg" className="w-40 text-2xl h-16 rounded-2xl">
                 {isActive ? <Pause className="w-8 h-8"/> : <Play className="w-8 h-8"/>}
                 <span className="ml-2">{isActive ? 'Pause' : 'Start'}</span>
             </Button>
-            <Button variant="ghost" size="icon" className="h-16 w-16" title="Skip to next phase">
+            <Button onClick={resetTimer} variant="ghost" size="icon" className="h-16 w-16" title="Reset Timer">
+                 <RotateCcw className="w-8 h-8 text-muted-foreground"/>
+            </Button>
+            <Button onClick={skipMode} variant="ghost" size="icon" className="h-16 w-16" title="Skip to next phase">
                 <Forward className="w-8 h-8 text-muted-foreground"/>
             </Button>
         </div>
       </CardContent>
        <CardFooter className="flex-col gap-2 text-center text-muted-foreground">
-        <p>You've completed {cycles} focus sessions today.</p>
-        <p className="text-xs">This feature is in development. Pomodoro cycles are not yet automated.</p>
+        <p className="font-semibold">
+          {cycles} / {preset.cyclesUntilLongBreak} focus sessions completed
+        </p>
+        <p className="text-sm">Current Mode: <span className="font-semibold capitalize text-primary">{mode === 'work' ? 'Focus' : mode === 'shortBreak' ? 'Short Break' : 'Long Break'}</span></p>
       </CardFooter>
     </Card>
   );
