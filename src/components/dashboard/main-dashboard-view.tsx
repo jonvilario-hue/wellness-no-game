@@ -12,12 +12,11 @@ import { ChcDomainCard } from './chc-domain-card';
 import { cn } from '@/lib/utils';
 
 export function MainDashboardView() {
-  const [view, setView] = useState<ViewMode>('efficiency');
-  type ViewMode = 'efficiency' | 'profile';
+  const [view, setView] = useState<'efficiency' | 'profile'>('efficiency');
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
-      <Tabs defaultValue="efficiency" onValueChange={(value) => setView(value as ViewMode)} value={view}>
+      <Tabs defaultValue="efficiency" onValueChange={(value) => setView(value as 'efficiency' | 'profile')}>
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="space-y-1.5">
               <CardTitle className="font-headline">
@@ -55,10 +54,10 @@ export function MainDashboardView() {
           </TooltipProvider>
         </CardHeader>
         
-        <TabsContent value="efficiency" key="efficiency">
+        <TabsContent value="efficiency">
             <CognitiveEfficiency />
         </TabsContent>
-        <TabsContent value="profile" key="profile">
+        <TabsContent value="profile">
           <CardContent className="space-y-4">
             <ChcProfileOverview />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">

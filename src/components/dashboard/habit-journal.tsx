@@ -24,7 +24,7 @@ import {
   ArrowDownUp,
   AlertTriangle,
 } from 'lucide-react';
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -454,7 +454,7 @@ const groupEntriesByDate = (entries: JournalEntry[]) => {
   }, {} as Record<string, JournalEntry[]>);
 };
 
-const JournalSidebar = ({ 
+const JournalSidebar = memo(({ 
     onSelectEntry, 
     onDeleteEntry,
     selectedEntry,
@@ -703,7 +703,8 @@ const JournalSidebar = ({
             </div>
         </div>
     );
-}
+});
+JournalSidebar.displayName = 'JournalSidebar';
 
 export function HabitJournal() {
   const { entries, addEntry, updateEntry, deleteEntry, findOrCreateEntry, isLoaded, setSelectedEntry: setGlobalSelectedEntry, selectedEntry: globalSelectedEntry } = useJournal();
@@ -749,6 +750,12 @@ export function HabitJournal() {
     const isNew = entryToSave.id.startsWith('new-');
     
     if (isNew) {
+      const hasContent = entryToSave.field1 || entryToSave.field2 || entryToSave.field3 || entryToSave.affirmations.some(a => a);
+      if (!hasContent) {
+          // It's a new, empty entry. Don't add it to the main list.
+          // The editor will hold its state. If the user navigates away, it's lost, which is OK.
+          return { success: false, entry: null };
+      }
       savedEntry = addEntry(entryToSave);
     } else {
       updateEntry(entryToSave.id, entryToSave);
@@ -829,7 +836,3 @@ export function HabitJournal() {
 };
 
 HabitJournal.displayName = 'HabitJournal';
-
-    
-
-    
