@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DomainStreak, type DomainStreakProps } from './domain-streak';
 import { useState, useEffect } from 'react';
 import { useJournal } from '@/hooks/use-journal';
-import { allHabits, journalConfig, type JournalCategory, type HabitId } from '@/lib/journal-config';
+import { allHabits, journalConfig, type JournalCategory, type HabitId, type Habit } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -133,7 +133,7 @@ export function HabitTracker() {
                               <AccordionContent>
                                 <div className="space-y-2 pl-2">
                                   {categoryHabits.map(habit => (
-                                    <HabitItem 
+                                    habit && <HabitItem 
                                       key={habit.id} 
                                       habit={habit}
                                       isDone={todaysHabits.has(habit.id)}

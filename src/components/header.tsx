@@ -17,13 +17,13 @@ export function Header() {
         </Link>
         <div className="flex-1 flex justify-end items-center gap-2">
            <Button asChild variant="ghost" size="icon">
-            <Link href="/calendar">
-              <CalendarDays className="h-5 w-5" />
+            <Link href="/settings">
+              <Settings className="h-5 w-5" />
             </Link>
           </Button>
           <Button asChild variant="ghost" size="icon">
-            <Link href="/settings">
-              <Settings className="h-5 w-5" />
+            <Link href="/calendar">
+              <CalendarDays className="h-5 w-5" />
             </Link>
           </Button>
         </div>
