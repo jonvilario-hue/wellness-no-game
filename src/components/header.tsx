@@ -1,12 +1,42 @@
-import { BrainCircuit, Settings, CalendarDays, Clock } from 'lucide-react';
+
+'use client';
+
+import { BrainCircuit, Settings, CalendarDays, Clock, Sigma } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useTrainingFocus } from '@/hooks/use-training-focus';
 
 export function Header() {
+  const { focus, setFocus, isLoaded } = useTrainingFocus();
+
   return (
     <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
-        <div className="flex-1 flex justify-start">
+        <div className="flex-1 flex justify-start items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" disabled={!isLoaded}>
+                  {focus === 'math' ? <Sigma className="h-5 w-5" /> : <BrainCircuit className="h-5 w-5" />}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Training Focus</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={focus} onValueChange={(value) => setFocus(value as 'neutral' | 'math')}>
+                  <DropdownMenuRadioItem value="neutral">Core Thinking</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="math">Math Reasoning</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
            <Button asChild variant="ghost" size="icon">
             <Link href="/time">
               <Clock className="h-5 w-5" />
