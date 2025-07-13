@@ -481,22 +481,30 @@ tags: ${entry.tags}
                   {config.habits.map(habitId => {
                     const habit = allHabits[habitId];
                     if (!habit) return null;
+                    const habitCheckboxId = `habit-${habit.id}-${entry.id}`;
                     return (
-                       <Label
-                        key={habit.id}
-                        htmlFor={`habit-${habit.id}-${entry.id}`}
-                        className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
-                      >
+                       <div key={habit.id} className="flex items-center">
                         <input
                           type="checkbox"
-                          id={`habit-${habit.id}-${entry.id}`}
+                          id={habitCheckboxId}
                           checked={!!editorState.habits[habit.id]}
                           onChange={e => handleHabitChange(habit.id, e.target.checked)}
-                          className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
+                          className="hidden"
                         />
-                        <habit.icon className="w-4 h-4 text-muted-foreground" />
-                        <span>{habit.label}</span>
-                      </Label>
+                         <Label
+                          htmlFor={habitCheckboxId}
+                          className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
+                        >
+                           <span className={cn(
+                            "w-4 h-4 rounded-sm border border-primary flex items-center justify-center shrink-0",
+                            !!editorState.habits[habit.id] && "bg-primary text-primary-foreground"
+                           )}>
+                            {!!editorState.habits[habit.id] && <CheckCircle className="w-3 h-3" />}
+                           </span>
+                          <habit.icon className="w-4 h-4 text-muted-foreground" />
+                          <span>{habit.label}</span>
+                        </Label>
+                      </div>
                     );
                   })}
                 </div>

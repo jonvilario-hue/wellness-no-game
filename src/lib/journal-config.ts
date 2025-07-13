@@ -11,7 +11,7 @@ import {
   Smile,
   Target,
   Waves,
-  CheckSquare,
+  CheckCircle,
   Lightbulb,
   Repeat,
   Sparkles,
@@ -66,7 +66,7 @@ export const allHabits: Record<HabitId, Habit> = {
   // Positivity & Strengths
   note_gratitude: { id: 'note_gratitude', label: 'Wrote something I appreciated about today', icon: Leaf },
   affirm_strength: { id: 'affirm_strength', label: 'Noted a personal strength I used', icon: Sparkles },
-  acknowledge_progress: { id: 'acknowledge_progress', label: 'Acknowledged a moment of progress or effort', icon: CheckSquare },
+  acknowledge_progress: { id: 'acknowledge_progress', label: 'Acknowledged a moment of progress or effort', icon: CheckCircle },
 
   // Emotion & Mood Processing
   name_emotion: { id: 'name_emotion', label: 'Labeled a core emotion I felt today', icon: MessageSquare },

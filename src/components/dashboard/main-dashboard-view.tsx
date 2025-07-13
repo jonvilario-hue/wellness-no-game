@@ -50,10 +50,10 @@ export function MainDashboardView() {
           </TooltipProvider>
         </CardHeader>
         
-        <TabsContent value="efficiency">
+        <TabsContent value="efficiency" key="efficiency">
             <CognitiveEfficiency />
         </TabsContent>
-        <TabsContent value="profile">
+        <TabsContent value="profile" key="profile">
           <CardContent className="space-y-4">
             <ChcProfileOverview />
             <ChcDomainDashboard />
