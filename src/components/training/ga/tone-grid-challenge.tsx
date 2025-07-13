@@ -203,7 +203,7 @@ export function ToneGridChallenge() {
     <Card className="w-full max-w-2xl text-center">
       <CardHeader>
         <CardTitle>(Ga) Tone Grid Challenge</CardTitle>
-        <CardDescription>Listen to the sequence of tones, then follow the instructions.</CardDescription>
+        <CardDescription>Either repeat the sequence you hear, or identify if a target tone was present.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         <div className="w-full flex justify-between font-mono text-lg">
