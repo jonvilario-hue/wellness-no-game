@@ -21,6 +21,37 @@ export function TrainingSettings() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+                <div>
+                  <Label className="text-base font-semibold">Training Focus</Label>
+                  <p className="text-sm text-muted-foreground mb-4">Choose your primary focus to tailor the content of the games.</p>
+                  <RadioGroup value={focus} onValueChange={(value) => setFocus(value as any)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div>
+                        <Label htmlFor="core-thinking" className="flex items-start gap-4 p-4 rounded-lg border cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary">
+                             <RadioGroupItem value="neutral" id="core-thinking" className="mt-1"/>
+                             <div className="space-y-1">
+                                <div className="font-semibold flex items-center gap-2">
+                                    <BrainCircuit className="w-5 h-5"/> Core Thinking
+                                </div>
+                                <p className="text-xs text-muted-foreground">Train cognitive skills with abstract, symbolic puzzles. This is the standard, cognition-first experience.</p>
+                             </div>
+                        </Label>
+                     </div>
+                     <div>
+                        <Label htmlFor="math-reasoning" className="flex items-start gap-4 p-4 rounded-lg border cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary">
+                             <RadioGroupItem value="math" id="math-reasoning" className="mt-1"/>
+                             <div className="space-y-1">
+                                <div className="font-semibold flex items-center gap-2">
+                                    <Sigma className="w-5 h-5"/> Math Reasoning
+                                </div>
+                                <p className="text-xs text-muted-foreground">Train cognitive skills and mathematical logic simultaneously with math-integrated puzzles.</p>
+                             </div>
+                        </Label>
+                     </div>
+                  </RadioGroup>
+                </div>
+
+                <Separator />
+                
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                     <Label htmlFor="adaptive-difficulty-switch" className="font-medium">
                        Allow Adaptive Difficulty
