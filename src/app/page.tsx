@@ -22,15 +22,7 @@ import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
 import { TimeToolsCard } from '@/components/dashboard/time-tools-card';
 
 function DashboardContent() {
-  const journalContainerRef = useRef<HTMLDivElement>(null);
   const { settings } = useDashboardSettings();
-  const { setSelectedEntry, createNewEntry } = useJournal();
-
-
-  const handleNewNoteClick = () => {
-    journalContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
-    setSelectedEntry(createNewEntry());
-  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -64,18 +56,11 @@ function DashboardContent() {
              {settings.timeTools && <TimeToolsCard />}
           </div>
 
-          <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalContainerRef}>
+          <div className="grid grid-cols-1 md:col-span-2 gap-6">
             {settings.habitJournal && <HabitJournal />}
           </div>
         </div>
       </main>
-      <Button 
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
-        onClick={handleNewNoteClick}
-        aria-label="Create new journal entry"
-      >
-        <Plus className="h-8 w-8" />
-      </Button>
     </div>
   );
 }

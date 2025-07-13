@@ -52,6 +52,10 @@ export function HabitJournal() {
   const handleSelectFromList = useCallback((entry: JournalEntry) => {
     setSelectedEntry(entry);
   }, [setSelectedEntry]);
+  
+  const handleNewEntry = useCallback(() => {
+    setSelectedEntry(createNewEntry());
+  }, [setSelectedEntry, createNewEntry]);
 
   const handleCategoryChange = useCallback((newCategory: JournalCategory) => {
     if (activeEntry) {
@@ -133,6 +137,7 @@ export function HabitJournal() {
             <JournalSidebar 
                 onSelectEntry={handleSelectFromList} 
                 onDeleteEntry={handleDelete}
+                onNewEntry={handleNewEntry}
                 selectedEntry={activeEntry}
             />
 

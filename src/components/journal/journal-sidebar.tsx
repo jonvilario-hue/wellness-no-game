@@ -8,6 +8,7 @@ import {
     Search,
     ArrowDownUp,
     AlertTriangle,
+    PlusCircle,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -42,10 +43,12 @@ import { cn } from '@/lib/utils';
 export const JournalSidebar = memo(({ 
     onSelectEntry, 
     onDeleteEntry,
+    onNewEntry,
     selectedEntry,
 }: {
     onSelectEntry: (entry: JournalEntry) => void,
     onDeleteEntry: (id: string) => void,
+    onNewEntry: () => void,
     selectedEntry: JournalEntry | null,
 }) => {
     const [viewMode, setViewMode] = useState<'entries' | 'trash'>('entries');
@@ -256,9 +259,12 @@ export const JournalSidebar = memo(({
     return (
         <div className="lg:col-span-1 bg-muted/30 rounded-lg p-3 flex flex-col h-full">
             <div className="flex-shrink-0 space-y-2">
+                <Button className="w-full" onClick={onNewEntry}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> New Entry
+                </Button>
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => setViewMode('entries')} className={cn(viewMode === 'entries' && 'bg-background font-semibold')}>Entries</Button>
+                        <Button variant="ghost" size="sm" onClick={() => setViewMode('entries')} className={cn(viewMode === 'entries' && 'bg-background font-semibold')}>Entries ({entries.length})</Button>
                         <Button variant="ghost" size="sm" onClick={() => setViewMode('trash')} className={cn(viewMode === 'trash' && 'bg-background font-semibold')}>Trash ({trashedEntries.length})</Button>
                     </div>
                 </div>
