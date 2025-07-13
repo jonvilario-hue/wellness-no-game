@@ -242,10 +242,15 @@ export function HabitJournal() {
     };
 
     const handleHabitChange = (habitId: HabitId, checked: boolean) => {
-      setEditorState(prevState => ({
-        ...prevState,
-        habits: { ...prevState.habits, [habitId]: checked ? 'done' : null },
-      }));
+      setEditorState(prevState => {
+        const newHabits = { ...prevState.habits };
+        if (checked) {
+          newHabits[habitId] = 'done';
+        } else {
+          delete newHabits[habitId];
+        }
+        return { ...prevState, habits: newHabits };
+      });
     };
 
     const handleAffirmationChange = (index: number, value: string) => {
@@ -676,5 +681,3 @@ tags: ${entry.tags}
     </Card>
   );
 }
-
-    

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { JournalCategory, HabitId } from '@/lib/journal-config';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
@@ -137,12 +137,22 @@ const useJournal = () => {
     const getEntry = (id: string) => {
         return entries.find(entry => entry.id === id);
     };
+    
+    const getCompletedHabitsForDay = useCallback((date: string) => {
+        const completed = new Set<string>();
+        entries.forEach(entry => {
+            if (entry.date === date) {
+                for (const habitId in entry.habits) {
+                    if (entry.habits[habitId as HabitId] === 'done') {
+                        completed.add(habitId);
+                    }
+                }
+            }
+        });
+        return completed;
+    }, [entries]);
 
-    return { entries, trashedEntries, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash };
+    return { entries, trashedEntries, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash, getCompletedHabitsForDay };
 };
 
 export { useJournal };
-
-    
-
-    

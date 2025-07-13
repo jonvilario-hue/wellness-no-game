@@ -2,10 +2,14 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target, Zap, BrainCircuit, Lightbulb, TrendingUp } from 'lucide-react';
+import { Target, Zap, TrendingUp, Lightbulb, CheckSquare, ListTodo } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DomainStreak, type DomainStreakProps } from './domain-streak';
 import { useState, useEffect } from 'react';
+import { useJournal } from '@/hooks/use-journal';
+import { allHabits, type Habit } from '@/lib/journal-config';
+import { cn } from '@/lib/utils';
+import { ScrollArea } from '../ui/scroll-area';
 
 const overallStats = {
   totalSessions: 42,
@@ -25,8 +29,39 @@ const domainStreaksData: DomainStreakProps[] = [
 ].sort((a, b) => b.streak - a.streak);
 
 
+const HabitItem = ({ habit, isDone }: { habit: Habit; isDone: boolean }) => {
+  const Icon = habit.icon;
+  return (
+    <div className={cn(
+      "flex items-center gap-3 p-3 rounded-lg transition-all",
+      isDone ? 'bg-primary/10' : 'bg-muted/50'
+    )}>
+      <div className={cn(
+        "p-1.5 rounded-md",
+        isDone ? 'bg-primary/20' : 'bg-background/50'
+      )}>
+        <Icon className={cn("w-5 h-5", isDone ? 'text-primary' : 'text-muted-foreground')} />
+      </div>
+      <span className={cn(
+        "flex-grow font-medium text-sm",
+        isDone ? 'text-primary-foreground' : 'text-muted-foreground'
+      )}>{habit.label}</span>
+      {isDone && <CheckSquare className="w-5 h-5 text-primary shrink-0"/>}
+    </div>
+  );
+};
+
+
 export function HabitTracker() {
     const [insight, setInsight] = useState('');
+    const { getCompletedHabitsForDay } = useJournal();
+    const [completedToday, setCompletedToday] = useState(new Set<string>());
+
+    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
+    useEffect(() => {
+        setCompletedToday(getCompletedHabitsForDay(today));
+    }, [getCompletedHabitsForDay, today]);
 
     useEffect(() => {
         const topStreak = domainStreaksData.find(d => d.isTop);
@@ -34,6 +69,10 @@ export function HabitTracker() {
             setInsight(`Your ${topStreak.name} streak is on fire! This consistency sharpens your logical decision-making skills.`);
         }
     }, []);
+
+    const allHabitList = Object.values(allHabits);
+    const habitsDone = allHabitList.filter(h => completedToday.has(h.id));
+    const habitsToDo = allHabitList.filter(h => !completedToday.has(h.id));
 
 
   return (
@@ -46,11 +85,37 @@ export function HabitTracker() {
         <CardDescription>Track your consistency and build lasting cognitive habits.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="overview">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
+        <Tabs defaultValue="today">
+            <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="today">Today's Habits</TabsTrigger>
                 <TabsTrigger value="streaks">Domain Streaks</TabsTrigger>
+                <TabsTrigger value="overview">Overview</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="today" className="pt-4">
+                <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold">Today's Progress</h3>
+                    <p className="text-sm font-bold text-primary">{habitsDone.length} / {allHabitList.length} Done</p>
+                </div>
+                 <ScrollArea className="h-64 pr-3 -mr-3">
+                    <div className="space-y-2">
+                        {habitsDone.map(habit => <HabitItem key={habit.id} habit={habit} isDone={true} />)}
+                        {habitsToDo.map(habit => <HabitItem key={habit.id} habit={habit} isDone={false} />)}
+                    </div>
+                </ScrollArea>
+                {habitsDone.length === allHabitList.length && (
+                    <p className="text-center text-green-500 font-bold mt-4">All habits completed for today!</p>
+                )}
+            </TabsContent>
+
+            <TabsContent value="streaks" className="space-y-3 pt-4">
+                <ScrollArea className="h-64 pr-3 -mr-3">
+                 {domainStreaksData.map(streak => (
+                    <DomainStreak key={streak.domainKey} {...streak} />
+                 ))}
+                </ScrollArea>
+            </TabsContent>
+
             <TabsContent value="overview" className="space-y-4 pt-4">
                 <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                     <div className="flex items-center gap-3">
@@ -72,11 +137,6 @@ export function HabitTracker() {
                         <span><span className="font-bold text-primary-foreground">Insight:</span> {insight}</span>
                     </p>
                 </div>
-            </TabsContent>
-            <TabsContent value="streaks" className="space-y-3 pt-4">
-                 {domainStreaksData.map(streak => (
-                    <DomainStreak key={streak.domainKey} {...streak} />
-                 ))}
             </TabsContent>
         </Tabs>
       </CardContent>
