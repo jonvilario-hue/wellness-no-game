@@ -78,7 +78,7 @@ function StopwatchInstance({
                     <EditableLabel
                       initialValue={stopwatch.label}
                       onSave={(newLabel) => updateStopwatch(stopwatch.id, { label: newLabel })}
-                      placeholder={`Stopwatch #${stopwatch.id}`}
+                      placeholder={`Stopwatch`}
                       className="w-full"
                     />
                     <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => removeStopwatch(stopwatch.id)}>
@@ -123,25 +123,29 @@ export function Stopwatch() {
     const nextId = useRef(1);
 
     const addStopwatch = () => {
-        const newId = nextId.current++;
-        setStopwatches(prev => [...prev, {
-            id: newId,
-            time: 0,
-            isActive: false,
-            laps: [],
-            startTime: 0,
-            label: `Stopwatch #${newId}`
-        }]);
+        setStopwatches(prev => {
+            const existingNumbers = prev.map(sw => {
+                const match = sw.label.match(/#(\d+)/);
+                return match ? parseInt(match[1], 10) : 0;
+            });
+            let newNumber = 1;
+            while (existingNumbers.includes(newNumber)) {
+                newNumber++;
+            }
+            const newId = nextId.current++;
+            return [...prev, {
+                id: newId,
+                time: 0,
+                isActive: false,
+                laps: [],
+                startTime: 0,
+                label: `Stopwatch #${newNumber}`
+            }];
+        });
     };
 
     const removeStopwatch = (id: number) => {
-        setStopwatches(prev => {
-            const remaining = prev.filter(sw => sw.id !== id);
-            if (remaining.length === 0) {
-                nextId.current = 1; // Reset counter if all are deleted
-            }
-            return remaining;
-        });
+        setStopwatches(prev => prev.filter(sw => sw.id !== id));
     };
 
     const updateStopwatch = useCallback((id: number, newState: Partial<StopwatchState>) => {
@@ -149,7 +153,6 @@ export function Stopwatch() {
     }, []);
 
     useEffect(() => {
-        // Automatically add one stopwatch on initial load if there are none.
         if (stopwatches.length === 0) {
             addStopwatch();
         }

@@ -123,7 +123,7 @@ function TimerInstance({
                     <EditableLabel
                       initialValue={timer.label}
                       onSave={(newLabel) => updateTimer(timer.id, { label: newLabel })}
-                      placeholder={`Timer #${timer.id}`}
+                      placeholder={`Timer`}
                       className="w-full"
                     />
                     <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => removeTimer(timer.id)}>
@@ -167,28 +167,33 @@ export function Timer() {
     const [newTimerDuration, setNewTimerDuration] = useState(300); // 5 minutes in seconds
     const nextId = useRef(1);
 
-    const addTimer = () => {
-        const newId = nextId.current++;
-        setTimers(prev => [...prev, {
-            id: newId,
-            initialTime: newTimerDuration,
-            timeLeft: newTimerDuration,
-            isActive: false,
-            label: newTimerLabel || `Timer #${newId}`
-        }]);
-        // Reset form
+    const addTimer = (initialLabel?: string) => {
+        setTimers(prev => {
+            const existingNumbers = prev.map(t => {
+                const match = t.label.match(/#(\d+)/);
+                return match ? parseInt(match[1], 10) : 0;
+            });
+            let newNumber = 1;
+            while (existingNumbers.includes(newNumber)) {
+                newNumber++;
+            }
+            const newId = nextId.current++;
+            const label = newTimerLabel || initialLabel || `Timer #${newNumber}`;
+            
+            return [...prev, {
+                id: newId,
+                initialTime: newTimerDuration,
+                timeLeft: newTimerDuration,
+                isActive: false,
+                label
+            }];
+        });
         setNewTimerLabel('');
         setNewTimerDuration(300);
     };
 
     const removeTimer = (id: number) => {
-        setTimers(prev => {
-            const remaining = prev.filter(t => t.id !== id);
-            if (remaining.length === 0) {
-                nextId.current = 1; // Reset counter if all are deleted
-            }
-            return remaining;
-        });
+        setTimers(prev => prev.filter(t => t.id !== id));
     };
 
     const updateTimer = useCallback((id: number, newState: Partial<TimerState>) => {
@@ -196,16 +201,8 @@ export function Timer() {
     }, []);
 
     useEffect(() => {
-        // Automatically add one timer on initial load if there are none.
         if (timers.length === 0) {
-             const id = nextId.current++;
-             setTimers([{
-                id,
-                initialTime: 300,
-                timeLeft: 300,
-                isActive: false,
-                label: `Timer #${id}`
-            }]);
+            addTimer('Timer #1');
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -250,7 +247,7 @@ export function Timer() {
                         </div>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={addTimer}>Add Timer</AlertDialogAction>
+                            <AlertDialogAction onClick={() => addTimer()}>Add Timer</AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
