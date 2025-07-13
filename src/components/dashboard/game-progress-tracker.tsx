@@ -1,12 +1,13 @@
 
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Award, Puzzle, TrendingUp, Zap, Calendar, Target, BrainCircuit, Info, Lightbulb, X } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Award, Puzzle, TrendingUp, Zap, Calendar, Target, BrainCircuit, Info, Lightbulb, X, ArrowRight } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 const progressData = {
   puzzlesToday: 12,
@@ -36,7 +37,7 @@ export function GameProgressTracker() {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
+    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Puzzle className="w-5 h-5 text-primary" />
@@ -44,7 +45,7 @@ export function GameProgressTracker() {
         </CardTitle>
         <CardDescription>Track your training performance and skill growth.</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-4 flex-grow">
         <TooltipProvider>
             <div className="space-y-4">
                 <div>
@@ -115,6 +116,13 @@ export function GameProgressTracker() {
             </div>
         )}
       </CardContent>
+       <CardFooter>
+        <Button variant="outline" className="w-full" asChild>
+            <Link href="/calendar">
+                View Calendar <ArrowRight className="ml-2" />
+            </Link>
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
