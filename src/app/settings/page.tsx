@@ -55,13 +55,13 @@ export default function SettingsPage() {
                          <TabsTrigger value="alarms" className="justify-start gap-2">
                            <AlarmClockIcon className="h-4 w-4"/> Alarms
                         </TabsTrigger>
-                        <TabsTrigger value="pomodoro" className="justify-start gap-2" disabled>
+                        <TabsTrigger value="pomodoro" className="justify-start gap-2">
                            <CirclePlay className="h-4 w-4"/> Pomodoro
                         </TabsTrigger>
-                        <TabsTrigger value="timer" className="justify-start gap-2" disabled>
+                        <TabsTrigger value="timer" className="justify-start gap-2">
                            <TimerIcon className="h-4 w-4"/> Timer
                         </TabsTrigger>
-                        <TabsTrigger value="stopwatch" className="justify-start gap-2" disabled>
+                        <TabsTrigger value="stopwatch" className="justify-start gap-2">
                            <Hourglass className="h-4 w-4"/> Stopwatch
                         </TabsTrigger>
                         <TabsTrigger value="account" className="justify-start gap-2" disabled>
