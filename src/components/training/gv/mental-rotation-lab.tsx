@@ -28,6 +28,10 @@ const shapes = [
   [[1,1,0], [0,1,0], [0,1,1]],
   // Complex Asymmetric
   [[1,1,1], [1,0,1], [1,0,0]],
+  // Another L-variant
+  [[1,1,0], [0,1,0], [0,1,0]],
+  // Asymmetric fork
+  [[1,0,1], [1,1,1], [0,1,0]],
 ];
 
 type Grid = number[][];
@@ -55,44 +59,45 @@ const areGridsEqual = (grid1: Grid, grid2: Grid) => {
 const generatePuzzle = (): Puzzle => {
   const baseShape = shapes[Math.floor(Math.random() * shapes.length)];
   
+  // 1. Create the correct answer (a rotated version of the base shape)
   let targetShape = baseShape;
-  const rotations = Math.floor(Math.random() * 4);
+  const rotations = Math.floor(Math.random() * 4); // 0, 1, 2, or 3 rotations
   for (let i = 0; i < rotations; i++) {
     targetShape = rotateGrid(targetShape);
   }
 
-  const options = [targetShape];
+  const options: Grid[] = [targetShape];
   
-  // Add a mirror image distractor
+  // 2. Create a mirror image distractor
   let mirrorImage = flipGridHorizontal(baseShape);
   const mirrorRotations = Math.floor(Math.random() * 4);
   for (let i = 0; i < mirrorRotations; i++) {
     mirrorImage = rotateGrid(mirrorImage);
   }
-  // Ensure the mirror image is not identical to the target shape
-  if (!options.some(opt => areGridsEqual(opt, mirrorImage))) {
+  // Ensure the mirror image is not identical to the target shape (can happen with symmetrical shapes)
+  if (!areGridsEqual(targetShape, mirrorImage)) {
     options.push(mirrorImage);
   }
 
-
-  // Add different shape distractors
-  while (options.length < 4) {
-    let distractor = shapes[Math.floor(Math.random() * shapes.length)];
-    // Ensure distractor is not the same as the base shape
-    if (areGridsEqual(distractor, baseShape)) continue;
+  // 3. Add other shapes as distractors until we have 4 options
+  const availableShapes = shapes.filter(s => !areGridsEqual(s, baseShape));
+  while (options.length < 4 && availableShapes.length > 0) {
+    const distractorIndex = Math.floor(Math.random() * availableShapes.length);
+    let distractor = availableShapes.splice(distractorIndex, 1)[0];
     
     const distractorRotations = Math.floor(Math.random() * 4);
      for (let i = 0; i < distractorRotations; i++) {
         distractor = rotateGrid(distractor);
     }
     
-    // Ensure we don't accidentally create the answer or a duplicate
+    // Final check for duplicates before adding
     const isDuplicate = options.some(opt => areGridsEqual(opt, distractor));
     if (!isDuplicate) {
         options.push(distractor);
     }
   }
   
+  // 4. Shuffle the final options
   options.sort(() => Math.random() - 0.5);
   
   return { baseShape, answer: targetShape, options: options.slice(0, 4) };
@@ -174,7 +179,7 @@ export function MentalRotationLab() {
             <View />
             (Gv) Mental Rotation Lab
         </CardTitle>
-        <CardDescription>Which of the shapes below is a rotated version of the target shape?</CardDescription>
+        <CardDescription>Which of the shapes below is a rotated version of the target shape? Mirrored versions do not count.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         <div className="w-full flex justify-between font-mono">
@@ -212,7 +217,7 @@ export function MentalRotationLab() {
         {feedback && (
           <div className="flex flex-col items-center gap-4 mt-4 text-center animate-in fade-in">
              {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct! Perfect rotation.</p>}
-            {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">That's not a pure rotation. It might be a mirror image.</p>}
+            {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">That's not a pure rotation. It might be a mirror image or a different shape.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>
           </div>
         )}
