@@ -21,6 +21,7 @@ const componentLabels: Record<DashboardComponent, string> = {
   adaptiveDifficulty: 'Adaptive Difficulty',
   habitJournal: 'Habit Journal',
   cognitiveCalendar: 'Cognitive Calendar',
+  timeTools: 'Time & Sleep Tools',
 };
 
 export function DashboardLayoutSettings() {

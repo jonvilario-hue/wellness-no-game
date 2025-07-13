@@ -16,6 +16,7 @@ const defaultSettings = {
   adaptiveDifficulty: true,
   habitJournal: true,
   cognitiveCalendar: true,
+  timeTools: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;

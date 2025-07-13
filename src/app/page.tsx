@@ -19,6 +19,7 @@ import { GameProgressTracker } from '@/components/dashboard/game-progress-tracke
 import { useJournal } from '@/hooks/use-journal';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
+import { TimeToolsCard } from '@/components/dashboard/time-tools-card';
 
 function DashboardContent() {
   const journalContainerRef = useRef<HTMLDivElement>(null);
@@ -57,9 +58,10 @@ function DashboardContent() {
             {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
              {settings.habitTracker && <HabitTracker />}
              {settings.milestoneBadges && <MilestoneBadges />}
+             {settings.timeTools && <TimeToolsCard />}
           </div>
 
           <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalContainerRef}>

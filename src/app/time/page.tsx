@@ -15,7 +15,7 @@ function AlarmTabContent() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Alarms</CardTitle>
+                <CardTitle>Cognitive Alarms</CardTitle>
                 <CardDescription>
                     Set puzzle-based alarms to wake up your mind or structure your day.
                 </CardDescription>
@@ -54,7 +54,7 @@ export default function TimePage() {
                 <div className="flex items-center gap-3">
                     <Clock className="h-7 w-7 text-primary" />
                     <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
-                    Time Tools
+                    Time & Sleep Tools
                     </h1>
                 </div>
                  <div className="flex-1 flex justify-end items-center gap-2">
