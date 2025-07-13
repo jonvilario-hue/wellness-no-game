@@ -30,18 +30,16 @@ export function DailyChallenge() {
 
     if (isPending || !recommendation) {
         return (
-             <Card>
-                <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                           <Skeleton className="h-12 w-12 rounded-lg" />
-                           <div className="space-y-2">
-                                <Skeleton className="h-4 w-[250px]" />
-                                <Skeleton className="h-4 w-[200px]" />
-                           </div>
-                        </div>
-                        <Skeleton className="h-10 w-32" />
+             <Card className="bg-primary/10 border-primary/20">
+                <CardContent className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                       <Skeleton className="h-12 w-12 rounded-lg bg-primary/20" />
+                       <div className="space-y-2">
+                            <Skeleton className="h-4 w-[250px] bg-primary/20" />
+                            <Skeleton className="h-4 w-[200px] bg-primary/20" />
+                       </div>
                     </div>
+                    <Skeleton className="h-10 w-32 bg-primary/20" />
                 </CardContent>
             </Card>
         )
