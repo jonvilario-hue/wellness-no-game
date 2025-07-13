@@ -39,7 +39,7 @@ export function DailyChallenge() {
                             <Skeleton className="h-4 w-[200px] bg-primary/20" />
                        </div>
                     </div>
-                    <Skeleton className="h-10 w-32 bg-primary/20" />
+                    <Skeleton className="h-10 w-32 rounded-md bg-primary/20" />
                 </CardContent>
             </Card>
         )

@@ -21,7 +21,7 @@ import {
   Share,
   MinusCircle,
 } from 'lucide-react';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -107,13 +107,11 @@ export function HabitJournal() {
 
   const handleSave = useCallback((entryToSave: JournalEntry) => {
     if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim()) {
-      if (entryToSave.id.startsWith('new-')) {
-          toast({
-            title: 'Empty Journal',
-            description: 'Please write something before saving.',
-            variant: 'destructive',
-          });
-      }
+      toast({
+        title: 'Empty Journal',
+        description: 'Please write something before saving.',
+        variant: 'destructive',
+      });
       return false;
     }
     const isNew = entryToSave.id.startsWith('new-');
@@ -142,7 +140,7 @@ export function HabitJournal() {
       description: 'You can restore it from the trash.',
       action: (
         <Button
-          onClick={() => handleRestore(id)}
+          onClick={() => restoreEntry(id)}
           variant="outline"
           size="sm"
         >
@@ -155,9 +153,12 @@ export function HabitJournal() {
     if (selectedEntry?.id === id) {
        const remainingEntries = entries.filter(e => e.id !== id);
        if (remainingEntries.length > 0) {
-            // Try to select the next item, or the previous one if it was the last
             const newIndex = Math.min(entryToDeleteIndex, remainingEntries.length - 1);
-            setSelectedEntry(remainingEntries[newIndex]);
+            if(remainingEntries[newIndex]) {
+              setSelectedEntry(remainingEntries[newIndex]);
+            } else {
+              handleNewEntry();
+            }
         } else {
             handleNewEntry();
         }
@@ -182,7 +183,6 @@ export function HabitJournal() {
 
     useEffect(() => {
         const isNew = editorState.id.startsWith('new-');
-        // Do not auto-save new entries. Only auto-save existing entries.
         if (isNew || JSON.stringify(entry) === JSON.stringify(editorState)) {
           return;
         }
@@ -191,7 +191,7 @@ export function HabitJournal() {
         const handler = setTimeout(() => {
           onSave(editorState);
           setSaveStatus('saved');
-        }, 1500); // Debounce time for auto-save
+        }, 1500); 
 
         return () => {
             clearTimeout(handler);
@@ -477,30 +477,26 @@ tags: ${entry.tags}
             {config.habits.length > 0 && (
               <div>
                 <Label>Supporting Habits</Label>
-                <div className="space-y-2 mt-1">
+                <div className="space-y-1 mt-1">
                   {config.habits.map(habitId => {
                     const habit = allHabits[habitId];
                     if (!habit) return null;
                     return (
-                      <div
+                       <Label
                         key={habit.id}
-                        className="flex items-center space-x-2"
+                        htmlFor={`habit-${habit.id}-${entry.id}`}
+                        className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
                       >
-                        <Label
-                          htmlFor={`habit-${habit.id}-${entry.id}`}
-                          className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
-                        >
-                          <input
-                            type="checkbox"
-                            id={`habit-${habit.id}-${entry.id}`}
-                            checked={!!editorState.habits[habit.id]}
-                            onChange={e => handleHabitChange(habit.id, e.target.checked)}
-                            className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
-                          />
-                          <habit.icon className="w-4 h-4 text-muted-foreground" />
-                          <span>{habit.label}</span>
-                        </Label>
-                      </div>
+                        <input
+                          type="checkbox"
+                          id={`habit-${habit.id}-${entry.id}`}
+                          checked={!!editorState.habits[habit.id]}
+                          onChange={e => handleHabitChange(habit.id, e.target.checked)}
+                          className="form-checkbox h-4 w-4 rounded text-primary bg-background border-primary focus:ring-primary"
+                        />
+                        <habit.icon className="w-4 h-4 text-muted-foreground" />
+                        <span>{habit.label}</span>
+                      </Label>
                     );
                   })}
                 </div>
@@ -585,7 +581,7 @@ tags: ${entry.tags}
                           <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{journalConfig[entry.category as JournalCategory]?.title || entry.category}</span></p>
                           <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleRestore(entry.id)}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => restoreEntry(entry.id)}>
                           <ArchiveRestore className="w-4 h-4 text-muted-foreground"/>
                       </Button>
                   </div>
@@ -682,5 +678,3 @@ tags: ${entry.tags}
     </Card>
   );
 }
-
-    

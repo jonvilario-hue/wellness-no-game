@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, BrainCircuit, MemoryStick, Shuffle, Lightbulb, Info, Zap } from 'lucide-react';
+import { TrendingUp, BrainCircuit, MemoryStick, Shuffle, Lightbulb, Info, Zap, Archive } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { Separator } from '../ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
@@ -15,6 +15,7 @@ const efficiencyData = {
     { name: 'Working Memory Span (Gwm)', value: 72, icon: MemoryStick, description: "Dynamic memory span under distraction or dual-tasking." },
     { name: 'Cognitive Switching (EF)', value: 77, icon: Shuffle, description: "Speed and accuracy when switching between tasks." },
     { name: 'Processing Speed (Gs)', value: 88, icon: Zap, description: "How fast simple cognitive tasks can be done accurately." },
+    { name: 'Long-Term Retrieval (Glr)', value: 68, icon: Archive, description: "Efficient access to stored knowledge and patterns." },
   ],
   insight: "Your gains were driven by better interference control during complex tasks."
 };
