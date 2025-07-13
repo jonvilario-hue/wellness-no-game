@@ -7,16 +7,24 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { useTrainingFocus } from "@/hooks/use-training-focus";
 
-const prompts = [
+const neutralPrompts = [
   "Things you find in a kitchen",
   "Types of fruit",
   "Animals that live in the jungle",
   "Words that start with 'C'",
   "Things that are cold",
   "Musical instruments",
-  "Things you can fly in",
-  "Types of fish"
+];
+
+const mathPrompts = [
+  "Prime numbers under 50",
+  "Even numbers between 10 and 30",
+  "Types of geometric shapes",
+  "Things measured in meters",
+  "Multiples of 7",
+  "Mathematical symbols",
 ];
 
 export function SemanticFluencyStorm() {
@@ -27,7 +35,11 @@ export function SemanticFluencyStorm() {
   const [responses, setResponses] = useState<string[]>([]);
   const [switched, setSwitched] = useState(false);
   const promptHistory = useRef<string[]>([]);
-  
+  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
+
+  const currentMode = isLoaded && trainingFocus === 'math' ? 'math' : 'neutral';
+  const prompts = currentMode === 'math' ? mathPrompts : neutralPrompts;
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (gameState === 'running' && timeLeft > 0) {
@@ -48,7 +60,7 @@ export function SemanticFluencyStorm() {
       setGameState('finished');
     }
     return () => clearTimeout(timer);
-  }, [gameState, timeLeft, switched]);
+  }, [gameState, timeLeft, switched, prompts]);
 
   const handleStart = () => {
     let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
@@ -73,6 +85,16 @@ export function SemanticFluencyStorm() {
     }
     setCurrentInput('');
   };
+
+  if (!isLoaded) {
+    return (
+      <Card className="w-full max-w-2xl text-center">
+        <CardContent className="flex items-center justify-center h-48">
+          <p>Loading game...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-2xl">

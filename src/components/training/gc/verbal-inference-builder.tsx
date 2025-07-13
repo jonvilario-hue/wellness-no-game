@@ -3,11 +3,12 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
+import { useTrainingFocus } from "@/hooks/use-training-focus";
 
-const puzzles = [
+const neutralPuzzles = [
   {
     type: 'analogy',
     question: "Doctor is to hospital as teacher is to ____.",
@@ -36,44 +37,40 @@ const puzzles = [
     answer: "Feather",
     explanation: "Branch, leaf, and root are all parts of a tree. A feather is part of a bird."
   },
+];
+
+const mathPuzzles = [
+  {
+    type: 'word-problem',
+    question: "A train travels 300 miles in 5 hours. What is its average speed in miles per hour?",
+    options: ["50 mph", "60 mph", "70 mph", "55 mph"],
+    answer: "60 mph",
+    explanation: "Speed is distance divided by time (300 miles / 5 hours = 60 mph)."
+  },
+  {
+    type: 'logic',
+    question: "If X > Y and Y > Z, which statement is definitely true?",
+    options: ["X < Z", "X = Z", "X > Z", "Y > X"],
+    answer: "X > Z",
+    explanation: "This is the transitive property of inequality. If X is greater than Y, and Y is greater than Z, then X must be greater than Z."
+  },
+  {
+    type: 'pattern',
+    question: "What is the next number in the sequence: 3, 7, 15, 31, __?",
+    options: ["45", "55", "63", "71"],
+    answer: "63",
+    explanation: "The pattern is to multiply by 2 and add 1 (3*2+1=7, 7*2+1=15, 15*2+1=31, 31*2+1=63)."
+  },
   {
     type: 'analogy',
-    question: "Symphony is to composer as novel is to ____.",
-    options: ["Reader", "Publisher", "Author", "Chapter"],
-    answer: "Author",
-    explanation: "A composer creates a symphony, and an author creates a novel. The relationship is creation to creator."
-  },
-  {
-    type: 'context',
-    question: "Her ____ for punctuality was well-known; she was never late for an appointment.",
-    options: ["penchant", "distaste", "apathy", "flexibility"],
-    answer: "penchant",
-    explanation: "'Penchant' means a strong or habitual liking for something. It fits the context of never being late."
-  },
-    {
-    type: 'relationship',
-    question: "Which word does not belong with the others?",
-    options: ["Jubilant", "Ecstatic", "Melancholy", "Elated"],
-    answer: "Melancholy",
-    explanation: "Jubilant, ecstatic, and elated are all synonyms for being very happy. Melancholy means sad."
-  },
-  {
-    type: 'analogy',
-    question: "Flippant is to serious as ephemeral is to ____.",
-    options: ["Fleeting", "Permanent", "Trivial", "Bright"],
-    answer: "Permanent",
-    explanation: "Flippant is an antonym for serious, just as ephemeral (short-lived) is an antonym for permanent."
-  },
-  {
-    type: 'relationship',
-    question: "Which category includes all the others?",
-    options: ["Furniture", "Table", "Chair", "Desk"],
-    answer: "Furniture",
-    explanation: "Table, chair, and desk are all types of furniture, making it the broadest category."
+    question: "Perimeter is to square as circumference is to ____.",
+    options: ["Area", "Diameter", "Circle", "Radius"],
+    answer: "Circle",
+    explanation: "Perimeter is the boundary of a square, and circumference is the boundary of a circle."
   },
 ];
 
-type Puzzle = (typeof puzzles)[0];
+type Puzzle = (typeof neutralPuzzles)[0];
 
 export function VerbalInferenceBuilder() {
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
@@ -82,11 +79,22 @@ export function VerbalInferenceBuilder() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState(''); // '', 'correct', 'incorrect'
   const [gameState, setGameState] = useState('playing'); // playing, finished
+  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
+
+  const currentMode = isLoaded && trainingFocus === 'math' ? 'math' : 'neutral';
   
   useEffect(() => {
-    // This effect runs only once on the client after mounting
-    setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5));
-  }, []);
+    // This effect runs on client mount and when mode changes
+    if (isLoaded) {
+      const puzzleSet = currentMode === 'math' ? mathPuzzles : neutralPuzzles;
+      setShuffledPuzzles([...puzzleSet].sort(() => Math.random() - 0.5));
+      setCurrentPuzzleIndex(0);
+      setScore(0);
+      setFeedback('');
+      setSelectedAnswer(null);
+      setGameState('playing');
+    }
+  }, [currentMode, isLoaded]);
 
   const currentPuzzle = shuffledPuzzles[currentPuzzleIndex];
 
@@ -113,8 +121,9 @@ export function VerbalInferenceBuilder() {
   };
   
   const handleRestart = () => {
+    const puzzleSet = currentMode === 'math' ? mathPuzzles : neutralPuzzles;
+    setShuffledPuzzles([...puzzleSet].sort(() => Math.random() - 0.5));
     setCurrentPuzzleIndex(0);
-    setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5));
     setScore(0);
     setFeedback('');
     setSelectedAnswer(null);
@@ -135,7 +144,7 @@ export function VerbalInferenceBuilder() {
     return "secondary";
   }
 
-  if (shuffledPuzzles.length === 0 || !currentPuzzle) {
+  if (shuffledPuzzles.length === 0 || !currentPuzzle || !isLoaded) {
     return (
       <Card className="w-full max-w-2xl text-center">
         <CardContent className="flex items-center justify-center h-48">
