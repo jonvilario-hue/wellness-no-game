@@ -146,7 +146,7 @@ const useJournal = () => {
             entries: savedEntries,
             trashedEntries: savedTrashedEntries,
             completedHabits: savedHabits,
-            selectedEntry: savedEntries.length > 0 ? savedEntries[0] : null
+            selectedEntry: savedEntries.length > 0 ? savedEntries.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0] : null
         });
 
         setIsLoaded(true);

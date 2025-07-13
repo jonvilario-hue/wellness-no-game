@@ -94,7 +94,7 @@ export const HabitJournal = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!selectedEntry && entries.length > 0) {
-      setSelectedEntry(entries[0]);
+      setSelectedEntry(entries.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]);
     } else if (!selectedEntry && entries.length === 0) {
       handleNewEntry();
     }
@@ -109,16 +109,19 @@ export const HabitJournal = forwardRef((props, ref) => {
       });
       return { success: false, entry: null };
     }
+    
+    let savedEntry = entryToSave;
     const isNew = entryToSave.id.startsWith('new-');
+    
     if (isNew) {
-      const finalEntry = { ...entryToSave, id: `${entryToSave.date}-${Date.now()}` };
-      addEntry(finalEntry);
-      setSelectedEntry(finalEntry);
-       return { success: true, entry: finalEntry };
+      savedEntry = { ...entryToSave, id: `${entryToSave.date}-${Date.now()}` };
+      addEntry(savedEntry);
     } else {
       updateEntry(entryToSave.id, entryToSave);
-       return { success: true, entry: entryToSave };
     }
+    
+    setSelectedEntry(savedEntry);
+    return { success: true, entry: savedEntry };
   }, [addEntry, updateEntry, toast, setSelectedEntry]);
   
   const handleRestore = (id: string) => {
