@@ -13,12 +13,12 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   BookMarked,
   Save,
-  PlusCircle,
   Trash2,
   ArchiveRestore,
   Loader2,
   CheckCircle,
   Share,
+  PlusCircle,
   MinusCircle,
   Search,
   ArrowDownUp,
@@ -111,11 +111,15 @@ const JournalEditor = memo(({
   }, [entry, onSave]);
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      handleSave(editorState);
-    }, 1500);
-    
-    return () => clearTimeout(handler);
+    // This effect handles auto-saving
+    if (entry.id === editorState.id && JSON.stringify(entry) !== JSON.stringify(editorState)) {
+      const handler = setTimeout(() => {
+        handleSave(editorState);
+      }, 1500);
+
+      return () => clearTimeout(handler);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editorState, handleSave]);
 
 
@@ -705,43 +709,41 @@ JournalSidebar.displayName = 'JournalSidebar';
 
 
 export function HabitJournal() {
-  const { entries, addEntry, updateEntry, deleteEntry, findOrCreateEntry, isLoaded, setSelectedEntry: setGlobalSelectedEntry, selectedEntry: globalSelectedEntry } = useJournal();
-  
-  const activeEntry = useMemo(() => globalSelectedEntry, [globalSelectedEntry]);
-  const { toast } = useToast();
-  
+  const { entries, addEntry, updateEntry, deleteEntry, findOrCreateEntry, isLoaded, setSelectedEntry, selectedEntry } = useJournal();
+
   useEffect(() => {
-    if (isLoaded && !globalSelectedEntry) {
+    if (isLoaded && !selectedEntry) {
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
       const entry = findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
-      setGlobalSelectedEntry(entry);
+      setSelectedEntry(entry);
     }
-  }, [isLoaded, findOrCreateEntry, globalSelectedEntry, setGlobalSelectedEntry]);
-
+  }, [isLoaded, findOrCreateEntry, selectedEntry, setSelectedEntry]);
+  
+  const { toast } = useToast();
 
   const handleSelectFromList = useCallback((entry: JournalEntry) => {
-    setGlobalSelectedEntry(entry);
-  }, [setGlobalSelectedEntry]);
+    setSelectedEntry(entry);
+  }, [setSelectedEntry]);
 
   const handleCategoryChange = useCallback((newCategory: JournalCategory) => {
-    if (activeEntry) {
-      const newEntry = findOrCreateEntry(activeEntry.date, newCategory, activeEntry.frequency);
-      setGlobalSelectedEntry(newEntry);
+    if (selectedEntry) {
+      const newEntry = findOrCreateEntry(selectedEntry.date, newCategory, selectedEntry.frequency);
+      setSelectedEntry(newEntry);
     }
-  }, [activeEntry, findOrCreateEntry, setGlobalSelectedEntry]);
+  }, [selectedEntry, findOrCreateEntry, setSelectedEntry]);
 
   const handleFrequencyChange = useCallback((newFrequency: ReflectionFrequency) => {
-    if (activeEntry) {
-      const newEntry = findOrCreateEntry(activeEntry.date, activeEntry.category, newFrequency);
-      setGlobalSelectedEntry(newEntry);
+    if (selectedEntry) {
+      const newEntry = findOrCreateEntry(selectedEntry.date, selectedEntry.category, newFrequency);
+      setSelectedEntry(newEntry);
     }
-  }, [activeEntry, findOrCreateEntry, setGlobalSelectedEntry]);
+  }, [selectedEntry, findOrCreateEntry, setSelectedEntry]);
   
   const handleSave = useCallback((entryToSave: JournalEntry, options?: { isFinal?: boolean }) => {
     let savedEntry = entryToSave;
     const isNew = entryToSave.id.startsWith('new-');
     
-    // Only save if it's a "final" save or if it's an existing entry
+    // Only save if it's a "final" save or if it's an existing entry being modified
     if (isNew && !options?.isFinal) {
         const hasContent = entryToSave.field1 || entryToSave.field2 || entryToSave.field3 || entryToSave.affirmations.some(a => a);
         if (!hasContent) {
@@ -755,11 +757,13 @@ export function HabitJournal() {
       updateEntry(entryToSave.id, entryToSave);
     }
     
-    if (activeEntry?.id === entryToSave.id || isNew) {
-        setGlobalSelectedEntry(savedEntry);
+    // If the currently active entry was the one we just saved (especially a new one),
+    // update the global selection to the final, saved version.
+    if (selectedEntry?.id === entryToSave.id || isNew) {
+        setSelectedEntry(savedEntry);
     }
     return { success: true, entry: savedEntry };
-  }, [addEntry, updateEntry, setGlobalSelectedEntry, activeEntry]);
+  }, [addEntry, updateEntry, setSelectedEntry, selectedEntry]);
 
   const handleDelete = useCallback((id: string) => {
     const entryData = entries.find(e => e.id === id);
@@ -782,12 +786,12 @@ export function HabitJournal() {
       ) : undefined,
     });
     
-    if (activeEntry?.id === id) {
+    if (selectedEntry?.id === id) {
        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
        const newEntry = findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
-       setGlobalSelectedEntry(newEntry);
+       setSelectedEntry(newEntry);
     }
-  }, [deleteEntry, toast, activeEntry, entries, findOrCreateEntry, setGlobalSelectedEntry]);
+  }, [deleteEntry, toast, selectedEntry, entries, findOrCreateEntry, setSelectedEntry]);
 
   
   return (
@@ -806,13 +810,13 @@ export function HabitJournal() {
             <JournalSidebar 
                 onSelectEntry={handleSelectFromList} 
                 onDeleteEntry={handleDelete}
-                selectedEntry={activeEntry}
+                selectedEntry={selectedEntry}
             />
 
           <div className="lg:col-span-2 bg-background rounded-lg border">
-            {activeEntry ? (
+            {selectedEntry ? (
               <JournalEditor 
-                entry={activeEntry} 
+                entry={selectedEntry} 
                 onSave={handleSave} 
                 onDelete={handleDelete}
                 onCategoryChange={handleCategoryChange}
@@ -833,4 +837,4 @@ export function HabitJournal() {
 
 HabitJournal.displayName = 'HabitJournal';
 
-    
+      

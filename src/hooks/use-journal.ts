@@ -321,6 +321,9 @@ const useJournal = () => {
     return { ...state, ...stableFns, isLoaded };
 };
 
+useJournal.getState = () => memoryState;
 useJournal.subscribe = subscribe;
 
 export { useJournal };
+
+      
