@@ -6,16 +6,35 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ArrowRight, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
+import { useFocusBuilder } from '@/hooks/use-focus-builder';
+import { Skeleton } from '../ui/skeleton';
 
 export function CognitiveFocusBuilder() {
-  // Static data for now. Will be replaced by dynamic logic later.
-  const focusDomain = {
-    name: 'Working Memory',
-    key: 'Gwm'
-  };
-  const daysCompleted = 12;
-  const cycleLength = 30;
-  const progress = (daysCompleted / cycleLength) * 100;
+  const { currentFocus, daysCompleted, cycleLength, progress, isLoaded } = useFocusBuilder();
+
+  if (!isLoaded) {
+    return (
+        <Card className="flex flex-col">
+            <CardHeader>
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+            </CardHeader>
+            <CardContent className="flex-grow space-y-3">
+                 <div className="space-y-1">
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-5 w-2/3" />
+                </div>
+                 <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                </div>
+            </CardContent>
+            <CardFooter>
+                 <Skeleton className="h-10 w-full" />
+            </CardFooter>
+        </Card>
+    )
+  }
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col bg-primary/5 border-primary/20">
@@ -29,7 +48,7 @@ export function CognitiveFocusBuilder() {
       <CardContent className="flex-grow space-y-3">
         <div>
             <p className="text-sm font-medium text-muted-foreground">This month's focus</p>
-            <p className="text-lg font-bold text-primary">{focusDomain.name}</p>
+            <p className="text-lg font-bold text-primary">{currentFocus.name}</p>
         </div>
          <div>
             <div className="flex justify-between items-center mb-1">
