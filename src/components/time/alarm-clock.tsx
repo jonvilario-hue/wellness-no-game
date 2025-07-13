@@ -210,19 +210,21 @@ export function AlarmClock() {
         <TooltipProvider>
             {alarms.map((alarm) => (
                 <div key={alarm.id} className="p-4 rounded-lg bg-muted/50 group space-y-3">
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between gap-4">
                         <div className="flex-grow">
-                            <span className="text-3xl font-bold">{alarm.time}</span>
-                            <span className="ml-2 text-muted-foreground font-semibold">{alarm.period}</span>
                              <EditableLabel
                                 initialValue={alarm.label}
                                 onSave={(newLabel) => updateAlarm(alarm.id, { label: newLabel })}
                                 placeholder="Add a label"
                                 className="!p-0 !min-h-0"
-                                inputClassName="!text-sm !h-7"
+                                inputClassName="text-base font-semibold"
                             />
+                            <div>
+                                <span className="text-3xl font-bold">{alarm.time}</span>
+                                <span className="ml-2 text-muted-foreground font-semibold">{alarm.period}</span>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-shrink-0">
                              <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button variant="ghost" size="icon" onClick={() => toggleAlarmPuzzle(alarm.id)}>
