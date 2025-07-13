@@ -210,10 +210,7 @@ export function FocusSwitchReactor() {
               <span>Score: {score}</span>
               <span>Time: {timeLeft}s</span>
             </div>
-            <div className={cn(
-                "p-8 bg-muted rounded-lg w-full transition-colors",
-                rule === 'no_go' && 'bg-destructive/10'
-            )}>
+            <div className="p-8 bg-muted rounded-lg w-full transition-colors">
               <p className="text-xl mb-4">Rule: <span className="font-bold text-primary uppercase">{getRuleText()}</span></p>
               <div className="text-6xl font-extrabold" >
                 {currentMode === 'neutral' ? (
