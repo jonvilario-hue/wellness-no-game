@@ -9,34 +9,46 @@ import { getDailyCircuitAction } from '@/app/actions';
 import type { DailyCircuitOutput } from '@/ai/flows';
 import { domainIcons } from '../icons';
 import { Skeleton } from '../ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 export function DailyChallenge() {
   const [circuit, setCircuit] = useState<DailyCircuitOutput | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     startTransition(async () => {
-      const result = await getDailyCircuitAction();
-      setCircuit(result);
+      try {
+        const result = await getDailyCircuitAction();
+        if (result) {
+          setCircuit(result);
+        } else {
+          setError('Could not load a daily circuit. Please try again later.');
+        }
+      } catch (e) {
+        setError('An unexpected error occurred while fetching the daily circuit.');
+        console.error(e);
+      }
     });
   }, []);
 
-  if (isPending || !circuit) {
+  if (isPending) {
     return (
       <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
+        <CardHeader className="text-center">
+          <Skeleton className="h-7 w-3/4 mx-auto" />
+          <Skeleton className="h-4 w-1/2 mx-auto" />
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => (
-              <Card key={i} className="bg-muted/50 p-4 flex items-center gap-4">
-                <Skeleton className="h-10 w-10 rounded-lg bg-primary/20" />
-                <div className="space-y-2 flex-1">
-                  <Skeleton className="h-5 w-3/4 bg-primary/20" />
-                  <Skeleton className="h-4 w-full bg-primary/20" />
-                </div>
+              <Card key={i} className="bg-muted/30 p-4 flex flex-col items-center text-center gap-3">
+                 <Skeleton className="h-12 w-12 rounded-lg" />
+                 <div className="space-y-2 flex-1 w-full">
+                    <Skeleton className="h-5 w-3/4 mx-auto" />
+                    <Skeleton className="h-4 w-full" />
+                 </div>
+                 <Skeleton className="h-8 w-24" />
               </Card>
             ))}
           </div>
@@ -44,6 +56,29 @@ export function DailyChallenge() {
         </CardContent>
       </Card>
     );
+  }
+
+  if (error) {
+     return (
+        <Card>
+            <CardHeader>
+                 <CardTitle className="font-headline text-2xl flex items-center justify-center gap-2">
+                    <Zap className="w-6 h-6 text-primary"/>
+                    Daily Challenge
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Alert variant="destructive">
+                    <AlertTitle>Error Loading Challenge</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            </CardContent>
+        </Card>
+     )
+  }
+
+  if (!circuit) {
+    return null; // Don't render anything if there's no circuit and no error
   }
 
   const firstGameDomain = circuit.segments[0].domain;
