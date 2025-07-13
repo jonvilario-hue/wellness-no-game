@@ -7,8 +7,6 @@ import { Volume2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
-import { useTrainingFocus } from "@/hooks/use-training-focus";
-import { useTrainingOverride } from "@/hooks/use-training-override";
 
 type GameMode = 'mimic' | 'find';
 
@@ -26,11 +24,6 @@ export function ToneGridChallenge() {
   const [startTime, setStartTime] = useState(0);
 
   const { logGameResult } = usePerformanceStore();
-  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
-  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
-  
-  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
-  // This game does not have a math mode, so we default to neutral
   const currentMode = 'neutral';
 
   useEffect(() => {
@@ -86,7 +79,6 @@ export function ToneGridChallenge() {
     }
     
     setUserSequence([]);
-    // Make 'mimic' mode more common to serve as the base challenge
     const newMode = Math.random() > 0.3 ? 'mimic' : 'find';
     setGameMode(newMode);
     
@@ -201,7 +193,7 @@ export function ToneGridChallenge() {
     <Card className="w-full max-w-2xl text-center">
       <CardHeader>
         <CardTitle>(Ga) Tone Grid Challenge</CardTitle>
-        <CardDescription>Either repeat the sequence you hear, or identify if a target tone was present.</CardDescription>
+        <CardDescription>Either repeat the sequence you hear, or identify if a target tone was present. This trains auditory discrimination and sequencing.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         <div className="w-full flex justify-between font-mono text-lg">
