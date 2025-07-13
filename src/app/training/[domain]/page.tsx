@@ -12,15 +12,21 @@ import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { use } from 'react';
+import { useTrainingOverride } from '@/hooks/use-training-override';
 
 export default function TrainingPage({ params }: { params: Promise<{ domain: CHCDomain }> }) {
   const resolvedParams = use(params);
   const domainInfo = chcDomains.find(d => d.key === resolvedParams.domain);
-  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
 
   if (!domainInfo) {
     notFound();
   }
+  
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  // Determine the effective training focus: override > global
+  const trainingFocus = override || globalFocus;
 
   const PageIcon = domainIcons[domainInfo.key];
   const GameComponent = gameComponents[domainInfo.key] || (() => <p>Game not found</p>);
@@ -50,6 +56,7 @@ export default function TrainingPage({ params }: { params: Promise<{ domain: CHC
                  <Badge variant="secondary" className="capitalize">
                   {trainingFocus === 'math' ? <Sigma className="w-3 h-3 mr-1.5"/> : <BrainCircuit className="w-3 h-3 mr-1.5"/>}
                   {trainingFocus === 'math' ? 'Math Reasoning' : 'Core Thinking'}
+                  {override && <span className="ml-1.5 text-xs font-bold">(Session Override)</span>}
                 </Badge>
               ) : (
                 isLoaded && !focusSupportsMath ? null : <Skeleton className="h-5 w-24" />
