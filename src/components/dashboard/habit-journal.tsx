@@ -543,7 +543,7 @@ const TrashView = ({
   onDeletePermanently, 
   onEmptyTrash 
 }: { 
-  trashedEntries: JournalEntry[], 
+  trashedEntries: TrashedJournalEntry[], 
   onRestore: (id: string) => void, 
   onDeletePermanently: (id: string) => void,
   onEmptyTrash: () => void 
@@ -673,15 +673,6 @@ export function HabitJournal() {
   }, []);
   
   const handleSave = useCallback((entryToSave: JournalEntry) => {
-    if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim() && !entryToSave.affirmations.some(a => a.trim())) {
-      toast({
-        title: 'Empty Journal',
-        description: 'Please write something before saving.',
-        variant: 'destructive',
-      });
-      return { success: false, entry: null };
-    }
-    
     let savedEntry = entryToSave;
     const isNew = entryToSave.id.startsWith('new-');
     
@@ -693,7 +684,7 @@ export function HabitJournal() {
     
     _setSelectedEntry(savedEntry);
     return { success: true, entry: savedEntry };
-  }, [addEntry, updateEntry, toast]);
+  }, [addEntry, updateEntry]);
   
   const handleRestore = useCallback((id: string) => {
     restoreEntry(id);
