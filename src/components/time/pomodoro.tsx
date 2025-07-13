@@ -4,9 +4,9 @@
 import { useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, RotateCcw, Forward, Settings, Check } from 'lucide-react';
-import { usePomodoroStore, type PomodoroMode } from '@/hooks/use-pomodoro-store';
-import { pomodoroPresets, type PomodoroPreset } from '@/data/pomodoro-presets';
+import { Play, Pause, RotateCcw, Forward } from 'lucide-react';
+import { usePomodoroStore } from '@/hooks/use-pomodoro-store';
+import { pomodoroPresets } from '@/data/pomodoro-presets';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formatTime = (totalSeconds: number) => {
