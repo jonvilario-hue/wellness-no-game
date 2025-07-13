@@ -47,9 +47,7 @@ function DashboardContent() {
             </div>
             <aside className="lg:col-span-1 flex flex-col gap-6">
               {settings.hyperfocusBuilder && <HyperfocusBuilder />}
-              {settings.habitTracker && <HabitTracker />}
               {settings.gameProgressTracker && <GameProgressTracker />}
-              {settings.milestoneBadges && <MilestoneBadges />}
             </aside>
           </div>
 
@@ -60,8 +58,13 @@ function DashboardContent() {
             </div>
           )}
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
+             {settings.habitTracker && <HabitTracker />}
+             {settings.milestoneBadges && <MilestoneBadges />}
+          </div>
+
           <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalContainerRef}>
-            {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
             {settings.habitJournal && <HabitJournal />}
           </div>
         </div>
