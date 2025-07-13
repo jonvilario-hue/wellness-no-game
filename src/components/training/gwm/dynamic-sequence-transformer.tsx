@@ -111,8 +111,8 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
     } else { // Math mode
         const nums = sequence.split('').map(Number);
         switch(task.id) {
-            case 'add_two': return nums.map(n => n + 2).join('');
-            case 'subtract_one': return nums.map(n => Math.max(0, n - 1)).join('');
+            case 'add_two': return nums.map(n => (n + 2) % 10).join('');
+            case 'subtract_one': return nums.map(n => (n - 1 + 10) % 10).join('');
             case 'repeat_even': return nums.filter(n => n % 2 === 0).join('');
             case 'differences':
                 if (nums.length < 2) return '';
