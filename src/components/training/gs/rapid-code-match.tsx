@@ -70,7 +70,7 @@ export function RapidCodeMatch() {
   return (
     <Card className="w-full max-w-4xl text-center">
       <CardHeader>
-        <CardTitle>Rapid Code Match</CardTitle>
+        <CardTitle>(Gs) Rapid Code Match</CardTitle>
         <CardDescription>Match the symbol to the correct digit using the key as fast as you can.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">

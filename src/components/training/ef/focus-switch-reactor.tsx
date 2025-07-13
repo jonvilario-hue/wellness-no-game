@@ -105,7 +105,7 @@ export function FocusSwitchReactor() {
   return (
     <Card className="w-full max-w-2xl text-center">
       <CardHeader>
-        <CardTitle>Focus Switch Reactor</CardTitle>
+        <CardTitle>(EF) Focus Switch Reactor</CardTitle>
         <CardDescription>Inhibition & Task-Switching Challenge. Pay attention to the rule!</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">

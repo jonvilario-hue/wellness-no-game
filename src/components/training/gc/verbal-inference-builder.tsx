@@ -84,6 +84,7 @@ export function VerbalInferenceBuilder() {
   const [gameState, setGameState] = useState('playing'); // playing, finished
   
   useEffect(() => {
+    // This effect runs only once on the client after mounting
     setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5));
   }, []);
 
@@ -149,7 +150,7 @@ export function VerbalInferenceBuilder() {
       <CardHeader>
         <CardTitle className="flex items-center justify-center gap-2">
             <BookOpenText />
-            Verbal Inference Builder
+            (Gc) Verbal Inference Builder
         </CardTitle>
         <CardDescription className="text-center">Deduce the meaning or relationship from the context provided.</CardDescription>
       </CardHeader>

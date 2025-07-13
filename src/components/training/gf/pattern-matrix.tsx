@@ -121,6 +121,7 @@ export function PatternMatrix() {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
 
   useEffect(() => {
+    // This effect runs only once on the client after mounting
     setPuzzle(generatePuzzle());
   }, [puzzleKey]);
 
@@ -158,7 +159,7 @@ export function PatternMatrix() {
       <CardHeader>
         <CardTitle className="flex items-center justify-center gap-2">
             <BrainCircuit />
-            Pattern Matrix
+            (Gf) Pattern Matrix
         </CardTitle>
         <CardDescription className="text-center">Identify the logical rule and find the missing piece.</CardDescription>
       </CardHeader>

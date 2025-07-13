@@ -128,7 +128,7 @@ export function MentalRotationLab() {
       <CardHeader className="text-center">
         <CardTitle className="flex items-center justify-center gap-2">
             <View />
-            Mental Rotation Lab
+            (Gv) Mental Rotation Lab
         </CardTitle>
         <CardDescription>Which of the shapes below is a rotated version of the target shape?</CardDescription>
       </CardHeader>

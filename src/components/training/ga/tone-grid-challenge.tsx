@@ -151,7 +151,7 @@ export function ToneGridChallenge() {
   return (
     <Card className="w-full max-w-2xl text-center">
       <CardHeader>
-        <CardTitle>Tone Grid Challenge</CardTitle>
+        <CardTitle>(Ga) Tone Grid Challenge</CardTitle>
         <CardDescription>Listen to the sequence of tones, then follow the instructions.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">

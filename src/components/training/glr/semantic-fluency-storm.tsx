@@ -77,7 +77,7 @@ export function SemanticFluencyStorm() {
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader className="text-center">
-        <CardTitle>Semantic Fluency Storm</CardTitle>
+        <CardTitle>(Glr) Semantic Fluency Storm</CardTitle>
         <CardDescription>Name as many items as you can for the given category.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
