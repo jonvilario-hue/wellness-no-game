@@ -1,14 +1,15 @@
 
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, BrainCircuit, MemoryStick, Shuffle, Lightbulb, Info, Zap, Archive, ArrowDown, ArrowUp, Minus } from 'lucide-react';
+import { CardContent } from '@/components/ui/card';
+import { TrendingUp, BrainCircuit, MemoryStick, Shuffle, Lightbulb, Info, Zap, Archive, ArrowDown, ArrowUp, Minus, X } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Progress } from '../ui/progress';
+import { Button } from '../ui/button';
 
 const efficiencyData = {
   weekly: {
@@ -67,6 +68,20 @@ const TrendIndicator = ({ trend }: { trend: number }) => {
 
 export function CognitiveEfficiency() {
   const [timeframe, setTimeframe] = useState<Timeframe>('weekly');
+  const [isInsightVisible, setIsInsightVisible] = useState(false);
+
+  useEffect(() => {
+    // This effect should only run on the client
+    const dismissed = localStorage.getItem('cognitiveEfficiencyInsightDismissed');
+    if (dismissed !== 'true') {
+      setIsInsightVisible(true);
+    }
+  }, []);
+
+  const handleDismissInsight = () => {
+    setIsInsightVisible(false);
+    localStorage.setItem('cognitiveEfficiencyInsightDismissed', 'true');
+  };
 
   const currentData = efficiencyData[timeframe];
   const trendText = timeframe === 'overall' ? 'since starting' : `from last ${timeframe.slice(0, -2)}`;
@@ -122,14 +137,26 @@ export function CognitiveEfficiency() {
                 })}
               </div>
               
-              <Separator />
-
-              <div className="p-3 bg-primary/10 rounded-lg text-center">
-                  <p className="text-sm flex items-start gap-2">
-                      <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
-                      <span className="text-foreground"><span className="font-bold">Insight:</span> {currentData.insight}</span>
-                  </p>
-              </div>
+              {isInsightVisible && (
+                <>
+                <Separator />
+                <div className="p-3 bg-primary/10 rounded-lg text-center relative">
+                    <p className="text-sm flex items-start gap-2 pr-6">
+                        <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
+                        <span className="text-foreground text-left"><span className="font-bold">Insight:</span> {currentData.insight}</span>
+                    </p>
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="absolute top-1 right-1 h-6 w-6"
+                        onClick={handleDismissInsight}
+                        aria-label="Dismiss insight"
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
+                </>
+              )}
             </div>
           </Tabs>
         </TooltipProvider>
