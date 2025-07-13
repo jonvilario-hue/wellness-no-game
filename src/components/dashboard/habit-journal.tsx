@@ -532,16 +532,31 @@ tags: ${entry.tags}
         <ScrollArea className="flex-grow pr-3 -mr-3">
             <div className="space-y-2 mt-2">
             {entries.map(entry => {
+                const isSelected = selectedEntry?.id === entry.id;
                 const categoryTitle = journalConfig[entry.category as JournalCategory]?.title || entry.category;
                 return (
                     <div key={entry.id} className="group flex items-center gap-2">
                         <button onClick={() => handleSelectEntry(entry)}
                             className={cn(
                                 "flex-grow text-left p-2 rounded-md transition-colors",
-                                selectedEntry?.id === entry.id ? 'bg-primary/10 text-primary-foreground' : 'hover:bg-muted'
+                                isSelected ? 'bg-primary/10' : 'hover:bg-muted'
                             )}>
-                            <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{categoryTitle}</span></p>
-                            <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
+                            <p className={cn(
+                                "font-semibold",
+                                isSelected ? "text-primary font-bold" : "text-foreground"
+                            )}>
+                                {new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} 
+                                <span className={cn(
+                                    "text-sm font-normal",
+                                    isSelected ? "text-primary/80" : "text-muted-foreground"
+                                )}> - {categoryTitle}</span>
+                            </p>
+                            <p className={cn(
+                                "text-sm truncate",
+                                isSelected ? "text-foreground/90" : "text-muted-foreground"
+                            )}>
+                                {entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}
+                            </p>
                         </button>
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
