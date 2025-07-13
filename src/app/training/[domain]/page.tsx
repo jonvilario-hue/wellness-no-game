@@ -11,11 +11,10 @@ import { gameComponents } from '@/components/training/game-components';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { use } from 'react';
 import { useTrainingOverride } from '@/hooks/use-training-override';
 
 export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
-  const { domain } = use(Promise.resolve(params));
+  const { domain } = params;
   const domainInfo = chcDomains.find(d => d.key === domain);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
