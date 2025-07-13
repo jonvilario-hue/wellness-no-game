@@ -26,6 +26,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Skeleton } from '../ui/skeleton';
 
 interface ChcDomainCardProps {
   domain: {
@@ -39,11 +40,22 @@ interface ChcDomainCardProps {
 }
 
 const generateInitialData = (domainKey: CHCDomain) => {
-    const generatedScore = (domainKey.charCodeAt(0) * 3) % 40 + 50;
+    // Make the random generation more deterministic to avoid large swings, but still varied.
+    const keySeed = domainKey.charCodeAt(0) + domainKey.charCodeAt(1);
+    const pseudoRandom = (seed: number) => {
+        let x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+    };
+
+    const generatedScore = (keySeed * 3) % 40 + 50;
+    const randomFactor1 = pseudoRandom(keySeed + 1) * 5;
+    const randomFactor2 = pseudoRandom(keySeed + 2) * 5;
+    const randomFactor3 = pseudoRandom(keySeed + 3) * 5;
+    
     const generatedTrendData = [
-      { week: 'W1', score: generatedScore - 15 + Math.random() * 5 },
-      { week: 'W2', score: generatedScore - 10 + Math.random() * 5 },
-      { week: 'W3', score: generatedScore - 5 + Math.random() * 5 },
+      { week: 'W1', score: generatedScore - 15 + randomFactor1 },
+      { week: 'W2', score: generatedScore - 10 + randomFactor2 },
+      { week: 'W3', score: generatedScore - 5 + randomFactor3 },
       { week: 'W4', score: generatedScore },
     ].map(d => ({ ...d, score: Math.max(0, Math.min(100, d.score)) }));
     
@@ -60,11 +72,17 @@ const generateInitialData = (domainKey: CHCDomain) => {
 
 export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   const Icon = domainIcons[domain.key];
-  const [data] = useState(() => generateInitialData(domain.key));
+  const [data, setData] = useState<{ score: number; trend: number } | null>(null);
   const { focus: globalFocus, isLoaded } = useTrainingFocus();
   const { setOverride } = useTrainingOverride();
 
+  useEffect(() => {
+    // Generate data on the client side to avoid hydration errors
+    setData(generateInitialData(domain.key));
+  }, [domain.key]);
+
   const getTrendInfo = () => {
+    if (!data) return { Icon: Minus, color: 'text-primary', text: 'Calculating...' };
     if (data.trend > 2) {
       return { Icon: ArrowUp, color: 'text-green-500', text: 'Trending upward' };
     }
@@ -96,40 +114,47 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-2">
-        <TooltipProvider>
-        <div>
-          <div className="flex justify-between items-center mb-1">
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <span className="text-sm font-medium text-muted-foreground flex items-center gap-1 cursor-help">
-                    Current Score <Info className="w-3 h-3"/>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Adaptive skill rating (50 = average, 100 = high mastery)</p>
-                </TooltipContent>
-              </Tooltip>
-            <span className="text-sm font-bold text-primary">{Math.round(data.score)}</span>
+        {!data ? (
+          <div className="space-y-3 pt-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
           </div>
-          <Progress value={data.score} />
-        </div>
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <span className="flex items-center gap-1 cursor-help">
-                  Weekly Trend <Info className="w-3 h-3"/>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{trendText}</p>
-              </TooltipContent>
-            </Tooltip>
-            <div className={`flex items-center font-bold ${trendColor}`}>
-                <TrendIcon className="w-4 h-4 mr-1"/>
-                {data.trend.toFixed(1)}%
+        ) : (
+          <TooltipProvider>
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <span className="text-sm font-medium text-muted-foreground flex items-center gap-1 cursor-help">
+                        Current Score <Info className="w-3 h-3"/>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Adaptive skill rating (50 = average, 100 = high mastery)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                <span className="text-sm font-bold text-primary">{Math.round(data.score)}</span>
+              </div>
+              <Progress value={data.score} />
             </div>
-        </div>
-        </TooltipProvider>
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <span className="flex items-center gap-1 cursor-help">
+                      Weekly Trend <Info className="w-3 h-3"/>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{trendText}</p>
+                  </TooltipContent>
+                </Tooltip>
+                <div className={`flex items-center font-bold ${trendColor}`}>
+                    <TrendIcon className="w-4 h-4 mr-1"/>
+                    {data.trend.toFixed(1)}%
+                </div>
+            </div>
+          </TooltipProvider>
+        )}
       </CardContent>
       <CardFooter className="flex items-center gap-2">
         <Button asChild className="w-full" onClick={() => handleTrainClick(null)}>
