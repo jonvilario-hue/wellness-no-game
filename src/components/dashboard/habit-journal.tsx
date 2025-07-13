@@ -17,10 +17,13 @@ import { useToast } from '@/hooks/use-toast';
 import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, getFrequencyForDate, type JournalCategory } from '@/hooks/use-journal';
 import { JournalEditor } from '@/components/journal/journal-editor';
 import { JournalSidebar } from '@/components/journal/journal-sidebar';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 
 export function HabitJournal() {
   const { hasHydrated, findOrCreateEntry, setSelectedEntry, selectedEntry, createNewEntry } = useJournal();
+  const { organicGrowth } = useTheme();
   
   // Memoize the initial entry to avoid re-running findOrCreateEntry on every render
   const initialEntry = useMemo(() => {
@@ -134,7 +137,8 @@ export function HabitJournal() {
 
   
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300 col-span-1 md:col-span-2">
+    <Card className="hover:shadow-lg transition-shadow duration-300 col-span-1 md:col-span-2 relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <BookMarked className="w-5 h-5 text-primary" />

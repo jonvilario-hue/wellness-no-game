@@ -12,6 +12,8 @@ import { domainIcons } from '../icons';
 import { chcDomains } from '@/types';
 import Link from 'next/link';
 import { Skeleton } from '../ui/skeleton';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 const INSIGHT_KEY = 'weakAreaInsightDismissed';
 
@@ -20,6 +22,7 @@ export function WeakAreaRecommendations() {
   const [result, setResult] = useState<WeakAreaRecommendationOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isInsightVisible, setIsInsightVisible] = useState(false);
+  const { organicGrowth } = useTheme();
 
   useEffect(() => {
     startTransition(async () => {
@@ -106,7 +109,8 @@ export function WeakAreaRecommendations() {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
+    <Card className="hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Target className="w-5 h-5 text-primary" />

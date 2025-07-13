@@ -9,6 +9,8 @@ import type { TrainingRecommendationOutput } from '@/ai/flows';
 import { useState, useEffect, useTransition } from 'react';
 import { getTrainingRecommendationAction } from '@/app/actions';
 import { Skeleton } from '../ui/skeleton';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 const recommendationIcons = {
   weakArea: TrendingUp,
@@ -22,6 +24,7 @@ export function PerformanceInsights() {
   const [recommendation, setRecommendation] = useState<TrainingRecommendationOutput | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isInsightVisible, setIsInsightVisible] = useState(false);
+  const { organicGrowth } = useTheme();
 
   useEffect(() => {
     startTransition(async () => {
@@ -70,7 +73,8 @@ export function PerformanceInsights() {
 
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
+    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Sparkles className="w-5 h-5 text-primary" />

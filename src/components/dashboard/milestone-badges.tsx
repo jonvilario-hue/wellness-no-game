@@ -9,6 +9,8 @@ import { badges } from '@/data/badges';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 const top8BadgeKeys = [
   'neurogrit',
@@ -25,6 +27,7 @@ const INSIGHT_KEY = 'milestoneBadgesInsightDismissed';
 
 export function MilestoneBadges() {
   const [isInsightVisible, setIsInsightVisible] = useState(false);
+  const { organicGrowth } = useTheme();
 
   useEffect(() => {
     const dismissed = localStorage.getItem(INSIGHT_KEY);
@@ -43,7 +46,8 @@ export function MilestoneBadges() {
   }, []);
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
+    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Award className="w-5 h-5 text-primary" />

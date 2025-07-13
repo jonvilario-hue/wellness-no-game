@@ -5,10 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { chcDomains } from '@/types';
 import { ChcDomainCard } from './chc-domain-card';
 import { Gamepad2 } from 'lucide-react';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 export function AllGames() {
+  const { organicGrowth } = useTheme();
+
   return (
-    <Card>
+    <Card className="relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Gamepad2 className="w-6 h-6 text-primary" />

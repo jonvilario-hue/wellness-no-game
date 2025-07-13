@@ -32,6 +32,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from '../ui/skeleton';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
@@ -172,6 +174,7 @@ export function HabitTracker() {
     const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit, resetHabits, hasHydrated } = useJournal();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
+    const { organicGrowth } = useTheme();
 
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
     const todaysHabits = completedHabits[today] || [];
@@ -220,7 +223,8 @@ export function HabitTracker() {
     }
 
     return (
-      <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
+      <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col relative overflow-hidden">
+        {organicGrowth && <GrowthDecoration />}
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-headline">
             <Target className="w-5 h-5 text-primary" />

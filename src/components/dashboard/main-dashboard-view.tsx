@@ -9,12 +9,16 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { ChcProfileOverview } from './chc-profile-overview';
 import { chcDomains } from '@/types';
 import { ChcDomainCard } from './chc-domain-card';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 export function MainDashboardView() {
   const [view, setView] = useState<'efficiency' | 'profile'>('efficiency');
+  const { organicGrowth } = useTheme();
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
+    <Card className="hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <Tabs defaultValue="efficiency" onValueChange={(value) => setView(value as 'efficiency' | 'profile')}>
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="space-y-1.5">

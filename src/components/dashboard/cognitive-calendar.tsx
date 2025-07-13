@@ -6,10 +6,15 @@ import { CalendarView } from '../calendar/calendar-view';
 import { CalendarDays, Expand } from 'lucide-react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 export function CognitiveCalendar() {
+  const { organicGrowth } = useTheme();
+
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
+    <Card className="hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle className="flex items-center gap-2 font-headline">

@@ -1,13 +1,19 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlarmClock, ArrowRight, CirclePlay, Hourglass } from 'lucide-react';
 import Link from 'next/link';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 export function TimeToolsCard() {
+  const { organicGrowth } = useTheme();
+
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
+    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <AlarmClock className="w-5 h-5 text-primary" />

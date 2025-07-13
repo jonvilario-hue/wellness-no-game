@@ -10,6 +10,8 @@ import { SlidersHorizontal, Loader2, Wand2, Lightbulb, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { chcDomains, type CHCDomain } from '@/types';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { useTheme } from '@/hooks/use-theme';
+import { GrowthDecoration } from '../ui/growth-decoration';
 
 const INSIGHT_KEY = 'adaptiveDifficultyInsightDismissed';
 
@@ -20,6 +22,7 @@ export function AdaptiveDifficulty() {
   const [selectedFactor, setSelectedFactor] = useState<CHCDomain>('Gf');
   const [isInsightVisible, setIsInsightVisible] = useState(false);
   const [skillLevel, setSkillLevel] = useState(50);
+  const { organicGrowth } = useTheme();
 
   useEffect(() => {
     const dismissed = localStorage.getItem(INSIGHT_KEY);
@@ -62,7 +65,8 @@ export function AdaptiveDifficulty() {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
+    <Card className="hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
+      {organicGrowth && <GrowthDecoration />}
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <SlidersHorizontal className="w-5 h-5 text-primary" />
