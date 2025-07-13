@@ -2,59 +2,74 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, BrainCircuit, MemoryStick, Shuffle, Lightbulb, Info, Zap, Archive } from 'lucide-react';
-import { Progress } from '../ui/progress';
+import { TrendingUp, BrainCircuit, MemoryStick, Shuffle, Lightbulb, Info, Zap, Archive, ArrowDown, ArrowUp, Minus } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 const efficiencyData = {
   weekly: {
-    overallScore: 78,
     trend: 14,
     subMetrics: [
-      { name: 'Problem-Solving Depth (Gf)', value: 85, icon: BrainCircuit, description: "Ability to resolve multi-step problems without hints." },
-      { name: 'Working Memory Span (Gwm)', value: 72, icon: MemoryStick, description: "Dynamic memory span under distraction or dual-tasking." },
-      { name: 'Cognitive Switching (EF)', value: 77, icon: Shuffle, description: "Speed and accuracy when switching between tasks." },
-      { name: 'Processing Speed (Gs)', value: 88, icon: Zap, description: "How fast simple cognitive tasks can be done accurately." },
-      { name: 'Long-Term Retrieval (Glr)', value: 68, icon: Archive, description: "Efficient access to stored knowledge and patterns." },
+      { name: 'Problem-Solving Depth (Gf)', trend: 18, icon: BrainCircuit, description: "Ability to resolve multi-step problems without hints." },
+      { name: 'Working Memory Span (Gwm)', trend: 9, icon: MemoryStick, description: "Dynamic memory span under distraction or dual-tasking." },
+      { name: 'Cognitive Switching (EF)', trend: 12, icon: Shuffle, description: "Speed and accuracy when switching between tasks." },
+      { name: 'Processing Speed (Gs)', trend: 15, icon: Zap, description: "How fast simple cognitive tasks can be done accurately." },
+      { name: 'Long-Term Retrieval (Glr)', trend: 5, icon: Archive, description: "Efficient access to stored knowledge and patterns." },
     ],
     insight: "Your gains this week were driven by better interference control during complex tasks."
   },
   monthly: {
-    overallScore: 72,
     trend: 8,
     subMetrics: [
-      { name: 'Problem-Solving Depth (Gf)', value: 80, icon: BrainCircuit, description: "Ability to resolve multi-step problems without hints." },
-      { name: 'Working Memory Span (Gwm)', value: 68, icon: MemoryStick, description: "Dynamic memory span under distraction or dual-tasking." },
-      { name: 'Cognitive Switching (EF)', value: 71, icon: Shuffle, description: "Speed and accuracy when switching between tasks." },
-      { name: 'Processing Speed (Gs)', value: 82, icon: Zap, description: "How fast simple cognitive tasks can be done accurately." },
-      { name: 'Long-Term Retrieval (Glr)', value: 65, icon: Archive, description: "Efficient access to stored knowledge and patterns." },
+        { name: 'Problem-Solving Depth (Gf)', trend: 10, icon: BrainCircuit, description: "Ability to resolve multi-step problems without hints." },
+        { name: 'Working Memory Span (Gwm)', trend: 5, icon: MemoryStick, description: "Dynamic memory span under distraction or dual-tasking." },
+        { name: 'Cognitive Switching (EF)', trend: 7, icon: Shuffle, description: "Speed and accuracy when switching between tasks." },
+        { name: 'Processing Speed (Gs)', trend: 12, icon: Zap, description: "How fast simple cognitive tasks can be done accurately." },
+        { name: 'Long-Term Retrieval (Glr)', trend: 3, icon: Archive, description: "Efficient access to stored knowledge and patterns." },
     ],
-    insight: "Your monthly trend shows strong, steady growth in processing speed."
+    insight: "Your monthly trend shows strong, steady growth in processing speed. Natural fluctuations are normal as you consolidate skills."
   },
   overall: {
-    overallScore: 65,
-    trend: 65, // Or could be compared to a starting baseline
+    trend: 65,
     subMetrics: [
-      { name: 'Problem-Solving Depth (Gf)', value: 75, icon: BrainCircuit, description: "Ability to resolve multi-step problems without hints." },
-      { name: 'Working Memory Span (Gwm)', value: 62, icon: MemoryStick, description: "Dynamic memory span under distraction or dual-tasking." },
-      { name: 'Cognitive Switching (EF)', value: 65, icon: Shuffle, description: "Speed and accuracy when switching between tasks." },
-      { name: 'Processing Speed (Gs)', value: 70, icon: Zap, description: "How fast simple cognitive tasks can be done accurately." },
-      { name: 'Long-Term Retrieval (Glr)', value: 58, icon: Archive, description: "Efficient access to stored knowledge and patterns." },
+        { name: 'Problem-Solving Depth (Gf)', trend: 75, icon: BrainCircuit, description: "Ability to resolve multi-step problems without hints." },
+        { name: 'Working Memory Span (Gwm)', trend: 62, icon: MemoryStick, description: "Dynamic memory span under distraction or dual-tasking." },
+        { name: 'Cognitive Switching (EF)', trend: 65, icon: Shuffle, description: "Speed and accuracy when switching between tasks." },
+        { name: 'Processing Speed (Gs)', trend: 70, icon: Zap, description: "How fast simple cognitive tasks can be done accurately." },
+        { name: 'Long-Term Retrieval (Glr)', trend: 58, icon: Archive, description: "Efficient access to stored knowledge and patterns." },
     ],
-    insight: "Overall, your biggest improvement has been in problem-solving depth since you started."
+    insight: "Compared to your starting baseline, your biggest improvement has been in problem-solving depth. This is a sign of deep, structural cognitive change."
   }
 };
 
 type Timeframe = 'weekly' | 'monthly' | 'overall';
 
+
+const TrendIndicator = ({ trend }: { trend: number }) => {
+  const trendInfo = {
+    Icon: trend > 2 ? ArrowUp : trend < -2 ? ArrowDown : Minus,
+    color: trend > 2 ? 'text-green-500' : trend < -2 ? 'text-amber-500' : 'text-muted-foreground',
+    text: `${trend >= 0 ? '+' : ''}${trend}%`
+  };
+
+  return (
+    <div className={cn("flex items-center font-bold text-sm", trendInfo.color)}>
+      <trendInfo.Icon className="w-4 h-4 mr-1" />
+      {trendInfo.text}
+    </div>
+  );
+};
+
+
 export function CognitiveEfficiency() {
   const [timeframe, setTimeframe] = useState<Timeframe>('weekly');
 
   const currentData = efficiencyData[timeframe];
-  const trendText = timeframe === 'overall' ? 'since starting' : `since last ${timeframe.slice(0, -2)}`;
+  const trendText = timeframe === 'overall' ? 'since starting' : `from last ${timeframe.slice(0, -2)}`;
+  const trendColor = currentData.trend > 0 ? 'text-green-500' : 'text-amber-500';
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
@@ -64,7 +79,7 @@ export function CognitiveEfficiency() {
           Cognitive Efficiency
         </CardTitle>
         <CardDescription>
-          Your integrated performance in core cognitive areas.
+          Your complexity-adjusted performance trend.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -78,10 +93,12 @@ export function CognitiveEfficiency() {
 
             <div className="space-y-4">
               <div className="text-center">
-                <p className="text-sm text-muted-foreground">Overall Score</p>
-                <p className="text-4xl font-bold text-primary">{currentData.overallScore}</p>
-                <p className="text-sm font-semibold text-green-500">
-                  +{currentData.trend}% {trendText}
+                <p className="text-sm text-muted-foreground">Performance Trend</p>
+                <p className={cn("text-4xl font-bold", trendColor)}>
+                    {currentData.trend > 0 ? '+' : ''}{currentData.trend}%
+                </p>
+                <p className="text-sm font-semibold text-muted-foreground">
+                    {trendText}
                 </p>
               </div>
               
@@ -92,23 +109,20 @@ export function CognitiveEfficiency() {
                 {currentData.subMetrics.map(metric => {
                   const Icon = metric.icon;
                   return (
-                    <div key={metric.name}>
-                      <div className="flex justify-between items-center mb-1">
+                    <div key={metric.name} className="flex justify-between items-center p-2 rounded-lg hover:bg-muted/50">
                         <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>
-                            <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5 cursor-help">
-                              <Icon className="w-4 h-4" />
-                              {metric.name}
-                              <Info className="w-3 h-3 opacity-50" />
+                            <span className="text-sm font-medium text-muted-foreground flex items-center gap-2 cursor-help">
+                              <Icon className="w-4 h-4 shrink-0" />
+                              <span className='truncate'>{metric.name}</span>
+                              <Info className="w-3 h-3 opacity-50 shrink-0" />
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>{metric.description}</p>
                           </TooltipContent>
                         </Tooltip>
-                        <span className="text-sm font-bold">{metric.value}</span>
-                      </div>
-                      <Progress value={metric.value} aria-label={`${metric.name} score is ${metric.value}`} />
+                        <TrendIndicator trend={metric.trend} />
                     </div>
                   );
                 })}
