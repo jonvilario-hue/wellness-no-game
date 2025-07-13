@@ -223,13 +223,13 @@ export function FocusSwitchReactor() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
               {currentMode === 'neutral' ? (
                 colorOptions.map(color => (
-                    <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg" disabled={rule === 'no_go'}>
+                    <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg">
                     {color.name}
                     </Button>
                 ))
               ) : (
                  mathAnswerOptions.map(option => (
-                     <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg" disabled={rule === 'no_go'}>
+                     <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg">
                          {option}
                      </Button>
                  ))
