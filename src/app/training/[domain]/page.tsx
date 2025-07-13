@@ -15,7 +15,8 @@ import { useTrainingOverride } from '@/hooks/use-training-override';
 import { use } from 'react';
 
 export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
-  const { domain } = params;
+  const resolvedParams = use(params);
+  const domain = resolvedParams.domain;
   const domainInfo = chcDomains.find(d => d.key === domain);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
