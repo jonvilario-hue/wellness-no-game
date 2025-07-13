@@ -39,9 +39,21 @@ interface ChcDomainCardProps {
   };
 }
 
-const generateInitialData = (domainKey: CHCDomain) => {
-    // Make the random generation more deterministic to avoid large swings, but still varied.
-    const keySeed = domainKey.charCodeAt(0) + domainKey.charCodeAt(1);
+export function ChcDomainCard({ domain }: ChcDomainCardProps) {
+  const Icon = domainIcons[domain.key];
+  const [data, setData] = useState<{ score: number; trend: number } | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const { focus: globalFocus, isLoaded } = useTrainingFocus();
+  const { setOverride } = useTrainingOverride();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
+    const keySeed = domain.key.charCodeAt(0) + domain.key.charCodeAt(1);
     const pseudoRandom = (seed: number) => {
         let x = Math.sin(seed) * 10000;
         return x - Math.floor(x);
@@ -66,20 +78,9 @@ const generateInitialData = (domainKey: CHCDomain) => {
         const pctChange = ((endScore - startScore) / startScore) * 100;
         trend = pctChange;
     }
-    return { score: generatedScore, trend };
-}
+    setData({ score: generatedScore, trend });
+  }, [domain.key, isClient]);
 
-
-export function ChcDomainCard({ domain }: ChcDomainCardProps) {
-  const Icon = domainIcons[domain.key];
-  const [data, setData] = useState<{ score: number; trend: number } | null>(null);
-  const { focus: globalFocus, isLoaded } = useTrainingFocus();
-  const { setOverride } = useTrainingOverride();
-
-  useEffect(() => {
-    // Generate data on the client side to avoid hydration errors
-    setData(generateInitialData(domain.key));
-  }, [domain.key]);
 
   const getTrendInfo = () => {
     if (!data) return { Icon: Minus, color: 'text-primary', text: 'Calculating...' };
@@ -104,20 +105,22 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
-      <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2 flex-grow">
         <div className="p-3 bg-primary/10 rounded-lg">
           <Icon className="w-6 h-6 text-primary" />
         </div>
         <div className="flex-1">
-          <CardTitle className="font-headline text-lg">{domain.name}</CardTitle>
-          <CardDescription className="text-sm">{domain.description}</CardDescription>
+          <CardTitle className="font-headline text-base">{domain.name}</CardTitle>
+          <CardDescription className="text-xs">{domain.description}</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow space-y-2">
-        {!data ? (
+      <CardContent className="space-y-2 h-24">
+        {!isClient || !data ? (
           <div className="space-y-3 pt-2">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
           </div>
         ) : (
           <TooltipProvider>
