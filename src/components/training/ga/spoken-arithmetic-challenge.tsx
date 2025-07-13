@@ -8,6 +8,7 @@ import { Volume2, Loader2, Lightbulb } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useToast } from "@/hooks/use-toast";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 type Operation = '+' | '-' | '*';
 const numberWords: { [key: number]: string } = {
@@ -31,7 +32,6 @@ const generateQuestion = (level: number): { text: string; answer: number } => {
     const op = ops[Math.floor(Math.random() * ops.length)];
     let nextNum = Math.floor(Math.random() * 9) + 1;
     
-    // Avoid division by zero for multiplication inverse and negative results for subtraction
     if (op === '*' && nextNum === 0) nextNum = 1;
     if (op === '-' && eval(formula) < nextNum) {
       const temp = eval(formula);
@@ -120,7 +120,7 @@ export function SpokenArithmeticChallenge() {
     if (isCorrect) {
       setScore(prev => prev + (level * 10));
       logGameResult('Ga', 'math', { score: level * 10, time });
-      toast({ title: "Correct!", description: `The answer was ${question.answer}.` });
+      showSuccessFeedback('Ga');
       setTimeout(() => {
         const nextLvl = level + 1;
         setLevel(nextLvl);
@@ -130,6 +130,7 @@ export function SpokenArithmeticChallenge() {
       const newLives = lives - 1;
       setLives(newLives);
       logGameResult('Ga', 'math', { score: 0, time });
+      showFailureFeedback('Ga');
       toast({
         title: "Not quite.",
         description: `The correct answer was ${question.answer}. You have ${newLives} lives left.`,

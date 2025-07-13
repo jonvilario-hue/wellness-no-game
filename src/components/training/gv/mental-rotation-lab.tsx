@@ -9,6 +9,7 @@ import { View } from "lucide-react";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 
 const shapes = [
@@ -145,8 +146,10 @@ export function MentalRotationLab() {
     if (areGridsEqual(option, puzzle.answer)) {
       setFeedback('correct');
       setScore(prev => prev + 1);
+      showSuccessFeedback('Gv');
     } else {
       setFeedback('incorrect');
+      showFailureFeedback('Gv');
     }
   };
 
@@ -215,8 +218,6 @@ export function MentalRotationLab() {
 
         {feedback && (
           <div className="flex flex-col items-center gap-4 mt-4 text-center animate-in fade-in">
-             {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct! Perfect rotation.</p>}
-            {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">That's not a pure rotation. It might be a mirror image or a different shape.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>
           </div>
         )}

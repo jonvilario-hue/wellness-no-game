@@ -9,6 +9,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 const generateNeutralSequence = (length: number) => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -136,6 +137,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
     
     if (userAnswer.toUpperCase().trim() === correctAnswer) {
       logGameResult('Gwm', currentMode, { score: level * 10, time });
+      showSuccessFeedback('Gwm');
       
       if(onComplete) {
         setFeedback('Correct! Alarm dismissed.');
@@ -153,6 +155,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
       }, 2000);
     } else {
       setFeedback(`Incorrect. The answer was: ${correctAnswer}. Let's try again.`);
+      showFailureFeedback('Gwm');
       logGameResult('Gwm', currentMode, { score: 0, time });
       
       if(onComplete) {

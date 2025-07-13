@@ -7,6 +7,7 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { Scale, RefreshCw } from 'lucide-react';
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 const shapes = [
     { id: 'circle', symbol: '●', color: 'text-chart-1' },
@@ -106,9 +107,11 @@ export function BalancePuzzle() {
         if (option === puzzle.answer) {
             setFeedback('correct');
             score = 100;
+            showSuccessFeedback('Gv');
         } else {
             setFeedback('incorrect');
             score = 0;
+            showFailureFeedback('Gv');
         }
         logGameResult('Gv', 'math', { score, time });
 
@@ -169,10 +172,10 @@ export function BalancePuzzle() {
 
                 {/* Feedback */}
                 <div className="h-10 mt-2 text-center">
-                    {feedback && (
+                    {feedback === 'incorrect' && (
                         <div className="animate-in fade-in">
-                            <p className={cn("text-lg font-bold", feedback === 'correct' ? 'text-green-500' : 'text-destructive')}>
-                                {feedback === 'correct' ? 'Correct!' : `Not quite. The answer was ${puzzle.answer}.`}
+                            <p className="text-lg font-bold text-destructive">
+                                {`Not quite. The answer was ${puzzle.answer}.`}
                             </p>
                         </div>
                     )}

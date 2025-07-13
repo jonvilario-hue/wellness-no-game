@@ -9,6 +9,7 @@ import { BookOpenText } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 const neutralPuzzles = [
   {
@@ -171,8 +172,10 @@ export function VerbalInferenceBuilder() {
     if (option === currentPuzzle.answer) {
       setScore(score + 1);
       setFeedback('correct');
+      showSuccessFeedback('Gc');
     } else {
       setFeedback('incorrect');
+      showFailureFeedback('Gc');
     }
 
     setTimeout(() => {
@@ -248,7 +251,6 @@ export function VerbalInferenceBuilder() {
             <div className="h-16 mt-2 text-center">
               {feedback && (
                 <div className="animate-in fade-in">
-                    <p className="text-lg font-bold text-green-500">{feedback === 'correct' ? 'Correct!' : 'Not quite.'}</p>
                     <p className="text-sm text-muted-foreground">{currentPuzzle.explanation}</p>
                 </div>
               )}

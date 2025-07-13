@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 const symbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
 const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -74,8 +75,12 @@ export function RapidCodeMatch() {
 
     if (keyMap[currentSymbol] === digit) {
       setScore(score + 1);
+      if (score > 0 && score % 5 === 0) {
+        showSuccessFeedback('Gs');
+      }
     } else {
       setScore(Math.max(0, score - 1));
+      showFailureFeedback('Gs');
     }
     const symbolsInKey = Object.keys(keyMap);
     setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);

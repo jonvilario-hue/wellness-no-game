@@ -7,6 +7,7 @@ import { Volume2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 type GameMode = 'mimic' | 'find';
 
@@ -135,6 +136,7 @@ export function ToneGridChallenge() {
 
   const handleIncorrect = () => {
     setLives(prev => prev - 1);
+    showFailureFeedback('Ga');
     setMessage(`Not quite. ${lives - 1} lives left. Let's try level ${level} again.`);
     setTimeout(() => {
         startLevel(level);
@@ -150,6 +152,7 @@ export function ToneGridChallenge() {
     if (newAttempt.length === sequence.length) {
       setGameState('feedback');
       if (JSON.stringify(newAttempt) === JSON.stringify(sequence)) {
+        showSuccessFeedback('Ga');
         setMessage('Correct! Next level.');
         setTimeout(handleNextLevel, 1500);
       } else {
@@ -167,6 +170,7 @@ export function ToneGridChallenge() {
     setGameState('feedback');
     const isCorrect = sequence.includes(targetTone) === wasPresent;
     if (isCorrect) {
+        showSuccessFeedback('Ga');
         setMessage('Correct! Next level.');
         setTimeout(handleNextLevel, 1500);
     } else {

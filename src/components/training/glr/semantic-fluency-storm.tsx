@@ -11,6 +11,7 @@ import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useToast } from "@/hooks/use-toast";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 type Prompt = {
     text: string;
@@ -115,27 +116,32 @@ export function SemanticFluencyStorm() {
 
     if (!cleanInput) return;
 
-    // Check for duplicates
     if (responses.includes(cleanInput)) {
         setCurrentInput('');
         return;
     }
 
+    let isValid = false;
     if (currentMode === 'math' && prompt?.answers) {
         if (prompt.answers.includes(cleanInput)) {
-            const newResponses = [...responses, cleanInput];
-            setResponses(newResponses);
-
-            // Check if all correct answers have been found
-            if (newResponses.length === prompt.answers.length) {
-                toast({ title: "Category Complete!", description: "Great job! Here's a new category." });
-                setPrompt(getNewPrompt());
-                // Give a small time bonus for completing a category
-                setTimeLeft(prev => Math.min(45, prev + 5));
-            }
+            isValid = true;
+        } else {
+            showFailureFeedback('Glr');
         }
     } else { // Neutral mode
-        setResponses([...responses, cleanInput]);
+        isValid = true;
+    }
+    
+    if (isValid) {
+        showSuccessFeedback('Glr');
+        const newResponses = [...responses, cleanInput];
+        setResponses(newResponses);
+
+        if (currentMode === 'math' && prompt?.answers && newResponses.length === prompt.answers.length) {
+            toast({ title: "Category Complete!", description: "Great job! Here's a new category." });
+            setPrompt(getNewPrompt());
+            setTimeLeft(prev => Math.min(45, prev + 5));
+        }
     }
     
     setCurrentInput('');

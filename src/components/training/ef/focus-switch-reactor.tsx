@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 // --- Neutral Mode Config ---
 const colorOptions = [
@@ -122,7 +123,11 @@ export function FocusSwitchReactor() {
   
   const processNextTurn = (correct: boolean) => {
     setScore(prev => correct ? prev + 1 : Math.max(0, prev - 1));
-    // Increase rule switch randomness. It could switch now, or in the next few turns.
+    if (correct) {
+        showSuccessFeedback('EF');
+    } else {
+        showFailureFeedback('EF');
+    }
     if (Math.random() < 0.3) { 
       generateRule();
     }
@@ -210,7 +215,7 @@ export function FocusSwitchReactor() {
               <span>Score: {score}</span>
               <span>Time: {timeLeft}s</span>
             </div>
-            <div className="p-8 bg-muted rounded-lg w-full transition-colors">
+            <div className="p-8 bg-muted rounded-lg w-full">
               <p className="text-xl mb-4">Rule: <span className="font-bold text-primary uppercase">{getRuleText()}</span></p>
               <div className="text-6xl font-extrabold" >
                 {currentMode === 'neutral' ? (

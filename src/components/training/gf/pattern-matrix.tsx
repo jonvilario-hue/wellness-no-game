@@ -9,6 +9,7 @@ import { BrainCircuit } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { showSuccessFeedback, showFailureFeedback } from "@/lib/feedback-system";
 
 // --- Neutral Mode Components ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
@@ -31,9 +32,9 @@ const generateNeutralElement = (): NeutralElement => ({
 // --- Math Mode Components ---
 type MathElement = { value: number };
 const mathOperators = [
-    { name: 'add', op: (a: number, b: number) => a + b, decoyOp: (a: number, b: number) => a - b },
+    { name: 'add', op: (a: number, b: number) => a + b, decoyOp: (a: number, b: number) => Math.abs(a - b) },
     { name: 'subtract', op: (a: number, b: number) => a - b, decoyOp: (a: number, b: number) => a + b },
-    { name: 'multiply', op: (a: number, b: number) => a * b, decoyOp: (a: number, b: number) => a + b },
+    { name: 'multiply', op: (a: number, b: number) => a * b, decoyOp: (a: number, b: number) => a + b + 1},
 ];
 const generateMathElement = (): MathElement => ({ value: Math.floor(Math.random() * 10) + 1 });
 
@@ -105,7 +106,7 @@ const generatePuzzle = (mode: 'neutral' | 'math'): Puzzle => {
     const isRowRule = col === 2;
     const firstVal = (grid[isRowRule ? row * size : col] as MathElement).value;
     const secondVal = (grid[isRowRule ? row * size + 1 : col + size] as MathElement).value;
-    // Find the correct operator, then use its decoy for a logical distractor
+    
     const correctOperator = mathOperators.find(o => o.op(firstVal, secondVal) === (answer as MathElement).value);
     if (correctOperator) {
         options.push({ value: correctOperator.decoyOp(firstVal, secondVal) });
@@ -218,8 +219,10 @@ export function PatternMatrix() {
     if (JSON.stringify(option) === JSON.stringify(puzzle.answer)) {
       setFeedback('correct');
       setScore(score + 1);
+      showSuccessFeedback('Gf');
     } else {
       setFeedback('incorrect');
+      showFailureFeedback('Gf');
     }
   };
 
@@ -284,8 +287,6 @@ export function PatternMatrix() {
 
         {feedback && (
           <div className="flex flex-col items-center gap-4 mt-4 text-center animate-in fade-in">
-             {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct!</p>}
-             {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">Not quite. Look for another pattern.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>
           </div>
         )}
