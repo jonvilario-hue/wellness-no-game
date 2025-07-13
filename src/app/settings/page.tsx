@@ -1,7 +1,8 @@
 
 'use client';
 
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock, ExternalLink, Brain, Zap, Moon } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock, ExternalLink, Brain, Zap, Moon, Check } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,8 +11,19 @@ import { TrainingSettings } from '@/components/settings/training-settings';
 import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+type AlarmPreset = 'quick' | 'deep' | 'gentle';
+
+const presets: { id: AlarmPreset, title: string, icon: LucideIcon, description: string }[] = [
+    { id: 'quick', title: 'Quick Boost', icon: Zap, description: '1 short EF puzzle, low fallback time.' },
+    { id: 'deep', title: 'Deep Wake', icon: Brain, description: '2 puzzles, no skip, XP bonus for completion.' },
+    { id: 'gentle', title: 'Gentle Start', icon: Moon, description: 'Warm-up puzzle, soft tone, feedback delay.' },
+];
 
 const AlarmSettings = () => {
+  const [selectedPreset, setSelectedPreset] = useState<AlarmPreset>('quick');
+  
   return (
     <Card>
       <CardHeader>
@@ -39,30 +51,34 @@ const AlarmSettings = () => {
                 Choose a preset to quickly configure your alarm's behavior. (Feature in development)
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-base"><Zap className="w-4 h-4 text-primary"/>Quick Boost</CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-xs text-muted-foreground">
-                        1 short EF puzzle, low fallback time.
-                    </CardContent>
-                </Card>
-                 <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-base"><Brain className="w-4 h-4 text-primary"/>Deep Wake</CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-xs text-muted-foreground">
-                       2 puzzles, no skip, XP bonus for completion.
-                    </CardContent>
-                </Card>
-                 <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-base"><Moon className="w-4 h-4 text-primary"/>Gentle Start</CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-xs text-muted-foreground">
-                        Warm-up puzzle, soft tone, feedback delay.
-                    </CardContent>
-                </Card>
+                {presets.map((preset) => {
+                    const isActive = selectedPreset === preset.id;
+                    return (
+                        <Card 
+                            key={preset.id} 
+                            onClick={() => setSelectedPreset(preset.id)}
+                            className={cn(
+                                "cursor-pointer transition-all relative",
+                                isActive ? 'border-primary ring-2 ring-primary' : 'hover:border-muted-foreground/50'
+                            )}
+                        >
+                            {isActive && (
+                                <div className="absolute top-2 right-2 p-1 bg-primary rounded-full text-primary-foreground">
+                                    <Check className="h-3 w-3" />
+                                </div>
+                            )}
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-base">
+                                    <preset.icon className="w-4 h-4 text-primary"/>
+                                    {preset.title}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="text-xs text-muted-foreground">
+                               {preset.description}
+                            </CardContent>
+                        </Card>
+                    );
+                })}
             </div>
         </div>
 
