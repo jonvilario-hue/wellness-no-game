@@ -8,17 +8,8 @@ import { getAdaptiveDifficultyAction } from '@/app/actions';
 import type { AdaptDifficultyOutput, AdaptDifficultyInput } from '@/ai/flows';
 import { SlidersHorizontal, Loader2, Wand2, Lightbulb, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { efficiencyData } from '@/data/efficiency-data';
-import type { ChcFactor } from '@/data/efficiency-data';
+import { chcDomains, type CHCDomain } from '@/types';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-
-const domainMap: Record<ChcFactor, string> = {
-  'Gf': 'Problem-Solving Depth (Gf)',
-  'Gwm': 'Working Memory Span (Gwm)',
-  'EF': 'Cognitive Switching (EF)',
-  'Gs': 'Processing Speed (Gs)',
-  'Glr': 'Long-Term Retrieval (Glr)',
-};
 
 const INSIGHT_KEY = 'adaptiveDifficultyInsightDismissed';
 
@@ -26,8 +17,9 @@ export function AdaptiveDifficulty() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<AdaptDifficultyOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFactor, setSelectedFactor] = useState<ChcFactor>('Gf');
+  const [selectedFactor, setSelectedFactor] = useState<CHCDomain>('Gf');
   const [isInsightVisible, setIsInsightVisible] = useState(false);
+  const [skillLevel, setSkillLevel] = useState(50);
 
   useEffect(() => {
     const dismissed = localStorage.getItem(INSIGHT_KEY);
@@ -35,8 +27,19 @@ export function AdaptiveDifficulty() {
       setIsInsightVisible(true);
     }
   }, []);
+
+  useEffect(() => {
+    // In a real app, you might fetch this data. Here we simulate it.
+    // This pseudo-random generation ensures a consistent score for each domain.
+    const keySeed = selectedFactor.charCodeAt(0) + selectedFactor.charCodeAt(1);
+    const pseudoRandom = (seed: number) => {
+        let x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+    };
+    const generatedScore = Math.round(50 + ((keySeed * 13) % 40) + pseudoRandom(keySeed) * 5);
+    setSkillLevel(generatedScore);
+  }, [selectedFactor]);
   
-  const skillLevel = efficiencyData.weekly.subMetrics.find(m => m.key === selectedFactor)?.value || 50;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,13 +76,13 @@ export function AdaptiveDifficulty() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="chc-domain-select" className="text-sm font-medium text-muted-foreground">Cognitive Factor</label>
-            <Select onValueChange={(value: ChcFactor) => setSelectedFactor(value)} defaultValue={selectedFactor}>
+            <Select onValueChange={(value: CHCDomain) => setSelectedFactor(value)} defaultValue={selectedFactor}>
               <SelectTrigger id="chc-domain-select">
                 <SelectValue placeholder="Select a factor" />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(domainMap).map(([key, name]) => (
-                  <SelectItem key={key} value={key}>{name}</SelectItem>
+                {chcDomains.map((domain) => (
+                  <SelectItem key={domain.key} value={domain.key}>{domain.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
