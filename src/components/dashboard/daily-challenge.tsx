@@ -3,43 +3,67 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Archive, BrainCircuit, Goal, Zap, ArrowRight } from 'lucide-react';
+import { Lightbulb, TrendingUp, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
+import { getTrainingRecommendationAction } from '@/app/actions';
+import type { TrainingRecommendationOutput } from '@/ai/flows';
+import { domainIcons } from '../icons';
+import { Skeleton } from '../ui/skeleton';
 
-const challenges = [
-    { domain: "Glr", icon: Archive, text: "Boosts retrieval speed", link: "/training/Glr" },
-    { domain: "Gf", icon: BrainCircuit, text: "Sharpens logical problem-solving", link: "/training/Gf" },
-    { domain: "EF", icon: Goal, text: "Improves task-switching", link: "/training/EF" },
-    { domain: "Gs", icon: Zap, text: "Increases reaction time", link: "/training/Gs" },
-];
+const recommendationIcons = {
+  weakArea: TrendingUp,
+  performanceInsight: Lightbulb,
+  momentumStarter: Zap,
+};
 
 export function DailyChallenge() {
-    const [challenge, setChallenge] = useState(challenges[0]);
+    const [recommendation, setRecommendation] = useState<TrainingRecommendationOutput | null>(null);
+    const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
-        // Select challenge on the client-side to avoid hydration mismatch
-        const dayIndex = new Date().getDate() % challenges.length;
-        setChallenge(challenges[dayIndex]);
+        startTransition(async () => {
+            const result = await getTrainingRecommendationAction();
+            setRecommendation(result);
+        });
     }, []);
 
-    const Icon = challenge.icon;
+    if (isPending || !recommendation) {
+        return (
+             <Card>
+                <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                           <Skeleton className="h-12 w-12 rounded-lg" />
+                           <div className="space-y-2">
+                                <Skeleton className="h-4 w-[250px]" />
+                                <Skeleton className="h-4 w-[200px]" />
+                           </div>
+                        </div>
+                        <Skeleton className="h-10 w-32" />
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
+
+    const RecIcon = recommendationIcons[recommendation.recommendationType];
 
     return (
         <Card className="bg-primary/10 border-primary/20 hover:shadow-lg transition-shadow duration-300">
             <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-primary/20 rounded-lg">
-                        <Icon className="w-6 h-6 text-primary" />
+                        <RecIcon className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-lg text-foreground">Daily Challenge</h3>
-                        <p className="text-muted-foreground">Try a 2-minute {challenge.domain} task — {challenge.text}.</p>
+                        <h3 className="font-bold text-lg text-foreground">{recommendation.title}</h3>
+                        <p className="text-muted-foreground">{recommendation.description}</p>
                     </div>
                 </div>
                 <Button asChild>
-                    <Link href={challenge.link}>
-                        Start Challenge <ArrowRight className="ml-2" />
+                    <Link href={`/training/${recommendation.domain}`}>
+                        Start Training <ArrowRight className="ml-2" />
                     </Link>
                 </Button>
             </CardContent>
