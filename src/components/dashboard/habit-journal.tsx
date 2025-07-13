@@ -150,14 +150,26 @@ const JournalEditor = memo(({
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
     if (editorState.category !== newCategory) {
-        handleSave(editorState, { isFinal: true });
+        const isNew = editorState.id.startsWith('new-');
+        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
+        if (isNew && !hasContent) {
+           // Don't save, just switch
+        } else {
+            handleSave(editorState, { isFinal: true });
+        }
         onCategoryChange(newCategory);
     }
   };
   
   const handleFrequencyButtonClick = (newFrequency: ReflectionFrequency) => {
     if (editorState.frequency !== newFrequency) {
-        handleSave(editorState, { isFinal: true });
+        const isNew = editorState.id.startsWith('new-');
+        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
+        if (isNew && !hasContent) {
+            // Don't save, just switch
+        } else {
+           handleSave(editorState, { isFinal: true });
+        }
         onFrequencyChange(newFrequency);
     }
   };
