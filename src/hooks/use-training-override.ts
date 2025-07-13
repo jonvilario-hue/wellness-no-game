@@ -21,16 +21,10 @@ export const useTrainingOverride = () => {
   const setOverride = useCallback((newOverride: TrainingFocus | null) => {
     // The override functionality has been removed from the UI,
     // but the hook is kept for potential future use and to avoid breaking dependencies.
-    // For now, it doesn't need to do anything.
+    // For now, it doesn't need to do anything with storage.
     setOverrideState(newOverride);
-    if(newOverride === null) {
-      try {
-        window.sessionStorage.removeItem(TRAINING_OVERRIDE_KEY);
-      } catch (error) {
-         console.error("Failed to clear training override from sessionStorage", error);
-      }
-    }
   }, []);
 
   return { override, setOverride, isLoaded };
 };
+
