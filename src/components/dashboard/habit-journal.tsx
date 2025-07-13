@@ -24,7 +24,7 @@ import {
   ArrowDownUp,
   AlertTriangle,
 } from 'lucide-react';
-import { useState, useEffect, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
+import { useState, useEffect, useCallback, useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -84,30 +84,43 @@ const EntryEditor = ({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
   const { completedHabits, toggleHabitForDay } = useJournal();
-  
+  const editorStateRef = useRef(editorState);
+
   const todaysHabits = completedHabits[editorState.date] || new Set();
 
   useEffect(() => {
     setEditorState(entry);
     setSaveStatus('idle');
   }, [entry]);
+  
+  useEffect(() => {
+    editorStateRef.current = editorState;
+  }, [editorState]);
 
   useEffect(() => {
-      const isNew = editorState.id.startsWith('new-');
-      if (isNew || JSON.stringify(entry) === JSON.stringify(editorState)) {
+      const isNew = editorStateRef.current.id.startsWith('new-');
+      const hasChanged = JSON.stringify(entry) !== JSON.stringify(editorStateRef.current);
+
+      if (isNew || !hasChanged) {
         return;
       }
-
+      
       setSaveStatus('saving');
       const handler = setTimeout(() => {
-        onSave(editorState);
+        onSave(editorStateRef.current);
         setSaveStatus('saved');
       }, 1500); 
 
       return () => {
           clearTimeout(handler);
+          // Save on unmount if there are pending changes
+          if (JSON.stringify(entry) !== JSON.stringify(editorStateRef.current)) {
+              onSave(editorStateRef.current);
+          }
       };
-  }, [editorState, entry, onSave]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorState, entry.id]);
+
 
   useEffect(() => {
       if (saveStatus === 'saved') {
@@ -176,30 +189,30 @@ const EntryEditor = ({
   }
 
 
-  const exportAsMarkdown = (entry: JournalEntry) => {
-      const entryConfig = journalConfig[entry.category as JournalCategory];
-      const prompts = entryConfig.prompts[entry.frequency] || entryConfig.prompts.daily;
+  const exportAsMarkdown = (entryToExport: JournalEntry) => {
+      const entryConfig = journalConfig[entryToExport.category as JournalCategory];
+      const prompts = entryConfig.prompts[entryToExport.frequency] || entryConfig.prompts.daily;
 
       let markdown = `---
-date: ${entry.date}
-category: "${entry.category}"
-frequency: ${entry.frequency}
-effort: ${entry.effort}
-tags: ${entry.tags}
+date: ${entryToExport.date}
+category: "${entryToExport.category}"
+frequency: ${entryToExport.frequency}
+effort: ${entryToExport.effort}
+tags: ${entryToExport.tags}
 ---
 
-# Journal Entry: ${new Date(entry.date + 'T00:00:00').toLocaleDateString()}
+# Journal Entry: ${new Date(entryToExport.date + 'T00:00:00').toLocaleDateString()}
 
-## ${entry.category} (${entry.frequency})
+## ${entryToExport.category} (${entryToExport.frequency})
 
 `;
 
-      if (entry.field1) markdown += `### ${prompts[0]}\n${entry.field1}\n\n`;
-      if (entry.field2) markdown += `### ${prompts[1]}\n${entry.field2}\n\n`;
-      if (entry.field3) markdown += `### ${prompts[2]}\n${entry.field3}\n\n`;
+      if (entryToExport.field1) markdown += `### ${prompts[0]}\n${entryToExport.field1}\n\n`;
+      if (entryToExport.field2) markdown += `### ${prompts[1]}\n${entryToExport.field2}\n\n`;
+      if (entryToExport.field3) markdown += `### ${prompts[2]}\n${entryToExport.field3}\n\n`;
 
-      if (entry.affirmations && entry.affirmations.length > 0) {
-          markdown += `### Affirmations\n${entry.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
+      if (entryToExport.affirmations && entryToExport.affirmations.length > 0) {
+          markdown += `### Affirmations\n${entryToExport.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
       }
       
       const completedHabitsForEntry = Object.values(allHabits)
@@ -213,7 +226,7 @@ tags: ${entry.tags}
       const element = document.createElement("a");
       const file = new Blob([markdown], {type: 'text/plain'});
       element.href = URL.createObjectURL(file);
-      element.download = `journal-${entry.date}.md`;
+      element.download = `journal-${entryToExport.date}.md`;
       document.body.appendChild(element); 
       element.click();
       document.body.removeChild(element);
@@ -626,7 +639,7 @@ export const HabitJournal = forwardRef((props, ref) => {
   }, [entries, selectedEntry, handleNewEntry, setSelectedEntry]);
 
   const handleSave = useCallback((entryToSave: JournalEntry) => {
-    if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim()) {
+    if (!entryToSave.field1.trim() && !entryToSave.field2.trim() && !entryToSave.field3.trim() && !entryToSave.affirmations.some(a => a.trim())) {
       toast({
         title: 'Empty Journal',
         description: 'Please write something before saving.',
@@ -813,5 +826,3 @@ export const HabitJournal = forwardRef((props, ref) => {
 });
 
 HabitJournal.displayName = 'HabitJournal';
-
-    
