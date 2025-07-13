@@ -7,9 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DomainStreak, type DomainStreakProps } from './domain-streak';
 import { useState, useEffect } from 'react';
 import { useJournal } from '@/hooks/use-journal';
-import { allHabits, type Habit } from '@/lib/journal-config';
+import { allHabits, journalConfig, type Habit, type JournalCategory } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Checkbox } from '../ui/checkbox';
+import { Label } from '../ui/label';
 
 const overallStats = {
   totalSessions: 42,
@@ -28,40 +31,39 @@ const domainStreaksData: DomainStreakProps[] = [
     { domainKey: 'Glr', name: 'Long-Term Retrieval', streak: 9, isTop: false },
 ].sort((a, b) => b.streak - a.streak);
 
+const habitCategories = Object.keys(journalConfig) as JournalCategory[];
 
-const HabitItem = ({ habit, isDone }: { habit: Habit; isDone: boolean }) => {
+const HabitItem = ({ habit, isDone, onToggle }: { habit: Habit; isDone: boolean, onToggle: (checked: boolean) => void }) => {
   const Icon = habit.icon;
+  const checkboxId = `habit-tracker-${habit.id}`;
   return (
-    <div className={cn(
-      "flex items-center gap-3 p-3 rounded-lg transition-all",
-      isDone ? 'bg-primary/10' : 'bg-muted/50'
-    )}>
-      <div className={cn(
-        "p-1.5 rounded-md",
-        isDone ? 'bg-primary/20' : 'bg-background/50'
-      )}>
-        <Icon className={cn("w-5 h-5", isDone ? 'text-primary' : 'text-muted-foreground')} />
-      </div>
-      <span className={cn(
-        "flex-grow font-medium text-sm",
-        isDone ? 'text-primary-foreground' : 'text-muted-foreground'
-      )}>{habit.label}</span>
-      {isDone && <CheckSquare className="w-5 h-5 text-primary shrink-0"/>}
+    <div className="flex items-center">
+      <Label
+        htmlFor={checkboxId}
+        className={cn(
+          "flex items-center gap-3 p-2 rounded-lg transition-all w-full cursor-pointer",
+          isDone ? 'bg-primary/10 hover:bg-primary/20' : 'bg-muted/50 hover:bg-muted'
+        )}
+      >
+        <Checkbox id={checkboxId} checked={isDone} onCheckedChange={onToggle} />
+        <div className={cn("p-1.5 rounded-md", isDone ? 'bg-primary/20' : 'bg-background/50')}>
+          <Icon className={cn("w-5 h-5", isDone ? 'text-primary' : 'text-muted-foreground')} />
+        </div>
+        <span className={cn("flex-grow font-medium text-sm", isDone ? 'text-primary-foreground' : 'text-muted-foreground')}>
+          {habit.label}
+        </span>
+      </Label>
     </div>
   );
 };
 
-
 export function HabitTracker() {
     const [insight, setInsight] = useState('');
-    const { getCompletedHabitsForDay } = useJournal();
-    const [completedToday, setCompletedToday] = useState(new Set<string>());
+    const { completedHabits, toggleHabitForDay } = useJournal();
 
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-
-    useEffect(() => {
-        setCompletedToday(getCompletedHabitsForDay(today));
-    }, [getCompletedHabitsForDay, today]);
+    const todaysHabits = completedHabits[today] || new Set();
+    const allHabitList = Object.values(allHabits);
 
     useEffect(() => {
         const topStreak = domainStreaksData.find(d => d.isTop);
@@ -70,80 +72,106 @@ export function HabitTracker() {
         }
     }, []);
 
-    const allHabitList = Object.values(allHabits);
-    const habitsDone = allHabitList.filter(h => completedToday.has(h.id));
-    const habitsToDo = allHabitList.filter(h => !completedToday.has(h.id));
+    const handleToggleHabit = (habitId: string) => {
+      toggleHabitForDay(today, habitId);
+    };
 
+    return (
+      <Card className="hover:shadow-lg transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 font-headline">
+            <Target className="w-5 h-5 text-primary" />
+            Habit Tracker
+          </CardTitle>
+          <CardDescription>Track your consistency and build lasting cognitive habits.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="today">
+              <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="today">Today's Habits</TabsTrigger>
+                  <TabsTrigger value="streaks">Domain Streaks</TabsTrigger>
+                  <TabsTrigger value="insight">Insight</TabsTrigger>
+              </TabsList>
 
-  return (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-headline">
-          <Target className="w-5 h-5 text-primary" />
-          Habit Tracker
-        </CardTitle>
-        <CardDescription>Track your consistency and build lasting cognitive habits.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="today">
-            <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="today">Today's Habits</TabsTrigger>
-                <TabsTrigger value="streaks">Domain Streaks</TabsTrigger>
-                <TabsTrigger value="insight">Insight</TabsTrigger>
-            </TabsList>
+              <TabsContent value="today" className="pt-4">
+                  <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold">Today's Progress</h3>
+                      <p className="text-sm font-bold text-primary">{todaysHabits.size} / {allHabitList.length} Done</p>
+                  </div>
+                   <ScrollArea className="h-64 pr-3 -mr-3">
+                      <Accordion type="multiple" defaultValue={habitCategories} className="w-full">
+                        {habitCategories.map(category => {
+                          const categoryConfig = journalConfig[category];
+                          const categoryHabits = categoryConfig.habits.map(habitId => allHabits[habitId]);
+                          const completedInCategory = categoryHabits.filter(h => todaysHabits.has(h.id)).length;
 
-            <TabsContent value="today" className="pt-4">
-                <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold">Today's Progress</h3>
-                    <p className="text-sm font-bold text-primary">{habitsDone.length} / {allHabitList.length} Done</p>
-                </div>
-                 <ScrollArea className="h-64 pr-3 -mr-3">
-                    <div className="space-y-2">
-                        {habitsDone.map(habit => <HabitItem key={habit.id} habit={habit} isDone={true} />)}
-                        {habitsToDo.map(habit => <HabitItem key={habit.id} habit={habit} isDone={false} />)}
-                    </div>
-                </ScrollArea>
-                {habitsDone.length === allHabitList.length && (
-                    <p className="text-center text-green-500 font-bold mt-4">All habits completed for today!</p>
-                )}
-            </TabsContent>
+                          return (
+                            <AccordionItem value={category} key={category}>
+                              <AccordionTrigger>
+                                <div className="flex items-center justify-between w-full">
+                                  <div className="flex items-center gap-2">
+                                    <categoryConfig.icon className="w-4 h-4 text-muted-foreground" />
+                                    <span className="font-semibold">{category}</span>
+                                  </div>
+                                  <span className="text-sm text-muted-foreground font-medium pr-2">{completedInCategory} / {categoryHabits.length}</span>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent>
+                                <div className="space-y-2 pl-2">
+                                  {categoryHabits.map(habit => (
+                                    <HabitItem 
+                                      key={habit.id} 
+                                      habit={habit}
+                                      isDone={todaysHabits.has(habit.id)}
+                                      onToggle={() => handleToggleHabit(habit.id)}
+                                    />
+                                  ))}
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          )
+                        })}
+                      </Accordion>
+                  </ScrollArea>
+                  {todaysHabits.size === allHabitList.length && (
+                      <p className="text-center text-green-500 font-bold mt-4">All habits completed for today!</p>
+                  )}
+              </TabsContent>
 
-            <TabsContent value="streaks" className="space-y-3 pt-4">
-                 <ScrollArea className="h-64 pr-3 -mr-3">
-                    <div className="space-y-2">
-                         {domainStreaksData.map((streak, index) => (
-                            <DomainStreak key={index} {...streak} />
-                         ))}
-                    </div>
-                </ScrollArea>
-            </TabsContent>
+              <TabsContent value="streaks" className="space-y-3 pt-4">
+                   <ScrollArea className="h-64 pr-3 -mr-3">
+                      <div className="space-y-2">
+                           {domainStreaksData.map((streak, index) => (
+                              <DomainStreak key={index} {...streak} />
+                           ))}
+                      </div>
+                  </ScrollArea>
+              </TabsContent>
 
-            <TabsContent value="insight" className="space-y-4 pt-4">
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                        <TrendingUp className="w-6 h-6 text-primary" />
-                        <span className="font-medium">Current Streak</span>
-                    </div>
-                    <span className="font-bold text-lg">{overallStats.currentStreak} Days</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                        <Zap className="w-6 h-6 text-accent" />
-                        <span className="font-medium">Total Sessions</span>
-                    </div>
-                    <span className="font-bold text-lg">{overallStats.totalSessions}</span>
-                </div>
-                 <div className="p-3 bg-primary/10 rounded-lg text-center">
-                    <p className="text-sm text-primary-foreground/80 flex items-start gap-2">
-                        <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
-                        <span><span className="font-bold text-primary-foreground">Insight:</span> {insight}</span>
-                    </p>
-                </div>
-            </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
+              <TabsContent value="insight" className="space-y-4 pt-4">
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                          <TrendingUp className="w-6 h-6 text-primary" />
+                          <span className="font-medium">Current Streak</span>
+                      </div>
+                      <span className="font-bold text-lg">{overallStats.currentStreak} Days</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                          <Zap className="w-6 h-6 text-accent" />
+                          <span className="font-medium">Total Sessions</span>
+                      </div>
+                      <span className="font-bold text-lg">{overallStats.totalSessions}</span>
+                  </div>
+                   <div className="p-3 bg-primary/10 rounded-lg text-center">
+                      <p className="text-sm text-primary-foreground/80 flex items-start gap-2">
+                          <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
+                          <span><span className="font-bold text-primary-foreground">Insight:</span> {insight}</span>
+                      </p>
+                  </div>
+              </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    );
 }
-
-    

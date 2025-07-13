@@ -72,7 +72,7 @@ const groupEntriesByDate = (entries: JournalEntry[]) => {
 };
 
 export function HabitJournal() {
-  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash } = useJournal();
+  const { entries, trashedEntries, addEntry, updateEntry, deleteEntry, restoreEntry, emptyTrash, completedHabits, toggleHabitForDay } = useJournal();
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('entries');
   const [searchQuery, setSearchQuery] = useState('');
@@ -109,7 +109,6 @@ export function HabitJournal() {
       tags: '',
       effort: 7,
       mood: null,
-      habits: {},
     };
   }, [getDefaultFrequency]);
 
@@ -226,6 +225,8 @@ export function HabitJournal() {
   }) => {
     const [editorState, setEditorState] = useState<JournalEntry>(entry);
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+    
+    const todaysHabits = completedHabits[editorState.date] || new Set();
 
     useEffect(() => {
       setEditorState(entry);
@@ -294,15 +295,7 @@ export function HabitJournal() {
     };
 
     const handleHabitChange = (habitId: HabitId, checked: boolean) => {
-      setEditorState(prevState => {
-        const newHabits = { ...prevState.habits };
-        if (checked) {
-          newHabits[habitId] = 'done';
-        } else {
-          delete newHabits[habitId];
-        }
-        return { ...prevState, habits: newHabits };
-      });
+      toggleHabitForDay(editorState.date, habitId);
     };
 
     const handleAffirmationChange = (index: number, value: string) => {
@@ -346,9 +339,9 @@ tags: ${entry.tags}
             markdown += `### Affirmations\n${entry.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
         }
         
-        const completedHabits = Object.keys(entry.habits)
-            .filter(key => entry.habits[key as HabitId] === 'done')
-            .map(key => allHabits[key as HabitId]?.label);
+        const completedHabits = Object.values(allHabits)
+            .filter(habit => todaysHabits.has(habit.id))
+            .map(h => h?.label);
 
         if (completedHabits.length > 0) {
             markdown += `### Supporting Habits\n${completedHabits.map(h => `- [x] ${h}`).join('\n')}\n\n`;
@@ -541,7 +534,7 @@ tags: ${entry.tags}
                         >
                            <Checkbox 
                             id={habitCheckboxId}
-                            checked={!!editorState.habits[habit.id]}
+                            checked={todaysHabits.has(habit.id)}
                             onCheckedChange={checked => handleHabitChange(habit.id, !!checked)}
                            />
                           <habit.icon className="w-4 h-4 text-muted-foreground" />
