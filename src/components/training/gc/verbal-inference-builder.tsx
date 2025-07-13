@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
 
@@ -59,20 +59,25 @@ const puzzles = [
   },
 ];
 
+type Puzzle = (typeof puzzles)[0];
+
 export function VerbalInferenceBuilder() {
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
+  const [shuffledPuzzles, setShuffledPuzzles] = useState<Puzzle[]>([]);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState(''); // '', 'correct', 'incorrect'
   const [gameState, setGameState] = useState('playing'); // playing, finished
   
-  // Shuffle puzzles once on initial load
-  const shuffledPuzzles = useMemo(() => [...puzzles].sort(() => Math.random() - 0.5), []);
+  useEffect(() => {
+    // Shuffle puzzles once on client-side mount to avoid hydration mismatch
+    setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5));
+  }, []);
 
   const currentPuzzle = shuffledPuzzles[currentPuzzleIndex];
 
   const handleAnswer = (option: string) => {
-    if (feedback) return;
+    if (feedback || !currentPuzzle) return;
 
     setSelectedAnswer(option);
     if (option === currentPuzzle.answer) {
@@ -95,6 +100,7 @@ export function VerbalInferenceBuilder() {
   
   const handleRestart = () => {
     setCurrentPuzzleIndex(0);
+    setShuffledPuzzles([...puzzles].sort(() => Math.random() - 0.5)); // Re-shuffle for new game
     setScore(0);
     setFeedback('');
     setSelectedAnswer(null);
@@ -102,7 +108,7 @@ export function VerbalInferenceBuilder() {
   };
   
   const getButtonClass = (option: string) => {
-    if (!feedback) return "secondary";
+    if (!feedback || !currentPuzzle) return "secondary";
 
     if (option === currentPuzzle.answer) {
       return "bg-green-600 hover:bg-green-700 text-white";
@@ -115,6 +121,15 @@ export function VerbalInferenceBuilder() {
     return "secondary";
   }
 
+  if (shuffledPuzzles.length === 0 || !currentPuzzle) {
+    return (
+      <Card className="w-full max-w-2xl text-center">
+        <CardContent className="flex items-center justify-center h-48">
+          <p>Loading puzzles...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-2xl">

@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 import { BrainCircuit } from "lucide-react";
 
@@ -21,15 +21,12 @@ const generateElement = () => ({
 // --- Puzzle Generation Logic ---
 type Element = { shape: string; color: string; rotation: number; };
 type Grid = (Element | null)[];
+type Puzzle = { grid: Grid, missingIndex: number, answer: Element, options: Element[], size: number };
 
-const rules = [
-  'row_progression', 
-  'column_progression',
-];
-
-const generatePuzzle = () => {
+const generatePuzzle = (): Puzzle => {
   const size = Math.random() > 0.5 ? 3 : 2; // 3x3 or 2x2 grid
   const grid: Grid = Array(size * size).fill(null);
+  const rules = ['row_progression', 'column_progression'];
   const rule = rules[Math.floor(Math.random() * rules.length)];
   const missingIndex = Math.floor(Math.random() * (size * size));
 
@@ -107,15 +104,20 @@ const ShapeComponent = ({ shape, color, rotation }: Element) => {
 
 
 export function PatternMatrix() {
+  const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [puzzleKey, setPuzzleKey] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState<Element | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
 
-  const puzzle = useMemo(() => generatePuzzle(), [puzzleKey]);
+  useEffect(() => {
+    // Generate puzzle on client mount to avoid hydration mismatch
+    setPuzzle(generatePuzzle());
+  }, [puzzleKey]);
+
 
   const handleSelectOption = (option: Element) => {
-    if (feedback) return;
+    if (feedback || !puzzle) return;
     setSelectedOption(option);
     if (JSON.stringify(option) === JSON.stringify(puzzle.answer)) {
       setFeedback('correct');
@@ -130,6 +132,16 @@ export function PatternMatrix() {
     setSelectedOption(null);
     setFeedback('');
   };
+
+  if (!puzzle) {
+    return (
+      <Card className="w-full max-w-md text-center">
+         <CardContent className="flex items-center justify-center h-48">
+          <p>Loading puzzle...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const gridClass = puzzle.size === 3 ? "grid-cols-3" : "grid-cols-2";
 

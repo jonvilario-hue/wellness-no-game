@@ -93,7 +93,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
               </Tooltip>
             <span className="text-sm font-bold text-primary">{score > 0 ? Math.round(score) : '...'}</span>
           </div>
-          <Progress value={score} aria-label={`Score for ${domain.name} is ${score}`} />
+          <Progress value={score} />
         </div>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
             <Tooltip delayDuration={0}>

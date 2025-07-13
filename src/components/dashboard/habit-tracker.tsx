@@ -2,12 +2,12 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target, Zap, TrendingUp, Lightbulb, CheckSquare, X } from 'lucide-react';
+import { Target, Zap, TrendingUp, Lightbulb, X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DomainStreak, type DomainStreakProps } from './domain-streak';
 import { useState, useEffect } from 'react';
 import { useJournal } from '@/hooks/use-journal';
-import { allHabits, journalConfig, type Habit, type JournalCategory, type HabitId } from '@/lib/journal-config';
+import { allHabits, journalConfig, type JournalCategory, type HabitId } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
