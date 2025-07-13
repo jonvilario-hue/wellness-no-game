@@ -157,17 +157,18 @@ function TimerInstance({
 
 export function Timer() {
     const [timers, setTimers] = useState<TimerState[]>([]);
-    const nextId = useRef(1);
     const [newTimerLabel, setNewTimerLabel] = useState('');
     const [newTimerDuration, setNewTimerDuration] = useState(300); // 5 minutes in seconds
+    const nextId = useRef(1);
 
     const addTimer = () => {
+        const newId = nextId.current++;
         setTimers(prev => [...prev, {
-            id: nextId.current++,
+            id: newId,
             initialTime: newTimerDuration,
             timeLeft: newTimerDuration,
             isActive: false,
-            label: newTimerLabel || `Timer #${nextId.current -1}`
+            label: newTimerLabel || `Timer #${newId}`
         }]);
         // Reset form
         setNewTimerLabel('');
@@ -185,12 +186,13 @@ export function Timer() {
     useEffect(() => {
         // Automatically add one timer on initial load if there are none.
         if (timers.length === 0) {
+             const id = nextId.current++;
              setTimers([{
-                id: nextId.current++,
+                id,
                 initialTime: 300,
                 timeLeft: 300,
                 isActive: false,
-                label: `Timer #1`
+                label: `Timer #${id}`
             }]);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps

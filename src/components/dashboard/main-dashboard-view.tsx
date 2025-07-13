@@ -9,7 +9,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { ChcProfileOverview } from './chc-profile-overview';
 import { chcDomains } from '@/types';
 import { ChcDomainCard } from './chc-domain-card';
-import { cn } from '@/lib/utils';
 
 export function MainDashboardView() {
   const [view, setView] = useState<'efficiency' | 'profile'>('efficiency');

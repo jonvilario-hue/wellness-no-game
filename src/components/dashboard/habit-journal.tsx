@@ -24,7 +24,7 @@ import {
   ArrowDownUp,
   AlertTriangle,
 } from 'lucide-react';
-import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -75,63 +75,46 @@ const JournalEditor = ({
   const { toast } = useToast();
   const { completedHabits, toggleHabitForDay } = useJournal();
   
-  const editorStateRef = useRef(editorState);
-  const onSaveRef = useRef(onSave);
-  const originalEntryRef = useRef(entry);
-
-
   const todaysHabits = completedHabits[editorState.date] || new Set();
 
   useEffect(() => {
-    onSaveRef.current = onSave;
-  });
-
-  useEffect(() => {
     setEditorState(entry);
-    originalEntryRef.current = entry;
     setSaveStatus('idle');
   }, [entry]);
   
-  useEffect(() => {
-    editorStateRef.current = editorState;
-  }, [editorState]);
-  
-  const handleSave = useCallback((options: { isFinal: boolean } = { isFinal: false }) => {
-    const currentEntry = editorStateRef.current;
+  const handleSave = useCallback((updatedEntry: JournalEntry, options: { isFinal: boolean } = { isFinal: false }) => {
+    const isNew = updatedEntry.id.startsWith('new-');
+    const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a);
     
-    // Don't save if it's a new, untouched entry
-    const isNew = currentEntry.id.startsWith('new-');
-    const hasContent = currentEntry.field1 || currentEntry.field2 || currentEntry.field3 || currentEntry.affirmations.some(a => a);
+    // Don't auto-save if it's a new, untouched entry
     if(isNew && !hasContent && !options.isFinal) return;
+
+    // Check for actual changes before saving
+    const originalEntry = entry;
+    const hasChanged = JSON.stringify(originalEntry) !== JSON.stringify(updatedEntry);
+
+    if(!hasChanged && !isNew) {
+      setSaveStatus('idle');
+      return;
+    }
     
     setSaveStatus('saving');
-    const result = onSaveRef.current(currentEntry, options);
+    const result = onSave(updatedEntry, options);
+    
     if (result.success && result.entry) {
-        setEditorState(result.entry);
-        originalEntryRef.current = result.entry;
+        setEditorState(prev => ({...prev, ...result.entry}));
         setTimeout(() => setSaveStatus('saved'), 500);
     } else if (!result.success) {
         setSaveStatus('idle');
     }
-  }, []);
+  }, [entry, onSave]);
 
   useEffect(() => {
-    const hasChanged = JSON.stringify(originalEntryRef.current) !== JSON.stringify(editorStateRef.current);
-    if (!hasChanged) {
-      setSaveStatus('idle');
-      return;
-    }
-
     const handler = setTimeout(() => {
-      // Check for changes one more time before saving
-      if (JSON.stringify(originalEntryRef.current) !== JSON.stringify(editorStateRef.current)) {
-          handleSave();
-      }
+      handleSave(editorState);
     }, 1500);
     
-    return () => {
-      clearTimeout(handler);
-    };
+    return () => clearTimeout(handler);
   }, [editorState, handleSave]);
 
 
@@ -154,20 +137,20 @@ const JournalEditor = ({
   const isNewEntry = editorState.id.startsWith('new-');
   
   const handleManualSave = () => {
-    handleSave({ isFinal: true });
+    handleSave(editorState, { isFinal: true });
     toast({ title: 'Journal Entry Saved' });
   }
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
     if (editorState.category !== newCategory) {
-        handleSave({ isFinal: true });
+        handleSave(editorState, { isFinal: true });
         onCategoryChange(newCategory);
     }
   };
   
   const handleFrequencyButtonClick = (newFrequency: ReflectionFrequency) => {
     if (editorState.frequency !== newFrequency) {
-        handleSave({ isFinal: true });
+        handleSave(editorState, { isFinal: true });
         onFrequencyChange(newFrequency);
     }
   };

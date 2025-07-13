@@ -61,20 +61,22 @@ const calculateMetrics = (data: { name: string, score: number }[]) => {
 
 export function ChcProfileOverview() {
   const [timeframe, setTimeframe] = useState<Timeframe>('weekly');
-  const [data, setData] = useState<{ score: number, trend: number, chartData: any[] }>({
-    score: 0,
-    trend: 0,
-    chartData: []
-  });
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This effect runs on the client after mounting and when timeframe changes
-    const chartData = generateMockData(timeframe);
-    const { score, trend } = calculateMetrics(chartData);
-    setData({ score, trend, chartData });
-  }, [timeframe]);
+    setIsClient(true);
+  }, []);
 
-  const trendColor = data.trend > 0 ? 'text-green-500' : 'text-amber-500';
+  if (!isClient) {
+    return (
+        <Card className="bg-muted/30 p-4 rounded-lg h-[150px] animate-pulse" />
+    );
+  }
+
+  const chartData = generateMockData(timeframe);
+  const { score, trend } = calculateMetrics(chartData);
+  
+  const trendColor = trend > 0 ? 'text-green-500' : 'text-amber-500';
   const timeframeText = {
       weekly: "from last week",
       monthly: "from last month",
@@ -95,20 +97,20 @@ export function ChcProfileOverview() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
         <div className="flex flex-col items-center justify-center space-y-1">
           <p className="text-sm text-muted-foreground font-semibold">Average Score</p>
-          <p className="text-4xl font-bold text-primary">{data.score}</p>
+          <p className="text-4xl font-bold text-primary">{score}</p>
           <p className="text-xs text-muted-foreground capitalize">{timeframe} average</p>
         </div>
         <div className="flex flex-col items-center justify-center space-y-1">
           <p className="text-sm text-muted-foreground font-semibold">Performance Trend</p>
           <p className={cn('text-4xl font-bold', trendColor)}>
-            {data.trend >= 0 ? '+' : ''}
-            {data.trend}%
+            {trend >= 0 ? '+' : ''}
+            {trend}%
           </p>
            <p className="text-xs text-muted-foreground">Change {timeframeText[timeframe]}</p>
         </div>
         <div className="h-24 md:col-span-1">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data.chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'hsl(var(--background))',
