@@ -42,17 +42,15 @@ const getDomainInfo = (domainKey: CHCDomain) => {
 const getTodayChallengeSet = (): CHCDomain[] => {
   const dayOfWeek = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
   
-  // A curated list of domains to ensure they rotate daily.
-  const dailyRotation: CHCDomain[][] = [
-    ['Gf', 'Gwm', 'Gs'],   // Sunday
-    ['Gv', 'EF', 'Glr'],   // Monday
-    ['Gc', 'Ga', 'Gf'],    // Tuesday
-    ['Gwm', 'Gs', 'Gv'],   // Wednesday
-    ['EF', 'Glr', 'Gc'],   // Thursday
-    ['Ga', 'Gf', 'Gwm'],   // Friday
-    ['Gs', 'Gv', 'EF'],    // Saturday
+  // A curated list of domains to ensure they rotate daily and are sorted alphabetically for predictability
+  const sortedDomains = [...chcDomains].sort((a,b) => a.key < b.key ? -1 : 1).map(d => d.key);
+  
+  // This ensures a different, predictable set every day
+  return [
+      sortedDomains[dayOfWeek % 8],
+      sortedDomains[(dayOfWeek + 2) % 8],
+      sortedDomains[(dayOfWeek + 4) % 8],
   ];
-  return dailyRotation[dayOfWeek];
 }
 
 
