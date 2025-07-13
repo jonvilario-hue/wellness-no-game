@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +19,6 @@ const recommendationIcons = {
 export function PerformanceInsights() {
   const [recommendation, setRecommendation] = useState<TrainingRecommendationOutput | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     startTransition(async () => {
@@ -26,10 +26,6 @@ export function PerformanceInsights() {
       setRecommendation(result);
     });
   }, []);
-
-  if (isDismissed) {
-    return null;
-  }
 
   if (isPending || !recommendation) {
     return (
@@ -56,16 +52,7 @@ export function PerformanceInsights() {
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
-      <CardHeader className="relative">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-4 right-4 h-6 w-6 text-muted-foreground hover:text-foreground"
-          onClick={() => setIsDismissed(true)}
-          aria-label="Dismiss insight"
-        >
-          <X className="w-4 h-4" />
-        </Button>
+      <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Sparkles className="w-5 h-5 text-primary" />
           Performance Insights

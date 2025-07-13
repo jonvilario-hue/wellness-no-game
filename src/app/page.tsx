@@ -14,9 +14,11 @@ import { Plus } from 'lucide-react';
 import { useRef } from 'react';
 import { MainDashboardView } from '@/components/dashboard/main-dashboard-view';
 import { AllGames } from '@/components/dashboard/all-games';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 function DashboardContent() {
   const journalRef = useRef<HTMLDivElement>(null);
+  const { settings } = useDashboardSettings();
 
   const handleNewNoteClick = () => {
     journalRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -29,28 +31,30 @@ function DashboardContent() {
       <Header />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-7xl space-y-6">
-          <DailyChallenge />
+          {settings.dailyChallenge && <DailyChallenge />}
 
-          <AllGames />
+          {settings.allGames && <AllGames />}
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <MainDashboardView />
+              {settings.mainDashboard && <MainDashboardView />}
             </div>
             <aside className="lg:col-span-1 flex flex-col gap-6">
-              <HabitTracker />
-              <MilestoneBadges />
+              {settings.habitTracker && <HabitTracker />}
+              {settings.milestoneBadges && <MilestoneBadges />}
             </aside>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <PerformanceInsights />
-            <WeakAreaRecommendations />
-          </div>
+          {(settings.performanceInsights || settings.weakAreaRecommendations) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              {settings.performanceInsights && <PerformanceInsights />}
+              {settings.weakAreaRecommendations && <WeakAreaRecommendations />}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalRef}>
-            <AdaptiveDifficulty />
-            <HabitJournal />
+            {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
+            {settings.habitJournal && <HabitJournal />}
           </div>
         </div>
       </main>
