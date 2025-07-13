@@ -43,7 +43,7 @@ export function AppearanceSettings() {
                             )}
                             <div className="flex flex-col h-full">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <div className="p-2 rounded-md" style={{ backgroundColor: theme.colorScheme.accentBars, color: theme.colorScheme.isDark ? '#000' : '#fff' }}>
+                                    <div className="p-2 rounded-md" style={{ backgroundColor: theme.colorScheme.accentBars, color: theme.colorScheme.successProgressText }}>
                                         <Icon className="w-5 h-5"/>
                                     </div>
                                     <h3 className="font-bold text-lg" style={{ color: theme.colorScheme.successProgressText }}>

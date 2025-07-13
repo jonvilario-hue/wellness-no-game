@@ -1,8 +1,7 @@
 
 import type { LucideIcon } from 'lucide-react';
 import { Target, Zap, Waves, MemoryStick, Shield, Sword } from 'lucide-react';
-
-export type CHCDomain = 'Gf' | 'Gc' | 'Gwm' | 'Gs' | 'Gv' | 'Ga' | 'Glr' | 'EF';
+import type { CHCDomain } from '@/types';
 
 export interface Theme {
   key: 'focus' | 'energize' | 'reflect' | 'memory' | 'confidence' | 'challenge';
@@ -25,7 +24,7 @@ export const themes: Theme[] = [
     key: 'focus',
     name: 'Focus Mode',
     icon: Target,
-    idealFor: 'Users easily distracted or training attention control.',
+    idealFor: 'Users easily distracted or with low sustained attention.',
     chcDomains: ['EF', 'Gs'],
     scientificRationale: 'Uses a low-arousal, dark background with cool, soft highlights (blue/teal) to minimize cognitive interference and reduce visual strain. This follows the principle of attentional filtering, where reducing irrelevant sensory input enhances focus on the primary task.',
     colorScheme: {
@@ -45,12 +44,12 @@ export const themes: Theme[] = [
     key: 'energize',
     name: 'Energize Mode',
     icon: Zap,
-    idealFor: 'Users needing alertness or training processing speed.',
+    idealFor: 'Users training processing speed or needing activation.',
     chcDomains: ['Gs', 'Gwm'],
     scientificRationale: 'Employs a high-contrast light theme with bright, warm colors (yellow/orange) to increase arousal and alertness, based on color psychology principles that associate these hues with energy and attention. Quick, sharp feedback enhances the feeling of speed.',
     colorScheme: {
       background: '#F7FAFC', // Very Light Gray
-      accentBars: 'linear-gradient(90deg, #F59E0B, #F97316)', // Orange-Yellow Gradient
+      accentBars: '#F59E0B',
       successProgressText: '#16A34A', // Strong Green
       isDark: false,
     },
@@ -86,7 +85,7 @@ export const themes: Theme[] = [
     name: 'Memory Mode',
     icon: MemoryStick,
     idealFor: 'Associative thinkers, language learners, or memory boosters.',
-    chcDomains: ['Glr', 'Gwm'],
+    chcDomains: ['Gwm', 'Glr'],
     scientificRationale: 'Utilizes a palette of purple, lavender, and cyan, colors often linked to creativity and imagination. This encourages associative thinking, which is critical for long-term memory encoding (Glr) and creating rich mental contexts.',
     colorScheme: {
       background: '#241b3a', // Deep Purple
@@ -105,7 +104,7 @@ export const themes: Theme[] = [
     key: 'confidence',
     name: 'Confidence Mode',
     icon: Shield,
-    idealFor: 'Users with low motivation or confidence.',
+    idealFor: 'Users with low motivation, new to cognitive training, or with low self-confidence.',
     chcDomains: ['EF', 'Gwm'],
     scientificRationale: 'Based on principles of psychological safety and reinforcement theory. Soft, warm, and positive colors (blush, gold, mint) create a non-threatening environment. The focus is on effort and progress, not just performance, to build self-efficacy.',
     colorScheme: {
@@ -125,7 +124,7 @@ export const themes: Theme[] = [
     key: 'challenge',
     name: 'Challenge Mode',
     icon: Sword,
-    idealFor: 'Competitive, high-achieving users wanting challenge.',
+    idealFor: 'High-performing, competitive users who want clear feedback and intensity.',
     chcDomains: ['Gf', 'EF'],
     scientificRationale: 'Designed to induce a state of high focus and intensity (flow state). The high-contrast, jet-black background minimizes all distractions, while sharp, high-energy crimson and platinum accents signal importance and achievement, tapping into competitive drive.',
     colorScheme: {
