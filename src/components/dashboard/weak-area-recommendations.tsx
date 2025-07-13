@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { getWeakAreaRecommendationsAction } from '@/app/actions';
 import type { WeakAreaRecommendationOutput } from '@/ai/flows';
-import { Lightbulb, Loader2, Info, ArrowRight } from 'lucide-react';
+import { Lightbulb, Loader2, Info, ArrowRight, Target } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { domainIcons } from '../icons';
 import { chcDomains } from '@/types';
@@ -19,11 +19,12 @@ export function WeakAreaRecommendations() {
 
   useEffect(() => {
     startTransition(async () => {
-      const res = await getWeakAreaRecommendationsAction();
-      if (res) {
+      try {
+        const res = await getWeakAreaRecommendationsAction();
         setResult(res);
-      } else {
+      } catch (e) {
         setError('Failed to get recommendations. Please try again.');
+        console.error(e);
       }
     });
   }, []);
@@ -79,7 +80,7 @@ export function WeakAreaRecommendations() {
             </p>
             <Button asChild className="w-full">
               <Link href={`/training/${weakestDomainRec.domain}`}>
-                Train {domainInfo?.name} <ArrowRight className="ml-2 h-4 w-4" />
+                Train {weakestDomainRec.exercise} <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -87,18 +88,18 @@ export function WeakAreaRecommendations() {
       }
     }
     
-    return <p className="text-muted-foreground text-sm">Could not load recommendation.</p>;
+    return <p className="text-muted-foreground text-sm text-center">Could not load recommendation.</p>;
   };
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
-          <Lightbulb className="w-5 h-5 text-primary" />
-          Weak Area Targeting
+          <Target className="w-5 h-5 text-primary" />
+          Growth Focus
         </CardTitle>
         <CardDescription>
-          AI-driven suggestions to turn your weaknesses into strengths.
+          AI suggestions to turn weaknesses into strengths.
         </CardDescription>
       </CardHeader>
       <CardContent>
