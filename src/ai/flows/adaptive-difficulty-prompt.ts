@@ -8,8 +8,8 @@
  * - AdaptDifficultyOutput - The return type for the adaptDifficulty function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { z } from 'zod';
+import { getDifficultyReasoning } from '@/lib/prompt-templates';
 
 const AdaptDifficultyInputSchema = z.object({
   chcDomain: z.string().describe('The CHC domain the user is training in.'),
@@ -24,34 +24,20 @@ const AdaptDifficultyOutputSchema = z.object({
 export type AdaptDifficultyOutput = z.infer<typeof AdaptDifficultyOutputSchema>;
 
 export async function adaptDifficulty(input: AdaptDifficultyInput): Promise<AdaptDifficultyOutput> {
-  return adaptDifficultyFlow(input);
-}
+  let adjustedDifficulty: 'Easy' | 'Medium' | 'Hard';
 
-const prompt = ai.definePrompt({
-  name: 'adaptDifficultyPrompt',
-  input: {schema: AdaptDifficultyInputSchema},
-  output: {schema: AdaptDifficultyOutputSchema},
-  prompt: `You are an expert cognitive training assistant. Your role is to suggest a puzzle difficulty based on a user's self-reported skill level in a CHC domain.
-
-Follow these rules:
-- Skill level < 30: "Easy"
-- Skill level >= 30 and <= 70: "Medium"
-- Skill level > 70: "Hard"
-
-The user is training in "{{chcDomain}}" and their skill level is {{userSkillLevel}}.
-
-Based on this, determine the appropriate difficulty. Provide a brief, encouraging reason for your choice.
-`,
-});
-
-const adaptDifficultyFlow = ai.defineFlow(
-  {
-    name: 'adaptDifficultyFlow',
-    inputSchema: AdaptDifficultyInputSchema,
-    outputSchema: AdaptDifficultyOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  if (input.userSkillLevel < 30) {
+    adjustedDifficulty = 'Easy';
+  } else if (input.userSkillLevel <= 70) {
+    adjustedDifficulty = 'Medium';
+  } else {
+    adjustedDifficulty = 'Hard';
   }
-);
+
+  const reasoning = getDifficultyReasoning(adjustedDifficulty, input.userSkillLevel);
+
+  return {
+    adjustedDifficulty,
+    reasoning,
+  };
+}

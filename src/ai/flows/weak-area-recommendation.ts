@@ -1,9 +1,9 @@
-// Weak Area Targeting [GenAI]: Smart repeat algorithms identify weak areas for revisit across all 8 CHC domains.
+// Weak Area Targeting: Smart repeat algorithms identify weak areas for revisit across all 8 CHC domains.
 // A tool for helping the user train the appropriate skills.
 
 'use server';
 /**
- * @fileOverview This file defines a Genkit flow for identifying a user's weak areas across the 8 CHC domains
+ * @fileOverview This file defines a deterministic function for identifying a user's weak areas across the 8 CHC domains
  * and recommending specific training exercises or puzzles to help improve those areas.
  *
  * - weakAreaRecommendation - A function that takes user's performance data and returns recommendations for weak area training.
@@ -11,8 +11,9 @@
  * - WeakAreaRecommendationOutput - The return type for the weakAreaRecommendation function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { z } from 'zod';
+import { chcDomains } from '@/types';
+import { getWeakAreaTemplate } from '@/lib/prompt-templates';
 
 const CHCDomainSchema = z.enum([
   'Gf',
@@ -62,39 +63,38 @@ export type WeakAreaRecommendationOutput = z.infer<
 export async function weakAreaRecommendation(
   input: WeakAreaRecommendationInput
 ): Promise<WeakAreaRecommendationOutput> {
-  return weakAreaRecommendationFlow(input);
-}
+  const { performanceData } = input;
+  const totalSessions = performanceData.reduce((sum, d) => sum + d.sessions, 0);
 
-const prompt = ai.definePrompt({
-  name: 'weakAreaRecommendationPrompt',
-  input: {schema: WeakAreaRecommendationInputSchema},
-  output: {schema: WeakAreaRecommendationOutputSchema},
-  prompt: `You are an AI-powered cognitive training assistant. Your task is to analyze a user's performance data and suggest ONE focus area for improvement.
-
-Follow these steps:
-1.  Review the user's performance data. Check if the user has completed at least 5 sessions in at least one domain.
-2.  If the user has NOT met this criteria, do not provide any recommendations. Instead, set the "recommendations" array to be empty and provide a friendly "message" explaining that more training data is needed. For example: "I need a little more data to find your weak spots. Try completing a few more different training sessions!".
-3.  If the user HAS met the criteria, identify the single domain with the lowest score. This is the user's primary weak area.
-4.  For this weak area, recommend its specific, engaging training exercise or puzzle. Explain concisely and motivationally why this exercise is suitable for improving that specific cognitive domain, framing it as a growth opportunity. Example reason: "Improving your Fluid Reasoning will help you solve novel problems more effectively."
-5.  Format the output as a JSON object with a "recommendations" array containing just ONE recommendation. If you provided a message in step 2, include the "message" field.
-
-User Performance Data:
-{{#each performanceData}}
-- Domain: {{this.domain}}, Score: {{this.score}}, Sessions: {{this.sessions}}
-{{/each}}
-
-Produce the output in the specified JSON format.
-`,
-});
-
-const weakAreaRecommendationFlow = ai.defineFlow(
-  {
-    name: 'weakAreaRecommendationFlow',
-    inputSchema: WeakAreaRecommendationInputSchema,
-    outputSchema: WeakAreaRecommendationOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  // 1. Check if the user has completed at least 5 sessions in total.
+  if (totalSessions < 5) {
+    return {
+      recommendations: [],
+      message: getWeakAreaTemplate('insufficientData').reason,
+    };
   }
-);
+
+  // 2. Identify the single domain with the lowest score.
+  const weakestDomainData = [...performanceData].sort((a, b) => a.score - b.score)[0];
+  
+  if (!weakestDomainData) {
+     return {
+      recommendations: [],
+      message: getWeakAreaTemplate('insufficientData').reason,
+    };
+  }
+
+  const domainInfo = chcDomains.find(d => d.key === weakestDomainData.domain);
+  const exercise = domainInfo?.gameTitle || 'Training';
+  const reason = getWeakAreaTemplate('focusArea', weakestDomainData.domain).reason;
+
+  const recommendation: z.infer<typeof TrainingRecommendationSchema> = {
+    domain: weakestDomainData.domain,
+    exercise,
+    reason,
+  };
+
+  return {
+    recommendations: [recommendation],
+  };
+}

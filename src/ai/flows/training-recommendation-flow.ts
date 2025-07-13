@@ -1,7 +1,7 @@
 
 'use server';
 /**
- * @fileOverview This file defines a Genkit flow for generating smart training recommendations.
+ * @fileOverview This file defines a deterministic flow for generating smart training recommendations.
  * It decides which of three types of recommendations to provide based on user performance data:
  * 1. Weak Area Targeting: Focus on the lowest-performing domain.
  * 2. Performance Insight: Capitalize on peak performance times (e.g., morning for EF).
@@ -12,9 +12,9 @@
  * - TrainingRecommendationOutput - The return type for the function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'zod';
-import { CHCDomain, chcDomains } from '@/types';
+import { z } from 'zod';
+import type { CHCDomain } from '@/types';
+import { getRecommendationTemplate } from '@/lib/prompt-templates';
 
 const CHCDomainEnum = z.enum([
   'Gf',
@@ -33,7 +33,7 @@ const UserPerformanceSchema = z.object({
   trend: z.number().describe('Percentage change in score over the last 5 sessions.'),
 });
 
-const TrainingRecommendationInputSchema = z.object({
+export const TrainingRecommendationInputSchema = z.object({
   performanceData: z.array(UserPerformanceSchema),
   sessionStreak: z.number().describe('Current daily training streak.'),
   hoursSinceLastSession: z.number().describe('Hours since the user last completed a session.'),
@@ -58,53 +58,54 @@ export type TrainingRecommendationOutput = z.infer<typeof TrainingRecommendation
 
 
 export async function getTrainingRecommendation(input: TrainingRecommendationInput): Promise<TrainingRecommendationOutput> {
-  return trainingRecommendationFlow(input);
-}
+  const { performanceData, sessionStreak, hoursSinceLastSession, timeOfDay, recentFailures } = input;
 
-const prompt = ai.definePrompt({
-    name: 'trainingRecommendationPrompt',
-    input: { schema: TrainingRecommendationInputSchema },
-    output: { schema: TrainingRecommendationOutputSchema },
-    prompt: `You are a cognitive training coach AI. Your goal is to provide a single, highly relevant training recommendation to a user based on their recent performance and context.
-
-Analyze the user's data and choose ONE of the following three recommendation strategies:
-
-1.  **Performance Insight (Highest Priority):** If the user's context matches a known peak performance pattern, recommend that.
-    *   *Trigger condition:* User is training in the morning.
-    *   *Insight:* Users often exhibit stronger Executive Function (EF) in the morning.
-    *   *Action:* If it's morning, recommend 'EF' training. Use a personal, time-sensitive tone.
-
-2.  **Momentum Starter (Second Priority):** If the user needs a confidence boost, recommend their strongest domain.
-    *   *Trigger conditions:* User is returning after a break (> 24 hours), has a broken streak (streak is 0 but has trained before), or had recent failures (> 2).
-    *   *Action:* Identify the domain with the highest score. Recommend training in that domain to build momentum. Use a confidence-boosting tone.
-
-3.  **Weak Area Targeting (Default Priority):** If no other conditions are met, recommend the user's weakest domain to encourage growth.
-    *   *Trigger condition:* Default case when other conditions aren't met.
-    *   *Action:* Identify the domain with the lowest score. Recommend training that domain. Frame it as an opportunity for a breakthrough.
-
-**User Data:**
--   **Performance:**
-    {{#each performanceData}}
-    - Domain: {{this.domain}}, Score: {{this.score}}, Trend: {{this.trend}}%
-    {{/each}}
--   **Context:**
-    -   Current Streak: {{sessionStreak}} days
-    -   Hours Since Last Session: {{hoursSinceLastSession}} hours
-    -   Time of Day: {{timeOfDay}}
-    -   Recent Failures: {{recentFailures}}
-
-Based on the hierarchy (Performance Insight > Momentum Starter > Weak Area Targeting), determine the single best recommendation and provide the output in the required JSON format.
-`,
-});
-
-const trainingRecommendationFlow = ai.defineFlow(
-  {
-    name: 'trainingRecommendationFlow',
-    inputSchema: TrainingRecommendationInputSchema,
-    outputSchema: TrainingRecommendationOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+  // Rule 1: Performance Insight (Highest Priority)
+  if (timeOfDay === 'morning') {
+    const template = getRecommendationTemplate('performanceInsight', 'EF', { timeOfDay });
+    return {
+      recommendationType: 'performanceInsight',
+      title: template.title,
+      description: template.description,
+      domain: 'EF',
+    };
   }
-);
+
+  // Rule 2: Momentum Starter (Second Priority)
+  const isReturningAfterBreak = hoursSinceLastSession > 24;
+  const hasBrokenStreak = sessionStreak === 0 && hoursSinceLastSession > 0;
+  const needsConfidenceBoost = isReturningAfterBreak || hasBrokenStreak || recentFailures > 2;
+  
+  if (needsConfidenceBoost && performanceData.length > 0) {
+    const strongestDomain = [...performanceData].sort((a, b) => b.score - a.score)[0];
+    const template = getRecommendationTemplate('momentumStarter', strongestDomain.domain, { domain: strongestDomain.domain });
+    return {
+        recommendationType: 'momentumStarter',
+        title: template.title,
+        description: template.description,
+        domain: strongestDomain.domain,
+    };
+  }
+
+  // Rule 3: Weak Area Targeting (Default Priority)
+  if (performanceData.length > 0) {
+    const weakestDomain = [...performanceData].sort((a, b) => a.score - b.score)[0];
+    const template = getRecommendationTemplate('weakArea', weakestDomain.domain, { domain: weakestDomain.domain });
+    return {
+        recommendationType: 'weakArea',
+        title: template.title,
+        description: template.description,
+        domain: weakestDomain.domain,
+    };
+  }
+  
+  // Fallback (should not be reached with valid data)
+  const fallbackDomain: CHCDomain = 'Gf';
+  const template = getRecommendationTemplate('weakArea', fallbackDomain, { domain: fallbackDomain });
+  return {
+    recommendationType: 'weakArea',
+    title: template.title,
+    description: template.description,
+    domain: fallbackDomain,
+  };
+}

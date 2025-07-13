@@ -1,6 +1,6 @@
 'use server';
 import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit } from '@/ai/flows';
-import type { WeakAreaRecommendationInput, AdaptDifficultyInput, TrainingRecommendationOutput } from '@/ai/flows';
+import type { WeakAreaRecommendationInput, AdaptDifficultyInput, TrainingRecommendationInput, TrainingRecommendationOutput } from '@/ai/flows';
 
 export async function getWeakAreaRecommendationsAction() {
   // Mock performance data to simulate a real user with a clear weak area
@@ -47,7 +47,7 @@ export async function getTrainingRecommendationAction() {
   ];
 
   // This input will trigger the "Performance Insight" for morning training.
-  const input: TrainingRecommendationOutput['input'] = {
+  const input: TrainingRecommendationInput = {
     performanceData,
     sessionStreak: 5,
     hoursSinceLastSession: 12,
@@ -65,7 +65,8 @@ export async function getTrainingRecommendationAction() {
 
 export async function getDailyCircuitAction() {
   try {
-    return await getDailyCircuit();
+    const result = await getDailyCircuit();
+    return result;
   } catch (error) {
     console.error('Error getting daily circuit:', error);
     return null;
