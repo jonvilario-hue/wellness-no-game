@@ -22,6 +22,7 @@ import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import Link from 'next/link';
 import { Separator } from '../ui/separator';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 const formatTime = (totalSeconds: number) => {
     const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -104,9 +105,18 @@ export function PomodoroTimer() {
                     <SelectValue placeholder="Select a preset" />
                 </SelectTrigger>
                 <SelectContent>
+                  <TooltipProvider>
                     {pomodoroPresets.map(p => (
-                        <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>
+                      <Tooltip key={p.name} delayDuration={0}>
+                          <TooltipTrigger asChild>
+                              <SelectItem value={p.name}>{p.name}</SelectItem>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                              <p>{p.description}</p>
+                          </TooltipContent>
+                      </Tooltip>
                     ))}
+                  </TooltipProvider>
                 </SelectContent>
             </Select>
         </div>
