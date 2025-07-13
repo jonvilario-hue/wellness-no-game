@@ -5,8 +5,6 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw, Plus, Minus, PlusCircle, Trash2 } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { Input } from '../ui/input';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +17,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { cn } from '@/lib/utils';
 
 type TimerState = {
     id: number;
@@ -33,6 +33,46 @@ const formatTime = (totalSeconds: number) => {
   const seconds = (totalSeconds % 60).toString().padStart(2, '0');
   return `${minutes}:${seconds}`;
 };
+
+const CircularTimerVisual = ({ progress }: { progress: number }) => {
+    const radius = 80;
+    const stroke = 10;
+    const normalizedRadius = radius - stroke * 2;
+    const circumference = normalizedRadius * 2 * Math.PI;
+    const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+    return (
+        <div className="relative w-48 h-48">
+            <svg
+                height="100%"
+                width="100%"
+                viewBox="0 0 200 200"
+                className="transform -rotate-90"
+            >
+                <circle
+                    stroke="hsl(var(--secondary-hsl))"
+                    fill="transparent"
+                    strokeWidth={stroke}
+                    r={normalizedRadius}
+                    cx={radius + stroke}
+                    cy={radius + stroke}
+                />
+                <circle
+                    stroke="hsl(var(--primary-hsl))"
+                    fill="transparent"
+                    strokeWidth={stroke}
+                    strokeDasharray={circumference + ' ' + circumference}
+                    style={{ strokeDashoffset, strokeLinecap: 'round' }}
+                    r={normalizedRadius}
+                    cx={radius + stroke}
+                    cy={radius + stroke}
+                    className="transition-all duration-300"
+                />
+            </svg>
+        </div>
+    );
+};
+
 
 function TimerInstance({
     timer,
@@ -97,22 +137,24 @@ function TimerInstance({
                         <Trash2 className="w-4 h-4"/>
                     </Button>
                 </div>
-                <div className="relative w-full flex items-center justify-center">
-                    {!timer.isActive && (
-                        <Button onClick={() => adjustTime(-60)} variant="ghost" size="icon" className="absolute left-0">
-                            <Minus className="w-6 h-6"/>
-                        </Button>
-                    )}
-                    <div className="font-mono text-5xl tracking-tighter">
-                        {formatTime(timer.timeLeft)}
+                 <div className="relative w-48 h-48 flex items-center justify-center">
+                    <CircularTimerVisual progress={progress} />
+                     <div className="absolute flex flex-col items-center justify-center">
+                        <span className="font-mono text-4xl tracking-tighter">
+                            {formatTime(timer.timeLeft)}
+                        </span>
+                        {!timer.isActive && (
+                            <div className="flex items-center gap-2 mt-2">
+                                <Button onClick={() => adjustTime(-60)} variant="ghost" size="icon" className="w-8 h-8 rounded-full">
+                                    <Minus className="w-5 h-5"/>
+                                </Button>
+                                <Button onClick={() => adjustTime(60)} variant="ghost" size="icon" className="w-8 h-8 rounded-full">
+                                    <Plus className="w-5 h-5"/>
+                                </Button>
+                            </div>
+                        )}
                     </div>
-                     {!timer.isActive && (
-                        <Button onClick={() => adjustTime(60)} variant="ghost" size="icon" className="absolute right-0">
-                            <Plus className="w-6 h-6"/>
-                        </Button>
-                    )}
-                </div>
-                <Progress value={progress} className="h-2 w-full"/>
+                 </div>
                 <div className="flex gap-4">
                   <Button onClick={handleStartPause} size="lg" className="w-32">
                     {timer.isActive ? <><Pause className="mr-2" /> Pause</> : <><Play className="mr-2" /> Start</>}
