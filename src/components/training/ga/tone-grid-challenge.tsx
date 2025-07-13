@@ -21,7 +21,6 @@ export function ToneGridChallenge() {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [message, setMessage] = useState('');
-  const [highlightedNote, setHighlightedNote] = useState<number | null>(null);
   const [gameMode, setGameMode] = useState<GameMode>('mimic');
   const [targetTone, setTargetTone] = useState<number | null>(null);
   const [startTime, setStartTime] = useState(0);
@@ -73,9 +72,7 @@ export function ToneGridChallenge() {
     if (!audioContext) return;
     seq.forEach((noteIndex, i) => {
       setTimeout(() => {
-        setHighlightedNote(noteIndex);
         playTone(frequencies[noteIndex]);
-        setTimeout(() => setHighlightedNote(null), 300);
       }, i * interval);
     });
   };
@@ -226,8 +223,7 @@ export function ToneGridChallenge() {
                       onClick={() => handleUserInput(index)} 
                       disabled={gameState !== 'answering'}
                       className={cn(
-                          "aspect-square h-auto text-2xl transition-all",
-                          highlightedNote === index && 'bg-primary scale-110'
+                          "aspect-square h-auto text-2xl transition-all"
                       )}
                       variant="secondary"
                     >
