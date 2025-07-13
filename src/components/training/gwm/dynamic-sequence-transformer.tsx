@@ -174,7 +174,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
       <CardHeader>
         <CardTitle className="flex items-center justify-center gap-2">
             <MemoryStick />
-            (Gwm) Sequence Dynamics
+            (Gwm) Dynamic Sequence
         </CardTitle>
         <CardDescription>Memorize the sequence, then transform it as instructed.</CardDescription>
       </CardHeader>
