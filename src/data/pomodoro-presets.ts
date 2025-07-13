@@ -6,6 +6,7 @@ export type PomodoroPreset = {
   longBreakMinutes: number;
   cyclesUntilLongBreak: number;
   description: string;
+  summary: string;
   attachedDomain?: string;
 };
 
@@ -17,6 +18,7 @@ export const pomodoroPresets: PomodoroPreset[] = [
     longBreakMinutes: 15,
     cyclesUntilLongBreak: 4,
     description: "The original method. Great for balanced focus and rest.",
+    summary: "(25 / 5 / 15)",
   },
   {
     name: "Deep Focus",
@@ -25,6 +27,7 @@ export const pomodoroPresets: PomodoroPreset[] = [
     longBreakMinutes: 30,
     cyclesUntilLongBreak: 3,
     description: "Ideal for deep work sessions with fewer interruptions.",
+    summary: "(50 / 10 / 30)",
   },
   {
     name: "Micro Pomodoro",
@@ -33,6 +36,7 @@ export const pomodoroPresets: PomodoroPreset[] = [
     longBreakMinutes: 10,
     cyclesUntilLongBreak: 4,
     description: "Best for light tasks, warming up, or clearing a to-do list.",
+    summary: "(15 / 3 / 10)",
   },
   {
     name: "Creative Sprint",
@@ -41,6 +45,7 @@ export const pomodoroPresets: PomodoroPreset[] = [
     longBreakMinutes: 20,
     cyclesUntilLongBreak: 2,
     description: "Longer focus blocks for creative or problem-solving tasks.",
+    summary: "(45 / 5 / 20)",
   },
   {
     name: "Recovery Mode",
@@ -49,6 +54,7 @@ export const pomodoroPresets: PomodoroPreset[] = [
     longBreakMinutes: 30,
     cyclesUntilLongBreak: 2,
     description: "Gentle, low-pressure intervals for low-energy days.",
+    summary: "(10 / 10 / 30)",
   },
   {
     name: "Cognitive Training",
@@ -57,6 +63,7 @@ export const pomodoroPresets: PomodoroPreset[] = [
     longBreakMinutes: 15,
     cyclesUntilLongBreak: 3,
     description: "A balanced session specifically for brain training exercises.",
+    summary: "(20 / 5 / 15)",
     attachedDomain: "working_memory"
   }
 ];

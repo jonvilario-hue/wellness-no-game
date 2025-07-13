@@ -98,10 +98,10 @@ export function PomodoroTimer() {
         <div className="flex justify-between items-start">
             <div>
                 <CardTitle>Pomodoro Timer</CardTitle>
-                <CardDescription>Break down your work into focused intervals.</CardDescription>
+                <CardDescription>{preset.description}</CardDescription>
             </div>
             <Select value={preset.name} onValueChange={handlePresetChange}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-[240px]">
                     <SelectValue placeholder="Select a preset" />
                 </SelectTrigger>
                 <SelectContent>
@@ -109,7 +109,9 @@ export function PomodoroTimer() {
                     {pomodoroPresets.map(p => (
                       <Tooltip key={p.name} delayDuration={0}>
                           <TooltipTrigger asChild>
-                              <SelectItem value={p.name}>{p.name}</SelectItem>
+                              <SelectItem value={p.name}>
+                                {p.name} <span className="text-muted-foreground ml-2">{p.summary}</span>
+                              </SelectItem>
                           </TooltipTrigger>
                           <TooltipContent side="right">
                               <p>{p.description}</p>
