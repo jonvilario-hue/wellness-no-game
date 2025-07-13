@@ -185,7 +185,13 @@ export function Timer() {
     useEffect(() => {
         // Automatically add one timer on initial load if there are none.
         if (timers.length === 0) {
-            addTimer();
+             setTimers([{
+                id: nextId.current++,
+                initialTime: 300,
+                timeLeft: 300,
+                isActive: false,
+                label: `Timer #1`
+            }]);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
