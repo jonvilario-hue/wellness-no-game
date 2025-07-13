@@ -18,6 +18,35 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
+// Helper to convert hex to HSL string
+const hexToHslString = (hex: string): string | null => {
+  if (!hex.startsWith('#')) return null;
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return null;
+
+  let r = parseInt(result[1], 16);
+  let g = parseInt(result[2], 16);
+  let b = parseInt(result[3], 16);
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  h = Math.round(h * 360);
+  s = Math.round(s * 100);
+  l = Math.round(l * 100);
+  return `${h} ${s}% ${l}%`;
+};
+
+
 export function ThemeProvider({
   children,
   defaultThemeKey = 'focus',
@@ -40,23 +69,31 @@ export function ThemeProvider({
     } catch (e) {
       // Local storage not available
     }
-    return defaultInitialTheme;
+    return themes.find(t => t.key === defaultThemeKey) || defaultInitialTheme;
   });
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove(...themes.map(t => t.key));
 
-    if (theme.key) {
-      root.classList.add(theme.key);
+    root.classList.remove('dark', 'light');
+    root.classList.add(theme.colorScheme.isDark ? 'dark' : 'light');
+
+    const backgroundHsl = hexToHslString(theme.colorScheme.background);
+    const textHsl = hexToHslString(theme.colorScheme.successProgressText);
+
+    if (backgroundHsl) {
+        root.style.setProperty('--background-hsl', backgroundHsl);
+        root.style.setProperty('--card-hsl', backgroundHsl);
+        root.style.setProperty('--popover-hsl', backgroundHsl);
+    }
+    if (textHsl) {
+        root.style.setProperty('--foreground-hsl', textHsl);
+        root.style.setProperty('--card-foreground-hsl', textHsl);
+        root.style.setProperty('--popover-foreground-hsl', textHsl);
+        root.style.setProperty('--primary-hsl', textHsl);
+        root.style.setProperty('--ring-hsl', textHsl);
     }
     
-    if (theme.colorScheme.isDark) {
-        root.classList.add('dark');
-    } else {
-        root.classList.remove('dark');
-    }
-
     try {
       window.localStorage.setItem(storageKey, theme.key);
     } catch (e) {
