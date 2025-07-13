@@ -3,43 +3,80 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { useTrainingFocus } from "@/hooks/use-training-focus";
 
+// --- Neutral Mode Config ---
 const colorOptions = [
     { name: 'DESTRUCTIVE', class: 'text-destructive' },
     { name: 'PRIMARY', class: 'text-primary' },
     { name: 'ACCENT', class: 'text-accent' },
     { name: 'CHART-3', class: 'text-chart-3' },
 ];
+type NeutralRule = 'color' | 'word' | 'no_go';
+const neutralRules: NeutralRule[] = ['color', 'word', 'no_go'];
 
-type Rule = 'color' | 'word' | 'no_go';
-const rules: Rule[] = ['color', 'word', 'no_go'];
+
+// --- Math Mode Config ---
+type MathRule = 'parity' | 'primality' | 'no_go';
+const mathRules: MathRule[] = ['parity', 'primality', 'no_go'];
+
+const isPrime = (num: number) => {
+  if (num <= 1) return false;
+  for (let i = 2; i < num; i++) {
+    if (num % i === 0) return false;
+  }
+  return true;
+};
+
 
 export function FocusSwitchReactor() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
-  const [rule, setRule] = useState<Rule>('word');
-  const [stimulus, setStimulus] = useState({ word: 'PRIMARY', color: 'text-primary' });
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(45);
+  const [rule, setRule] = useState<NeutralRule | MathRule>('word');
+  const [stimulus, setStimulus] = useState<any>({ word: 'PRIMARY', color: 'text-primary' });
 
   const ruleRef = useRef(rule);
+  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
+  const currentMode = isLoaded && trainingFocus === 'math' ? 'math' : 'neutral';
+
   useEffect(() => {
     ruleRef.current = rule;
   }, [rule]);
 
-  const generateStimulus = () => {
+  const generateNeutralStimulus = () => {
     const randomWord = colorOptions[Math.floor(Math.random() * colorOptions.length)];
     const randomColor = colorOptions[Math.floor(Math.random() * colorOptions.length)];
     setStimulus({ word: randomWord.name, color: randomColor.class });
   };
   
+  const generateMathStimulus = () => {
+    const value = Math.floor(Math.random() * 20) + 2; // numbers from 2 to 21
+    setStimulus({ value });
+  }
+
+  const generateStimulus = () => {
+    if (currentMode === 'math') {
+        generateMathStimulus();
+    } else {
+        generateNeutralStimulus();
+    }
+  }
+
   const generateRule = () => {
-    // Make 'no_go' less frequent
-    const ruleIndex = Math.floor(Math.random() * 5); // 0,1,2,3,4
-    if (ruleIndex < 2) setRule('color'); // 40%
-    else if (ruleIndex < 4) setRule('word'); // 40%
-    else setRule('no_go'); // 20%
+    if (currentMode === 'math') {
+        const ruleIndex = Math.floor(Math.random() * 5); // 0,1,2,3,4
+        if (ruleIndex < 2) setRule('parity'); // 40%
+        else if (ruleIndex < 4) setRule('primality'); // 40%
+        else setRule('no_go'); // 20%
+    } else {
+        const ruleIndex = Math.floor(Math.random() * 5);
+        if (ruleIndex < 2) setRule('color');
+        else if (ruleIndex < 4) setRule('word');
+        else setRule('no_go');
+    }
   };
 
   useEffect(() => {
@@ -74,37 +111,67 @@ export function FocusSwitchReactor() {
       return;
     }
     
-    let correctAnswer;
-    if (rule === 'word') {
-      correctAnswer = stimulus.word;
-    } else { // rule is 'color'
-       const correctOption = colorOptions.find(opt => opt.class === stimulus.color);
-       correctAnswer = correctOption?.name;
+    let isCorrect = false;
+    if (currentMode === 'neutral') {
+        let correctAnswer;
+        if (rule === 'word') {
+            correctAnswer = stimulus.word;
+        } else { // rule is 'color'
+            const correctOption = colorOptions.find(opt => opt.class === stimulus.color);
+            correctAnswer = correctOption?.name;
+        }
+        isCorrect = (answer === correctAnswer);
+    } else { // Math mode
+        const num = stimulus.value;
+        if (rule === 'parity') {
+            const parity = num % 2 === 0 ? 'EVEN' : 'ODD';
+            isCorrect = (answer === parity);
+        } else if (rule === 'primality') {
+            const primality = isPrime(num) ? 'PRIME' : 'COMPOSITE';
+            isCorrect = (answer === primality);
+        }
     }
     
-    processNextTurn(answer === correctAnswer);
+    processNextTurn(isCorrect);
   };
   
   // This function is for when the user correctly waits on a "no_go" trial
   useEffect(() => {
+    let noGoTimer: NodeJS.Timeout;
     if (gameState === 'running' && rule === 'no_go') {
-        const noGoTimer = setTimeout(() => {
-            // Check again to make sure the rule hasn't changed by a fast click
-            if(ruleRef.current === 'no_go') {
-               processNextTurn(true); // Reward for correctly inhibiting response
-            }
-        }, 1500); // 1.5 seconds to wait
-        return () => clearTimeout(noGoTimer);
+        const isMathNoGo = currentMode === 'math' && stimulus.value % 5 === 0;
+
+        if (!isMathNoGo) { // Neutral mode no-go or math mode non-penalty no-go
+            noGoTimer = setTimeout(() => {
+                if(ruleRef.current === 'no_go') {
+                   processNextTurn(true); // Reward for correctly inhibiting response
+                }
+            }, 1500); // 1.5 seconds to wait
+        }
     }
-  }, [rule, stimulus, gameState]);
+    return () => clearTimeout(noGoTimer);
+  }, [rule, stimulus, gameState, currentMode]);
 
 
   const getRuleText = () => {
       if (rule === 'color') return 'Respond to the COLOR';
       if (rule === 'word') return 'Respond to the WORD';
-      if (rule === 'no_go') return "DON'T RESPOND";
+      if (rule === 'parity') return 'Is the number EVEN or ODD?';
+      if (rule === 'primality') return 'Is the number PRIME or COMPOSITE?';
+      if (rule === 'no_go') {
+          if(currentMode === 'math' && stimulus.value % 5 === 0) {
+              return 'DO NOT RESPOND: Multiple of 5';
+          }
+          return "DON'T RESPOND";
+      }
       return '';
   }
+  
+  const mathAnswerOptions = useMemo(() => {
+      if (rule === 'parity') return ['EVEN', 'ODD'];
+      if (rule === 'primality') return ['PRIME', 'COMPOSITE'];
+      return ['EVEN', 'ODD', 'PRIME', 'COMPOSITE'];
+  }, [rule]);
 
   return (
     <Card className="w-full max-w-2xl text-center">
@@ -114,7 +181,9 @@ export function FocusSwitchReactor() {
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         {gameState === 'idle' && (
-          <Button onClick={handleStart} size="lg">Start Game</Button>
+          <Button onClick={handleStart} size="lg" disabled={!isLoaded}>
+              {isLoaded ? "Start Game" : "Loading..."}
+          </Button>
         )}
         
         {gameState === 'running' && (
@@ -123,18 +192,33 @@ export function FocusSwitchReactor() {
               <span>Score: {score}</span>
               <span>Time: {timeLeft}s</span>
             </div>
-            <div className={cn("p-8 bg-muted rounded-lg w-full transition-colors", rule === 'no_go' && 'bg-destructive/10')}>
+            <div className={cn(
+                "p-8 bg-muted rounded-lg w-full transition-colors",
+                rule === 'no_go' && 'bg-destructive/10'
+            )}>
               <p className="text-xl mb-4">Rule: <span className="font-bold text-primary uppercase">{getRuleText()}</span></p>
               <div className="text-6xl font-extrabold" >
-                <span className={stimulus.color}>{stimulus.word}</span>
+                {currentMode === 'neutral' ? (
+                     <span className={stimulus.color}>{stimulus.word}</span>
+                ) : (
+                    <span className="text-primary">{stimulus.value}</span>
+                )}
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 w-full">
-              {colorOptions.map(color => (
-                <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg" disabled={rule === 'no_go'}>
-                  {color.name}
-                </Button>
-              ))}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+              {currentMode === 'neutral' ? (
+                colorOptions.map(color => (
+                    <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg" disabled={rule === 'no_go'}>
+                    {color.name}
+                    </Button>
+                ))
+              ) : (
+                 mathAnswerOptions.map(option => (
+                     <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg" disabled={rule === 'no_go'}>
+                         {option}
+                     </Button>
+                 ))
+              )}
             </div>
           </div>
         )}

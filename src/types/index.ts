@@ -16,5 +16,5 @@ export const chcDomains: {
   { key: 'Gv', name: '(Gv) Visual Processing', description: 'Visualize and rotate objects', gameTitle: 'Mental Rotation Lab', tasks: ['mental_rotation'], supportsMath: false },
   { key: 'Ga', name: '(Ga) Auditory Processing', description: 'Process and distinguish sounds', gameTitle: 'Tone Grid Challenge', tasks: ['tone_grid'], supportsMath: false },
   { key: 'Glr', name: '(Glr) Long-Term Retrieval', description: 'Store and recall ideas', gameTitle: 'Semantic Fluency Storm', tasks: ['semantic_fluency'], supportsMath: true },
-  { key: 'EF', name: '(EF) Executive Function', description: 'Focus, switch, control tasks', gameTitle: 'Focus Switch Reactor', tasks: ['focus_switch'], supportsMath: false },
+  { key: 'EF', name: '(EF) Executive Function', description: 'Focus, switch, control tasks', gameTitle: 'Focus Switch Reactor', tasks: ['focus_switch'], supportsMath: true },
 ];
