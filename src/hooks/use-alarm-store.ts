@@ -4,13 +4,15 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-type Alarm = {
+export type Alarm = {
     id: number;
     time: string;
     period: 'AM' | 'PM';
     label: string;
     active: boolean;
     puzzle: boolean;
+    repeatWeekly: boolean;
+    repeatDays: number[]; // 0-6 for Sun-Sat
 };
 
 type AlarmStore = {
@@ -19,12 +21,13 @@ type AlarmStore = {
     removeAlarm: (id: number) => void;
     toggleAlarm: (id: number) => void;
     toggleAlarmPuzzle: (id: number) => void;
+    updateAlarm: (id: number, updates: Partial<Alarm>) => void;
 };
 
 const defaultAlarms: Alarm[] = [
-    { id: 1, time: '06:30', period: 'AM', label: 'Wake Up + Gwm Training', active: true, puzzle: true },
-    { id: 2, time: '09:00', period: 'AM', label: 'Start Deep Work Block', active: true, puzzle: true },
-    { id: 3, time: '08:00', period: 'PM', label: 'Wind Down', active: false, puzzle: false },
+    { id: 1, time: '06:30', period: 'AM', label: 'Wake Up + Gwm Training', active: true, puzzle: true, repeatWeekly: true, repeatDays: [1,2,3,4,5] },
+    { id: 2, time: '09:00', period: 'AM', label: 'Start Deep Work Block', active: true, puzzle: true, repeatWeekly: false, repeatDays: [] },
+    { id: 3, time: '08:00', period: 'PM', label: 'Wind Down', active: false, puzzle: false, repeatWeekly: true, repeatDays: [0,6] },
 ];
 
 export const useAlarmStore = create<AlarmStore>()(
@@ -49,6 +52,12 @@ export const useAlarmStore = create<AlarmStore>()(
                 set((state) => ({
                     alarms: state.alarms.map((alarm) =>
                         alarm.id === id ? { ...alarm, puzzle: !alarm.puzzle } : alarm
+                    ),
+                })),
+            updateAlarm: (id, updates) =>
+                set((state) => ({
+                    alarms: state.alarms.map((alarm) =>
+                        alarm.id === id ? { ...alarm, ...updates } : alarm
                     ),
                 })),
         }),
