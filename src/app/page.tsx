@@ -17,6 +17,7 @@ import { AllGames } from '@/components/dashboard/all-games';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { GameProgressTracker } from '@/components/dashboard/game-progress-tracker';
 import { useJournal } from '@/hooks/use-journal';
+import { CognitiveFocusBuilder } from '@/components/dashboard/cognitive-focus-builder';
 
 function DashboardContent() {
   const journalRef = useRef<HTMLDivElement>(null);
@@ -43,6 +44,7 @@ function DashboardContent() {
               {settings.mainDashboard && <MainDashboardView />}
             </div>
             <aside className="lg:col-span-1 flex flex-col gap-6">
+              {settings.cognitiveFocusBuilder && <CognitiveFocusBuilder />}
               {settings.habitTracker && <HabitTracker />}
               {settings.gameProgressTracker && <GameProgressTracker />}
               {settings.milestoneBadges && <MilestoneBadges />}

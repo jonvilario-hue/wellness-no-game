@@ -7,6 +7,7 @@ const defaultSettings = {
   dailyChallenge: true,
   allGames: true,
   mainDashboard: true,
+  cognitiveFocusBuilder: true,
   habitTracker: true,
   gameProgressTracker: true,
   milestoneBadges: true,
