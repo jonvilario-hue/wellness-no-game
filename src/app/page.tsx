@@ -58,8 +58,13 @@ function DashboardContent() {
             </div>
           )}
 
+          {settings.adaptiveDifficulty && (
+            <div className="grid grid-cols-1 gap-6">
+              <AdaptiveDifficulty />
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
              {settings.habitTracker && <HabitTracker />}
              {settings.milestoneBadges && <MilestoneBadges />}
           </div>
