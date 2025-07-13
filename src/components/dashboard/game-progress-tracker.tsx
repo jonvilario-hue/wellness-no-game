@@ -134,9 +134,9 @@ export function GameProgressTracker() {
                       </div>
                   </ScrollArea>
             </TabsContent>
-            <TabsContent value="insight" className="pt-4">
-                {isInsightVisible && (
-                    <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2">
+            <TabsContent value="insight" className="pt-4 min-h-[120px] flex items-center justify-center">
+                {isInsightVisible && insight ? (
+                    <div className="p-3 bg-primary/10 rounded-lg text-center relative">
                         <p className="text-sm flex items-start gap-2 pr-6">
                             <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
                             <span className="text-foreground text-left"><span className="font-bold">Insight:</span> {insight}</span>
@@ -148,8 +148,14 @@ export function GameProgressTracker() {
                             onClick={handleDismissInsight}
                             aria-label="Dismiss insight"
                         >
-                            <X className="h-4 w-4" />
+                            <X className="h-4 h-4" />
                         </Button>
+                    </div>
+                ) : (
+                    <div className="text-center text-muted-foreground p-4">
+                        <Lightbulb className="mx-auto h-6 w-6 mb-2"/>
+                        <p className="font-semibold">No new insights right now.</p>
+                        <p className="text-xs">Play more games to unlock personalized feedback.</p>
                     </div>
                 )}
             </TabsContent>
