@@ -1,4 +1,4 @@
-import { BrainCircuit, Settings } from 'lucide-react';
+import { BrainCircuit, Settings, CalendarDays } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 
@@ -15,7 +15,12 @@ export function Header() {
             Cognitive Crucible
             </h1>
         </Link>
-        <div className="flex-1 flex justify-end">
+        <div className="flex-1 flex justify-end items-center gap-2">
+           <Button asChild variant="ghost" size="icon">
+            <Link href="/calendar">
+              <CalendarDays className="h-5 w-5" />
+            </Link>
+          </Button>
           <Button asChild variant="ghost" size="icon">
             <Link href="/settings">
               <Settings className="h-5 w-5" />
