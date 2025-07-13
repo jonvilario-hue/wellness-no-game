@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChcDomainDashboard } from './chc-domain-dashboard';
 import { CognitiveEfficiency } from './cognitive-efficiency';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 type ViewMode = 'efficiency' | 'profile';
 
@@ -48,19 +49,16 @@ export function MainDashboardView() {
             </Tabs>
         </TooltipProvider>
        </CardHeader>
-        <Tabs value={view}>
-            <TabsContent value="efficiency" className="p-0">
-                <CognitiveEfficiency />
-            </TabsContent>
-            <TabsContent value="profile" className="p-0">
-                <CardContent>
-                    <ChcDomainDashboard />
-                </CardContent>
-            </TabsContent>
-        </Tabs>
+      <Tabs value={view}>
+        <TabsContent value="efficiency" className="p-0">
+          <CognitiveEfficiency />
+        </TabsContent>
+        <TabsContent value="profile" className="p-0">
+          <CardContent>
+            <ChcDomainDashboard />
+          </CardContent>
+        </TabsContent>
+      </Tabs>
     </Card>
   );
 }
-
-// Dummy Card components for structure, assuming they exist in ui/card
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
