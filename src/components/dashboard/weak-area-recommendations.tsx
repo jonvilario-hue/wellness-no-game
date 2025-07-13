@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
@@ -96,10 +97,10 @@ export function WeakAreaRecommendations() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Target className="w-5 h-5 text-primary" />
-          Growth Focus
+          Weak Area Targeting
         </CardTitle>
         <CardDescription>
-          AI suggestions to turn weaknesses into strengths.
+          AI-powered suggestions to turn weaknesses into strengths.
         </CardDescription>
       </CardHeader>
       <CardContent>
