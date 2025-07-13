@@ -12,8 +12,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Cognitive Crucible',
-  description: 'AI-powered cognitive training to sharpen your mind across 8 core domains.',
+  title: 'Polymath Lab',
+  description: 'AI-powered training to develop the mind of a polymath across 8 core domains.',
 };
 
 export default function RootLayout({

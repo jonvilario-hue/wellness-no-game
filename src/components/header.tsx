@@ -56,7 +56,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
             <BrainCircuit className="h-7 w-7 text-primary" />
             <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
-            Cognitive Crucible
+            Polymath Lab
             </h1>
         </Link>
         <div className="flex-1 flex justify-end items-center gap-2">

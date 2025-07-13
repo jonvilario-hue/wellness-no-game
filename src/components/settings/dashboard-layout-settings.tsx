@@ -6,23 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useDashboardSettings, type DashboardComponent } from '@/hooks/use-dashboard-settings';
-
-const componentLabels: Record<DashboardComponent, string> = {
-  dailyChallenge: 'Daily Challenge',
-  allGames: 'All Training Games',
-  mainDashboard: 'Main Dashboard (Efficiency/Strength)',
-  hyperfocusBuilder: 'Hyperfocus Builder',
-  habitTracker: 'Habit Tracker',
-  gameProgressTracker: 'Game Progress Tracker',
-  milestoneBadges: 'Milestone Badges',
-  performanceInsights: 'Performance Insights',
-  weakAreaRecommendations: 'Weak Area Targeting',
-  adaptiveDifficulty: 'Adaptive Difficulty',
-  habitJournal: 'Habit Journal',
-  cognitiveCalendar: 'Cognitive Calendar',
-  timeTools: 'Time & Sleep Tools',
-};
+import { useDashboardSettings, type DashboardComponent, componentLabels } from '@/hooks/use-dashboard-settings';
 
 export function DashboardLayoutSettings() {
     const { settings, toggleSetting, resetSettings } = useDashboardSettings();

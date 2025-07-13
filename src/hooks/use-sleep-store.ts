@@ -60,7 +60,7 @@ const getFeedbackSummary = (score: number) => {
         return "You're primed for peak performance! Your sleep was restorative, setting you up for a highly productive day. Expect to tackle complex problems with ease.";
     }
     if (score > 60) {
-        return "You're well-rested and ready to go. Your cognitive batteries are charged for a solid day of focus and learning.";
+        return "You're well-rested and ready to go. Your mental batteries are charged for a solid day of focus and learning.";
     }
     if (score > 40) {
         return "You got some rest, but there's room for improvement. A balanced approach to tasks is best today; don't push too hard.";

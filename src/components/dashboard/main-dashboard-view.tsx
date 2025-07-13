@@ -19,12 +19,12 @@ export function MainDashboardView() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="space-y-1.5">
               <CardTitle className="font-headline">
-                  {view === 'efficiency' ? 'Cognitive Efficiency' : 'My Full Strength'}
+                  {view === 'efficiency' ? 'Performance Index' : 'My Full Strength'}
               </CardTitle>
               <CardDescription>
                   {view === 'efficiency' 
                       ? 'Your complexity-adjusted performance trend.' 
-                      : 'A holistic overview of your cognitive strengths and history.'}
+                      : 'A holistic overview of your domain strengths and history.'}
               </CardDescription>
           </div>
           <TooltipProvider>
@@ -32,7 +32,7 @@ export function MainDashboardView() {
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <TabsTrigger value="efficiency">
-                        Cognitive Efficiency
+                        Performance Index
                     </TabsTrigger>
                   </TooltipTrigger>
                   <TooltipContent>

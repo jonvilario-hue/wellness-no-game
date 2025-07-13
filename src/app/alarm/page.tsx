@@ -103,7 +103,7 @@ export default function AlarmPage() {
                 <CardContent className="space-y-6 animate-in fade-in flex flex-col items-center">
                     <ReadinessGauge score={readinessScore} />
                     <div className="text-center">
-                        <h2 className="text-2xl font-bold">Today's Cognitive Readiness: {readinessScore}/100</h2>
+                        <h2 className="text-2xl font-bold">Today's Mental Readiness: {readinessScore}/100</h2>
                         <p className="text-muted-foreground max-w-md mx-auto">{feedbackSummary}</p>
                     </div>
                 </CardContent>
@@ -141,7 +141,7 @@ export default function AlarmPage() {
                 <CardTitle className={cn("text-3xl", alarmState === 'ringing' && 'text-destructive-foreground')}>
                     {alarmState === 'ringing' && "WAKE UP!"}
                     {alarmState === 'solving' && "Cognitive Warm-up"}
-                    {alarmState === 'dismissed' && "Cognitive Readiness"}
+                    {alarmState === 'dismissed' && "Mental Readiness"}
                     {alarmState === 'tagged' && "Ready to Go!"}
                 </CardTitle>
                 <CardDescription className={cn(alarmState === 'ringing' && 'text-destructive-foreground/80')}>

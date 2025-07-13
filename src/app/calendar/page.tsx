@@ -22,7 +22,7 @@ export default function CalendarPage() {
                 <div className="flex items-center gap-3">
                     <CalendarDays className="h-7 w-7 text-primary" />
                     <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
-                    My Cognitive Calendar
+                    My Training Log
                     </h1>
                 </div>
                  <div className="flex-1 flex justify-end">

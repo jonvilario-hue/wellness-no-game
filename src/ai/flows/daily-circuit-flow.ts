@@ -1,7 +1,7 @@
 
 'use server';
 /**
- * @fileOverview Defines a deterministic flow for generating a daily 3-part "Cognitive Circuit" challenge.
+ * @fileOverview Defines a deterministic flow for generating a daily 3-part "Training Sequence" challenge.
  *
  * - getDailyCircuit - A function that returns a unique 3-part training circuit for the day.
  * - DailyCircuitOutput - The return type for the getDailyCircuit function.
@@ -23,7 +23,7 @@ const CircuitSegmentSchema = z.object({
 });
 
 const DailyCircuitOutputSchema = z.object({
-  circuitTitle: z.string().describe("An overarching, exciting title for the entire daily challenge (e.g., 'The Focus Catalyst Circuit')."),
+  circuitTitle: z.string().describe("An overarching, exciting title for the entire daily challenge (e.g., 'The Focus Catalyst Sequence')."),
   segments: z.array(CircuitSegmentSchema).length(3).describe("An array of exactly three training segments for the daily circuit."),
 });
 export type DailyCircuitOutput = z.infer<typeof DailyCircuitOutputSchema>;
@@ -68,7 +68,7 @@ export async function getDailyCircuit(): Promise<DailyCircuitOutput> {
   });
 
   return {
-    circuitTitle: "Today's Cognitive Circuit",
+    circuitTitle: "Today's Training Sequence",
     segments,
   };
 }

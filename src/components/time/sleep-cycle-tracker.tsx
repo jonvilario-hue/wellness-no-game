@@ -64,7 +64,7 @@ export function SleepCycleTracker() {
         <Card>
             <CardHeader>
                 <CardTitle>Sleep Cycle & Readiness</CardTitle>
-                <CardDescription>Analyze your simulated sleep patterns to understand your cognitive readiness.</CardDescription>
+                <CardDescription>Analyze your simulated sleep patterns to understand your mental readiness.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
@@ -102,7 +102,7 @@ export function SleepCycleTracker() {
                  <div className="p-4 bg-muted/50 rounded-lg text-center">
                     <h3 className="font-semibold">Test the Alarm Dismissal Flow</h3>
                     <p className="text-muted-foreground text-sm mb-4">
-                        Experience how your readiness score is calculated after a cognitive puzzle.
+                        Experience how your readiness score is calculated after a warm-up puzzle.
                     </p>
                     <Button asChild>
                         <Link href="/alarm" target="_blank">

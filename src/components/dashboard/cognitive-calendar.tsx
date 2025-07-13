@@ -14,7 +14,7 @@ export function CognitiveCalendar() {
         <div>
           <CardTitle className="flex items-center gap-2 font-headline">
             <CalendarDays className="w-5 h-5 text-primary" />
-            Cognitive Calendar
+            Training Log
           </CardTitle>
           <CardDescription>
             View your training history and journal entries.

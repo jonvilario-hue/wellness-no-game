@@ -68,3 +68,21 @@ export const useDashboardSettings = () => {
 
   return { settings, toggleSetting, resetSettings, isLoaded };
 };
+
+const componentLabels: Record<DashboardComponent, string> = {
+  dailyChallenge: 'Daily Training Sequence',
+  allGames: 'All Training Games',
+  mainDashboard: 'Main Dashboard (Performance/Strength)',
+  hyperfocusBuilder: 'Hyperfocus Builder',
+  habitTracker: 'Habit Tracker',
+  gameProgressTracker: 'Game Progress Tracker',
+  milestoneBadges: 'Milestone Badges',
+  performanceInsights: 'Performance Insights',
+  weakAreaRecommendations: 'Weak Area Targeting',
+  adaptiveDifficulty: 'Adaptive Difficulty',
+  habitJournal: 'Habit Journal',
+  cognitiveCalendar: 'Training Log',
+  timeTools: 'Time & Sleep Tools',
+};
+
+export { componentLabels };

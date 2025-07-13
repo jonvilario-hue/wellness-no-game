@@ -64,7 +64,7 @@ export function DailyChallenge() {
             <CardHeader>
                  <CardTitle className="font-headline text-2xl flex items-center justify-center gap-2">
                     <Zap className="w-6 h-6 text-primary"/>
-                    Daily Challenge
+                    Daily Training Sequence
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -89,7 +89,7 @@ export function DailyChallenge() {
             {circuit.circuitTitle}
         </CardTitle>
         <CardDescription>
-          Your daily 3-part cognitive workout to sharpen your mind.
+          Your daily 3-part training workout to sharpen your mind.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -111,7 +111,7 @@ export function DailyChallenge() {
         </div>
         <Button asChild size="lg" className="w-full">
           <Link href={`/training/daily-challenge`}>
-            Start Daily Circuit <ArrowRight className="ml-2 h-4 w-4" />
+            Start Daily Sequence <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
       </CardContent>
