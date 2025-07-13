@@ -20,6 +20,7 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
 import { Slider } from '@/components/ui/slider';
+import { EditableLabel } from './editable-label';
 
 type TimerState = {
     id: number;
@@ -119,7 +120,12 @@ function TimerInstance({
          <Card className="w-full">
             <CardContent className="pt-6 space-y-4 flex flex-col items-center">
                  <div className="flex justify-between items-center w-full">
-                    <h3 className="font-semibold truncate pr-2">{timer.label || `Timer #${timer.id}`}</h3>
+                    <EditableLabel
+                      initialValue={timer.label}
+                      onSave={(newLabel) => updateTimer(timer.id, { label: newLabel })}
+                      placeholder={`Timer #${timer.id}`}
+                      className="w-full"
+                    />
                     <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => removeTimer(timer.id)}>
                         <Trash2 className="w-4 h-4"/>
                     </Button>
@@ -176,7 +182,13 @@ export function Timer() {
     };
 
     const removeTimer = (id: number) => {
-        setTimers(prev => prev.filter(t => t.id !== id));
+        setTimers(prev => {
+            const remaining = prev.filter(t => t.id !== id);
+            if (remaining.length === 0) {
+                nextId.current = 1; // Reset counter if all are deleted
+            }
+            return remaining;
+        });
     };
 
     const updateTimer = useCallback((id: number, newState: Partial<TimerState>) => {

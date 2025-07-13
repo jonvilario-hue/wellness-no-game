@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw, Flag, PlusCircle, Trash2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { EditableLabel } from './editable-label';
 
 type StopwatchState = {
   id: number;
@@ -13,6 +14,7 @@ type StopwatchState = {
   isActive: boolean;
   laps: number[];
   startTime: number;
+  label: string;
 };
 
 const formatTime = (time: number) => {
@@ -73,7 +75,12 @@ function StopwatchInstance({
         <Card className="w-full">
             <CardContent className="pt-6 space-y-4">
                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold">Stopwatch #{stopwatch.id}</h3>
+                    <EditableLabel
+                      initialValue={stopwatch.label}
+                      onSave={(newLabel) => updateStopwatch(stopwatch.id, { label: newLabel })}
+                      placeholder={`Stopwatch #${stopwatch.id}`}
+                      className="w-full"
+                    />
                     <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => removeStopwatch(stopwatch.id)}>
                         <Trash2 className="w-4 h-4"/>
                     </Button>
@@ -116,17 +123,25 @@ export function Stopwatch() {
     const nextId = useRef(1);
 
     const addStopwatch = () => {
+        const newId = nextId.current++;
         setStopwatches(prev => [...prev, {
-            id: nextId.current++,
+            id: newId,
             time: 0,
             isActive: false,
             laps: [],
-            startTime: 0
+            startTime: 0,
+            label: `Stopwatch #${newId}`
         }]);
     };
 
     const removeStopwatch = (id: number) => {
-        setStopwatches(prev => prev.filter(sw => sw.id !== id));
+        setStopwatches(prev => {
+            const remaining = prev.filter(sw => sw.id !== id);
+            if (remaining.length === 0) {
+                nextId.current = 1; // Reset counter if all are deleted
+            }
+            return remaining;
+        });
     };
 
     const updateStopwatch = useCallback((id: number, newState: Partial<StopwatchState>) => {
