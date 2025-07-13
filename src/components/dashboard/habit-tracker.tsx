@@ -82,7 +82,7 @@ const HabitItem = ({
 const HabitDialog = ({
     open,
     onOpenChange,
-    onSave: onSaveProp,
+    onSave,
     habitToEdit
 }: {
     open: boolean,
@@ -108,10 +108,9 @@ const HabitDialog = ({
         const newHabitData = {
             label,
             category,
-            // For now, custom icons are not supported, so we default one
-            icon: Target,
+            icon: journalConfig[category]?.icon || Target,
         };
-        onSaveProp(newHabitData, habitToEdit?.id);
+        onSave(newHabitData, habitToEdit?.id);
         onOpenChange(false);
     }
     
@@ -137,7 +136,7 @@ const HabitDialog = ({
                             </SelectTrigger>
                             <SelectContent>
                                 {habitCategories.map(cat => (
-                                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                    <SelectItem key={cat} value={cat}>{journalConfig[cat].title}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
@@ -214,20 +213,21 @@ export function HabitTracker() {
                 <p className="text-sm font-bold text-primary">{todaysHabits.length} / {habits.length} Done</p>
             </div>
             <ScrollArea className="pr-3 -mr-3 flex-grow">
-                <Accordion type="multiple" defaultValue={habitCategories} className="w-full">
-                {habitCategories.map(category => {
-                    const categoryHabits = habits.filter(h => h.category === category);
+                <Accordion type="multiple" defaultValue={habitCategories.map(c => journalConfig[c].title)} className="w-full">
+                {habitCategories.map(categoryKey => {
+                    const category = journalConfig[categoryKey];
+                    const categoryHabits = habits.filter(h => h.category === category.title);
                     const completedInCategory = categoryHabits.filter(h => todaysHabits.includes(h.id)).length;
 
                     if (!categoryHabits.length) return null;
 
                     return (
-                    <AccordionItem value={category} key={category}>
+                    <AccordionItem value={category.title} key={category.title}>
                         <AccordionTrigger>
                         <div className="flex items-center justify-between w-full">
                             <div className="flex items-center gap-2">
-                            <journalConfig[category].icon className="w-4 h-4 text-muted-foreground" />
-                            <span className="font-semibold">{category}</span>
+                            <category.icon className="w-4 h-4 text-muted-foreground" />
+                            <span className="font-semibold">{category.title}</span>
                             </div>
                             <span className="text-sm text-muted-foreground font-medium pr-2">{completedInCategory} / {categoryHabits.length}</span>
                         </div>
