@@ -1,11 +1,11 @@
 
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Target, PlusCircle, Trash2, Edit } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useJournal, type Habit } from '@/hooks/use-journal';
-import { journalConfig, type JournalCategory, type HabitId } from '@/lib/journal-config';
+import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -48,7 +48,7 @@ const HabitItem = ({
   onEdit: () => void,
   onDelete: () => void
 }) => {
-  const Icon = habit.icon;
+  const Icon = allHabits[habit.id]?.icon || Target;
   const checkboxId = `habit-tracker-${habit.id}`;
   return (
     <div className="flex items-center group">
