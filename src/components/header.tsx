@@ -14,9 +14,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTrainingFocus } from '@/hooks/use-training-focus';
+import { useTrainingOverride } from '@/hooks/use-training-override';
 
 export function Header() {
   const { focus, setFocus, isLoaded } = useTrainingFocus();
+  const { setOverride } = useTrainingOverride();
+
+  const handleFocusChange = (value: string) => {
+    const newFocus = value as 'neutral' | 'math';
+    setFocus(newFocus);
+    setOverride(null); // Reset any session-specific overrides
+  };
 
   return (
     <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card">
@@ -31,7 +39,7 @@ export function Header() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>Training Focus</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup value={focus} onValueChange={(value) => setFocus(value as 'neutral' | 'math')}>
+                <DropdownMenuRadioGroup value={focus} onValueChange={handleFocusChange}>
                   <DropdownMenuRadioItem value="neutral">Core Thinking</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="math">Math Reasoning</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
