@@ -126,7 +126,7 @@ export function GameProgressTracker() {
                 </TooltipProvider>
             </TabsContent>
             <TabsContent value="streaks" className="pt-4">
-                 <ScrollArea className="h-64 pr-3 -mr-3">
+                 <ScrollArea className="h-[200px] pr-3 -mr-3">
                       <div className="space-y-2">
                            {domainStreaksData.map((streak) => (
                               <DomainStreak key={streak.domainKey} {...streak} />

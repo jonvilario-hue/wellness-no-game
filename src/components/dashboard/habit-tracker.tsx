@@ -51,7 +51,7 @@ export function HabitTracker() {
     };
 
     return (
-      <Card className="hover:shadow-lg transition-shadow duration-300">
+      <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-headline">
             <Target className="w-5 h-5 text-primary" />
@@ -59,12 +59,12 @@ export function HabitTracker() {
           </CardTitle>
           <CardDescription>Track your consistency and build lasting cognitive habits.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-grow flex flex-col">
             <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold">Today's Progress</h3>
                 <p className="text-sm font-bold text-primary">{todaysHabits.size} / {allHabitList.length} Done</p>
             </div>
-            <ScrollArea className="h-[28rem] pr-3 -mr-3">
+            <ScrollArea className="pr-3 -mr-3">
                 <Accordion type="multiple" defaultValue={habitCategories} className="w-full">
                 {habitCategories.map(category => {
                     const categoryConfig = journalConfig[category];
