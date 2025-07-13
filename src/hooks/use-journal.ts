@@ -98,6 +98,22 @@ const dispatch = (newState: Partial<typeof memoryState>) => {
     listeners.forEach(listener => listener(memoryState));
 };
 
+const createNewEntryObject = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
+    return {
+      id: `new-${Date.now()}`,
+      date,
+      category,
+      frequency,
+      field1: '',
+      field2: '',
+      field3: '',
+      affirmations: [],
+      tags: '',
+      effort: 7,
+      mood: null,
+    };
+};
+
 const useJournal = () => {
     const [state, setState] = useState(memoryState);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -201,21 +217,6 @@ const useJournal = () => {
         }
     }, []);
     
-    const createNewEntryObject = useCallback((date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
-        return {
-          id: `new-${Date.now()}`,
-          date,
-          category,
-          frequency,
-          field1: '',
-          field2: '',
-          field3: '',
-          affirmations: [],
-          tags: '',
-          effort: 7,
-          mood: null,
-        };
-    }, []);
 
     const findOrCreateEntry = useCallback((date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
         const existingEntry = memoryState.entries.find(
@@ -227,7 +228,7 @@ const useJournal = () => {
         }
     
         return createNewEntryObject(date, category, frequency);
-    }, [createNewEntryObject]);
+    }, []);
 
 
     const addEntry = useCallback((newEntry: JournalEntry) => {
@@ -296,7 +297,7 @@ const useJournal = () => {
         const newEntry = createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
         dispatch({ selectedEntry: newEntry });
         return newEntry;
-    }, [createNewEntryObject]);
+    }, []);
 
     const setSelectedEntry = useCallback((entry: JournalEntry) => {
         dispatch({ selectedEntry: entry });
@@ -322,3 +323,5 @@ const useJournal = () => {
 useJournal.subscribe = subscribe;
 
 export { useJournal };
+
+    

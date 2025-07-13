@@ -708,41 +708,41 @@ const JournalSidebar = ({
 export function HabitJournal() {
   const { entries, addEntry, updateEntry, deleteEntry, findOrCreateEntry, isLoaded, setSelectedEntry: setGlobalSelectedEntry, selectedEntry: globalSelectedEntry } = useJournal();
   
-  const [currentDate, setCurrentDate] = useState(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]);
-  const [currentCategory, setCurrentCategory] = useState<JournalCategory>('Growth & Challenge Reflection');
-  const [currentFrequency, setCurrentFrequency] = useState<ReflectionFrequency>('daily');
   const [activeEntry, setActiveEntry] = useState<JournalEntry | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     if (globalSelectedEntry) {
-        setActiveEntry(globalSelectedEntry);
-        setCurrentDate(globalSelectedEntry.date);
-        setCurrentCategory(globalSelectedEntry.category);
-        setCurrentFrequency(globalSelectedEntry.frequency);
+      setActiveEntry(globalSelectedEntry);
     }
   }, [globalSelectedEntry]);
   
   useEffect(() => {
-    if (isLoaded) {
-      setCurrentFrequency(getFrequencyForDate(new Date(currentDate)));
-    }
-  }, [currentDate, isLoaded]);
-
-  useEffect(() => {
-    if(isLoaded && !globalSelectedEntry) {
-      const entry = findOrCreateEntry(currentDate, currentCategory, currentFrequency);
+    if (isLoaded && !globalSelectedEntry) {
+      const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+      const entry = findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
       setActiveEntry(entry);
     }
-  }, [isLoaded, currentDate, currentCategory, currentFrequency, findOrCreateEntry, globalSelectedEntry]);
+  }, [isLoaded, findOrCreateEntry, globalSelectedEntry]);
 
 
   const handleSelectFromList = useCallback((entry: JournalEntry) => {
-    setActiveEntry(entry);
-    setCurrentDate(entry.date);
-    setCurrentCategory(entry.category);
-    setCurrentFrequency(entry.frequency);
-  }, []);
+    setGlobalSelectedEntry(entry);
+  }, [setGlobalSelectedEntry]);
+
+  const handleCategoryChange = (newCategory: JournalCategory) => {
+    if (activeEntry) {
+      const newEntry = findOrCreateEntry(activeEntry.date, newCategory, activeEntry.frequency);
+      setGlobalSelectedEntry(newEntry);
+    }
+  };
+
+  const handleFrequencyChange = (newFrequency: ReflectionFrequency) => {
+    if (activeEntry) {
+      const newEntry = findOrCreateEntry(activeEntry.date, activeEntry.category, newFrequency);
+      setGlobalSelectedEntry(newEntry);
+    }
+  };
   
   const handleSave = useCallback((entryToSave: JournalEntry) => {
     let savedEntry = entryToSave;
@@ -754,9 +754,9 @@ export function HabitJournal() {
       updateEntry(entryToSave.id, entryToSave);
     }
     
-    setActiveEntry(savedEntry);
+    setGlobalSelectedEntry(savedEntry);
     return { success: true, entry: savedEntry };
-  }, [addEntry, updateEntry]);
+  }, [addEntry, updateEntry, setGlobalSelectedEntry]);
 
   const handleDelete = useCallback((id: string) => {
     const entryData = entries.find(e => e.id === id);
@@ -780,10 +780,11 @@ export function HabitJournal() {
     });
     
     if (activeEntry?.id === id) {
-       const newEntry = findOrCreateEntry(currentDate, currentCategory, currentFrequency);
-       setActiveEntry(newEntry);
+       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+       const newEntry = findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
+       setGlobalSelectedEntry(newEntry);
     }
-  }, [deleteEntry, toast, activeEntry, entries, findOrCreateEntry, currentDate, currentCategory, currentFrequency]);
+  }, [deleteEntry, toast, activeEntry, entries, findOrCreateEntry, setGlobalSelectedEntry]);
 
   
   return (
@@ -811,8 +812,8 @@ export function HabitJournal() {
                 entry={activeEntry} 
                 onSave={handleSave} 
                 onDelete={handleDelete}
-                onCategoryChange={setCurrentCategory}
-                onFrequencyChange={setCurrentFrequency}
+                onCategoryChange={handleCategoryChange}
+                onFrequencyChange={handleFrequencyChange}
                />
             ) : (
               <div className="p-6 flex flex-col items-center justify-center h-full text-center text-muted-foreground">
@@ -828,5 +829,7 @@ export function HabitJournal() {
 };
 
 HabitJournal.displayName = 'HabitJournal';
+
+    
 
     
