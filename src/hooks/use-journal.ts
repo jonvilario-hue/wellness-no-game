@@ -152,7 +152,7 @@ const useJournal = () => {
         return entries.find(entry => entry.id === id);
     };
     
-    const getCompletedHabitsForDay = useCallback((date: string) => {
+    const getCompletedHabitsForDay = useCallback((date: string): Set<string> => {
         const completed = new Set<string>();
         entries.forEach(entry => {
             if (entry.date === date) {

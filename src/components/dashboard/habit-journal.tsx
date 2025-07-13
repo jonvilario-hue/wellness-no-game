@@ -475,7 +475,7 @@ tags: ${entry.tags}
 
             {config.habits.length > 0 && (
               <div>
-                <Label>Supportive Habits</Label>
+                <Label>Supporting Habits</Label>
                 <div className="space-y-2 mt-1">
                   {config.habits.map(habitId => {
                     const habit = allHabits[habitId];

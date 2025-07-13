@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target, Zap, TrendingUp, Lightbulb, CheckSquare, ListTodo } from 'lucide-react';
+import { Target, Zap, TrendingUp, Lightbulb, CheckSquare } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DomainStreak, type DomainStreakProps } from './domain-streak';
 import { useState, useEffect } from 'react';
@@ -110,8 +110,8 @@ export function HabitTracker() {
 
             <TabsContent value="streaks" className="space-y-3 pt-4">
                 <ScrollArea className="h-64 pr-3 -mr-3">
-                 {domainStreaksData.map(streak => (
-                    <DomainStreak key={streak.domainKey} {...streak} />
+                 {domainStreaksData.map((streak, index) => (
+                    <DomainStreak key={index} {...streak} />
                  ))}
                 </ScrollArea>
             </TabsContent>
