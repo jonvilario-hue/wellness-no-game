@@ -5,47 +5,56 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
+import { useToast } from "@/hooks/use-toast";
 
-const neutralPrompts = [
-  "Things you find in a kitchen",
-  "Types of fruit",
-  "Animals that live in the jungle",
-  "Words that start with 'C'",
-  "Things that are cold",
-  "Musical instruments",
-  "Items you'd pack for a beach trip",
-  "Types of weather",
-  "Four-letter words",
-  "Occupations or jobs",
+type Prompt = {
+    text: string;
+    answers?: string[]; // Optional for neutral mode, required for math mode
+};
+
+const neutralPrompts: Prompt[] = [
+  { text: "Things you find in a kitchen" },
+  { text: "Types of fruit" },
+  { text: "Animals that live in the jungle" },
+  { text: "Words that start with 'C'" },
+  { text: "Things that are cold" },
+  { text: "Musical instruments" },
+  { text: "Items you'd pack for a beach trip" },
+  { text: "Types of weather" },
+  { text: "Four-letter words" },
+  { text: "Occupations or jobs" },
+  { text: "Things that are blue" },
+  { text: "Hobbies or pastimes" },
+  { text: "Types of trees" },
+  { text: "Things with wheels" },
 ];
 
-const mathPrompts = [
-  "Prime numbers under 50",
-  "Even numbers between 10 and 30",
-  "Types of geometric shapes",
-  "Things measured in meters",
-  "Multiples of 7",
-  "Mathematical symbols",
-  "Units of time",
-  "Objects that are typically counted",
-  "Terms from algebra",
-  "Numbers divisible by 3",
+const mathPrompts: Prompt[] = [
+  { text: "Prime numbers under 50", answers: ["2", "3", "5", "7", "11", "13", "17", "19", "23", "29", "31", "37", "41", "43", "47"] },
+  { text: "Even numbers between 10 and 30", answers: ["12", "14", "16", "18", "20", "22", "24", "26", "28"] },
+  { text: "Types of geometric shapes", answers: ["circle", "square", "triangle", "rectangle", "pentagon", "hexagon", "octagon", "rhombus", "trapezoid", "cube", "sphere", "cylinder", "pyramid"] },
+  { text: "Multiples of 7 up to 70", answers: ["7", "14", "21", "28", "35", "42", "49", "56", "63", "70"] },
+  { text: "Units of time", answers: ["second", "minute", "hour", "day", "week", "month", "year", "decade", "century", "millisecond"] },
+  { text: "Numbers divisible by 3 up to 30", answers: ["3", "6", "9", "12", "15", "18", "21", "24", "27", "30"] },
+  { text: "Perfect squares up to 100", answers: ["1", "4", "9", "16", "25", "36", "49", "64", "81", "100"] },
 ];
+
 
 export function SemanticFluencyStorm() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState<Prompt | null>(null);
   const [timeLeft, setTimeLeft] = useState(45);
   const [currentInput, setCurrentInput] = useState('');
   const [responses, setResponses] = useState<string[]>([]);
   const [switched, setSwitched] = useState(false);
   const [startTime, setStartTime] = useState(0);
   const promptHistory = useRef<string[]>([]);
+  const { toast } = useToast();
   
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
@@ -55,6 +64,15 @@ export function SemanticFluencyStorm() {
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
   const prompts = currentMode === 'math' ? mathPrompts : neutralPrompts;
 
+  const getNewPrompt = () => {
+    let newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+    while (promptHistory.current.includes(newPrompt.text)) {
+      newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+    }
+    promptHistory.current.push(newPrompt.text);
+    return newPrompt;
+  };
+  
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (gameState === 'running' && timeLeft > 0) {
@@ -63,12 +81,7 @@ export function SemanticFluencyStorm() {
         // Category switch halfway through
         if (timeLeft === 23 && !switched) {
           setSwitched(true);
-          let newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-          while (promptHistory.current.includes(newPrompt)) {
-            newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-          }
-          setPrompt(newPrompt);
-          promptHistory.current.push(newPrompt);
+          setPrompt(getNewPrompt());
         }
       }, 1000);
     } else if (timeLeft === 0 && gameState === 'running') {
@@ -80,8 +93,8 @@ export function SemanticFluencyStorm() {
   }, [gameState, timeLeft, switched, prompts, responses.length, currentMode, logGameResult, startTime]);
 
   const handleStart = () => {
-    let initialPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-    promptHistory.current = [initialPrompt];
+    let initialPrompt = getNewPrompt();
+    promptHistory.current = [initialPrompt.text];
     setPrompt(initialPrompt);
     
     setGameState('running');
@@ -98,9 +111,33 @@ export function SemanticFluencyStorm() {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (currentInput.trim() && !responses.includes(currentInput.trim().toLowerCase())) {
-      setResponses([...responses, currentInput.trim().toLowerCase()]);
+    const cleanInput = currentInput.trim().toLowerCase();
+
+    if (!cleanInput) return;
+
+    // Check for duplicates
+    if (responses.includes(cleanInput)) {
+        setCurrentInput('');
+        return;
     }
+
+    if (currentMode === 'math' && prompt?.answers) {
+        if (prompt.answers.includes(cleanInput)) {
+            const newResponses = [...responses, cleanInput];
+            setResponses(newResponses);
+
+            // Check if all correct answers have been found
+            if (newResponses.length === prompt.answers.length) {
+                toast({ title: "Category Complete!", description: "Great job! Here's a new category." });
+                setPrompt(getNewPrompt());
+                // Give a small time bonus for completing a category
+                setTimeLeft(prev => Math.min(45, prev + 5));
+            }
+        }
+    } else { // Neutral mode
+        setResponses([...responses, cleanInput]);
+    }
+    
     setCurrentInput('');
   };
 
@@ -132,7 +169,7 @@ export function SemanticFluencyStorm() {
               <span>Score: {responses.length}</span>
             </div>
             <div className={cn("p-4 bg-muted rounded-lg w-full text-center transition-all", switched && timeLeft > 20 && "bg-primary/20 animate-pulse")}>
-              <p className="text-xl font-semibold">{prompt}</p>
+              <p className="text-xl font-semibold">{prompt?.text}</p>
             </div>
             <form onSubmit={handleSubmit} className="flex gap-2">
               <Input 
