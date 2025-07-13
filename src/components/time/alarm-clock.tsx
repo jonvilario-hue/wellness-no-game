@@ -20,9 +20,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useAlarmStore } from '@/hooks/use-alarm-store';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { cn } from '@/lib/utils';
 
 export function AlarmClock() {
-  const { alarms, addAlarm, toggleAlarm, removeAlarm } = useAlarmStore();
+  const { alarms, addAlarm, toggleAlarm, removeAlarm, toggleAlarmPuzzle } = useAlarmStore();
   const [newAlarmTime, setNewAlarmTime] = useState('07:30');
   const [newAlarmLabel, setNewAlarmLabel] = useState('');
   const [newAlarmPuzzle, setNewAlarmPuzzle] = useState(true);
@@ -71,24 +73,34 @@ export function AlarmClock() {
             No alarms set.
           </div>
         )}
-        {alarms.map((alarm) => (
-            <div key={alarm.id} className="flex items-center justify-between p-4 rounded-lg bg-muted/50 group">
-                <div>
-                    <span className="text-3xl font-bold">{alarm.time}</span>
-                    <span className="ml-2 text-muted-foreground font-semibold">{alarm.period}</span>
-                    <p className="text-sm text-muted-foreground">{alarm.label}</p>
+        <TooltipProvider>
+            {alarms.map((alarm) => (
+                <div key={alarm.id} className="flex items-center justify-between p-4 rounded-lg bg-muted/50 group">
+                    <div>
+                        <span className="text-3xl font-bold">{alarm.time}</span>
+                        <span className="ml-2 text-muted-foreground font-semibold">{alarm.period}</span>
+                        <p className="text-sm text-muted-foreground">{alarm.label}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" onClick={() => toggleAlarmPuzzle(alarm.id)}>
+                                    <Puzzle className={cn("w-5 h-5", alarm.puzzle ? 'text-primary' : 'text-muted-foreground/50')} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>{alarm.puzzle ? 'Puzzle is required' : 'Puzzle is optional'}. Click to toggle.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        
+                        <Switch checked={alarm.active} onCheckedChange={() => toggleAlarm(alarm.id)} aria-label={`Toggle alarm for ${alarm.time} ${alarm.period}`} />
+                        <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100" onClick={() => removeAlarm(alarm.id)}>
+                            <Trash2 className="w-4 h-4 text-muted-foreground" />
+                        </Button>
+                    </div>
                 </div>
-                <div className="flex items-center gap-4">
-                    {alarm.puzzle && (
-                        <Puzzle className="w-5 h-5 text-primary" title="Puzzle required"/>
-                    )}
-                    <Switch checked={alarm.active} onCheckedChange={() => toggleAlarm(alarm.id)} aria-label={`Toggle alarm for ${alarm.time} ${alarm.period}`} />
-                    <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100" onClick={() => removeAlarm(alarm.id)}>
-                        <Trash2 className="w-4 h-4 text-muted-foreground" />
-                    </Button>
-                </div>
-            </div>
-        ))}
+            ))}
+        </TooltipProvider>
 
         <AlertDialog>
             <AlertDialogTrigger asChild>
