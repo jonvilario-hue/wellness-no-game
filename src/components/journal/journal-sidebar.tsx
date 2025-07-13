@@ -81,12 +81,12 @@ export const JournalSidebar = memo(({
             if (entry.id.startsWith('new-')) return false;
             const query = searchQuery.toLowerCase();
             return (
-                entry.label.toLowerCase().includes(query) ||
-                entry.category.toLowerCase().includes(query) ||
-                entry.field1.toLowerCase().includes(query) ||
-                entry.field2.toLowerCase().includes(query) ||
-                entry.field3.toLowerCase().includes(query) ||
-                entry.tags.toLowerCase().includes(query)
+                (entry.label || '').toLowerCase().includes(query) ||
+                (entry.category || '').toLowerCase().includes(query) ||
+                (entry.field1 || '').toLowerCase().includes(query) ||
+                (entry.field2 || '').toLowerCase().includes(query) ||
+                (entry.field3 || '').toLowerCase().includes(query) ||
+                (entry.tags || '').toLowerCase().includes(query)
             );
         });
 
@@ -144,7 +144,7 @@ export const JournalSidebar = memo(({
                                     const isSelected = selectedEntry?.id === entry.id;
                                     const categoryTitle = journalConfig[entry.category as JournalCategory]?.title || entry.category;
                                     const preview = (entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.').substring(0, 100);
-                                    const tags = entry.tags.split(',').map(t => t.trim()).filter(Boolean);
+                                    const tags = (entry.tags || '').split(',').map(t => t.trim()).filter(Boolean);
 
                                     return (
                                         <div key={entry.id} className="group flex items-center gap-1">
