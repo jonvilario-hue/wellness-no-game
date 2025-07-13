@@ -35,7 +35,7 @@ import { Input } from '../ui/input';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { useJournal, type JournalEntry } from '@/hooks/use-journal';
+import { useHydratedJournalStore as useJournal, type JournalEntry } from '@/hooks/use-journal';
 import { journalConfig, type JournalCategory } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 

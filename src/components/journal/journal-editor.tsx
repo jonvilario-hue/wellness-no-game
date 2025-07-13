@@ -33,7 +33,7 @@ import { Separator } from '../ui/separator';
 import { Slider } from '../ui/slider';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit } from '@/hooks/use-journal';
+import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit } from '@/hooks/use-journal';
 import { journalConfig, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 

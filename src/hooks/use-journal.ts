@@ -6,6 +6,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { JournalCategory } from '@/lib/journal-config';
 import { allHabits as defaultHabits, journalConfig } from '@/lib/journal-config';
 import type { LucideIcon } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
 export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
@@ -90,10 +91,10 @@ interface JournalState {
     habits: Habit[];
     completedHabits: DailyHabits;
     selectedEntry: JournalEntry | null;
-    isLoaded: boolean;
+    hasHydrated: boolean;
 
     // Actions
-    setLoaded: (loaded: boolean) => void;
+    setHasHydrated: (hydrated: boolean) => void;
     findOrCreateEntry: (date: string, category: JournalCategory, frequency: ReflectionFrequency) => JournalEntry;
     addEntry: (newEntry: JournalEntry) => JournalEntry;
     updateEntry: (id: string, updatedEntry: JournalEntry) => void;
@@ -123,142 +124,185 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
     mood: null,
 });
 
-const useJournalStore = (set: any, get: any): JournalState => ({
-    entries: [],
-    trashedEntries: [],
-    habits: [],
-    completedHabits: {},
-    selectedEntry: null,
-    isLoaded: false,
+export const useJournal = create<JournalState>()(
+  persist(
+    (set, get) => ({
+        entries: [],
+        trashedEntries: [],
+        habits: [],
+        completedHabits: {},
+        selectedEntry: null,
+        hasHydrated: false,
 
-    setLoaded: (loaded) => set({ isLoaded: loaded }),
-    
-    findOrCreateEntry: (date, category, frequency) => {
-        const state = get();
-        const existingEntry = state.entries.find(
-            (e) => e.date === date && e.category === category && e.frequency === frequency
-        );
-        return existingEntry || createNewEntryObject(date, category, frequency);
-    },
+        setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
+        
+        findOrCreateEntry: (date, category, frequency) => {
+            const state = get();
+            const existingEntry = state.entries.find(
+                (e) => e.date === date && e.category === category && e.frequency === frequency
+            );
+            return existingEntry || createNewEntryObject(date, category, frequency);
+        },
 
-    addEntry: (newEntry) => {
-        const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
-        const entryWithFinalId = { ...newEntry, id: finalId };
-        set(state => ({
-            entries: [...state.entries.filter(e => e.id !== finalId), entryWithFinalId].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        }));
-        return entryWithFinalId;
-    },
-
-    updateEntry: (id, updatedEntry) => {
-        set(state => ({
-            entries: state.entries.map(entry => (entry.id === id ? updatedEntry : entry))
-        }));
-    },
-
-    deleteEntry: (id) => {
-        const entryToTrash = get().entries.find(entry => entry.id === id);
-        if (entryToTrash) {
-            const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
+        addEntry: (newEntry) => {
+            const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
+            const entryWithFinalId = { ...newEntry, id: finalId };
             set(state => ({
-                entries: state.entries.filter(entry => entry.id !== id),
-                trashedEntries: [trashedEntry, ...state.trashedEntries].slice(0, MAX_TRASH_ITEMS)
+                entries: [...state.entries.filter(e => e.id !== finalId), entryWithFinalId].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             }));
-        }
-    },
+            return entryWithFinalId;
+        },
 
-    restoreEntry: (id) => {
-        const entryToRestore = get().trashedEntries.find(entry => entry.id === id);
-        if (entryToRestore) {
-            const { deletedAt, ...originalEntry } = entryToRestore;
+        updateEntry: (id, updatedEntry) => {
             set(state => ({
-                trashedEntries: state.trashedEntries.filter(entry => entry.id !== id),
-                entries: [...state.entries.filter(e => e.id !== originalEntry.id), originalEntry].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                entries: state.entries.map(entry => (entry.id === id ? updatedEntry : entry))
             }));
-        }
-    },
+        },
 
-    deleteFromTrashPermanently: (id) => {
-        set(state => ({
-            trashedEntries: state.trashedEntries.filter(entry => entry.id !== id)
-        }));
-    },
-
-    emptyTrash: () => set({ trashedEntries: [] }),
-
-    toggleHabitForDay: (date, habitId) => {
-        set(state => {
-            const habitsForDay = new Set(state.completedHabits[date] || []);
-            if (habitsForDay.has(habitId)) {
-                habitsForDay.delete(habitId);
-            } else {
-                habitsForDay.add(habitId);
+        deleteEntry: (id) => {
+            const entryToTrash = get().entries.find(entry => entry.id === id);
+            if (entryToTrash) {
+                const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
+                set(state => ({
+                    entries: state.entries.filter(entry => entry.id !== id),
+                    trashedEntries: [trashedEntry, ...state.trashedEntries].slice(0, MAX_TRASH_ITEMS)
+                }));
             }
-            return {
-                completedHabits: {
-                    ...state.completedHabits,
-                    [date]: Array.from(habitsForDay)
+        },
+
+        restoreEntry: (id) => {
+            const entryToRestore = get().trashedEntries.find(entry => entry.id === id);
+            if (entryToRestore) {
+                const { deletedAt, ...originalEntry } = entryToRestore;
+                set(state => ({
+                    trashedEntries: state.trashedEntries.filter(entry => entry.id !== id),
+                    entries: [...state.entries.filter(e => e.id !== originalEntry.id), originalEntry].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                }));
+            }
+        },
+
+        deleteFromTrashPermanently: (id) => {
+            set(state => ({
+                trashedEntries: state.trashedEntries.filter(entry => entry.id !== id)
+            }));
+        },
+
+        emptyTrash: () => set({ trashedEntries: [] }),
+
+        toggleHabitForDay: (date, habitId) => {
+            set(state => {
+                const habitsForDay = new Set(state.completedHabits[date] || []);
+                if (habitsForDay.has(habitId)) {
+                    habitsForDay.delete(habitId);
+                } else {
+                    habitsForDay.add(habitId);
                 }
-            };
-        });
-    },
-    
-    addHabit: (habitData) => {
-        set(state => ({
-            habits: [...state.habits, { ...habitData, id: `custom-${Date.now()}` }]
-        }));
-    },
-
-    updateHabit: (id, habitData) => {
-        set(state => ({
-            habits: state.habits.map(h => h.id === id ? { ...h, ...habitData } : h)
-        }));
-    },
-
-    removeHabit: (id) => {
-        set(state => ({
-            habits: state.habits.filter(h => h.id !== id)
-        }));
-    },
-    
-    createNewEntry: () => {
-        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-        return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
-    },
-
-    setSelectedEntry: (entry) => set({ selectedEntry: entry }),
-});
-
-const useServerSafeJournalStore = (set: any, get: any): JournalState => ({
-    ...useJournalStore(set, get),
-    isLoaded: true, // On server, it's always "loaded" with empty state
-});
-
-export const useJournal = typeof window === 'undefined'
-  ? create<JournalState>(useServerSafeJournalStore)
-  : create<JournalState>()(
-      persist(
-        useJournalStore,
-        {
-            name: 'journal-storage',
-            storage: createJSONStorage(() => localStorage),
-            onRehydrateStorage: () => (state) => {
-                if (state) {
-                    // Check if seed data needs to be added
-                    if (!state.habits || state.habits.length === 0) {
-                        const { entries, habits, habitConfig } = createSeedData();
-                        state.entries = entries;
-                        state.completedHabits = habits;
-                        state.habits = habitConfig;
+                return {
+                    completedHabits: {
+                        ...state.completedHabits,
+                        [date]: Array.from(habitsForDay)
                     }
-                    
-                    // Cleanup expired trash
-                    const thirtyDaysAgo = Date.now() - TRASH_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
-                    state.trashedEntries = state.trashedEntries.filter(item => item.deletedAt > thirtyDaysAgo);
+                };
+            });
+        },
+        
+        addHabit: (habitData) => {
+            set(state => ({
+                habits: [...state.habits, { ...habitData, id: `custom-${Date.now()}` }]
+            }));
+        },
 
-                    state.setLoaded(true);
-                }
-            },
-        }
-    )
+        updateHabit: (id, habitData) => {
+            set(state => ({
+                habits: state.habits.map(h => h.id === id ? { ...h, ...habitData } : h)
+            }));
+        },
+
+        removeHabit: (id) => {
+            set(state => ({
+                habits: state.habits.filter(h => h.id !== id)
+            }));
+        },
+        
+        createNewEntry: () => {
+            const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+            return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
+        },
+
+        setSelectedEntry: (entry) => set({ selectedEntry: entry }),
+    }),
+    {
+      name: 'journal-storage',
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+          if (state) {
+              // Check if seed data needs to be added
+              if (!state.habits || state.habits.length === 0) {
+                  const { entries, habits, habitConfig } = createSeedData();
+                  state.entries = entries;
+                  state.completedHabits = habits;
+                  state.habits = habitConfig;
+              }
+              
+              // Cleanup expired trash
+              const thirtyDaysAgo = Date.now() - TRASH_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
+              state.trashedEntries = state.trashedEntries.filter(item => item.deletedAt > thirtyDaysAgo);
+
+              state.setHasHydrated(true);
+          }
+      },
+    }
+  )
 );
+
+// Custom hook to safely access the store's state only after hydration
+export const useHydratedJournalStore = () => {
+    const storeState = useJournal();
+    const [hydratedState, setHydratedState] = useState(storeState);
+
+    useEffect(() => {
+        const unsubscribe = useJournal.subscribe(
+            (currentState) => {
+                if (currentState.hasHydrated) {
+                    setHydratedState(currentState);
+                    unsubscribe();
+                }
+            }
+        );
+
+        if (useJournal.getState().hasHydrated) {
+            setHydratedState(useJournal.getState());
+        }
+
+        return unsubscribe;
+    }, []);
+    
+    // On the server and before hydration, return the initial state
+    if (typeof window === "undefined" || !hydratedState.hasHydrated) {
+        return {
+            entries: [],
+            trashedEntries: [],
+            habits: [],
+            completedHabits: {},
+            selectedEntry: null,
+            hasHydrated: false,
+            // Return dummy functions to prevent errors during SSR
+            setHasHydrated: () => {},
+            findOrCreateEntry: (date: string, category: JournalCategory, frequency: ReflectionFrequency) => createNewEntryObject(date, category, frequency),
+            addEntry: (entry: JournalEntry) => entry,
+            updateEntry: () => {},
+            deleteEntry: () => {},
+            restoreEntry: () => {},
+            deleteFromTrashPermanently: () => {},
+            emptyTrash: () => {},
+            toggleHabitForDay: () => {},
+            addHabit: () => {},
+            updateHabit: () => {},
+            removeHabit: () => {},
+            createNewEntry: () => createNewEntryObject(new Date().toISOString().split('T')[0], 'Growth & Challenge Reflection', 'daily'),
+            setSelectedEntry: () => {},
+        };
+    }
+
+    return hydratedState;
+};

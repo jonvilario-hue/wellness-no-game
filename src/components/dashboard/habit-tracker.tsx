@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Target, PlusCircle, Trash2, Edit } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useJournal, type Habit } from '@/hooks/use-journal';
+import { useHydratedJournalStore as useJournal, type Habit } from '@/hooks/use-journal';
 import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from '../ui/skeleton';
 
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
@@ -153,7 +154,7 @@ const HabitDialog = ({
 
 
 export function HabitTracker() {
-    const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit, isLoaded } = useJournal();
+    const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit, hasHydrated } = useJournal();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
 
@@ -181,7 +182,7 @@ export function HabitTracker() {
         removeHabit(id);
     };
     
-    if (!isLoaded) {
+    if (!hasHydrated) {
       return (
         <Card>
           <CardHeader>
@@ -192,7 +193,12 @@ export function HabitTracker() {
             <CardDescription>Loading habits...</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-48 animate-pulse bg-muted rounded-md"></div>
+            <div className="space-y-2">
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
+            </div>
           </CardContent>
         </Card>
       );

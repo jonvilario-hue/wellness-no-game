@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Calendar } from '@/components/ui/calendar';
-import { useJournal, type JournalEntry } from '@/hooks/use-journal';
+import { useHydratedJournalStore, type JournalEntry } from '@/hooks/use-journal';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
@@ -12,6 +12,7 @@ import { journalConfig } from '@/lib/journal-config';
 import { domainIcons } from '../icons';
 import { chcDomains } from '@/types';
 import type { CHCDomain } from '@/types';
+import { Skeleton } from '../ui/skeleton';
 
 // Simulate which domains were trained on which days
 const getMockTrainingData = (date: Date): CHCDomain[] => {
@@ -26,10 +27,13 @@ const getMockTrainingData = (date: Date): CHCDomain[] => {
 
 
 export function CalendarView() {
-  const { entries, isLoaded } = useJournal();
+  const { entries, hasHydrated } = useHydratedJournalStore();
   const [date, setDate] = React.useState<Date | undefined>(undefined);
+  const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
+    // This effect runs only on the client, after the initial render.
+    setIsClient(true);
     setDate(new Date());
   }, []);
 
@@ -57,8 +61,17 @@ export function CalendarView() {
       })
     : 'No date selected';
 
-  if (!isLoaded) {
-    return <div>Loading Calendar...</div>;
+  if (!isClient || !hasHydrated) {
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 p-4 gap-4">
+            <Skeleton className="h-[300px] w-full" />
+            <div className="space-y-4">
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-4 w-64" />
+                <Skeleton className="h-64 w-full" />
+            </div>
+        </div>
+    );
   }
 
   return (

@@ -14,23 +14,23 @@ import {
 } from 'lucide-react';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useJournal, type JournalEntry, type ReflectionFrequency, getFrequencyForDate, type JournalCategory } from '@/hooks/use-journal';
+import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, getFrequencyForDate, type JournalCategory } from '@/hooks/use-journal';
 import { JournalEditor } from '@/components/journal/journal-editor';
 import { JournalSidebar } from '@/components/journal/journal-sidebar';
 
 
 export function HabitJournal() {
-  const { isLoaded, findOrCreateEntry, setSelectedEntry, selectedEntry, createNewEntry } = useJournal();
+  const { hasHydrated, findOrCreateEntry, setSelectedEntry, selectedEntry, createNewEntry } = useJournal();
   
   // Memoize the initial entry to avoid re-running findOrCreateEntry on every render
   const initialEntry = useMemo(() => {
-    if (isLoaded) {
+    if (hasHydrated) {
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
       return findOrCreateEntry(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date(today)));
     }
     return null;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded]);
+  }, [hasHydrated]);
 
   // Set the selected entry only once when the component is loaded or when the initial entry is ready
   useEffect(() => {
@@ -42,9 +42,9 @@ export function HabitJournal() {
   // Memoize active entry for editor to prevent re-renders
   const activeEntry = useMemo(() => {
     if (selectedEntry) return selectedEntry;
-    if (isLoaded) return createNewEntry();
+    if (hasHydrated) return createNewEntry();
     return null;
-  }, [selectedEntry, isLoaded, createNewEntry]);
+  }, [selectedEntry, hasHydrated, createNewEntry]);
   
   const { toast } = useToast();
   const { addEntry, updateEntry, deleteEntry, entries } = useJournal();
