@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,17 +55,17 @@ export function PerformanceInsights() {
   const RecIcon = recommendationIcons[recommendation.recommendationType] || Sparkles;
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col relative">
-       <Button 
-          variant="ghost" 
-          size="icon" 
-          className="absolute top-2 right-2 h-7 w-7 text-muted-foreground hover:text-foreground"
+    <Card className="hover:shadow-lg transition-shadow duration-300 flex flex-col">
+      <CardHeader className="relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-4 right-4 h-6 w-6 text-muted-foreground hover:text-foreground"
           onClick={() => setIsDismissed(true)}
           aria-label="Dismiss insight"
         >
           <X className="w-4 h-4" />
-       </Button>
-      <CardHeader>
+        </Button>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Sparkles className="w-5 h-5 text-primary" />
           Performance Insights

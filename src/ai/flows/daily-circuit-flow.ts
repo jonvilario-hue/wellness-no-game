@@ -8,7 +8,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { CHCDomain, chcDomains } from '@/types';
 
 // Use a subset of domains suitable for a "circuit"
 const CircuitDomainEnum = z.enum([
@@ -19,7 +18,6 @@ const CircuitDomainEnum = z.enum([
   'EF',
   'Glr',
 ]);
-type CircuitDomain = z.infer<typeof CircuitDomainEnum>;
 
 const CircuitSegmentSchema = z.object({
   domain: CircuitDomainEnum.describe("The CHC domain for this segment."),
@@ -35,7 +33,7 @@ const DailyCircuitOutputSchema = z.object({
 export type DailyCircuitOutput = z.infer<typeof DailyCircuitOutputSchema>;
 
 export async function getDailyCircuit(): Promise<DailyCircuitOutput> {
-  // Use a deterministic seed for the day to ensure the circuit is the same for a user.
+  // Use a deterministic seed for the day to ensure the circuit is the same for all users.
   const dailySeed = new Date().toISOString().slice(0, 10);
   return dailyCircuitFlow(dailySeed);
 }
@@ -44,26 +42,24 @@ const prompt = ai.definePrompt({
   name: 'dailyCircuitPrompt',
   input: { schema: z.string() },
   output: { schema: DailyCircuitOutputSchema },
-  prompt: `You are an expert cognitive training designer. Your task is to create a compelling, 3-part "Cognitive Circuit" for a daily challenge. The circuit must be varied, engaging, and grounded in cognitive science.
+  prompt: `You are an expert cognitive training designer. Create a compelling, 3-part "Cognitive Circuit" for a daily challenge based on the provided daily seed.
 
 Rules:
-1.  **Select Three Distinct Domains:** From the available domains (Gf, Gwm, Gs, Gv, EF, Glr), choose three *different* domains for the circuit. The combination should be interesting. For example, a good mix could be Gf (logic), Gs (speed), and EF (focus).
-2.  **Create Catchy Titles:** Give each segment a short, exciting title that hints at the cognitive skill being trained.
-3.  **Write "Transfer Anchors":** For each segment, provide a "transferAnchor" that clearly and concisely explains the real-world benefit. Start it with "Helps with...".
-4.  **Use Specific Game Titles:** Use the provided game titles for each domain.
-5.  **Give the Circuit a Cool Name:** Create an overarching "circuitTitle" for the entire challenge.
-
-Available Domains and Game Titles:
--   **Gf (Fluid Reasoning):** Pattern Matrix
--   **Gwm (Working Memory):** Dynamic Sequence Transformer
--   **Gs (Processing Speed):** Rapid Code Match
--   **Gv (Visual Processing):** Mental Rotation Lab
--   **EF (Executive Functioning):** Focus Switch Reactor
--   **Glr (Long-Term Retrieval):** Semantic Fluency Storm
+1.  **Select Three Distinct Domains:** Choose three *different* domains from: Gf, Gwm, Gs, Gv, EF, Glr.
+2.  **Create Catchy Titles:** Give each segment a short, exciting title.
+3.  **Write "Transfer Anchors":** For each segment, provide a "transferAnchor" starting with "Helps with...".
+4.  **Use Specific Game Titles:**
+    - Gf: Pattern Matrix
+    - Gwm: Dynamic Sequence Transformer
+    - Gs: Rapid Code Match
+    - Gv: Mental Rotation Lab
+    - EF: Focus Switch Reactor
+    - Glr: Semantic Fluency Storm
+5.  **Create a Cool Circuit Title:** Give the entire challenge a cool name.
 
 **Daily Seed:** {{prompt}}
 
-Based on this seed, generate a unique and exciting 3-part cognitive circuit. Ensure the output is in the required JSON format.
+Generate a unique and exciting 3-part cognitive circuit based on this seed.
 `,
 });
 
@@ -75,6 +71,9 @@ const dailyCircuitFlow = ai.defineFlow(
   },
   async (seed) => {
     const { output } = await prompt(seed);
-    return output!;
+    if (!output) {
+      throw new Error('Failed to generate daily circuit.');
+    }
+    return output;
   }
 );
