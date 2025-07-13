@@ -1,24 +1,22 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import type { JournalCategory, HabitId } from '@/lib/journal-config';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
 export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
 
 export type JournalEntry = {
-    id: string; // Composite key: `${date}-${category}-${frequency}` for saved entries
+    id: string;
     date: string; // YYYY-MM-DD
     category: JournalCategory;
     frequency: ReflectionFrequency;
-    
-    // Template fields
     field1: string;
     field2: string;
     field3: string;
     affirmations: string[];
-
     tags: string;
     effort: number;
     mood: MoodState;
@@ -28,7 +26,7 @@ export type TrashedJournalEntry = JournalEntry & {
     deletedAt: number; // UTC timestamp in milliseconds
 };
 
-export type DailyHabits = Record<string, Set<HabitId>>; // YYYY-MM-DD -> Set of completed habit IDs
+export type DailyHabits = Record<string, HabitId[]>; // YYYY-MM-DD -> Array of completed habit IDs
 
 const MAX_TRASH_ITEMS = 100;
 const TRASH_EXPIRATION_DAYS = 30;
@@ -43,15 +41,10 @@ export const getFrequencyForDate = (date: Date): ReflectionFrequency => {
     return 'daily';
 };
 
-
 const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits } => {
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
     const category: JournalCategory = 'Growth & Challenge Reflection';
     const frequency = getFrequencyForDate(new Date());
-
-    const seedHabits = new Set<HabitId>();
-    seedHabits.add('reflect_challenge');
-    seedHabits.add('learn_from_discomfort');
 
     return {
         entries: [
@@ -70,256 +63,156 @@ const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits } => {
             },
         ],
         habits: {
-            [today]: seedHabits
+            [today]: ['reflect_challenge', 'learn_from_discomfort']
         }
     };
 };
 
-let memoryState: {
+// --- Zustand Store Definition ---
+
+interface JournalState {
     entries: JournalEntry[];
     trashedEntries: TrashedJournalEntry[];
     completedHabits: DailyHabits;
-    selectedEntry: JournalEntry | null; // For external components to set the current entry
-} = {
-    entries: [],
-    trashedEntries: [],
-    completedHabits: {},
-    selectedEntry: null,
-};
+    selectedEntry: JournalEntry | null;
+    isLoaded: boolean;
 
-const listeners: Set<Function> = new Set();
-const subscribe = (callback: Function) => {
-    listeners.add(callback);
-    return () => listeners.delete(callback);
+    // Actions
+    setLoaded: (loaded: boolean) => void;
+    findOrCreateEntry: (date: string, category: JournalCategory, frequency: ReflectionFrequency) => JournalEntry;
+    addEntry: (newEntry: JournalEntry) => JournalEntry;
+    updateEntry: (id: string, updatedEntry: JournalEntry) => void;
+    deleteEntry: (id: string) => void;
+    restoreEntry: (id: string) => void;
+    deleteFromTrashPermanently: (id: string) => void;
+    emptyTrash: () => void;
+    toggleHabitForDay: (date: string, habitId: HabitId) => void;
+    createNewEntry: () => JournalEntry;
+    setSelectedEntry: (entry: JournalEntry | null) => void;
 }
 
-const dispatch = (newState: Partial<typeof memoryState>) => {
-    memoryState = { ...memoryState, ...newState };
-    listeners.forEach(listener => listener(memoryState));
-};
+const createNewEntryObject = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => ({
+    id: `new-${Date.now()}`,
+    date,
+    category,
+    frequency,
+    field1: '',
+    field2: '',
+    field3: '',
+    affirmations: [],
+    tags: '',
+    effort: 7,
+    mood: null,
+});
 
-const createNewEntryObject = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
-    return {
-      id: `new-${Date.now()}`,
-      date,
-      category,
-      frequency,
-      field1: '',
-      field2: '',
-      field3: '',
-      affirmations: [],
-      tags: '',
-      effort: 7,
-      mood: null,
-    };
-};
+export const useJournal = create<JournalState>()(
+    persist(
+        (set, get) => ({
+            entries: [],
+            trashedEntries: [],
+            completedHabits: {},
+            selectedEntry: null,
+            isLoaded: false,
 
-const useJournal = () => {
-    const [state, setState] = useState(memoryState);
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    useEffect(() => {
-        const unsubscribe = subscribe(setState);
-        return unsubscribe;
-    }, []);
-
-    useEffect(() => {
-        let savedEntries: JournalEntry[] = [];
-        let savedTrashedEntries: TrashedJournalEntry[] = [];
-        let savedHabits: DailyHabits = {};
-        let entriesExist = false;
-
-        try {
-            const savedEntriesStr = window.localStorage.getItem('journalEntries');
-            if (savedEntriesStr !== null) {
-                entriesExist = true;
-                const parsed = JSON.parse(savedEntriesStr);
-                if (Array.isArray(parsed)) {
-                    savedEntries = parsed;
-                }
-            }
-
-            const savedTrashedEntriesStr = window.localStorage.getItem('journalTrashedEntries');
-            if (savedTrashedEntriesStr) {
-                 const parsed = JSON.parse(savedTrashedEntriesStr);
-                 if (Array.isArray(parsed)) {
-                    const thirtyDaysAgo = Date.now() - TRASH_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
-                    savedTrashedEntries = parsed.filter((item: TrashedJournalEntry) => item.deletedAt > thirtyDaysAgo);
-                }
-            }
+            setLoaded: (loaded) => set({ isLoaded: loaded }),
             
-            const savedHabitsStr = window.localStorage.getItem('journalCompletedHabits');
-            if (savedHabitsStr !== null) {
-                const parsed = JSON.parse(savedHabitsStr);
-                Object.keys(parsed).forEach(date => {
-                    parsed[date] = new Set(parsed[date]);
+            findOrCreateEntry: (date, category, frequency) => {
+                const state = get();
+                const existingEntry = state.entries.find(
+                    (e) => e.date === date && e.category === category && e.frequency === frequency
+                );
+                return existingEntry || createNewEntryObject(date, category, frequency);
+            },
+
+            addEntry: (newEntry) => {
+                const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
+                const entryWithFinalId = { ...newEntry, id: finalId };
+                set(state => ({
+                    entries: [...state.entries.filter(e => e.id !== finalId), entryWithFinalId].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                }));
+                return entryWithFinalId;
+            },
+
+            updateEntry: (id, updatedEntry) => {
+                set(state => ({
+                    entries: state.entries.map(entry => (entry.id === id ? updatedEntry : entry))
+                }));
+            },
+
+            deleteEntry: (id) => {
+                const entryToTrash = get().entries.find(entry => entry.id === id);
+                if (entryToTrash) {
+                    const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
+                    set(state => ({
+                        entries: state.entries.filter(entry => entry.id !== id),
+                        trashedEntries: [trashedEntry, ...state.trashedEntries].slice(0, MAX_TRASH_ITEMS)
+                    }));
+                }
+            },
+
+            restoreEntry: (id) => {
+                const entryToRestore = get().trashedEntries.find(entry => entry.id === id);
+                if (entryToRestore) {
+                    const { deletedAt, ...originalEntry } = entryToRestore;
+                    set(state => ({
+                        trashedEntries: state.trashedEntries.filter(entry => entry.id !== id),
+                        entries: [...state.entries.filter(e => e.id !== originalEntry.id), originalEntry].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    }));
+                }
+            },
+
+            deleteFromTrashPermanently: (id) => {
+                set(state => ({
+                    trashedEntries: state.trashedEntries.filter(entry => entry.id !== id)
+                }));
+            },
+
+            emptyTrash: () => set({ trashedEntries: [] }),
+
+            toggleHabitForDay: (date, habitId) => {
+                set(state => {
+                    const habitsForDay = new Set(state.completedHabits[date] || []);
+                    if (habitsForDay.has(habitId)) {
+                        habitsForDay.delete(habitId);
+                    } else {
+                        habitsForDay.add(habitId);
+                    }
+                    return {
+                        completedHabits: {
+                            ...state.completedHabits,
+                            [date]: Array.from(habitsForDay)
+                        }
+                    };
                 });
-                savedHabits = parsed;
-            }
-
-        } catch (error) {
-            console.error("Failed to load journal from localStorage", error);
-        }
-        
-        if (!entriesExist && window.localStorage.getItem('journalInitialized') !== 'true') {
-            const { entries: seedEntries, habits: seedHabits } = createSeedData();
-            savedEntries = seedEntries;
-            savedHabits = seedHabits;
-            window.localStorage.setItem('journalEntries', JSON.stringify(seedEntries));
-            const serializableHabits = { [Object.keys(seedHabits)[0]]: Array.from(Object.values(seedHabits)[0]) };
-            window.localStorage.setItem('journalCompletedHabits', JSON.stringify(serializableHabits));
-            window.localStorage.setItem('journalInitialized', 'true');
-        }
-
-        dispatch({
-            entries: savedEntries,
-            trashedEntries: savedTrashedEntries,
-            completedHabits: savedHabits,
-        });
-
-        setIsLoaded(true);
-
-    }, []);
-
-    const saveEntries = useCallback((newEntries: JournalEntry[]) => {
-        try {
-            const sortedEntries = newEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-            dispatch({ entries: sortedEntries });
-            window.localStorage.setItem('journalEntries', JSON.stringify(sortedEntries));
-        } catch (error) {
-            console.error("Failed to save entries to localStorage", error);
-        }
-    }, []);
-    
-    const saveTrashedEntries = useCallback((newTrashedEntries: TrashedJournalEntry[]) => {
-         try {
-            let updatedTrashedEntries = [...newTrashedEntries];
-            while (updatedTrashedEntries.length > MAX_TRASH_ITEMS) {
-                updatedTrashedEntries.shift();
-            }
-            dispatch({ trashedEntries: updatedTrashedEntries });
-            window.localStorage.setItem('journalTrashedEntries', JSON.stringify(updatedTrashedEntries));
-        } catch (error) {
-            console.error("Failed to save trashed entries to localStorage", error);
-        }
-    }, []);
-    
-    const saveCompletedHabits = useCallback((newHabits: DailyHabits) => {
-        try {
-            dispatch({ completedHabits: newHabits });
-            const serializableHabits: Record<string, HabitId[]> = {};
-            for (const date in newHabits) {
-                serializableHabits[date] = Array.from(newHabits[date]);
-            }
-            window.localStorage.setItem('journalCompletedHabits', JSON.stringify(serializableHabits));
-        } catch (error) {
-            console.error("Failed to save habits to localStorage", error);
-        }
-    }, []);
-    
-
-    const stableFns = useMemo(() => {
-        const findOrCreateEntry = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
-            const existingEntry = memoryState.entries.find(
-              (e) => e.date === date && e.category === category && e.frequency === frequency
-            );
-        
-            if (existingEntry) {
-              return existingEntry;
-            }
-        
-            return createNewEntryObject(date, category, frequency);
-        };
-    
-        const addEntry = (newEntry: JournalEntry) => {
-            const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
-            const entryWithFinalId = { ...newEntry, id: finalId };
+            },
             
-            const newEntries = [...memoryState.entries.filter(e => e.id !== finalId), entryWithFinalId];
-            saveEntries(newEntries);
-            return entryWithFinalId;
-        };
-    
-        const updateEntry = (id: string, updatedEntry: JournalEntry) => {
-            const newEntries = memoryState.entries.map(entry => (entry.id === id ? updatedEntry : entry));
-            saveEntries(newEntries);
-        };
-    
-        const deleteEntry = (id: string) => {
-            const entryToTrash = memoryState.entries.find(entry => entry.id === id);
-            if (entryToTrash) {
-                const newEntries = memoryState.entries.filter(entry => entry.id !== id);
-                const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
-                const newTrashedEntries = [trashedEntry, ...memoryState.trashedEntries];
-                saveEntries(newEntries);
-                saveTrashedEntries(newTrashedEntries);
-            }
-        };
-        
-        const restoreEntry = (id: string) => {
-            const entryToRestore = memoryState.trashedEntries.find(entry => entry.id === id);
-            if (entryToRestore) {
-                const newTrashedEntries = memoryState.trashedEntries.filter(entry => entry.id !== id);
-                const { deletedAt, ...originalEntry } = entryToRestore;
-                const newEntries = [...memoryState.entries.filter(e => e.id !== originalEntry.id), originalEntry];
-                saveTrashedEntries(newTrashedEntries);
-                saveEntries(newEntries);
-            }
-        };
-    
-        const deleteFromTrashPermanently = (id: string) => {
-            const newTrashedEntries = memoryState.trashedEntries.filter(entry => entry.id !== id);
-            saveTrashedEntries(newTrashedEntries);
-        };
-        
-        const emptyTrash = () => {
-            saveTrashedEntries([]);
-        };
-    
-        const toggleHabitForDay = (date: string, habitId: HabitId) => {
-            const newHabits = { ...memoryState.completedHabits };
-            if (!newHabits[date]) {
-                newHabits[date] = new Set();
-            }
-            
-            const dateHabits = newHabits[date];
-            if (dateHabits.has(habitId)) {
-                dateHabits.delete(habitId);
-            } else {
-                dateHabits.add(habitId);
-            }
-            
-            saveCompletedHabits(newHabits);
-        };
-    
-        const createNewEntry = () => {
-            const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-            return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
-        };
-    
-        const setSelectedEntry = (entry: JournalEntry | null) => {
-            dispatch({ selectedEntry: entry });
-        };
-        
-        return {
-            addEntry,
-            updateEntry,
-            deleteEntry,
-            restoreEntry,
-            deleteFromTrashPermanently,
-            emptyTrash,
-            toggleHabitForDay,
-            findOrCreateEntry,
-            createNewEntry,
-            setSelectedEntry,
-        };
-    }, [saveEntries, saveTrashedEntries, saveCompletedHabits]);
+            createNewEntry: () => {
+                const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+                return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
+            },
 
+            setSelectedEntry: (entry) => set({ selectedEntry: entry }),
+        }),
+        {
+            name: 'journal-storage',
+            storage: createJSONStorage(() => localStorage),
+            onRehydrateStorage: () => (state) => {
+                if (state) {
+                    // Check if seed data needs to be added
+                    if (state.entries.length === 0 && !localStorage.getItem('journalInitialized')) {
+                        const { entries, habits } = createSeedData();
+                        state.entries = entries;
+                        state.completedHabits = habits;
+                        localStorage.setItem('journalInitialized', 'true');
+                    }
+                    
+                    // Cleanup expired trash
+                    const thirtyDaysAgo = Date.now() - TRASH_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
+                    state.trashedEntries = state.trashedEntries.filter(item => item.deletedAt > thirtyDaysAgo);
 
-    return { ...state, ...stableFns, isLoaded };
-};
-
-useJournal.getState = () => memoryState;
-useJournal.subscribe = subscribe;
-
-export { useJournal };
+                    state.setLoaded(true);
+                }
+            },
+        }
+    )
+);

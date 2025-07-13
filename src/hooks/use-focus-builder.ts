@@ -14,11 +14,19 @@ const focusRotation: CHCDomain[] = ['Gwm', 'Gf', 'EF', 'Gs', 'Gc', 'Gv', 'Ga', '
 type FocusBuilderState = {
   cycleStartDate: string; // ISO string for the start date of the current cycle
   manualOverrideDomain: CHCDomain | null; // If user manually selected a domain
+  lastAutomaticDomain: CHCDomain; // The last domain that was set automatically
 };
 
 export const useFocusBuilder = () => {
   const [state, setState] = useState<FocusBuilderState | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Function to determine the next domain in the automatic rotation
+  const getNextAutomaticDomain = (lastDomain: CHCDomain): CHCDomain => {
+    const lastIndex = focusRotation.indexOf(lastDomain);
+    const nextIndex = (lastIndex + 1) % focusRotation.length;
+    return focusRotation[nextIndex];
+  };
 
   useEffect(() => {
     let storedState: FocusBuilderState | null = null;
@@ -36,14 +44,13 @@ export const useFocusBuilder = () => {
     const diffDays = (today.getTime() - cycleStartDate.getTime()) / (1000 * 3600 * 24);
 
     if (!storedState || diffDays >= CYCLE_LENGTH) {
-      // If cycle is over, determine the next domain in the sequence
-      const lastFocus = storedState?.manualOverrideDomain || getFocusDomainForDate(cycleStartDate);
-      const lastIndex = focusRotation.indexOf(lastFocus);
-      const nextIndex = (lastIndex + 1) % focusRotation.length;
+      const lastDomain = storedState?.manualOverrideDomain || storedState?.lastAutomaticDomain || focusRotation[focusRotation.length - 1];
+      const nextDomain = getNextAutomaticDomain(lastDomain);
       
       const newState: FocusBuilderState = {
         cycleStartDate: today.toISOString(),
         manualOverrideDomain: null, // Reset manual override on new cycle
+        lastAutomaticDomain: nextDomain,
       };
       setState(newState);
       try {
@@ -57,15 +64,10 @@ export const useFocusBuilder = () => {
     setIsLoaded(true);
   }, []);
 
-  const getFocusDomainForDate = (date: Date): CHCDomain => {
-    const monthIndex = date.getMonth(); // 0-11
-    return focusRotation[monthIndex % focusRotation.length];
-  };
-
   const setManualFocus = useCallback((domainKey: CHCDomain) => {
-    // When a user manually selects a focus, we reset the cycle start date to today
-    // and store their choice as the manual override.
+    if (!state) return;
     const newState: FocusBuilderState = {
+      ...state,
       cycleStartDate: new Date().toISOString(),
       manualOverrideDomain: domainKey,
     };
@@ -75,21 +77,11 @@ export const useFocusBuilder = () => {
     } catch (error) {
       console.error('Failed to save manual focus state', error);
     }
-  }, []);
-
-  const getAutomaticFocus = (startDate: Date): CHCDomain => {
-     if (!state) return focusRotation[0];
-     // Find the last domain to determine the next one
-     const lastStoredState = state;
-     const lastFocus = lastStoredState.manualOverrideDomain || getFocusDomainForDate(new Date(lastStoredState.cycleStartDate));
-     const lastIndex = focusRotation.indexOf(lastFocus);
-     const nextIndex = (lastIndex + 1) % focusRotation.length;
-     return focusRotation[nextIndex];
-  }
+  }, [state]);
 
   const cycleStartDate = new Date(state?.cycleStartDate || Date.now());
 
-  const currentFocusKey = state?.manualOverrideDomain || getAutomaticFocus(cycleStartDate);
+  const currentFocusKey = state?.manualOverrideDomain || state?.lastAutomaticDomain || focusRotation[0];
   const currentFocus = chcDomains.find(d => d.key === currentFocusKey) || chcDomains[0];
   
   const today = new Date();
