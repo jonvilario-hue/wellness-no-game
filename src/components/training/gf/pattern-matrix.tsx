@@ -3,40 +3,51 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { cn } from "@/lib/utils";
 import { BrainCircuit } from "lucide-react";
+import { useTrainingFocus } from "@/hooks/use-training-focus.tsx";
 
+// --- Neutral Mode Components ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
 const colors = ['bg-primary', 'bg-accent', 'bg-chart-3', 'bg-chart-4'];
 const rotations = [0, 90, 180, 270];
 const fills = ['fill', 'outline'];
 
-type Element = { shape: string; color: string; rotation: number; fill: 'fill' | 'outline' };
-type Grid = (Element | null)[];
-type Puzzle = { grid: Grid; missingIndex: number; answer: Element; options: Element[]; size: number };
+type NeutralElement = { shape: string; color: string; rotation: number; fill: 'fill' | 'outline' };
+const getNextInSequence = <T,>(val: T, collection: T[]) => {
+  const currentIndex = collection.indexOf(val);
+  return collection[(currentIndex + 1) % collection.length];
+};
+const generateNeutralElement = (): NeutralElement => ({
+  shape: shapes[Math.floor(Math.random() * shapes.length)],
+  color: colors[Math.floor(Math.random() * colors.length)],
+  rotation: rotations[Math.floor(Math.random() * rotations.length)],
+  fill: fills[Math.floor(Math.random() * fills.length)] as 'fill' | 'outline',
+});
 
-const generatePuzzle = (): Puzzle => {
+// --- Math Mode Components ---
+type MathElement = { value: number };
+const mathOperators = [(a: number) => a + 2, (a: number) => a * 2, (a: number) => a - 3, (a: number) => Math.floor(a / 2)];
+const generateMathElement = (): MathElement => ({ value: Math.floor(Math.random() * 10) + 1 });
+
+// --- Unified Puzzle Types ---
+type PuzzleElement = NeutralElement | MathElement;
+type Grid = (PuzzleElement | null)[];
+type Puzzle = { grid: Grid; missingIndex: number; answer: PuzzleElement; options: PuzzleElement[]; size: number, mode: 'neutral' | 'math' };
+
+
+const generatePuzzle = (mode: 'neutral' | 'math'): Puzzle => {
   const size = 3;
   const grid: Grid = Array(size * size).fill(null);
-  const rules = ['row_progression', 'column_progression', 'cell_combination'];
-  const rule = rules[Math.floor(Math.random() * rules.length)];
   const missingIndex = Math.floor(Math.random() * (size * size));
 
-  const getNextInSequence = <T,>(val: T, collection: T[]) => {
-    const currentIndex = collection.indexOf(val);
-    return collection[(currentIndex + 1) % collection.length];
-  }
-
-  const baseElement = {
-    shape: shapes[Math.floor(Math.random() * shapes.length)],
-    color: colors[Math.floor(Math.random() * colors.length)],
-    rotation: rotations[Math.floor(Math.random() * rotations.length)],
-    fill: fills[Math.floor(Math.random() * fills.length)] as 'fill' | 'outline',
-  };
-
-  if (rule === 'row_progression' || rule === 'column_progression') {
-    const progressionProp: keyof Omit<Element, 'toString'> = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as any;
+  if (mode === 'neutral') {
+    // Row/Column Progression Rule for Neutral Mode
+    const rules: ('row_progression' | 'column_progression')[] = ['row_progression', 'column_progression'];
+    const rule = rules[Math.floor(Math.random() * rules.length)];
+    const progressionProp: keyof Omit<NeutralElement, 'toString'> = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as any;
+    const baseElement = generateNeutralElement();
     
     for (let i = 0; i < size * size; i++) {
       const row = Math.floor(i / size);
@@ -53,19 +64,41 @@ const generatePuzzle = (): Puzzle => {
       (newElement[progressionProp] as any) = currentVal;
       grid[i] = newElement;
     }
-  } else { // cell_combination
-    // Rule: Cell[2] is a combination of Cell[0] and Cell[1]
-    const prop1: keyof Element = 'shape';
-    const prop2: keyof Element = 'color';
-    for (let row = 0; row < size; row++) {
-      const i = row * size;
-      grid[i] = generateElement();
-      grid[i+1] = generateElement();
-      grid[i+2] = {
-        ...generateElement(),
-        [prop1]: grid[i]![prop1],
-        [prop2]: grid[i+1]![prop2],
-      };
+  } else { // Math Mode
+    // Row/Column Arithmetic Rule for Math Mode
+    const rules = ['row_add', 'col_add', 'row_op', 'col_op'];
+    const rule = rules[Math.floor(Math.random() * rules.length)];
+    
+    if (rule === 'row_add' || rule === 'col_add') { // C = A + B
+        for (let i = 0; i < size; i++) {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            if(rule === 'row_add') {
+                grid[i*size] = { value: a };
+                grid[i*size + 1] = { value: b };
+                grid[i*size + 2] = { value: a + b };
+            } else { // col_add
+                grid[i] = { value: a };
+                grid[i + size] = { value: b };
+                grid[i + 2*size] = { value: a + b };
+            }
+        }
+    } else { // row_op or col_op (A -> B -> C)
+        const op = mathOperators[Math.floor(Math.random() * mathOperators.length)];
+        for (let i = 0; i < size; i++) {
+            const startVal = Math.floor(Math.random() * 10) + 5;
+            const secondVal = op(startVal);
+            const thirdVal = op(secondVal);
+            if (rule === 'row_op') {
+                grid[i*size] = { value: startVal };
+                grid[i*size + 1] = { value: secondVal };
+                grid[i*size + 2] = { value: thirdVal };
+            } else { // col_op
+                grid[i] = { value: startVal };
+                grid[i + size] = { value: secondVal };
+                grid[i + 2*size] = { value: thirdVal };
+            }
+        }
     }
   }
 
@@ -73,10 +106,16 @@ const generatePuzzle = (): Puzzle => {
   
   const options = [answer];
   while(options.length < 6) {
-    const decoy = { ...answer };
-    const changeProp = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as keyof Element;
-    const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[changeProp];
-    (decoy[changeProp] as any) = getNextInSequence(decoy[changeProp], collection as any[]);
+    let decoy: PuzzleElement;
+    if(mode === 'neutral') {
+      const tempDecoy = { ...(answer as NeutralElement) };
+      const changeProp = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as keyof NeutralElement;
+      const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[changeProp];
+      (tempDecoy[changeProp] as any) = getNextInSequence(tempDecoy[changeProp], collection as any[]);
+      decoy = tempDecoy;
+    } else { // Math mode decoy
+      decoy = { value: (answer as MathElement).value + (Math.floor(Math.random() * 5) - 2) * (Math.random() > 0.5 ? 1 : -1) || 1 };
+    }
     
     if (!options.some(o => JSON.stringify(o) === JSON.stringify(decoy))) {
       options.push(decoy);
@@ -85,17 +124,10 @@ const generatePuzzle = (): Puzzle => {
   
   options.sort(() => Math.random() - 0.5);
   grid[missingIndex] = null;
-  return { grid, missingIndex, answer, options, size };
+  return { grid, missingIndex, answer, options, size, mode };
 };
 
-const generateElement = (): Element => ({
-  shape: shapes[Math.floor(Math.random() * shapes.length)],
-  color: colors[Math.floor(Math.random() * colors.length)],
-  rotation: rotations[Math.floor(Math.random() * rotations.length)],
-  fill: fills[Math.floor(Math.random() * fills.length)] as 'fill' | 'outline',
-});
-
-const ShapeComponent = ({ shape, color, rotation, fill }: Element) => {
+const ShapeComponent = ({ shape, color, rotation, fill }: NeutralElement) => {
   const baseClasses = "w-10 h-10 transition-all";
   const style = { transform: `rotate(${rotation}deg)` };
   const outlineClasses = `bg-transparent border-4 ${color.replace('bg-','border-')}`;
@@ -113,19 +145,36 @@ const ShapeComponent = ({ shape, color, rotation, fill }: Element) => {
   }
 };
 
+const MathComponent = ({ value }: MathElement) => {
+    return (
+        <span className="text-4xl font-bold text-primary font-mono">{value}</span>
+    )
+}
+
+const ElementDisplay = ({ element }: { element: PuzzleElement }) => {
+    if ('value' in element) {
+        return <MathComponent {...element} />;
+    }
+    return <ShapeComponent {...element} />;
+};
+
+
 export function PatternMatrix() {
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [puzzleKey, setPuzzleKey] = useState(0);
   const [score, setScore] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<Element | null>(null);
+  const [selectedOption, setSelectedOption] = useState<PuzzleElement | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
+  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
+  const currentMode = trainingFocus === 'math' ? 'math' : 'neutral';
 
   useEffect(() => {
-    // This effect runs only once on the client after mounting
-    setPuzzle(generatePuzzle());
-  }, [puzzleKey]);
+    if (isLoaded) {
+      setPuzzle(generatePuzzle(currentMode));
+    }
+  }, [puzzleKey, isLoaded, currentMode]);
 
-  const handleSelectOption = (option: Element) => {
+  const handleSelectOption = (option: PuzzleElement) => {
     if (feedback || !puzzle) return;
     setSelectedOption(option);
     if (JSON.stringify(option) === JSON.stringify(puzzle.answer)) {
@@ -142,7 +191,7 @@ export function PatternMatrix() {
     setFeedback('');
   };
 
-  if (!puzzle) {
+  if (!puzzle || !isLoaded) {
     return (
       <Card className="w-full max-w-md text-center">
          <CardContent className="flex items-center justify-center h-48">
@@ -172,9 +221,9 @@ export function PatternMatrix() {
           {puzzle.grid.map((cell, index) => (
             <div key={index} className="w-20 h-20 bg-background/50 rounded-md flex items-center justify-center">
               {index === puzzle.missingIndex ? (
-                 feedback === 'correct' ? <ShapeComponent {...puzzle.answer} /> : <span className="text-4xl font-bold text-primary">?</span>
+                 feedback === 'correct' ? <ElementDisplay element={puzzle.answer} /> : <span className="text-4xl font-bold text-primary">?</span>
               ) : (
-                cell ? <ShapeComponent {...cell} /> : null
+                cell ? <ElementDisplay element={cell} /> : null
               )}
             </div>
           ))}
@@ -195,7 +244,7 @@ export function PatternMatrix() {
                 )}
                 disabled={!!feedback}
               >
-                <ShapeComponent {...option} />
+                <ElementDisplay element={option} />
               </button>
             ))}
           </div>

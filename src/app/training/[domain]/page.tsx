@@ -1,14 +1,20 @@
 
+'use client';
+
 import Link from 'next/link';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, BrainCircuit, Settings, Sigma } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { chcDomains, type CHCDomain } from '@/types';
 import { domainIcons } from '@/components/icons';
 import { notFound } from 'next/navigation';
 import { gameComponents } from '@/components/training/game-components';
+import { useTrainingFocus } from '@/hooks/use-training-focus.tsx';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
   const domainInfo = chcDomains.find(d => d.key === params.domain);
+  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
 
   if (!domainInfo) {
     notFound();
@@ -17,6 +23,9 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
   const PageIcon = domainIcons[domainInfo.key];
   const GameComponent = gameComponents[domainInfo.key] || (() => <p>Game not found</p>);
   const gameTitle = domainInfo.gameTitle || domainInfo.name;
+  
+  const focusSupportsMath = domainInfo.key === 'Gf'; // For now, only Gf supports math mode
+  const isMathMode = trainingFocus === 'math' && focusSupportsMath;
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -32,9 +41,19 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
           </div>
           <div className="flex items-center gap-3">
             <PageIcon className="h-7 w-7 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
-              {gameTitle}
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
+                {gameTitle}
+              </h1>
+              {isLoaded && domainInfo.supportsMath ? (
+                 <Badge variant="secondary" className="capitalize">
+                  {trainingFocus === 'math' ? <Sigma className="w-3 h-3 mr-1.5"/> : <BrainCircuit className="w-3 h-3 mr-1.5"/>}
+                  {trainingFocus} Mode
+                </Badge>
+              ) : (
+                <Skeleton className="h-5 w-24" />
+              )}
+            </div>
           </div>
           <div className="flex-1 flex justify-end">
             <Button variant="ghost" size="icon">

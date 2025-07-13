@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -47,6 +47,9 @@ export default function SettingsPage() {
                          <TabsTrigger value="appearance" className="justify-start gap-2">
                            <Palette className="h-4 w-4"/> Appearance
                         </TabsTrigger>
+                        <TabsTrigger value="alarms" className="justify-start gap-2">
+                           <AlarmClock className="h-4 w-4"/> Alarms
+                        </TabsTrigger>
                         <TabsTrigger value="account" className="justify-start gap-2" disabled>
                            <User className="h-4 w-4"/> Account
                         </TabsTrigger>
@@ -61,6 +64,9 @@ export default function SettingsPage() {
                         </TabsContent>
                          <TabsContent value="appearance">
                            <AppearanceSettings />
+                        </TabsContent>
+                         <TabsContent value="alarms">
+                           <PlaceholderSettings title="Cognitive Alarms" description="Set alarms that require solving a puzzle to dismiss."/>
                         </TabsContent>
                          <TabsContent value="account">
                            <PlaceholderSettings title="Account Settings" description="Manage your profile, subscription, and data."/>

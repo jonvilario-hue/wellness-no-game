@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@/hooks/use-theme.tsx';
+import { ThemeProvider } from '@/hooks/use-theme';
+import { TrainingFocusProvider } from '@/hooks/use-training-focus.tsx';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,8 +24,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider>
-          {children}
-          <Toaster />
+          <TrainingFocusProvider>
+            {children}
+            <Toaster />
+          </TrainingFocusProvider>
         </ThemeProvider>
       </body>
     </html>
