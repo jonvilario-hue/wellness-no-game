@@ -54,6 +54,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from '../ui/badge';
+import { Checkbox } from '../ui/checkbox';
 
 const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
 type ViewMode = 'entries' | 'trash';
