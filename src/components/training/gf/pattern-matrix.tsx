@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect, useMemo } from 'react';
 import { cn } from "@/lib/utils";
 import { BrainCircuit } from "lucide-react";
-import { useTrainingFocus } from "@/hooks/use-training-focus.tsx";
+import { useTrainingFocus } from "@/hooks/use-training-focus";
 
 // --- Neutral Mode Components ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];

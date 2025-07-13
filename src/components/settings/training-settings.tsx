@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useTrainingFocus } from '@/hooks/use-training-focus.tsx';
+import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { BrainCircuit, Sigma } from 'lucide-react';
 import { Separator } from '../ui/separator';
 

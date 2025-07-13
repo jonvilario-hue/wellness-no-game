@@ -8,7 +8,7 @@ import { chcDomains, type CHCDomain } from '@/types';
 import { domainIcons } from '@/components/icons';
 import { notFound } from 'next/navigation';
 import { gameComponents } from '@/components/training/game-components';
-import { useTrainingFocus } from '@/hooks/use-training-focus.tsx';
+import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -24,7 +24,7 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
   const GameComponent = gameComponents[domainInfo.key] || (() => <p>Game not found</p>);
   const gameTitle = domainInfo.gameTitle || domainInfo.name;
   
-  const focusSupportsMath = domainInfo.key === 'Gf'; // For now, only Gf supports math mode
+  const focusSupportsMath = domainInfo.supportsMath;
   const isMathMode = trainingFocus === 'math' && focusSupportsMath;
 
   return (
