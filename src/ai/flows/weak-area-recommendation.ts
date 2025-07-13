@@ -49,7 +49,11 @@ const TrainingRecommendationSchema = z.object({
 const WeakAreaRecommendationOutputSchema = z.object({
   recommendations: z
     .array(TrainingRecommendationSchema)
-    .describe('An array of training recommendations for the user.'),
+    .describe('An array of training recommendations for the user. This will be empty if there is not enough data.'),
+  message: z
+    .string()
+    .optional()
+    .describe('A message to the user, especially if there is not enough data to generate recommendations.'),
 });
 export type WeakAreaRecommendationOutput = z.infer<
   typeof WeakAreaRecommendationOutputSchema
@@ -65,20 +69,22 @@ const prompt = ai.definePrompt({
   name: 'weakAreaRecommendationPrompt',
   input: {schema: WeakAreaRecommendationInputSchema},
   output: {schema: WeakAreaRecommendationOutputSchema},
-  prompt: `You are an AI-powered cognitive training assistant. Analyze the user's performance data across the 8 CHC domains (Gf, Gc, Gwm, Gs, Gv, Ga, Glr, EF) and identify weak areas where the user needs the most improvement. Based on the weak areas, recommend specific training exercises or puzzles to help the user improve in those areas. Explain why the recommended exercises are appropriate for the identified weak areas.
+  prompt: `You are an AI-powered cognitive training assistant. Your task is to analyze a user's performance data and suggest focus areas for improvement.
+
+Follow these steps:
+1.  Review the user's performance data. Check if the user has completed at least 5 sessions in at least three different domains.
+2.  If the user has NOT met this criteria, do not provide any recommendations. Instead, set the "recommendations" array to be empty and provide a friendly "message" explaining that more training data is needed. For example: "I need a little more data to find your weak spots. Try completing a few more different training sessions!".
+3.  If the user HAS met the criteria, identify the 2-3 domains with the lowest scores. These are the user's weak areas.
+4.  For each weak area, recommend a specific, engaging training exercise or puzzle. Explain concisely why this exercise is suitable for improving that specific cognitive domain.
+5.  Format the output as a JSON object with a "recommendations" array. If you provided a message in step 2, include the "message" field.
 
 User Performance Data:
 {{#each performanceData}}
 - Domain: {{this.domain}}, Score: {{this.score}}, Sessions: {{this.sessions}}
 {{/each}}
 
-Based on this data, provide a list of training recommendations in JSON format.
-
-Each recommendation should include the domain, a specific exercise/puzzle, and a reason for the recommendation.
-
-Output should be in JSON format:
-
-{ "recommendations": [ { "domain": "<domain>",   "exercise": "<exercise name>",  "reason": "<reason>"  } ]}`,
+Produce the output in the specified JSON format.
+`,
 });
 
 const weakAreaRecommendationFlow = ai.defineFlow(
