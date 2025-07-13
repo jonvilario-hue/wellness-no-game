@@ -35,14 +35,11 @@ export function DailyChallenge() {
                     <div className="flex items-center gap-4">
                        <Skeleton className="h-12 w-12 rounded-lg bg-primary/20" />
                        <div className="space-y-2">
-                            <Skeleton className="h-4 w-[250px] bg-primary/20" />
+                            <Skeleton className="h-5 w-[250px] bg-primary/20" />
                             <Skeleton className="h-4 w-[200px] bg-primary/20" />
                        </div>
                     </div>
-                    <Button disabled className="h-10 w-32">
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Loading
-                    </Button>
+                     <Skeleton className="h-10 w-32 rounded-md bg-primary/20" />
                 </CardContent>
             </Card>
         )
@@ -64,7 +61,7 @@ export function DailyChallenge() {
                 </div>
                 <Button asChild>
                     <Link href={`/training/${recommendation.domain}`}>
-                        Start Training <ArrowRight className="ml-2" />
+                        Start Training <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                 </Button>
             </CardContent>

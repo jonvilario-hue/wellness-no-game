@@ -133,13 +133,14 @@ export function HabitJournal() {
   const handleDelete = (id: string) => {
     const entryToDeleteIndex = entries.findIndex(e => e.id === id);
     const entryWasSelected = selectedEntry?.id === id;
+    const entryData = entries.find(e => e.id === id);
 
     deleteEntry(id);
     
     toast({
       title: 'Entry Moved to Trash',
       description: 'You can restore it from the trash.',
-      action: (
+      action: entryData ? (
         <Button
           onClick={(e) => {
             e.preventDefault();
@@ -150,18 +151,15 @@ export function HabitJournal() {
         >
           Undo
         </Button>
-      ),
+      ) : undefined,
     });
     
-    // After deleting, select the next available entry or create a new one
     if (entryWasSelected) {
        const remainingEntries = entries.filter(e => e.id !== id);
        if (remainingEntries.length > 0) {
-            // Try to select the same index, or the last item if it was the last one
             const newIndex = Math.min(entryToDeleteIndex, remainingEntries.length - 1);
             setSelectedEntry(remainingEntries[newIndex]);
         } else {
-            // No entries left, create a new one
             handleNewEntry();
         }
     }
