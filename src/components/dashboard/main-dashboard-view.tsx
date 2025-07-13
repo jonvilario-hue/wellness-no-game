@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { ChcProfileOverview } from './chc-profile-overview';
 import { chcDomains } from '@/types';
 import { ChcDomainCard } from './chc-domain-card';
+import { cn } from '@/lib/utils';
 
 export function MainDashboardView() {
   const [view, setView] = useState<ViewMode>('efficiency');
@@ -16,7 +17,7 @@ export function MainDashboardView() {
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
-      <Tabs defaultValue="efficiency" onValueChange={(value) => setView(value as ViewMode)}>
+      <Tabs defaultValue="efficiency" onValueChange={(value) => setView(value as ViewMode)} value={view}>
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="space-y-1.5">
               <CardTitle className="font-headline">
@@ -32,7 +33,12 @@ export function MainDashboardView() {
               <TabsList>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <TabsTrigger value="efficiency">Cognitive Efficiency</TabsTrigger>
+                    <TabsTrigger 
+                        value="efficiency"
+                        className={cn(view === 'profile' && 'bg-background text-foreground shadow-sm')}
+                    >
+                        Cognitive Efficiency
+                    </TabsTrigger>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Tracks your speed and accuracy under challenge.</p>
