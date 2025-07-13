@@ -44,26 +44,9 @@ export function GameProgressTracker() {
         </CardTitle>
         <CardDescription>Track your training performance and skill growth.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-4">
         <TooltipProvider>
             <div className="space-y-4">
-                {isInsightVisible && (
-                  <div className="p-3 bg-primary/10 rounded-lg text-center relative">
-                      <p className="text-sm flex items-start gap-2 pr-6">
-                          <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
-                          <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This panel tracks your performance, like weekly goals and session streaks.</span>
-                      </p>
-                      <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute top-1 right-1 h-6 w-6"
-                          onClick={handleDismissInsight}
-                          aria-label="Dismiss insight"
-                      >
-                          <X className="h-4 w-4" />
-                      </Button>
-                  </div>
-                )}
                 <div>
                     <div className="flex justify-between items-center mb-1">
                         <Tooltip delayDuration={0}>
@@ -114,6 +97,23 @@ export function GameProgressTracker() {
 
             </div>
         </TooltipProvider>
+        {isInsightVisible && (
+            <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2">
+                <p className="text-sm flex items-start gap-2 pr-6">
+                    <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
+                    <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This panel tracks your performance, like weekly goals and session streaks.</span>
+                </p>
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute top-1 right-1 h-6 w-6"
+                    onClick={handleDismissInsight}
+                    aria-label="Dismiss insight"
+                >
+                    <X className="h-4 w-4" />
+                </Button>
+            </div>
+        )}
       </CardContent>
     </Card>
   );

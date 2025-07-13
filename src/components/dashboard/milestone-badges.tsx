@@ -51,23 +51,6 @@ export function MilestoneBadges() {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
-        {isInsightVisible && (
-          <div className="p-3 bg-primary/10 rounded-lg text-center relative">
-              <p className="text-sm flex items-start gap-2 pr-6">
-                  <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
-                  <span className="text-foreground text-left"><span className="font-bold">Insight:</span> Earn badges by completing streaks, trying new games, and hitting training milestones.</span>
-              </p>
-              <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute top-1 right-1 h-6 w-6"
-                  onClick={handleDismissInsight}
-                  aria-label="Dismiss insight"
-              >
-                  <X className="h-4 w-4" />
-              </Button>
-          </div>
-        )}
         <TooltipProvider>
           <div className="grid grid-cols-4 gap-4 text-center">
             {displayedBadges.map((badge, index) => (
@@ -93,6 +76,23 @@ export function MilestoneBadges() {
             ))}
           </div>
         </TooltipProvider>
+        {isInsightVisible && (
+          <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-4">
+              <p className="text-sm flex items-start gap-2 pr-6">
+                  <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
+                  <span className="text-foreground text-left"><span className="font-bold">Insight:</span> Earn badges by completing streaks, trying new games, and hitting training milestones.</span>
+              </p>
+              <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-1 right-1 h-6 w-6"
+                  onClick={handleDismissInsight}
+                  aria-label="Dismiss insight"
+              >
+                  <X className="h-4 w-4" />
+              </Button>
+          </div>
+        )}
       </CardContent>
       <CardFooter>
         <Button variant="outline" className="w-full" asChild>
