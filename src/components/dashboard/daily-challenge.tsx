@@ -37,22 +37,23 @@ export function DailyChallenge() {
       <Card>
         <CardHeader className="text-center">
           <Skeleton className="h-7 w-3/4 mx-auto" />
-          <Skeleton className="h-4 w-1/2 mx-auto" />
+          <Skeleton className="h-4 w-1/2 mx-auto mt-1" />
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => (
               <Card key={i} className="bg-muted/30 p-4 flex flex-col items-center text-center gap-3">
                  <Skeleton className="h-12 w-12 rounded-lg" />
-                 <div className="space-y-2 flex-1 w-full">
+                 <div className="space-y-2 flex-1 w-full mt-2">
                     <Skeleton className="h-5 w-3/4 mx-auto" />
                     <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6 mx-auto" />
                  </div>
-                 <Skeleton className="h-8 w-24" />
+                 <Skeleton className="h-8 w-24 mt-2" />
               </Card>
             ))}
           </div>
-          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full rounded-md" />
         </CardContent>
       </Card>
     );
