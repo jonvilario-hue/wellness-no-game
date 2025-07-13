@@ -23,7 +23,9 @@ export function Header() {
   const handleFocusChange = (value: string) => {
     const newFocus = value as 'neutral' | 'math';
     setFocus(newFocus);
-    setOverride(null); // Reset any session-specific overrides
+    // This is the key change: Reset any session-specific overrides
+    // when the global master switch is used.
+    setOverride(null); 
   };
 
   return (
