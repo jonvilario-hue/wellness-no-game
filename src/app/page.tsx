@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useRef } from 'react';
 import { MainDashboardView } from '@/components/dashboard/main-dashboard-view';
+import { AllGames } from '@/components/dashboard/all-games';
 
 function DashboardContent() {
   const journalRef = useRef<HTMLDivElement>(null);
@@ -30,6 +31,8 @@ function DashboardContent() {
         <div className="mx-auto max-w-7xl space-y-6">
           <DailyChallenge />
 
+          <AllGames />
+          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <MainDashboardView />

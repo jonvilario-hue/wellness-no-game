@@ -20,7 +20,7 @@ export function MainDashboardView() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="space-y-1.5">
               <CardTitle className="font-headline">
-                  {view === 'efficiency' ? 'Cognitive Efficiency' : 'Full Cognitive Profile'}
+                  {view === 'efficiency' ? 'Cognitive Efficiency' : 'My Strengths'}
               </CardTitle>
               <CardDescription>
                   {view === 'efficiency' 
@@ -40,7 +40,7 @@ export function MainDashboardView() {
                 </Tooltip>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                      <TabsTrigger value="profile">Full CHC Profile</TabsTrigger>
+                      <TabsTrigger value="profile">My Strengths</TabsTrigger>
                   </TooltipTrigger>
                     <TooltipContent>
                     <p>Shows your full range of mental strengths.</p>
@@ -49,7 +49,7 @@ export function MainDashboardView() {
               </TabsList>
           </TooltipProvider>
         </CardHeader>
-
+        
         <TabsContent value="efficiency">
             <CognitiveEfficiency />
         </TabsContent>
