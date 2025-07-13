@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, Clock, AlarmClock as AlarmClockIcon, Timer as TimerIcon, Hourglass, CirclePlay, Settings, CalendarDays, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Clock, AlarmClock as AlarmClockIcon, Timer as TimerIcon, Hourglass, CirclePlay, Settings, CalendarDays, ExternalLink, Moon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,7 +15,10 @@ function AlarmTabContent() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Cognitive Alarms</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                    <Moon className="w-5 h-5 text-primary"/>
+                    Cognitive Alarms
+                </CardTitle>
                 <CardDescription>
                     Set puzzle-based alarms to wake up your mind or structure your day.
                 </CardDescription>
@@ -75,7 +78,7 @@ export default function TimePage() {
             <div className="w-full max-w-4xl">
                 <Tabs defaultValue="alarm" className="w-full">
                     <TabsList className="grid w-full grid-cols-4">
-                        <TabsTrigger value="alarm"><AlarmClockIcon className="w-4 h-4 mr-2"/>Alarm</TabsTrigger>
+                        <TabsTrigger value="alarm"><Moon className="w-4 h-4 mr-2"/>Sleep & Alarms</TabsTrigger>
                         <TabsTrigger value="stopwatch"><Hourglass className="w-4 h-4 mr-2"/>Stopwatch</TabsTrigger>
                         <TabsTrigger value="timer"><TimerIcon className="w-4 h-4 mr-2"/>Timer</TabsTrigger>
                         <TabsTrigger value="pomodoro"><CirclePlay className="w-4 h-4 mr-2"/>Pomodoro</TabsTrigger>

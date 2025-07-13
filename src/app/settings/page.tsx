@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, AlarmClock as AlarmClockIcon, ExternalLink, Brain, Zap, Moon, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -52,8 +52,8 @@ export default function SettingsPage() {
                          <TabsTrigger value="appearance" className="justify-start gap-2">
                            <Palette className="h-4 w-4"/> Appearance
                         </TabsTrigger>
-                         <TabsTrigger value="alarms" className="justify-start gap-2">
-                           <AlarmClockIcon className="h-4 w-4"/> Alarms
+                         <TabsTrigger value="sleep" className="justify-start gap-2">
+                           <Moon className="h-4 w-4"/> Sleep & Alarms
                         </TabsTrigger>
                         <TabsTrigger value="pomodoro" className="justify-start gap-2">
                            <CirclePlay className="h-4 w-4"/> Pomodoro
@@ -79,7 +79,7 @@ export default function SettingsPage() {
                          <TabsContent value="appearance">
                            <AppearanceSettings />
                         </TabsContent>
-                         <TabsContent value="alarms">
+                         <TabsContent value="sleep">
                            <AlarmClock />
                         </TabsContent>
                         <TabsContent value="pomodoro">
