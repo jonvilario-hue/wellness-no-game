@@ -39,7 +39,10 @@ export function DailyChallenge() {
                             <Skeleton className="h-4 w-[200px] bg-primary/20" />
                        </div>
                     </div>
-                    <Skeleton className="h-10 w-32 rounded-md bg-primary/20" />
+                    <Button disabled className="h-10 w-32">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Loading
+                    </Button>
                 </CardContent>
             </Card>
         )
