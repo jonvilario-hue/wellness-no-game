@@ -1,6 +1,6 @@
 'use server';
 import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit } from '@/ai/flows';
-import type { WeakAreaRecommendationInput, AdaptDifficultyInput, TrainingRecommendationInput, TrainingRecommendationOutput } from '@/ai/flows';
+import type { WeakAreaRecommendationInput, AdaptDifficultyInput, TrainingRecommendationInput } from '@/ai/flows';
 
 export async function getWeakAreaRecommendationsAction() {
   // Mock performance data to simulate a real user with a clear weak area
@@ -35,7 +35,7 @@ export async function getAdaptiveDifficultyAction(input: AdaptDifficultyInput) {
 
 export async function getTrainingRecommendationAction() {
    // Mock performance data to simulate a real user where a specific insight can be triggered.
-  const performanceData: TrainingRecommendationOutput['performanceData'] = [
+  const performanceData: TrainingRecommendationInput['performanceData'] = [
     { domain: 'Gf', score: 70, trend: 2 },
     { domain: 'Gc', score: 80, trend: 5 },
     { domain: 'Gwm', score: 85, trend: 7 }, // High performing domain for "Momentum Starter"

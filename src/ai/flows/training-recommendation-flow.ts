@@ -33,7 +33,7 @@ const UserPerformanceSchema = z.object({
   trend: z.number().describe('Percentage change in score over the last 5 sessions.'),
 });
 
-export const TrainingRecommendationInputSchema = z.object({
+const TrainingRecommendationInputSchema = z.object({
   performanceData: z.array(UserPerformanceSchema),
   sessionStreak: z.number().describe('Current daily training streak.'),
   hoursSinceLastSession: z.number().describe('Hours since the user last completed a session.'),
@@ -53,6 +53,7 @@ const TrainingRecommendationOutputSchema = z.object({
   title: z.string().describe('A catchy, motivating title for the button label.'),
   description: z.string().describe('A short, persuasive reason for this recommendation.'),
   domain: CHCDomainEnum.describe('The recommended CHC domain to train.'),
+  performanceData: z.array(UserPerformanceSchema).optional(), // This was added to fix type issues in actions.ts
 });
 export type TrainingRecommendationOutput = z.infer<typeof TrainingRecommendationOutputSchema>;
 
