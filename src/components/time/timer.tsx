@@ -51,7 +51,7 @@ const CircularTimerVisual = ({ progress }: { progress: number }) => {
                 className="transform -rotate-90"
             >
                 <circle
-                    stroke="hsl(var(--secondary-hsl))"
+                    stroke="hsl(var(--secondary))"
                     fill="transparent"
                     strokeWidth={stroke}
                     r={normalizedRadius}
@@ -59,7 +59,7 @@ const CircularTimerVisual = ({ progress }: { progress: number }) => {
                     cy={radius + stroke}
                 />
                 <circle
-                    stroke="hsl(var(--primary-hsl))"
+                    stroke="hsl(var(--primary))"
                     fill="transparent"
                     strokeWidth={stroke}
                     strokeDasharray={circumference + ' ' + circumference}
@@ -85,13 +85,6 @@ function TimerInstance({
     removeTimer: (id: number) => void;
 }) {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
-
-    useEffect(() => {
-        if (typeof window !== 'undefined' && !audioRef.current) {
-            audioRef.current = new Audio('/alarm.mp3');
-        }
-    }, []);
 
     useEffect(() => {
         if (timer.isActive && timer.timeLeft > 0) {
@@ -100,9 +93,6 @@ function TimerInstance({
             }, 1000);
         } else if (timer.timeLeft <= 0 && timer.isActive) {
             updateTimer(timer.id, { isActive: false });
-            if (audioRef.current) {
-                audioRef.current.play().catch(e => console.error("Audio playback failed:", e));
-            }
         }
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
@@ -115,10 +105,6 @@ function TimerInstance({
 
     const handleReset = () => {
         updateTimer(timer.id, { isActive: false, timeLeft: timer.initialTime });
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
-        }
     };
     
     const adjustTime = (amount: number) => {
@@ -196,6 +182,13 @@ export function Timer() {
         setTimers(prev => prev.map(t => t.id === id ? { ...t, ...newState } : t));
     }, []);
 
+    useEffect(() => {
+        // Automatically add one timer on initial load if there are none.
+        if (timers.length === 0) {
+            addTimer();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <Card>

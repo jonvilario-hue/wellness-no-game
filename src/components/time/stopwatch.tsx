@@ -133,6 +133,15 @@ export function Stopwatch() {
         setStopwatches(prev => prev.map(sw => sw.id === id ? { ...sw, ...newState } : sw));
     }, []);
 
+    useEffect(() => {
+        // Automatically add one stopwatch on initial load if there are none.
+        if (stopwatches.length === 0) {
+            addStopwatch();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
     return (
         <Card>
             <CardHeader>

@@ -74,6 +74,7 @@ const JournalEditor = ({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
   const { completedHabits, toggleHabitForDay } = useJournal();
+  
   const editorStateRef = useRef(editorState);
   const onSaveRef = useRef(onSave);
   const originalEntryRef = useRef(entry);
@@ -122,7 +123,10 @@ const JournalEditor = ({
     }
 
     const handler = setTimeout(() => {
-      handleSave();
+      // Check for changes one more time before saving
+      if (JSON.stringify(originalEntryRef.current) !== JSON.stringify(editorStateRef.current)) {
+          handleSave();
+      }
     }, 1500);
     
     return () => {
@@ -502,6 +506,17 @@ const JournalSidebar = memo(({
         });
     }, [entries, searchQuery, sortMode]);
 
+    const groupEntriesByDate = (entries: JournalEntry[]) => {
+      return entries.reduce((acc, entry) => {
+        const date = entry.date;
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(entry);
+        return acc;
+      }, {} as Record<string, JournalEntry[]>);
+    };
+
     const ListView = () => {
         const groupedEntries = groupEntriesByDate(filteredAndSortedEntries);
         const sortedDates = Object.keys(groupedEntries).sort((a,b) => new Date(b).getTime() - new Date(a).getTime());
@@ -700,17 +715,6 @@ const JournalSidebar = memo(({
 });
 JournalSidebar.displayName = 'JournalSidebar';
 
-
-const groupEntriesByDate = (entries: JournalEntry[]) => {
-  return entries.reduce((acc, entry) => {
-    const date = entry.date;
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(entry);
-    return acc;
-  }, {} as Record<string, JournalEntry[]>);
-};
 
 export function HabitJournal() {
   const { entries, addEntry, updateEntry, deleteEntry, findOrCreateEntry, isLoaded, setSelectedEntry: setGlobalSelectedEntry, selectedEntry: globalSelectedEntry } = useJournal();

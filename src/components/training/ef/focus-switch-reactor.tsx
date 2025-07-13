@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 const colorOptions = [
@@ -22,6 +22,11 @@ export function FocusSwitchReactor() {
   const [stimulus, setStimulus] = useState({ word: 'PRIMARY', color: 'text-primary' });
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(45);
+
+  const ruleRef = useRef(rule);
+  useEffect(() => {
+    ruleRef.current = rule;
+  }, [rule]);
 
   const generateStimulus = () => {
     const randomWord = colorOptions[Math.floor(Math.random() * colorOptions.length)];
@@ -85,13 +90,12 @@ export function FocusSwitchReactor() {
     if (gameState === 'running' && rule === 'no_go') {
         const noGoTimer = setTimeout(() => {
             // Check again to make sure the rule hasn't changed by a fast click
-            if(rule === 'no_go') {
+            if(ruleRef.current === 'no_go') {
                processNextTurn(true); // Reward for correctly inhibiting response
             }
         }, 1500); // 1.5 seconds to wait
         return () => clearTimeout(noGoTimer);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rule, stimulus, gameState]);
 
 
