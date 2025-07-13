@@ -164,7 +164,3 @@ export const journalConfig: Record<JournalCategory, {
     habits: ['freewrite', 'highlight_insight', 'follow_curiosity']
   },
 };
-
-    
-
-  

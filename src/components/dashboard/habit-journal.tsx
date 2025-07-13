@@ -627,10 +627,12 @@ tags: ${entry.tags}
         <ScrollArea className="flex-grow pr-3 -mr-3">
             <div className="space-y-2 mt-2">
             {trashedEntries.length > 0 ? trashedEntries.map(entry => {
+                const config = journalConfig[entry.category as JournalCategory];
+                const categoryTitle = config ? config.title : entry.category;
                 return (
                   <div key={entry.id} className="group flex items-center gap-2 p-2 rounded-md bg-muted/50">
                       <div className='flex-grow'>
-                          <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{journalConfig[entry.category as JournalCategory]?.title || entry.category}</span></p>
+                          <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{categoryTitle}</span></p>
                           <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
                       </div>
                       <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleRestore(entry.id)}>

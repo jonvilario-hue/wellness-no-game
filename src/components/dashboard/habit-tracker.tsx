@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DomainStreak, type DomainStreakProps } from './domain-streak';
 import { useState, useEffect } from 'react';
 import { useJournal } from '@/hooks/use-journal';
-import { allHabits, journalConfig, type Habit, type JournalCategory } from '@/lib/journal-config';
+import { allHabits, journalConfig, type Habit, type JournalCategory, type HabitId } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -79,7 +79,7 @@ export function HabitTracker() {
         }
     }, []);
 
-    const handleToggleHabit = (habitId: string) => {
+    const handleToggleHabit = (habitId: HabitId) => {
       toggleHabitForDay(today, habitId);
     };
 
@@ -115,7 +115,9 @@ export function HabitTracker() {
                         {habitCategories.map(category => {
                           const categoryConfig = journalConfig[category];
                           const categoryHabits = categoryConfig.habits.map(habitId => allHabits[habitId]);
-                          const completedInCategory = categoryHabits.filter(h => todaysHabits.has(h.id)).length;
+                          const completedInCategory = categoryHabits.filter(h => h && todaysHabits.has(h.id)).length;
+
+                          if (!categoryHabits.length || categoryHabits.some(h => !h)) return null;
 
                           return (
                             <AccordionItem value={category} key={category}>
@@ -198,5 +200,3 @@ export function HabitTracker() {
       </Card>
     );
 }
-
-  

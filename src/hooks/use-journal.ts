@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { JournalCategory, HabitId } from '@/lib/journal-config';
+import { allHabits } from '@/lib/journal-config';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
 export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
