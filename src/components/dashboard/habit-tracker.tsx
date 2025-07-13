@@ -89,7 +89,7 @@ export function HabitTracker() {
             <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="today">Today's Habits</TabsTrigger>
                 <TabsTrigger value="streaks">Domain Streaks</TabsTrigger>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="insight">Insight</TabsTrigger>
             </TabsList>
 
             <TabsContent value="today" className="pt-4">
@@ -109,14 +109,16 @@ export function HabitTracker() {
             </TabsContent>
 
             <TabsContent value="streaks" className="space-y-3 pt-4">
-                <ScrollArea className="h-64 pr-3 -mr-3">
-                 {domainStreaksData.map((streak, index) => (
-                    <DomainStreak key={index} {...streak} />
-                 ))}
+                 <ScrollArea className="h-64 pr-3 -mr-3">
+                    <div className="space-y-2">
+                         {domainStreaksData.map((streak, index) => (
+                            <DomainStreak key={index} {...streak} />
+                         ))}
+                    </div>
                 </ScrollArea>
             </TabsContent>
 
-            <TabsContent value="overview" className="space-y-4 pt-4">
+            <TabsContent value="insight" className="space-y-4 pt-4">
                 <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                     <div className="flex items-center gap-3">
                         <TrendingUp className="w-6 h-6 text-primary" />
@@ -143,3 +145,5 @@ export function HabitTracker() {
     </Card>
   );
 }
+
+    

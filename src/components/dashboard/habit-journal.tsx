@@ -126,6 +126,11 @@ export function HabitJournal() {
     }
     return true;
   }, [addEntry, updateEntry, toast]);
+  
+  const handleRestore = (id: string) => {
+    restoreEntry(id);
+    toast({ title: 'Entry Restored' });
+  };
 
   const handleDelete = (id: string) => {
     const entryToDeleteIndex = entries.findIndex(e => e.id === id);
@@ -159,10 +164,6 @@ export function HabitJournal() {
     }
   };
 
-  const handleRestore = (id: string) => {
-    restoreEntry(id);
-    toast({ title: 'Entry Restored' });
-  };
   
   const EntryEditor = ({
     entry,
@@ -269,7 +270,7 @@ export function HabitJournal() {
 
 
     const exportAsMarkdown = (entry: JournalEntry) => {
-        const entryConfig = journalConfig[entry.category];
+        const entryConfig = journalConfig[entry.category as JournalCategory];
         const prompts = entryConfig.prompts[entry.frequency] || entryConfig.prompts.daily;
 
         let markdown = `---
@@ -681,3 +682,5 @@ tags: ${entry.tags}
     </Card>
   );
 }
+
+    

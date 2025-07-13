@@ -59,35 +59,39 @@ const useJournal = () => {
     const [trashedEntries, setTrashedEntries] = useState<JournalEntry[]>([]);
 
     useEffect(() => {
-        try {
-            const savedEntries = window.localStorage.getItem('journalEntries');
-            const savedTrashedEntries = window.localStorage.getItem('journalTrashedEntries');
+        let savedEntries: JournalEntry[] = [];
+        let savedTrashedEntries: JournalEntry[] = [];
 
-            if (savedEntries) {
-                const parsed = JSON.parse(savedEntries);
-                 if (Array.isArray(parsed)) {
-                    setEntries(parsed);
+        try {
+            const savedEntriesStr = window.localStorage.getItem('journalEntries');
+            if (savedEntriesStr) {
+                const parsed = JSON.parse(savedEntriesStr);
+                if (Array.isArray(parsed)) {
+                    savedEntries = parsed;
                 }
-            } else {
-                // If no entries, create and save seed data
-                const seedEntries = createSeedData();
-                saveEntries(seedEntries);
             }
 
-            if (savedTrashedEntries) {
-                const parsed = JSON.parse(savedTrashedEntries);
-                if (Array.isArray(parsed)) {
-                    setTrashedEntries(parsed);
+            const savedTrashedEntriesStr = window.localStorage.getItem('journalTrashedEntries');
+            if (savedTrashedEntriesStr) {
+                 const parsed = JSON.parse(savedTrashedEntriesStr);
+                 if (Array.isArray(parsed)) {
+                    savedTrashedEntries = parsed;
                 }
             }
         } catch (error) {
             console.error("Failed to load journal entries from localStorage", error);
-            // If loading fails, start with seed data as a fallback
-            if (entries.length === 0) {
-                 const seedEntries = createSeedData();
-                 saveEntries(seedEntries);
-            }
         }
+        
+        if (savedEntries.length > 0) {
+            setEntries(savedEntries);
+        } else {
+            // If no entries, create and save seed data
+            const seedEntries = createSeedData();
+            saveEntries(seedEntries);
+        }
+        
+        setTrashedEntries(savedTrashedEntries);
+
     }, []);
 
     const saveEntries = (newEntries: JournalEntry[]) => {
@@ -170,3 +174,5 @@ const useJournal = () => {
 };
 
 export { useJournal };
+
+    
