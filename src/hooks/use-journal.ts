@@ -26,7 +26,12 @@ export type JournalEntry = {
     habits: Partial<Record<HabitId, HabitState>>;
 };
 
-const MAX_TRASH_ITEMS = 20;
+export type TrashedJournalEntry = JournalEntry & {
+    deletedAt: number; // UTC timestamp in milliseconds
+};
+
+const MAX_TRASH_ITEMS = 100;
+const TRASH_EXPIRATION_DAYS = 30;
 
 const createSeedData = (): JournalEntry[] => {
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -56,11 +61,11 @@ const createSeedData = (): JournalEntry[] => {
 
 const useJournal = () => {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
-    const [trashedEntries, setTrashedEntries] = useState<JournalEntry[]>([]);
+    const [trashedEntries, setTrashedEntries] = useState<TrashedJournalEntry[]>([]);
 
     useEffect(() => {
         let savedEntries: JournalEntry[] = [];
-        let savedTrashedEntries: JournalEntry[] = [];
+        let savedTrashedEntries: TrashedJournalEntry[] = [];
 
         try {
             const savedEntriesStr = window.localStorage.getItem('journalEntries');
@@ -75,7 +80,9 @@ const useJournal = () => {
             if (savedTrashedEntriesStr) {
                  const parsed = JSON.parse(savedTrashedEntriesStr);
                  if (Array.isArray(parsed)) {
-                    savedTrashedEntries = parsed;
+                    // Filter out expired trash items on load
+                    const thirtyDaysAgo = Date.now() - TRASH_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
+                    savedTrashedEntries = parsed.filter((item: TrashedJournalEntry) => item.deletedAt > thirtyDaysAgo);
                 }
             }
         } catch (error) {
@@ -90,7 +97,7 @@ const useJournal = () => {
             saveEntries(seedEntries);
         }
         
-        setTrashedEntries(savedTrashedEntries);
+        saveTrashedEntries(savedTrashedEntries);
 
     }, []);
 
@@ -104,7 +111,7 @@ const useJournal = () => {
         }
     };
     
-    const saveTrashedEntries = (newTrashedEntries: JournalEntry[]) => {
+    const saveTrashedEntries = (newTrashedEntries: TrashedJournalEntry[]) => {
          try {
             // Enforce max trash size
             let updatedTrashedEntries = [...newTrashedEntries];
@@ -131,7 +138,8 @@ const useJournal = () => {
         const entryToTrash = entries.find(entry => entry.id === id);
         if (entryToTrash) {
             const newEntries = entries.filter(entry => entry.id !== id);
-            const newTrashedEntries = [entryToTrash, ...trashedEntries];
+            const trashedEntry: TrashedJournalEntry = { ...entryToTrash, deletedAt: Date.now() };
+            const newTrashedEntries = [trashedEntry, ...trashedEntries];
             saveEntries(newEntries);
             saveTrashedEntries(newTrashedEntries);
         }
@@ -141,7 +149,8 @@ const useJournal = () => {
         const entryToRestore = trashedEntries.find(entry => entry.id === id);
         if (entryToRestore) {
             const newTrashedEntries = trashedEntries.filter(entry => entry.id !== id);
-            const newEntries = [...entries, entryToRestore];
+            const { deletedAt, ...originalEntry } = entryToRestore;
+            const newEntries = [...entries, originalEntry];
             saveTrashedEntries(newTrashedEntries);
             saveEntries(newEntries);
         }
@@ -174,5 +183,3 @@ const useJournal = () => {
 };
 
 export { useJournal };
-
-    
