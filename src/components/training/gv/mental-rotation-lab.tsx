@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { View } from "lucide-react";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
@@ -109,9 +109,10 @@ const ShapeGrid = ({ grid }: { grid: Grid }) => (
 );
 
 export function MentalRotationLab() {
+  const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [puzzleKey, setPuzzleKey] = useState(0);
   const [score, setScore] = useState(0);
-  const [startTime, setStartTime] = useState(Date.now());
+  const [startTime, setStartTime] = useState(0);
   const [selectedOption, setSelectedOption] = useState<Grid | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | ''>('');
   
@@ -123,10 +124,13 @@ export function MentalRotationLab() {
   // This game does not have a math mode, so we default to neutral
   const currentMode = 'neutral';
 
-  const puzzle = useMemo(() => generatePuzzle(), [puzzleKey]);
+  useEffect(() => {
+    setPuzzle(generatePuzzle());
+    setStartTime(Date.now());
+  }, [puzzleKey]);
 
   const handleSelectOption = (option: Grid) => {
-    if (feedback) return;
+    if (feedback || !puzzle) return;
     setSelectedOption(option);
     if (areGridsEqual(option, puzzle.answer)) {
       setFeedback('correct');
@@ -146,6 +150,16 @@ export function MentalRotationLab() {
     setFeedback('');
     setStartTime(Date.now());
   };
+  
+  if (!puzzle || !isLoaded) {
+    return (
+      <Card className="w-full max-w-2xl text-center">
+        <CardContent className="flex items-center justify-center h-48">
+          <p>Loading puzzle...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-2xl">
