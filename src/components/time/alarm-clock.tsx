@@ -27,11 +27,11 @@ import Link from 'next/link';
 const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 const DaySelector = ({ 
-    selectedDays, 
+    selectedDays = [], 
     onDayToggle,
     disabled = false,
 }: { 
-    selectedDays: number[]; 
+    selectedDays?: number[]; 
     onDayToggle: (dayIndex: number) => void;
     disabled?: boolean;
 }) => {
