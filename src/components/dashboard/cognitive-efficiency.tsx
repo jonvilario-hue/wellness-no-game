@@ -75,9 +75,9 @@ export function CognitiveEfficiency() {
             <Separator />
 
             <div className="p-3 bg-primary/10 rounded-lg text-center">
-                <p className="text-sm text-primary-foreground/80 flex items-start gap-2">
+                <p className="text-sm text-primary-foreground/90 flex items-start gap-2">
                     <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0"/> 
-                    <span><span className="font-bold text-primary-foreground">Weekly Insight:</span> {efficiencyData.insight}</span>
+                    <span className="text-foreground"><span className="font-bold">Weekly Insight:</span> {efficiencyData.insight}</span>
                 </p>
             </div>
           </div>
