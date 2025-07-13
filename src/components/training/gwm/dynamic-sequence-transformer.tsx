@@ -5,9 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MemoryStick } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useTrainingFocus } from "@/hooks/use-training-focus";
 
-const generateSequence = (length: number) => {
+const generateNeutralSequence = (length: number) => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
@@ -16,7 +17,11 @@ const generateSequence = (length: number) => {
   return result;
 };
 
-const tasks = [
+const generateMathSequence = (length: number) => {
+  return Array.from({ length }, () => Math.floor(Math.random() * 9) + 1).join('');
+};
+
+const neutralTasks = [
   { id: 'reverse', label: "Repeat the sequence backward." },
   { id: 'alpha_only', label: "Repeat only the letters, in order." },
   { id: 'numeric_only', label: "Repeat only the numbers, in order." },
@@ -24,17 +29,29 @@ const tasks = [
   { id: 'alpha_shift', label: "Repeat the letters, shifting each forward by one (A->B, Z->A)." },
 ];
 
+const mathTasks = [
+  { id: 'add_two', label: "Add 2 to each number and state the new sequence." },
+  { id: 'subtract_one', label: "Subtract 1 from each number and state the new sequence." },
+  { id: 'repeat_even', label: "Repeat only the even numbers in order." },
+  { id: 'differences', label: "State the difference between each consecutive pair of numbers." }
+];
+
 export function DynamicSequenceTransformer() {
   const [level, setLevel] = useState(1);
   const [sequence, setSequence] = useState('');
-  const [task, setTask] = useState(tasks[0]);
+  const [task, setTask] = useState<(typeof neutralTasks)[0] | (typeof mathTasks)[0]>(neutralTasks[0]);
   const [userAnswer, setUserAnswer] = useState('');
   const [gameState, setGameState] = useState('start'); // start, memorizing, answering, feedback
   const [feedback, setFeedback] = useState('');
+  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
 
+  const currentMode = isLoaded && trainingFocus === 'math' ? 'math' : 'neutral';
+  
   const startLevel = () => {
-    const newSequence = generateSequence(level + 3);
-    const newTask = tasks[Math.floor(Math.random() * tasks.length)];
+    const seqLength = level + 3;
+    const newSequence = currentMode === 'math' ? generateMathSequence(seqLength) : generateNeutralSequence(seqLength);
+    const newTask = currentMode === 'math' ? mathTasks[Math.floor(Math.random() * mathTasks.length)] : neutralTasks[Math.floor(Math.random() * neutralTasks.length)];
+    
     setSequence(newSequence);
     setTask(newTask);
     setUserAnswer('');
@@ -46,32 +63,44 @@ export function DynamicSequenceTransformer() {
     }, 4000); // 4 seconds to memorize
   };
 
-  const getCorrectAnswer = () => {
-    switch(task.id) {
-      case 'reverse':
-        return sequence.split('').reverse().join('');
-      case 'alpha_only':
-        return sequence.replace(/[^A-Z]/g, '');
-      case 'numeric_only':
-        return sequence.replace(/[^0-9]/g, '');
-      case 'remove_first':
-        return sequence.substring(1);
-      case 'alpha_shift':
-        return sequence.replace(/[^A-Z]/g, '').split('').map(char => {
-          if (char === 'Z') return 'A';
-          return String.fromCharCode(char.charCodeAt(0) + 1);
-        }).join('');
-      default:
-        return '';
+  const correctAnswer = useMemo(() => {
+    if (!sequence || !task) return '';
+    if (currentMode === 'neutral') {
+        switch(task.id) {
+            case 'reverse': return sequence.split('').reverse().join('');
+            case 'alpha_only': return sequence.replace(/[^A-Z]/g, '');
+            case 'numeric_only': return sequence.replace(/[^0-9]/g, '');
+            case 'remove_first': return sequence.substring(1);
+            case 'alpha_shift':
+                return sequence.replace(/[^A-Z]/g, '').split('').map(char => 
+                    char === 'Z' ? 'A' : String.fromCharCode(char.charCodeAt(0) + 1)
+                ).join('');
+            default: return '';
+        }
+    } else { // Math mode
+        const nums = sequence.split('').map(Number);
+        switch(task.id) {
+            case 'add_two': return nums.map(n => n + 2).join('');
+            case 'subtract_one': return nums.map(n => Math.max(0, n - 1)).join('');
+            case 'repeat_even': return nums.filter(n => n % 2 === 0).join('');
+            case 'differences':
+                if (nums.length < 2) return '';
+                const diffs = [];
+                for (let i = 0; i < nums.length - 1; i++) {
+                    diffs.push(Math.abs(nums[i+1] - nums[i]));
+                }
+                return diffs.join('');
+            default: return '';
+        }
     }
-  };
+  }, [sequence, task, currentMode]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (gameState !== 'answering') return;
     
     setGameState('feedback');
-    const correctAnswer = getCorrectAnswer();
     
     if (userAnswer.toUpperCase().trim() === correctAnswer) {
       setFeedback('Correct! Next level.');
@@ -82,7 +111,6 @@ export function DynamicSequenceTransformer() {
     } else {
       setFeedback(`Incorrect. The answer was: ${correctAnswer}. Let's try again.`);
       setTimeout(() => {
-        // Restart the same level
         startLevel();
       }, 3000);
     }
@@ -103,7 +131,9 @@ export function DynamicSequenceTransformer() {
         {gameState === 'start' && (
             <div className="flex flex-col items-center gap-4">
                 <div className="font-mono text-lg">Level: {level}</div>
-                <Button onClick={startLevel} size="lg">Start Level {level}</Button>
+                <Button onClick={startLevel} size="lg" disabled={!isLoaded}>
+                  {isLoaded ? `Start Level ${level}` : "Loading..."}
+                </Button>
             </div>
         )}
 

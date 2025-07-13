@@ -25,7 +25,6 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
   const gameTitle = domainInfo.gameTitle || domainInfo.name;
   
   const focusSupportsMath = domainInfo.supportsMath;
-  const isMathMode = trainingFocus === 'math' && focusSupportsMath;
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -45,7 +44,7 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
               <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
                 {gameTitle}
               </h1>
-              {isLoaded && domainInfo.supportsMath ? (
+              {isLoaded && focusSupportsMath ? (
                  <Badge variant="secondary" className="capitalize">
                   {trainingFocus === 'math' ? <Sigma className="w-3 h-3 mr-1.5"/> : <BrainCircuit className="w-3 h-3 mr-1.5"/>}
                   {trainingFocus} Mode
