@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ArrowLeft, Clock, AlarmClock as AlarmClockIcon, Timer as TimerIcon, Hourglass, CirclePlay, Settings, CalendarDays } from 'lucide-react';
+import { ArrowLeft, Clock, AlarmClock as AlarmClockIcon, Timer as TimerIcon, Hourglass, CirclePlay, Settings, CalendarDays, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,6 +9,34 @@ import { AlarmClock } from '@/components/time/alarm-clock';
 import { Stopwatch } from '@/components/time/stopwatch';
 import { Timer } from '@/components/time/timer';
 import { PomodoroTimer } from '@/components/time/pomodoro';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+function AlarmTabContent() {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Alarms</CardTitle>
+                <CardDescription>
+                    Set puzzle-based alarms to wake up your mind or structure your day.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="p-4 bg-muted/50 rounded-lg text-center">
+                    <h3 className="font-semibold">Test the Alarm Dismissal</h3>
+                    <p className="text-muted-foreground text-sm mb-4">
+                        Experience the puzzle-based alarm dismissal flow.
+                    </p>
+                    <Button asChild>
+                        <Link href="/alarm" target="_blank">
+                            Simulate Alarm <ExternalLink className="w-4 h-4 ml-2"/>
+                        </Link>
+                    </Button>
+                </div>
+                <AlarmClock />
+            </CardContent>
+        </Card>
+    );
+}
 
 export default function TimePage() {
     return (
@@ -53,7 +81,7 @@ export default function TimePage() {
                         <TabsTrigger value="pomodoro"><CirclePlay className="w-4 h-4 mr-2"/>Pomodoro</TabsTrigger>
                     </TabsList>
                     <TabsContent value="alarm" className="mt-6">
-                       <AlarmClock />
+                       <AlarmTabContent />
                     </TabsContent>
                     <TabsContent value="stopwatch" className="mt-6">
                        <Stopwatch />
