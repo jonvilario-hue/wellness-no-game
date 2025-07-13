@@ -86,7 +86,8 @@ export function ToneGridChallenge() {
     }
     
     setUserSequence([]);
-    const newMode = Math.random() > 0.4 ? 'mimic' : 'find';
+    // Make 'mimic' mode more common to serve as the base challenge
+    const newMode = Math.random() > 0.3 ? 'mimic' : 'find';
     setGameMode(newMode);
     
     if (newMode === 'mimic') {

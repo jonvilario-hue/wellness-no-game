@@ -39,6 +39,34 @@ const neutralPuzzles = [
     answer: "Feather",
     explanation: "Branch, leaf, and root are all parts of a tree. A feather is part of a bird."
   },
+  {
+    type: 'analogy',
+    question: "Oar is to sailboat as pedal is to ____.",
+    options: ["Car", "Bicycle", "Boat", "Plane"],
+    answer: "Bicycle",
+    explanation: "An oar propels a sailboat (traditionally), and a pedal propels a bicycle."
+  },
+  {
+    type: 'context',
+    question: "Her ____ nature made her the perfect diplomat; she could find common ground in any disagreement.",
+    options: ["conciliatory", "argumentative", "apathetic", "stubborn"],
+    answer: "conciliatory",
+    explanation: "'Conciliatory' means intended to placate or pacify, which is ideal for a diplomat."
+  },
+  {
+    type: 'inference',
+    question: "The ancient text was ____, filled with cryptic symbols that had puzzled scholars for centuries.",
+    options: ["lucid", "straightforward", "esoteric", "commonplace"],
+    answer: "esoteric",
+    explanation: "'Esoteric' means intended for or likely to be understood by only a small number of people with specialized knowledge, which fits the description of a cryptic ancient text."
+  },
+  {
+    type: 'relationship',
+    question: "Which word does not belong with the others?",
+    options: ["Triangle", "Circle", "Square", "Sphere"],
+    answer: "Sphere",
+    explanation: "Triangle, Circle, and Square are two-dimensional shapes. A Sphere is a three-dimensional shape."
+  },
 ];
 
 const mathPuzzles = [
@@ -69,6 +97,34 @@ const mathPuzzles = [
     options: ["Area", "Diameter", "Circle", "Radius"],
     answer: "Circle",
     explanation: "Perimeter is the boundary of a square, and circumference is the boundary of a circle."
+  },
+   {
+    type: 'word-problem',
+    question: "If an item costs $45 after a 10% discount, what was the original price?",
+    options: ["$49.50", "$50", "$40.50", "$55"],
+    answer: "$50",
+    explanation: "The discounted price is 90% of the original. Original Price = $45 / 0.90 = $50."
+  },
+  {
+    type: 'logic',
+    question: "If all cats are mammals, and a tiger is a cat, then a tiger is a ____.",
+    options: ["Reptile", "Fish", "Mammal", "Amphibian"],
+    answer: "Mammal",
+    explanation: "This is a simple syllogism. If the first two premises are true, the conclusion must be true."
+  },
+  {
+    type: 'pattern',
+    question: "What is the next number in the sequence: 1, 4, 9, 16, __?",
+    options: ["20", "25", "36", "30"],
+    answer: "25",
+    explanation: "The sequence consists of perfect squares (1^2, 2^2, 3^2, 4^2, 5^2)."
+  },
+  {
+    type: 'analogy',
+    question: "Addition is to sum as multiplication is to ____.",
+    options: ["Difference", "Quotient", "Product", "Factor"],
+    answer: "Product",
+    explanation: "The result of addition is a sum, and the result of multiplication is a product."
   },
 ];
 

@@ -122,7 +122,8 @@ export function FocusSwitchReactor() {
   
   const processNextTurn = (correct: boolean) => {
     setScore(prev => correct ? prev + 1 : Math.max(0, prev - 1));
-    if (Math.random() < 0.4) { // Switch rule ~40% of the time
+    // Increase rule switch randomness. It could switch now, or in the next few turns.
+    if (Math.random() < 0.3) { 
       generateRule();
     }
     generateStimulus();

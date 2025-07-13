@@ -18,6 +18,10 @@ const neutralPrompts = [
   "Words that start with 'C'",
   "Things that are cold",
   "Musical instruments",
+  "Items you'd pack for a beach trip",
+  "Types of weather",
+  "Four-letter words",
+  "Occupations or jobs",
 ];
 
 const mathPrompts = [
@@ -27,6 +31,10 @@ const mathPrompts = [
   "Things measured in meters",
   "Multiples of 7",
   "Mathematical symbols",
+  "Units of time",
+  "Objects that are typically counted",
+  "Terms from algebra",
+  "Numbers divisible by 3",
 ];
 
 export function SemanticFluencyStorm() {
