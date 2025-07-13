@@ -61,7 +61,11 @@ const generatePuzzle = (): Puzzle => {
   for (let i = 0; i < mirrorRotations; i++) {
     mirrorImage = rotateGrid(mirrorImage);
   }
-  options.push(mirrorImage);
+  // Ensure the mirror image is not identical to the target shape
+  if (!areGridsEqual(mirrorImage, targetShape)) {
+    options.push(mirrorImage);
+  }
+
 
   // Add different shape distractors
   while (options.length < 4) {
@@ -162,7 +166,7 @@ export function MentalRotationLab() {
         </div>
 
         {feedback && (
-          <div className="flex flex-col items-center gap-4 mt-4 text-center">
+          <div className="flex flex-col items-center gap-4 mt-4 text-center animate-in fade-in">
              {feedback === 'correct' && <p className="text-lg font-bold text-green-500">Correct! Perfect rotation.</p>}
             {feedback === 'incorrect' && <p className="text-lg font-bold text-destructive">That's not a pure rotation. It might be a mirror image.</p>}
             <Button onClick={handleNextPuzzle}>Next Puzzle</Button>

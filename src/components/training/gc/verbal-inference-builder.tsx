@@ -86,7 +86,7 @@ export function VerbalInferenceBuilder() {
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
 
-  const restartGame = () => {
+  const restartGame = useMemo(() => () => {
     const puzzleSet = currentMode === 'math' ? mathPuzzles : neutralPuzzles;
     setShuffledPuzzles([...puzzleSet].sort(() => Math.random() - 0.5));
     setCurrentPuzzleIndex(0);
@@ -94,14 +94,13 @@ export function VerbalInferenceBuilder() {
     setFeedback('');
     setSelectedAnswer(null);
     setGameState('playing');
-  };
+  }, [currentMode]);
   
   useEffect(() => {
     if (isLoaded) {
       restartGame();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentMode, isLoaded]);
+  }, [isLoaded, restartGame]);
 
   const currentPuzzle = shuffledPuzzles[currentPuzzleIndex];
 

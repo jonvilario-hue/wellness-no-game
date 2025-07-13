@@ -114,8 +114,9 @@ export function ToneGridChallenge() {
   };
   
   const handleNextLevel = () => {
-    setLevel(level + 1);
-    startLevel(level + 1);
+    const nextLevel = level + 1;
+    setLevel(nextLevel);
+    startLevel(nextLevel);
   };
 
   const handleIncorrect = () => {

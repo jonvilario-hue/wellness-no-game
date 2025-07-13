@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
+import { useTrainingOverride } from "@/hooks/use-training-override";
 
 // --- Neutral Mode Config ---
 const colorOptions = [
@@ -36,11 +37,14 @@ export function FocusSwitchReactor() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(45);
   const [rule, setRule] = useState<NeutralRule | MathRule>('word');
-  const [stimulus, setStimulus] = useState<any>({ word: 'PRIMARY', color: 'text-primary' });
+  const [stimulus, setStimulus] = useState<any>({ word: 'PRIMARY', color: 'text-primary', value: 7 });
 
   const ruleRef = useRef(rule);
-  const { focus: trainingFocus, isLoaded } = useTrainingFocus();
-  const currentMode = isLoaded && trainingFocus === 'math' ? 'math' : 'neutral';
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
+  
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
 
   useEffect(() => {
     ruleRef.current = rule;
@@ -78,24 +82,33 @@ export function FocusSwitchReactor() {
         else setRule('no_go');
     }
   };
+  
+  const restartGame = () => {
+    setScore(0);
+    setTimeLeft(45);
+    setGameState('running');
+    generateStimulus();
+    generateRule();
+  }
 
   useEffect(() => {
     if (gameState === 'running' && timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     }
-    if (timeLeft === 0) {
+    if (timeLeft === 0 && gameState === 'running') {
       setGameState('finished');
     }
   }, [gameState, timeLeft]);
   
-  const handleStart = () => {
-    setScore(0);
-    setTimeLeft(45);
-    setGameState('running');
-    generateStimulus();
-    generateRule();
-  };
+  // This effect handles mode changes.
+  useEffect(() => {
+    if (isLoaded) {
+      setGameState('idle');
+      setScore(0);
+      setTimeLeft(45);
+    }
+  }, [currentMode, isLoaded]);
   
   const processNextTurn = (correct: boolean) => {
     setScore(prev => correct ? prev + 1 : Math.max(0, prev - 1));
@@ -106,8 +119,8 @@ export function FocusSwitchReactor() {
   }
 
   const handleAnswer = (answer: string) => {
-    if (rule === 'no_go') {
-      processNextTurn(false); // Penalty for responding on a no-go trial
+    if (gameState !== 'running' || rule === 'no_go') {
+      if(rule === 'no_go') processNextTurn(false); // Penalty for responding on a no-go trial
       return;
     }
     
@@ -139,18 +152,14 @@ export function FocusSwitchReactor() {
   useEffect(() => {
     let noGoTimer: NodeJS.Timeout;
     if (gameState === 'running' && rule === 'no_go') {
-        const isMathNoGo = currentMode === 'math' && stimulus.value % 5 === 0;
-
-        if (!isMathNoGo) { // Neutral mode no-go or math mode non-penalty no-go
-            noGoTimer = setTimeout(() => {
-                if(ruleRef.current === 'no_go') {
-                   processNextTurn(true); // Reward for correctly inhibiting response
-                }
-            }, 1500); // 1.5 seconds to wait
-        }
+        noGoTimer = setTimeout(() => {
+            if(ruleRef.current === 'no_go') {
+               processNextTurn(true); // Reward for correctly inhibiting response
+            }
+        }, 1500); // 1.5 seconds to wait
     }
     return () => clearTimeout(noGoTimer);
-  }, [rule, stimulus, gameState, currentMode]);
+  }, [rule, stimulus, gameState]);
 
 
   const getRuleText = () => {
@@ -158,18 +167,14 @@ export function FocusSwitchReactor() {
       if (rule === 'word') return 'Respond to the WORD';
       if (rule === 'parity') return 'Is the number EVEN or ODD?';
       if (rule === 'primality') return 'Is the number PRIME or COMPOSITE?';
-      if (rule === 'no_go') {
-          if(currentMode === 'math' && stimulus.value % 5 === 0) {
-              return 'DO NOT RESPOND: Multiple of 5';
-          }
-          return "DON'T RESPOND";
-      }
+      if (rule === 'no_go') return "DON'T RESPOND";
       return '';
   }
   
   const mathAnswerOptions = useMemo(() => {
       if (rule === 'parity') return ['EVEN', 'ODD'];
       if (rule === 'primality') return ['PRIME', 'COMPOSITE'];
+      // Fallback for when the rule is 'no_go' but we still need to render buttons
       return ['EVEN', 'ODD', 'PRIME', 'COMPOSITE'];
   }, [rule]);
 
@@ -181,7 +186,7 @@ export function FocusSwitchReactor() {
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         {gameState === 'idle' && (
-          <Button onClick={handleStart} size="lg" disabled={!isLoaded}>
+          <Button onClick={restartGame} size="lg" disabled={!isLoaded}>
               {isLoaded ? "Start Game" : "Loading..."}
           </Button>
         )}
@@ -227,7 +232,7 @@ export function FocusSwitchReactor() {
           <div className="flex flex-col items-center gap-4">
             <CardTitle>Game Over!</CardTitle>
             <p className="text-xl">Your final score is: <span className="text-primary font-bold">{score}</span></p>
-            <Button onClick={handleStart} size="lg">Play Again</Button>
+            <Button onClick={restartGame} size="lg">Play Again</Button>
           </div>
         )}
       </CardContent>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MemoryStick } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 
@@ -50,7 +50,7 @@ export function DynamicSequenceTransformer() {
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
   
-  const startLevel = (newLevel: number) => {
+  const startLevel = useCallback((newLevel: number) => {
     const seqLength = newLevel + 3;
     const newSequence = currentMode === 'math' ? generateMathSequence(seqLength) : generateNeutralSequence(seqLength);
     const newTask = currentMode === 'math' ? mathTasks[Math.floor(Math.random() * mathTasks.length)] : neutralTasks[Math.floor(Math.random() * neutralTasks.length)];
@@ -64,13 +64,13 @@ export function DynamicSequenceTransformer() {
     setTimeout(() => {
       setGameState('answering');
     }, 4000); // 4 seconds to memorize
-  };
+  }, [currentMode]);
   
   useEffect(() => {
     if (isLoaded) {
-      startLevel(level);
+      setGameState('start');
+      setLevel(1);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, currentMode]);
 
   const correctAnswer = useMemo(() => {
