@@ -1,10 +1,11 @@
+
 'use client';
 
 import { DailyChallenge } from '@/components/dashboard/daily-challenge';
 import { ChcDomainDashboard } from '@/components/dashboard/chc-domain-dashboard';
 import { HabitTracker } from '@/components/dashboard/habit-tracker';
 import { MilestoneBadges } from '@/components/dashboard/milestone-badges';
-import { IqProxyProgress } from '@/components/dashboard/iq-proxy-progress';
+import { CognitiveEfficiency } from '@/components/dashboard/cognitive-efficiency';
 import { CognitiveEnergyMeter } from '@/components/dashboard/cognitive-energy-meter';
 import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recommendations';
 import { AdaptiveDifficulty } from '@/components/dashboard/adaptive-difficulty';
@@ -41,12 +42,12 @@ function DashboardContent() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <IqProxyProgress />
+            <CognitiveEfficiency />
             <CognitiveEnergyMeter />
             <WeakAreaRecommendations />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" ref={journalRef}>
+          <div className="grid grid-cols-1 md:col-span-2 gap-6" ref={journalRef}>
             <AdaptiveDifficulty />
             <HabitJournal />
           </div>
