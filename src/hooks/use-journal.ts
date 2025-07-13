@@ -65,7 +65,7 @@ const useJournal = () => {
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        let savedEntries: JournalEntry[] = [];
+        let savedEntries: JournalEntry[] | null = null;
         let savedTrashedEntries: TrashedJournalEntry[] = [];
 
         try {
@@ -90,10 +90,11 @@ const useJournal = () => {
             console.error("Failed to load journal entries from localStorage", error);
         }
         
-        if (savedEntries.length > 0) {
+        if (savedEntries) {
+            // If entries exist (even an empty array), use them.
             setEntries(savedEntries);
         } else {
-            // If no entries, create and save seed data
+            // If no key exists at all, this is a first-time user. Create and save seed data.
             const seedEntries = createSeedData();
             setEntries(seedEntries);
             window.localStorage.setItem('journalEntries', JSON.stringify(seedEntries));

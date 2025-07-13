@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Volume2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 export function ToneGridChallenge() {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
@@ -13,6 +14,7 @@ export function ToneGridChallenge() {
   const [userSequence, setUserSequence] = useState<number[]>([]);
   const [level, setLevel] = useState(1);
   const [message, setMessage] = useState('');
+  const [highlightedNote, setHighlightedNote] = useState<number | null>(null);
 
   // Initialize AudioContext on client-side only
   useEffect(() => {
@@ -47,7 +49,9 @@ export function ToneGridChallenge() {
     if (!audioContext) return;
     seq.forEach((noteIndex, i) => {
       setTimeout(() => {
+        setHighlightedNote(noteIndex);
         playTone(frequencies[noteIndex]);
+        setTimeout(() => setHighlightedNote(null), 300);
       }, i * 400);
     });
   };
@@ -80,6 +84,22 @@ export function ToneGridChallenge() {
     }
   }
 
+  const showCorrectSequence = (seq: number[]) => {
+    seq.forEach((noteIndex, i) => {
+      setTimeout(() => {
+        setHighlightedNote(noteIndex);
+      }, i * 200);
+    });
+    setTimeout(() => {
+      setHighlightedNote(null);
+      setMessage(`Incorrect. Let's try level ${level} again.`);
+       setTimeout(() => {
+          startLevel(level);
+      }, 1500);
+    }, seq.length * 200 + 500);
+  };
+
+
   const handleUserInput = (index: number) => {
     if (gameState !== 'answering') return;
     playTone(frequencies[index]);
@@ -94,10 +114,8 @@ export function ToneGridChallenge() {
           setLevel(level + 1);
         }, 1500);
       } else {
-        setMessage(`Incorrect. Let's try level ${level} again.`);
-        setTimeout(() => {
-            startLevel(level);
-        }, 1500);
+        setMessage('Incorrect. The correct sequence was...');
+        setTimeout(() => showCorrectSequence(sequence), 500);
       }
     }
   };
@@ -122,7 +140,10 @@ export function ToneGridChallenge() {
                   key={index} 
                   onClick={() => handleUserInput(index)} 
                   disabled={gameState !== 'answering'}
-                  className="aspect-square h-auto text-2xl"
+                  className={cn(
+                      "aspect-square h-auto text-2xl transition-all",
+                      highlightedNote === index && 'bg-primary scale-110'
+                  )}
                   variant="secondary"
                 >
                   {index + 1}
