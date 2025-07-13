@@ -3,7 +3,6 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { JournalCategory, HabitId } from '@/lib/journal-config';
-import { journalConfig } from '@/lib/journal-config';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
 export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
@@ -284,9 +283,21 @@ const useJournal = () => {
         }
         
         saveCompletedHabits(newHabits);
-    }, [saveCompletedHabits]);
+    }, [saveCompletedHabits, state.completedHabits]);
 
-    return { ...state, addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, toggleHabitForDay, isLoaded, findOrCreateEntry };
+    const stableFns = useMemo(() => ({
+        addEntry,
+        updateEntry,
+        deleteEntry,
+        restoreEntry,
+        deleteFromTrashPermanently,
+        emptyTrash,
+        toggleHabitForDay,
+        findOrCreateEntry,
+    }), [addEntry, updateEntry, deleteEntry, restoreEntry, deleteFromTrashPermanently, emptyTrash, toggleHabitForDay, findOrCreateEntry]);
+
+
+    return { ...state, ...stableFns, isLoaded };
 };
 
 export { useJournal };

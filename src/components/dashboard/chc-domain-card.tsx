@@ -74,7 +74,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
           <Icon className="w-6 h-6 text-primary" />
         </div>
         <div className="flex-1">
-          <CardTitle className="font-headline text-lg">{domain.gameTitle}</CardTitle>
+          <CardTitle className="font-headline text-lg">{domain.name}</CardTitle>
           <CardDescription className="text-sm">{domain.description}</CardDescription>
         </div>
       </CardHeader>
@@ -122,9 +122,8 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full">
-          <Link href={`/training/${domain.key}`}>Start Training</Link>
+          <Link href={`/training/${domain.key}`}>{domain.gameTitle}</Link>
         </Button>
       </CardFooter>
     </Card>
   );
-}

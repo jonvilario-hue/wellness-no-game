@@ -24,7 +24,7 @@ import {
   ArrowDownUp,
   AlertTriangle,
 } from 'lucide-react';
-import { useState, useEffect, useCallback, useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, forwardRef, useRef, useImperativeHandle } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -111,7 +111,7 @@ const EntryEditor = ({
     setSaveStatus('saving');
     const result = onSave(currentEntry, options);
     if (result.success && result.entry) {
-        setEditorState(prev => ({...result.entry!, affirmations: prev.affirmations}));
+        setEditorState(result.entry);
         setTimeout(() => setSaveStatus('saved'), 500);
     } else if (!result.success) {
         setSaveStatus('idle');
@@ -129,9 +129,11 @@ const EntryEditor = ({
     const handler = setTimeout(() => {
       handleSave();
     }, 1500);
-
+    
+    // Save on unmount
     return () => {
       clearTimeout(handler);
+      handleSave({ isFinal: true });
     };
   }, [editorState, entry, handleSave]);
 
@@ -654,7 +656,7 @@ export const HabitJournal = forwardRef((props, ref) => {
       const entry = findOrCreateEntry(currentDate, currentCategory, currentFrequency);
       setSelectedEntry(entry);
     }
-  }, [isLoaded, currentDate, currentCategory, currentFrequency, findOrCreateEntry, entries]);
+  }, [isLoaded, currentDate, currentCategory, currentFrequency, findOrCreateEntry]);
 
 
   const handleSelectFromList = useCallback((entry: JournalEntry) => {
@@ -685,7 +687,7 @@ export const HabitJournal = forwardRef((props, ref) => {
     
     setSelectedEntry(savedEntry);
     return { success: true, entry: savedEntry };
-  }, [addEntry, updateEntry, toast, setSelectedEntry]);
+  }, [addEntry, updateEntry, toast]);
   
   const handleRestore = useCallback((id: string) => {
     restoreEntry(id);
