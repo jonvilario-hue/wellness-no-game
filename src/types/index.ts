@@ -9,5 +9,5 @@ export const chcDomains: { key: CHCDomain; name: string; description: string; ga
   { key: 'Gv', name: 'Visual Processing', description: 'Gv – Visualize and rotate objects', gameTitle: 'Mental Rotation Lab' },
   { key: 'Ga', name: 'Auditory Processing', description: 'Ga – Process and distinguish sounds', gameTitle: 'Tone Grid Challenge' },
   { key: 'Glr', name: 'Long-Term Retrieval', description: 'Glr – Store and recall ideas', gameTitle: 'Semantic Fluency Storm' },
-  { key: 'EF', name: 'Executive Functioning', description: 'EF/Attention – Focus, switch, control tasks', gameTitle: 'Focus Switch Reactor' },
+  { key: 'EF', name: 'Executive Functioning', description: 'EF – Focus, switch, control tasks', gameTitle: 'Focus Switch Reactor' },
 ];
