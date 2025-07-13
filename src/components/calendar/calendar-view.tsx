@@ -128,7 +128,7 @@ export function CalendarView() {
                             const config = journalConfig[entry.category];
                             return (
                                 <div key={entry.id} className="p-3 bg-muted/50 rounded-lg">
-                                    <p className="font-semibold text-sm mb-1">{config.title}</p>
+                                    <p className="font-semibold text-sm mb-1">{config?.title || entry.category}</p>
                                     <p className="text-xs text-muted-foreground italic truncate">
                                     {entry.field1 || entry.field2 || entry.field3}
                                     </p>
