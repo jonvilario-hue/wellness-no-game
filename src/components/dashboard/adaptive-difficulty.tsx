@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getAdaptiveDifficultyAction } from '@/app/actions';
 import type { AdaptDifficultyOutput, AdaptDifficultyInput } from '@/ai/flows';
-import { SlidersHorizontal, Loader2, Wand2 } from 'lucide-react';
+import { SlidersHorizontal, Loader2, Wand2, Lightbulb, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { efficiencyData } from '@/data/efficiency-data';
 import type { ChcFactor } from '@/data/efficiency-data';
@@ -20,11 +20,21 @@ const domainMap: Record<ChcFactor, string> = {
   'Glr': 'Long-Term Retrieval (Glr)',
 };
 
+const INSIGHT_KEY = 'adaptiveDifficultyInsightDismissed';
+
 export function AdaptiveDifficulty() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<AdaptDifficultyOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedFactor, setSelectedFactor] = useState<ChcFactor>('Gf');
+  const [isInsightVisible, setIsInsightVisible] = useState(false);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem(INSIGHT_KEY);
+    if (dismissed !== 'true') {
+      setIsInsightVisible(true);
+    }
+  }, []);
   
   const skillLevel = efficiencyData.weekly.subMetrics.find(m => m.key === selectedFactor)?.value || 50;
 
@@ -43,6 +53,11 @@ export function AdaptiveDifficulty() {
     });
   };
 
+  const handleDismissInsight = () => {
+    setIsInsightVisible(false);
+    localStorage.setItem(INSIGHT_KEY, 'true');
+  };
+
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
@@ -54,7 +69,7 @@ export function AdaptiveDifficulty() {
           Find the right puzzle difficulty based on your current skill level.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="chc-domain-select" className="text-sm font-medium text-muted-foreground">Cognitive Factor</label>
@@ -107,6 +122,24 @@ export function AdaptiveDifficulty() {
               {result.reasoning}
             </AlertDescription>
           </Alert>
+        )}
+
+        {isInsightVisible && (
+          <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2">
+            <p className="text-sm flex items-start gap-2 pr-6">
+              <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0" />
+              <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This tool automatically uses your skill score to suggest the perfect difficulty. No more guessing!</span>
+            </p>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-1 right-1 h-6 w-6"
+              onClick={handleDismissInsight}
+              aria-label="Dismiss insight"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </CardContent>
     </Card>

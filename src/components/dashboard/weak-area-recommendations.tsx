@@ -6,17 +6,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { getWeakAreaRecommendationsAction } from '@/app/actions';
 import type { WeakAreaRecommendationOutput } from '@/ai/flows';
-import { Lightbulb, Loader2, Info, ArrowRight, Target } from 'lucide-react';
+import { Lightbulb, Loader2, Info, ArrowRight, Target, X } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { domainIcons } from '../icons';
 import { chcDomains } from '@/types';
 import Link from 'next/link';
 import { Skeleton } from '../ui/skeleton';
 
+const INSIGHT_KEY = 'weakAreaInsightDismissed';
+
 export function WeakAreaRecommendations() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<WeakAreaRecommendationOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isInsightVisible, setIsInsightVisible] = useState(false);
 
   useEffect(() => {
     startTransition(async () => {
@@ -28,7 +31,17 @@ export function WeakAreaRecommendations() {
         console.error(e);
       }
     });
+
+    const dismissed = localStorage.getItem(INSIGHT_KEY);
+    if (dismissed !== 'true') {
+      setIsInsightVisible(true);
+    }
   }, []);
+
+  const handleDismissInsight = () => {
+    setIsInsightVisible(false);
+    localStorage.setItem(INSIGHT_KEY, 'true');
+  };
 
   const renderContent = () => {
     if (isPending) {
@@ -103,8 +116,26 @@ export function WeakAreaRecommendations() {
           AI-powered suggestions to turn weaknesses into strengths.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-4">
         {renderContent()}
+
+        {isInsightVisible && (
+          <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2">
+            <p className="text-sm flex items-start gap-2 pr-6">
+              <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0" />
+              <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This AI tool analyzes your performance to find your biggest area for growth and recommends a specific game to train it.</span>
+            </p>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-1 right-1 h-6 w-6"
+              onClick={handleDismissInsight}
+              aria-label="Dismiss insight"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
