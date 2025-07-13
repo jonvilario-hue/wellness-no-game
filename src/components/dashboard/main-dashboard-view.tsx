@@ -7,6 +7,7 @@ import { ChcDomainDashboard } from './chc-domain-dashboard';
 import { CognitiveEfficiency } from './cognitive-efficiency';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { ChcProfileOverview } from './chc-profile-overview';
 
 type ViewMode = 'efficiency' | 'profile';
 
@@ -15,19 +16,19 @@ export function MainDashboardView() {
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300">
-       <CardHeader className="flex flex-row items-center justify-between">
-         <div className="space-y-1.5">
-            <CardTitle className="font-headline">
-                {view === 'efficiency' ? 'Cognitive Efficiency' : 'Full Cognitive Profile'}
-            </CardTitle>
-            <CardDescription>
-                {view === 'efficiency' 
-                    ? 'Your complexity-adjusted performance trend.' 
-                    : 'A holistic overview of your cognitive strengths.'}
-            </CardDescription>
-         </div>
-        <TooltipProvider>
-            <Tabs defaultValue="efficiency" onValueChange={(value) => setView(value as ViewMode)}>
+      <Tabs defaultValue="efficiency" onValueChange={(value) => setView(value as ViewMode)}>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div className="space-y-1.5">
+              <CardTitle className="font-headline">
+                  {view === 'efficiency' ? 'Cognitive Efficiency' : 'Full Cognitive Profile'}
+              </CardTitle>
+              <CardDescription>
+                  {view === 'efficiency' 
+                      ? 'Your complexity-adjusted performance trend.' 
+                      : 'A holistic overview of your cognitive strengths.'}
+              </CardDescription>
+          </div>
+          <TooltipProvider>
               <TabsList>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
@@ -39,22 +40,22 @@ export function MainDashboardView() {
                 </Tooltip>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                     <TabsTrigger value="profile">Full CHC Profile</TabsTrigger>
+                      <TabsTrigger value="profile">Full CHC Profile</TabsTrigger>
                   </TooltipTrigger>
-                   <TooltipContent>
+                    <TooltipContent>
                     <p>Shows your full range of mental strengths.</p>
                   </TooltipContent>
                 </Tooltip>
               </TabsList>
-            </Tabs>
-        </TooltipProvider>
-       </CardHeader>
-      <Tabs value={view}>
-        <TabsContent value="efficiency" className="p-0">
-          <CognitiveEfficiency />
+          </TooltipProvider>
+        </CardHeader>
+
+        <TabsContent value="efficiency">
+            <CognitiveEfficiency />
         </TabsContent>
-        <TabsContent value="profile" className="p-0">
-          <CardContent>
+        <TabsContent value="profile">
+          <CardContent className="space-y-4">
+            <ChcProfileOverview />
             <ChcDomainDashboard />
           </CardContent>
         </TabsContent>
