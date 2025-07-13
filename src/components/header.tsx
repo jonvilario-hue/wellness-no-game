@@ -1,4 +1,4 @@
-import { BrainCircuit, Settings, CalendarDays } from 'lucide-react';
+import { BrainCircuit, Settings, CalendarDays, Clock } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 
@@ -7,7 +7,11 @@ export function Header() {
     <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
         <div className="flex-1 flex justify-start">
-          {/* Placeholder for left-aligned content if needed */}
+           <Button asChild variant="ghost" size="icon">
+            <Link href="/time">
+              <Clock className="h-5 w-5" />
+            </Link>
+          </Button>
         </div>
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
             <BrainCircuit className="h-7 w-7 text-primary" />
