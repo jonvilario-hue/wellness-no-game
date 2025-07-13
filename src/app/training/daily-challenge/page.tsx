@@ -50,7 +50,7 @@ export default function DailyChallengePage() {
       return (
         <div className="flex h-screen w-full flex-col items-center justify-center gap-4 text-center">
             <Zap className="h-16 w-16 text-green-500" />
-            <h1 className="text-3xl font-bold">Daily Sequence Complete!</h1>
+            <h1 className="text-3xl font-bold">Daily Projects Complete!</h1>
             <p className="text-muted-foreground">You've sharpened your mind for the day. Come back tomorrow!</p>
             <Button asChild>
                 <Link href="/">Back to Dashboard</Link>
@@ -86,7 +86,7 @@ export default function DailyChallengePage() {
        <main className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center gap-6">
         {TaskComponent ? <TaskComponent /> : <p>Loading task...</p>}
         <Button onClick={handleNextTask} size="lg">
-          {taskIndex < circuit.segments.length - 1 ? 'Next Task' : 'Finish Sequence'}
+          {taskIndex < circuit.segments.length - 1 ? 'Next Task' : 'Finish Projects'}
         </Button>
       </main>
     </div>

@@ -68,7 +68,7 @@ export async function getDailyCircuit(): Promise<DailyCircuitOutput> {
   });
 
   return {
-    circuitTitle: "Today's Training Sequence",
+    circuitTitle: "Daily Lab Projects",
     segments,
   };
 }

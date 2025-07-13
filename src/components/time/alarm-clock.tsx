@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Bell, Puzzle, Trash2, ExternalLink } from 'lucide-react';
+import { PlusCircle, Bell, Puzzle, Trash2, ExternalLink, Edit } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import {
@@ -18,11 +18,12 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAlarmStore, type Alarm } from '@/hooks/use-alarm-store';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { EditableLabel } from './editable-label';
 
 const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -56,48 +57,133 @@ const DaySelector = ({
     );
 };
 
+const AlarmDialog = ({ 
+    open,
+    onOpenChange,
+    onSave,
+    alarmToEdit
+}: { 
+    open: boolean, 
+    onOpenChange: (open: boolean) => void,
+    onSave: (alarm: Omit<Alarm, 'id'>, id?: number) => void,
+    alarmToEdit: Alarm | null
+}) => {
+    const [time, setTime] = useState('07:30');
+    const [label, setLabel] = useState('');
+    const [puzzle, setPuzzle] = useState(true);
+    const [repeat, setRepeat] = useState(false);
+    const [days, setDays] = useState<number[]>([]);
+
+    useEffect(() => {
+        if (alarmToEdit && open) {
+            const [hour, minute] = alarmToEdit.time.split(':');
+            let hour24 = parseInt(hour, 10);
+            if(alarmToEdit.period === 'PM' && hour24 !== 12) hour24 += 12;
+            if(alarmToEdit.period === 'AM' && hour24 === 12) hour24 = 0;
+            
+            setTime(`${hour24.toString().padStart(2, '0')}:${minute}`);
+            setLabel(alarmToEdit.label);
+            setPuzzle(alarmToEdit.puzzle);
+            setRepeat(alarmToEdit.repeatWeekly);
+            setDays(alarmToEdit.repeatDays || []);
+        } else {
+            // Reset for new alarm
+            setTime('07:30');
+            setLabel('');
+            setPuzzle(true);
+            setRepeat(false);
+            setDays([]);
+        }
+    }, [alarmToEdit, open]);
+
+    const handleSave = () => {
+        const [hours, minutes] = time.split(':');
+        let period = 'AM';
+        let hour = parseInt(hours, 10);
+
+        if (hour >= 12) {
+            period = 'PM';
+            if (hour > 12) hour -= 12;
+        }
+        if (hour === 0) hour = 12;
+
+        const formattedTime = `${hour.toString().padStart(2, '0')}:${minutes}`;
+
+        onSave({
+            time: formattedTime,
+            period: period as 'AM' | 'PM',
+            label: label || 'Alarm',
+            active: alarmToEdit?.active ?? true,
+            puzzle: puzzle,
+            repeatWeekly: repeat,
+            repeatDays: days,
+        }, alarmToEdit?.id);
+        
+        onOpenChange(false);
+    };
+
+     const handleToggleDay = (dayIndex: number) => {
+        setDays(prev => 
+            prev.includes(dayIndex) ? prev.filter(d => d !== dayIndex) : [...prev, dayIndex]
+        );
+    };
+
+    return (
+        <AlertDialog open={open} onOpenChange={onOpenChange}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>{alarmToEdit ? 'Edit Alarm' : 'Add New Alarm'}</AlertDialogTitle>
+                    <AlertDialogDescription>Configure your alarm below.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="space-y-4">
+                    <div>
+                        <Label htmlFor="alarm-time">Time</Label>
+                        <Input id="alarm-time" type="time" value={time} onChange={e => setTime(e.target.value)} />
+                    </div>
+                     <div>
+                        <Label htmlFor="alarm-label">Label</Label>
+                        <Input id="alarm-label" type="text" placeholder="e.g., Wake Up" value={label} onChange={e => setLabel(e.target.value)}/>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <Label htmlFor="puzzle-switch">Require Puzzle to Dismiss</Label>
+                        <Switch id="puzzle-switch" checked={puzzle} onCheckedChange={setPuzzle} />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <Label htmlFor="repeat-switch">Repeat Weekly</Label>
+                        <Switch id="repeat-switch" checked={repeat} onCheckedChange={setRepeat} />
+                    </div>
+                    {repeat && (
+                        <div>
+                             <Label className="mb-2 block text-center">On these days</Label>
+                            <DaySelector selectedDays={days} onDayToggle={handleToggleDay} />
+                        </div>
+                    )}
+                </div>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleSave}>Save</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
+};
+
 export function AlarmClock() {
   const { alarms, addAlarm, toggleAlarm, removeAlarm, toggleAlarmPuzzle, updateAlarm } = useAlarmStore();
-  const [newAlarmTime, setNewAlarmTime] = useState('07:30');
-  const [newAlarmLabel, setNewAlarmLabel] = useState('');
-  const [newAlarmPuzzle, setNewAlarmPuzzle] = useState(true);
-  const [newAlarmRepeat, setNewAlarmRepeat] = useState(false);
-  const [newAlarmDays, setNewAlarmDays] = useState<number[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [alarmToEdit, setAlarmToEdit] = useState<Alarm | null>(null);
 
-  const handleAddAlarm = () => {
-    const [hours, minutes] = newAlarmTime.split(':');
-    let period = 'AM';
-    let hour = parseInt(hours, 10);
-
-    if (hour >= 12) {
-        period = 'PM';
-        if (hour > 12) {
-            hour -= 12;
-        }
-    }
-    if (hour === 0) {
-        hour = 12;
-    }
-    
-    const formattedTime = `${hour.toString().padStart(2, '0')}:${minutes}`;
-
-    addAlarm({
-        id: Date.now(),
-        time: formattedTime,
-        period: period as 'AM' | 'PM',
-        label: newAlarmLabel || 'Alarm',
-        active: true,
-        puzzle: newAlarmPuzzle,
-        repeatWeekly: newAlarmRepeat,
-        repeatDays: newAlarmDays,
-    });
-
-    // Reset form
-    setNewAlarmTime('07:30');
-    setNewAlarmLabel('');
-    setNewAlarmPuzzle(true);
-    setNewAlarmRepeat(false);
-    setNewAlarmDays([]);
+  const handleOpenDialog = (alarm: Alarm | null) => {
+      setAlarmToEdit(alarm);
+      setIsDialogOpen(true);
+  };
+  
+  const handleSave = (alarmData: Omit<Alarm, 'id'>, id?: number) => {
+      if (id) {
+          updateAlarm(id, alarmData);
+      } else {
+          addAlarm(alarmData);
+      }
   };
 
   const handleToggleRepeatDay = (alarmId: number, dayIndex: number) => {
@@ -109,12 +195,6 @@ export function AlarmClock() {
     updateAlarm(alarmId, { repeatDays: newDays });
   };
   
-  const handleToggleNewRepeatDay = (dayIndex: number) => {
-    setNewAlarmDays(prev => 
-        prev.includes(dayIndex) ? prev.filter(d => d !== dayIndex) : [...prev, dayIndex]
-    );
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -130,14 +210,20 @@ export function AlarmClock() {
         <TooltipProvider>
             {alarms.map((alarm) => (
                 <div key={alarm.id} className="p-4 rounded-lg bg-muted/50 group space-y-3">
-                    <div className="flex items-center justify-between">
-                        <div>
+                    <div className="flex items-start justify-between">
+                        <div className="flex-grow">
                             <span className="text-3xl font-bold">{alarm.time}</span>
                             <span className="ml-2 text-muted-foreground font-semibold">{alarm.period}</span>
-                            <p className="text-sm text-muted-foreground">{alarm.label}</p>
+                             <EditableLabel
+                                initialValue={alarm.label}
+                                onSave={(newLabel) => updateAlarm(alarm.id, { label: newLabel })}
+                                placeholder="Add a label"
+                                className="!p-0 !min-h-0"
+                                inputClassName="!text-sm !h-7"
+                            />
                         </div>
-                        <div className="flex items-center gap-4">
-                            <Tooltip delayDuration={0}>
+                        <div className="flex items-center gap-2">
+                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button variant="ghost" size="icon" onClick={() => toggleAlarmPuzzle(alarm.id)}>
                                         <Puzzle className={cn("w-5 h-5", alarm.puzzle ? 'text-primary' : 'text-muted-foreground/50')} />
@@ -149,14 +235,16 @@ export function AlarmClock() {
                             </Tooltip>
                             
                             <Switch checked={alarm.active} onCheckedChange={() => toggleAlarm(alarm.id)} aria-label={`Toggle alarm for ${alarm.time} ${alarm.period}`} />
-                            <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100" onClick={() => removeAlarm(alarm.id)}>
-                                <Trash2 className="w-4 h-4 text-muted-foreground" />
-                            </Button>
+                            
+                            <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenDialog(alarm)}>
+                                    <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeAlarm(alarm.id)}>
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor={`repeat-switch-${alarm.id}`} className="text-sm font-medium">Repeat weekly</Label>
-                        <Switch id={`repeat-switch-${alarm.id}`} checked={alarm.repeatWeekly} onCheckedChange={(checked) => updateAlarm(alarm.id, { repeatWeekly: checked })} />
                     </div>
                     {alarm.repeatWeekly && (
                        <DaySelector
@@ -168,48 +256,10 @@ export function AlarmClock() {
             ))}
         </TooltipProvider>
 
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
-                <Button variant="outline" className="w-full border-dashed">
-                    <PlusCircle className="w-4 h-4 mr-2"/>
-                    Add New Alarm
-                </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Add a New Alarm</AlertDialogTitle>
-                    <AlertDialogDescription>Configure your new alarm below.</AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="space-y-4">
-                    <div>
-                        <Label htmlFor="alarm-time">Time</Label>
-                        <Input id="alarm-time" type="time" value={newAlarmTime} onChange={e => setNewAlarmTime(e.target.value)} />
-                    </div>
-                     <div>
-                        <Label htmlFor="alarm-label">Label</Label>
-                        <Input id="alarm-label" type="text" placeholder="e.g., Wake Up" value={newAlarmLabel} onChange={e => setNewAlarmLabel(e.target.value)}/>
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="puzzle-switch">Require Puzzle to Dismiss</Label>
-                        <Switch id="puzzle-switch" checked={newAlarmPuzzle} onCheckedChange={setNewAlarmPuzzle} />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="repeat-switch">Repeat Weekly</Label>
-                        <Switch id="repeat-switch" checked={newAlarmRepeat} onCheckedChange={setNewAlarmRepeat} />
-                    </div>
-                    {newAlarmRepeat && (
-                        <div>
-                             <Label className="mb-2 block text-center">On these days</Label>
-                            <DaySelector selectedDays={newAlarmDays} onDayToggle={handleToggleNewRepeatDay} />
-                        </div>
-                    )}
-                </div>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleAddAlarm}>Add Alarm</AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+        <Button variant="outline" className="w-full border-dashed" onClick={() => handleOpenDialog(null)}>
+            <PlusCircle className="w-4 h-4 mr-2"/>
+            Add New Alarm
+        </Button>
          <div className="p-4 bg-muted/50 rounded-lg text-center">
             <h3 className="font-semibold">Test the Alarm Dismissal Flow</h3>
             <p className="text-muted-foreground text-sm mb-4">
@@ -222,6 +272,12 @@ export function AlarmClock() {
             </Button>
         </div>
       </CardContent>
+      <AlarmDialog 
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSave={handleSave}
+        alarmToEdit={alarmToEdit}
+      />
     </Card>
   );
 }

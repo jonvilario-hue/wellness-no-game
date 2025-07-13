@@ -67,7 +67,7 @@ export function DailyChallenge() {
             <CardHeader>
                  <CardTitle className="font-headline text-2xl flex items-center justify-center gap-2">
                     <Zap className="w-6 h-6 text-primary"/>
-                    Daily Training Sequence
+                    Daily Lab Projects
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -115,7 +115,7 @@ export function DailyChallenge() {
         </div>
         <Button asChild size="lg" className="w-full">
           <Link href={`/training/daily-challenge`}>
-            Start Daily Sequence <ArrowRight className="ml-2 h-4 w-4" />
+            Start Daily Projects <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
       </CardContent>
