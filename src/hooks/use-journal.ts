@@ -99,7 +99,7 @@ interface JournalState {
     setHasHydrated: (hydrated: boolean) => void;
     findOrCreateEntry: (options: { date: string, category: JournalCategory, frequency: ReflectionFrequency, forceNew?: boolean }) => JournalEntry;
     addEntry: (newEntry: JournalEntry) => JournalEntry;
-    updateEntry: (id: string, updatedEntry: JournalEntry) => void;
+    updateEntry: (id: string, updatedEntry: Partial<JournalEntry>) => void;
     deleteEntry: (id: string) => void;
     restoreEntry: (id: string) => void;
     deleteFromTrashPermanently: (id: string) => void;
@@ -149,8 +149,9 @@ export const useJournal = create<JournalState>()(
                 (e) => e.date === date && e.category === category && e.frequency === frequency
             );
             
+            // If an entry exists but is completely empty (placeholder), treat it as new.
             if (existingEntry) {
-                 const hasContent = existingEntry.field1 || existingEntry.field2 || existingEntry.field3 || existingEntry.affirmations.some(a => a);
+                 const hasContent = existingEntry.field1 || existingEntry.field2 || existingEntry.field3 || existingEntry.affirmations.some(a => a) || existingEntry.label !== (journalConfig[existingEntry.category]?.title || 'New Entry');
                  if (hasContent) {
                     return existingEntry;
                  }
@@ -184,7 +185,7 @@ export const useJournal = create<JournalState>()(
 
         updateEntry: (id, updatedEntry) => {
             set(state => ({
-                entries: state.entries.map(entry => (entry.id === id ? updatedEntry : entry))
+                entries: state.entries.map(entry => (entry.id === id ? { ...entry, ...updatedEntry } : entry))
             }));
         },
 
