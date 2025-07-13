@@ -19,6 +19,7 @@ import {
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
+import { Slider } from '@/components/ui/slider';
 
 type TimerState = {
     id: number;
@@ -219,8 +220,19 @@ export function Timer() {
                                 <Input id="timer-label" type="text" placeholder="e.g., Study Session" value={newTimerLabel} onChange={e => setNewTimerLabel(e.target.value)}/>
                             </div>
                             <div>
-                                <Label htmlFor="timer-duration">Duration (minutes)</Label>
-                                <Input id="timer-duration" type="number" value={newTimerDuration / 60} onChange={e => setNewTimerDuration(Number(e.target.value) * 60)} min="1"/>
+                                <Label htmlFor="timer-duration" className="flex justify-between">
+                                  <span>Duration</span>
+                                  <span>{newTimerDuration / 60} minutes</span>
+                                </Label>
+                                <Slider 
+                                  id="timer-duration"
+                                  min={1}
+                                  max={120}
+                                  step={1}
+                                  value={[newTimerDuration / 60]}
+                                  onValueChange={(value) => setNewTimerDuration(value[0] * 60)}
+                                  className="mt-2"
+                                />
                             </div>
                         </div>
                         <AlertDialogFooter>
