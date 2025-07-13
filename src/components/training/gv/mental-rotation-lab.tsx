@@ -130,8 +130,7 @@ export function MentalRotationLab() {
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
   
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
-  // This game does not have a math mode, so we default to neutral.
-  // The global focus (math/neutral) does not affect this game's logic.
+  // This game is explicitly for Gv Core Mode, so it always uses 'neutral'.
   const currentMode = 'neutral';
 
   useEffect(() => {
@@ -179,7 +178,7 @@ export function MentalRotationLab() {
             <View />
             (Gv) Mental Rotation Lab
         </CardTitle>
-        <CardDescription>Which of the shapes below is a rotated version of the target shape? Mirrored versions do not count.</CardDescription>
+        <CardDescription>Which of the shapes below is a rotated version of the target shape? Mirrored versions do not count. This strengthens your visual imagination and mental manipulation.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         <div className="w-full flex justify-between font-mono">
