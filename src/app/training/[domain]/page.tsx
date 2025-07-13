@@ -12,6 +12,7 @@ import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTrainingOverride } from '@/hooks/use-training-override';
+import { use } from 'react';
 
 export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
   const { domain } = params;
