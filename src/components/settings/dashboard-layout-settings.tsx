@@ -13,6 +13,7 @@ const componentLabels: Record<DashboardComponent, string> = {
   allGames: 'All Training Games',
   mainDashboard: 'Main Dashboard (Efficiency/Strength)',
   habitTracker: 'Habit Tracker',
+  gameProgressTracker: 'Game Progress Tracker',
   milestoneBadges: 'Milestone Badges',
   performanceInsights: 'Performance Insights',
   weakAreaRecommendations: 'Weak Area Targeting',

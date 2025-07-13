@@ -8,6 +8,7 @@ const defaultSettings = {
   allGames: true,
   mainDashboard: true,
   habitTracker: true,
+  gameProgressTracker: true,
   milestoneBadges: true,
   performanceInsights: true,
   weakAreaRecommendations: true,
