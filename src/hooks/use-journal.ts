@@ -28,6 +28,32 @@ export type JournalEntry = {
 
 const MAX_TRASH_ITEMS = 20;
 
+const createSeedData = (): JournalEntry[] => {
+    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .split('T')[0];
+
+    return [
+        {
+            id: `seed-${Date.now()}`,
+            date: today,
+            category: 'Growth & Challenge Reflection',
+            frequency: 'daily',
+            field1: 'My main challenge today was getting started with this new app and figuring out all its features!',
+            field2: 'I learned that taking a moment to explore and read the descriptions helps a lot. It feels less overwhelming now.',
+            field3: 'Next time I start something new, I\'ll give myself more time to just explore without pressure to be productive right away.',
+            affirmations: ['I am capable of learning new things.'],
+            tags: '#onboarding, #learning, #growth',
+            effort: 5,
+            mood: null,
+            habits: {
+                reflect_challenge: 'done',
+                learn_from_discomfort: 'done',
+            },
+        },
+    ];
+};
+
 const useJournal = () => {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [trashedEntries, setTrashedEntries] = useState<JournalEntry[]>([]);
@@ -35,44 +61,32 @@ const useJournal = () => {
     useEffect(() => {
         try {
             const savedEntries = window.localStorage.getItem('journalEntries');
+            const savedTrashedEntries = window.localStorage.getItem('journalTrashedEntries');
+
             if (savedEntries) {
                 const parsed = JSON.parse(savedEntries);
-                if (Array.isArray(parsed)) {
-                    // Quick migration for old data structure
-                    const migratedEntries = parsed.map(entry => {
-                        if (typeof entry.affirmation === 'string') {
-                            entry.affirmations = entry.hasAffirmation ? [entry.affirmation] : [];
-                            delete entry.affirmation;
-                            delete entry.hasAffirmation;
-                        }
-                        if (!entry.affirmations) {
-                             entry.affirmations = [];
-                        }
-                        return entry;
-                    });
-                    setEntries(migratedEntries);
+                 if (Array.isArray(parsed)) {
+                    setEntries(parsed);
                 }
+            } else {
+                // If no entries, create and save seed data
+                const seedEntries = createSeedData();
+                saveEntries(seedEntries);
             }
-             const savedTrashedEntries = window.localStorage.getItem('journalTrashedEntries');
+
             if (savedTrashedEntries) {
                 const parsed = JSON.parse(savedTrashedEntries);
                 if (Array.isArray(parsed)) {
-                    const migratedTrashed = parsed.map(entry => {
-                         if (typeof entry.affirmation === 'string') {
-                            entry.affirmations = entry.hasAffirmation ? [entry.affirmation] : [];
-                            delete entry.affirmation;
-                            delete entry.hasAffirmation;
-                        }
-                         if (!entry.affirmations) {
-                             entry.affirmations = [];
-                        }
-                        return entry;
-                    });
-                    setTrashedEntries(migratedTrashed);
+                    setTrashedEntries(parsed);
                 }
             }
         } catch (error) {
             console.error("Failed to load journal entries from localStorage", error);
+            // If loading fails, start with seed data as a fallback
+            if (entries.length === 0) {
+                 const seedEntries = createSeedData();
+                 saveEntries(seedEntries);
+            }
         }
     }, []);
 
