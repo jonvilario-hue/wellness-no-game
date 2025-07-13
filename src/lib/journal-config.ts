@@ -1,4 +1,5 @@
 
+
 import type { LucideIcon } from 'lucide-react';
 import {
   BookOpen,
@@ -29,54 +30,40 @@ export type JournalCategory =
   | 'Emotion & Mood Processing'
   | 'Freeform Exploration';
 
-export type HabitId =
-  | 'reflect_challenge'
-  | 'learn_from_discomfort'
-  | 'reframe_thought'
-  | 'step_toward_goal'
-  | 'visualize_success'
-  | 'review_value'
-  | 'note_gratitude'
-  | 'affirm_strength'
-  | 'acknowledge_progress'
-  | 'name_emotion'
-  | 'self_compassion'
-  | 'regulation_technique'
-  | 'freewrite'
-  | 'highlight_insight'
-  | 'follow_curiosity';
+export type HabitId = string;
 
-export type Habit = {
+export type HabitConfig = {
   id: HabitId;
   label: string;
   icon: LucideIcon;
+  category: JournalCategory;
 };
 
-export const allHabits: Record<HabitId, Habit> = {
+export const allHabits: Record<HabitId, HabitConfig> = {
   // Growth & Challenge Reflection
-  reflect_challenge: { id: 'reflect_challenge', label: 'Reflected on a challenge, mistake, or effort today', icon: ShieldQuestion },
-  learn_from_discomfort: { id: 'learn_from_discomfort', label: 'Identified something I learned from discomfort', icon: Zap },
-  reframe_thought: { id: 'reframe_thought', label: 'Reframed a negative thought into a growth message', icon: Lightbulb },
+  reflect_challenge: { id: 'reflect_challenge', label: 'Reflected on a challenge, mistake, or effort today', icon: ShieldQuestion, category: 'Growth & Challenge Reflection' },
+  learn_from_discomfort: { id: 'learn_from_discomfort', label: 'Identified something I learned from discomfort', icon: Zap, category: 'Growth & Challenge Reflection' },
+  reframe_thought: { id: 'reframe_thought', label: 'Reframed a negative thought into a growth message', icon: Lightbulb, category: 'Growth & Challenge Reflection' },
 
   // Goal & Identity Alignment
-  step_toward_goal: { id: 'step_toward_goal', label: 'Took one small action toward a long-term goal', icon: Target },
-  review_value: { id: 'review_value', label: 'Reviewed or wrote about a core personal value or identity', icon: ClipboardCheck },
-  visualize_success: { id: 'visualize_success', label: 'Visualized a successful outcome or process step', icon: Eye },
+  step_toward_goal: { id: 'step_toward_goal', label: 'Took one small action toward a long-term goal', icon: Target, category: 'Goal & Identity Alignment' },
+  review_value: { id: 'review_value', label: 'Reviewed or wrote about a core personal value or identity', icon: ClipboardCheck, category: 'Goal & Identity Alignment' },
+  visualize_success: { id: 'visualize_success', label: 'Visualized a successful outcome or process step', icon: Eye, category: 'Goal & Identity Alignment' },
   
   // Positivity & Strengths
-  note_gratitude: { id: 'note_gratitude', label: 'Wrote something I appreciated about today', icon: Leaf },
-  affirm_strength: { id: 'affirm_strength', label: 'Noted a personal strength I used', icon: Sparkles },
-  acknowledge_progress: { id: 'acknowledge_progress', label: 'Acknowledged a moment of progress or effort', icon: CheckCircle },
+  note_gratitude: { id: 'note_gratitude', label: 'Wrote something I appreciated about today', icon: Leaf, category: 'Positivity & Strengths' },
+  affirm_strength: { id: 'affirm_strength', label: 'Noted a personal strength I used', icon: Sparkles, category: 'Positivity & Strengths' },
+  acknowledge_progress: { id: 'acknowledge_progress', label: 'Acknowledged a moment of progress or effort', icon: CheckCircle, category: 'Positivity & Strengths' },
 
   // Emotion & Mood Processing
-  name_emotion: { id: 'name_emotion', label: 'Labeled a core emotion I felt today', icon: MessageSquare },
-  self_compassion: { id: 'self_compassion', label: 'Responded to myself with kindness or understanding', icon: HeartHandshake },
-  regulation_technique: { id: 'regulation_technique', label: 'Used a calming or self-regulation practice', icon: Waves },
+  name_emotion: { id: 'name_emotion', label: 'Labeled a core emotion I felt today', icon: MessageSquare, category: 'Emotion & Mood Processing' },
+  self_compassion: { id: 'self_compassion', label: 'Responded to myself with kindness or understanding', icon: HeartHandshake, category: 'Emotion & Mood Processing' },
+  regulation_technique: { id: 'regulation_technique', label: 'Used a calming or self-regulation practice', icon: Waves, category: 'Emotion & Mood Processing' },
   
   // Freeform Exploration
-  freewrite: { id: 'freewrite', label: 'Freewrote for at least 5 minutes without editing', icon: Feather },
-  highlight_insight: { id: 'highlight_insight', label: 'Highlighted or tagged an insight or idea', icon: Lightbulb },
-  follow_curiosity: { id: 'follow_curiosity', label: 'Followed a curiosity or question with writing', icon: Search },
+  freewrite: { id: 'freewrite', label: 'Freewrote for at least 5 minutes without editing', icon: Feather, category: 'Freeform Exploration' },
+  highlight_insight: { id: 'highlight_insight', label: 'Highlighted or tagged an insight or idea', icon: Lightbulb, category: 'Freeform Exploration' },
+  follow_curiosity: { id: 'follow_curiosity', label: 'Followed a curiosity or question with writing', icon: Search, category: 'Freeform Exploration' },
 };
 
 export const journalConfig: Record<JournalCategory, {
@@ -91,7 +78,6 @@ export const journalConfig: Record<JournalCategory, {
   affirmationPrompt: string;
   guidance: string;
   suggestedTags: string;
-  habits: HabitId[];
 }> = {
   'Growth & Challenge Reflection': {
     icon: BrainCircuit,
@@ -105,7 +91,6 @@ export const journalConfig: Record<JournalCategory, {
     affirmationPrompt: "Write one sentence affirming your resilience.",
     guidance: "Use this space to reflect on challenges you encountered. Focus on how you handled them, what you learned, or how you might grow from them.",
     suggestedTags: "#resilience, #learning, #problem-solving, #setback, #growth",
-    habits: ['reflect_challenge', 'learn_from_discomfort', 'reframe_thought']
   },
   'Goal & Identity Alignment': {
     icon: Target,
@@ -119,7 +104,6 @@ export const journalConfig: Record<JournalCategory, {
     affirmationPrompt: "Write an affirmation that reflects who you’re becoming.",
     guidance: "Use this section to connect your actions to what matters most. Define your goal clearly and focus on next steps that reflect your values.",
     suggestedTags: "#goal, #clarity, #values, #planning, #becoming",
-    habits: ['step_toward_goal', 'review_value', 'visualize_success']
   },
   'Positivity & Strengths': {
     icon: Smile,
@@ -133,7 +117,6 @@ export const journalConfig: Record<JournalCategory, {
     affirmationPrompt: "Write an affirmation that reinforces that strength.",
     guidance: "Reflect on what’s working, even if small. Use this space to train your brain to recognize positive progress and personal strengths.",
     suggestedTags: "#gratitude, #small-wins, #confidence, #strength",
-    habits: ['note_gratitude', 'affirm_strength', 'acknowledge_progress']
   },
   'Emotion & Mood Processing': {
     icon: Waves,
@@ -147,7 +130,6 @@ export const journalConfig: Record<JournalCategory, {
     affirmationPrompt: "What do you need right now — or what’s a kind thing to say to yourself?",
     guidance: "Use this space to name your emotions and reflect on their source. This helps reduce overwhelm and improve clarity.",
     suggestedTags: "#emotion, #stress, #processing, #mindfulness, #calm",
-    habits: ['name_emotion', 'self_compassion', 'regulation_technique']
   },
   'Freeform Exploration': {
     icon: Feather,
@@ -161,6 +143,5 @@ export const journalConfig: Record<JournalCategory, {
     affirmationPrompt: "Write an affirmation for the day.",
     guidance: "Use this space freely. No structure required. You can explore ideas, reflect on the day, or just release thoughts.",
     suggestedTags: "#thought-dump, #freewrite, #creative, #uncategorized",
-    habits: ['freewrite', 'highlight_insight', 'follow_curiosity']
   },
 };

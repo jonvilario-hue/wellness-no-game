@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { memo, useCallback, useEffect, useState } from 'react';
@@ -32,8 +33,8 @@ import { Separator } from '../ui/separator';
 import { Slider } from '../ui/slider';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId } from '@/hooks/use-journal';
-import { journalConfig, allHabits } from '@/lib/journal-config';
+import { useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit } from '@/hooks/use-journal';
+import { journalConfig } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 
 export const JournalEditor = memo(({
@@ -52,9 +53,9 @@ export const JournalEditor = memo(({
   const [editorState, setEditorState] = useState<JournalEntry>(entry);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
-  const { completedHabits, toggleHabitForDay } = useJournal();
+  const { habits, completedHabits, toggleHabitForDay } = useJournal();
   
-  const todaysHabits = completedHabits[editorState.date] || new Set();
+  const todaysHabits = completedHabits[editorState.date] || [];
 
   useEffect(() => {
     setEditorState(entry);
@@ -197,8 +198,8 @@ tags: ${entryToExport.tags}
           markdown += `### Affirmations\n${entryToExport.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
       }
       
-      const completedHabitsForEntry = Object.values(allHabits)
-          .filter(habit => todaysHabits.has(habit.id))
+      const completedHabitsForEntry = habits
+          .filter(habit => todaysHabits.includes(habit.id))
           .map(h => h?.label);
 
       if (completedHabitsForEntry.length > 0) {
@@ -216,6 +217,7 @@ tags: ${entryToExport.tags}
   
   const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
   const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
+  const relevantHabits = habits.filter(h => h.category === category);
 
   return (
     <div className="p-4 h-full flex flex-col gap-2 relative">
@@ -376,12 +378,11 @@ tags: ${entryToExport.tags}
               />
           </div>
 
-          {config.habits.length > 0 && (
+          {relevantHabits.length > 0 && (
             <div>
               <Label>Supporting Habits</Label>
               <div className="space-y-1 mt-1">
-                {config.habits.map(habitId => {
-                  const habit = allHabits[habitId];
+                {relevantHabits.map(habit => {
                   if (!habit) return null;
                   const habitCheckboxId = `habit-${habit.id}-${entry.id}`;
                   return (
@@ -392,7 +393,7 @@ tags: ${entryToExport.tags}
                       >
                          <Checkbox 
                           id={habitCheckboxId}
-                          checked={todaysHabits.has(habit.id)}
+                          checked={todaysHabits.includes(habit.id)}
                           onCheckedChange={checked => handleHabitChange(habit.id, !!checked)}
                          />
                         <habit.icon className="w-4 h-4 text-muted-foreground" />

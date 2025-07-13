@@ -3,10 +3,21 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { JournalCategory, HabitId } from '@/lib/journal-config';
+import type { JournalCategory } from '@/lib/journal-config';
+import { allHabits as defaultHabits, journalConfig } from '@/lib/journal-config';
+import type { LucideIcon } from 'lucide-react';
 
 export type MoodState = 'happy' | 'neutral' | 'sad' | null;
 export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
+
+export type HabitId = string;
+
+export type Habit = {
+  id: HabitId;
+  label: string;
+  icon: LucideIcon;
+  category: JournalCategory;
+};
 
 export type JournalEntry = {
     id: string;
@@ -41,10 +52,12 @@ export const getFrequencyForDate = (date: Date): ReflectionFrequency => {
     return 'daily';
 };
 
-const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits } => {
+const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits, habitConfig: Habit[] } => {
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
     const category: JournalCategory = 'Growth & Challenge Reflection';
     const frequency = getFrequencyForDate(new Date());
+
+    const initialHabits: Habit[] = Object.values(defaultHabits);
 
     return {
         entries: [
@@ -64,7 +77,8 @@ const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits } => {
         ],
         habits: {
             [today]: ['reflect_challenge', 'learn_from_discomfort']
-        }
+        },
+        habitConfig: initialHabits,
     };
 };
 
@@ -73,6 +87,7 @@ const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits } => {
 interface JournalState {
     entries: JournalEntry[];
     trashedEntries: TrashedJournalEntry[];
+    habits: Habit[];
     completedHabits: DailyHabits;
     selectedEntry: JournalEntry | null;
     isLoaded: boolean;
@@ -87,6 +102,9 @@ interface JournalState {
     deleteFromTrashPermanently: (id: string) => void;
     emptyTrash: () => void;
     toggleHabitForDay: (date: string, habitId: HabitId) => void;
+    addHabit: (habitData: Omit<Habit, 'id'>) => void;
+    updateHabit: (id: HabitId, habitData: Partial<Omit<Habit, 'id'>>) => void;
+    removeHabit: (id: HabitId) => void;
     createNewEntry: () => JournalEntry;
     setSelectedEntry: (entry: JournalEntry | null) => void;
 }
@@ -110,6 +128,7 @@ export const useJournal = create<JournalState>()(
         (set, get) => ({
             entries: [],
             trashedEntries: [],
+            habits: [],
             completedHabits: {},
             selectedEntry: null,
             isLoaded: false,
@@ -186,6 +205,24 @@ export const useJournal = create<JournalState>()(
                 });
             },
             
+            addHabit: (habitData) => {
+                set(state => ({
+                    habits: [...state.habits, { ...habitData, id: `custom-${Date.now()}` }]
+                }));
+            },
+
+            updateHabit: (id, habitData) => {
+                set(state => ({
+                    habits: state.habits.map(h => h.id === id ? { ...h, ...habitData } : h)
+                }));
+            },
+
+            removeHabit: (id) => {
+                set(state => ({
+                    habits: state.habits.filter(h => h.id !== id)
+                }));
+            },
+            
             createNewEntry: () => {
                 const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
                 return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
@@ -199,11 +236,11 @@ export const useJournal = create<JournalState>()(
             onRehydrateStorage: () => (state) => {
                 if (state) {
                     // Check if seed data needs to be added
-                    if (state.entries.length === 0 && !localStorage.getItem('journalInitialized')) {
-                        const { entries, habits } = createSeedData();
+                    if (!state.habits || state.habits.length === 0) {
+                        const { entries, habits, habitConfig } = createSeedData();
                         state.entries = entries;
                         state.completedHabits = habits;
-                        localStorage.setItem('journalInitialized', 'true');
+                        state.habits = habitConfig;
                     }
                     
                     // Cleanup expired trash
