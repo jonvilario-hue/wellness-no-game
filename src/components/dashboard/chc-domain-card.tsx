@@ -43,8 +43,8 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
   const Icon = domainIcons[domain.key];
   const [data, setData] = useState<{ score: number; trend: number } | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const { focus: globalFocus, isLoaded } = useTrainingFocus();
-  const { setOverride } = useTrainingOverride();
+  const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { override, setOverride, isLoaded: isOverrideLoaded } = useTrainingOverride();
 
   useEffect(() => {
     setIsClient(true);
@@ -59,26 +59,18 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
         return x - Math.floor(x);
     };
 
-    const generatedScore = (keySeed * 3) % 40 + 50;
+    const generatedScore = 50 + ((keySeed * 13) % 40);
     const randomFactor1 = pseudoRandom(keySeed + 1) * 5;
     const randomFactor2 = pseudoRandom(keySeed + 2) * 5;
-    const randomFactor3 = pseudoRandom(keySeed + 3) * 5;
     
-    const generatedTrendData = [
-      { week: 'W1', score: generatedScore - 15 + randomFactor1 },
-      { week: 'W2', score: generatedScore - 10 + randomFactor2 },
-      { week: 'W3', score: generatedScore - 5 + randomFactor3 },
-      { week: 'W4', score: generatedScore },
-    ].map(d => ({ ...d, score: Math.max(0, Math.min(100, d.score)) }));
+    const startScore = generatedScore - 10 + randomFactor1;
+    const endScore = generatedScore + randomFactor2;
     
     let trend = 0;
-    const startScore = generatedTrendData[0].score;
-    const endScore = generatedTrendData[generatedTrendData.length - 1].score;
     if(startScore > 0) {
-        const pctChange = ((endScore - startScore) / startScore) * 100;
-        trend = pctChange;
+        trend = ((endScore - startScore) / startScore) * 100;
     }
-    setData({ score: generatedScore, trend });
+    setData({ score: Math.round(generatedScore), trend });
   }, [domain.key, isClient]);
 
 
@@ -95,9 +87,17 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
 
   const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo();
   
-  const isMathMode = isLoaded && globalFocus === 'math' && domain.supportsMath;
+  const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
+  
+  // Determine the effective focus: override > global
+  const effectiveFocus = isLoaded ? (override || globalFocus) : 'neutral';
+  const isMathMode = effectiveFocus === 'math' && domain.supportsMath;
+
   const ModeIcon = isMathMode ? Sigma : BrainCircuit;
-  const modeTooltip = isMathMode ? 'Global Focus: Math Reasoning' : 'Global Focus: Core Thinking';
+  const modeTooltip = override
+    ? `Session Override: ${override === 'math' ? 'Math Reasoning' : 'Core Thinking'}`
+    : `Global Focus: ${globalFocus === 'math' ? 'Math Reasoning' : 'Core Thinking'}`;
+
 
   const handleTrainClick = (mode: 'neutral' | 'math' | null) => {
     setOverride(mode);
@@ -168,7 +168,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
             <Tooltip delayDuration={0}>
                 <DropdownMenuTrigger asChild>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="shrink-0">
+                    <Button variant="ghost" size="icon" className="shrink-0" disabled={!isLoaded}>
                         <ModeIcon className={cn("w-5 h-5", isMathMode ? "text-accent" : "text-muted-foreground")} />
                     </Button>
                   </TooltipTrigger>
@@ -181,12 +181,12 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
                 <DropdownMenuItem onClick={() => handleTrainClick('neutral')}>
                   <BrainCircuit className="mr-2 h-4 w-4" />
                   <span>Train Core Thinking</span>
-                  {globalFocus === 'neutral' && <Check className="ml-auto h-4 w-4" />}
+                  {globalFocus === 'neutral' && !override && <Check className="ml-auto h-4 w-4" />}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleTrainClick('math')} disabled={!domain.supportsMath}>
                   <Sigma className="mr-2 h-4 w-4" />
                    <span>Train Math Reasoning</span>
-                   {globalFocus === 'math' && <Check className="ml-auto h-4 w-4" />}
+                   {globalFocus === 'math' && !override && <Check className="ml-auto h-4 w-4" />}
                 </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
