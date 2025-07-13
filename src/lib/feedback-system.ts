@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import type { CHCDomain } from "@/types";
 
 type FeedbackType = 'success' | 'failure';
@@ -104,8 +104,6 @@ const feedbackLibrary: Record<CHCDomain, Record<FeedbackType, Feedback[]>> = {
         ]
     },
 };
-
-const { toast } = useToast();
 
 const showFeedback = (domain: CHCDomain, type: FeedbackType) => {
     const messages = feedbackLibrary[domain]?.[type] || feedbackLibrary.Gf[type];
