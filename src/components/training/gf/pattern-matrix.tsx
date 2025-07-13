@@ -9,7 +9,7 @@ import { BrainCircuit } from "lucide-react";
 
 // --- Puzzle Elements ---
 const shapes = ['circle', 'square', 'triangle', 'diamond'];
-const colors = ['bg-primary', 'bg-accent', 'bg-green-500', 'bg-yellow-500'];
+const colors = ['bg-primary', 'bg-accent', 'bg-chart-3', 'bg-chart-4'];
 const rotations = [0, 90, 180, 270];
 
 const generateElement = () => ({

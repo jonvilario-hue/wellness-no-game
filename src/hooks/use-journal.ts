@@ -62,6 +62,7 @@ const createSeedData = (): JournalEntry[] => {
 const useJournal = () => {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [trashedEntries, setTrashedEntries] = useState<TrashedJournalEntry[]>([]);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         let savedEntries: JournalEntry[] = [];
@@ -94,10 +95,12 @@ const useJournal = () => {
         } else {
             // If no entries, create and save seed data
             const seedEntries = createSeedData();
-            saveEntries(seedEntries);
+            setEntries(seedEntries);
+            window.localStorage.setItem('journalEntries', JSON.stringify(seedEntries));
         }
         
-        saveTrashedEntries(savedTrashedEntries);
+        setTrashedEntries(savedTrashedEntries);
+        setIsLoaded(true);
 
     }, []);
 
@@ -179,7 +182,7 @@ const useJournal = () => {
         return completed;
     }, [entries]);
 
-    return { entries, trashedEntries, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash, getCompletedHabitsForDay };
+    return { entries, trashedEntries, addEntry, updateEntry, deleteEntry, getEntry, restoreEntry, emptyTrash, getCompletedHabitsForDay, isLoaded };
 };
 
 export { useJournal };

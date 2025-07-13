@@ -10,7 +10,7 @@ const colorOptions = [
     { name: 'DESTRUCTIVE', class: 'text-destructive' },
     { name: 'PRIMARY', class: 'text-primary' },
     { name: 'ACCENT', class: 'text-accent' },
-    { name: 'GREEN', class: 'text-green-500' },
+    { name: 'CHART-3', class: 'text-chart-3' },
 ];
 
 export function FocusSwitchReactor() {
