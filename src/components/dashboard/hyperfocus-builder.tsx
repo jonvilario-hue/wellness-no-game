@@ -4,13 +4,20 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowRight, BrainCircuit } from 'lucide-react';
-import Link from 'next/link';
+import { BrainCircuit, ChevronDown } from 'lucide-react';
 import { useFocusBuilder } from '@/hooks/use-focus-builder';
 import { Skeleton } from '../ui/skeleton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { chcDomains } from '@/types';
 
-export function CognitiveFocusBuilder() {
-  const { currentFocus, daysCompleted, cycleLength, progress, isLoaded } = useFocusBuilder();
+export function HyperfocusBuilder() {
+  const { currentFocus, daysCompleted, cycleLength, progress, isLoaded, setManualFocus } = useFocusBuilder();
 
   if (!isLoaded) {
     return (
@@ -41,7 +48,7 @@ export function CognitiveFocusBuilder() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <BrainCircuit className="w-5 h-5 text-primary" />
-          Cognitive Focus Builder
+          Hyperfocus Builder
         </CardTitle>
         <CardDescription>Train one skill deeply, 30 days at a time.</CardDescription>
       </CardHeader>
@@ -61,12 +68,26 @@ export function CognitiveFocusBuilder() {
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="w-full" asChild>
-          {/* This will eventually link to the Focus Builder settings page */}
-          <Link href="#"> 
-            Adjust Focus <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full">
+                    Change Focus
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-64">
+                <DropdownMenuRadioGroup 
+                    value={currentFocus.key} 
+                    onValueChange={(value) => setManualFocus(value as any)}
+                >
+                    {chcDomains.map(domain => (
+                        <DropdownMenuRadioItem key={domain.key} value={domain.key}>
+                            {domain.name}
+                        </DropdownMenuRadioItem>
+                    ))}
+                </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+        </DropdownMenu>
       </CardFooter>
     </Card>
   );

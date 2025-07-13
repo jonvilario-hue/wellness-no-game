@@ -31,7 +31,6 @@ export const useFocusBuilder = () => {
       console.error('Failed to load focus builder state from localStorage', error);
     }
     
-    // If no state, or if the cycle is over, create a new cycle
     const today = new Date();
     const cycleStartDate = storedState ? new Date(storedState.cycleStartDate) : new Date(0);
     const diffDays = (today.getTime() - cycleStartDate.getTime()) / (1000 * 3600 * 24);
@@ -59,6 +58,21 @@ export const useFocusBuilder = () => {
     return focusRotation[monthIndex % focusRotation.length];
   };
 
+  const setManualFocus = useCallback((domainKey: CHCDomain) => {
+    const newState: FocusBuilderState = {
+      // Keep the original cycle start date unless we want to reset the timer on manual change
+      cycleStartDate: state?.cycleStartDate || new Date().toISOString(),
+      manualOverrideDomain: domainKey,
+    };
+    setState(newState);
+    try {
+      window.localStorage.setItem(FOCUS_BUILDER_KEY, JSON.stringify(newState));
+    } catch (error) {
+      console.error('Failed to save manual focus state', error);
+    }
+  }, [state?.cycleStartDate]);
+
+
   const currentFocusKey = state?.manualOverrideDomain || getFocusDomainForDate(new Date(state?.cycleStartDate || Date.now()));
   const currentFocus = chcDomains.find(d => d.key === currentFocusKey) || chcDomains[0];
   
@@ -66,9 +80,6 @@ export const useFocusBuilder = () => {
   const cycleStartDate = new Date(state?.cycleStartDate || Date.now());
   const daysCompleted = Math.floor((today.getTime() - cycleStartDate.getTime()) / (1000 * 3600 * 24));
   const progress = Math.min(100, (daysCompleted / CYCLE_LENGTH) * 100);
-
-  // Eventually, add a function here to set a manual override
-  // const setManualFocus = (domainKey: CHCDomain) => { ... }
   
   return {
     isLoaded,
@@ -76,5 +87,6 @@ export const useFocusBuilder = () => {
     daysCompleted: Math.min(daysCompleted, CYCLE_LENGTH),
     cycleLength: CYCLE_LENGTH,
     progress,
+    setManualFocus,
   };
 };

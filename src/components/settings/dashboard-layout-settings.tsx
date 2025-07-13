@@ -12,7 +12,7 @@ const componentLabels: Record<DashboardComponent, string> = {
   dailyChallenge: 'Daily Challenge',
   allGames: 'All Training Games',
   mainDashboard: 'Main Dashboard (Efficiency/Strength)',
-  cognitiveFocusBuilder: 'Cognitive Focus Builder',
+  hyperfocusBuilder: 'Hyperfocus Builder',
   habitTracker: 'Habit Tracker',
   gameProgressTracker: 'Game Progress Tracker',
   milestoneBadges: 'Milestone Badges',
