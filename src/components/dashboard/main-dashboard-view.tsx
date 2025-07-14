@@ -6,9 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CognitiveEfficiency } from './cognitive-efficiency';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { ChcProfileOverview } from './chc-profile-overview';
-import { chcDomains } from '@/types';
-import { ChcDomainCard } from './chc-domain-card';
+import { FullStrengthProfile } from './full-strength-profile';
 import { useTheme } from '@/hooks/use-theme';
 import { GrowthDecoration } from '../ui/growth-decoration';
 
@@ -61,14 +59,7 @@ export function MainDashboardView() {
               <CognitiveEfficiency />
           </TabsContent>
           <TabsContent value="profile">
-            <div className="space-y-4">
-              <ChcProfileOverview />
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {chcDomains.map((domain) => (
-                  <ChcDomainCard key={domain.key} domain={domain} />
-                ))}
-              </div>
-            </div>
+            <FullStrengthProfile />
           </TabsContent>
         </CardContent>
       </Tabs>
