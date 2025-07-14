@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import {
   BookMarked,
 } from 'lucide-react';
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, getFrequencyForDate, type JournalCategory } from '@/hooks/use-journal';
 import { JournalEditor } from '@/components/journal/journal-editor';
@@ -22,42 +22,42 @@ import { GrowthDecoration } from '../ui/growth-decoration';
 
 
 export function HabitJournal() {
-  const { hasHydrated, findOrCreateEntry, setSelectedEntry, selectedEntry, createNewEntry } = useJournal();
+  const { hasHydrated, findOrCreateEntry, setSelectedEntry, selectedEntry, createNewEntry, entries, addEntry, updateEntry, deleteEntry } = useJournal();
   const { organicGrowth } = useTheme();
-  
-  // Memoize the initial entry to avoid re-running findOrCreateEntry on every render
-  const initialEntry = useMemo(() => {
-    if (hasHydrated) {
-      const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-      return findOrCreateEntry({ date: today, category: 'Growth & Challenge Reflection', frequency: getFrequencyForDate(new Date(today))});
-    }
-    return null;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasHydrated]);
+  const [activeEntry, setActiveEntry] = useState<JournalEntry | null>(null);
 
-  // Set the selected entry only once when the component is loaded or when the initial entry is ready
+  // Effect to set the initial or selected entry
   useEffect(() => {
-    if (initialEntry && !selectedEntry) {
-      setSelectedEntry(initialEntry);
+    if (hasHydrated) {
+      if (selectedEntry) {
+        setActiveEntry(selectedEntry);
+      } else {
+        // If no entry is selected, find or create one for today
+        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        const initialEntry = findOrCreateEntry({
+          date: today,
+          category: 'Growth & Challenge Reflection',
+          frequency: getFrequencyForDate(new Date(today))
+        });
+        setActiveEntry(initialEntry);
+        // Optionally set this as the globally selected one if it's the first load
+        if (!selectedEntry) {
+           setSelectedEntry(initialEntry);
+        }
+      }
     }
-  }, [initialEntry, selectedEntry, setSelectedEntry]);
-  
-  // Memoize active entry for editor to prevent re-renders
-  const activeEntry = useMemo(() => {
-    if (selectedEntry) return selectedEntry;
-    if (hasHydrated) return createNewEntry();
-    return null;
-  }, [selectedEntry, hasHydrated, createNewEntry]);
+  }, [hasHydrated, selectedEntry, findOrCreateEntry, setSelectedEntry]);
   
   const { toast } = useToast();
-  const { addEntry, updateEntry, deleteEntry, entries } = useJournal();
 
   const handleSelectFromList = useCallback((entry: JournalEntry) => {
     setSelectedEntry(entry);
   }, [setSelectedEntry]);
   
   const handleNewEntry = useCallback(() => {
-    setSelectedEntry(createNewEntry());
+    const newEntry = createNewEntry();
+    setSelectedEntry(newEntry);
+    setActiveEntry(newEntry);
   }, [setSelectedEntry, createNewEntry]);
 
   const handleCategoryChange = useCallback((newCategory: JournalCategory) => {
@@ -103,6 +103,7 @@ export function HabitJournal() {
     
     if (activeEntry?.id === entryToSave.id || isNew) {
         setSelectedEntry(savedEntry);
+        setActiveEntry(savedEntry);
     }
     return { success: true, entry: savedEntry };
   }, [addEntry, updateEntry, setSelectedEntry, activeEntry]);
@@ -161,6 +162,7 @@ export function HabitJournal() {
           <div className="lg:col-span-2 bg-background rounded-lg border">
             {activeEntry ? (
               <JournalEditor 
+                key={activeEntry.id} // Add key to force re-mount on entry change
                 entry={activeEntry} 
                 onSave={handleSave} 
                 onDelete={handleDelete}

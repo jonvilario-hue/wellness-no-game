@@ -195,8 +195,8 @@ tags: ${entryToExport.tags}
       if (entryToExport.field2) markdown += `### ${prompts[1]}\n${entryToExport.field2}\n\n`;
       if (entryToExport.field3) markdown += `### ${prompts[2]}\n${entryToExport.field3}\n\n`;
 
-      if (entryToExport.affirmations && entryToExport.affirmations.length > 0) {
-          markdown += `### Affirmations\n${entryToExport.affirmations.map(a => `> ${a}`).join('\n')}\n\n`;
+      if (entryToExport.affirmations && entryToExport.affirmations.length > 0 && entryToExport.affirmations.some(a => a)) {
+          markdown += `### Affirmations\n${entryToExport.affirmations.filter(a => a).map(a => `> ${a}`).join('\n')}\n\n`;
       }
       
       const completedHabitsForEntry = habits
@@ -369,7 +369,7 @@ tags: ${entryToExport.tags}
                       <PlusCircle className="mr-2 h-4 w-4"/>
                       Add Affirmation
                   </Button>
-                  {editorState.affirmations.length > 0 && (
+                  {editorState.affirmations.length > 1 && (
                       <Button variant="ghost" size="sm" onClick={removeLastAffirmation}>
                           <MinusCircle className="mr-2 h-4 w-4"/>
                           Remove
