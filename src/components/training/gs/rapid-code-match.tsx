@@ -39,7 +39,8 @@ export function RapidCodeMatch() {
   const generateKeyMap = useCallback(() => {
     const shuffledSymbols = [...symbols].sort(() => Math.random() - 0.5);
     const map: { [key: string]: number } = {};
-    shuffledSymbols.slice(0, 7).forEach((symbol, index) => {
+    // Use a smaller key map that changes, increasing cognitive load
+    shuffledSymbols.slice(0, 5).forEach((symbol, index) => {
       map[symbol] = digits[index];
     });
     return map;
@@ -74,27 +75,33 @@ export function RapidCodeMatch() {
 
   const handleAnswer = (digit: number) => {
     if (gameState !== 'running') return;
-
+    
+    let newScore = score;
     if (keyMap[currentSymbol] === digit) {
-      setScore(score + 1);
-      if (score > 0 && score % 5 === 0) {
-        setInlineFeedback({ message: getSuccessFeedback('Gs'), type: 'success' });
+      newScore++;
+      setScore(newScore);
+      // Change the keymap every 5 correct answers to force re-learning
+      if (newScore > 0 && newScore % 5 === 0) {
+        setKeyMap(generateKeyMap());
+        setInlineFeedback({ message: "Key changed!", type: 'success' });
         setTimeout(() => setInlineFeedback({ message: '', type: '' }), 1500);
       }
     } else {
-      setScore(Math.max(0, score - 1));
+      newScore = Math.max(0, score - 1);
+      setScore(newScore);
       setInlineFeedback({ message: getFailureFeedback('Gs'), type: 'failure' });
       setTimeout(() => setInlineFeedback({ message: '', type: '' }), 1500);
     }
+
     const symbolsInKey = Object.keys(keyMap);
     setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
   };
 
   return (
-    <Card className="w-full max-w-4xl text-center">
+    <Card className="w-full max-w-2xl text-center">
       <CardHeader>
         <CardTitle>(Gs) Rapid Code Match</CardTitle>
-        <CardDescription>Match the symbol to the correct digit using the key as fast as you can.</CardDescription>
+        <CardDescription>Match the symbol to the correct digit using the key as fast as you can. The key changes periodically!</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         {gameState === 'idle' && (
@@ -134,7 +141,7 @@ export function RapidCodeMatch() {
               <NoiseOverlay />
             </div>
             
-            <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
+            <div className="grid grid-cols-5 md:grid-cols-5 gap-2 justify-center max-w-md mx-auto">
               {keyEntries.map(([_, digit]) => (
                 <Button key={digit} onClick={() => handleAnswer(digit)} variant="secondary" size="lg" className="text-2xl h-16">
                   {digit}
