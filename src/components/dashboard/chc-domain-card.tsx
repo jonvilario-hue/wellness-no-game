@@ -103,7 +103,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
            </TooltipProvider>
         )}
       </CardHeader>
-      <CardContent className="space-y-2 h-24">
+      <CardContent className="space-y-4 py-4 flex-grow">
         {!isClient || !data ? (
           <div className="space-y-3 pt-2">
             <Skeleton className="h-4 w-full" />
@@ -148,7 +148,7 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
           </TooltipProvider>
         )}
       </CardContent>
-      <CardFooter className="flex items-center gap-2">
+      <CardFooter className="flex items-center gap-2 pt-0">
         <Button asChild className="w-full">
           <Link href={`/training/${domain.key}`}>{domain.gameTitle}</Link>
         </Button>
