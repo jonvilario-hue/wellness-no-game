@@ -17,9 +17,10 @@ import type { CHCDomain } from '@/types';
 import { useState, useEffect, memo } from 'react';
 import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Sigma } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import { useTrainingFocus } from '@/hooks/use-training-focus';
+import { useTrainingFocus, type TrainingFocus } from '@/hooks/use-training-focus';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
+import { usePerformanceStore } from '@/hooks/use-performance-store';
 
 interface ChcDomainCardProps {
   domain: {
@@ -34,51 +35,35 @@ interface ChcDomainCardProps {
 
 const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   const Icon = domainIcons[domain.key];
-  const [data, setData] = useState<{ score: number; trend: number } | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
+  const { performance } = usePerformanceStore();
 
+  const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
-
-    const keySeed = domain.key.charCodeAt(0) + domain.key.charCodeAt(1);
-    const pseudoRandom = (seed: number) => {
-        let x = Math.sin(seed) * 10000;
-        return x - Math.floor(x);
-    };
-
-    const generatedScore = 50 + ((keySeed * 13) % 40);
-    const randomFactor1 = pseudoRandom(keySeed + 1) * 5;
-    const randomFactor2 = pseudoRandom(keySeed + 2) * 5;
-    
-    const startScore = generatedScore - 10 + randomFactor1;
-    const endScore = generatedScore + randomFactor2;
-    
-    let trend = 0;
-    if(startScore > 0) {
-        trend = ((endScore - startScore) / startScore) * 100;
-    }
-    setData({ score: Math.round(generatedScore), trend });
-  }, [domain.key]);
-
-
-  const getTrendInfo = () => {
-    if (!data) return { Icon: Minus, color: 'text-primary', text: 'Calculating...' };
-    if (data.trend > 2) {
+  }, []);
+  
+  const getTrendInfo = (trend: number) => {
+    if (trend > 2) {
       return { Icon: ArrowUp, color: 'text-green-500', text: 'Trending upward' };
     }
-    if (data.trend < -2) {
+    if (trend < -2) {
       return { Icon: ArrowDown, color: 'text-muted-foreground', text: 'Natural fluctuation' };
     }
     return { Icon: Minus, color: 'text-primary', text: 'Holding steady' };
   };
 
-  const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo();
-  
-  const isLoaded = isGlobalFocusLoaded;
-  
+  const isLoaded = isGlobalFocusLoaded && isClient;
   const isMathMode = isLoaded && globalFocus === 'math' && domain.supportsMath;
   const ModeIcon = isMathMode ? Sigma : BrainCircuit;
+
+  const modeToDisplay: TrainingFocus = (isMathMode || !domain.supportsMath) ? 'math' : 'neutral';
+  
+  // Get the performance data for the currently displayed mode
+  const performanceData = isLoaded ? performance[domain.key][modeToDisplay] : null;
+  const score = performanceData?.score ?? 0;
+  const trend = performanceData?.trend ?? 0;
+  const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo(trend);
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
@@ -104,7 +89,7 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
         )}
       </CardHeader>
       <CardContent className="space-y-4 py-4 flex-grow">
-        {!isClient || !data ? (
+        {!isLoaded || !performanceData ? (
           <div className="space-y-3 pt-2">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-2/3" />
@@ -123,11 +108,12 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Adaptive skill rating (50 = average, 100 = high mastery)</p>
+                      <p className="font-bold capitalize">{modeToDisplay} Mode</p>
                     </TooltipContent>
                   </Tooltip>
-                <span className="text-sm font-bold text-primary">{Math.round(data.score)}</span>
+                <span className="text-sm font-bold text-primary">{Math.round(score)}</span>
               </div>
-              <Progress value={data.score} />
+              <Progress value={score} />
             </div>
             <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <Tooltip delayDuration={0}>
@@ -138,11 +124,12 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>{trendText}</p>
+                     <p className="font-bold capitalize">{modeToDisplay} Mode</p>
                   </TooltipContent>
                 </Tooltip>
                 <div className={`flex items-center font-bold ${trendColor}`}>
                     <TrendIcon className="w-4 h-4 mr-1"/>
-                    {data.trend.toFixed(1)}%
+                    {trend.toFixed(1)}%
                 </div>
             </div>
           </TooltipProvider>
