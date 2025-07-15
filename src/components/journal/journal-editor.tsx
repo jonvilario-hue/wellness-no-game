@@ -87,9 +87,18 @@ const JournalEditorComponent = ({
       setSaveStatus('idle');
       return { success: true, entry: updatedEntry };
     }
+
+    const entryToSave = { ...updatedEntry };
+    if (!dashboardSettings.moodTracker) {
+      entryToSave.mood = null;
+      entryToSave.moodNote = '';
+    }
+    if (!dashboardSettings.effortTracker) {
+      entryToSave.effort = 75; // Reset to default if tracker is off
+    }
     
     setSaveStatus('saving');
-    const result = onSave(updatedEntry, options);
+    const result = onSave(entryToSave, options);
     
     if (result.success && result.entry) {
         setEditorState(prev => ({...prev, ...result.entry}));
@@ -98,7 +107,7 @@ const JournalEditorComponent = ({
         setSaveStatus('idle');
     }
     return result;
-  }, [entry, onSave]);
+  }, [entry, onSave, dashboardSettings]);
 
   useEffect(() => {
     const hasChanged = JSON.stringify(entry) !== JSON.stringify(editorState);
