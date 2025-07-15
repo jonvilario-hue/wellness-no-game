@@ -17,8 +17,8 @@ const defaultSettings = {
   habitJournal: true,
   cognitiveCalendar: true,
   timeTools: true,
-  moodTracker: true,
-  effortTracker: true,
+  moodTracker: false,
+  effortTracker: false,
 };
 
 export type DashboardSettings = typeof defaultSettings;
