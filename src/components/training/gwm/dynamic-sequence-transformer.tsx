@@ -75,7 +75,8 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
   const startLevel = useCallback((newLevel: number) => {
     const seqLength = getSequenceLength(newLevel);
     const newSequence = currentMode === 'math' ? generateMathSequence(seqLength) : generateNeutralSequence(seqLength);
-    const newTask = currentMode === 'math' ? mathTasks[Math.floor(Math.random() * mathTasks.length)] : neutralTasks[Math.floor(Math.random() * neutralTasks.length)];
+    const newTasks = currentMode === 'math' ? mathTasks : neutralTasks;
+    const newTask = newTasks[Math.floor(Math.random() * newTasks.length)];
     
     setSequence(newSequence);
     setTask(newTask);

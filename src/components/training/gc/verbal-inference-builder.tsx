@@ -170,8 +170,9 @@ export function VerbalInferenceBuilder() {
   const handleAnswer = (option: string) => {
     if (feedback || !currentPuzzle) return;
 
+    const isCorrect = option === currentPuzzle.answer;
     setSelectedAnswer(option);
-    if (option === currentPuzzle.answer) {
+    if (isCorrect) {
       setScore(score + 1);
       setFeedback('correct');
       setInlineFeedback({ message: getSuccessFeedback('Gc'), type: 'success' });
@@ -180,19 +181,21 @@ export function VerbalInferenceBuilder() {
       setInlineFeedback({ message: getFailureFeedback('Gc'), type: 'failure' });
     }
 
-    setTimeout(() => {
-      if (currentPuzzleIndex < shuffledPuzzles.length - 1) {
-        setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-        setFeedback('');
-        setInlineFeedback({ message: '', type: '' });
-        setSelectedAnswer(null);
-      } else {
-        setGameState('finished');
+    const isLastPuzzle = currentPuzzleIndex === shuffledPuzzles.length - 1;
+
+    if (isLastPuzzle) {
         const time = (Date.now() - startTime) / 1000;
-        const finalScore = option === currentPuzzle.answer ? score + 1 : score;
+        const finalScore = isCorrect ? score + 1 : score;
         logGameResult('Gc', currentMode, { score: finalScore, time });
-      }
-    }, 2500);
+        setGameState('finished');
+    } else {
+        setTimeout(() => {
+            setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+            setFeedback('');
+            setInlineFeedback({ message: '', type: '' });
+            setSelectedAnswer(null);
+        }, 2500);
+    }
   };
   
   const getButtonClass = (option: string) => {
@@ -262,7 +265,7 @@ export function VerbalInferenceBuilder() {
                 </p>
               )}
             </div>
-              {feedback && (
+              {feedback && !gameState.includes('finished') && (
                 <div className="animate-in fade-in">
                     <p className="text-sm text-muted-foreground">{currentPuzzle.explanation}</p>
                 </div>
@@ -273,6 +276,10 @@ export function VerbalInferenceBuilder() {
           <div className="text-center space-y-4 animate-in fade-in">
             <CardTitle>Puzzle Set Complete!</CardTitle>
             <p className="text-xl">Your final score is: <span className="font-bold text-primary">{score} out of {shuffledPuzzles.length}</span></p>
+            <div className="p-3 bg-muted/50 rounded-lg">
+                <p className="font-semibold">Last Question Explanation:</p>
+                <p className="text-sm text-muted-foreground">{currentPuzzle.explanation}</p>
+            </div>
             <Button onClick={restartGame} size="lg">Play Again</Button>
           </div>
         )}
