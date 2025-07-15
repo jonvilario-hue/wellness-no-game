@@ -13,6 +13,7 @@ import { domainIcons } from '../icons';
 import { chcDomains } from '@/types';
 import type { CHCDomain } from '@/types';
 import { Skeleton } from '../ui/skeleton';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 // Simulate which domains were trained on which days
 const getMockTrainingData = (date: Date): CHCDomain[] => {
@@ -32,6 +33,7 @@ export function CalendarView() {
   const { entries, hasHydrated } = useHydratedJournalStore();
   const [date, setDate] = React.useState<Date | undefined>(undefined);
   const [isClient, setIsClient] = React.useState(false);
+  const { settings: dashboardSettings } = useDashboardSettings();
 
   React.useEffect(() => {
     // This effect runs only on the client, after the initial render.
@@ -100,7 +102,7 @@ export function CalendarView() {
                     <span>{date.getDate()}</span>
                     {(hasJournalEntry || trainedDomains.length > 0 || moodEmoji) && (
                       <div className="absolute bottom-0.5 right-0.5 flex items-center gap-0.5">
-                        {moodEmoji && <span className="text-xs">{moodEmoji}</span>}
+                        {dashboardSettings.moodTracker && moodEmoji && <span className="text-xs">{moodEmoji}</span>}
                         {hasJournalEntry && !moodEmoji && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
                       </div>
                     )}
@@ -177,7 +179,7 @@ export function CalendarView() {
                                                 </p>
                                             )}
                                         </div>
-                                         {hasMood && <span className="text-xl">{moodEmojis[entry.mood!]}</span>}
+                                         {dashboardSettings.moodTracker && hasMood && <span className="text-xl">{moodEmojis[entry.mood!]}</span>}
                                     </div>
                                 </div>
                             )

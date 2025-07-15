@@ -37,6 +37,7 @@ import { journalConfig, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { EditableLabel } from '../time/editable-label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 const moodOptions = [
   { emoji: '😔', label: 'Very Low', value: 0 },
@@ -63,6 +64,7 @@ const JournalEditorComponent = ({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
   const { habits, completedHabits, toggleHabitForDay } = useJournal();
+  const { settings: dashboardSettings } = useDashboardSettings();
   
   const todaysHabits = completedHabits[editorState.date] || [];
 
@@ -395,57 +397,61 @@ tags: ${entryToExport.tags}
           </div>
           
           <Separator/>
-
-          <div>
-            <Label>Mood</Label>
-            <TooltipProvider>
-            <div className="flex justify-around items-center p-2 rounded-lg bg-muted/50 mt-1">
-              {moodOptions.map(option => (
-                <Tooltip key={option.value} delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={() => handleFieldChange('mood', editorState.mood === option.value ? null : option.value)}
-                      className={cn(
-                        "text-3xl transition-transform duration-200 ease-in-out hover:scale-125",
-                        editorState.mood === option.value ? "scale-125" : "scale-100 opacity-50"
-                      )}
-                    >
-                      {option.emoji}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{option.label}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
-            </div>
-            </TooltipProvider>
-             <Textarea
-                placeholder="Optional: What influenced your mood today?"
-                value={editorState.moodNote || ''}
-                onChange={e => handleFieldChange('moodNote', e.target.value)}
-                className="min-h-[60px] mt-2"
-              />
-          </div>
           
-          <div>
-            <Label
-              htmlFor="effort-slider"
-              className="flex justify-between"
-            >
-              <span>Effort / Focus</span>
-              <span className="text-muted-foreground text-sm">{getEffortLabel(editorState.effort)}</span>
-            </Label>
-            <Slider
-              id="effort-slider"
-              min={0}
-              max={10}
-              step={1}
-              value={[editorState.effort]}
-              onValueChange={value => handleFieldChange('effort', value[0])}
-              className="mt-2"
-            />
-          </div>
+          {dashboardSettings.moodTracker && (
+            <>
+            <div>
+              <Label>Mood</Label>
+              <TooltipProvider>
+              <div className="flex justify-around items-center p-2 rounded-lg bg-muted/50 mt-1">
+                {moodOptions.map(option => (
+                  <Tooltip key={option.value} delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => handleFieldChange('mood', editorState.mood === option.value ? null : option.value)}
+                        className={cn(
+                          "text-3xl transition-transform duration-200 ease-in-out hover:scale-125",
+                          editorState.mood === option.value ? "scale-125" : "scale-100 opacity-50"
+                        )}
+                      >
+                        {option.emoji}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{option.label}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
+              </TooltipProvider>
+              <Textarea
+                  placeholder="Optional: What influenced your mood today?"
+                  value={editorState.moodNote || ''}
+                  onChange={e => handleFieldChange('moodNote', e.target.value)}
+                  className="min-h-[60px] mt-2"
+                />
+            </div>
+            
+            <div>
+              <Label
+                htmlFor="effort-slider"
+                className="flex justify-between"
+              >
+                <span>Effort / Focus</span>
+                <span className="text-muted-foreground text-sm">{getEffortLabel(editorState.effort)}</span>
+              </Label>
+              <Slider
+                id="effort-slider"
+                min={0}
+                max={10}
+                step={1}
+                value={[editorState.effort]}
+                onValueChange={value => handleFieldChange('effort', value[0])}
+                className="mt-2"
+              />
+            </div>
+            </>
+          )}
           
           <div>
               <Label htmlFor="tags-input">Tags (comma-separated)</Label>
