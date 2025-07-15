@@ -17,6 +17,7 @@ const defaultSettings = {
   habitJournal: true,
   cognitiveCalendar: true,
   timeTools: true,
+  moodTracker: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;
@@ -83,6 +84,7 @@ const componentLabels: Record<DashboardComponent, string> = {
   habitJournal: 'Habit Journal',
   cognitiveCalendar: 'Training Log',
   timeTools: 'Time & Sleep Tools',
+  moodTracker: 'Mood Tracker',
 };
 
 export { componentLabels };

@@ -20,6 +20,7 @@ import { useJournal } from '@/hooks/use-journal';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
 import { TimeToolsCard } from '@/components/dashboard/time-tools-card';
+import { MoodTrackerCard } from '@/components/dashboard/mood-tracker-card';
 
 function DashboardContent() {
   const { settings } = useDashboardSettings();
@@ -52,6 +53,7 @@ function DashboardContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
              {settings.habitTracker && <HabitTracker />}
+             {settings.moodTracker && <MoodTrackerCard />}
              {settings.milestoneBadges && <MilestoneBadges />}
              {settings.timeTools && <TimeToolsCard />}
           </div>

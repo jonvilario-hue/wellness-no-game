@@ -25,6 +25,8 @@ const getMockTrainingData = (date: Date): CHCDomain[] => {
     return [];
 };
 
+const moodEmojis = ['😔', '😐', '🙂', '😊', '😄'];
+
 
 export function CalendarView() {
   const { entries, hasHydrated } = useHydratedJournalStore();
@@ -85,21 +87,31 @@ export function CalendarView() {
             className="rounded-md"
             components={{
               DayContent: ({ date, ...props }) => {
-                const hasJournalEntry = journalEntriesByDate.has(date.toDateString());
+                const dateString = date.toDateString();
+                const entriesForDay = journalEntriesByDate.get(dateString);
+                const hasJournalEntry = entriesForDay && entriesForDay.some(e => e.field1 || e.field2 || e.field3);
+                const moodEntry = entriesForDay?.find(e => e.mood !== null);
+                const moodEmoji = moodEntry && moodEntry.mood !== null ? moodEmojis[moodEntry.mood] : null;
+
                 const trainedDomains = getMockTrainingData(date);
                 
                 return (
                   <div className="relative h-full w-full flex items-center justify-center">
                     <span>{date.getDate()}</span>
-                    {(hasJournalEntry || trainedDomains.length > 0) && (
-                      <div className="absolute bottom-1 flex items-center gap-0.5">
+                    {(hasJournalEntry || trainedDomains.length > 0 || moodEmoji) && (
+                      <div className="absolute bottom-1 right-1 flex items-center gap-0.5">
+                        {moodEmoji && <span className="text-xs">{moodEmoji}</span>}
                         {hasJournalEntry && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
-                        {trainedDomains.map(domain => {
-                            const domainInfo = chcDomains.find(d => d.key === domain);
-                            const color = `var(--chart-${(domainInfo?.key.charCodeAt(0) ?? 0) % 5 + 1})`;
-                            return <div key={domain} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />;
-                        })}
                       </div>
+                    )}
+                    {trainedDomains.length > 0 && !moodEmoji && (
+                         <div className="absolute bottom-1 left-1 flex items-center gap-0.5">
+                            {trainedDomains.map(domain => {
+                                const domainInfo = chcDomains.find(d => d.key === domain);
+                                const color = `var(--chart-${(domainInfo?.key.charCodeAt(0) ?? 0) % 5 + 1})`;
+                                return <div key={domain} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />;
+                            })}
+                        </div>
                     )}
                   </div>
                 );
@@ -143,12 +155,30 @@ export function CalendarView() {
                         <div className="space-y-3">
                         {journalEntriesForSelectedDate.map(entry => {
                             const config = journalConfig[entry.category];
+                            const hasContent = entry.field1 || entry.field2 || entry.field3;
+                            const hasMood = entry.mood !== null;
+
+                             if (!hasContent && !hasMood) {
+                                return null;
+                            }
+
                             return (
                                 <div key={entry.id} className="p-3 bg-muted/50 rounded-lg">
-                                    <p className="font-semibold text-sm mb-1">{config?.title || entry.category}</p>
-                                    <p className="text-xs text-muted-foreground italic truncate">
-                                    {entry.field1 || entry.field2 || entry.field3}
-                                    </p>
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <p className="font-semibold text-sm mb-1">{hasContent ? (config?.title || entry.category) : 'Mood Log'}</p>
+                                            {hasContent ? (
+                                                <p className="text-xs text-muted-foreground italic truncate">
+                                                    {entry.field1 || entry.field2 || entry.field3}
+                                                </p>
+                                            ) : (
+                                                <p className="text-xs text-muted-foreground italic truncate">
+                                                    {entry.moodNote}
+                                                </p>
+                                            )}
+                                        </div>
+                                         {hasMood && <span className="text-xl">{moodEmojis[entry.mood!]}</span>}
+                                    </div>
                                 </div>
                             )
                         })}

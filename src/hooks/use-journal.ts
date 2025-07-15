@@ -33,6 +33,7 @@ export type JournalEntry = {
     tags: string;
     effort: number; // 0-10 scale
     mood: MoodState;
+    moodNote?: string;
 };
 
 export type TrashedJournalEntry = JournalEntry & {
@@ -76,6 +77,7 @@ const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits, habit
                 tags: '',
                 effort: 7,
                 mood: null,
+                moodNote: '',
             },
         ],
         habits: {
@@ -126,6 +128,7 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
     tags: '',
     effort: 7,
     mood: null,
+    moodNote: '',
 });
 
 export const useJournal = create<JournalState>()(
@@ -152,7 +155,7 @@ export const useJournal = create<JournalState>()(
             // If an entry exists but is completely empty (placeholder), treat it as new.
             if (existingEntry) {
                  const hasContent = existingEntry.field1 || existingEntry.field2 || existingEntry.field3 || existingEntry.affirmations.some(a => a) || existingEntry.label !== (journalConfig[existingEntry.category]?.title || 'New Entry');
-                 if (hasContent) {
+                 if (hasContent || existingEntry.mood !== null) {
                     return existingEntry;
                  }
             }
@@ -171,6 +174,7 @@ export const useJournal = create<JournalState>()(
                 tags: '',
                 effort: 7,
                 mood: null,
+                moodNote: '',
             };
         },
 

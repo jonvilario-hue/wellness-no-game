@@ -74,7 +74,7 @@ export const JournalEditor = memo(({
   
   const handleSave = useCallback((updatedEntry: JournalEntry, options: { isFinal?: boolean } = { isFinal: false }) => {
     const isNew = updatedEntry.id.startsWith('new-');
-    const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a);
+    const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a) || updatedEntry.moodNote;
     
     if(isNew && !hasContent && !options.isFinal) {
       return { success: false, entry: null };
@@ -139,7 +139,7 @@ export const JournalEditor = memo(({
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
     if (editorState.category !== newCategory) {
-        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
+        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a) || editorState.moodNote;
         if (!isNewEntry || hasContent) {
           handleSave(editorState, { isFinal: true });
         }
@@ -149,7 +149,7 @@ export const JournalEditor = memo(({
   
   const handleFrequencyButtonClick = (newFrequency: ReflectionFrequency) => {
     if (editorState.frequency !== newFrequency) {
-        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a);
+        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a) || editorState.moodNote;
         if (!isNewEntry || hasContent) {
           handleSave(editorState, { isFinal: true });
         }
@@ -421,6 +421,12 @@ tags: ${entryToExport.tags}
               ))}
             </div>
             </TooltipProvider>
+             <Textarea
+                placeholder="Optional: What influenced your mood today?"
+                value={editorState.moodNote || ''}
+                onChange={e => handleFieldChange('moodNote', e.target.value)}
+                className="min-h-[60px] mt-2"
+              />
           </div>
           
           <div>
