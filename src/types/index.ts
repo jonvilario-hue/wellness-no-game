@@ -1,4 +1,3 @@
-
 export type CHCDomain = 'Gf' | 'Gc' | 'Gwm' | 'Gs' | 'Gv' | 'Ga' | 'Glr' | 'EF';
 
 export const chcDomains: { 
