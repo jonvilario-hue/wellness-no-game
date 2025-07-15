@@ -200,6 +200,12 @@ export function HabitTracker() {
         removeHabit(id);
     };
     
+    const habitsByCategory = habitCategories.map(categoryKey => {
+      const category = journalConfig[categoryKey];
+      const categoryHabits = habits.filter(h => h.category === category.title);
+      return { category, categoryHabits };
+    }).filter(group => group.categoryHabits.length > 0);
+
     if (!hasHydrated) {
       return (
         <Card>
@@ -239,13 +245,8 @@ export function HabitTracker() {
             </div>
             <ScrollArea className="pr-3 -mr-3 flex-grow">
                 <Accordion type="multiple" className="w-full" defaultValue={[habitCategories[0]]}>
-                {habitCategories.map(categoryKey => {
-                    const category = journalConfig[categoryKey];
-                    const categoryHabits = habits.filter(h => h.category === category.title);
+                {habitsByCategory.map(({ category, categoryHabits }) => {
                     const completedInCategory = categoryHabits.filter(h => todaysHabits.includes(h.id)).length;
-
-                    if (!categoryHabits.length) return null;
-
                     return (
                     <AccordionItem value={category.title} key={category.title}>
                         <AccordionTrigger>

@@ -101,12 +101,15 @@ export function HabitJournal() {
       updateEntry(entryToSave.id, entryToSave);
     }
     
-    if (activeEntry?.id === entryToSave.id || isNew) {
+    // Update the active entry in the parent component as well
+    // Use the latest selectedEntry from the store to make this function more stable
+    const currentSelectedEntry = useJournal.getState().selectedEntry;
+    if (currentSelectedEntry?.id === entryToSave.id || isNew) {
         setSelectedEntry(savedEntry);
         setActiveEntry(savedEntry);
     }
     return { success: true, entry: savedEntry };
-  }, [addEntry, updateEntry, setSelectedEntry, activeEntry]);
+  }, [addEntry, updateEntry, setSelectedEntry]);
 
   const handleDelete = useCallback((id: string) => {
     const entryData = entries.find(e => e.id === id);
@@ -134,7 +137,7 @@ export function HabitJournal() {
        const newEntry = findOrCreateEntry({date: today, category: 'Growth & Challenge Reflection', frequency: getFrequencyForDate(new Date(today))});
        setSelectedEntry(newEntry);
     }
-  }, [deleteEntry, toast, activeEntry, entries, findOrCreateEntry, setSelectedEntry]);
+  }, [deleteEntry, toast, activeEntry?.id, entries, findOrCreateEntry, setSelectedEntry]);
 
   
   return (

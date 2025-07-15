@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -158,7 +159,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
   }, [sequence, task, currentMode, mathRule, mathStream, mathStreamIndex]);
 
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (gameState !== 'answering') return;
     
@@ -210,7 +211,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
         startLevel(level);
       }, 3000);
     }
-  };
+  }, [gameState, userAnswer, correctAnswer, startTime, logGameResult, currentMode, level, onComplete, task, mathStreamIndex, mathStream.length, startLevel]);
 
 
   return (
