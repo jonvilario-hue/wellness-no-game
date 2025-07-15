@@ -27,21 +27,19 @@ export function DashboardLayoutSettings() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {Object.keys(settings).map((key) => {
-                  const componentKey = key as DashboardComponent;
-                  return (
+                {(Object.keys(settings) as DashboardComponent[]).map((key) => (
                     <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                       <Label htmlFor={`switch-${key}`} className="font-medium">
-                        {componentLabels[componentKey]}
+                        {componentLabels[key] || key}
                       </Label>
                       <Switch
                         id={`switch-${key}`}
-                        checked={settings[componentKey]}
-                        onCheckedChange={() => toggleSetting(componentKey)}
+                        checked={settings[key]}
+                        onCheckedChange={() => toggleSetting(key)}
                       />
                     </div>
-                  );
-                })}
+                  )
+                )}
               </div>
             </CardContent>
         </Card>
