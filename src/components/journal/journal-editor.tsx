@@ -400,7 +400,6 @@ tags: ${entryToExport.tags}
           <Separator/>
           
           {dashboardSettings.moodTracker && (
-            <>
             <div>
               <Label>Mood</Label>
               <TooltipProvider>
@@ -432,7 +431,9 @@ tags: ${entryToExport.tags}
                   className="min-h-[60px] mt-2"
                 />
             </div>
-            
+          )}
+
+          {dashboardSettings.effortTracker && (
             <div>
               <Label
                 htmlFor="effort-slider"
@@ -451,7 +452,6 @@ tags: ${entryToExport.tags}
                 className="mt-2"
               />
             </div>
-            </>
           )}
           
           <div>
