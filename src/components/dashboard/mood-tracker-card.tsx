@@ -135,7 +135,7 @@ export function MoodTrackerCard() {
                             <Tooltip key={option.value} delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <button
-                                        onClick={() => setMood(option.value)}
+                                        onClick={() => setMood(mood === option.value ? null : option.value)}
                                         className={cn(
                                             "text-3xl transition-transform duration-200 ease-in-out hover:scale-125",
                                             mood === option.value ? "scale-125" : "scale-100 opacity-50"
