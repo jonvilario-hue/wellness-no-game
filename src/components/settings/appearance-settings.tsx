@@ -41,25 +41,25 @@ export function AppearanceSettings() {
                                     isActive ? 'border-primary shadow-lg' : 'border-muted hover:border-muted-foreground/50'
                                 )}
                                 style={{ 
-                                    backgroundColor: theme.colorScheme.background,
-                                    borderColor: isActive ? theme.colorScheme.accent : undefined
+                                    backgroundColor: `hsl(${theme.colorScheme.panels})`,
+                                    borderColor: isActive ? `hsl(${theme.colorScheme.accent})` : undefined
                                 }}
                             >
                                 {isActive && (
-                                    <div className="absolute top-2 right-2 p-1 rounded-full text-primary-foreground" style={{ backgroundColor: theme.colorScheme.accent }}>
+                                    <div className="absolute top-2 right-2 p-1 rounded-full text-primary-foreground" style={{ backgroundColor: `hsl(${theme.colorScheme.accent})` }}>
                                         <Check className="h-4 w-4" />
                                     </div>
                                 )}
                                 <div className="flex flex-col h-full">
                                     <div className="flex items-center gap-2 mb-3">
-                                        <div className="p-2 rounded-md" style={{ backgroundColor: theme.colorScheme.panels, color: theme.colorScheme.accent }}>
+                                        <div className="p-2 rounded-md" style={{ backgroundColor: `hsl(${theme.colorScheme.panels})`, color: `hsl(${theme.colorScheme.accent})` }}>
                                             <Icon className="w-5 h-5"/>
                                         </div>
-                                        <h3 className="font-bold text-lg" style={{ color: theme.colorScheme.textPrimary }}>
+                                        <h3 className="font-bold text-lg" style={{ color: `hsl(${theme.colorScheme.textPrimary})` }}>
                                             {theme.name}
                                         </h3>
                                     </div>
-                                    <p className="text-sm flex-grow" style={{ color: theme.colorScheme.textSecondary }}>
+                                    <p className="text-sm flex-grow" style={{ color: `hsl(${theme.colorScheme.textSecondary})` }}>
                                         {theme.idealFor}
                                     </p>
                                 </div>

@@ -181,5 +181,4 @@ export function HabitJournal() {
     </Card>
   );
 };
-
 HabitJournal.displayName = 'HabitJournal';

@@ -30,16 +30,6 @@ export function GrowthDecoration() {
             opacity: 0;
             animation: fadeIn 8s ease-in forwards infinite;
            }
-          @keyframes draw {
-            to {
-              stroke-dashoffset: 0;
-            }
-          }
-          @keyframes fadeIn {
-              to {
-                  opacity: 0.6;
-              }
-          }
         </style>
       </defs>
       

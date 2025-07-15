@@ -69,33 +69,6 @@ export function ThemeProvider({
     }
   }, []);
 
-  const hexToHslString = useCallback((hex: string): string | null => {
-    if (!hex.startsWith('#')) return null;
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!result) return null;
-
-    let r = parseInt(result[1], 16);
-    let g = parseInt(result[2], 16);
-    let b = parseInt(result[3], 16);
-    r /= 255; g /= 255; b /= 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h = 0, s = 0, l = (max + min) / 2;
-    if (max !== min) {
-      const d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      switch (max) {
-        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-        case g: h = (b - r) / d + 2; break;
-        case b: h = (r - g) / d + 4; break;
-      }
-      h /= 6;
-    }
-    h = Math.round(h * 360);
-    s = Math.round(s * 100);
-    l = Math.round(l * 100);
-    return `${h} ${s}% ${l}%`;
-  }, []);
-
   useEffect(() => {
     const root = window.document.documentElement;
 
@@ -103,13 +76,13 @@ export function ThemeProvider({
     root.classList.add(theme.colorScheme.isDark ? 'dark' : 'light');
 
     const themeColors = {
-        '--theme-bg': hexToHslString(theme.colorScheme.background),
-        '--theme-panel': hexToHslString(theme.colorScheme.panels),
-        '--theme-text-primary': hexToHslString(theme.colorScheme.textPrimary),
-        '--theme-text-secondary': hexToHslString(theme.colorScheme.textSecondary),
-        '--theme-accent': hexToHslString(theme.colorScheme.accent),
-        '--theme-accent-fg': hexToHslString(theme.colorScheme.accentForeground),
-        '--theme-success': hexToHslString(theme.colorScheme.success),
+        '--theme-bg': theme.colorScheme.background,
+        '--theme-panel': theme.colorScheme.panels,
+        '--theme-text-primary': theme.colorScheme.textPrimary,
+        '--theme-text-secondary': theme.colorScheme.textSecondary,
+        '--theme-accent': theme.colorScheme.accent,
+        '--theme-accent-fg': theme.colorScheme.accentForeground,
+        '--theme-success': theme.colorScheme.success,
     };
     
     for (const [key, value] of Object.entries(themeColors)) {
@@ -118,7 +91,7 @@ export function ThemeProvider({
         }
     }
     
-  }, [theme, hexToHslString]);
+  }, [theme]);
 
   const value = useMemo(() => ({
     theme,

@@ -11,13 +11,13 @@ export interface Theme {
   chcDomains: CHCDomain[];
   scientificRationale: string;
   colorScheme: {
-    background: string; // Background of the entire "lab"
-    panels: string; // The color of modular UI panels/cards
-    textPrimary: string; // Primary text color
-    textSecondary: string; // Muted/secondary text color
-    accent: string; // The main interactive color for buttons, highlights
-    accentForeground: string; // Text color on top of the accent color
-    success: string; // Color for positive feedback/success states
+    background: string; // HSL value string 'H S% L%'
+    panels: string;     // HSL value string 'H S% L%'
+    textPrimary: string;// HSL value string 'H S% L%'
+    textSecondary: string; // HSL value string 'H S% L%'
+    accent: string;     // HSL value string 'H S% L%'
+    accentForeground: string; // HSL value string 'H S% L%'
+    success: string;    // HSL value string 'H S% L%'
     isDark: boolean;
   };
   uxFeatures: string[];
@@ -32,13 +32,13 @@ export const themes: Theme[] = [
     chcDomains: ['EF', 'Gs'],
     scientificRationale: 'Uses a low-arousal, dark background with cool, soft highlights (blue/teal) to minimize cognitive interference and reduce visual strain. This follows the principle of attentional filtering, where reducing irrelevant sensory input enhances focus on the primary task.',
     colorScheme: {
-      background: '#1A202C', // Dark Slate Gray
-      panels: '#2D3748',     // Darker Slate
-      textPrimary: '#E2E8F0', // Light Gray
-      textSecondary: '#A0AEC0',// Muted Gray
-      accent: '#4FD1C5',      // Teal
-      accentForeground: '#1A202C',
-      success: '#68D391',     // Soft Green
+      background: '220 20% 12%',
+      panels: '220 15% 18%',
+      textPrimary: '210 20% 90%',
+      textSecondary: '210 15% 65%',
+      accent: '173 58% 50%',
+      accentForeground: '220 20% 12%',
+      success: '142 71% 45%',
       isDark: true,
     },
     uxFeatures: [
@@ -56,13 +56,13 @@ export const themes: Theme[] = [
     chcDomains: ['Gs', 'Gwm'],
     scientificRationale: 'Employs a high-contrast light theme with bright, warm colors (yellow/orange) to increase arousal and alertness, based on color psychology principles that associate these hues with energy and attention. Quick, sharp feedback enhances the feeling of speed.',
     colorScheme: {
-      background: '#F7FAFC', // Very Light Gray
-      panels: '#FFFFFF',     // White
-      textPrimary: '#2D3748', // Dark Slate for text
-      textSecondary: '#718096',// Medium Gray
-      accent: '#F59E0B',      // Amber/Orange
-      accentForeground: '#FFFFFF',
-      success: '#38A169',     // Strong Green
+      background: '20 50% 98%',
+      panels: '0 0% 100%',
+      textPrimary: '20 10% 20%',
+      textSecondary: '20 10% 45%',
+      accent: '38 92% 55%',
+      accentForeground: '0 0% 100%',
+      success: '142 71% 45%',
       isDark: false,
     },
     uxFeatures: [
@@ -80,13 +80,13 @@ export const themes: Theme[] = [
     chcDomains: ['Gf', 'Gc'],
     scientificRationale: 'A low-stimulation, cool-toned environment supports deliberate, analytical thought (System 2 thinking). The blue and silver palette is calming and associated with clarity and intellect, reducing emotional arousal to favor logical processing.',
     colorScheme: {
-      background: '#EBF4FF', // Pale Blue
-      panels: '#FFFFFF',     // White
-      textPrimary: '#2C5282', // Deep Blue
-      textSecondary: '#718096',// Steel Gray
-      accent: '#4299E1',      // Medium Blue
-      accentForeground: '#FFFFFF',
-      success: '#2B6CB0',     // Darker Blue for success
+      background: '220 20% 95%',
+      panels: '0 0% 100%',
+      textPrimary: '220 25% 25%',
+      textSecondary: '220 15% 50%',
+      accent: '215 50% 55%',
+      accentForeground: '0 0% 100%',
+      success: '142 71% 45%',
       isDark: false,
     },
     uxFeatures: [
@@ -104,13 +104,13 @@ export const themes: Theme[] = [
     chcDomains: ['Gwm', 'Glr'],
     scientificRationale: 'Utilizes a palette of purple, lavender, and cyan, colors often linked to creativity and imagination. This encourages associative thinking, which is critical for long-term memory encoding (Glr) and creating rich mental contexts.',
     colorScheme: {
-      background: '#241b3a', // Deep Purple
-      panels: '#3c2c5c',     // Lighter Purple
-      textPrimary: '#E9D8FD', // Lavender
-      textSecondary: '#b39edb',// Muted Lavender
-      accent: '#67E8F9',      // Bright Cyan
-      accentForeground: '#1a202c',
-      success: '#A78BFA',     // Lighter Purple for success
+      background: '250 25% 15%',
+      panels: '250 20% 22%',
+      textPrimary: '250 30% 92%',
+      textSecondary: '250 20% 70%',
+      accent: '190 70% 60%',
+      accentForeground: '250 25% 15%',
+      success: '142 71% 45%',
       isDark: true,
     },
     uxFeatures: [
@@ -128,13 +128,13 @@ export const themes: Theme[] = [
     chcDomains: ['EF', 'Gwm'],
     scientificRationale: 'Based on principles of psychological safety and reinforcement theory. Soft, warm, and positive colors (blush, gold, mint) create a non-threatening environment. The focus is on effort and progress, not just performance, to build self-efficacy.',
     colorScheme: {
-      background: '#FFFBF5', // Soft Cream
-      panels: '#FFFFFF',     // White
-      textPrimary: '#5D4037', // Soft Brown
-      textSecondary: '#A1887F',// Lighter Brown
-      accent: '#FBBF24',      // Warm Gold
-      accentForeground: '#5D4037',
-      success: '#34D399',     // Mint Green
+      background: '30 80% 96%',
+      panels: '0 0% 100%',
+      textPrimary: '25 35% 30%',
+      textSecondary: '25 25% 55%',
+      accent: '45 85% 60%',
+      accentForeground: '25 35% 30%',
+      success: '142 71% 45%',
       isDark: false,
     },
     uxFeatures: [
@@ -152,13 +152,13 @@ export const themes: Theme[] = [
     chcDomains: ['Gf', 'EF'],
     scientificRationale: 'Designed to induce a state of high focus and intensity (flow state). The high-contrast, jet-black background minimizes all distractions, while sharp, high-energy crimson and amber accents signal importance and achievement, tapping into competitive drive.',
     colorScheme: {
-      background: '#000000', // Jet Black
-      panels: '#111111',     // Near Black
-      textPrimary: '#E5E7EB', // Platinum
-      textSecondary: '#9CA3AF',// Muted Gray
-      accent: '#FBBF24',      // Amber
-      accentForeground: '#000000',
-      success: '#3B82F6',     // Royal Blue
+      background: '0 0% 5%',
+      panels: '0 0% 10%',
+      textPrimary: '0 0% 95%',
+      textSecondary: '0 0% 65%',
+      accent: '0 84% 60%',
+      accentForeground: '0 0% 98%',
+      success: '142 71% 45%',
       isDark: true,
     },
     uxFeatures: [
