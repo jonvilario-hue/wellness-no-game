@@ -24,6 +24,19 @@ const moodOptions = [
 
 const moodLabels = ['😔', '😐', '🙂', '😊', '😄'];
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    const moodValue = payload[0].value;
+    return (
+      <div className="p-2 bg-background border rounded-lg shadow-lg">
+        <p className="label">{`Date: ${label}`}</p>
+        <p className="intro">{`Mood: ${moodLabels[moodValue]}`}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
 const MoodTrendChart = ({ data }: { data: { date: string; mood: number }[] }) => {
   const formattedData = data.map(entry => ({
     date: new Date(entry.date).toLocaleDateString('en-us', { month: 'short', day: 'numeric' }),
@@ -44,15 +57,7 @@ const MoodTrendChart = ({ data }: { data: { date: string; mood: number }[] }) =>
         <LineChart data={formattedData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
           <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
           <YAxis domain={[0, 4]} stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => moodLabels[val]} />
-          <RechartsTooltip
-            contentStyle={{
-              backgroundColor: 'hsl(var(--background))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius)',
-            }}
-            labelStyle={{ color: 'hsl(var(--foreground))' }}
-            formatter={(value) => [moodLabels[value as number], 'Mood']}
-          />
+          <RechartsTooltip content={<CustomTooltip />} />
           <Line type="monotone" dataKey="mood" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4, fill: 'hsl(var(--primary))' }} />
         </LineChart>
       </ResponsiveContainer>

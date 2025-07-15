@@ -99,16 +99,16 @@ export function CalendarView() {
                   <div className="relative h-full w-full flex items-center justify-center">
                     <span>{date.getDate()}</span>
                     {(hasJournalEntry || trainedDomains.length > 0 || moodEmoji) && (
-                      <div className="absolute bottom-1 right-1 flex items-center gap-0.5">
+                      <div className="absolute bottom-0.5 right-0.5 flex items-center gap-0.5">
                         {moodEmoji && <span className="text-xs">{moodEmoji}</span>}
-                        {hasJournalEntry && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                        {hasJournalEntry && !moodEmoji && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
                       </div>
                     )}
-                    {trainedDomains.length > 0 && !moodEmoji && (
-                         <div className="absolute bottom-1 left-1 flex items-center gap-0.5">
-                            {trainedDomains.map(domain => {
+                    {trainedDomains.length > 0 && (
+                         <div className="absolute bottom-0.5 left-0.5 flex items-center gap-0.5">
+                            {trainedDomains.slice(0, 2).map(domain => {
                                 const domainInfo = chcDomains.find(d => d.key === domain);
-                                const color = `var(--chart-${(domainInfo?.key.charCodeAt(0) ?? 0) % 5 + 1})`;
+                                const color = `hsl(var(--chart-${(domainInfo?.key.charCodeAt(0) ?? 0) % 5 + 1}))`;
                                 return <div key={domain} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />;
                             })}
                         </div>
