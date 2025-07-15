@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
@@ -240,13 +240,13 @@ export function FocusSwitchReactor() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
               {currentMode === 'neutral' ? (
                 colorOptions.map(color => (
-                    <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg" disabled={!!inlineFeedback.message}>
+                    <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg">
                     {color.name}
                     </Button>
                 ))
               ) : (
                  mathAnswerOptions.map(option => (
-                     <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg" disabled={!!inlineFeedback.message}>
+                     <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg">
                          {option}
                      </Button>
                  ))
