@@ -21,7 +21,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { GrowthDecoration } from '../ui/growth-decoration';
 
 
-export function HabitJournal() {
+export function JournalModule() {
   const { hasHydrated, findOrCreateEntry, setSelectedEntry, selectedEntry, createNewEntry, entries, addEntry, updateEntry, deleteEntry } = useJournal();
   const { organicGrowth } = useTheme();
   const [activeEntry, setActiveEntry] = useState<JournalEntry | null>(null);
@@ -184,4 +184,3 @@ export function HabitJournal() {
     </Card>
   );
 };
-HabitJournal.displayName = 'HabitJournal';

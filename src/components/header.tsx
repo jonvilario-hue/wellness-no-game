@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { useTrainingOverride } from '@/hooks/use-training-override';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 export function Header() {
   const { focus, setFocus, isLoaded } = useTrainingFocus();
@@ -31,13 +32,21 @@ export function Header() {
   return (
     <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
-        <div className="flex-1 flex justify-start items-center gap-2">
+        <TooltipProvider>
+        <div className="flex-1 flex justify-start items-center gap-1">
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" disabled={!isLoaded}>
-                  {focus === 'math' ? <Sigma className="h-5 w-5" /> : <BrainCircuit className="h-5 w-5" />}
-                </Button>
-              </DropdownMenuTrigger>
+              <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" disabled={!isLoaded}>
+                          {focus === 'math' ? <Sigma className="h-5 w-5" /> : <BrainCircuit className="h-5 w-5" />}
+                        </Button>
+                      </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                   <TooltipContent>
+                      <p>Global Training Focus: {focus === 'math' ? 'Math Reasoning' : 'Core Thinking'}</p>
+                   </TooltipContent>
+              </Tooltip>
               <DropdownMenuContent>
                 <DropdownMenuLabel>Global Training Focus</DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -47,40 +56,78 @@ export function Header() {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-           <Button asChild variant="ghost" size="icon">
-            <Link href="/time">
-              <Clock className="h-5 w-5" />
-            </Link>
-          </Button>
+           <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href="/time">
+                      <Clock className="h-5 w-5" />
+                    </Link>
+                  </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Clock Tools</p>
+              </TooltipContent>
+            </Tooltip>
         </div>
+        </TooltipProvider>
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
             <BrainCircuit className="h-7 w-7 text-primary" />
             <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
             Polymath Lab
             </h1>
         </Link>
-        <div className="flex-1 flex justify-end items-center gap-2">
-           <Button asChild variant="ghost" size="icon">
-            <Link href="/calendar">
-              <Smile className="h-5 w-5" />
-            </Link>
-          </Button>
-           <Button asChild variant="ghost" size="icon">
-            <Link href="/calendar">
-              <CheckCircle className="h-5 w-5" />
-            </Link>
-          </Button>
-           <Button asChild variant="ghost" size="icon">
-            <Link href="/calendar">
-              <CalendarDays className="h-5 w-5" />
-            </Link>
-          </Button>
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/settings">
-              <Settings className="h-5 w-5" />
-            </Link>
-          </Button>
+        <TooltipProvider>
+        <div className="flex-1 flex justify-end items-center gap-1">
+           <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button asChild variant="ghost" size="icon">
+                  <Link href="/mood">
+                    <Smile className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Mood Tracker</p>
+              </TooltipContent>
+            </Tooltip>
+           <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button asChild variant="ghost" size="icon">
+                  <Link href="/habits">
+                    <CheckCircle className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Habit Tracker</p>
+              </TooltipContent>
+            </Tooltip>
+           <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button asChild variant="ghost" size="icon">
+                  <Link href="/calendar">
+                    <CalendarDays className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Training Calendar</p>
+              </TooltipContent>
+            </Tooltip>
+          <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button asChild variant="ghost" size="icon">
+                  <Link href="/settings">
+                    <Settings className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Settings</p>
+              </TooltipContent>
+            </Tooltip>
         </div>
+        </TooltipProvider>
       </div>
     </header>
   );

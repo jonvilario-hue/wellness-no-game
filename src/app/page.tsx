@@ -7,19 +7,14 @@ import { MilestoneBadges } from '@/components/dashboard/milestone-badges';
 import { PerformanceInsights } from '@/components/dashboard/performance-insights';
 import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recommendations';
 import { AdaptiveDifficulty } from '@/components/dashboard/adaptive-difficulty';
-import { HabitJournal } from '@/components/dashboard/habit-journal';
 import { Header } from '@/components/header';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { useRef } from 'react';
 import { MainDashboardView } from '@/components/dashboard/main-dashboard-view';
 import { AllGames } from '@/components/dashboard/all-games';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { GameProgressTracker } from '@/components/dashboard/game-progress-tracker';
-import { useJournal } from '@/hooks/use-journal';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
-import { MoodTrackerCard } from '@/components/dashboard/mood-tracker-card';
+import { JournalModule } from '@/components/dashboard/journal-module';
 
 function DashboardContent() {
   const { settings } = useDashboardSettings();
@@ -37,6 +32,7 @@ function DashboardContent() {
             <div className="lg:col-span-2 space-y-6">
               {settings.mainDashboard && <MainDashboardView />}
               {settings.cognitiveCalendar && <CognitiveCalendar />}
+              {settings.journal && <JournalModule />}
             </div>
             <aside className="lg:col-span-1 flex flex-col gap-6">
               {settings.hyperfocusBuilder && <HyperfocusBuilder />}
@@ -52,12 +48,7 @@ function DashboardContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
              {settings.habitTracker && <HabitTracker />}
-             {settings.moodTracker && <MoodTrackerCard />}
              {settings.milestoneBadges && <MilestoneBadges />}
-          </div>
-
-          <div className="grid grid-cols-1 md:col-span-2 gap-6">
-            {settings.habitJournal && <HabitJournal />}
           </div>
         </div>
       </main>
