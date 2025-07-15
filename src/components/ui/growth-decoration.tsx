@@ -29,7 +29,6 @@ export function GrowthDecoration() {
             stroke-width: 0.5;
             opacity: 0;
             animation: fadeIn 8s ease-in forwards infinite;
-            animation-delay: 5s;
            }
           @keyframes draw {
             to {
@@ -38,7 +37,7 @@ export function GrowthDecoration() {
           }
           @keyframes fadeIn {
               to {
-                  opacity: 1;
+                  opacity: 0.6;
               }
           }
         </style>
@@ -47,22 +46,22 @@ export function GrowthDecoration() {
       <!-- Bottom-left growth -->
       <path class="vine" d="M1,299 C 40,200 80,300 120,150 S 180,0 250,100" style="animation-delay: 0s;"/>
       <g class="leaf" style="animation-delay: 7s;">
-        <circle cx="120" cy="150" r="3" />
-        <circle cx="115" cy="155" r="2.5" />
+        <path d="M120,150 Q118,147 115,145" />
+        <path d="M120,150 Q123,148 125,146" />
       </g>
 
       <!-- Top-right growth -->
       <path class="vine" d="M399,1 C 350,100 300,50 250,180 S 150,320 100,250" style="animation-delay: 2s;"/>
        <g class="leaf" style="animation-delay: 9s;">
-        <circle cx="250" cy="180" r="3.5" />
-        <circle cx="258" cy="178" r="2" />
+        <path d="M250,180 Q253,177 255,175" />
+        <path d="M250,180 Q247,178 245,176" />
       </g>
       
       <!-- Top-left to bottom-right -->
       <path class="vine" d="M1,1 C 100,100 50,250 200,200 S 350,50 399,299" style="animation-delay: 4s;"/>
        <g class="leaf" style="animation-delay: 11s;">
-        <circle cx="200" cy="200" r="4" />
-        <circle cx="205" cy="195" r="3" />
+        <path d="M200,200 Q197,197 195,195" />
+        <path d="M200,200 Q203,198 205,196" />
       </g>
     </svg>
   `;
