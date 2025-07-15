@@ -239,9 +239,10 @@ tags: ${entryToExport.tags}
   }
   
   const getEffortLabel = (value: number) => {
-    if (value <= 3) return "Low effort / Distracted";
-    if (value <= 7) return "Moderate effort";
-    return "High effort / Deep focus";
+    if (value <= 25) return 'Distracted / Very Low Effort';
+    if (value <= 50) return 'Low-Medium Effort';
+    if (value <= 75) return 'Focused / Medium-High Effort';
+    return 'Deep Focus / Very High Effort';
   };
 
   return (
@@ -437,13 +438,13 @@ tags: ${entryToExport.tags}
                 htmlFor="effort-slider"
                 className="flex justify-between"
               >
-                <span>Effort / Focus</span>
+                <span>Focus / Cognitive Effort</span>
                 <span className="text-muted-foreground text-sm">{getEffortLabel(editorState.effort)}</span>
               </Label>
               <Slider
                 id="effort-slider"
                 min={0}
-                max={10}
+                max={100}
                 step={1}
                 value={[editorState.effort]}
                 onValueChange={value => handleFieldChange('effort', value[0])}
