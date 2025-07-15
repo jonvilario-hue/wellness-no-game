@@ -16,7 +16,6 @@ const defaultSettings = {
   adaptiveDifficulty: true,
   habitJournal: true,
   cognitiveCalendar: true,
-  timeTools: true,
   moodTracker: false,
   effortTracker: false,
 };
@@ -84,7 +83,6 @@ export const componentLabels: Record<DashboardComponent, string> = {
   adaptiveDifficulty: 'Adaptive Difficulty',
   habitJournal: 'Habit Journal',
   cognitiveCalendar: 'Training Log',
-  timeTools: 'Time & Sleep Tools',
   moodTracker: 'Mood Tracker',
   effortTracker: 'Focus / Effort Tracker',
 };

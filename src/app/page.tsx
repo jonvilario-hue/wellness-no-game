@@ -19,7 +19,6 @@ import { GameProgressTracker } from '@/components/dashboard/game-progress-tracke
 import { useJournal } from '@/hooks/use-journal';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
-import { TimeToolsCard } from '@/components/dashboard/time-tools-card';
 import { MoodTrackerCard } from '@/components/dashboard/mood-tracker-card';
 
 function DashboardContent() {
@@ -55,7 +54,6 @@ function DashboardContent() {
              {settings.habitTracker && <HabitTracker />}
              {settings.moodTracker && <MoodTrackerCard />}
              {settings.milestoneBadges && <MilestoneBadges />}
-             {settings.timeTools && <TimeToolsCard />}
           </div>
 
           <div className="grid grid-cols-1 md:col-span-2 gap-6">
