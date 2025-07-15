@@ -33,10 +33,19 @@ import { Separator } from '../ui/separator';
 import { Slider } from '../ui/slider';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit } from '@/hooks/use-journal';
+import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit, type MoodState } from '@/hooks/use-journal';
 import { journalConfig, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { EditableLabel } from '../time/editable-label';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+
+const moodOptions = [
+  { emoji: '😔', label: 'Very Low', value: 0 },
+  { emoji: '😐', label: 'Neutral', value: 1 },
+  { emoji: '🙂', label: 'Okay', value: 2 },
+  { emoji: '😊', label: 'Good', value: 3 },
+  { emoji: '😄', label: 'Very Good', value: 4 },
+];
 
 export const JournalEditor = memo(({
   entry,
@@ -176,12 +185,14 @@ export const JournalEditor = memo(({
   const exportAsMarkdown = (entryToExport: JournalEntry) => {
       const entryConfig = journalConfig[entryToExport.category as JournalCategory];
       const prompts = entryConfig.prompts[entryToExport.frequency] || entryConfig.prompts.daily;
+      const moodLabel = moodOptions.find(m => m.value === entryToExport.mood)?.label;
 
       let markdown = `---
 date: ${entryToExport.date}
 category: "${entryToExport.category}"
 frequency: ${entryToExport.frequency}
 effort: ${entryToExport.effort}
+mood: ${moodLabel || 'Not set'}
 tags: ${entryToExport.tags}
 ---
 
@@ -225,6 +236,12 @@ tags: ${entryToExport.tags}
     setEditorState(updatedEntry);
     handleSave(updatedEntry, { isFinal: true });
   }
+  
+  const getEffortLabel = (value: number) => {
+    if (value <= 3) return "Low effort / Distracted";
+    if (value <= 7) return "Moderate effort";
+    return "High effort / Deep focus";
+  };
 
   return (
     <div className="p-4 h-full flex flex-col gap-2 relative">
@@ -379,6 +396,51 @@ tags: ${entryToExport.tags}
           </div>
           
           <Separator/>
+
+          <div>
+            <Label>Mood</Label>
+            <TooltipProvider>
+            <div className="flex justify-around items-center p-2 rounded-lg bg-muted/50 mt-1">
+              {moodOptions.map(option => (
+                <Tooltip key={option.value} delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => handleFieldChange('mood', editorState.mood === option.value ? null : option.value)}
+                      className={cn(
+                        "text-3xl transition-transform duration-200 ease-in-out hover:scale-125",
+                        editorState.mood === option.value ? "scale-125" : "scale-100 opacity-50"
+                      )}
+                    >
+                      {option.emoji}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{option.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+            </TooltipProvider>
+          </div>
+          
+          <div>
+            <Label
+              htmlFor="effort-slider"
+              className="flex justify-between"
+            >
+              <span>Effort / Focus</span>
+              <span className="text-muted-foreground text-sm">{getEffortLabel(editorState.effort)}</span>
+            </Label>
+            <Slider
+              id="effort-slider"
+              min={0}
+              max={10}
+              step={1}
+              value={[editorState.effort]}
+              onValueChange={value => handleFieldChange('effort', value[0])}
+              className="mt-2"
+            />
+          </div>
           
           <div>
               <Label htmlFor="tags-input">Tags (comma-separated)</Label>
@@ -420,23 +482,6 @@ tags: ${entryToExport.tags}
               </div>
             </div>
           )}
-           <div>
-            <Label
-              htmlFor="effort-slider"
-              className="flex justify-between"
-            >
-              <span>Effort / Focus</span>
-              <span>{editorState.effort}/10</span>
-            </Label>
-            <Slider
-              id="effort-slider"
-              min={1}
-              max={10}
-              step={1}
-              value={[editorState.effort]}
-              onValueChange={value => handleFieldChange('effort', value[0])}
-            />
-          </div>
         </div>
       </ScrollArea>
     </div>

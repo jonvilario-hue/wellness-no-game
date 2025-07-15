@@ -9,7 +9,7 @@ import { allHabits as defaultHabits, journalConfig } from '@/lib/journal-config'
 import type { LucideIcon } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 
-export type MoodState = 'happy' | 'neutral' | 'sad' | null;
+export type MoodState = number | null; // 0-4 scale, null if not set
 export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
 
 export type HabitId = string;
@@ -31,7 +31,7 @@ export type JournalEntry = {
     field3: string;
     affirmations: string[];
     tags: string;
-    effort: number;
+    effort: number; // 0-10 scale
     mood: MoodState;
 };
 
