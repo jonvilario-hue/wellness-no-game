@@ -10,11 +10,11 @@ import { FocusSwitchReactor } from './ef/focus-switch-reactor';
 
 export const gameComponents: Record<CHCDomain, React.ComponentType> = {
   Gf: PatternMatrix,
+  Gc: VerbalInferenceBuilder,
   Gwm: DynamicSequenceTransformer,
   Gs: RapidCodeMatch,
   Gv: VisualProcessingRouter,
   Ga: AuditoryProcessingRouter,
-  Gc: VerbalInferenceBuilder,
   Glr: SemanticFluencyStorm,
   EF: FocusSwitchReactor,
 };

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +36,15 @@ const mathTasks = [
   { id: 'add_two', label: "Add 2 to each number and state the new sequence." },
   { id: 'subtract_one', label: "Subtract 1 from each number and state the new sequence." },
   { id: 'repeat_even', label: "Repeat only the even numbers in order." },
-  { id: 'differences', label: "State the difference between each consecutive pair of numbers." }
+  { id: 'differences', label: "State the difference between each consecutive pair of numbers." },
+  { id: 'memory_math', label: "Memorize rule, then apply to number:"}
+];
+
+const mathRules = [
+    { text: "Add 4 then divide by 2", apply: (n: number) => (n + 4) / 2 },
+    { text: "Subtract 1 then double", apply: (n: number) => (n - 1) * 2 },
+    { text: "Square the number, then subtract 1", apply: (n: number) => (n*n) - 1 },
+    { text: "Add the digits together, then multiply by 3", apply: (n: number) => (n.toString().split('').reduce((a,b) => a+parseInt(b), 0)) * 3 },
 ];
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
@@ -55,6 +62,12 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
   const [gameState, setGameState] = useState('start'); // start, memorizing, answering, feedback
   const [feedback, setFeedback] = useState('');
   const [startTime, setStartTime] = useState(0);
+  
+  const [mathRule, setMathRule] = useState(() => mathRules[0]);
+  const [showMathRule, setShowMathRule] = useState(true);
+  const [mathStream, setMathStream] = useState([3,6,5]);
+  const [mathStreamIndex, setMathStreamIndex] = useState(0);
+  
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
   const { logGameResult } = usePerformanceStore();
@@ -85,6 +98,16 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
     setGameState('memorizing');
     setStartTime(Date.now());
 
+    if(currentMode === 'math' && newTask.id === 'memory_math') {
+        const newRule = mathRules[Math.floor(Math.random() * mathRules.length)];
+        setMathRule(newRule);
+        const newStream = Array.from({length: 3}, () => Math.floor(Math.random() * 10) + 1);
+        setMathStream(newStream);
+        setMathStreamIndex(0);
+        setShowMathRule(true);
+        setTimeout(() => setShowMathRule(false), 3000);
+    }
+
     setTimeout(() => {
       setGameState('answering');
     }, 4000); // 4 seconds to memorize
@@ -99,6 +122,11 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
 
   const correctAnswer = useMemo(() => {
     if (!sequence || !task) return '';
+    
+    if (currentMode === 'math' && task.id === 'memory_math') {
+        return mathRule.apply(mathStream[mathStreamIndex]).toString();
+    }
+
     if (currentMode === 'neutral') {
         switch(task.id) {
             case 'reverse': return sequence.split('').reverse().join('');
@@ -127,7 +155,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
             default: return '';
         }
     }
-  }, [sequence, task, currentMode]);
+  }, [sequence, task, currentMode, mathRule, mathStream, mathStreamIndex]);
 
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -137,7 +165,9 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
     setGameState('feedback');
     const time = (Date.now() - startTime) / 1000;
     
-    if (userAnswer.toUpperCase().trim() === correctAnswer) {
+    const isCorrect = userAnswer.toUpperCase().trim() === correctAnswer;
+
+    if (isCorrect) {
       logGameResult('Gwm', currentMode, { score: level * 10, time });
       
       if(onComplete) {
@@ -149,11 +179,22 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
       }
       
       setFeedback(getSuccessFeedback('Gwm'));
-      setTimeout(() => {
-        const nextLevel = level + 1;
-        setLevel(nextLevel);
-        startLevel(nextLevel);
-      }, 2000);
+      
+      if (currentMode === 'math' && task.id === 'memory_math' && mathStreamIndex < mathStream.length - 1) {
+          setTimeout(() => {
+              setMathStreamIndex(prev => prev + 1);
+              setUserAnswer('');
+              setFeedback('');
+              setGameState('answering');
+          }, 2000);
+      } else {
+        setTimeout(() => {
+          const nextLevel = level + 1;
+          setLevel(nextLevel);
+          startLevel(nextLevel);
+        }, 2000);
+      }
+
     } else {
       setFeedback(`Incorrect. The answer was: ${correctAnswer}. ${getFailureFeedback('Gwm')}`);
       logGameResult('Gwm', currentMode, { score: 0, time });
@@ -205,9 +246,22 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
         {(gameState === 'answering' || gameState === 'feedback') && (
           <div className="w-full space-y-4 text-center animate-in fade-in">
              <div className="font-mono text-lg">Level: {level}</div>
-            <div className="p-4 bg-muted rounded-lg">
-                <p className="text-xl font-semibold">{task.label}</p>
+             <div className="p-4 bg-muted rounded-lg">
+                {(currentMode === 'math' && task.id === 'memory_math') ? (
+                    showMathRule ? (
+                         <p className="text-xl font-semibold">{mathRule.text}</p>
+                    ) : (
+                         <p className="italic text-muted-foreground">Rule hidden</p>
+                    )
+                ) : (
+                     <p className="text-xl font-semibold">{task.label}</p>
+                )}
             </div>
+
+            {(currentMode === 'math' && task.id === 'memory_math') && (
+                <p className="text-lg">Transform this number: <strong className="text-primary text-2xl">{mathStream[mathStreamIndex]}</strong></p>
+            )}
+
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-center">
               <Input
                 type="text"
