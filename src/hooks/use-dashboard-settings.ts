@@ -70,7 +70,7 @@ export const useDashboardSettings = () => {
   return { settings, toggleSetting, resetSettings, isLoaded };
 };
 
-const componentLabels: Record<DashboardComponent, string> = {
+export const componentLabels: Record<DashboardComponent, string> = {
   dailyChallenge: 'Daily Training Sequence',
   allGames: 'All Training Games',
   mainDashboard: 'Main Dashboard (Performance/Strength)',
@@ -86,5 +86,3 @@ const componentLabels: Record<DashboardComponent, string> = {
   timeTools: 'Time & Sleep Tools',
   moodTracker: 'Mood Tracker',
 };
-
-export { componentLabels };
