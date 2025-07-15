@@ -1,7 +1,7 @@
 
 'use client';
 
-import { BrainCircuit, Settings, CalendarDays, Clock, Sigma } from 'lucide-react';
+import { BrainCircuit, Settings, CalendarDays, Clock, Sigma, Smile, BarChart2 } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -60,6 +60,16 @@ export function Header() {
             </h1>
         </Link>
         <div className="flex-1 flex justify-end items-center gap-2">
+           <Button asChild variant="ghost" size="icon">
+            <Link href="/calendar">
+              <Smile className="h-5 w-5" />
+            </Link>
+          </Button>
+           <Button asChild variant="ghost" size="icon">
+            <Link href="/calendar">
+              <BarChart2 className="h-5 w-5" />
+            </Link>
+          </Button>
            <Button asChild variant="ghost" size="icon">
             <Link href="/calendar">
               <CalendarDays className="h-5 w-5" />
