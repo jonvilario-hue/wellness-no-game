@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { domainIcons } from '@/components/icons';
 import type { CHCDomain } from '@/types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Sigma } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
@@ -32,7 +32,7 @@ interface ChcDomainCardProps {
   };
 }
 
-export function ChcDomainCard({ domain }: ChcDomainCardProps) {
+const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   const Icon = domainIcons[domain.key];
   const [data, setData] = useState<{ score: number; trend: number } | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -156,3 +156,5 @@ export function ChcDomainCard({ domain }: ChcDomainCardProps) {
     </Card>
   );
 }
+
+export const ChcDomainCard = memo(ChcDomainCardComponent);

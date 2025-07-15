@@ -6,6 +6,7 @@ import type { CHCDomain } from '@/types';
 import { domainIcons } from '../icons';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { memo } from 'react';
 
 export type DomainStreakProps = {
   domainKey: CHCDomain;
@@ -14,7 +15,7 @@ export type DomainStreakProps = {
   isTop: boolean;
 };
 
-export function DomainStreak({ domainKey, name, streak, isTop }: DomainStreakProps) {
+const DomainStreakComponent = ({ domainKey, name, streak, isTop }: DomainStreakProps) => {
   const Icon = domainIcons[domainKey];
 
   return (
@@ -46,3 +47,5 @@ export function DomainStreak({ domainKey, name, streak, isTop }: DomainStreakPro
     </TooltipProvider>
   );
 }
+
+export const DomainStreak = memo(DomainStreakComponent);

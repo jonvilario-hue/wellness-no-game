@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { memo, useCallback, useMemo, useState } from 'react';
@@ -43,7 +42,7 @@ import { journalConfig, type JournalCategory } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { Label } from '../ui/label';
 
-export const JournalSidebar = memo(({ 
+const JournalSidebarComponent = ({ 
     onSelectEntry, 
     onDeleteEntry,
     onNewEntry,
@@ -54,7 +53,7 @@ export const JournalSidebar = memo(({
     onDeleteEntry: (id: string) => void,
     onNewEntry: () => void,
     selectedEntry: JournalEntry | null,
-    onUpdateEntry: (id: string, updatedEntry: JournalEntry) => void,
+    onUpdateEntry: (id: string, updatedEntry: Partial<Omit<JournalEntry, 'id' | 'date' | 'category' | 'frequency'>>) => void,
 }) => {
     const [viewMode, setViewMode] = useState<'entries' | 'trash'>('entries');
     type SortMode = 'date-desc' | 'date-asc' | 'category';
@@ -346,5 +345,7 @@ export const JournalSidebar = memo(({
             </div>
         </div>
     );
-});
+}
+
+export const JournalSidebar = memo(JournalSidebarComponent);
 JournalSidebar.displayName = 'JournalSidebar';

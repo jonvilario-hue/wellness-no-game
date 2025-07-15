@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { memo, useCallback, useEffect, useState } from 'react';
@@ -47,7 +46,7 @@ const moodOptions = [
   { emoji: '😄', label: 'Very Good', value: 4 },
 ];
 
-export const JournalEditor = memo(({
+const JournalEditorComponent = ({
   entry,
   onSave,
   onDelete,
@@ -492,5 +491,6 @@ tags: ${entryToExport.tags}
       </ScrollArea>
     </div>
   );
-});
+};
+export const JournalEditor = memo(JournalEditorComponent);
 JournalEditor.displayName = 'JournalEditor';
