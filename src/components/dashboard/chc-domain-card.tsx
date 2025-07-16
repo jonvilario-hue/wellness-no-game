@@ -30,14 +30,14 @@ const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
         {...props}
     >
-        <line x1="5" y1="7" x2="19" y2="7" />
-        <line x1="7" y1="7" x2="7" y2="18" />
-        <line x1="12" y1="7" x2="12" y2="18" />
+        <path d="M5 7h14" />
+        <path d="M8.5 7v10" />
+        <path d="M14.5 7c0 5.5-2 10-7 10" />
     </svg>
 );
 
@@ -169,6 +169,6 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
       </CardFooter>
     </Card>
   );
-}
+};
 
 export const ChcDomainCard = memo(ChcDomainCardComponent);
