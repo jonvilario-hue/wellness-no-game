@@ -38,17 +38,17 @@ function DashboardContent() {
               {settings.hyperfocusBuilder && <HyperfocusBuilder />}
               {settings.weakAreaRecommendations && <WeakAreaRecommendations />}
               {settings.gameProgressTracker && <GameProgressTracker />}
+              {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
             </aside>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {settings.performanceInsights && <PerformanceInsights />}
-            {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
+            {settings.milestoneBadges && <MilestoneBadges />}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1">
              {settings.habitTracker && <HabitTracker />}
-             {settings.milestoneBadges && <MilestoneBadges />}
           </div>
         </div>
       </main>

@@ -230,7 +230,7 @@ export function HabitsView() {
                 </CardHeader>
                 <CardContent>
                     <ScrollArea className="h-[500px] pr-3 -mr-3">
-                        <Accordion type="multiple" className="w-full" defaultValue={habitCategories}>
+                        <Accordion type="multiple" className="w-full" defaultValue={[]}>
                         {habitsByCategory.map(({ category, categoryHabits }) => {
                             if (categoryHabits.length === 0) return null;
                             const completedInCategory = categoryHabits.filter(h => todaysHabits.includes(h.id)).length;
