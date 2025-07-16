@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
@@ -185,6 +185,51 @@ const mathPuzzles = [
   },
 ];
 
+const musicPuzzles = [
+  {
+    type: 'terminology',
+    question: "Which term refers to the speed of a piece of music?",
+    options: ["Dynamics", "Tempo", "Rhythm", "Pitch"],
+    answer: "Tempo",
+    explanation: "Tempo is the speed or pace of a given piece."
+  },
+  {
+    type: 'analogy',
+    question: "Verse is to song as chapter is to ____.",
+    options: ["Poem", "Book", "Paragraph", "Page"],
+    answer: "Book",
+    explanation: "A verse is a section of a song, just as a chapter is a section of a book."
+  },
+  {
+    type: 'inference',
+    question: "A piece of music marked 'Adagio' should be played ____.",
+    options: ["Quickly and lively", "At a walking pace", "Slowly and stately", "Very fast"],
+    answer: "Slowly and stately",
+    explanation: "'Adagio' is an Italian musical term meaning to be played slowly."
+  },
+  {
+    type: 'relationship',
+    question: "Which instrument does not belong in the string family?",
+    options: ["Violin", "Cello", "Flute", "Guitar"],
+    answer: "Flute",
+    explanation: "A flute is a woodwind instrument, while the others are string instruments."
+  },
+  {
+    type: 'context',
+    question: "The orchestra's performance reached a powerful ____, with every instrument playing at full volume.",
+    options: ["crescendo", "diminuendo", "staccato", "coda"],
+    answer: "crescendo",
+    explanation: "'Crescendo' means a gradual increase in loudness, fitting the context of a powerful climax."
+  },
+  {
+    type: 'terminology',
+    question: "A 'C Major' chord consists of which three notes?",
+    options: ["C, D, E", "C, E, G", "C, F, G", "C, D, G"],
+    answer: "C, E, G",
+    explanation: "A major chord is built from the root (C), a major third (E), and a perfect fifth (G)."
+  },
+];
+
 type Puzzle = (typeof neutralPuzzles)[0];
 
 export function VerbalInferenceBuilder() {
@@ -202,9 +247,16 @@ export function VerbalInferenceBuilder() {
   
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
+  
+  const puzzleSet = useMemo(() => {
+    switch (currentMode) {
+        case 'math': return mathPuzzles;
+        case 'music': return musicPuzzles;
+        default: return neutralPuzzles;
+    }
+  }, [currentMode]);
 
   const restartGame = useCallback(() => {
-    const puzzleSet = currentMode === 'math' ? mathPuzzles : neutralPuzzles;
     setShuffledPuzzles([...puzzleSet].sort(() => Math.random() - 0.5));
     setCurrentPuzzleIndex(0);
     setScore(0);
@@ -213,7 +265,7 @@ export function VerbalInferenceBuilder() {
     setInlineFeedback({ message: '', type: '' });
     setSelectedAnswer(null);
     setGameState('playing');
-  }, [currentMode]);
+  }, [puzzleSet]);
   
   useEffect(() => {
     if (isLoaded) {

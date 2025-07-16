@@ -12,6 +12,7 @@ import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 const neutralSymbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
 const musicSymbols = ['♩', '♪', '♫', '♭', '♯', '♮', '𝄞', '𝄢', '𝄡'];
+const mathSymbols = ['+', '−', '×', '÷', '%', '∑', '√', '∞', '='];
 const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const NoiseOverlay = () => (
@@ -35,7 +36,14 @@ export function RapidCodeMatch() {
   
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
-  const symbols = currentMode === 'music' ? musicSymbols : neutralSymbols;
+  
+  const symbols = useMemo(() => {
+    switch (currentMode) {
+        case 'music': return musicSymbols;
+        case 'math': return mathSymbols;
+        default: return neutralSymbols;
+    }
+  }, [currentMode]);
 
   const generateKeyMap = useCallback(() => {
     const shuffledSymbols = [...symbols].sort(() => Math.random() - 0.5);
@@ -55,18 +63,18 @@ export function RapidCodeMatch() {
   }, [currentMode, generateKeyMap]);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (gameState === 'running' && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-    if (timeLeft === 0 && gameState === 'running') {
+      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    } else if (timeLeft <= 0 && gameState === 'running') {
       setGameState('finished');
       const time = (Date.now() - startTime) / 1000;
       logGameResult('Gs', currentMode, { score, time });
     }
+    return () => clearTimeout(timer);
   }, [gameState, timeLeft, score, startTime, currentMode, logGameResult]);
   
-  const handleStart = () => {
+  const handleStart = useCallback(() => {
     setScore(0);
     setTimeLeft(60);
     const newKeyMap = generateKeyMap();
@@ -76,13 +84,15 @@ export function RapidCodeMatch() {
     setStartTime(Date.now());
     setGameState('running');
     setInlineFeedback({ message: '', type: '' });
-  };
+  }, [generateKeyMap]);
 
-  const handleAnswer = (digit: number) => {
+  const handleAnswer = useCallback((digit: number) => {
     if (gameState !== 'running') return;
     
     let newScore = score;
-    if (keyMap[currentSymbol] === digit) {
+    let isCorrect = keyMap[currentSymbol] === digit;
+
+    if (isCorrect) {
       newScore++;
       setScore(newScore);
       // Change the keymap every 5 correct answers to force re-learning
@@ -100,7 +110,7 @@ export function RapidCodeMatch() {
 
     const symbolsInKey = Object.keys(keyMap);
     setCurrentSymbol(symbolsInKey[Math.floor(Math.random() * symbolsInKey.length)]);
-  };
+  }, [gameState, score, keyMap, currentSymbol, generateKeyMap]);
 
   return (
     <Card className="w-full max-w-2xl text-center">
@@ -110,7 +120,9 @@ export function RapidCodeMatch() {
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         {gameState === 'idle' && (
-          <Button onClick={handleStart} size="lg">Start Game</Button>
+          <Button onClick={handleStart} size="lg" disabled={!isLoaded}>
+            {isLoaded ? 'Start Game' : 'Loading...'}
+          </Button>
         )}
         
         {gameState === 'running' && (

@@ -31,14 +31,30 @@ const isPrime = (num: number) => {
   return true;
 };
 
+// --- Music Mode Config ---
+const notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+const qualities = ['MAJOR', 'MINOR'];
+type MusicRule = 'quality' | 'no_go';
+
+// Simple check for major/minor "feel"
+const isMajor = (noteSequence: string[]) => {
+    // This is a heuristic. A true major scale has a specific interval pattern.
+    // For this game, we'll use a simpler rule: if it contains a 'happy' sounding interval like C-E or G-B.
+    const majorIntervals = new Set(['CE', 'FA', 'GB']);
+    for(let i = 0; i < noteSequence.length - 1; i++) {
+        const interval = noteSequence[i] + noteSequence[i+1];
+        if (majorIntervals.has(interval)) return true;
+    }
+    return false;
+}
 
 export function FocusSwitchReactor() {
   const [gameState, setGameState] = useState('idle'); // idle, running, finished
   const [score, setScore] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [timeLeft, setTimeLeft] = useState(45);
-  const [rule, setRule] = useState<NeutralRule | MathRule>('word');
-  const [stimulus, setStimulus] = useState<any>({ word: 'PRIMARY', color: 'text-primary', value: 7 });
+  const [rule, setRule] = useState<NeutralRule | MathRule | MusicRule>('word');
+  const [stimulus, setStimulus] = useState<any>({ word: 'PRIMARY', color: 'text-primary', value: 7, noteSequence: ['C','E','G'] });
   const [inlineFeedback, setInlineFeedback] = useState({ message: '', type: '' });
 
   const ruleRef = useRef(rule);
@@ -63,26 +79,36 @@ export function FocusSwitchReactor() {
     const value = Math.floor(Math.random() * 20) + 2; // numbers from 2 to 21
     setStimulus({ value });
   }, []);
+  
+  const generateMusicStimulus = useCallback(() => {
+    const sequenceLength = 3;
+    const noteSequence = Array.from({length: sequenceLength}, () => notes[Math.floor(Math.random() * notes.length)]);
+    setStimulus({ noteSequence });
+  }, []);
 
   const generateStimulus = useCallback(() => {
     if (currentMode === 'math') {
         generateMathStimulus();
+    } else if (currentMode === 'music') {
+        generateMusicStimulus();
     } else {
         generateNeutralStimulus();
     }
-  }, [currentMode, generateMathStimulus, generateNeutralStimulus]);
+  }, [currentMode, generateMathStimulus, generateNeutralStimulus, generateMusicStimulus]);
 
   const generateRule = useCallback(() => {
+    const noGoChance = 0.2;
+    if (Math.random() < noGoChance) {
+        setRule('no_go');
+        return;
+    }
+    
     if (currentMode === 'math') {
-        const ruleIndex = Math.floor(Math.random() * 5); // 0,1,2,3,4
-        if (ruleIndex < 2) setRule('parity'); // 40%
-        else if (ruleIndex < 4) setRule('primality'); // 40%
-        else setRule('no_go'); // 20%
-    } else {
-        const ruleIndex = Math.floor(Math.random() * 5);
-        if (ruleIndex < 2) setRule('color');
-        else if (ruleIndex < 4) setRule('word');
-        else setRule('no_go');
+        setRule(Math.random() < 0.5 ? 'parity' : 'primality');
+    } else if (currentMode === 'music') {
+        setRule('quality');
+    } else { // Neutral mode
+        setRule(Math.random() < 0.5 ? 'color' : 'word');
     }
   }, [currentMode]);
   
@@ -152,7 +178,7 @@ export function FocusSwitchReactor() {
             correctAnswer = correctOption?.name;
         }
         isCorrect = (answer === correctAnswer);
-    } else { // Math mode
+    } else if (currentMode === 'math') {
         const num = stimulus.value;
         if (rule === 'parity') {
             const parity = num % 2 === 0 ? 'EVEN' : 'ODD';
@@ -161,6 +187,9 @@ export function FocusSwitchReactor() {
             const primality = isPrime(num) ? 'PRIME' : 'COMPOSITE';
             isCorrect = (answer === primality);
         }
+    } else { // Music mode
+        const quality = isMajor(stimulus.noteSequence) ? 'MAJOR' : 'MINOR';
+        isCorrect = (answer === quality);
     }
     
     processNextTurn(isCorrect);
@@ -185,16 +214,26 @@ export function FocusSwitchReactor() {
       if (rule === 'word') return 'Respond to the WORD';
       if (rule === 'parity') return 'Is the number EVEN or ODD?';
       if (rule === 'primality') return 'Is the number PRIME or COMPOSITE?';
+      if (rule === 'quality') return 'Is the sequence MAJOR or MINOR?';
       if (rule === 'no_go') return "DON'T RESPOND";
       return '';
   }
   
-  const mathAnswerOptions = useMemo(() => {
-      if (rule === 'parity') return ['EVEN', 'ODD'];
-      if (rule === 'primality') return ['PRIME', 'COMPOSITE'];
-      // Fallback for when the rule is 'no_go' but we still need to render buttons
-      return ['EVEN', 'ODD', 'PRIME', 'COMPOSITE'];
-  }, [rule]);
+  const getAnswerOptions = () => {
+      if (currentMode === 'math') {
+        if (rule === 'parity') return ['EVEN', 'ODD'];
+        if (rule === 'primality') return ['PRIME', 'COMPOSITE'];
+        return ['EVEN', 'ODD', 'PRIME', 'COMPOSITE']; // Fallback for no-go
+      }
+      if (currentMode === 'music') {
+        return qualities;
+      }
+      // Neutral mode
+      return colorOptions.map(c => c.name);
+  }
+  
+  const answerOptions = useMemo(getAnswerOptions, [rule, currentMode]);
+  const buttonGridCols = currentMode === 'neutral' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2';
 
   return (
     <Card className="w-full max-w-2xl text-center">
@@ -218,11 +257,9 @@ export function FocusSwitchReactor() {
             <div className="p-8 bg-muted rounded-lg w-full">
               <p className="text-xl mb-4">Rule: <span className="font-bold text-primary uppercase">{getRuleText()}</span></p>
               <div className="text-6xl font-extrabold" >
-                {currentMode === 'neutral' ? (
-                     <span className={stimulus.color}>{stimulus.word}</span>
-                ) : (
-                    <span className="text-primary">{stimulus.value}</span>
-                )}
+                {currentMode === 'neutral' && <span className={stimulus.color}>{stimulus.word}</span>}
+                {currentMode === 'math' && <span className="text-primary">{stimulus.value}</span>}
+                {currentMode === 'music' && <span className="text-primary tracking-widest">{stimulus.noteSequence?.join(' ')}</span>}
               </div>
             </div>
              <div className="h-6 text-sm font-semibold">
@@ -235,20 +272,12 @@ export function FocusSwitchReactor() {
                 </p>
               )}
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
-              {currentMode === 'neutral' ? (
-                colorOptions.map(color => (
-                    <Button key={color.name} onClick={() => handleAnswer(color.name)} variant="secondary" size="lg">
-                    {color.name}
-                    </Button>
-                ))
-              ) : (
-                 mathAnswerOptions.map(option => (
-                     <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg">
-                         {option}
-                     </Button>
-                 ))
-              )}
+            <div className={cn("grid gap-4 w-full", buttonGridCols)}>
+              {answerOptions.map(option => (
+                  <Button key={option} onClick={() => handleAnswer(option)} variant="secondary" size="lg">
+                    {option}
+                  </Button>
+              ))}
             </div>
           </div>
         )}

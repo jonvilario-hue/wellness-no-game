@@ -6,6 +6,7 @@ import { useTrainingOverride } from '@/hooks/use-training-override';
 import { MentalRotationLab } from './mental-rotation-lab';
 import { BalancePuzzle } from './balance-puzzle';
 import { Skeleton } from '@/components/ui/skeleton';
+import { VisualMusicMatch } from './visual-music-match';
 
 export function VisualProcessingRouter() {
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
@@ -20,10 +21,13 @@ export function VisualProcessingRouter() {
   // Determine the effective training focus: override > global
   const effectiveFocus = override || globalFocus;
   
-  if (effectiveFocus === 'math') {
-    return <BalancePuzzle />;
+  switch (effectiveFocus) {
+    case 'math':
+      return <BalancePuzzle />;
+    case 'music':
+      return <VisualMusicMatch />;
+    case 'neutral':
+    default:
+      return <MentalRotationLab />;
   }
-  
-  // Default to Core Mode for both 'neutral' and 'music'
-  return <MentalRotationLab />;
 }

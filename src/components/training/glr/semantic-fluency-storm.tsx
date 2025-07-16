@@ -15,7 +15,7 @@ import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
 type Prompt = {
     text: string;
-    answers?: string[]; // Optional for neutral mode, required for math mode
+    answers?: string[]; // Optional for neutral mode, required for math/music modes
 };
 
 const neutralPrompts: Prompt[] = [
@@ -38,10 +38,10 @@ const mathPrompts: Prompt[] = [
 ];
 
 const musicPrompts: Prompt[] = [
-    { text: "Musical instruments" },
-    { text: "Occupations or jobs in music" },
-    { text: "Four-letter words related to music" },
-    { text: "Music genres" },
+    { text: "Musical instruments", answers: ["piano", "guitar", "violin", "drums", "trumpet", "flute", "cello", "saxophone", "bass", "clarinet"] },
+    { text: "Music genres", answers: ["rock", "pop", "jazz", "classical", "hip hop", "electronic", "country", "blues", "reggae", "folk"] },
+    { text: "Terms for dynamics (volume)", answers: ["piano", "forte", "crescendo", "diminuendo", "mezzopiano", "mezzoforte", "pianissimo", "fortissimo"] },
+    { text: "Notes in the C Major scale", answers: ["c", "d", "e", "f", "g", "a", "b"] },
 ];
 
 
@@ -130,13 +130,13 @@ export function SemanticFluencyStorm() {
     }
 
     let isValid = false;
-    if (currentMode === 'math' && prompt?.answers) {
+    if ((currentMode === 'math' || currentMode === 'music') && prompt?.answers) {
         if (prompt.answers.includes(cleanInput)) {
             isValid = true;
         } else {
              setInlineFeedback({ message: getFailureFeedback('Glr'), type: 'failure' });
         }
-    } else { // Neutral or Music mode
+    } else { // Neutral mode has no predefined answers
         isValid = true;
     }
     
@@ -145,10 +145,13 @@ export function SemanticFluencyStorm() {
         const newResponses = [...responses, cleanInput];
         setResponses(newResponses);
 
-        if (currentMode === 'math' && prompt?.answers && newResponses.length === prompt.answers.length) {
+        const currentPromptAnswers = prompt?.answers || [];
+        const answersForPrompt = newResponses.filter(r => currentPromptAnswers.includes(r));
+
+        if (currentPromptAnswers.length > 0 && answersForPrompt.length === currentPromptAnswers.length) {
             toast({ title: "Category Complete!", description: "Great job! Here's a new category." });
             setPrompt(getNewPrompt());
-            setTimeLeft(prev => Math.min(45, prev + 5));
+            setTimeLeft(prev => Math.min(45, prev + 5)); // Bonus time for completion
         }
     }
     
