@@ -9,10 +9,7 @@ import type { TrainingFocus } from './use-training-focus';
 // This is being simplified as the individual override UI has been removed.
 export const useTrainingOverride = () => {
   const [override, setOverride] = useState<TrainingFocus | null>(null);
-  
-  // No need for useEffect here since we want this to be a volatile, session-only state.
-  // The default will always be null when a new session starts.
-  const isLoaded = true;
+  const isLoaded = true; // This hook's state is not persisted, so it's always "loaded".
 
   return { override, setOverride, isLoaded };
 };

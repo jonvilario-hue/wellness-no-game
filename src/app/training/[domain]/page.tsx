@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, BrainCircuit, Settings, Sigma } from 'lucide-react';
+import { ArrowLeft, BrainCircuit, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { chcDomains, type CHCDomain } from '@/types';
 import { domainIcons } from '@/components/icons';
@@ -12,11 +12,30 @@ import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTrainingOverride } from '@/hooks/use-training-override';
-import { use } from 'react';
+import { Music } from 'lucide-react';
+
+const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        {...props}
+    >
+        <path d="M5 7h14" />
+        <path d="M8.5 7v10" />
+        <path d="M14.5 7c0 5.5-2 10-7 10" />
+    </svg>
+);
+
 
 export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
-  const resolvedParams = use(params);
-  const domain = resolvedParams.domain;
+  const { domain } = params;
   const domainInfo = chcDomains.find(d => d.key === domain);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
@@ -34,6 +53,22 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
   const gameTitle = domainInfo.gameTitle || domainInfo.name;
   
   const focusSupportsMath = domainInfo.supportsMath;
+  const focusSupportsMusic = domainInfo.supportsMusic;
+
+  const focusInfo = {
+      neutral: { Icon: BrainCircuit, label: 'Core Thinking' },
+      math: { Icon: PiIcon, label: 'Math Reasoning' },
+      music: { Icon: Music, label: 'Music Cognition' },
+  };
+
+  const currentFocusConfig = focusInfo[effectiveFocus] || focusInfo.neutral;
+  const { Icon: FocusIcon, label: focusLabel } = currentFocusConfig;
+  
+  const isFocusSupported = () => {
+      if (effectiveFocus === 'math') return focusSupportsMath;
+      if (effectiveFocus === 'music') return focusSupportsMusic;
+      return true; // Neutral is always supported
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -53,14 +88,16 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
               <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
                 {gameTitle}
               </h1>
-              {isLoaded && focusSupportsMath ? (
-                 <Badge variant="secondary" className="capitalize">
-                  {effectiveFocus === 'math' ? <Sigma className="w-3 h-3 mr-1.5"/> : <BrainCircuit className="w-3 h-3 mr-1.5"/>}
-                  {effectiveFocus === 'math' ? 'Math Reasoning' : 'Core Thinking'}
-                  {override && <span className="ml-1.5 text-xs font-bold">(Session Override)</span>}
-                </Badge>
+               {isLoaded ? (
+                 isFocusSupported() && (
+                    <Badge variant="secondary" className="capitalize">
+                      <FocusIcon className="w-3 h-3 mr-1.5"/>
+                      {focusLabel}
+                      {override && <span className="ml-1.5 text-xs font-bold">(Session Override)</span>}
+                    </Badge>
+                 )
               ) : (
-                isLoaded && !focusSupportsMath ? null : <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-5 w-24" />
               )}
             </div>
           </div>

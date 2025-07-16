@@ -170,16 +170,12 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
 
     if (isCorrect) {
       logGameResult('Gwm', currentMode, { score: level * 10, time });
-      
-      if(onComplete) {
-        setFeedback(getSuccessFeedback('Gwm'));
-        setTimeout(() => {
-            onComplete();
-        }, 1500)
+      setFeedback(getSuccessFeedback('Gwm'));
+
+      if (onComplete) {
+        setTimeout(() => onComplete(), 1500);
         return;
       }
-      
-      setFeedback(getSuccessFeedback('Gwm'));
       
       if (currentMode === 'math' && task.id === 'memory_math' && mathStreamIndex < mathStream.length - 1) {
           setTimeout(() => {
@@ -195,15 +191,12 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
           startLevel(nextLevel);
         }, 2000);
       }
-
     } else {
       setFeedback(`Incorrect. The answer was: ${correctAnswer}. ${getFailureFeedback('Gwm')}`);
       logGameResult('Gwm', currentMode, { score: 0, time });
       
-      if(onComplete) {
-        setTimeout(() => {
-            startLevel(level);
-        }, 3000);
+      if (onComplete) {
+        setTimeout(() => startLevel(level), 3000);
         return;
       }
 
