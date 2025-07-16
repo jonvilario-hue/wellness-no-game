@@ -29,7 +29,6 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
-import { Slider } from '../ui/slider';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit, type MoodState } from '@/hooks/use-journal';
@@ -45,6 +44,14 @@ const moodOptions = [
   { emoji: '🙂', label: 'Neutral', value: 2 },
   { emoji: '😊', label: 'Good', value: 3 },
   { emoji: '😄', label: 'Very Good', value: 4 },
+];
+
+const effortLevels: { value: number, label: string }[] = [
+    { value: 1, label: 'Very Low' },
+    { value: 2, label: 'Low' },
+    { value: 3, label: 'Medium' },
+    { value: 4, label: 'High' },
+    { value: 5, label: 'Very High' },
 ];
 
 const JournalEditorComponent = ({
@@ -94,7 +101,7 @@ const JournalEditorComponent = ({
       entryToSave.moodNote = '';
     }
     if (!dashboardSettings.effortTracker) {
-      entryToSave.effort = 75; // Reset to default if tracker is off
+      entryToSave.effort = 3; // Reset to default if tracker is off
     }
     
     setSaveStatus('saving');
@@ -246,13 +253,6 @@ tags: ${entryToExport.tags}
     setEditorState(updatedEntry);
     handleSave(updatedEntry, { isFinal: true });
   }
-  
-  const getEffortLabel = (value: number) => {
-    if (value <= 25) return 'Distracted / Very Low Effort';
-    if (value <= 50) return 'Low-Medium Effort';
-    if (value <= 75) return 'Focused / Medium-High Effort';
-    return 'Deep Focus / Very High Effort';
-  };
 
   return (
     <div className="p-4 h-full flex flex-col gap-2 relative">
@@ -449,17 +449,19 @@ tags: ${entryToExport.tags}
                 className="flex justify-between"
               >
                 <span>Focus / Cognitive Effort</span>
-                <span className="text-muted-foreground text-sm">{getEffortLabel(editorState.effort)}</span>
               </Label>
-              <Slider
-                id="effort-slider"
-                min={0}
-                max={100}
-                step={1}
-                value={[editorState.effort]}
-                onValueChange={value => handleFieldChange('effort', value[0])}
-                className="mt-2"
-              />
+              <div className="grid grid-cols-5 gap-2 mt-2">
+                  {effortLevels.map(({ value, label }) => (
+                      <Button
+                          key={value}
+                          variant={editorState.effort === value ? 'default' : 'outline'}
+                          onClick={() => handleFieldChange('effort', value)}
+                          className="text-xs h-auto py-2"
+                      >
+                          {label}
+                      </Button>
+                  ))}
+              </div>
             </div>
           )}
           

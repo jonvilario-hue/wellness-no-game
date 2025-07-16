@@ -31,7 +31,7 @@ export type JournalEntry = {
     field3: string;
     affirmations: string[];
     tags: string;
-    effort: number; // 0-100 scale
+    effort: number; // 1-5 scale
     mood: MoodState;
     moodNote?: string;
 };
@@ -73,7 +73,7 @@ const createSeedData = (): { entries: JournalEntry[], habits: Record<string, Hab
                 field3: '',
                 affirmations: [],
                 tags: '',
-                effort: 75,
+                effort: 3,
                 mood: null,
                 moodNote: '',
             },
@@ -135,7 +135,7 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
         field3: '',
         affirmations: [],
         tags: '',
-        effort: 75,
+        effort: 3,
         mood: null,
         moodNote: '',
     };
@@ -182,7 +182,7 @@ export const useJournal = create<JournalState>()(
                 field3: '',
                 affirmations: [],
                 tags: '',
-                effort: 75,
+                effort: 3,
                 mood: null,
                 moodNote: '',
             };
