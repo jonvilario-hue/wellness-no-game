@@ -12,6 +12,7 @@ import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTrainingOverride } from '@/hooks/use-training-override';
+import { use } from 'react';
 
 const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -32,7 +33,7 @@ const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
-  const { domain } = params;
+  const { domain } = use(params);
   const domainInfo = chcDomains.find(d => d.key === domain);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
