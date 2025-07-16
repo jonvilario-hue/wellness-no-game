@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ArrowLeft, Loader2, Zap } from 'lucide-react';
 import { getDailyCircuitAction } from '@/app/actions';
 import type { DailyCircuitOutput } from '@/ai/flows';
-import { gameComponents } from '@/data/gamesRegistry';
+import { gameComponents } from '@/components/training/game-components';
 import { chcDomains } from '@/types';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -45,8 +45,7 @@ export default function DailyChallengePage() {
 
   const currentSegment = circuit?.segments[taskIndex];
   const domainInfo = currentSegment ? chcDomains.find(d => d.key === currentSegment.domain) : null;
-  const gameInfo = currentSegment ? gameComponents.find(g => g.domain === currentSegment.domain) : null;
-  const TaskComponent = gameInfo ? gameInfo.component : null;
+  const TaskComponent = currentSegment ? gameComponents[currentSegment.domain] : null;
 
 
   if (isPending || (!circuit && !error)) {
