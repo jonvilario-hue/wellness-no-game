@@ -6,10 +6,10 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
-import { BrainCircuit, Music } from 'lucide-react';
+import { Brain, Music } from 'lucide-react';
 import { Separator } from '../ui/separator';
 
-const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -22,10 +22,8 @@ const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M8.5 7v10" />
-      <path d="M15.5 7v10" />
-      <path d="M5 7c0 1.5.8 3 2 3s2-1.5 2-3" />
-      <path d="M12 7c0 1.5.8 3 2 3s2-1.5 2-3" />
+      <path d="M4 4l16 8-16 8" />
+      <path d="M4 20V4" />
     </svg>
 );
 
@@ -51,7 +49,7 @@ export function TrainingSettings() {
                              <RadioGroupItem value="neutral" id="core-thinking" className="mt-1"/>
                              <div className="space-y-1">
                                 <div className="font-semibold flex items-center gap-2">
-                                    <BrainCircuit className="w-5 h-5"/> Core Thinking
+                                    <Brain className="w-5 h-5"/> Core Thinking
                                 </div>
                                 <p className="text-xs text-muted-foreground">Train cognitive skills with abstract, symbolic puzzles. This is the standard, cognition-first experience.</p>
                              </div>
@@ -62,7 +60,7 @@ export function TrainingSettings() {
                              <RadioGroupItem value="math" id="math-reasoning" className="mt-1"/>
                              <div className="space-y-1">
                                 <div className="font-semibold flex items-center gap-2">
-                                    <PiIcon className="w-5 h-5"/> Math Reasoning
+                                    <SigmaIcon className="w-5 h-5"/> Math Reasoning
                                 </div>
                                 <p className="text-xs text-muted-foreground">Train cognitive skills and mathematical logic simultaneously with math-integrated puzzles.</p>
                              </div>

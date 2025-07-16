@@ -1,7 +1,7 @@
 
 'use client';
 
-import { BrainCircuit, Settings, CalendarDays, Clock, Smile, BookMarked, Music } from 'lucide-react';
+import { Brain, Settings, CalendarDays, Clock, Smile, BookMarked, Music } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -17,7 +17,7 @@ import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { useTrainingOverride } from '@/hooks/use-training-override';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
-const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -30,10 +30,8 @@ const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M8.5 7v10" />
-      <path d="M15.5 7v10" />
-      <path d="M5 7c0 1.5.8 3 2 3s2-1.5 2-3" />
-      <path d="M12 7c0 1.5.8 3 2 3s2-1.5 2-3" />
+      <path d="M4 4l16 8-16 8" />
+      <path d="M4 20V4" />
     </svg>
 );
 
@@ -69,8 +67,8 @@ export function Header() {
   };
   
   const focusInfo = {
-    neutral: { Icon: BrainCircuit, label: 'Core Thinking' },
-    math: { Icon: PiIcon, label: 'Math Reasoning' },
+    neutral: { Icon: Brain, label: 'Core Thinking' },
+    math: { Icon: SigmaIcon, label: 'Math Reasoning' },
     music: { Icon: Music, label: 'Music Cognition' },
   }
 
@@ -99,10 +97,10 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioGroup value={focus} onValueChange={handleFocusChange}>
                   <DropdownMenuRadioItem value="neutral" className="gap-2">
-                    <BrainCircuit className="w-4 h-4"/> Core Thinking
+                    <Brain className="w-4 h-4"/> Core Thinking
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="math" className="gap-2">
-                     <PiIcon className="w-4 h-4"/> Math Reasoning
+                     <SigmaIcon className="w-4 h-4"/> Math Reasoning
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="music" className="gap-2">
                      <Music className="w-4 h-4"/> Music Cognition
@@ -137,7 +135,7 @@ export function Header() {
         </div>
         </TooltipProvider>
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
-            <BrainCircuit className="h-7 w-7 text-primary" />
+            <Brain className="h-7 w-7 text-primary" />
             <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
             Polymath Lab
             </h1>

@@ -15,14 +15,14 @@ import { Progress } from '@/components/ui/progress';
 import { domainIcons } from '@/components/icons';
 import type { CHCDomain } from '@/types';
 import { useState, useEffect, memo } from 'react';
-import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Music } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info, Minus, Brain, Music } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useTrainingFocus, type TrainingFocus } from '@/hooks/use-training-focus';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
 import { usePerformanceStore } from '@/hooks/use-performance-store';
 
-const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -35,10 +35,8 @@ const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M8.5 7v10" />
-      <path d="M15.5 7v10" />
-      <path d="M5 7c0 1.5.8 3 2 3s2-1.5 2-3" />
-      <path d="M12 7c0 1.5.8 3 2 3s2-1.5 2-3" />
+      <path d="M4 4l16 8-16 8" />
+      <path d="M4 20V4" />
     </svg>
 );
 
@@ -78,8 +76,8 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   const isLoaded = isGlobalFocusLoaded && isClient;
   
   const focusInfo = {
-    neutral: { Icon: BrainCircuit, label: 'Core Thinking', color: 'text-muted-foreground', supported: true },
-    math: { Icon: PiIcon, label: 'Math Reasoning', color: 'text-energize', supported: domain.supportsMath },
+    neutral: { Icon: Brain, label: 'Core Thinking', color: 'text-muted-foreground', supported: true },
+    math: { Icon: SigmaIcon, label: 'Math Reasoning', color: 'text-energize', supported: domain.supportsMath },
     music: { Icon: Music, label: 'Music Cognition', color: 'text-blue-500', supported: domain.supportsMusic },
   };
   

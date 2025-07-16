@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, BrainCircuit, Settings, Music } from 'lucide-react';
+import { ArrowLeft, Brain, Settings, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { chcDomains, type CHCDomain } from '@/types';
 import { domainIcons } from '@/components/icons';
@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTrainingOverride } from '@/hooks/use-training-override';
 
-const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -26,10 +26,8 @@ const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M8.5 7v10" />
-      <path d="M15.5 7v10" />
-      <path d="M5 7c0 1.5.8 3 2 3s2-1.5 2-3" />
-      <path d="M12 7c0 1.5.8 3 2 3s2-1.5 2-3" />
+      <path d="M4 4l16 8-16 8" />
+      <path d="M4 20V4" />
     </svg>
 );
 
@@ -56,8 +54,8 @@ export default function TrainingPage({ params }: { params: { domain: CHCDomain }
   const focusSupportsMusic = domainInfo.supportsMusic;
 
   const focusInfo = {
-      neutral: { Icon: BrainCircuit, label: 'Core Thinking' },
-      math: { Icon: PiIcon, label: 'Math Reasoning' },
+      neutral: { Icon: Brain, label: 'Core Thinking' },
+      math: { Icon: SigmaIcon, label: 'Math Reasoning' },
       music: { Icon: Music, label: 'Music Cognition' },
   };
 
