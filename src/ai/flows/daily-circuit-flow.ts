@@ -65,6 +65,11 @@ const getTodayChallengeSet = (): CHCDomain[] => {
   return [sortedDomains[dayOfWeek % 8], sortedDomains[(dayOfWeek + 2) % 8], sortedDomains[(dayOfWeek + 4) % 8]];
 };
 
+const AIGeneratedTitlesSchema = z.object({
+    circuitTitle: z.string().describe("An overarching, exciting title for the entire daily challenge (e.g., 'The Focus Catalyst Sequence')."),
+    segmentTitles: z.array(z.string()).length(3).describe("An array of exactly three short, catchy titles for the training segments.")
+});
+
 const dailyCircuitPrompt = ai.definePrompt({
   name: 'dailyCircuitPrompt',
   input: {
@@ -74,7 +79,7 @@ const dailyCircuitPrompt = ai.definePrompt({
       domain3: z.string(),
     }),
   },
-  output: {schema: DailyCircuitOutputSchema},
+  output: {schema: AIGeneratedTitlesSchema},
   prompt: `
     You are a cognitive science coach creating a daily brain training routine.
     Your task is to generate an exciting and motivating set of titles for a 3-part training circuit.
@@ -85,13 +90,11 @@ const dailyCircuitPrompt = ai.definePrompt({
     3. {{{domain3}}}
 
     Based on these domains, generate an exciting overall "Circuit Title" for the whole session.
-    Then, for each of the three domains, create a short, catchy "Segment Title".
+    Then, for each of the three domains, create a short, catchy "Segment Title" and return them in the 'segmentTitles' array.
     
     For example, if the domains are Working Memory, Fluid Reasoning, and Executive Function, you might generate:
-    - Circuit Title: "The Mental Architect Sequence"
-    - Segment 1 Title: "Memory Matrix"
-    - Segment 2 Title: "Logic Flow"
-    - Segment 3 Title: "Attention Filter"
+    - circuitTitle: "The Mental Architect Sequence"
+    - segmentTitles: ["Memory Matrix", "Logic Flow", "Attention Filter"]
     
     Return the response in the specified JSON format.
   `,
@@ -108,17 +111,16 @@ export async function getDailyCircuit(): Promise<DailyCircuitOutput> {
     domain3: d3,
   });
 
-  if (!output) {
-    throw new Error('AI failed to generate a daily circuit.');
+  if (!output || !output.segmentTitles || output.segmentTitles.length !== 3) {
+    throw new Error('AI failed to generate a valid daily circuit with 3 segment titles.');
   }
 
   // Combine AI titles with static domain data
-  const finalSegments = output.segments.map((segment, index) => {
-    const domainKey = selectedDomains[index];
+  const finalSegments = selectedDomains.map((domainKey, index) => {
     const staticInfo = getDomainInfo(domainKey);
     return {
       domain: domainKey,
-      title: segment.title,
+      title: output.segmentTitles[index],
       gameTitle: staticInfo.gameTitle,
       transferAnchor: staticInfo.transferAnchor,
     };
