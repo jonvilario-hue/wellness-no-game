@@ -38,9 +38,13 @@ export function DailyChallenge() {
 
   if (isPending) {
     return (
-      <Card>
+      <Card className="relative overflow-hidden">
+        {organicGrowth && <GrowthDecoration />}
         <CardHeader className="text-center">
-          <Skeleton className="h-7 w-3/4 mx-auto" />
+          <div className="flex items-center justify-center gap-2">
+            <Zap className="w-6 h-6 text-primary"/>
+            <Skeleton className="h-7 w-3/4" />
+          </div>
           <Skeleton className="h-4 w-1/2 mx-auto mt-1" />
         </CardHeader>
         <CardContent className="space-y-4">
@@ -63,21 +67,22 @@ export function DailyChallenge() {
 
   if (error) {
      return (
-        <Card>
-            <CardHeader>
-                 <CardTitle className="font-headline text-2xl flex items-center justify-center gap-2">
-                    <Zap className="w-6 h-6 text-primary"/>
-                    Daily Lab Projects
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Alert variant="destructive">
-                    <AlertTitle>Error Loading Challenge</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                </Alert>
-            </CardContent>
+        <Card className="relative overflow-hidden">
+          {organicGrowth && <GrowthDecoration />}
+          <CardHeader>
+               <CardTitle className="font-headline text-2xl flex items-center justify-center gap-2">
+                  <Zap className="w-6 h-6 text-primary"/>
+                  Daily Lab Projects
+              </CardTitle>
+          </CardHeader>
+          <CardContent>
+              <Alert variant="destructive">
+                  <AlertTitle>Error Loading Challenge</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+              </Alert>
+          </CardContent>
         </Card>
-     )
+     );
   }
 
   if (!circuit) {
@@ -93,7 +98,7 @@ export function DailyChallenge() {
             {circuit.circuitTitle}
         </CardTitle>
         <CardDescription>
-          Your daily 3-part training workout to sharpen your mind.
+          Your daily 3-part AI-curated workout to sharpen your mind.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
