@@ -40,8 +40,6 @@ export type TrashedJournalEntry = JournalEntry & {
     deletedAt: number; // UTC timestamp in milliseconds
 };
 
-export type DailyHabits = Record<string, HabitId[]>; // YYYY-MM-DD -> Array of completed habit IDs
-
 const MAX_TRASH_ITEMS = 100;
 const TRASH_EXPIRATION_DAYS = 30;
 
@@ -115,21 +113,28 @@ interface JournalState {
     setSelectedEntry: (entry: JournalEntry | null) => void;
 }
 
-const createNewEntryObject = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => ({
-    id: `new-${Date.now()}`,
-    label: journalConfig[category]?.title || 'New Entry',
-    date,
-    category,
-    frequency,
-    field1: '',
-    field2: '',
-    field3: '',
-    affirmations: [],
-    tags: '',
-    effort: 75,
-    mood: null,
-    moodNote: '',
-});
+const createNewEntryObject = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const timeStamp = `${hours}:${minutes}`;
+
+    return {
+        id: `new-${Date.now()}`,
+        label: `entry ${date} ${timeStamp}`,
+        date,
+        category,
+        frequency,
+        field1: '',
+        field2: '',
+        field3: '',
+        affirmations: [],
+        tags: '',
+        effort: 75,
+        mood: null,
+        moodNote: '',
+    };
+};
 
 export const useJournal = create<JournalState>()(
   persist(
