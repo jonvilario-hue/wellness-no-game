@@ -110,13 +110,13 @@ export function Header() {
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                   <Button asChild variant="ghost" size="icon">
-                    <Link href="/time">
-                      <Clock className="h-5 w-5" />
+                    <Link href="/calendar">
+                      <CalendarDays className="h-5 w-5" />
                     </Link>
                   </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Clock Tools</p>
+                <p>Training Calendar</p>
               </TooltipContent>
             </Tooltip>
            <Tooltip delayDuration={0}>
@@ -168,13 +168,13 @@ export function Header() {
            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <Button asChild variant="ghost" size="icon">
-                  <Link href="/calendar">
-                    <CalendarDays className="h-5 w-5" />
+                  <Link href="/time">
+                    <Clock className="h-5 w-5" />
                   </Link>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Training Calendar</p>
+                <p>Clock Tools</p>
               </TooltipContent>
             </Tooltip>
           <Tooltip delayDuration={0}>
