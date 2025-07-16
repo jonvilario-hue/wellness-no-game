@@ -9,7 +9,7 @@ import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { BrainCircuit, Music } from 'lucide-react';
 import { Separator } from '../ui/separator';
 
-const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -22,7 +22,9 @@ const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
       {...props}
     >
-        <path d="M4 18V6h16l-8 6 8 6H4z"/>
+        <path d="M5 7h14" />
+        <path d="M8.5 7v10" />
+        <path d="M14.5 7c0 5.5-2 10-7 10" />
     </svg>
 );
 
@@ -59,7 +61,7 @@ export function TrainingSettings() {
                              <RadioGroupItem value="math" id="math-reasoning" className="mt-1"/>
                              <div className="space-y-1">
                                 <div className="font-semibold flex items-center gap-2">
-                                    <SigmaIcon className="w-5 h-5"/> Math Reasoning
+                                    <PiIcon className="w-5 h-5"/> Math Reasoning
                                 </div>
                                 <p className="text-xs text-muted-foreground">Train cognitive skills and mathematical logic simultaneously with math-integrated puzzles.</p>
                              </div>
