@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
@@ -71,36 +71,23 @@ export function SemanticFluencyStorm() {
         default: return neutralPrompts;
     }
   }, [currentMode]);
-
-  const getNewPrompt = () => {
+  
+  const getNewPrompt = useCallback(() => {
     let newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
     while (promptHistory.current.includes(newPrompt.text) && promptHistory.current.length < prompts.length) {
       newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
     }
     promptHistory.current.push(newPrompt.text);
     return newPrompt;
-  };
-  
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (gameState === 'running' && timeLeft > 0) {
-      timer = setTimeout(() => {
-        setTimeLeft(timeLeft - 1);
-        // Category switch halfway through
-        if (timeLeft === 23 && !switched) {
-          setSwitched(true);
-          setPrompt(getNewPrompt());
-        }
-      }, 1000);
-    } else if (timeLeft === 0 && gameState === 'running') {
-      setGameState('finished');
-      const time = (Date.now() - startTime) / 1000;
-      logGameResult('Glr', currentMode, { score: responses.length, time });
-    }
-    return () => clearTimeout(timer);
-  }, [gameState, timeLeft, switched, prompts, responses.length, currentMode, logGameResult, startTime]);
+  }, [prompts]);
 
-  const handleStart = () => {
+  const finishGame = useCallback(() => {
+    setGameState('finished');
+    const time = (Date.now() - startTime) / 1000;
+    logGameResult('Glr', currentMode, { score: responses.length, time });
+  }, [startTime, currentMode, responses.length, logGameResult]);
+
+  const handleStart = useCallback(() => {
     promptHistory.current = [];
     let initialPrompt = getNewPrompt();
     setPrompt(initialPrompt);
@@ -112,13 +99,25 @@ export function SemanticFluencyStorm() {
     setSwitched(false);
     setStartTime(Date.now());
     setInlineFeedback({ message: '', type: '' });
-  };
+  }, [getNewPrompt]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentInput(e.target.value);
-  };
-  
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (gameState === 'running' && timeLeft > 0) {
+      timer = setTimeout(() => {
+        setTimeLeft(timeLeft - 1);
+        if (timeLeft === 23 && !switched) {
+          setSwitched(true);
+          setPrompt(getNewPrompt());
+        }
+      }, 1000);
+    } else if (timeLeft === 0 && gameState === 'running') {
+      finishGame();
+    }
+    return () => clearTimeout(timer);
+  }, [gameState, timeLeft, switched, getNewPrompt, finishGame]);
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     const cleanInput = currentInput.trim().toLowerCase();
 
@@ -157,7 +156,7 @@ export function SemanticFluencyStorm() {
     
     setTimeout(() => setInlineFeedback({ message: '', type: '' }), 1500);
     setCurrentInput('');
-  };
+  }, [currentInput, responses, prompt, currentMode, toast, getNewPrompt]);
 
   if (!isLoaded) {
     return (
@@ -193,7 +192,7 @@ export function SemanticFluencyStorm() {
               <Input 
                 type="text" 
                 value={currentInput}
-                onChange={handleInputChange}
+                onChange={e => setCurrentInput(e.target.value)}
                 placeholder="Type your answer..."
                 autoFocus
               />

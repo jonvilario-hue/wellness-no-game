@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { usePerformanceStore } from "@/hooks/use-performance-store";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
-import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
+import { getFailureFeedback } from "@/lib/feedback-system";
 
 const neutralSymbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
 const musicSymbols = ['♩', '♪', '♫', '♭', '♯', '♮', '𝄞', '𝄢', '𝄡'];
@@ -58,21 +58,11 @@ export function RapidCodeMatch() {
   const [keyMap, setKeyMap] = useState<{ [key: string]: number }>(() => generateKeyMap());
   const keyEntries = useMemo(() => Object.entries(keyMap), [keyMap]);
 
-  useEffect(() => {
-    setKeyMap(generateKeyMap());
-  }, [currentMode, generateKeyMap]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (gameState === 'running' && timeLeft > 0) {
-      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (timeLeft <= 0 && gameState === 'running') {
-      setGameState('finished');
-      const time = (Date.now() - startTime) / 1000;
-      logGameResult('Gs', currentMode, { score, time });
-    }
-    return () => clearTimeout(timer);
-  }, [gameState, timeLeft, score, startTime, currentMode, logGameResult]);
+  const finishGame = useCallback(() => {
+    setGameState('finished');
+    const time = (Date.now() - startTime) / 1000;
+    logGameResult('Gs', currentMode, { score, time });
+  }, [logGameResult, currentMode, score, startTime]);
   
   const handleStart = useCallback(() => {
     setScore(0);
@@ -85,6 +75,22 @@ export function RapidCodeMatch() {
     setGameState('running');
     setInlineFeedback({ message: '', type: '' });
   }, [generateKeyMap]);
+  
+  useEffect(() => {
+    if (isLoaded) {
+      handleStart();
+    }
+  }, [isLoaded, currentMode, handleStart]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (gameState === 'running' && timeLeft > 0) {
+      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    } else if (timeLeft <= 0 && gameState === 'running') {
+      finishGame();
+    }
+    return () => clearTimeout(timer);
+  }, [gameState, timeLeft, finishGame]);
 
   const handleAnswer = useCallback((digit: number) => {
     if (gameState !== 'running') return;

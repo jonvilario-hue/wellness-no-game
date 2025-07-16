@@ -129,13 +129,13 @@ export function FocusSwitchReactor() {
   }, [generateStimulus, generateRule]);
 
   useEffect(() => {
+    let timerId: NodeJS.Timeout;
     if (gameState === 'running' && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-    if (timeLeft === 0 && gameState === 'running') {
+      timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    } else if (timeLeft === 0 && gameState === 'running') {
       finishGame();
     }
+    return () => clearTimeout(timerId);
   }, [gameState, timeLeft, finishGame]);
   
   // This effect handles mode changes.
