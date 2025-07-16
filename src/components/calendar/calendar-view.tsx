@@ -14,6 +14,7 @@ import { chcDomains } from '@/types';
 import type { CHCDomain } from '@/types';
 import { Skeleton } from '../ui/skeleton';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { cn } from '@/lib/utils';
 
 // Simulate which domains were trained on which days
 const getMockTrainingData = (date: Date): CHCDomain[] => {
@@ -27,6 +28,13 @@ const getMockTrainingData = (date: Date): CHCDomain[] => {
 };
 
 const moodEmojis = ['😔', '😐', '🙂', '😊', '😄'];
+const moodColors = [
+    'bg-red-500/20',     // Very Low
+    'bg-orange-500/20',  // Low
+    'bg-yellow-500/20',  // Neutral
+    'bg-green-500/20',   // Good
+    'bg-blue-500/20'     // Very Good
+];
 
 
 export function CalendarView() {
@@ -87,23 +95,49 @@ export function CalendarView() {
             selected={date}
             onSelect={setDate}
             className="rounded-md"
+            modifiers={{
+                mood0: (day) => {
+                    const entries = journalEntriesByDate.get(day.toDateString());
+                    return !!entries?.some(e => e.mood === 0);
+                },
+                mood1: (day) => {
+                    const entries = journalEntriesByDate.get(day.toDateString());
+                    return !!entries?.some(e => e.mood === 1);
+                },
+                mood2: (day) => {
+                    const entries = journalEntriesByDate.get(day.toDateString());
+                    return !!entries?.some(e => e.mood === 2);
+                },
+                mood3: (day) => {
+                    const entries = journalEntriesByDate.get(day.toDateString());
+                    return !!entries?.some(e => e.mood === 3);
+                },
+                mood4: (day) => {
+                    const entries = journalEntriesByDate.get(day.toDateString());
+                    return !!entries?.some(e => e.mood === 4);
+                },
+            }}
+            modifiersClassNames={{
+                mood0: cn(moodColors[0]),
+                mood1: cn(moodColors[1]),
+                mood2: cn(moodColors[2]),
+                mood3: cn(moodColors[3]),
+                mood4: cn(moodColors[4]),
+            }}
             components={{
               DayContent: ({ date, ...props }) => {
                 const dateString = date.toDateString();
                 const entriesForDay = journalEntriesByDate.get(dateString);
                 const hasJournalEntry = entriesForDay && entriesForDay.some(e => e.field1 || e.field2 || e.field3);
-                const moodEntry = entriesForDay?.find(e => e.mood !== null);
-                const moodEmoji = moodEntry && moodEntry.mood !== null ? moodEmojis[moodEntry.mood] : null;
-
+                
                 const trainedDomains = getMockTrainingData(date);
                 
                 return (
                   <div className="relative h-full w-full flex items-center justify-center">
                     <span>{date.getDate()}</span>
-                    {(hasJournalEntry || trainedDomains.length > 0 || moodEmoji) && (
+                     {hasJournalEntry && (
                       <div className="absolute bottom-0.5 right-0.5 flex items-center gap-0.5">
-                        {dashboardSettings.moodTracker && moodEmoji && <span className="text-xs">{moodEmoji}</span>}
-                        {hasJournalEntry && !moodEmoji && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                        <div className="w-1.5 h-1.5 rounded-full bg-accent" />
                       </div>
                     )}
                     {trainedDomains.length > 0 && (
