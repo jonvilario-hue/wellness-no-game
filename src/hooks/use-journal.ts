@@ -115,13 +115,18 @@ interface JournalState {
 
 const createNewEntryObject = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
     const now = new Date();
+    const day = now.getDate().toString().padStart(2, '0');
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const year = now.getFullYear().toString().slice(-2);
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
+    
+    const formattedDate = `${day}/${month}/${year}`;
     const timeStamp = `${hours}:${minutes}`;
 
     return {
         id: `new-${Date.now()}`,
-        label: `entry ${date} ${timeStamp}`,
+        label: `entry ${formattedDate} ${timeStamp}`,
         date,
         category,
         frequency,
