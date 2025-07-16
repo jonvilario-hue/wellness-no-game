@@ -15,12 +15,32 @@ import { Progress } from '@/components/ui/progress';
 import { domainIcons } from '@/components/icons';
 import type { CHCDomain } from '@/types';
 import { useState, useEffect, memo } from 'react';
-import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Sigma, Music } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Music } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useTrainingFocus, type TrainingFocus } from '@/hooks/use-training-focus';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
 import { usePerformanceStore } from '@/hooks/use-performance-store';
+
+const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        {...props}
+    >
+        <line x1="5" y1="7" x2="19" y2="7" />
+        <line x1="7" y1="7" x2="7" y2="18" />
+        <line x1="12" y1="7" x2="12" y2="18" />
+    </svg>
+);
+
 
 interface ChcDomainCardProps {
   domain: {
@@ -58,7 +78,7 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   
   const focusInfo = {
     neutral: { Icon: BrainCircuit, label: 'Core Thinking', color: 'text-muted-foreground', supported: true },
-    math: { Icon: Sigma, label: 'Math Reasoning', color: 'text-energize', supported: domain.supportsMath },
+    math: { Icon: PiIcon, label: 'Math Reasoning', color: 'text-energize', supported: domain.supportsMath },
     music: { Icon: Music, label: 'Music Cognition', color: 'text-blue-500', supported: domain.supportsMusic },
   };
   

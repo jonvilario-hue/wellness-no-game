@@ -1,7 +1,7 @@
 
 'use client';
 
-import { BrainCircuit, Settings, CalendarDays, Clock, Sigma, Smile, CheckCircle, BookMarked, Music } from 'lucide-react';
+import { BrainCircuit, Settings, CalendarDays, Clock, Smile, CheckCircle, BookMarked, Music } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -17,6 +17,26 @@ import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { useTrainingOverride } from '@/hooks/use-training-override';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
+const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        {...props}
+    >
+        <line x1="5" y1="7" x2="19" y2="7" />
+        <line x1="7" y1="7" x2="7" y2="18" />
+        <line x1="12" y1="7" x2="12" y2="18" />
+    </svg>
+);
+
+
 export function Header() {
   const { focus, setFocus, isLoaded } = useTrainingFocus();
   const { setOverride } = useTrainingOverride();
@@ -31,7 +51,7 @@ export function Header() {
   
   const focusInfo = {
     neutral: { Icon: BrainCircuit, label: 'Core Thinking' },
-    math: { Icon: Sigma, label: 'Math Reasoning' },
+    math: { Icon: PiIcon, label: 'Math Reasoning' },
     music: { Icon: Music, label: 'Music Cognition' },
   }
 
