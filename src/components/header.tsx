@@ -1,7 +1,7 @@
 
 'use client';
 
-import { BrainCircuit, Settings, CalendarDays, Clock, Sigma, Smile, CheckCircle } from 'lucide-react';
+import { BrainCircuit, Settings, CalendarDays, Clock, Sigma, Smile, CheckCircle, BookMarked } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -59,13 +59,13 @@ export function Header() {
            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                   <Button asChild variant="ghost" size="icon">
-                    <Link href="/time">
-                      <Clock className="h-5 w-5" />
+                    <Link href="/journal">
+                      <BookMarked className="h-5 w-5" />
                     </Link>
                   </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Clock Tools</p>
+                <p>My Journal</p>
               </TooltipContent>
             </Tooltip>
         </div>

@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import {
   BookMarked,
 } from 'lucide-react';
-import { useCallback, useMemo, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, getFrequencyForDate, type JournalCategory } from '@/hooks/use-journal';
 import { JournalEditor } from '@/components/journal/journal-editor';
@@ -22,29 +22,30 @@ import { GrowthDecoration } from '../ui/growth-decoration';
 
 
 export function JournalModule() {
-  const { hasHydrated, findOrCreateEntry, setSelectedEntry, selectedEntry, createNewEntry, entries, addEntry, updateEntry, deleteEntry } = useJournal();
+  const { 
+    hasHydrated, 
+    findOrCreateEntry, 
+    selectedEntry,
+    setSelectedEntry, 
+    createNewEntry, 
+    addEntry, 
+    updateEntry, 
+    deleteEntry,
+    entries
+  } = useJournal();
+  
   const { organicGrowth } = useTheme();
-  const [activeEntry, setActiveEntry] = useState<JournalEntry | null>(null);
-
-  // Effect to set the initial or selected entry
+  
+  // Effect to set the initial entry on first load
   useEffect(() => {
-    if (hasHydrated) {
-      if (selectedEntry) {
-        setActiveEntry(selectedEntry);
-      } else {
-        // If no entry is selected, find or create one for today
-        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-        const initialEntry = findOrCreateEntry({
-          date: today,
-          category: 'Growth & Challenge Reflection',
-          frequency: getFrequencyForDate(new Date(today))
-        });
-        setActiveEntry(initialEntry);
-        // Optionally set this as the globally selected one if it's the first load
-        if (!selectedEntry) {
-           setSelectedEntry(initialEntry);
-        }
-      }
+    if (hasHydrated && !selectedEntry) {
+      const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+      const initialEntry = findOrCreateEntry({
+        date: today,
+        category: 'Growth & Challenge Reflection',
+        frequency: getFrequencyForDate(new Date(today))
+      });
+      setSelectedEntry(initialEntry);
     }
   }, [hasHydrated, selectedEntry, findOrCreateEntry, setSelectedEntry]);
   
@@ -57,37 +58,36 @@ export function JournalModule() {
   const handleNewEntry = useCallback(() => {
     const newEntry = createNewEntry();
     setSelectedEntry(newEntry);
-    setActiveEntry(newEntry);
   }, [setSelectedEntry, createNewEntry]);
 
   const handleCategoryChange = useCallback((newCategory: JournalCategory) => {
-    if (activeEntry) {
-      const isNew = activeEntry.id.startsWith('new-');
+    if (selectedEntry) {
+      const isNew = selectedEntry.id.startsWith('new-');
       const newEntry = findOrCreateEntry({
-          date: activeEntry.date, 
+          date: selectedEntry.date, 
           category: newCategory, 
-          frequency: activeEntry.frequency,
+          frequency: selectedEntry.frequency,
           forceNew: isNew, // Force a new blank entry if we're in the new entry flow
       });
       setSelectedEntry(newEntry);
     }
-  }, [activeEntry, findOrCreateEntry, setSelectedEntry]);
+  }, [selectedEntry, findOrCreateEntry, setSelectedEntry]);
 
   const handleFrequencyChange = useCallback((newFrequency: ReflectionFrequency) => {
-    if (activeEntry) {
-      const isNew = activeEntry.id.startsWith('new-');
+    if (selectedEntry) {
+      const isNew = selectedEntry.id.startsWith('new-');
       const newEntry = findOrCreateEntry({
-          date: activeEntry.date, 
-          category: activeEntry.category, 
+          date: selectedEntry.date, 
+          category: selectedEntry.category, 
           frequency: newFrequency,
           forceNew: isNew,
       });
       setSelectedEntry(newEntry);
     }
-  }, [activeEntry, findOrCreateEntry, setSelectedEntry]);
+  }, [selectedEntry, findOrCreateEntry, setSelectedEntry]);
   
   const handleSave = useCallback((entryToSave: JournalEntry, options?: { isFinal?: boolean }) => {
-    let savedEntry = entryToSave;
+    let savedEntry: JournalEntry;
     const isNew = entryToSave.id.startsWith('new-');
     
     const hasContent = entryToSave.field1 || entryToSave.field2 || entryToSave.field3 || entryToSave.affirmations.some(a => a);
@@ -99,15 +99,10 @@ export function JournalModule() {
       savedEntry = addEntry(entryToSave);
     } else {
       updateEntry(entryToSave.id, entryToSave);
+      savedEntry = entryToSave;
     }
     
-    // Update the active entry in the parent component as well
-    // Use the latest selectedEntry from the store to make this function more stable
-    const currentSelectedEntry = useJournal.getState().selectedEntry;
-    if (currentSelectedEntry?.id === entryToSave.id || isNew) {
-        setSelectedEntry(savedEntry);
-        setActiveEntry(savedEntry);
-    }
+    setSelectedEntry(savedEntry);
     return { success: true, entry: savedEntry };
   }, [addEntry, updateEntry, setSelectedEntry]);
 
@@ -132,41 +127,32 @@ export function JournalModule() {
       ) : undefined,
     });
     
-    if (activeEntry?.id === id) {
+    if (selectedEntry?.id === id) {
        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
        const newEntry = findOrCreateEntry({date: today, category: 'Growth & Challenge Reflection', frequency: getFrequencyForDate(new Date(today))});
        setSelectedEntry(newEntry);
     }
-  }, [deleteEntry, toast, activeEntry?.id, entries, findOrCreateEntry, setSelectedEntry]);
+  }, [deleteEntry, toast, selectedEntry?.id, entries, findOrCreateEntry, setSelectedEntry]);
 
   
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 col-span-1 md:col-span-2 relative overflow-hidden">
       {organicGrowth && <GrowthDecoration />}
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-headline">
-          <BookMarked className="w-5 h-5 text-primary" />
-          My Journal
-        </CardTitle>
-        <CardDescription>
-          A tool for reflection, goal-setting, and cognitive growth.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent className="pt-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[650px]">
             <JournalSidebar 
                 onSelectEntry={handleSelectFromList} 
                 onDeleteEntry={handleDelete}
                 onNewEntry={handleNewEntry}
-                selectedEntry={activeEntry}
+                selectedEntry={selectedEntry}
                 onUpdateEntry={updateEntry}
             />
 
           <div className="lg:col-span-2 bg-background rounded-lg border">
-            {activeEntry ? (
+            {selectedEntry ? (
               <JournalEditor 
-                key={activeEntry.id} // Add key to force re-mount on entry change
-                entry={activeEntry} 
+                key={selectedEntry.id} // Add key to force re-mount on entry change
+                entry={selectedEntry} 
                 onSave={handleSave} 
                 onDelete={handleDelete}
                 onCategoryChange={handleCategoryChange}

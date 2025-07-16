@@ -14,7 +14,6 @@ import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { GameProgressTracker } from '@/components/dashboard/game-progress-tracker';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
-import { JournalModule } from '@/components/dashboard/journal-module';
 
 function DashboardContent() {
   const { settings } = useDashboardSettings();
@@ -32,7 +31,6 @@ function DashboardContent() {
             <div className="lg:col-span-2 space-y-6">
               {settings.mainDashboard && <MainDashboardView />}
               {settings.cognitiveCalendar && <CognitiveCalendar />}
-              {settings.journal && <JournalModule />}
             </div>
             <aside className="lg:col-span-1 flex flex-col gap-6">
               {settings.hyperfocusBuilder && <HyperfocusBuilder />}
