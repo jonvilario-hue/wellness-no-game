@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
@@ -18,12 +18,10 @@ const colorOptions = [
     { name: 'CHART-3', class: 'text-chart-3' },
 ];
 type NeutralRule = 'color' | 'word' | 'no_go';
-const neutralRules: NeutralRule[] = ['color', 'word', 'no_go'];
 
 
 // --- Math Mode Config ---
 type MathRule = 'parity' | 'primality' | 'no_go';
-const mathRules: MathRule[] = ['parity', 'primality', 'no_go'];
 
 const isPrime = (num: number) => {
   if (num <= 1) return false;
@@ -55,26 +53,26 @@ export function FocusSwitchReactor() {
     ruleRef.current = rule;
   }, [rule]);
 
-  const generateNeutralStimulus = () => {
+  const generateNeutralStimulus = useCallback(() => {
     const randomWord = colorOptions[Math.floor(Math.random() * colorOptions.length)];
     const randomColor = colorOptions[Math.floor(Math.random() * colorOptions.length)];
     setStimulus({ word: randomWord.name, color: randomColor.class });
-  };
+  }, []);
   
-  const generateMathStimulus = () => {
+  const generateMathStimulus = useCallback(() => {
     const value = Math.floor(Math.random() * 20) + 2; // numbers from 2 to 21
     setStimulus({ value });
-  }
+  }, []);
 
-  const generateStimulus = () => {
+  const generateStimulus = useCallback(() => {
     if (currentMode === 'math') {
         generateMathStimulus();
     } else {
         generateNeutralStimulus();
     }
-  }
+  }, [currentMode, generateMathStimulus, generateNeutralStimulus]);
 
-  const generateRule = () => {
+  const generateRule = useCallback(() => {
     if (currentMode === 'math') {
         const ruleIndex = Math.floor(Math.random() * 5); // 0,1,2,3,4
         if (ruleIndex < 2) setRule('parity'); // 40%
@@ -86,9 +84,15 @@ export function FocusSwitchReactor() {
         else if (ruleIndex < 4) setRule('word');
         else setRule('no_go');
     }
-  };
+  }, [currentMode]);
   
-  const restartGame = () => {
+   const finishGame = useCallback(() => {
+    setGameState('finished');
+    const time = (Date.now() - startTime) / 1000;
+    logGameResult('EF', currentMode, { score, time });
+  }, [logGameResult, score, startTime, currentMode]);
+  
+  const restartGame = useCallback(() => {
     setScore(0);
     setTimeLeft(45);
     setStartTime(Date.now());
@@ -96,13 +100,7 @@ export function FocusSwitchReactor() {
     setInlineFeedback({ message: '', type: '' });
     generateStimulus();
     generateRule();
-  }
-
-  const finishGame = () => {
-    setGameState('finished');
-    const time = (Date.now() - startTime) / 1000;
-    logGameResult('EF', currentMode, { score, time });
-  }
+  }, [generateStimulus, generateRule]);
 
   useEffect(() => {
     if (gameState === 'running' && timeLeft > 0) {
@@ -112,7 +110,7 @@ export function FocusSwitchReactor() {
     if (timeLeft === 0 && gameState === 'running') {
       finishGame();
     }
-  }, [gameState, timeLeft]);
+  }, [gameState, timeLeft, finishGame]);
   
   // This effect handles mode changes.
   useEffect(() => {
@@ -123,7 +121,7 @@ export function FocusSwitchReactor() {
     }
   }, [currentMode, isLoaded]);
   
-  const processNextTurn = (correct: boolean) => {
+  const processNextTurn = useCallback((correct: boolean) => {
     setScore(prev => correct ? prev + 1 : Math.max(0, prev - 1));
     const feedbackMessage = correct ? getSuccessFeedback('EF') : getFailureFeedback('EF');
     setInlineFeedback({ message: feedbackMessage, type: correct ? 'success' : 'failure' });
@@ -134,9 +132,9 @@ export function FocusSwitchReactor() {
       generateRule();
     }
     generateStimulus();
-  }
+  }, [generateRule, generateStimulus]);
 
-  const handleAnswer = (answer: string) => {
+  const handleAnswer = useCallback((answer: string) => {
     if (gameState !== 'running') return;
     
     if (rule === 'no_go') {
@@ -166,7 +164,7 @@ export function FocusSwitchReactor() {
     }
     
     processNextTurn(isCorrect);
-  };
+  }, [gameState, rule, processNextTurn, currentMode, stimulus]);
   
   // This function is for when the user correctly waits on a "no_go" trial
   useEffect(() => {
@@ -179,7 +177,7 @@ export function FocusSwitchReactor() {
         }, 1500); // 1.5 seconds to wait
     }
     return () => clearTimeout(noGoTimer);
-  }, [rule, stimulus, gameState]);
+  }, [rule, stimulus, gameState, processNextTurn]);
 
 
   const getRuleText = () => {
