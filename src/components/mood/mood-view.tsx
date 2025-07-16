@@ -10,7 +10,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Smile, Save, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Bar, BarChart, CartesianGrid, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
 
@@ -47,7 +47,7 @@ const MoodTrendChart = ({ data }: { data: { date: string; mood: number }[] }) =>
   
   if (data.length < 2) {
     return (
-      <div className="h-40 flex items-center justify-center text-muted-foreground text-sm">
+      <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">
         Log your mood for a few more days to see a trend chart.
       </div>
     );
@@ -56,17 +56,13 @@ const MoodTrendChart = ({ data }: { data: { date: string; mood: number }[] }) =>
   return (
     <div className="h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={formattedData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+        <LineChart data={formattedData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false}/>
           <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
           <YAxis domain={[0, 4]} stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => moodLabels[val]} />
           <RechartsTooltip content={<CustomTooltip />} />
-          <Bar dataKey="mood" radius={[4, 4, 0, 0]}>
-             {formattedData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={moodColors[entry.mood]} />
-            ))}
-          </Bar>
-        </BarChart>
+          <Line type="monotone" dataKey="mood" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4, fill: 'hsl(var(--primary))' }} />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );
