@@ -37,6 +37,7 @@ import { cn } from '@/lib/utils';
 import { EditableLabel } from '../time/editable-label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { Slider } from '../ui/slider';
 
 const moodOptions = [
   { emoji: '😔', label: 'Very Low', value: 0 },
@@ -254,6 +255,8 @@ tags: ${entryToExport.tags}
     handleSave(updatedEntry, { isFinal: true });
   }
 
+  const effortLabel = effortLevels.find(l => l.value === editorState.effort)?.label || 'Medium';
+
   return (
     <div className="p-4 h-full flex flex-col gap-2 relative">
         <div className="absolute top-0 left-0 right-0 p-2 z-10 text-center">
@@ -446,22 +449,20 @@ tags: ${entryToExport.tags}
             <div>
               <Label
                 htmlFor="effort-slider"
-                className="flex justify-between"
+                className="flex justify-between items-center"
               >
                 <span>Focus / Cognitive Effort</span>
+                <span className="font-semibold text-primary">{effortLabel}</span>
               </Label>
-              <div className="grid grid-cols-5 gap-2 mt-2">
-                  {effortLevels.map(({ value, label }) => (
-                      <Button
-                          key={value}
-                          variant={editorState.effort === value ? 'default' : 'outline'}
-                          onClick={() => handleFieldChange('effort', value)}
-                          className="text-xs h-auto py-2"
-                      >
-                          {label}
-                      </Button>
-                  ))}
-              </div>
+              <Slider
+                id="effort-slider"
+                min={1}
+                max={5}
+                step={1}
+                value={[editorState.effort]}
+                onValueChange={(value) => handleFieldChange('effort', value[0])}
+                className="mt-2"
+              />
             </div>
           )}
           
