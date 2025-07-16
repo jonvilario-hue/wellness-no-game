@@ -41,8 +41,8 @@ import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 const moodOptions = [
   { emoji: '😔', label: 'Very Low', value: 0 },
-  { emoji: '😐', label: 'Neutral', value: 1 },
-  { emoji: '🙂', label: 'Okay', value: 2 },
+  { emoji: '😐', label: 'Low', value: 1 },
+  { emoji: '🙂', label: 'Neutral', value: 2 },
   { emoji: '😊', label: 'Good', value: 3 },
   { emoji: '😄', label: 'Very Good', value: 4 },
 ];
