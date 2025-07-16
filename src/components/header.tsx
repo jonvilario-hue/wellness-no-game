@@ -1,7 +1,7 @@
 
 'use client';
 
-import { BrainCircuit, Settings, CalendarDays, Clock, Smile, CheckCircle, BookMarked, Music } from 'lucide-react';
+import { BrainCircuit, Settings, CalendarDays, Clock, Smile, BookMarked, Music } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -33,6 +33,24 @@ const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
         <line x1="5" y1="7" x2="19" y2="7" />
         <line x1="7" y1="7" x2="7" y2="18" />
         <line x1="12" y1="7" x2="12" y2="18" />
+    </svg>
+);
+
+const CheckHexagonIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        {...props}
+    >
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+        <polyline points="9 12 11 14 15 10" />
     </svg>
 );
 
@@ -135,7 +153,7 @@ export function Header() {
               <TooltipTrigger asChild>
                 <Button asChild variant="ghost" size="icon">
                   <Link href="/habits">
-                    <CheckCircle className="h-5 w-5" />
+                    <CheckHexagonIcon className="h-5 w-5" />
                   </Link>
                 </Button>
               </TooltipTrigger>
