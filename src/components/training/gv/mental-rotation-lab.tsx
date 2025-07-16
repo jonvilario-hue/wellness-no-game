@@ -135,11 +135,18 @@ export function MentalRotationLab() {
   // This game is explicitly for Gv Core Mode, so it always uses 'neutral'.
   const currentMode = 'neutral';
 
-  useEffect(() => {
-    // Puzzle generation is client-side only to prevent hydration errors.
+  const generateNewPuzzle = useCallback(() => {
     setPuzzle(generatePuzzle());
+    setPuzzleKey(prev => prev + 1);
+    setSelectedOption(null);
+    setFeedback('');
+    setInlineFeedback({ message: '', type: '' });
     setStartTime(Date.now());
-  }, [puzzleKey]);
+  }, []);
+
+  useEffect(() => {
+    generateNewPuzzle();
+  }, []);
 
   const handleSelectOption = (option: Grid) => {
     if (feedback || !puzzle) return;
@@ -158,12 +165,7 @@ export function MentalRotationLab() {
     const time = (Date.now() - startTime) / 1000;
     const puzzleScore = feedback === 'correct' ? 100 : 0;
     logGameResult('Gv', currentMode, { score: puzzleScore, time });
-
-    setPuzzleKey(prevKey => prevKey + 1);
-    setSelectedOption(null);
-    setFeedback('');
-    setInlineFeedback({ message: '', type: '' });
-    setStartTime(Date.now());
+    generateNewPuzzle();
   };
   
   if (!puzzle || !isLoaded) {
@@ -187,7 +189,7 @@ export function MentalRotationLab() {
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         <div className="w-full flex justify-between font-mono">
-          <span>Puzzle: {puzzleKey + 1}</span>
+          <span>Puzzle: {puzzleKey}</span>
           <span>Score: {score}</span>
         </div>
         <div>
