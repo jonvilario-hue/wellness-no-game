@@ -1,30 +1,19 @@
 
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Textarea } from '@/components/ui/textarea';
 import { useHydratedJournalStore as useJournal, type MoodState } from '@/hooks/use-journal';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { Smile, Save, Check } from 'lucide-react';
+import { Save, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
-
-const moodOptions = [
-  { emoji: '😔', label: 'Very Low', value: 0 },
-  { emoji: '😐', label: 'Low', value: 1 },
-  { emoji: '🙂', label: 'Neutral', value: 2 },
-  { emoji: '😊', label: 'Good', value: 3 },
-  { emoji: '😄', label: 'Very Good', value: 4 },
-];
+import { MoodEditor } from './mood-editor';
 
 const moodLabels = ['😔', '😐', '🙂', '😊', '😄'];
-const moodColors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6'];
-
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -91,7 +80,7 @@ const MoodLogger = () => {
         }
     }, [hasHydrated, findOrCreateEntry]);
 
-    const handleSave = () => {
+    const handleSave = useCallback(() => {
         updateEntry(todayEntry.id, { mood, moodNote: note });
         toast({
             title: 'Mood Saved',
@@ -99,15 +88,20 @@ const MoodLogger = () => {
         });
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 2000);
-    };
+    }, [updateEntry, todayEntry.id, mood, note, toast]);
 
-    const handleMoodSelect = (value: number) => {
-        if (mood === value) {
-            setMood(null); // Deselect
-        } else {
-            setMood(value);
-        }
-    }
+    useEffect(() => {
+        // Auto-save when mood or note changes, with a debounce
+        const handler = setTimeout(() => {
+            if(todayEntry.id && (mood !== todayEntry.mood || note !== todayEntry.moodNote)) {
+                handleSave();
+            }
+        }, 1500);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [mood, note, todayEntry, handleSave]);
 
     if (!hasHydrated) {
         return <Skeleton className="h-[250px] w-full" />
@@ -120,33 +114,11 @@ const MoodLogger = () => {
                 <CardDescription>Log your mood once per day to see trends over time.</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow space-y-4">
-                <TooltipProvider>
-                    <div className="flex justify-around items-center p-2 rounded-lg bg-muted/50 mt-1">
-                        {moodOptions.map(option => (
-                            <Tooltip key={option.value} delayDuration={0}>
-                                <TooltipTrigger asChild>
-                                    <button
-                                        onClick={() => handleMoodSelect(option.value)}
-                                        className={cn(
-                                            "text-4xl transition-transform duration-200 ease-in-out hover:scale-125",
-                                            mood === option.value ? "scale-125" : "scale-100 opacity-50"
-                                        )}
-                                    >
-                                        {option.emoji}
-                                    </button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>{option.label}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        ))}
-                    </div>
-                </TooltipProvider>
-                <Textarea
-                    placeholder="Optional: What influenced your mood today?"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    rows={2}
+                <MoodEditor 
+                    mood={mood}
+                    moodNote={note}
+                    onMoodChange={setMood}
+                    onMoodNoteChange={setNote}
                 />
                  <Button onClick={handleSave} className="w-full" disabled={mood === null}>
                     {isSaved ? <Check className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
@@ -176,6 +148,7 @@ export function MoodView() {
             const dateStr = d.toISOString().split('T')[0];
             const entriesForDay = entries.filter(e => e.date === dateStr && e.mood !== null);
             if (entriesForDay.length > 0) {
+                // Use the last recorded mood for the day
                 last7DaysMap.set(dateStr, entriesForDay[entriesForDay.length - 1].mood!);
             }
         }
@@ -205,7 +178,7 @@ export function MoodView() {
                              <div key={entry.id} className="p-3 bg-muted/50 rounded-lg">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <p className="font-semibold text-sm mb-1">{new Date(entry.date).toLocaleDateString('en-us', { weekday: 'long', month: 'long', day: 'numeric'})}</p>
+                                        <p className="font-semibold text-sm mb-1">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-us', { weekday: 'long', month: 'long', day: 'numeric'})}</p>
                                         {entry.note && <p className="text-xs text-muted-foreground italic truncate">
                                             "{entry.note}"
                                         </p>}

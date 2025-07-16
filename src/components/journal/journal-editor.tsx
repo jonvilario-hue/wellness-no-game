@@ -10,6 +10,7 @@ import {
     Share,
     PlusCircle,
     MinusCircle,
+    Star,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -22,38 +23,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
-import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Checkbox } from '../ui/checkbox';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, type TrashedJournalEntry, type JournalCategory, type HabitId, type Habit, type MoodState } from '@/hooks/use-journal';
-import { journalConfig, allHabits } from '@/lib/journal-config';
-import { cn } from '@/lib/utils';
+import { useHydratedJournalStore as useJournal, type JournalEntry, type ReflectionFrequency, type JournalCategory } from '@/hooks/use-journal';
+import { journalConfig } from '@/lib/journal-config';
 import { EditableLabel } from '../time/editable-label';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
-import { Slider } from '../ui/slider';
-
-const moodOptions = [
-  { emoji: '😔', label: 'Very Low', value: 0 },
-  { emoji: '😐', label: 'Low', value: 1 },
-  { emoji: '🙂', label: 'Neutral', value: 2 },
-  { emoji: '😊', label: 'Good', value: 3 },
-  { emoji: '😄', label: 'Very Good', value: 4 },
-];
-
-const effortLevels: { value: number, label: string }[] = [
-    { value: 1, label: 'Very Low' },
-    { value: 2, label: 'Low' },
-    { value: 3, label: 'Medium' },
-    { value: 4, label: 'High' },
-    { value: 5, label: 'Very High' },
-];
+import { MoodEditor } from '../mood/mood-editor';
+import { FocusEditor } from '../focus/focus-editor';
 
 const JournalEditorComponent = ({
   entry,
@@ -71,19 +53,19 @@ const JournalEditorComponent = ({
   const [editorState, setEditorState] = useState<JournalEntry>(entry);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
-  const { habits, completedHabits, toggleHabitForDay } = useJournal();
   const { settings: dashboardSettings } = useDashboardSettings();
   
-  const todaysHabits = completedHabits[editorState.date] || [];
-
   useEffect(() => {
+    // This effect synchronizes the editor's state with the selected entry from the store.
+    // It's crucial for ensuring the editor displays the correct data when the user
+    // switches between different journal entries in the sidebar.
     setEditorState(entry);
-    setSaveStatus('idle');
+    setSaveStatus('idle'); // Reset save status on entry change
   }, [entry]);
   
   const handleSave = useCallback((updatedEntry: JournalEntry, options: { isFinal?: boolean } = { isFinal: false }) => {
     const isNew = updatedEntry.id.startsWith('new-');
-    const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a) || updatedEntry.moodNote;
+    const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a) || updatedEntry.moodNote || updatedEntry.effort > 0;
     
     if(isNew && !hasContent && !options.isFinal) {
       return { success: false, entry: null };
@@ -102,7 +84,7 @@ const JournalEditorComponent = ({
       entryToSave.moodNote = '';
     }
     if (!dashboardSettings.effortTracker) {
-      entryToSave.effort = 3; // Reset to default if tracker is off
+      entryToSave.effort = 0; // Use 0 for "unrated"
     }
     
     setSaveStatus('saving');
@@ -118,12 +100,15 @@ const JournalEditorComponent = ({
   }, [entry, onSave, dashboardSettings]);
 
   useEffect(() => {
+    // This is the auto-save effect.
+    // It triggers a save automatically a short while after the user stops typing.
     const hasChanged = JSON.stringify(entry) !== JSON.stringify(editorState);
 
+    // Only auto-save if the entry has actually changed
     if (entry.id === editorState.id && hasChanged) {
       const handler = setTimeout(() => {
         handleSave(editorState);
-      }, 1500);
+      }, 1500); // 1.5-second debounce
 
       return () => clearTimeout(handler);
     }
@@ -131,6 +116,7 @@ const JournalEditorComponent = ({
 
 
   useEffect(() => {
+      // This effect makes the "Saved" message disappear after a few seconds.
       if (saveStatus === 'saved') {
           const timer = setTimeout(() => setSaveStatus('idle'), 2000);
           return () => clearTimeout(timer);
@@ -157,7 +143,7 @@ const JournalEditorComponent = ({
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
     if (editorState.category !== newCategory) {
-        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a) || editorState.moodNote;
+        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a) || editorState.moodNote || editorState.effort > 0;
         if (!isNewEntry || hasContent) {
           handleSave(editorState, { isFinal: true });
         }
@@ -167,7 +153,7 @@ const JournalEditorComponent = ({
   
   const handleFrequencyButtonClick = (newFrequency: ReflectionFrequency) => {
     if (editorState.frequency !== newFrequency) {
-        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a) || editorState.moodNote;
+        const hasContent = editorState.field1 || editorState.field2 || editorState.field3 || editorState.affirmations.some(a => a) || editorState.moodNote || editorState.effort > 0;
         if (!isNewEntry || hasContent) {
           handleSave(editorState, { isFinal: true });
         }
@@ -181,81 +167,15 @@ const JournalEditorComponent = ({
   ) => {
     setEditorState(prevState => ({ ...prevState, [field]: value }));
   };
-
-  const handleHabitChange = (habitId: HabitId, checked: boolean) => {
-    toggleHabitForDay(editorState.date, habitId);
-  };
-
-  const handleAffirmationChange = (index: number, value: string) => {
-      const newAffirmations = [...editorState.affirmations];
-      newAffirmations[index] = value;
-      setEditorState(prevState => ({...prevState, affirmations: newAffirmations}));
-  }
-
-  const addAffirmation = () => {
-      setEditorState(prevState => ({...prevState, affirmations: [...prevState.affirmations, '']}));
-  }
-  
-  const removeLastAffirmation = () => {
-      setEditorState(prevState => ({...prevState, affirmations: prevState.affirmations.slice(0, -1)}));
-  }
-
-  const exportAsMarkdown = (entryToExport: JournalEntry) => {
-      const entryConfig = journalConfig[entryToExport.category as JournalCategory];
-      const prompts = entryConfig.prompts[entryToExport.frequency] || entryConfig.prompts.daily;
-      const moodLabel = moodOptions.find(m => m.value === entryToExport.mood)?.label;
-
-      let markdown = `---
-date: ${entryToExport.date}
-category: "${entryToExport.category}"
-frequency: ${entryToExport.frequency}
-effort: ${entryToExport.effort}
-mood: ${moodLabel || 'Not set'}
-tags: ${entryToExport.tags}
----
-
-# Journal Entry: ${new Date(entryToExport.date + 'T00:00:00').toLocaleDateString()}
-
-## ${entryToExport.category} (${entryToExport.frequency})
-
-`;
-
-      if (entryToExport.field1) markdown += `### ${prompts[0]}\n${entryToExport.field1}\n\n`;
-      if (entryToExport.field2) markdown += `### ${prompts[1]}\n${entryToExport.field2}\n\n`;
-      if (entryToExport.field3) markdown += `### ${prompts[2]}\n${entryToExport.field3}\n\n`;
-
-      if (entryToExport.affirmations && entryToExport.affirmations.length > 0 && entryToExport.affirmations.some(a => a)) {
-          markdown += `### Affirmations\n${entryToExport.affirmations.filter(a => a).map(a => `> ${a}`).join('\n')}\n\n`;
-      }
-      
-      const completedHabitsForEntry = habits
-          .filter(habit => todaysHabits.includes(habit.id))
-          .map(h => h?.label);
-
-      if (completedHabitsForEntry.length > 0) {
-          markdown += `### Supporting Habits\n${completedHabitsForEntry.map(h => `- [x] ${h}`).join('\n')}\n\n`;
-      }
-
-      const element = document.createElement("a");
-      const file = new Blob([markdown], {type: 'text/plain'});
-      element.href = URL.createObjectURL(file);
-      element.download = `journal-${entryToExport.date}.md`;
-      document.body.appendChild(element); 
-      element.click();
-      document.body.removeChild(element);
-  }
   
   const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
   const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
-  const relevantHabits = habits.filter(h => h.category === category);
-
+  
   const handleLabelSave = (newLabel: string) => {
     const updatedEntry = { ...editorState, label: newLabel };
     setEditorState(updatedEntry);
     handleSave(updatedEntry, { isFinal: true });
   }
-
-  const effortLabel = effortLevels.find(l => l.value === editorState.effort)?.label || 'Medium';
 
   return (
     <div className="p-4 h-full flex flex-col gap-2 relative">
@@ -270,7 +190,7 @@ tags: ${entryToExport.tags}
                   ) : (
                       <>
                            <CheckCircle className="w-4 h-4 text-green-500"/>
-                          <span>Saved at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          <span>Saved</span>
                       </>
                   )}
               </div>
@@ -292,9 +212,6 @@ tags: ${entryToExport.tags}
          <div className="flex items-center gap-2 flex-shrink-0">
           {!isNewEntry && (
               <>
-              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => exportAsMarkdown(editorState)}>
-                  <Share className="w-4 h-4"/>
-              </Button>
                <AlertDialog>
                   <AlertDialogTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
@@ -384,128 +301,25 @@ tags: ${entryToExport.tags}
             className="min-h-[60px]"
           />
           
-          <div className="space-y-2">
-               {editorState.affirmations.map((affirmation, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                       <Textarea
-                        placeholder={config.affirmationPrompt}
-                        value={affirmation}
-                        onChange={e => handleAffirmationChange(index, e.target.value)}
-                        className="min-h-[60px] flex-grow"
-                      />
-                  </div>
-               ))}
-               <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={addAffirmation}>
-                      <PlusCircle className="mr-2 h-4 w-4"/>
-                      Add Affirmation
-                  </Button>
-                  {editorState.affirmations.length > 1 && (
-                      <Button variant="ghost" size="sm" onClick={removeLastAffirmation}>
-                          <MinusCircle className="mr-2 h-4 w-4"/>
-                          Remove
-                      </Button>
-                  )}
-               </div>
-          </div>
-          
           <Separator/>
-          
-          {dashboardSettings.moodTracker && (
-            <div>
-              <Label>Mood</Label>
-              <TooltipProvider>
-              <div className="flex justify-around items-center p-2 rounded-lg bg-muted/50 mt-1">
-                {moodOptions.map(option => (
-                  <Tooltip key={option.value} delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => handleFieldChange('mood', editorState.mood === option.value ? null : option.value)}
-                        className={cn(
-                          "text-3xl transition-transform duration-200 ease-in-out hover:scale-125",
-                          editorState.mood === option.value ? "scale-125" : "scale-100 opacity-50"
-                        )}
-                      >
-                        {option.emoji}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{option.label}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                ))}
-              </div>
-              </TooltipProvider>
-              <Textarea
-                  placeholder="Optional: What influenced your mood today?"
-                  value={editorState.moodNote || ''}
-                  onChange={e => handleFieldChange('moodNote', e.target.value)}
-                  className="min-h-[60px] mt-2"
-                />
-            </div>
-          )}
 
+            {dashboardSettings.moodTracker && (
+              <MoodEditor
+                mood={editorState.mood}
+                moodNote={editorState.moodNote || ''}
+                onMoodChange={(value) => handleFieldChange('mood', value)}
+                onMoodNoteChange={(value) => handleFieldChange('moodNote', value)}
+              />
+            )}
+          
           {dashboardSettings.effortTracker && (
-            <div>
-              <Label
-                htmlFor="effort-slider"
-                className="flex justify-between items-center"
-              >
-                <span>Focus / Cognitive Effort</span>
-                <span className="font-semibold text-primary">{effortLabel}</span>
-              </Label>
-              <Slider
-                id="effort-slider"
-                min={1}
-                max={5}
-                step={1}
-                value={[editorState.effort]}
-                onValueChange={(value) => handleFieldChange('effort', value[0])}
-                className="mt-2"
-              />
-            </div>
+            <FocusEditor 
+              effort={editorState.effort}
+              onEffortChange={(value) => handleFieldChange('effort', value)}
+              contextualPrompt="Rate your focus for this reflection:"
+            />
           )}
-          
-          <div>
-              <Label htmlFor="tags-input">Tags (comma-separated)</Label>
-              <Input
-                id="tags-input"
-                placeholder={config.suggestedTags}
-                value={editorState.tags}
-                onChange={e => handleFieldChange('tags', e.target.value)}
-              />
-          </div>
 
-          {relevantHabits.length > 0 && (
-            <div>
-              <Label>Supporting Habits</Label>
-              <div className="space-y-1 mt-1">
-                {relevantHabits.map(habit => {
-                  if (!habit) return null;
-                  const habitCheckboxId = `habit-${habit.id}-${entry.id}`;
-                  const Icon = allHabits[habit.id]?.icon;
-                  if (!Icon) return null;
-
-                  return (
-                     <div key={habit.id} className="flex items-center">
-                      <Label
-                        htmlFor={habitCheckboxId}
-                        className="flex items-center gap-2 text-sm font-normal cursor-pointer p-2 rounded-md flex-grow hover:bg-muted w-full"
-                      >
-                         <Checkbox 
-                          id={habitCheckboxId}
-                          checked={todaysHabits.includes(habit.id)}
-                          onCheckedChange={checked => handleHabitChange(habit.id, !!checked)}
-                         />
-                        <Icon className="w-4 h-4 text-muted-foreground" />
-                        <span>{habit.label}</span>
-                      </Label>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </ScrollArea>
     </div>

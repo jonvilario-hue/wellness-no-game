@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Target, PlusCircle, Trash2, Edit, TrendingUp, Zap, Calendar } from 'lucide-react';
+import { Target, PlusCircle, Trash2, Edit, TrendingUp, Zap, Calendar, Check } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useHydratedJournalStore as useJournal, type Habit } from '@/hooks/use-journal';
 import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/lib/journal-config';
@@ -33,6 +33,9 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from '../ui/skeleton';
 import { Progress } from '../ui/progress';
+import { motion } from 'framer-motion';
+import { useToast } from '../ui/use-toast';
+
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
 
@@ -53,18 +56,26 @@ const HabitItem = ({
   const checkboxId = `habit-tracker-${habit.id}`;
   return (
     <div className="flex items-center group">
-      <Label
+       <Label
         htmlFor={checkboxId}
         className={cn(
           "flex items-center gap-3 p-3 rounded-lg transition-all w-full cursor-pointer",
           isDone ? 'bg-primary/10 hover:bg-primary/20' : 'bg-muted/50 hover:bg-muted'
         )}
       >
-        <Checkbox id={checkboxId} checked={isDone} onCheckedChange={onToggle} />
+        <motion.div whileTap={{ scale: 1.2 }}>
+            <Checkbox id={checkboxId} checked={isDone} onCheckedChange={onToggle}>
+                {isDone && (
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                        <Check className="h-4 w-4" />
+                    </motion.div>
+                )}
+            </Checkbox>
+        </motion.div>
         <div className={cn("p-1.5 rounded-md", isDone ? 'bg-primary/20' : 'bg-background/50')}>
           <Icon className={cn("w-5 h-5", isDone ? 'text-primary' : 'text-muted-foreground')} />
         </div>
-        <span className={cn("flex-grow font-medium text-sm", isDone ? 'text-foreground' : 'text-muted-foreground')}>
+        <span className={cn("flex-grow font-medium text-sm", isDone ? 'text-foreground line-through' : 'text-muted-foreground')}>
           {habit.label}
         </span>
       </Label>
@@ -172,12 +183,18 @@ export function HabitsView() {
     const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit, resetHabits, hasHydrated } = useJournal();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
+    const { toast } = useToast();
 
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
     const todaysHabits = completedHabits[today] || [];
     
     const handleToggleHabit = (habitId: HabitId) => {
+      const isCompleting = !todaysHabits.includes(habitId);
       toggleHabitForDay(today, habitId);
+      toast({
+          title: isCompleting ? "Habit Completed!" : "Habit Undone",
+          description: isCompleting ? "Great job building consistency." : "It's okay, you can do it later.",
+      })
     };
     
     const handleOpenDialog = (habit: Habit | null) => {

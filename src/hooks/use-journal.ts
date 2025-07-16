@@ -31,7 +31,7 @@ export type JournalEntry = {
     field3: string;
     affirmations: string[];
     tags: string;
-    effort: number; // 1-5 scale
+    effort: number; // 0-5 scale, 0 = unrated
     mood: MoodState;
     moodNote?: string;
 };
@@ -73,7 +73,7 @@ const createSeedData = (): { entries: JournalEntry[], habits: Record<string, Hab
                 field3: '',
                 affirmations: [],
                 tags: '',
-                effort: 3,
+                effort: 0,
                 mood: null,
                 moodNote: '',
             },
@@ -135,7 +135,7 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
         field3: '',
         affirmations: [],
         tags: '',
-        effort: 3,
+        effort: 0, // 0 = unrated
         mood: null,
         moodNote: '',
     };
@@ -162,15 +162,13 @@ export const useJournal = create<JournalState>()(
                 (e) => e.date === date && e.category === category && e.frequency === frequency
             );
             
-            // If an entry exists but is completely empty (placeholder), treat it as new.
             if (existingEntry) {
-                 const hasContent = existingEntry.field1 || existingEntry.field2 || existingEntry.field3 || existingEntry.affirmations.some(a => a) || existingEntry.label !== (journalConfig[existingEntry.category]?.title || 'New Entry');
-                 if (hasContent || existingEntry.mood !== null) {
+                 const hasContent = existingEntry.field1 || existingEntry.field2 || existingEntry.field3 || existingEntry.affirmations.some(a => a) || (existingEntry.label !== (journalConfig[existingEntry.category]?.title || 'New Entry'));
+                 if (hasContent || existingEntry.mood !== null || existingEntry.effort > 0) {
                     return existingEntry;
                  }
             }
             
-            // If no existing entry, or existing entry is blank, return a new object but with a persistent ID
             return {
                 id: `${date}-${category}-${frequency}`,
                 label: journalConfig[category]?.title || 'New Entry',
@@ -182,7 +180,7 @@ export const useJournal = create<JournalState>()(
                 field3: '',
                 affirmations: [],
                 tags: '',
-                effort: 3,
+                effort: 0, // 0 = unrated
                 mood: null,
                 moodNote: '',
             };
