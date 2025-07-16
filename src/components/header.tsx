@@ -56,6 +56,18 @@ export function Header() {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href="/time">
+                      <Clock className="h-5 w-5" />
+                    </Link>
+                  </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Clock Tools</p>
+              </TooltipContent>
+            </Tooltip>
            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                   <Button asChild variant="ghost" size="icon">
