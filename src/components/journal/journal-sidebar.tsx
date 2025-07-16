@@ -41,6 +41,7 @@ import { useHydratedJournalStore as useJournal, type JournalEntry } from '@/hook
 import { journalConfig, type JournalCategory } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { Label } from '../ui/label';
+import { EditableLabel } from '../time/editable-label';
 
 const JournalSidebarComponent = ({ 
     onSelectEntry, 
@@ -61,8 +62,6 @@ const JournalSidebarComponent = ({
     const { entries, trashedEntries, restoreEntry, deleteFromTrashPermanently, emptyTrash } = useJournal();
     const [searchQuery, setSearchQuery] = useState('');
     const [sortMode, setSortMode] = useState<SortMode>('date-desc');
-    const [isRenaming, setIsRenaming] = useState<string | null>(null);
-    const [renameValue, setRenameValue] = useState('');
     const { toast } = useToast();
 
     const handleRestore = useCallback((id: string) => {
@@ -113,16 +112,9 @@ const JournalSidebarComponent = ({
       }, {} as Record<string, JournalEntry[]>);
     };
 
-    const handleStartRename = (entry: JournalEntry) => {
-      setIsRenaming(entry.id);
-      setRenameValue(entry.label);
-    };
-
-    const handleSaveRename = (entry: JournalEntry) => {
-      onUpdateEntry(entry.id, { ...entry, label: renameValue });
-      setIsRenaming(null);
-      setRenameValue('');
-      toast({ title: 'Entry renamed' });
+    const handleSaveRename = (entry: JournalEntry, newLabel: string) => {
+        onUpdateEntry(entry.id, { label: newLabel });
+        toast({ title: 'Entry renamed' });
     };
 
     const ListView = () => {
@@ -171,27 +163,6 @@ const JournalSidebarComponent = ({
                                                 )}
                                             </button>
                                             
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => { e.stopPropagation(); handleStartRename(entry)}}>
-                                                        <Edit className="w-4 h-4 text-muted-foreground"/>
-                                                    </Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Rename Entry</AlertDialogTitle>
-                                                    </AlertDialogHeader>
-                                                    <div>
-                                                        <Label htmlFor='rename-input'>New Title</Label>
-                                                        <Input id="rename-input" value={renameValue} onChange={e => setRenameValue(e.target.value)} />
-                                                    </div>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={() => handleSaveRename(entry)}>Save</AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
                                                     <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
