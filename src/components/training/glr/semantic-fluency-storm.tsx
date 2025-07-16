@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
@@ -74,7 +74,7 @@ export function SemanticFluencyStorm() {
 
   const getNewPrompt = () => {
     let newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-    while (promptHistory.current.includes(newPrompt.text)) {
+    while (promptHistory.current.includes(newPrompt.text) && promptHistory.current.length < prompts.length) {
       newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
     }
     promptHistory.current.push(newPrompt.text);
@@ -101,8 +101,8 @@ export function SemanticFluencyStorm() {
   }, [gameState, timeLeft, switched, prompts, responses.length, currentMode, logGameResult, startTime]);
 
   const handleStart = () => {
+    promptHistory.current = [];
     let initialPrompt = getNewPrompt();
-    promptHistory.current = [initialPrompt.text];
     setPrompt(initialPrompt);
     
     setGameState('running');
