@@ -53,7 +53,7 @@ export const getFrequencyForDate = (date: Date): ReflectionFrequency => {
     return 'daily';
 };
 
-const createSeedData = (): { entries: JournalEntry[], habits: DailyHabits, habitConfig: Habit[] } => {
+const createSeedData = (): { entries: JournalEntry[], habits: Record<string, HabitId[]>, habitConfig: Habit[] } => {
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
     const category: JournalCategory = 'Growth & Challenge Reflection';
     const frequency = getFrequencyForDate(new Date());
@@ -91,7 +91,7 @@ interface JournalState {
     entries: JournalEntry[];
     trashedEntries: TrashedJournalEntry[];
     habits: Habit[];
-    completedHabits: DailyHabits;
+    completedHabits: Record<string, HabitId[]>;
     selectedEntry: JournalEntry | null;
     hasHydrated: boolean;
 
@@ -126,7 +126,7 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
 
     return {
         id: `new-${Date.now()}`,
-        label: `entry ${formattedDate} ${timeStamp}`,
+        label: `Entry ${formattedDate} ${timeStamp}`,
         date,
         category,
         frequency,
