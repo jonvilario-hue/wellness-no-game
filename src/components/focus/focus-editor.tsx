@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Wand2 } from 'lucide-react';
 import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
 
 const effortLevels: { value: number, label: string, color: string, emoji: string }[] = [
@@ -27,12 +26,21 @@ interface FocusEditorProps {
 export const FocusEditor = ({ effort, onEffortChange, contextualPrompt }: FocusEditorProps) => {
   const [internalEffort, setInternalEffort] = useState(effort);
   const [isRated, setIsRated] = useState(effort > 0);
-  const { toast } = useToast();
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
   useEffect(() => {
     setInternalEffort(effort);
     setIsRated(effort > 0);
   }, [effort]);
+
+  useEffect(() => {
+    if (feedbackMessage) {
+      const timer = setTimeout(() => {
+        setFeedbackMessage('');
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [feedbackMessage]);
 
   const handleSliderChange = (value: number[]) => {
     setInternalEffort(value[0]);
@@ -41,26 +49,19 @@ export const FocusEditor = ({ effort, onEffortChange, contextualPrompt }: FocusE
   const handleCommit = () => {
     onEffortChange(internalEffort);
     setIsRated(true);
-    toast({
-        title: "Focus Recorded",
-        description: `Your focus level of ${internalEffort}/5 has been saved.`,
-    });
+    setFeedbackMessage(`Focus level of ${internalEffort}/5 has been saved.`);
   };
   
   const handleClear = () => {
       onEffortChange(0); // 0 signifies "unrated"
       setIsRated(false);
-      toast({
-        title: "Focus Cleared",
-        description: "Your focus entry for this session has been removed.",
-    });
+      setFeedbackMessage("Focus entry for this session has been cleared.");
   }
 
   const handleStarClick = () => {
     if (isRated) {
         handleClear();
     } else {
-        // If not rated, but slider has a value, commit it. Otherwise, do nothing.
         if (internalEffort > 0) {
             handleCommit();
         }
@@ -68,7 +69,7 @@ export const FocusEditor = ({ effort, onEffortChange, contextualPrompt }: FocusE
   };
 
   const currentLevel = effortLevels.find(l => l.value === internalEffort) || effortLevels[0];
-  const starColor = isRated ? effortLevels.find(l => l.value === effort)?.color : 'text-muted-foreground';
+  const starColor = isRated ? (effortLevels.find(l => l.value === effort)?.color || 'text-yellow-500') : 'text-muted-foreground';
 
   return (
     <div className="space-y-3 p-3 bg-muted/30 rounded-lg">
@@ -107,18 +108,22 @@ export const FocusEditor = ({ effort, onEffortChange, contextualPrompt }: FocusE
             </AnimatePresence>
         </div>
       </div>
-       <AnimatePresence>
-       {isRated && (
-         <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-xs text-center text-muted-foreground"
-          >
-            Your focus level is recorded as <strong className={cn(starColor)}>{effort}/5</strong>. Tap the star to clear.
-         </motion.p>
-       )}
-      </AnimatePresence>
+       <div className="h-4 text-center">
+         <AnimatePresence>
+           {feedbackMessage && (
+             <motion.p
+                key={feedbackMessage}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 5 }}
+                transition={{ duration: 0.3 }}
+                className="text-xs text-muted-foreground"
+              >
+                {feedbackMessage}
+              </motion.p>
+           )}
+         </AnimatePresence>
+       </div>
     </div>
   );
 };
