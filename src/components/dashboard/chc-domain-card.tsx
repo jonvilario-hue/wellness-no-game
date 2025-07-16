@@ -22,22 +22,20 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
 import { usePerformanceStore } from '@/hooks/use-performance-store';
 
-const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
     >
-        <path d="M5 7h14" />
-        <path d="M8.5 7v10" />
-        <path d="M14.5 7c0 5.5-2 10-7 10" />
+        <path d="M4 18V6h16l-8 6 8 6H4z"/>
     </svg>
 );
 
@@ -78,7 +76,7 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   
   const focusInfo = {
     neutral: { Icon: BrainCircuit, label: 'Core Thinking', color: 'text-muted-foreground', supported: true },
-    math: { Icon: PiIcon, label: 'Math Reasoning', color: 'text-energize', supported: domain.supportsMath },
+    math: { Icon: SigmaIcon, label: 'Math Reasoning', color: 'text-energize', supported: domain.supportsMath },
     music: { Icon: Music, label: 'Music Cognition', color: 'text-blue-500', supported: domain.supportsMusic },
   };
   

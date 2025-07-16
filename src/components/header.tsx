@@ -17,22 +17,20 @@ import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { useTrainingOverride } from '@/hooks/use-training-override';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
-const PiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
     >
-        <path d="M5 7h14" />
-        <path d="M8.5 7v10" />
-        <path d="M14.5 7c0 5.5-2 10-7 10" />
+        <path d="M4 18V6h16l-8 6 8 6H4z"/>
     </svg>
 );
 
@@ -69,7 +67,7 @@ export function Header() {
   
   const focusInfo = {
     neutral: { Icon: BrainCircuit, label: 'Core Thinking' },
-    math: { Icon: PiIcon, label: 'Math Reasoning' },
+    math: { Icon: SigmaIcon, label: 'Math Reasoning' },
     music: { Icon: Music, label: 'Music Cognition' },
   }
 
@@ -101,7 +99,7 @@ export function Header() {
                     <BrainCircuit className="w-4 h-4"/> Core Thinking
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="math" className="gap-2">
-                     <PiIcon className="w-4 h-4"/> Math Reasoning
+                     <SigmaIcon className="w-4 h-4"/> Math Reasoning
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="music" className="gap-2">
                      <Music className="w-4 h-4"/> Music Cognition
