@@ -15,7 +15,7 @@ import { Progress } from '@/components/ui/progress';
 import { domainIcons } from '@/components/icons';
 import type { CHCDomain } from '@/types';
 import { useState, useEffect, memo } from 'react';
-import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Sigma } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info, Minus, BrainCircuit, Sigma, Music } from 'lucide-react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useTrainingFocus, type TrainingFocus } from '@/hooks/use-training-focus';
 import { cn } from '@/lib/utils';
@@ -30,6 +30,7 @@ interface ChcDomainCardProps {
     gameTitle: string;
     tasks: string[];
     supportsMath: boolean;
+    supportsMusic: boolean;
   };
 }
 
@@ -54,10 +55,16 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   };
 
   const isLoaded = isGlobalFocusLoaded && isClient;
-  const isMathMode = isLoaded && globalFocus === 'math' && domain.supportsMath;
-  const ModeIcon = isMathMode ? Sigma : BrainCircuit;
-
-  const modeToDisplay: TrainingFocus = (isMathMode || !domain.supportsMath) ? 'math' : 'neutral';
+  
+  const focusInfo = {
+    neutral: { Icon: BrainCircuit, label: 'Core Thinking', color: 'text-muted-foreground', supported: true },
+    math: { Icon: Sigma, label: 'Math Reasoning', color: 'text-energize', supported: domain.supportsMath },
+    music: { Icon: Music, label: 'Music Cognition', color: 'text-blue-500', supported: domain.supportsMusic },
+  };
+  
+  const activeMode = focusInfo[globalFocus];
+  const modeToDisplay = activeMode.supported ? globalFocus : 'neutral';
+  const { Icon: ModeIcon, label: modeLabel, color: modeColor } = focusInfo[modeToDisplay];
   
   // Get the performance data for the currently displayed mode
   const performanceData = isLoaded ? performance[domain.key][modeToDisplay] : null;
@@ -75,14 +82,14 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
           <CardTitle className="font-headline text-base">{domain.name}</CardTitle>
           <CardDescription className="text-xs">{domain.description}</CardDescription>
         </div>
-        {isLoaded && domain.supportsMath && (
+        {isLoaded && (activeMode.supported || modeToDisplay !== 'neutral') && (
            <TooltipProvider>
              <Tooltip delayDuration={0}>
                <TooltipTrigger>
-                  <ModeIcon className={cn("w-5 h-5", isMathMode ? "text-energize" : "text-muted-foreground")} />
+                  <ModeIcon className={cn("w-5 h-5", modeColor)} />
                </TooltipTrigger>
                <TooltipContent>
-                 <p>Mode: {isMathMode ? 'Math Reasoning' : 'Core Thinking'}</p>
+                 <p>Mode: {modeLabel}</p>
                </TooltipContent>
              </Tooltip>
            </TooltipProvider>
