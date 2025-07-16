@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +10,8 @@ import { useTrainingFocus } from "@/hooks/use-training-focus";
 import { useTrainingOverride } from "@/hooks/use-training-override";
 import { getSuccessFeedback, getFailureFeedback } from "@/lib/feedback-system";
 
-const symbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
+const neutralSymbols = ['★', '●', '▲', '■', '◆', '✚', '❤', '⚡', '☺'];
+const musicSymbols = ['♩', '♪', '♫', '♭', '♯', '♮', '𝄞', '𝄢', '𝄡'];
 const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const NoiseOverlay = () => (
@@ -32,8 +34,8 @@ export function RapidCodeMatch() {
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
   
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
-  // This game does not have a math mode, so we default to neutral
-  const currentMode = 'neutral';
+  const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
+  const symbols = currentMode === 'music' ? musicSymbols : neutralSymbols;
 
   const generateKeyMap = useCallback(() => {
     const shuffledSymbols = [...symbols].sort(() => Math.random() - 0.5);
@@ -43,10 +45,14 @@ export function RapidCodeMatch() {
       map[symbol] = digits[index];
     });
     return map;
-  }, []);
+  }, [symbols]);
 
-  const [keyMap, setKeyMap] = useState<{ [key: string]: number }>(generateKeyMap);
+  const [keyMap, setKeyMap] = useState<{ [key: string]: number }>(() => generateKeyMap());
   const keyEntries = useMemo(() => Object.entries(keyMap), [keyMap]);
+
+  useEffect(() => {
+    setKeyMap(generateKeyMap());
+  }, [currentMode, generateKeyMap]);
 
   useEffect(() => {
     if (gameState === 'running' && timeLeft > 0) {

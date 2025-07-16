@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useTrainingFocus } from '@/hooks/use-training-focus';
@@ -24,6 +25,6 @@ export function AuditoryProcessingRouter() {
     return <SpokenArithmeticChallenge />;
   }
   
-  // Default to Core Mode
+  // Default to Core Mode (which is also the Music mode for this game)
   return <ToneGridChallenge />;
 }

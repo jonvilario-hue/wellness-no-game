@@ -128,7 +128,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
         return mathRule.apply(mathStream[mathStreamIndex]).toString();
     }
 
-    if (currentMode === 'neutral') {
+    if (currentMode === 'neutral' || currentMode === 'music') {
         switch(task.id) {
             case 'reverse': return sequence.split('').reverse().join('');
             case 'alpha_only': return sequence.replace(/[^A-Z]/g, '');
@@ -196,13 +196,13 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
       logGameResult('Gwm', currentMode, { score: 0, time });
       
       if (onComplete) {
-        setTimeout(() => startLevel(level), 3000);
-        return;
+        // Even on failure in alarm mode, we eventually move on.
+        setTimeout(() => onComplete(), 3000);
+      } else {
+        setTimeout(() => {
+            startLevel(level);
+        }, 3000);
       }
-
-      setTimeout(() => {
-        startLevel(level);
-      }, 3000);
     }
   }, [gameState, userAnswer, correctAnswer, startTime, logGameResult, currentMode, level, onComplete, task, mathStreamIndex, mathStream.length, startLevel]);
 

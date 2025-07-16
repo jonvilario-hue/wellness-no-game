@@ -1,3 +1,4 @@
+
 import type { CHCDomain } from '@/types';
 import { PatternMatrix } from './gf/pattern-matrix';
 import { DynamicSequenceTransformer } from './gwm/dynamic-sequence-transformer';

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,12 +24,6 @@ const neutralPrompts: Prompt[] = [
   { text: "Animals that live in the jungle" },
   { text: "Words that start with 'C'" },
   { text: "Things that are cold" },
-  { text: "Musical instruments" },
-  { text: "Items you'd pack for a beach trip" },
-  { text: "Types of weather" },
-  { text: "Four-letter words" },
-  { text: "Occupations or jobs" },
-  { text: "Things that are blue" },
   { text: "Hobbies or pastimes" },
   { text: "Types of trees" },
   { text: "Things with wheels" },
@@ -40,8 +35,13 @@ const mathPrompts: Prompt[] = [
   { text: "Types of geometric shapes", answers: ["circle", "square", "triangle", "rectangle", "pentagon", "hexagon", "octagon", "rhombus", "trapezoid", "cube", "sphere", "cylinder", "pyramid"] },
   { text: "Multiples of 7 up to 70", answers: ["7", "14", "21", "28", "35", "42", "49", "56", "63", "70"] },
   { text: "Units of time", answers: ["second", "minute", "hour", "day", "week", "month", "year", "decade", "century", "millisecond"] },
-  { text: "Numbers divisible by 3 up to 30", answers: ["3", "6", "9", "12", "15", "18", "21", "24", "27", "30"] },
-  { text: "Perfect squares up to 100", answers: ["1", "4", "9", "16", "25", "36", "49", "64", "81", "100"] },
+];
+
+const musicPrompts: Prompt[] = [
+    { text: "Musical instruments" },
+    { text: "Occupations or jobs in music" },
+    { text: "Four-letter words related to music" },
+    { text: "Music genres" },
 ];
 
 
@@ -63,7 +63,14 @@ export function SemanticFluencyStorm() {
 
   const isLoaded = isGlobalFocusLoaded && isOverrideLoaded;
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
-  const prompts = currentMode === 'math' ? mathPrompts : neutralPrompts;
+  
+  const prompts = useMemo(() => {
+    switch (currentMode) {
+        case 'math': return mathPrompts;
+        case 'music': return musicPrompts;
+        default: return neutralPrompts;
+    }
+  }, [currentMode]);
 
   const getNewPrompt = () => {
     let newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
@@ -129,7 +136,7 @@ export function SemanticFluencyStorm() {
         } else {
              setInlineFeedback({ message: getFailureFeedback('Glr'), type: 'failure' });
         }
-    } else { // Neutral mode
+    } else { // Neutral or Music mode
         isValid = true;
     }
     

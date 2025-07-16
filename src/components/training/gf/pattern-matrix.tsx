@@ -188,7 +188,7 @@ export function PatternMatrix() {
   const currentMode = isLoaded ? (override || globalFocus) : 'neutral';
 
   const restartGame = useCallback(() => {
-    setPuzzle(generatePuzzle(currentMode));
+    setPuzzle(generatePuzzle(currentMode === 'music' ? 'neutral' : currentMode));
     setPuzzleKey(0);
     setScore(0);
     setSelectedOption(null);
@@ -202,7 +202,7 @@ export function PatternMatrix() {
     const time = (Date.now() - startTime) / 1000;
     logGameResult('Gf', currentMode, { score: puzzleScore, time });
     
-    setPuzzle(generatePuzzle(currentMode));
+    setPuzzle(generatePuzzle(currentMode === 'music' ? 'neutral' : currentMode));
     setPuzzleKey(prevKey => prevKey + 1);
     setSelectedOption(null);
     setFeedback('');
