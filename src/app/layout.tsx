@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Polymath Lab',
+  title: 'Cognitive Crucible',
   description: 'AI-powered training to develop the mind of a polymath across 8 core domains.',
 };
 

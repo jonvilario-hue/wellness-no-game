@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Brain, Settings, CalendarDays, Clock, Smile, BookMarked, Music } from 'lucide-react';
+import { Brain, Settings, CalendarDays, Clock, Smile, BookMarked, Music, Star } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -60,8 +60,6 @@ export function Header() {
   const handleFocusChange = (value: string) => {
     const newFocus = value as 'neutral' | 'math' | 'music';
     setFocus(newFocus);
-    // This is the key change: Reset any session-specific overrides
-    // when the global master switch is used.
     setOverride(null); 
   };
   
@@ -119,16 +117,16 @@ export function Header() {
                 <p>Training Calendar</p>
               </TooltipContent>
             </Tooltip>
-           <Tooltip delayDuration={0}>
+            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                   <Button asChild variant="ghost" size="icon">
-                    <Link href="/journal">
-                      <BookMarked className="h-5 w-5" />
+                    <Link href="/time">
+                      <Clock className="h-5 w-5" />
                     </Link>
                   </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>My Journal</p>
+                <p>Clock Tools</p>
               </TooltipContent>
             </Tooltip>
         </div>
@@ -136,11 +134,23 @@ export function Header() {
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
             <Brain className="h-7 w-7 text-primary" />
             <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
-            Polymath Lab
+            Cognitive Crucible
             </h1>
         </Link>
         <TooltipProvider>
         <div className="flex-1 flex justify-end items-center gap-1">
+           <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button asChild variant="ghost" size="icon">
+                  <Link href="/journal">
+                    <BookMarked className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>My Journal</p>
+              </TooltipContent>
+            </Tooltip>
            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <Button asChild variant="ghost" size="icon">
@@ -168,13 +178,13 @@ export function Header() {
            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <Button asChild variant="ghost" size="icon">
-                  <Link href="/time">
-                    <Clock className="h-5 w-5" />
+                  <Link href="/focus">
+                    <Star className="h-5 w-5" />
                   </Link>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Clock Tools</p>
+                <p>Focus Tracker</p>
               </TooltipContent>
             </Tooltip>
           <Tooltip delayDuration={0}>

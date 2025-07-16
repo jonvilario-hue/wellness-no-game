@@ -31,9 +31,11 @@ export type JournalEntry = {
     field3: string;
     affirmations: string[];
     tags: string;
-    effort: number; // 0-5 scale, 0 = unrated
+    effort: number; // Focus score: 0 = unrated, 1-5 = rated
     mood: MoodState;
     moodNote?: string;
+    focusContext: string | null; // What was being worked on? e.g., 'Journaling'
+    focusTags?: string[]; // Factors affecting focus
 };
 
 export type TrashedJournalEntry = JournalEntry & {
@@ -76,6 +78,8 @@ const createSeedData = (): { entries: JournalEntry[], habits: Record<string, Hab
                 effort: 0,
                 mood: null,
                 moodNote: '',
+                focusContext: 'Initial entry',
+                focusTags: [],
             },
         ],
         habits: {
@@ -138,6 +142,8 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
         effort: 0, // 0 = unrated
         mood: null,
         moodNote: '',
+        focusContext: null,
+        focusTags: [],
     };
 };
 
@@ -180,9 +186,11 @@ export const useJournal = create<JournalState>()(
                 field3: '',
                 affirmations: [],
                 tags: '',
-                effort: 0, // 0 = unrated
+                effort: 0,
                 mood: null,
                 moodNote: '',
+                focusContext: category,
+                focusTags: [],
             };
         },
 

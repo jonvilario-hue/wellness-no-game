@@ -56,7 +56,7 @@ const JournalEditorComponent = ({
   
   const handleSave = useCallback((updatedEntry: JournalEntry, options: { isFinal?: boolean } = { isFinal: false }) => {
     const isNew = updatedEntry.id.startsWith('new-');
-    const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a) || updatedEntry.moodNote || updatedEntry.effort > 0;
+    const hasContent = updatedEntry.field1 || updatedEntry.field2 || updatedEntry.field3 || updatedEntry.affirmations.some(a => a) || updatedEntry.moodNote || updatedEntry.effort > 0 || updatedEntry.focusContext;
     
     if(isNew && !hasContent && !options.isFinal) {
       return { success: false, entry: null };
@@ -75,7 +75,9 @@ const JournalEditorComponent = ({
       entryToSave.moodNote = '';
     }
     if (!dashboardSettings.effortTracker) {
-      entryToSave.effort = 0; // Use 0 for "unrated"
+      entryToSave.effort = 0;
+      entryToSave.focusContext = null;
+      entryToSave.focusTags = [];
     }
     
     setSaveStatus('saving');
@@ -316,6 +318,10 @@ const JournalEditorComponent = ({
             <FocusEditor 
               effort={editorState.effort}
               onEffortChange={(value) => handleFieldChange('effort', value)}
+              focusContext={editorState.focusContext || ''}
+              onFocusContextChange={(value) => handleFieldChange('focusContext', value)}
+              focusTags={editorState.focusTags || []}
+              onFocusTagsChange={(value) => handleFieldChange('focusTags', value)}
               contextualPrompt="Rate your focus for this reflection:"
             />
           )}

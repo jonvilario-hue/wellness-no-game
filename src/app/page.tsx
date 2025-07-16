@@ -15,6 +15,7 @@ import { GameProgressTracker } from '@/components/dashboard/game-progress-tracke
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
 import { JournalModule } from '@/components/dashboard/journal-module';
+import { TimeToolsCard } from '@/components/dashboard/time-tools-card';
 
 function DashboardContent() {
   const { settings } = useDashboardSettings();
@@ -32,12 +33,14 @@ function DashboardContent() {
             <div className="lg:col-span-2 space-y-6">
               {settings.mainDashboard && <MainDashboardView />}
               {settings.cognitiveCalendar && <CognitiveCalendar />}
+              {settings.journal && <JournalModule />}
             </div>
             <aside className="lg:col-span-1 flex flex-col gap-6">
               {settings.hyperfocusBuilder && <HyperfocusBuilder />}
               {settings.weakAreaRecommendations && <WeakAreaRecommendations />}
               {settings.gameProgressTracker && <GameProgressTracker />}
               {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
+              {settings.timeTools && <TimeToolsCard />}
             </aside>
           </div>
 
@@ -50,9 +53,6 @@ function DashboardContent() {
              {settings.habitTracker && <HabitTracker />}
           </div>
           
-          <div className="grid grid-cols-1">
-            {settings.journal && <JournalModule />}
-          </div>
         </div>
       </main>
     </div>

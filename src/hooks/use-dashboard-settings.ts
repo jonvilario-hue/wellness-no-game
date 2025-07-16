@@ -8,7 +8,7 @@ const defaultSettings = {
   allGames: true,
   mainDashboard: true,
   hyperfocusBuilder: true,
-  habitTracker: true,
+  habitTracker: false,
   gameProgressTracker: true,
   milestoneBadges: true,
   performanceInsights: true,
@@ -18,6 +18,7 @@ const defaultSettings = {
   moodTracker: false,
   effortTracker: false,
   journal: true,
+  timeTools: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;
@@ -34,10 +35,8 @@ export const useDashboardSettings = () => {
       const savedSettingsStr = window.localStorage.getItem(DASHBOARD_SETTINGS_KEY);
       if (savedSettingsStr) {
         const savedSettings = JSON.parse(savedSettingsStr);
-        // Merge with defaults to ensure new settings are included
         setSettings({ ...defaultSettings, ...savedSettings });
       } else {
-        // No settings saved, use defaults
         setSettings(defaultSettings);
       }
     } catch (error) {
@@ -85,4 +84,5 @@ export const componentLabels: Record<DashboardComponent, string> = {
   moodTracker: 'Mood Tracker',
   effortTracker: 'Focus / Effort Tracker',
   journal: 'Journal Module',
+  timeTools: 'Clock Tools Card',
 };
