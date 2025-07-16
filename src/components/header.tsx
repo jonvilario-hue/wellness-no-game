@@ -1,7 +1,7 @@
 
 'use client';
 
-import { BrainCircuit, Settings, CalendarDays, Clock, Sigma, Smile, CheckCircle, BookMarked } from 'lucide-react';
+import { BrainCircuit, Settings, CalendarDays, Clock, Sigma, Smile, CheckCircle, BookMarked, Music } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -22,12 +22,20 @@ export function Header() {
   const { setOverride } = useTrainingOverride();
 
   const handleFocusChange = (value: string) => {
-    const newFocus = value as 'neutral' | 'math';
+    const newFocus = value as 'neutral' | 'math' | 'music';
     setFocus(newFocus);
     // This is the key change: Reset any session-specific overrides
     // when the global master switch is used.
     setOverride(null); 
   };
+  
+  const focusInfo = {
+    neutral: { Icon: BrainCircuit, label: 'Core Thinking' },
+    math: { Icon: Sigma, label: 'Math Reasoning' },
+    music: { Icon: Music, label: 'Music Cognition' },
+  }
+
+  const { Icon, label } = focusInfo[focus] || focusInfo.neutral;
 
   return (
     <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card">
@@ -39,12 +47,12 @@ export function Header() {
                   <TooltipTrigger asChild>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" disabled={!isLoaded}>
-                          {focus === 'math' ? <Sigma className="h-5 w-5" /> : <BrainCircuit className="h-5 w-5" />}
+                          <Icon className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
                   </TooltipTrigger>
                    <TooltipContent>
-                      <p>Global Training Focus: {focus === 'math' ? 'Math Reasoning' : 'Core Thinking'}</p>
+                      <p>Global Training Focus: {label}</p>
                    </TooltipContent>
               </Tooltip>
               <DropdownMenuContent>
@@ -53,6 +61,7 @@ export function Header() {
                 <DropdownMenuRadioGroup value={focus} onValueChange={handleFocusChange}>
                   <DropdownMenuRadioItem value="neutral">Core Thinking</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="math">Math Reasoning</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="music">Music Cognition</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>

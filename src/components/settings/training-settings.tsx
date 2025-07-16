@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
-import { BrainCircuit, Sigma } from 'lucide-react';
+import { BrainCircuit, Sigma, Music } from 'lucide-react';
 import { Separator } from '../ui/separator';
 
 export function TrainingSettings() {
@@ -24,9 +24,9 @@ export function TrainingSettings() {
                 <div>
                   <Label className="text-base font-semibold">Training Focus</Label>
                   <p className="text-sm text-muted-foreground mb-4">Choose your primary focus to tailor the content of the games.</p>
-                  <RadioGroup value={focus} onValueChange={(value) => setFocus(value as any)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <RadioGroup value={focus} onValueChange={(value) => setFocus(value as any)} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                      <div>
-                        <Label htmlFor="core-thinking" className="flex items-start gap-4 p-4 rounded-lg border cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary">
+                        <Label htmlFor="core-thinking" className="flex items-start gap-4 p-4 rounded-lg border cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary h-full">
                              <RadioGroupItem value="neutral" id="core-thinking" className="mt-1"/>
                              <div className="space-y-1">
                                 <div className="font-semibold flex items-center gap-2">
@@ -37,13 +37,24 @@ export function TrainingSettings() {
                         </Label>
                      </div>
                      <div>
-                        <Label htmlFor="math-reasoning" className="flex items-start gap-4 p-4 rounded-lg border cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary">
+                        <Label htmlFor="math-reasoning" className="flex items-start gap-4 p-4 rounded-lg border cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary h-full">
                              <RadioGroupItem value="math" id="math-reasoning" className="mt-1"/>
                              <div className="space-y-1">
                                 <div className="font-semibold flex items-center gap-2">
                                     <Sigma className="w-5 h-5"/> Math Reasoning
                                 </div>
                                 <p className="text-xs text-muted-foreground">Train cognitive skills and mathematical logic simultaneously with math-integrated puzzles.</p>
+                             </div>
+                        </Label>
+                     </div>
+                     <div>
+                        <Label htmlFor="music-cognition" className="flex items-start gap-4 p-4 rounded-lg border cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary h-full">
+                             <RadioGroupItem value="music" id="music-cognition" className="mt-1"/>
+                             <div className="space-y-1">
+                                <div className="font-semibold flex items-center gap-2">
+                                    <Music className="w-5 h-5"/> Music Cognition
+                                </div>
+                                <p className="text-xs text-muted-foreground">Train cognitive skills through auditory, rhythmic, and music theory-based challenges.</p>
                              </div>
                         </Label>
                      </div>

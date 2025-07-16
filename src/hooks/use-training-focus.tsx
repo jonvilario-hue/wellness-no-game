@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback, createContext, useContext, useMemo } from 'react';
 
-export type TrainingFocus = 'neutral' | 'math';
+export type TrainingFocus = 'neutral' | 'math' | 'music';
 
 const TRAINING_FOCUS_KEY = 'trainingFocus';
 
@@ -22,7 +22,7 @@ export function TrainingFocusProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     try {
       const savedFocus = window.localStorage.getItem(TRAINING_FOCUS_KEY) as TrainingFocus | null;
-      if (savedFocus && ['neutral', 'math'].includes(savedFocus)) {
+      if (savedFocus && ['neutral', 'math', 'music'].includes(savedFocus)) {
         setFocusState(savedFocus);
       }
     } catch (error) {

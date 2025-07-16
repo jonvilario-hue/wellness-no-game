@@ -5,7 +5,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { CHCDomain } from '@/types';
 
-type TrainingMode = 'neutral' | 'math';
+type TrainingMode = 'neutral' | 'math' | 'music';
 
 type PerformanceMetric = {
   score: number;
@@ -17,6 +17,7 @@ type PerformanceMetric = {
 type DomainPerformance = {
   neutral: PerformanceMetric;
   math: PerformanceMetric;
+  music: PerformanceMetric;
 };
 
 type PerformanceState = {
@@ -35,6 +36,7 @@ const initialMetric = (): PerformanceMetric => ({
 const initialDomainPerformance = (): DomainPerformance => ({
   neutral: initialMetric(),
   math: initialMetric(),
+  music: initialMetric(),
 });
 
 const initialPerformanceState = (): Record<CHCDomain, DomainPerformance> => ({
