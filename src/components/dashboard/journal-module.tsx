@@ -4,9 +4,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,7 +39,7 @@ export function JournalModule() {
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
       const initialEntry = findOrCreateEntry({
         date: today,
-        category: 'Growth & Challenge Reflection',
+        category: 'Notebook',
         frequency: getFrequencyForDate(new Date(today))
       });
       setSelectedEntry(initialEntry);
@@ -129,7 +126,7 @@ export function JournalModule() {
     
     if (selectedEntry?.id === id) {
        const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-       const newEntry = findOrCreateEntry({date: today, category: 'Growth & Challenge Reflection', frequency: getFrequencyForDate(new Date(today))});
+       const newEntry = findOrCreateEntry({date: today, category: 'Notebook', frequency: getFrequencyForDate(new Date(today))});
        setSelectedEntry(newEntry);
     }
   }, [deleteEntry, toast, selectedEntry?.id, entries, findOrCreateEntry, setSelectedEntry]);

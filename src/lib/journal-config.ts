@@ -1,6 +1,5 @@
 
 
-
 import type { LucideIcon } from 'lucide-react';
 import {
   BookOpen,
@@ -22,9 +21,11 @@ import {
   Search,
   Zap,
   HeartHandshake,
+  Notebook,
 } from 'lucide-react';
 
 export type JournalCategory =
+  | 'Notebook'
   | 'Growth & Challenge Reflection'
   | 'Goal & Identity Alignment'
   | 'Positivity & Strengths'
@@ -80,6 +81,19 @@ export const journalConfig: Record<JournalCategory, {
   guidance: string;
   suggestedTags: string;
 }> = {
+  'Notebook': {
+    icon: Notebook,
+    title: 'Notebook',
+    purpose: "A blank canvas for your thoughts, ideas, and notes.",
+    prompts: {
+        daily: ["", "", ""],
+        weekly: ["", "", ""],
+        monthly: ["", "", ""],
+    },
+    affirmationPrompt: "Write an affirmation for the day.",
+    guidance: "Use this space for anything you want. There are no rules.",
+    suggestedTags: "#note, #idea, #freeform, #thought",
+  },
   'Growth & Challenge Reflection': {
     icon: BrainCircuit,
     title: 'Growth & Challenge Reflection',

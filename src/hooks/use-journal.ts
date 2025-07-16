@@ -55,7 +55,7 @@ export const getFrequencyForDate = (date: Date): ReflectionFrequency => {
 
 const createSeedData = (): { entries: JournalEntry[], habits: Record<string, HabitId[]>, habitConfig: Habit[] } => {
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-    const category: JournalCategory = 'Growth & Challenge Reflection';
+    const category: JournalCategory = 'Notebook';
     const frequency = getFrequencyForDate(new Date());
 
     const initialHabits: Habit[] = Object.values(defaultHabits);
@@ -64,7 +64,7 @@ const createSeedData = (): { entries: JournalEntry[], habits: Record<string, Hab
         entries: [
             {
                 id: `${today}-${category}-${frequency}`,
-                label: `Today's Reflection`,
+                label: `Today's Notebook`,
                 date: today,
                 category: category,
                 frequency: frequency,
@@ -278,7 +278,7 @@ export const useJournal = create<JournalState>()(
         
         createNewEntry: () => {
             const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-            return createNewEntryObject(today, 'Growth & Challenge Reflection', getFrequencyForDate(new Date()));
+            return createNewEntryObject(today, 'Notebook', getFrequencyForDate(new Date()));
         },
 
         setSelectedEntry: (entry) => set({ selectedEntry: entry }),
@@ -289,7 +289,7 @@ export const useJournal = create<JournalState>()(
       onRehydrateStorage: () => (state) => {
           if (!state) return;
           // Check if seed data needs to be added
-          if (!state.habits || state.habits.length === 0) {
+          if (!state.habits || state.habits.length === 0 || state.entries.length === 0) {
               const { entries, habits, habitConfig } = createSeedData();
               state.entries = entries;
               state.completedHabits = habits;
@@ -338,7 +338,7 @@ export const useHydratedJournalStore = () => {
             updateHabit: () => {},
             removeHabit: () => {},
             resetHabits: () => {},
-            createNewEntry: () => createNewEntryObject(new Date().toISOString().split('T')[0], 'Growth & Challenge Reflection', 'daily'),
+            createNewEntry: () => createNewEntryObject(new Date().toISOString().split('T')[0], 'Notebook', 'daily'),
             setSelectedEntry: () => {},
         };
       }

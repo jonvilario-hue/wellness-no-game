@@ -7,10 +7,6 @@ import {
     Trash2,
     Loader2,
     CheckCircle,
-    Share,
-    PlusCircle,
-    MinusCircle,
-    Star,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -21,10 +17,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
@@ -56,11 +50,8 @@ const JournalEditorComponent = ({
   const { settings: dashboardSettings } = useDashboardSettings();
   
   useEffect(() => {
-    // This effect synchronizes the editor's state with the selected entry from the store.
-    // It's crucial for ensuring the editor displays the correct data when the user
-    // switches between different journal entries in the sidebar.
     setEditorState(entry);
-    setSaveStatus('idle'); // Reset save status on entry change
+    setSaveStatus('idle');
   }, [entry]);
   
   const handleSave = useCallback((updatedEntry: JournalEntry, options: { isFinal?: boolean } = { isFinal: false }) => {
@@ -100,15 +91,12 @@ const JournalEditorComponent = ({
   }, [entry, onSave, dashboardSettings]);
 
   useEffect(() => {
-    // This is the auto-save effect.
-    // It triggers a save automatically a short while after the user stops typing.
     const hasChanged = JSON.stringify(entry) !== JSON.stringify(editorState);
 
-    // Only auto-save if the entry has actually changed
     if (entry.id === editorState.id && hasChanged) {
       const handler = setTimeout(() => {
         handleSave(editorState);
-      }, 1500); // 1.5-second debounce
+      }, 1500);
 
       return () => clearTimeout(handler);
     }
@@ -116,7 +104,6 @@ const JournalEditorComponent = ({
 
 
   useEffect(() => {
-      // This effect makes the "Saved" message disappear after a few seconds.
       if (saveStatus === 'saved') {
           const timer = setTimeout(() => setSaveStatus('idle'), 2000);
           return () => clearTimeout(timer);
@@ -124,10 +111,10 @@ const JournalEditorComponent = ({
   }, [saveStatus]);
   
   const getValidConfig = (category: JournalCategory | string) => {
+      const defaultCategory: JournalCategory = 'Notebook';
       if (category && journalConfig[category as JournalCategory]) {
           return { config: journalConfig[category as JournalCategory], category: category as JournalCategory};
       }
-      const defaultCategory = 'Growth & Challenge Reflection';
       return { config: journalConfig[defaultCategory], category: defaultCategory };
   }
   
@@ -267,39 +254,52 @@ const JournalEditorComponent = ({
             </div>
           </div>
           
-           <div>
-            <Label className="mb-2 block">Reflection Frequency</Label>
-              <div className="flex items-center gap-2">
-                  {(['daily', 'weekly', 'monthly'] as ReflectionFrequency[]).map(freq => (
-                      <Button key={freq} variant={editorState.frequency === freq ? 'default' : 'outline'} onClick={() => handleFrequencyButtonClick(freq)} className="capitalize flex-1">
-                          {freq}
-                      </Button>
-                  ))}
-              </div>
-          </div>
+           {category !== 'Notebook' && (
+             <div>
+              <Label className="mb-2 block">Reflection Frequency</Label>
+                <div className="flex items-center gap-2">
+                    {(['daily', 'weekly', 'monthly'] as ReflectionFrequency[]).map(freq => (
+                        <Button key={freq} variant={editorState.frequency === freq ? 'default' : 'outline'} onClick={() => handleFrequencyButtonClick(freq)} className="capitalize flex-1">
+                            {freq}
+                        </Button>
+                    ))}
+                </div>
+            </div>
+           )}
 
           <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
             {config.guidance}
           </div>
 
-          <Textarea
-            placeholder={currentPrompts[0]}
-            value={editorState.field1}
-            onChange={e => handleFieldChange('field1', e.target.value)}
-            className="min-h-[60px]"
-          />
-           <Textarea
-            placeholder={currentPrompts[1]}
-            value={editorState.field2}
-            onChange={e => handleFieldChange('field2', e.target.value)}
-            className="min-h-[60px]"
-          />
-           <Textarea
-            placeholder={currentPrompts[2]}
-            value={editorState.field3}
-            onChange={e => handleFieldChange('field3', e.target.value)}
-            className="min-h-[60px]"
-          />
+          {category === 'Notebook' ? (
+              <Textarea
+                placeholder="Start writing..."
+                value={editorState.field1}
+                onChange={e => handleFieldChange('field1', e.target.value)}
+                className="min-h-[300px]"
+              />
+          ) : (
+            <>
+              <Textarea
+                placeholder={currentPrompts[0]}
+                value={editorState.field1}
+                onChange={e => handleFieldChange('field1', e.target.value)}
+                className="min-h-[60px]"
+              />
+               <Textarea
+                placeholder={currentPrompts[1]}
+                value={editorState.field2}
+                onChange={e => handleFieldChange('field2', e.target.value)}
+                className="min-h-[60px]"
+              />
+               <Textarea
+                placeholder={currentPrompts[2]}
+                value={editorState.field3}
+                onChange={e => handleFieldChange('field3', e.target.value)}
+                className="min-h-[60px]"
+              />
+            </>
+          )}
           
           <Separator/>
 
