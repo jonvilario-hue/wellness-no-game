@@ -10,8 +10,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Smile, Save, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Bar, BarChart, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Bar, BarChart, CartesianGrid, Cell } from 'recharts';
 import { ScrollArea } from '../ui/scroll-area';
+import { Skeleton } from '../ui/skeleton';
 
 const moodOptions = [
   { emoji: '😔', label: 'Very Low', value: 0 },
@@ -65,7 +66,7 @@ const MoodTrendChart = ({ data }: { data: { date: string; mood: number }[] }) =>
               <Cell key={`cell-${index}`} fill={moodColors[entry.mood]} />
             ))}
           </Bar>
-        </LineChart>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );
