@@ -34,7 +34,7 @@ import {
 import { Skeleton } from '../ui/skeleton';
 import { Progress } from '../ui/progress';
 import { motion } from 'framer-motion';
-import { useToast } from '../ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
