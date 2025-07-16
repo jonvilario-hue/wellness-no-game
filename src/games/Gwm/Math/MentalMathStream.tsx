@@ -82,7 +82,10 @@ export default function MentalMathStream({ difficulty = 'Medium', onComplete }: 
       setMathStream(newStream);
       setMathStreamIndex(0);
       setShowMathRule(true);
-      setTimeout(() => setShowMathRule(false), 3000);
+      setTimeout(() => {
+        setShowMathRule(false)
+        setGameState('answering');
+      }, 3000);
     } else {
         setTimeout(() => {
             setGameState('answering');

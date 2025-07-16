@@ -3,10 +3,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Wand2 } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
-import { Button } from '../ui/button';
 
 const effortLevels: { value: number, label: string, color: string, emoji: string }[] = [
     { value: 0, label: 'Not Rated', color: 'text-muted-foreground', emoji: ''},
@@ -24,12 +23,12 @@ interface FocusEditorProps {
 }
 
 export const FocusEditor = ({ effort, onEffortChange, contextualPrompt }: FocusEditorProps) => {
-  const [internalEffort, setInternalEffort] = useState(effort);
+  const [internalEffort, setInternalEffort] = useState(effort || 1);
   const [isRated, setIsRated] = useState(effort > 0);
   const [feedbackMessage, setFeedbackMessage] = useState('');
 
   useEffect(() => {
-    setInternalEffort(effort);
+    setInternalEffort(effort || 1);
     setIsRated(effort > 0);
   }, [effort]);
 

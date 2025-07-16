@@ -59,10 +59,14 @@ const generatePuzzle = (): Puzzle => {
   const options: NeutralElement[] = [answer];
 
   while(options.length < 6) {
-    const tempDecoy = { ...answer };
-    const changeProp = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as keyof NeutralElement;
-    const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[changeProp as keyof typeof collection] as any[];
-    (tempDecoy[changeProp] as any) = getNextInSequence(tempDecoy[changeProp], collection);
+    const tempDecoy = { ...generateNeutralElement() }; // Generate a completely random element
+    
+    // Make a more logical decoy by changing only one property of the answer
+    if (Math.random() > 0.5) {
+        const changeProp = ['shape', 'color', 'rotation', 'fill'][Math.floor(Math.random() * 4)] as keyof NeutralElement;
+        const collection = { shape: shapes, color: colors, rotation: rotations, fill: fills }[changeProp as keyof typeof collection] as any[];
+        (tempDecoy[changeProp] as any) = getNextInSequence(answer[changeProp], collection);
+    }
     
     if (!options.some(o => JSON.stringify(o) === JSON.stringify(tempDecoy))) {
       options.push(tempDecoy);
@@ -71,7 +75,7 @@ const generatePuzzle = (): Puzzle => {
   
   options.sort(() => Math.random() - 0.5);
   grid[missingIndex] = null;
-  return { grid, missingIndex, answer, options, size };
+  return { grid, missingIndex, answer, options: options.slice(0,6), size };
 };
 
 const ShapeComponent = ({ shape, color, rotation, fill }: NeutralElement) => {

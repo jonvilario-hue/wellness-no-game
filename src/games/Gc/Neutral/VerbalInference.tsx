@@ -133,31 +133,31 @@ export default function VerbalInference() {
 
     const isCorrect = option === currentPuzzle.answer;
     setSelectedAnswer(option);
+    
     if (isCorrect) {
-      setScore(score + 1);
+      setScore(prevScore => prevScore + 1);
       setFeedback('correct');
       setInlineFeedback({ message: getSuccessFeedback('Gc'), type: 'success' });
     } else {
       setFeedback('incorrect');
       setInlineFeedback({ message: getFailureFeedback('Gc'), type: 'failure' });
     }
-
-    const isLastPuzzle = currentPuzzleIndex === shuffledPuzzles.length - 1;
-
+    
     setTimeout(() => {
+        const isLastPuzzle = currentPuzzleIndex === shuffledPuzzles.length - 1;
         if (isLastPuzzle) {
             const time = (Date.now() - startTime) / 1000;
             const finalScore = isCorrect ? score + 1 : score;
             logGameResult('Gc', 'neutral', { score: finalScore, time });
             setGameState('finished');
         } else {
-            setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+            setCurrentPuzzleIndex(prevIndex => prevIndex + 1);
             setFeedback('');
             setInlineFeedback({ message: '', type: '' });
             setSelectedAnswer(null);
         }
     }, 2500);
-  }, [feedback, currentPuzzle, score, currentPuzzleIndex, shuffledPuzzles.length, startTime, logGameResult]);
+  }, [feedback, currentPuzzle, currentPuzzleIndex, shuffledPuzzles.length, startTime, logGameResult, score]);
   
   const getButtonClass = (option: string) => {
     if (!feedback || !currentPuzzle) return "secondary";

@@ -24,7 +24,7 @@ const generatePuzzle = (): Puzzle => {
     const grid: (MathElement | null)[] = Array(size * size).fill(null);
     const rules = ['row_op', 'col_op'];
     const rule = rules[Math.floor(Math.random() * rules.length)];
-    const { op, decoyOp } = mathOperators[Math.floor(Math.random() * mathOperators.length)];
+    const { op } = mathOperators[Math.floor(Math.random() * mathOperators.length)];
     
     for (let i = 0; i < size; i++) {
         const a = Math.floor(Math.random() * 10) + 1;
