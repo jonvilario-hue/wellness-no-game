@@ -14,6 +14,7 @@ import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { GameProgressTracker } from '@/components/dashboard/game-progress-tracker';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
+import { JournalModule } from '@/components/dashboard/journal-module';
 
 function DashboardContent() {
   const { settings } = useDashboardSettings();
@@ -47,6 +48,10 @@ function DashboardContent() {
 
           <div className="grid grid-cols-1">
              {settings.habitTracker && <HabitTracker />}
+          </div>
+          
+          <div className="grid grid-cols-1">
+            {settings.journal && <JournalModule />}
           </div>
         </div>
       </main>

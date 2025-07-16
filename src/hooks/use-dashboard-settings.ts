@@ -17,6 +17,7 @@ const defaultSettings = {
   cognitiveCalendar: true,
   moodTracker: false,
   effortTracker: false,
+  journal: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;
@@ -83,4 +84,5 @@ export const componentLabels: Record<DashboardComponent, string> = {
   cognitiveCalendar: 'Training Log',
   moodTracker: 'Mood Tracker',
   effortTracker: 'Focus / Effort Tracker',
+  journal: 'Journal Module',
 };
