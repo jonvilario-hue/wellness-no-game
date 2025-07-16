@@ -68,6 +68,34 @@ const neutralPuzzles = [
     answer: "Sphere",
     explanation: "Triangle, Circle, and Square are two-dimensional shapes. A Sphere is a three-dimensional shape."
   },
+  {
+    type: 'analogy',
+    question: "Writer is to pen as painter is to ____.",
+    options: ["Canvas", "Studio", "Brush", "Color"],
+    answer: "Brush",
+    explanation: "A writer uses a pen as their primary tool, and a painter uses a brush."
+  },
+  {
+    type: 'context',
+    question: "The politician's speech was full of ____, vague promises that ultimately meant nothing.",
+    options: ["platitudes", "specifics", "facts", "data"],
+    answer: "platitudes",
+    explanation: "'Platitudes' are remarks or statements, especially ones with a moral content, that have been used too often to be interesting or thoughtful."
+  },
+  {
+    type: 'inference',
+    question: "After hiking for hours under the hot sun, the explorer was relieved to find a source of ____ water.",
+    options: ["brackish", "potable", "stagnant", "turbid"],
+    answer: "potable",
+    explanation: "'Potable' means safe to drink, which would be a relief for a thirsty explorer."
+  },
+  {
+    type: 'relationship',
+    question: "Which word does not belong with the others?",
+    options: ["Run", "Swim", "Fly", "Think"],
+    answer: "Think",
+    explanation: "Run, Swim, and Fly are all forms of physical movement. Think is a mental process."
+  },
 ];
 
 const mathPuzzles = [
@@ -126,6 +154,34 @@ const mathPuzzles = [
     options: ["Difference", "Quotient", "Product", "Factor"],
     answer: "Product",
     explanation: "The result of addition is a sum, and the result of multiplication is a product."
+  },
+  {
+    type: 'word-problem',
+    question: "A pizza is cut into 8 slices. If you eat 3/8 of the pizza, how many slices are left?",
+    options: ["3", "4", "5", "6"],
+    answer: "5",
+    explanation: "If you eat 3 slices out of 8, there are 8 - 3 = 5 slices remaining."
+  },
+  {
+    type: 'logic',
+    question: "A is the father of B, but B is not the son of A. What is the relationship?",
+    options: ["B is A's nephew", "B is A's uncle", "B is A's daughter", "Not possible"],
+    answer: "B is A's daughter",
+    explanation: "If B is not A's son, then B must be A's daughter."
+  },
+  {
+    type: 'pattern',
+    question: "What is the next term in the sequence: A, C, F, J, __?",
+    options: ["L", "M", "N", "O"],
+    answer: "O",
+    explanation: "The gap between letters increases by 1 each time: +2 (A-C), +3 (C-F), +4 (F-J), so the next is +5 (J-O)."
+  },
+  {
+    type: 'analogy',
+    question: "Inch is to length as ounce is to ____.",
+    options: ["Weight", "Volume", "Time", "Temperature"],
+    answer: "Weight",
+    explanation: "An inch is a unit of length, and an ounce is a unit of weight."
   },
 ];
 

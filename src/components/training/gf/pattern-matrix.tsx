@@ -197,7 +197,7 @@ export function PatternMatrix() {
     setStartTime(Date.now());
   }, [currentMode]);
 
-  const handleNextPuzzle = () => {
+  const handleNextPuzzle = useCallback(() => {
     const puzzleScore = feedback === 'correct' ? 10 : 0;
     const time = (Date.now() - startTime) / 1000;
     logGameResult('Gf', currentMode, { score: puzzleScore, time });
@@ -208,7 +208,7 @@ export function PatternMatrix() {
     setFeedback('');
     setInlineFeedback({ message: '', type: '' });
     setStartTime(Date.now());
-  };
+  }, [feedback, startTime, logGameResult, currentMode]);
 
   useEffect(() => {
     if (isLoaded) {

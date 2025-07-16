@@ -31,6 +31,7 @@ const neutralTasks = [
   { id: 'numeric_only', label: "Repeat only the numbers, in order." },
   { id: 'remove_first', label: "Repeat the sequence, removing the first character." },
   { id: 'alpha_shift', label: "Repeat the letters, shifting each forward by one (A->B, Z->A)." },
+  { id: 'every_other', label: "Repeat every other character, starting with the first." },
 ];
 
 const mathTasks = [
@@ -38,7 +39,8 @@ const mathTasks = [
   { id: 'subtract_one', label: "Subtract 1 from each number and state the new sequence." },
   { id: 'repeat_even', label: "Repeat only the even numbers in order." },
   { id: 'differences', label: "State the difference between each consecutive pair of numbers." },
-  { id: 'memory_math', label: "Memorize rule, then apply to number:"}
+  { id: 'memory_math', label: "Memorize rule, then apply to number:"},
+  { id: 'running_total', label: "State the running total after each number." },
 ];
 
 const mathRules = [
@@ -138,6 +140,8 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
                 return sequence.replace(/[^A-Z]/g, '').split('').map(char => 
                     char === 'Z' ? 'A' : String.fromCharCode(char.charCodeAt(0) + 1)
                 ).join('');
+            case 'every_other':
+                return sequence.split('').filter((_, i) => i % 2 === 0).join('');
             default: return '';
         }
     } else { // Math mode
@@ -153,6 +157,10 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
                     diffs.push(Math.abs(nums[i+1] - nums[i]));
                 }
                 return diffs.join('');
+            case 'running_total':
+                 if (nums.length === 0) return '';
+                 let total = 0;
+                 return nums.map(n => total += n).join('');
             default: return '';
         }
     }
