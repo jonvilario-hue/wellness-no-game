@@ -52,7 +52,7 @@ export function AppearanceSettings() {
                                         <Check className="h-4 w-4" />
                                     </div>
                                 )}
-                                <div className="flex flex-col h-full">
+                                <div className="flex flex-col h-full flex-grow">
                                     <div className="flex items-center gap-2 mb-3">
                                         <div className="p-2 rounded-md" style={{ backgroundColor: `hsl(${theme.colorScheme.panels})`, color: `hsl(${theme.colorScheme.accent})` }}>
                                             <Icon className="w-5 h-5"/>
