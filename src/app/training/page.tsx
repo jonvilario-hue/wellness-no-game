@@ -5,31 +5,13 @@ import Link from 'next/link';
 import { ArrowLeft, Brain, Settings, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { chcDomains, type CHCDomain } from '@/types';
-import { domainIcons } from '@/components/icons';
+import { domainIcons, SigmaIcon } from '@/components/icons';
 import { notFound, useSearchParams, useParams } from 'next/navigation';
 import { gameComponents } from '@/components/training/game-components';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTrainingOverride } from '@/hooks/use-training-override.tsx';
-
-const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M18 7H6l6 5-6 5h12" />
-  </svg>
-);
-
 
 export default function TrainingPage() {
   const params = useParams();
