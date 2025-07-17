@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import type { Card, CardType } from '@/types/flashcards';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 interface CardDialogProps {
   open: boolean;
@@ -25,6 +27,8 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
   const [type, setType] = useState<CardType>('basic');
   const [currentDeckId, setCurrentDeckId] = useState(deckId || 'default');
   const [tags, setTags] = useState('');
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (cardToEdit && open) {
@@ -46,27 +50,31 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
   const handleSave = () => {
     if (!front || !back || !currentDeckId) return;
     
-    const tagArray = tags.split(',').map(t => t.trim()).filter(Boolean);
+    startTransition(() => {
+        const tagArray = tags.split(',').map(t => t.trim()).filter(Boolean);
 
-    if (cardToEdit) {
-      updateCard({
-        ...cardToEdit,
-        front,
-        back,
-        type,
-        deckId: currentDeckId,
-        tags: tagArray,
-      });
-    } else {
-      addCard({
-        front,
-        back,
-        type,
-        deckId: currentDeckId,
-        tags: tagArray,
-      });
-    }
-    onOpenChange(false);
+        if (cardToEdit) {
+        updateCard({
+            ...cardToEdit,
+            front,
+            back,
+            type,
+            deckId: currentDeckId,
+            tags: tagArray,
+        });
+        toast({ title: "Card Updated!", description: "Your changes have been saved.", variant: "success" });
+        } else {
+        addCard({
+            front,
+            back,
+            type,
+            deckId: currentDeckId,
+            tags: tagArray,
+        });
+        toast({ title: "Card Created!", description: "A new card has been added to your deck.", variant: "success" });
+        }
+        onOpenChange(false);
+    });
   };
 
   return (
@@ -138,7 +146,10 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSave}>Save Card</Button>
+          <Button onClick={handleSave} disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Save Card
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
