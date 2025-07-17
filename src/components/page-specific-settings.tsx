@@ -36,18 +36,17 @@ export function PageSpecificSettings({ settingsKeys }: PageSpecificSettingsProps
             </Button>
           </motion.div>
         </PopoverTrigger>
-        <PopoverContent className="w-[300px]" side="top" align="end">
+        <PopoverContent className="w-[400px]" side="top" align="end">
             <Card className="shadow-none border-none">
               <CardHeader>
                 <CardTitle>Page Layout</CardTitle>
                 <CardDescription>Toggle components on this page.</CardDescription>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="max-h-[400px] pr-4">
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
                     {settingsKeys.map((key) => (
                       <div key={key} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                        <Label htmlFor={`switch-${key}`} className="font-medium text-sm">
+                        <Label htmlFor={`switch-${key}`} className="font-medium text-xs">
                           {componentLabels[key] || key}
                         </Label>
                         <Switch
@@ -58,7 +57,6 @@ export function PageSpecificSettings({ settingsKeys }: PageSpecificSettingsProps
                       </div>
                     ))}
                   </div>
-                </ScrollArea>
               </CardContent>
             </Card>
         </PopoverContent>
