@@ -34,6 +34,7 @@ export type JournalEntry = {
     moodNote?: string;
     focusContext: string | null; // What was being worked on? e.g., 'Journaling'
     focusTags?: string[]; // Factors affecting focus
+    bookmarked?: boolean; // New property
 };
 
 export type TrashedJournalEntry = JournalEntry & {
@@ -78,6 +79,7 @@ const createSeedData = (): { entries: JournalEntry[], habits: Record<string, Hab
                 moodNote: '',
                 focusContext: 'Initial entry',
                 focusTags: [],
+                bookmarked: false,
             },
         ],
         habits: {
@@ -107,6 +109,7 @@ interface JournalState {
     deleteFromTrashPermanently: (id: string) => void;
     emptyTrash: () => void;
     toggleHabitForDay: (date: string, habitId: HabitId) => void;
+    toggleJournalBookmark: (id: string) => void;
     addHabit: (habitData: Omit<Habit, 'id' | 'icon'>) => void;
     updateHabit: (id: HabitId, habitData: Partial<Omit<Habit, 'id' | 'icon'>>) => void;
     removeHabit: (id: HabitId) => void;
@@ -142,6 +145,7 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
         moodNote: '',
         focusContext: null,
         focusTags: [],
+        bookmarked: false,
     };
 };
 
@@ -189,12 +193,13 @@ export const useJournal = create<JournalState>()(
                 moodNote: '',
                 focusContext: category,
                 focusTags: [],
+                bookmarked: false,
             };
         },
 
         addEntry: (newEntry) => {
             const finalId = `${newEntry.date}-${newEntry.category}-${newEntry.frequency}`;
-            const entryWithFinalId = { ...newEntry, id: finalId };
+            const entryWithFinalId = { ...newEntry, id: finalId, bookmarked: newEntry.bookmarked || false };
             set(state => ({
                 entries: [...state.entries.filter(e => e.id !== finalId), entryWithFinalId].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             }));
@@ -254,6 +259,14 @@ export const useJournal = create<JournalState>()(
             });
         },
         
+        toggleJournalBookmark: (id: string) => {
+            set(state => ({
+                entries: state.entries.map(entry =>
+                    entry.id === id ? { ...entry, bookmarked: !entry.bookmarked } : entry
+                ),
+            }));
+        },
+
         addHabit: (habitData) => {
             set(state => {
                 const newHabit: Habit = { 

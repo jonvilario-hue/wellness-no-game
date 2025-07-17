@@ -28,8 +28,8 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function LibraryPage() {
-  const { items: libraryItems, deleteItem, toggleBookmark } = useLibraryStore();
-  const { entries: journalEntries } = useHydratedJournalStore();
+  const { items: libraryItems, deleteItem, toggleBookmark: toggleLibraryBookmark } = useLibraryStore();
+  const { entries: journalEntries, toggleJournalBookmark } = useHydratedJournalStore();
 
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<LibraryItem | null>(null);
@@ -45,9 +45,9 @@ export default function LibraryPage() {
       ...journalEntries.map(entry => ({
           id: entry.id,
           title: entry.label || entry.category,
-          content: entry.field1 || entry.field2 || entry.field3,
+          content: entry.field1 || entry.field2 || entry.field3 || 'No content',
           createdAt: entry.date,
-          bookmarked: false, // Journal entries are not bookmarkable in this implementation
+          bookmarked: entry.bookmarked || false,
           source: 'Journal'
       }))
   ].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -59,7 +59,15 @@ export default function LibraryPage() {
 
   const notes = filteredContent.filter(item => item.source === 'Library');
   const journalContent = filteredContent.filter(item => item.source === 'Journal');
-  const bookmarks = filteredContent.filter(item => item.bookmarked && item.source === 'Library');
+  const bookmarks = filteredContent.filter(item => item.bookmarked);
+
+  const handleToggleBookmark = (item: any) => {
+      if (item.source === 'Library') {
+          toggleLibraryBookmark(item.id);
+      } else {
+          toggleJournalBookmark(item.id);
+      }
+  }
 
 
   const ItemCard = ({ item }: { item: any }) => (
@@ -69,31 +77,33 @@ export default function LibraryPage() {
             <p className="text-sm text-muted-foreground truncate max-w-lg">{item.description || item.content}</p>
             <p className="text-xs text-primary font-semibold mt-1">{item.source}</p>
         </div>
-        {item.source === 'Library' && (
-            <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
-                <Button variant="ghost" size="icon" onClick={() => toggleBookmark(item.id)}>
-                    <Bookmark className={cn("w-4 h-4", item.bookmarked ? 'text-primary fill-current' : '')} />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleOpenNoteDialog(item)}>
-                    <Edit className="w-4 h-4" />
-                </Button>
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-destructive">
-                        <Trash2 className="w-4 h-4" />
+        <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
+            <Button variant="ghost" size="icon" onClick={() => handleToggleBookmark(item)}>
+                <Bookmark className={cn("w-4 h-4", item.bookmarked ? 'text-primary fill-current' : '')} />
+            </Button>
+            {item.source === 'Library' && (
+                <>
+                    <Button variant="ghost" size="icon" onClick={() => handleOpenNoteDialog(item)}>
+                        <Edit className="w-4 h-4" />
                     </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                    <AlertDialogHeader><AlertDialogTitle>Delete Note?</AlertDialogTitle></AlertDialogHeader>
-                    <AlertDialogDescription>Are you sure you want to delete this note? This action cannot be undone.</AlertDialogDescription>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => deleteItem(item.id)} variant="destructive">Delete</AlertDialogAction>
-                    </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            </div>
-        )}
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-destructive">
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                        <AlertDialogHeader><AlertDialogTitle>Delete Note?</AlertDialogTitle></AlertDialogHeader>
+                        <AlertDialogDescription>Are you sure you want to delete this note? This action cannot be undone.</AlertDialogDescription>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteItem(item.id)} variant="destructive">Delete</AlertDialogAction>
+                        </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </>
+            )}
+        </div>
     </div>
   )
 
