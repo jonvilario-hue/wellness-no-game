@@ -228,124 +228,137 @@ export function HabitsView() {
         weeklyCompletion: 85,
     }
 
-    if (!hasHydrated || !settings.habitTracker) {
-      return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2"><Skeleton className="h-[400px] w-full" /></div>
-            <div><Skeleton className="h-[400px] w-full" /></div>
-        </div>
-      );
+    if (!hasHydrated) {
+        return (
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-4 w-3/4" />
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="md:col-span-2"><Skeleton className="h-[400px] w-full" /></div>
+                    <div><Skeleton className="h-[400px] w-full" /></div>
+                </CardContent>
+            </Card>
+        )
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="md:col-span-2">
-                <CardHeader>
-                    <CardTitle>Today's Habits</CardTitle>
-                    <CardDescription>Check off your habits for today to build your streak.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ScrollArea className="h-[500px] pr-3 -mr-3">
-                        <Accordion type="multiple" className="w-full" defaultValue={[journalConfig['Growth & Challenge Reflection'].title]}>
-                        {habitsByCategory.map(({ category, categoryHabits }) => {
-                            if (categoryHabits.length === 0) return null;
-                            const completedInCategory = categoryHabits.filter(h => todaysHabits.includes(h.id)).length;
-                            return (
-                            <AccordionItem value={category.title} key={category.title}>
-                                <AccordionTrigger>
-                                <div className="flex items-center justify-between w-full">
-                                    <div className="flex items-center gap-2">
-                                    <category.icon className="w-4 h-4 text-muted-foreground" />
-                                    <span className="font-semibold">{category.title}</span>
-                                    </div>
-                                    <span className="text-sm text-muted-foreground font-medium pr-2">{completedInCategory} / {categoryHabits.length}</span>
-                                </div>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                <div className="space-y-2 pl-2">
-                                    {categoryHabits.map(habit => (
-                                    habit && <HabitItem 
-                                        key={habit.id} 
-                                        habit={habit}
-                                        isDone={todaysHabits.includes(habit.id)}
-                                        onToggle={() => handleToggleHabit(habit.id)}
-                                        onEdit={() => handleOpenDialog(habit)}
-                                        onDelete={() => handleDeleteHabit(habit.id)}
-                                    />
-                                    ))}
-                                </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                            )
-                        })}
-                        </Accordion>
-                    </ScrollArea>
-                </CardContent>
-                 <CardFooter className="border-t pt-4 flex-col gap-2">
-                    <Button variant="outline" className="w-full" onClick={() => handleOpenDialog(null)}>
-                        <PlusCircle className="mr-2 h-4 w-4"/>
-                        Add Custom Habit
-                    </Button>
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button variant="ghost" className="w-full text-muted-foreground">
-                                Reset to Default Habits
+        <Card>
+            <CardHeader>
+                <CardTitle>Habit Tracker</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="md:col-span-2">
+                        <CardHeader>
+                            <CardTitle>Today's Habits</CardTitle>
+                            <CardDescription>Check off your habits for today to build your streak.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ScrollArea className="h-[500px] pr-3 -mr-3">
+                                <Accordion type="multiple" className="w-full" defaultValue={[journalConfig['Growth & Challenge Reflection'].title]}>
+                                {habitsByCategory.map(({ category, categoryHabits }) => {
+                                    if (categoryHabits.length === 0) return null;
+                                    const completedInCategory = categoryHabits.filter(h => todaysHabits.includes(h.id)).length;
+                                    return (
+                                    <AccordionItem value={category.title} key={category.title}>
+                                        <AccordionTrigger>
+                                        <div className="flex items-center justify-between w-full">
+                                            <div className="flex items-center gap-2">
+                                            <category.icon className="w-4 h-4 text-muted-foreground" />
+                                            <span className="font-semibold">{category.title}</span>
+                                            </div>
+                                            <span className="text-sm text-muted-foreground font-medium pr-2">{completedInCategory} / {categoryHabits.length}</span>
+                                        </div>
+                                        </AccordionTrigger>
+                                        <AccordionContent>
+                                        <div className="space-y-2 pl-2">
+                                            {categoryHabits.map(habit => (
+                                            habit && <HabitItem 
+                                                key={habit.id} 
+                                                habit={habit}
+                                                isDone={todaysHabits.includes(habit.id)}
+                                                onToggle={() => handleToggleHabit(habit.id)}
+                                                onEdit={() => handleOpenDialog(habit)}
+                                                onDelete={() => handleDeleteHabit(habit.id)}
+                                            />
+                                            ))}
+                                        </div>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                    )
+                                })}
+                                </Accordion>
+                            </ScrollArea>
+                        </CardContent>
+                        <CardFooter className="border-t pt-4 flex-col gap-2">
+                            <Button variant="outline" className="w-full" onClick={() => handleOpenDialog(null)}>
+                                <PlusCircle className="mr-2 h-4 w-4"/>
+                                Add Custom Habit
                             </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Reset Habits?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This will remove any custom habits you've created and restore the original set. This action cannot be undone.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={resetHabits} variant="destructive">Reset Habits</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                </CardFooter>
-            </Card>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="ghost" className="w-full text-muted-foreground">
+                                        Reset to Default Habits
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Reset Habits?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will remove any custom habits you've created and restore the original set. This action cannot be undone.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={resetHabits} variant="destructive">Reset Habits</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </CardFooter>
+                    </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Your Progress</CardTitle>
-                    <CardDescription>Visualize your consistency and build momentum.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div>
-                        <div className="flex justify-between items-center mb-1">
-                            <span className="text-sm font-medium text-muted-foreground">Today's Completion</span>
-                            <span className="text-sm font-bold text-primary">{todaysHabits.length} / {habits.length}</span>
-                        </div>
-                        <Progress value={completionPercentage} />
-                    </div>
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                            <div className="flex items-center gap-2 text-muted-foreground">
-                                <Zap className="w-5 h-5"/>
-                                <span className="font-medium">Current Streak</span>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Your Progress</CardTitle>
+                            <CardDescription>Visualize your consistency and build momentum.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div>
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="text-sm font-medium text-muted-foreground">Today's Completion</span>
+                                    <span className="text-sm font-bold text-primary">{todaysHabits.length} / {habits.length}</span>
+                                </div>
+                                <Progress value={completionPercentage} />
                             </div>
-                            <span className="font-bold text-lg">{streakStats.currentStreak} days</span>
-                        </div>
-                         <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                            <div className="flex items-center gap-2 text-muted-foreground">
-                                <TrendingUp className="w-5 h-5"/>
-                                <span className="font-medium">Longest Streak</span>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Zap className="w-5 h-5"/>
+                                        <span className="font-medium">Current Streak</span>
+                                    </div>
+                                    <span className="font-bold text-lg">{streakStats.currentStreak} days</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <TrendingUp className="w-5 h-5"/>
+                                        <span className="font-medium">Longest Streak</span>
+                                    </div>
+                                    <span className="font-bold text-lg">{streakStats.longestStreak} days</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                        <Calendar className="w-5 h-5"/>
+                                        <span className="font-medium">Weekly Completion</span>
+                                    </div>
+                                    <span className="font-bold text-lg">{streakStats.weeklyCompletion}%</span>
+                                </div>
                             </div>
-                            <span className="font-bold text-lg">{streakStats.longestStreak} days</span>
-                        </div>
-                         <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                            <div className="flex items-center gap-2 text-muted-foreground">
-                                <Calendar className="w-5 h-5"/>
-                                <span className="font-medium">Weekly Completion</span>
-                            </div>
-                            <span className="font-bold text-lg">{streakStats.weeklyCompletion}%</span>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
+                        </CardContent>
+                    </Card>
+                </div>
+            </CardContent>
             <HabitDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onSave={handleSaveHabit} habitToEdit={habitToEdit} />
         </div>
     );

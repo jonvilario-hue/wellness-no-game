@@ -100,58 +100,69 @@ export function FocusView() {
     }, [focusData]);
 
 
-    if (!hasHydrated || !settings.effortTracker) {
-        return <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Skeleton className="h-[400px] w-full md:col-span-2 lg:col-span-3" />
-            <Skeleton className="h-[200px] w-full" />
-            <Skeleton className="h-[200px] w-full" />
-            <Skeleton className="h-[200px] w-full" />
-        </div>
+    if (!hasHydrated) {
+        return (
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-4 w-3/4" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-[400px] w-full" />
+                </CardContent>
+            </Card>
+        )
     }
 
     return (
-        <div className="space-y-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle>7-Day Focus Trend</CardTitle>
-                    <CardDescription>Your average focus rating over the last week.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <FocusTrendChart data={last7DaysData} />
-                </CardContent>
-            </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle>Focus Tracker</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>7-Day Focus Trend</CardTitle>
+                            <CardDescription>Your average focus rating over the last week.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <FocusTrendChart data={last7DaysData} />
+                        </CardContent>
+                    </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <Card className="lg:col-span-2">
-                    <CardHeader>
-                        <CardTitle>Focus Log</CardTitle>
-                        <CardDescription>Your most recent focus entries. Click to edit.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {focusData.length > 0 ? focusData.slice(0, 6).map(entry => (
-                            <FocusCard key={entry.id} entry={entry} onEdit={handleEdit} />
-                        )) : (
-                            <p className="text-muted-foreground col-span-2 text-center py-8">No focus entries logged yet. Log your focus in the journal to see it here.</p>
-                        )}
-                    </CardContent>
-                </Card>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <Card className="lg:col-span-2">
+                            <CardHeader>
+                                <CardTitle>Focus Log</CardTitle>
+                                <CardDescription>Your most recent focus entries. Click to edit.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {focusData.length > 0 ? focusData.slice(0, 6).map(entry => (
+                                    <FocusCard key={entry.id} entry={entry} onEdit={handleEdit} />
+                                )) : (
+                                    <p className="text-muted-foreground col-span-2 text-center py-8">No focus entries logged yet. Log your focus in the journal to see it here.</p>
+                                )}
+                            </CardContent>
+                        </Card>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Peak Focus Sessions</CardTitle>
-                        <CardDescription>These are your highest-rated focus sessions.</CardDescription>
-                    </CardHeader>
-                     <CardContent className="space-y-4">
-                        {peakFocusSessions.length > 0 ? peakFocusSessions.map(entry => (
-                           <FocusCard key={entry.id} entry={entry} onEdit={handleEdit} />
-                        )) : (
-                            <p className="text-muted-foreground text-center py-8">No high-focus sessions recorded yet.</p>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-            
-             <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Peak Focus Sessions</CardTitle>
+                                <CardDescription>These are your highest-rated focus sessions.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {peakFocusSessions.length > 0 ? peakFocusSessions.map(entry => (
+                                <FocusCard key={entry.id} entry={entry} onEdit={handleEdit} />
+                                )) : (
+                                    <p className="text-muted-foreground text-center py-8">No high-focus sessions recorded yet.</p>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </CardContent>
+            <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
                 <DialogContent className="max-w-4xl h-[90vh]">
                      {selectedEntry && (
                          <JournalEditor 
@@ -165,6 +176,6 @@ export function FocusView() {
                      )}
                 </DialogContent>
             </Dialog>
-        </div>
+        </Card>
     )
 }

@@ -12,9 +12,30 @@ import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ToolsPage() {
-  const { settings } = useDashboardSettings();
+  const { settings, isLoaded } = useDashboardSettings();
+
+  if (!isLoaded) {
+    return (
+       <>
+        <div className="sticky top-0 z-20">
+          <Header />
+          <PageNav />
+        </div>
+        <MotivationalMessage />
+        <main className="flex-1 p-4 sm:p-6 md:p-8">
+            <div className="space-y-8">
+                <Skeleton className="h-[700px] w-full" />
+                <Skeleton className="h-[400px] w-full" />
+                <Skeleton className="h-[400px] w-full" />
+                <Skeleton className="h-[400px] w-full" />
+            </div>
+        </main>
+      </>
+    )
+  }
 
   return (
     <>
@@ -35,18 +56,10 @@ export default function ToolsPage() {
             </CardContent>
           </Card>
           
-          <Separator />
+          {settings.moodTracker && <MoodView />}
+          {settings.habitTracker && <HabitsView />}
+          {settings.effortTracker && <FocusView />}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Wellness Trackers</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                {settings.moodTracker && <MoodView />}
-                {settings.habitTracker && <HabitsView />}
-                {settings.effortTracker && <FocusView />}
-            </CardContent>
-          </Card>
         </div>
       </main>
     </>

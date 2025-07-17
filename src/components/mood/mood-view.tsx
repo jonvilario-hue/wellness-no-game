@@ -167,45 +167,60 @@ export function MoodView() {
         return Array.from(last7DaysMap.entries()).map(([date, mood]) => ({ date, mood }));
     }, [entries]);
 
-    if (!hasHydrated || !settings.moodTracker) {
-        return <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Skeleton className="h-[400px] w-full" />
-            <Skeleton className="h-[400px] w-full" />
-        </div>
+    if (!hasHydrated) {
+        return (
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-4 w-3/4" />
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Skeleton className="h-[400px] w-full" />
+                    <Skeleton className="h-[400px] w-full" />
+                </CardContent>
+            </Card>
+        )
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <MoodLogger />
-            <Card>
-                <CardHeader>
-                    <CardTitle>Mood History</CardTitle>
-                    <CardDescription>Your 7-day mood trend and recent entries.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <MoodTrendChart data={last7DaysData} />
-                    <ScrollArea className="h-64 mt-4 pr-3 -mr-3">
-                        <div className="space-y-3">
-                        {moodData.map(entry => (
-                             <div key={entry.id} className="p-3 bg-muted/50 rounded-lg">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="font-semibold text-sm mb-1">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-us', { weekday: 'long', month: 'long', day: 'numeric'})}</p>
-                                        {entry.note && <p className="text-xs text-muted-foreground italic truncate">
-                                            "{entry.note}"
-                                        </p>}
-                                    </div>
-                                     <span className="text-2xl">{moodLabels[entry.mood!]}</span>
-                                </div>
-                            </div>
-                        ))}
-                        {moodData.length === 0 && (
-                            <p className="text-center text-muted-foreground pt-10">No mood entries yet.</p>
-                        )}
-                        </div>
-                    </ScrollArea>
-                </CardContent>
-            </Card>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Mood Tracker</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <MoodLogger />
+              <Card>
+                  <CardHeader>
+                      <CardTitle>Mood History</CardTitle>
+                      <CardDescription>Your 7-day mood trend and recent entries.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                      <MoodTrendChart data={last7DaysData} />
+                      <ScrollArea className="h-64 mt-4 pr-3 -mr-3">
+                          <div className="space-y-3">
+                          {moodData.map(entry => (
+                              <div key={entry.id} className="p-3 bg-muted/50 rounded-lg">
+                                  <div className="flex justify-between items-start">
+                                      <div>
+                                          <p className="font-semibold text-sm mb-1">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-us', { weekday: 'long', month: 'long', day: 'numeric'})}</p>
+                                          {entry.note && <p className="text-xs text-muted-foreground italic truncate">
+                                              "{entry.note}"
+                                          </p>}
+                                      </div>
+                                      <span className="text-2xl">{moodLabels[entry.mood!]}</span>
+                                  </div>
+                              </div>
+                          ))}
+                          {moodData.length === 0 && (
+                              <p className="text-center text-muted-foreground pt-10">No mood entries yet.</p>
+                          )}
+                          </div>
+                      </ScrollArea>
+                  </CardContent>
+              </Card>
+          </div>
+        </CardContent>
+      </Card>
     );
 }
