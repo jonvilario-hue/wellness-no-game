@@ -87,9 +87,9 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
             {cardToEdit ? 'Modify the details of your card.' : 'Add a new card to your collection.'}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex-grow overflow-y-auto">
+        <div className="flex-grow overflow-y-auto pr-1">
             <ScrollArea className="h-full">
-                <div className="space-y-4 py-4">
+                <div className="space-y-4 py-4 pr-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="card-type">Card Type</Label>
