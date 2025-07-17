@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, PlusCircle, Edit, Trash2, Play, Settings, Tag } from 'lucide-react';
+import { ArrowLeft, PlusCircle, Edit, Trash2, Play, Settings, Tag, BarChart2 } from 'lucide-react';
 import { CardDialog } from '@/components/flashcards/card-dialog';
 import { DeckDialog } from '@/components/flashcards/deck-dialog';
 import type { Card as CardType, Deck } from '@/types/flashcards';
@@ -137,23 +137,25 @@ export default function DeckPage() {
           ))}
         </CardContent>
          <CardFooter className="flex justify-between items-center">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive-outline" disabled={deck.id === 'default'}>
-                  <Trash2 className="mr-2 h-4 w-4"/> Delete Deck
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader><AlertDialogTitle>Delete Deck?</AlertDialogTitle></AlertDialogHeader>
-                <AlertDialogDescription>
-                    Are you sure you want to delete this deck? All cards within it will be moved to the "Default" deck. This action cannot be undone.
-                </AlertDialogDescription>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteDeck} variant="destructive">Delete Deck</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <div className="flex gap-2">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive-outline" disabled={deck.id === 'default'}>
+                      <Trash2 className="mr-2 h-4 w-4"/> Delete Deck
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader><AlertDialogTitle>Delete Deck?</AlertDialogTitle></AlertDialogHeader>
+                    <AlertDialogDescription>
+                        Are you sure you want to delete this deck? All cards within it will be moved to the "Default" deck. This action cannot be undone.
+                    </AlertDialogDescription>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteDeck} variant="destructive">Delete Deck</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+            </div>
             <Button asChild size="lg" disabled={dueInDeck === 0}>
                 <Link href={`/flashcards/study?deckId=${deckId}`}>
                     <Play className="mr-2 h-4 w-4" />
