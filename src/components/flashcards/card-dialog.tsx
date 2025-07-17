@@ -87,66 +87,68 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
             {cardToEdit ? 'Modify the details of your card.' : 'Add a new card to your collection.'}
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="flex-grow pr-6 -mr-6">
-            <div className="space-y-4 py-4 pr-1">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="card-type">Card Type</Label>
-                  <Select value={type} onValueChange={(value: CardType) => setType(value)}>
-                    <SelectTrigger id="card-type">
-                      <SelectValue placeholder="Select card type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="basic">Basic</SelectItem>
-                      <SelectItem value="cloze">Cloze Deletion</SelectItem>
-                    </SelectContent>
-                  </Select>
+        <div className="flex-grow overflow-y-auto pr-6 -mr-6">
+            <ScrollArea className="h-full">
+                <div className="space-y-4 py-4 pr-1">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="card-type">Card Type</Label>
+                      <Select value={type} onValueChange={(value: CardType) => setType(value)}>
+                        <SelectTrigger id="card-type">
+                          <SelectValue placeholder="Select card type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="basic">Basic</SelectItem>
+                          <SelectItem value="cloze">Cloze Deletion</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="deck-select">Deck</Label>
+                      <Select value={currentDeckId} onValueChange={setCurrentDeckId}>
+                        <SelectTrigger id="deck-select">
+                          <SelectValue placeholder="Select a deck" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {decks.map(d => (
+                            <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="front-content">Front</Label>
+                    <Textarea
+                      id="front-content"
+                      value={front}
+                      onChange={(e) => setFront(e.target.value)}
+                      placeholder={type === 'cloze' ? 'The capital of France is {{c1::Paris}}.' : 'Front of the card...'}
+                      rows={5}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="back-content">Back</Label>
+                    <Textarea
+                      id="back-content"
+                      value={back}
+                      onChange={(e) => setBack(e.target.value)}
+                      placeholder="Back of the card..."
+                      rows={5}
+                    />
+                  </div>
+                   <div>
+                    <Label htmlFor="tags">Tags (comma-separated)</Label>
+                    <Input
+                      id="tags"
+                      value={tags}
+                      onChange={(e) => setTags(e.target.value)}
+                      placeholder="e.g., biology, chapter-1, important"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="deck-select">Deck</Label>
-                  <Select value={currentDeckId} onValueChange={setCurrentDeckId}>
-                    <SelectTrigger id="deck-select">
-                      <SelectValue placeholder="Select a deck" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {decks.map(d => (
-                        <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="front-content">Front</Label>
-                <Textarea
-                  id="front-content"
-                  value={front}
-                  onChange={(e) => setFront(e.target.value)}
-                  placeholder={type === 'cloze' ? 'The capital of France is {{c1::Paris}}.' : 'Front of the card...'}
-                  rows={5}
-                />
-              </div>
-              <div>
-                <Label htmlFor="back-content">Back</Label>
-                <Textarea
-                  id="back-content"
-                  value={back}
-                  onChange={(e) => setBack(e.target.value)}
-                  placeholder="Back of the card..."
-                  rows={5}
-                />
-              </div>
-               <div>
-                <Label htmlFor="tags">Tags (comma-separated)</Label>
-                <Input
-                  id="tags"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  placeholder="e.g., biology, chapter-1, important"
-                />
-              </div>
-            </div>
-        </ScrollArea>
+            </ScrollArea>
+        </div>
         <DialogFooter className="flex-shrink-0 pt-4 border-t border-border -mx-6 px-6 -mb-6 pb-6">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={handleSave} disabled={isPending}>
@@ -158,3 +160,4 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
     </Dialog>
   );
 }
+
