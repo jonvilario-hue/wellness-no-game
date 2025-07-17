@@ -12,6 +12,7 @@ import { MainDashboardView } from '@/components/dashboard/main-dashboard-view';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
 import { HabitTracker } from '@/components/dashboard/habit-tracker';
+import { Header } from '@/components/header';
 
 export default function GamesPage() {
   const { settings } = useDashboardSettings();

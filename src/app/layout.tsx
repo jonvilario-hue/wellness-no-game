@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/hooks/use-theme';
 import { TrainingFocusProvider } from '@/hooks/use-training-focus';
+import { Header } from '@/components/header';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,7 +27,10 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning={true}>
         <ThemeProvider>
           <TrainingFocusProvider>
-            {children}
+            <Header />
+            <main className="flex-1 p-4 sm:p-6 md:p-8">
+                {children}
+            </main>
             <Toaster />
           </TrainingFocusProvider>
         </ThemeProvider>
