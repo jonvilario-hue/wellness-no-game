@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass, BarChart2 } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass, BarChart2, ListChecks } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +17,7 @@ import { SleepCycleTracker } from '@/components/time/sleep-cycle-tracker';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
+import { TrackerSettings } from '@/components/settings/tracker-settings';
 
 export default function SettingsPage() {
     return (
@@ -36,6 +36,9 @@ export default function SettingsPage() {
                             </TabsTrigger>
                             <TabsTrigger value="training" className="justify-start gap-2">
                             <Sliders className="h-4 w-4"/> Training
+                            </TabsTrigger>
+                             <TabsTrigger value="trackers" className="justify-start gap-2">
+                            <ListChecks className="h-4 w-4"/> Trackers
                             </TabsTrigger>
                             <TabsTrigger value="appearance" className="justify-start gap-2">
                             <Palette className="h-4 w-4"/> Appearance
@@ -66,6 +69,9 @@ export default function SettingsPage() {
                             </TabsContent>
                             <TabsContent value="training">
                             <TrainingSettings />
+                            </TabsContent>
+                             <TabsContent value="trackers">
+                            <TrackerSettings />
                             </TabsContent>
                             <TabsContent value="appearance">
                             <AppearanceSettings />
