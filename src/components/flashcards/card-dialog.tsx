@@ -86,6 +86,11 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
           <DialogDescription>
             {cardToEdit ? 'Modify the details of your card.' : 'Add a new card to your collection.'}
           </DialogDescription>
+          {type === 'cloze' && (
+            <DialogDescription className="pt-2 text-blue-500 italic">
+              Cloze cards create "fill-in-the-blank" style tests. Wrap the text you want to hide in double curly braces, like this: `{{c1::answer}}`.
+            </DialogDescription>
+          )}
         </DialogHeader>
         <div className="flex-grow overflow-y-auto">
             <ScrollArea className="h-full">
