@@ -1,75 +1,43 @@
 
 'use client';
 
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Settings, X } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDashboardSettings, componentLabels, type DashboardSettings } from '@/hooks/use-dashboard-settings';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ScrollArea } from './ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { motion } from 'framer-motion';
 
 interface PageSpecificSettingsProps {
   settingsKeys: (keyof DashboardSettings)[];
 }
 
 export function PageSpecificSettings({ settingsKeys }: PageSpecificSettingsProps) {
-  const [isOpen, setIsOpen] = useState(false);
   const { settings, toggleSetting } = useDashboardSettings();
 
   return (
-    <>
-      <div className="fixed bottom-6 right-6 z-50">
-        <motion.div
+    <div className="fixed bottom-6 right-6 z-50">
+      <Popover>
+        <PopoverTrigger asChild>
+          <motion.div
             initial={{ scale: 0, rotate: -90 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-        >
+          >
             <Button
               size="icon"
               className="rounded-full w-14 h-14 shadow-lg"
-              onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle Page Settings"
             >
-              <AnimatePresence initial={false}>
-                {isOpen ? (
-                    <motion.div
-                        key="close"
-                        initial={{ scale: 0, rotate: 90 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        exit={{ scale: 0, rotate: -90 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        <X className="h-6 w-6" />
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        key="settings"
-                        initial={{ scale: 0, rotate: -90 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        exit={{ scale: 0, rotate: 90 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        <Settings className="h-6 w-6" />
-                    </motion.div>
-                )}
-              </AnimatePresence>
+              <Settings className="h-6 w-6" />
             </Button>
-        </motion.div>
-      </div>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-40"
-          >
-            <Card className="w-80 shadow-2xl">
+          </motion.div>
+        </PopoverTrigger>
+        <PopoverContent className="w-80" side="top" align="end">
+            <Card className="shadow-none border-none">
               <CardHeader>
                 <CardTitle>Page Layout</CardTitle>
                 <CardDescription>Toggle components on this page.</CardDescription>
@@ -93,9 +61,8 @@ export function PageSpecificSettings({ settingsKeys }: PageSpecificSettingsProps
                 </ScrollArea>
               </CardContent>
             </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }
