@@ -56,11 +56,15 @@ export const useDashboardSettings = () => {
   }, []);
 
   const toggleSetting = useCallback((component: DashboardComponent) => {
-    saveSettings({
-      ...settings,
-      [component]: !settings[component],
+    setSettings(prevSettings => {
+        const newSettings = {
+            ...prevSettings,
+            [component]: !prevSettings[component],
+        };
+        saveSettings(newSettings);
+        return newSettings;
     });
-  }, [settings, saveSettings]);
+  }, [saveSettings]);
 
   const resetSettings = useCallback(() => {
     saveSettings(defaultSettings);

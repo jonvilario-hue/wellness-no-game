@@ -84,9 +84,11 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   const modeToDisplay = activeMode.supported ? globalFocus : 'neutral';
   const { Icon: ModeIcon, label: modeLabel, color: modeColor } = focusInfo[modeToDisplay];
   
-  const performanceData = isLoaded ? performance[domain.key]?.[modeToDisplay] : null;
-  const score = performanceData?.score ?? 0;
-  const trend = performanceData?.trend ?? 0;
+  const perfData = isLoaded ? performance[domain.key] : null;
+  const scoreData = perfData ? perfData[modeToDisplay] : null;
+  const score = scoreData?.score ?? 0;
+  const trend = scoreData?.trend ?? 0;
+  
   const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo(trend);
 
   return (
@@ -113,7 +115,7 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
         )}
       </CardHeader>
       <CardContent className="space-y-4 py-4 flex-grow">
-        {!isLoaded || !performanceData ? (
+        {!isLoaded || !scoreData ? (
           <div className="space-y-3 pt-2">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-2/3" />

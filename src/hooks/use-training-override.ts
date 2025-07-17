@@ -6,7 +6,6 @@ import type { TrainingFocus } from './use-training-focus';
 
 // This hook uses sessionStorage to store an override for the training focus.
 // The override is temporary and only lasts for the current browser tab session.
-// This is being simplified as the individual override UI has been removed.
 export const useTrainingOverride = () => {
   const [override, setOverride] = useState<TrainingFocus | null>(null);
   const isLoaded = true; // This hook's state is not persisted, so it's always "loaded".
