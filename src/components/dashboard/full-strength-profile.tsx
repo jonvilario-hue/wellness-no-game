@@ -17,19 +17,18 @@ import { chcDomains } from '@/types';
 import { domainIcons } from '../icons';
 import { cn } from '@/lib/utils';
 import { usePerformanceStore } from '@/hooks/use-performance-store';
+import { useTrainingFocus } from '@/hooks/use-training-focus';
 
 export function FullStrengthProfile() {
   const [isClient, setIsClient] = useState(false);
-  const { getPerformanceData } = usePerformanceStore();
-  const [performanceData, setPerformanceData] = useState<any[]>([]);
+  const { performance } = usePerformanceStore();
+  const { focus: globalFocus, isLoaded: isFocusLoaded } = useTrainingFocus();
 
   useEffect(() => {
     setIsClient(true);
-    // Fetch data on client mount to ensure it's from localStorage
-    setPerformanceData(getPerformanceData());
-  }, [getPerformanceData]);
+  }, []);
 
-  if (!isClient || performanceData.length === 0) {
+  if (!isClient || !isFocusLoaded) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Skeleton className="h-80 w-full" />
@@ -41,11 +40,13 @@ export function FullStrengthProfile() {
   }
 
   const chartData = chcDomains.map(domain => {
-    const perf = performanceData.find(p => p.domain === domain.key);
+    const perfData = performance[domain.key];
+    const modeToDisplay = domain.supportsMath && globalFocus === 'math' ? 'math' : domain.supportsMusic && globalFocus === 'music' ? 'music' : 'neutral';
+    const score = Math.round(perfData[modeToDisplay].score || 0);
     return {
       subject: domain.key,
       name: domain.name,
-      score: Math.round(perf?.score || Math.random() * 30 + 50), // Use real score or fallback
+      score: score > 0 ? score : Math.random() * 20 + 20, // Use real score or fallback for display
       fullMark: 100,
     };
   });

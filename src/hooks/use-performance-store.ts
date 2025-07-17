@@ -4,6 +4,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { CHCDomain } from '@/types';
+import { useMemo } from 'react';
 
 type TrainingMode = 'neutral' | 'math' | 'music';
 
@@ -12,6 +13,7 @@ type PerformanceMetric = {
   totalTime: number; // in seconds
   sessions: number;
   trend: number; // calculated on the fly
+  history: number[]; // last 5 scores
 };
 
 type DomainPerformance = {
@@ -23,7 +25,7 @@ type DomainPerformance = {
 type PerformanceState = {
   performance: Record<CHCDomain, DomainPerformance>;
   logGameResult: (domain: CHCDomain, mode: TrainingMode, result: { score: number; time: number }) => void;
-  getPerformanceData: () => any; // Simplified for now
+  getPerformanceForDomain: (domain: CHCDomain) => DomainPerformance;
 };
 
 const initialMetric = (): PerformanceMetric => ({
@@ -31,6 +33,7 @@ const initialMetric = (): PerformanceMetric => ({
   totalTime: 0,
   sessions: 0,
   trend: 0,
+  history: [],
 });
 
 const initialDomainPerformance = (): DomainPerformance => ({
@@ -59,21 +62,19 @@ export const usePerformanceStore = create<PerformanceState>()(
       logGameResult: (domain, mode, result) => {
         set((state) => {
           const newPerformance = { ...state.performance };
-          const domainData = newPerformance[domain];
-          const modeData = domainData[mode];
+          const domainData = { ...newPerformance[domain] };
+          const modeData = { ...domainData[mode] };
           
-          const oldSessions = modeData.sessions;
-          const newSessions = oldSessions + 1;
-          const oldTotalScore = modeData.score * oldSessions;
-          
-          const newAverageScore = (oldTotalScore + result.score) / newSessions;
-          const newTotalTime = modeData.totalTime + result.time;
+          const newHistory = [...modeData.history, result.score].slice(-5);
+          const oldAverageScore = modeData.score;
+          const newAverageScore = newHistory.reduce((a, b) => a + b, 0) / newHistory.length;
 
           const newModeData: PerformanceMetric = {
-            sessions: newSessions,
+            sessions: modeData.sessions + 1,
             score: Math.round(newAverageScore),
-            totalTime: newTotalTime,
-            trend: Math.round(((newAverageScore - modeData.score) / (modeData.score || 50)) * 100), // Basic trend
+            totalTime: modeData.totalTime + result.time,
+            history: newHistory,
+            trend: Math.round(((newAverageScore - oldAverageScore) / (oldAverageScore || 50)) * 100),
           };
 
           newPerformance[domain] = {
@@ -85,23 +86,10 @@ export const usePerformanceStore = create<PerformanceState>()(
         });
       },
 
-      // This function is designed to be server-safe BUT must be called from a client component
-      // to access the actual persisted state from localStorage.
-      getPerformanceData: () => {
-         if (typeof window === 'undefined') {
-            console.warn("getPerformanceData called on the server. Returning empty data. This should be handled gracefully.");
-            return []; // Or some default structure
-        }
+      getPerformanceForDomain: (domain) => {
         const state = get();
-        // This transformation is needed for the AI flows which expect a flat array.
-        // For now, we will just return the 'neutral' scores for simplicity.
-        return Object.entries(state.performance).map(([domain, data]) => ({
-            domain: domain as CHCDomain,
-            score: data.neutral.score,
-            trend: data.neutral.trend,
-            sessions: data.neutral.sessions,
-        }));
-      },
+        return state.performance[domain];
+      }
     }),
     {
       name: 'cognitive-performance-storage',

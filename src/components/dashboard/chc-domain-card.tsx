@@ -84,8 +84,7 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   const modeToDisplay = activeMode.supported ? globalFocus : 'neutral';
   const { Icon: ModeIcon, label: modeLabel, color: modeColor } = focusInfo[modeToDisplay];
   
-  // Get the performance data for the currently displayed mode
-  const performanceData = isLoaded ? performance[domain.key][modeToDisplay] : null;
+  const performanceData = isLoaded ? performance[domain.key]?.[modeToDisplay] : null;
   const score = performanceData?.score ?? 0;
   const trend = performanceData?.trend ?? 0;
   const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo(trend);

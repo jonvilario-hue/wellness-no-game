@@ -2,24 +2,19 @@
 'use server';
 
 import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit } from '@/ai/flows';
-import type { WeakAreaRecommendationInput, AdaptDifficultyInput, TrainingRecommendationInput } from '@/ai/flows';
+import type { AdaptDifficultyInput, TrainingRecommendationInput } from '@/ai/flows';
+import { usePerformanceStore } from '@/hooks/use-performance-store';
 
 export async function getWeakAreaRecommendationsAction() {
-  // In a real app, this data would be fetched from a DB.
-  // For now, we simulate a user with some performance history.
-  const performanceData: WeakAreaRecommendationInput['performanceData'] = [
-    { domain: 'Gf', score: 65, sessions: 10 },
-    { domain: 'Gc', score: 80, sessions: 15 },
-    { domain: 'Gwm', score: 55, sessions: 12 },
-    { domain: 'Gs', score: 70, sessions: 8 },
-    { domain: 'Gv', score: 60, sessions: 11 },
-    { domain: 'Ga', score: 75, sessions: 5 },
-    { domain: 'Glr', score: 85, sessions: 20 },
-    { domain: 'EF', score: 50, sessions: 18 }, // Clear weakest domain
-  ];
+  const performanceData = usePerformanceStore.getState().performance;
+  const flatPerformanceData = Object.entries(performanceData).map(([domain, data]) => ({
+      domain,
+      score: data.neutral.score,
+      sessions: data.neutral.sessions,
+  })) as any; // Cast as any to satisfy the input type
   
   try {
-    return await weakAreaRecommendation({ performanceData });
+    return await weakAreaRecommendation({ performanceData: flatPerformanceData });
   } catch (error)
   {
     console.error(error);
@@ -37,21 +32,16 @@ export async function getAdaptiveDifficultyAction(input: AdaptDifficultyInput) {
 }
 
 export async function getTrainingRecommendationAction() {
-   // This mock data simulates a real user where a specific insight can be triggered.
-  const performanceData: TrainingRecommendationInput['performanceData'] = [
-    { domain: 'Gf', score: 70, trend: 2 },
-    { domain: 'Gc', score: 80, trend: 5 },
-    { domain: 'Gwm', score: 85, trend: 7 }, // High performing domain for "Momentum Starter"
-    { domain: 'Gs', score: 75, trend: 1 },
-    { domain: 'Gv', score: 90, trend: 8 },
-    { domain: 'Ga', score: 75, trend: -1 },
-    { domain: 'Glr', score: 85, trend: 4 },
-    { domain: 'EF', score: 68, trend: 3 }, // EF score is not the lowest
-  ];
+   const performanceData = usePerformanceStore.getState().performance;
+   const flatPerformanceData = Object.entries(performanceData).map(([domain, data]) => ({
+      domain,
+      score: data.neutral.score,
+      trend: data.neutral.trend,
+   })) as any;
 
   // This input will trigger the "Performance Insight" for morning training.
   const input: TrainingRecommendationInput = {
-    performanceData,
+    performanceData: flatPerformanceData,
     sessionStreak: 5,
     hoursSinceLastSession: 12,
     timeOfDay: 'morning', 
@@ -60,9 +50,8 @@ export async function getTrainingRecommendationAction() {
 
   try {
     const result = await getTrainingRecommendation(input);
-    // Ensure performanceData is passed through if the flow doesn't add it.
     if (!result.performanceData) {
-      result.performanceData = performanceData;
+      result.performanceData = flatPerformanceData;
     }
     return result;
   } catch (error) {
