@@ -6,7 +6,7 @@ import { ArrowLeft, Brain, Settings, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { chcDomains, type CHCDomain } from '@/types';
 import { domainIcons } from '@/components/icons';
-import { notFound, useSearchParams } from 'next/navigation';
+import { notFound, useSearchParams, useParams } from 'next/navigation';
 import { gameComponents } from '@/components/training/game-components';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
@@ -31,8 +31,9 @@ const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 
-export default function TrainingPage({ params }: { params: { domain: CHCDomain } }) {
-  const { domain } = params;
+export default function TrainingPage() {
+  const params = useParams();
+  const domain = params.domain as CHCDomain;
   const domainInfo = chcDomains.find(d => d.key === domain);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
