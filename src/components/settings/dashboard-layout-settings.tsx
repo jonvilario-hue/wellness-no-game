@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useDashboardSettings, type DashboardComponent, componentLabels } from '@/hooks/use-dashboard-settings';
+import { useDashboardSettings, dashboardLayoutKeys, componentLabels } from '@/hooks/use-dashboard-settings';
 
 export function DashboardLayoutSettings() {
     const { settings, toggleSetting, resetSettings } = useDashboardSettings();
@@ -27,7 +27,7 @@ export function DashboardLayoutSettings() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {(Object.keys(settings) as DashboardComponent[]).map((key) => (
+                {dashboardLayoutKeys.map((key) => (
                     <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                       <Label htmlFor={`switch-${key}`} className="font-medium">
                         {componentLabels[key] || key}

@@ -13,7 +13,7 @@ const defaultSettings = {
   gameProgressTracker: true,
   milestoneBadges: true,
   performanceInsights: true,
-  // Tracker settings
+  // Tracker settings are managed here but toggled in their own component
   habitTracker: true,
   moodTracker: true,
   effortTracker: true,
@@ -70,7 +70,7 @@ export const useDashboardSettings = () => {
   return { settings, toggleSetting, resetSettings, isLoaded };
 };
 
-export const componentLabels: Record<DashboardComponent, string> = {
+export const componentLabels: Record<keyof DashboardSettings, string> = {
   mainDashboard: 'Main Dashboard (Performance/Strength)',
   dailyChallenge: 'Daily Training Sequence',
   allGames: 'All Training Games',
@@ -80,4 +80,19 @@ export const componentLabels: Record<DashboardComponent, string> = {
   performanceInsights: 'Performance Insights',
   weakAreaRecommendations: 'Weak Area Targeting',
   adaptiveDifficulty: 'Adaptive Difficulty',
+  habitTracker: 'Habit Tracker',
+  moodTracker: 'Mood Tracker',
+  effortTracker: 'Effort/Focus Tracker',
 };
+
+export const dashboardLayoutKeys: DashboardComponent[] = [
+    'mainDashboard',
+    'dailyChallenge',
+    'allGames',
+    'weakAreaRecommendations',
+    'adaptiveDifficulty',
+    'hyperfocusBuilder',
+    'gameProgressTracker',
+    'milestoneBadges',
+    'performanceInsights'
+];
