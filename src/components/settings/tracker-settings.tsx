@@ -14,7 +14,7 @@ export function TrackerSettings() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Journal Trackers</CardTitle>
+                <CardTitle>Trackers</CardTitle>
                 <CardDescription>
                     Enable or disable specific tracking modules within your journal entries and tools.
                 </CardDescription>
