@@ -10,6 +10,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Header } from '@/components/header';
+import { PageNav } from '@/components/page-nav';
+import { MotivationalMessage } from '@/components/motivational-message';
 
 type FilterType = 'all' | 'unlocked' | 'locked';
 
@@ -23,26 +26,12 @@ export default function BadgesPage() {
   });
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card sticky top-0 z-10">
-        <div className="mx-auto max-w-7xl flex items-center justify-between">
-          <div className="flex-1 flex justify-start">
-            <Button asChild variant="outline">
-              <Link href="/">
-                <ArrowLeft className="mr-2" />
-                Back to Dashboard
-              </Link>
-            </Button>
-          </div>
-          <div className="flex items-center gap-3">
-            <Award className="h-7 w-7 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground font-headline tracking-tight">
-              Milestone Badges
-            </h1>
-          </div>
-          <div className="flex-1"></div>
-        </div>
-      </header>
+    <>
+       <div className="sticky top-0 z-20">
+        <Header />
+        <PageNav />
+      </div>
+      <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-4xl space-y-6">
           <div className="flex justify-center">
@@ -97,6 +86,6 @@ export default function BadgesPage() {
           </Card>
         </div>
       </main>
-    </div>
+    </>
   );
 }

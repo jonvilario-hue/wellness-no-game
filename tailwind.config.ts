@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 const {fontFamily} = require('tailwindcss/defaultTheme');
 
@@ -20,7 +21,6 @@ export default {
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)', ...fontFamily.sans],
-        headline: ['var(--font-inter)', ...fontFamily.sans],
       },
       colors: {
         border: 'hsl(var(--border))',

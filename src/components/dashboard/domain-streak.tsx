@@ -46,6 +46,6 @@ const DomainStreakComponent = ({ domainKey, name, streak, isTop }: DomainStreakP
       </Tooltip>
     </TooltipProvider>
   );
-}
+};
 
 export const DomainStreak = memo(DomainStreakComponent);
