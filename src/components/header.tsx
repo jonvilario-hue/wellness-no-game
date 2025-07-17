@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Brain, Settings, CalendarDays, BookMarked, Music, FlaskConical } from 'lucide-react';
+import { Brain, Settings, CalendarDays, BookMarked, Music, FlaskConical, Clock } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTrainingFocus } from '@/hooks/use-training-focus';
-import { useTrainingOverride } from '@/hooks/use-training-override';
+import { useTrainingOverride } from '@/hooks/use-training-override.tsx';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -120,6 +120,18 @@ export function Header() {
         
         <TooltipProvider>
             <div className="flex-1 flex justify-end items-center gap-1">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href="/time">
+                      <Clock className="h-5 w-5" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Clock Tools</p>
+                </TooltipContent>
+              </Tooltip>
               <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button asChild variant="ghost" size="icon">

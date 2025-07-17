@@ -1,22 +1,19 @@
+
 'use client';
 
-import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass, BarChart2, ListChecks } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass, BarChart2, ListChecks, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DashboardLayoutSettings } from '@/components/settings/dashboard-layout-settings';
 import { TrainingSettings } from '@/components/settings/training-settings';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
-import { PomodoroTimer } from '@/components/time/pomodoro';
-import { Timer } from '@/components/time/timer';
-import { Stopwatch } from '@/components/time/stopwatch';
-import { AlarmClock } from '@/components/time/alarm-clock';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { SleepCycleTracker } from '@/components/time/sleep-cycle-tracker';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { TrackerSettings } from '@/components/settings/tracker-settings';
+import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
 
 export default function SettingsPage() {
     return (
@@ -42,20 +39,8 @@ export default function SettingsPage() {
                             <TabsTrigger value="appearance" className="justify-start gap-2">
                             <Palette className="h-4 w-4"/> Appearance
                             </TabsTrigger>
-                            <TabsTrigger value="sleep" className="justify-start gap-2">
-                            <BarChart2 className="h-4 w-4"/> Sleep
-                            </TabsTrigger>
-                            <TabsTrigger value="alarms" className="justify-start gap-2">
-                            <Moon className="h-4 w-4"/> Alarms
-                            </TabsTrigger>
-                            <TabsTrigger value="pomodoro" className="justify-start gap-2">
-                            <CirclePlay className="h-4 w-4"/> Pomodoro
-                            </TabsTrigger>
-                            <TabsTrigger value="timer" className="justify-start gap-2">
-                            <TimerIcon className="h-4 w-4"/> Timer
-                            </TabsTrigger>
-                            <TabsTrigger value="stopwatch" className="justify-start gap-2">
-                            <Hourglass className="h-4 w-4"/> Stopwatch
+                            <TabsTrigger value="time" className="justify-start gap-2">
+                            <Clock className="h-4 w-4"/> Time Tools
                             </TabsTrigger>
                             <TabsTrigger value="account" className="justify-start gap-2" disabled>
                             <User className="h-4 w-4"/> Account
@@ -75,20 +60,11 @@ export default function SettingsPage() {
                             <TabsContent value="appearance">
                             <AppearanceSettings />
                             </TabsContent>
-                            <TabsContent value="sleep">
-                            <SleepCycleTracker />
-                            </TabsContent>
-                            <TabsContent value="alarms">
-                            <AlarmClock />
-                            </TabsContent>
-                            <TabsContent value="pomodoro">
-                            <PomodoroTimer />
-                            </TabsContent>
-                            <TabsContent value="timer">
-                            <Timer />
-                            </TabsContent>
-                            <TabsContent value="stopwatch">
-                            <Stopwatch />
+                            <TabsContent value="time">
+                                <PlaceholderSettings 
+                                    title="Time Tools"
+                                    description="Time management tools have been moved to their own dedicated page, accessible via the clock icon in the header."
+                                />
                             </TabsContent>
                             <TabsContent value="account">
                             <Card>
