@@ -176,7 +176,7 @@ export default function LibraryPage() {
                             </div>
                         ) : (
                              <div className="space-y-4">
-                                {journalContent.map(item => <ItemCard key={item.id} item={{...item, source: 'Journal', title: item.label || item.category, content: item.field1 || item.field2 || item.field3 }} />)}
+                                {journalContent.map(item => <ItemCard key={item.id} item={item} />)}
                             </div>
                         )}
                     </TabsContent>
