@@ -11,10 +11,10 @@ import { Input } from '../ui/input';
 
 const effortLevels: { value: number, label: string, color: string, emoji: string }[] = [
     { value: 0, label: 'Not Rated', color: 'text-muted-foreground', emoji: ''},
-    { value: 1, label: 'Low Effort', color: 'text-slate-400', emoji: '😮‍💨' },
-    { value: 2, label: 'Some Focus', color: 'text-blue-400', emoji: '🤔' },
+    { value: 1, label: 'Low Effort', color: 'text-slate-400', emoji: '...' },
+    { value: 2, label: 'Some Focus', color: 'text-blue-400', emoji: '⚡' },
     { value: 3, label: 'Average Focus', color: 'text-green-500', emoji: '⚖️' },
-    { value: 4, label: 'High Focus', color: 'text-orange-500', emoji: '🔥' },
+    { value: 4, 'label': 'High Focus', color: 'text-orange-500', emoji: '🔥' },
     { value: 5, label: 'Deep Focus', color: 'text-purple-500', emoji: '🎯' },
 ];
 
