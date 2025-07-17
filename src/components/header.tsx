@@ -79,7 +79,7 @@ export function Header() {
   const { Icon, label } = focusInfo[focus] || focusInfo.neutral;
 
   return (
-    <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card">
+    <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card sticky top-0 z-20">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
         <TooltipProvider>
             <div className="flex-1 flex justify-start items-center gap-1">
