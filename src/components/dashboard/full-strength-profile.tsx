@@ -42,7 +42,9 @@ export function FullStrengthProfile() {
   const chartData = chcDomains.map(domain => {
     const perfData = performance[domain.key];
     const modeToDisplay = domain.supportsMath && globalFocus === 'math' ? 'math' : domain.supportsMusic && globalFocus === 'music' ? 'music' : 'neutral';
-    const score = Math.round(perfData[modeToDisplay].score || 0);
+    const scoreData = perfData?.[modeToDisplay];
+    const score = Math.round(scoreData?.score || 0);
+
     return {
       subject: domain.key,
       name: domain.name,
