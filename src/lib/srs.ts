@@ -11,26 +11,24 @@ export function applySpacedRepetition(
 
   if (rating === 'again') {
     repetitions = 0;
-    interval = 1;
+    interval = 1; // Show again in 1 day
+    easeFactor = Math.max(MIN_EASE_FACTOR, easeFactor - 0.20);
   } else {
     repetitions += 1;
     if (repetitions === 1) {
-      interval = 1;
+      interval = 1; // First successful repetition
     } else if (repetitions === 2) {
-      interval = 6;
+      interval = 6; // Second successful repetition
     } else {
       interval = Math.round(interval * easeFactor);
     }
-  }
-
-  if (rating === 'hard') {
-    easeFactor = Math.max(MIN_EASE_FACTOR, easeFactor - 0.15);
-  } else if (rating === 'easy') {
-    easeFactor += 0.15;
-  } else if (rating === 'good') {
-    // No change to ease factor
-  } else if (rating === 'again') {
-     easeFactor = Math.max(MIN_EASE_FACTOR, easeFactor - 0.2);
+    
+    if (rating === 'hard') {
+      easeFactor = Math.max(MIN_EASE_FACTOR, easeFactor - 0.15);
+    } else if (rating === 'easy') {
+      easeFactor += 0.15;
+    }
+    // No change for 'good'
   }
   
   const now = new Date();
@@ -39,7 +37,7 @@ export function applySpacedRepetition(
   return {
     ...card,
     interval,
-    easeFactor,
+    easeFactor: parseFloat(easeFactor.toFixed(2)),
     repetitions,
     dueDate,
   };

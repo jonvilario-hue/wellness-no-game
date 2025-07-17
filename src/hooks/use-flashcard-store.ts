@@ -4,7 +4,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Card, Deck, CardType } from '@/types/flashcards';
-import { applySpacedRepetition } from '@/lib/srs';
 
 type FlashcardStore = {
   decks: Deck[];
@@ -50,6 +49,7 @@ export const useFlashcardStore = create<FlashcardStore>()(
         })),
       deleteDeck: (deckId) =>
         set((state) => {
+          if (deckId === 'default') return state; // Prevent deleting the default deck
           // Instead of deleting cards, move them to the default deck
           const newCards = state.cards.map(card => {
             if (card.deckId === deckId) {
@@ -108,12 +108,14 @@ export const useFlashcardStore = create<FlashcardStore>()(
       },
     }),
     {
-      name: 'flashcard-storage-v2', // New version to avoid conflicts with old structure
+      name: 'flashcard-storage-v2',
       storage: createJSONStorage(() => localStorage),
        onRehydrateStorage: (state) => {
         if (!state) return;
-        if (!state.decks || state.decks.length === 0) {
-            state.decks = createInitialState().decks;
+        const s = state as FlashcardStore;
+        if (!s.decks || s.decks.length === 0 || !s.decks.find(d => d.id === 'default')) {
+            const defaults = createInitialState();
+            s.decks = defaults.decks;
         }
       }
     }

@@ -15,9 +15,10 @@ import type { Card as CardType } from '@/types/flashcards';
 import { applySpacedRepetition } from '@/lib/srs';
 
 const renderCloze = (text: string, reveal: boolean) => {
-  return text.replace(/\{\{c\d::(.*?)\}\}/g, (_, match) => 
-    reveal ? `<span class="font-bold text-blue-500">${match}</span>` : `<span class="font-bold text-primary">[...]</span>`
+  const clozeContent = text.replace(/\{\{c\d::(.*?)\}\}/g, (_, match) => 
+    reveal ? `<span class="font-bold text-primary">${match}</span>` : `<span class="font-bold text-blue-500">[...]</span>`
   );
+  return <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: clozeContent }} />;
 };
 
 export default function StudyPage() {
@@ -51,14 +52,14 @@ export default function StudyPage() {
 
   const currentCard = sessionCards[currentIndex];
 
-  const handleRating = (rating: 'again' | 'hard' | 'good' | 'easy') => {
+  const handleRating = useCallback((rating: 'again' | 'hard' | 'good' | 'easy') => {
     if (!currentCard) return;
 
     const updatedCard = applySpacedRepetition(currentCard, rating);
     updateCard(updatedCard);
     
     // Show feedback
-    if(rating === 'again' || rating === 'hard') {
+    if(rating === 'again') {
         setFeedback('incorrect');
     } else {
         setFeedback('correct');
@@ -73,7 +74,7 @@ export default function StudyPage() {
             setFeedback(null);
         }
     }, 1200);
-  };
+  }, [currentCard, currentIndex, sessionCards.length, updateCard]);
   
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -94,7 +95,7 @@ export default function StudyPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flipped, currentCard, sessionComplete, currentIndex, sessionCards.length]);
+  }, [flipped, currentCard, sessionComplete, currentIndex, sessionCards.length, handleRating]);
 
 
   if (sessionComplete) {
@@ -122,20 +123,22 @@ export default function StudyPage() {
 
   const renderContent = () => {
     const isCloze = currentCard.type === 'cloze';
-    const contentToShow = flipped ? currentCard.back : currentCard.front;
 
-    if (isCloze && !flipped) {
-      const html = renderCloze(contentToShow, flipped);
-      return <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: html }} />;
-    } else if (isCloze && flipped) {
-       const revealedFront = renderCloze(currentCard.front, true);
-       return (
-            <div className="prose dark:prose-invert max-w-none text-left">
-                <div className="mb-4 pb-4 border-b" dangerouslySetInnerHTML={{ __html: revealedFront }} />
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentCard.back}</ReactMarkdown>
-            </div>
-       )
+    if (isCloze) {
+      if (!flipped) {
+        return renderCloze(currentCard.front, false);
+      } else {
+        return (
+          <div className="prose dark:prose-invert max-w-none text-left space-y-4">
+            {renderCloze(currentCard.front, true)}
+            <hr />
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentCard.back}</ReactMarkdown>
+          </div>
+        );
+      }
     }
+    
+    const contentToShow = flipped ? currentCard.back : currentCard.front;
     return <ReactMarkdown className="prose dark:prose-invert max-w-none" remarkPlugins={[remarkGfm]}>{contentToShow}</ReactMarkdown>;
   };
 
@@ -152,7 +155,7 @@ export default function StudyPage() {
       <div className="space-y-4">
         <Progress value={progress} />
         <Card 
-            onClick={() => setFlipped(!flipped)} 
+            onClick={() => !feedback && setFlipped(!flipped)} 
             className="cursor-pointer min-h-[400px] flex items-center justify-center p-6 text-center text-xl relative overflow-hidden"
         >
           <CardContent className="w-full">
@@ -161,14 +164,14 @@ export default function StudyPage() {
           {feedback && (
              <div className="absolute inset-0 bg-background/80 flex items-center justify-center animate-in fade-in">
                 {feedback === 'correct' ? 
-                    <Check className="w-24 h-24 text-green-500" /> : 
-                    <X className="w-24 h-24 text-destructive" />
+                    <Check className="w-24 h-24 text-green-500 animate-in zoom-in-50" /> : 
+                    <X className="w-24 h-24 text-destructive animate-in zoom-in-50" />
                 }
              </div>
           )}
         </Card>
 
-        {flipped && (
+        {flipped && !feedback && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in">
             <Button onClick={() => handleRating("again")} variant="destructive" size="lg">Again <span className="ml-2 text-xs opacity-70">(1)</span></Button>
             <Button onClick={() => handleRating("hard")} variant="secondary" size="lg">Hard <span className="ml-2 text-xs opacity-70">(2)</span></Button>
