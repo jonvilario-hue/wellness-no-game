@@ -9,8 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { FileText, Bookmark, Search, PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { FileText, Bookmark, Search, PlusCircle, Edit, Trash2, BookUser } from 'lucide-react';
 import { useLibraryStore } from '@/hooks/use-library-store';
+import { useHydratedJournalStore } from '@/hooks/use-journal';
 import { NoteDialog } from '@/components/library/note-dialog';
 import type { LibraryItem } from '@/types/library';
 import {
@@ -26,7 +27,9 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function LibraryPage() {
-  const { items, deleteItem } = useLibraryStore();
+  const { items: libraryItems, deleteItem } = useLibraryStore();
+  const { entries: journalEntries } = useHydratedJournalStore();
+
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<LibraryItem | null>(null);
 
@@ -35,7 +38,50 @@ export default function LibraryPage() {
     setIsNoteDialogOpen(true);
   };
 
-  const notes = items.filter(item => item.type === 'note');
+  const notes = libraryItems.filter(item => item.type === 'note');
+  const allContent = [
+      ...libraryItems.map(item => ({...item, source: 'Library'})),
+      ...journalEntries.map(entry => ({
+          id: entry.id,
+          title: entry.label || entry.category,
+          content: entry.field1 || entry.field2 || entry.field3,
+          createdAt: entry.date,
+          source: 'Journal'
+      }))
+  ].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const ItemCard = ({ item }: { item: any }) => (
+    <div key={item.id} className="group flex items-center p-4 border rounded-lg hover:bg-muted/50">
+        <div className="flex-grow">
+            <p className="font-bold">{item.title}</p>
+            <p className="text-sm text-muted-foreground truncate">{item.description || item.content}</p>
+            <p className="text-xs text-primary font-semibold mt-1">{item.source}</p>
+        </div>
+        {item.source === 'Library' && (
+            <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
+                <Button variant="ghost" size="icon" onClick={() => handleOpenNoteDialog(item)}>
+                    <Edit className="w-4 h-4" />
+                </Button>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-destructive">
+                        <Trash2 className="w-4 h-4" />
+                    </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                    <AlertDialogHeader><AlertDialogTitle>Delete Note?</AlertDialogTitle></AlertDialogHeader>
+                    <AlertDialogDescription>Are you sure you want to delete this note? This action cannot be undone.</AlertDialogDescription>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => deleteItem(item.id)} variant="destructive">Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </div>
+        )}
+    </div>
+  )
+
 
   return (
     <>
@@ -59,6 +105,7 @@ export default function LibraryPage() {
                         <TabsList>
                             <TabsTrigger value="all"><FileText className="w-4 h-4 mr-2"/>All Content</TabsTrigger>
                             <TabsTrigger value="notes"><FileText className="w-4 h-4 mr-2"/>Notes</TabsTrigger>
+                             <TabsTrigger value="journal"><BookUser className="w-4 h-4 mr-2"/>Journal Entries</TabsTrigger>
                             <TabsTrigger value="bookmarks" disabled><Bookmark className="w-4 h-4 mr-2"/>Bookmarks</TabsTrigger>
                         </TabsList>
                          <div className="flex items-center gap-2">
@@ -72,41 +119,14 @@ export default function LibraryPage() {
                         </div>
                     </div>
                     <TabsContent value="all">
-                        {items.length === 0 ? (
+                        {allContent.length === 0 ? (
                              <div className="text-center py-16 border-2 border-dashed rounded-lg">
                                 <p className="text-muted-foreground">Your library is empty.</p>
                                 <p className="text-sm text-muted-foreground">Click "Add Note" to save your first item.</p>
                             </div>
                         ) : (
                              <div className="space-y-4">
-                                {items.map(item => (
-                                     <div key={item.id} className="group flex items-center p-4 border rounded-lg hover:bg-muted/50">
-                                        <div className="flex-grow">
-                                            <p className="font-bold">{item.title}</p>
-                                            <p className="text-sm text-muted-foreground truncate">{item.description || item.content}</p>
-                                        </div>
-                                         <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
-                                            <Button variant="ghost" size="icon" onClick={() => handleOpenNoteDialog(item)}>
-                                                <Edit className="w-4 h-4" />
-                                            </Button>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="text-destructive">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                <AlertDialogHeader><AlertDialogTitle>Delete Note?</AlertDialogTitle></AlertDialogHeader>
-                                                <AlertDialogDescription>Are you sure you want to delete this note? This action cannot be undone.</AlertDialogDescription>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={() => deleteItem(item.id)} variant="destructive">Delete</AlertDialogAction>
-                                                </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </div>
-                                    </div>
-                                ))}
+                                {allContent.map(item => <ItemCard key={item.id} item={item} />)}
                             </div>
                         )}
                        
@@ -119,34 +139,19 @@ export default function LibraryPage() {
                             </div>
                         ) : (
                              <div className="space-y-4">
-                                {notes.map(item => (
-                                     <div key={item.id} className="group flex items-center p-4 border rounded-lg hover:bg-muted/50">
-                                        <div className="flex-grow">
-                                            <p className="font-bold">{item.title}</p>
-                                            <p className="text-sm text-muted-foreground truncate">{item.description || item.content}</p>
-                                        </div>
-                                         <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
-                                            <Button variant="ghost" size="icon" onClick={() => handleOpenNoteDialog(item)}>
-                                                <Edit className="w-4 h-4" />
-                                            </Button>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="text-destructive">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                <AlertDialogHeader><AlertDialogTitle>Delete Note?</AlertDialogTitle></AlertDialogHeader>
-                                                <AlertDialogDescription>Are you sure you want to delete this note? This action cannot be undone.</AlertDialogDescription>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={() => deleteItem(item.id)} variant="destructive">Delete</AlertDialogAction>
-                                                </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </div>
-                                    </div>
-                                ))}
+                                {notes.map(item => <ItemCard key={item.id} item={item} />)}
+                            </div>
+                        )}
+                    </TabsContent>
+                     <TabsContent value="journal">
+                        {journalEntries.length === 0 ? (
+                             <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                                <p className="text-muted-foreground">You have no journal entries.</p>
+                                <p className="text-sm text-muted-foreground">Go to the journal to write an entry.</p>
+                            </div>
+                        ) : (
+                             <div className="space-y-4">
+                                {journalEntries.map(item => <ItemCard key={item.id} item={{...item, source: 'Journal', title: item.label || item.category, content: item.field1 || item.field2 || item.field3 }} />)}
                             </div>
                         )}
                     </TabsContent>
