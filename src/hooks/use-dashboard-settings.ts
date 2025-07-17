@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const defaultSettings = {
-  mainDashboard: true,
+  performanceOverview: true,
   dailyChallenge: true,
   allGames: true,
   weakAreaRecommendations: true,
@@ -22,7 +22,7 @@ export type DashboardSettings = typeof defaultSettings;
 export type DashboardComponent = keyof Omit<DashboardSettings, 'habitTracker' | 'moodTracker' | 'effortTracker'>;
 export type TrackerComponent = 'habitTracker' | 'moodTracker' | 'effortTracker';
 
-const DASHBOARD_SETTINGS_KEY = 'dashboardSettings-v2';
+const DASHBOARD_SETTINGS_KEY = 'dashboardSettings-v3';
 
 export const useDashboardSettings = () => {
   const [settings, setSettings] = useState<DashboardSettings>(defaultSettings);
@@ -70,7 +70,7 @@ export const useDashboardSettings = () => {
 };
 
 export const componentLabels: Record<keyof DashboardSettings, string> = {
-  mainDashboard: 'Main Dashboard',
+  performanceOverview: 'Performance Overview',
   dailyChallenge: 'Daily Challenge',
   allGames: 'All Training Games',
   hyperfocusBuilder: 'Hyperfocus Builder',
@@ -86,7 +86,7 @@ export const componentLabels: Record<keyof DashboardSettings, string> = {
 
 // Keys for the main dashboard page
 export const dashboardLayoutKeys: DashboardComponent[] = [
-    'mainDashboard',
+    'performanceOverview',
     'dailyChallenge',
     'allGames',
     'performanceInsights',
