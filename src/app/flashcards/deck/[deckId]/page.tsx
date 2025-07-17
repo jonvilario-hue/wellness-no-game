@@ -74,8 +74,10 @@ export default function DeckPage() {
           <p className="text-muted-foreground">{deck.description}</p>
         </div>
         <div className="flex gap-2">
-           <Button onClick={() => setIsDeckDialogOpen(true)} variant="secondary" disabled={deck.id === 'default'}>
-              <Settings className="mr-2 h-4 w-4" /> Deck Settings
+            <Button asChild variant="secondary" disabled={deck.id === 'default'}>
+                <Link href={`/flashcards/deck/${deckId}/settings`}>
+                    <Settings className="mr-2 h-4 w-4" /> Deck Settings
+                </Link>
             </Button>
             <Button onClick={() => handleOpenCardDialog(null)}>
                 <PlusCircle className="mr-2 h-4 w-4" /> Add Card
@@ -167,11 +169,12 @@ export default function DeckPage() {
         cardToEdit={cardToEdit}
         deckId={deckId}
       />
-      {deck.id !== 'default' && <DeckDialog
+      
+      <DeckDialog
         open={isDeckDialogOpen}
         onOpenChange={setIsDeckDialogOpen}
-        deckToEdit={deck}
-      />}
+        deckToEdit={isDeckDialogOpen ? deck : null}
+      />
     </div>
   );
 }

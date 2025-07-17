@@ -20,7 +20,10 @@ const createInitialState = () => {
     const defaultDeck: Deck = {
         id: 'default',
         name: 'Default',
-        description: 'Cards that don\'t belong to a specific deck.'
+        description: 'Cards that don\'t belong to a specific deck.',
+        newCardsPerDay: 20,
+        maxReviewsPerDay: 100,
+        learningSteps: [1, 10], // 1 minute, 10 minutes
     };
     return {
         decks: [defaultDeck],
@@ -39,6 +42,9 @@ export const useFlashcardStore = create<FlashcardStore>()(
             {
               id: crypto.randomUUID(),
               ...deck,
+              newCardsPerDay: 20,
+              maxReviewsPerDay: 100,
+              learningSteps: [1, 10],
             },
           ],
         })),

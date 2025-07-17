@@ -19,4 +19,8 @@ export type Deck = {
   id: string;
   name: string;
   description?: string;
+  // Anki-style settings
+  newCardsPerDay: number;
+  maxReviewsPerDay: number;
+  learningSteps: number[]; // in minutes
 };
