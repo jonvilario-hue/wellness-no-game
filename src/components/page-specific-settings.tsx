@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useDashboardSettings, componentLabels, type DashboardSettings } from '@/hooks/use-dashboard-settings';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { ScrollArea } from './ui/scroll-area';
 
 interface PageSpecificSettingsProps {
   settingsKeys: (keyof DashboardSettings)[];
@@ -73,19 +74,23 @@ export function PageSpecificSettings({ settingsKeys }: PageSpecificSettingsProps
                 <CardTitle>Page Layout</CardTitle>
                 <CardDescription>Toggle components on this page.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
-                 {settingsKeys.map((key) => (
-                    <div key={key} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                      <Label htmlFor={`switch-${key}`} className="font-medium text-sm">
-                        {componentLabels[key] || key}
-                      </Label>
-                      <Switch
-                        id={`switch-${key}`}
-                        checked={settings[key]}
-                        onCheckedChange={() => toggleSetting(key)}
-                      />
-                    </div>
-                  ))}
+              <CardContent>
+                <ScrollArea className="h-[400px] pr-4">
+                  <div className="space-y-3">
+                    {settingsKeys.map((key) => (
+                      <div key={key} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+                        <Label htmlFor={`switch-${key}`} className="font-medium text-sm">
+                          {componentLabels[key] || key}
+                        </Label>
+                        <Switch
+                          id={`switch-${key}`}
+                          checked={settings[key]}
+                          onCheckedChange={() => toggleSetting(key)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </CardContent>
             </Card>
           </motion.div>
