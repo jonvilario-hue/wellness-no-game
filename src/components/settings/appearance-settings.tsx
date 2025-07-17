@@ -4,15 +4,17 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTheme } from '@/hooks/use-theme';
 import { themes } from '@/data/themes';
-import { Check, Leaf } from 'lucide-react';
+import { Check, Leaf, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 import { Separator } from '../ui/separator';
+import { useMotivationStore } from '@/hooks/use-motivation-store';
 
 export function AppearanceSettings() {
   const { theme: activeTheme, setTheme, organicGrowth, setOrganicGrowth } = useTheme();
+  const { notificationsEnabled, toggleNotifications } = useMotivationStore();
 
   return (
     <Card>
@@ -79,23 +81,37 @@ export function AppearanceSettings() {
         <Separator />
 
         <div>
-            <Label className="text-base font-semibold">Visual Style</Label>
-            <p className="text-sm text-muted-foreground mb-4">Toggle decorative elements for a cleaner or more immersive experience.</p>
-            <div
-                className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-            >
-                <Label htmlFor="organic-growth-switch" className="flex items-center gap-3 font-medium">
-                    <Leaf className="w-5 h-5 text-primary" />
-                    <div>
-                        Enable Organic Growth
-                        <p className="text-xs text-muted-foreground font-normal">Show plant-like visuals that grow with your progress.</p>
-                    </div>
-                </Label>
-                <Switch
-                    id="organic-growth-switch"
-                    checked={organicGrowth}
-                    onCheckedChange={setOrganicGrowth}
-                />
+            <Label className="text-base font-semibold">UI Elements</Label>
+            <p className="text-sm text-muted-foreground mb-4">Toggle decorative or ambient UI elements.</p>
+            <div className="space-y-2">
+                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                    <Label htmlFor="organic-growth-switch" className="flex items-center gap-3 font-medium">
+                        <Leaf className="w-5 h-5 text-primary" />
+                        <div>
+                            Enable Organic Growth
+                            <p className="text-xs text-muted-foreground font-normal">Show plant-like visuals that grow with your progress.</p>
+                        </div>
+                    </Label>
+                    <Switch
+                        id="organic-growth-switch"
+                        checked={organicGrowth}
+                        onCheckedChange={setOrganicGrowth}
+                    />
+                </div>
+                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                    <Label htmlFor="motivational-messages-switch" className="flex items-center gap-3 font-medium">
+                        <MessageSquare className="w-5 h-5 text-primary" />
+                        <div>
+                            Show Motivational Messages
+                            <p className="text-xs text-muted-foreground font-normal">Display personalized, supportive messages based on your activity.</p>
+                        </div>
+                    </Label>
+                    <Switch
+                        id="motivational-messages-switch"
+                        checked={notificationsEnabled}
+                        onCheckedChange={toggleNotifications}
+                    />
+                </div>
             </div>
         </div>
 

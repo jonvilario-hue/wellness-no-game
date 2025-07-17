@@ -2,12 +2,15 @@
 'use client';
 
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { messages, type MessageTrigger } from '@/data/motivational-messages';
 import type { JournalEntry, HabitId } from './use-journal';
 
 type MotivationState = {
   message: string | null;
   isVisible: boolean;
+  notificationsEnabled: boolean;
+  toggleNotifications: () => void;
   selectMessage: (data: {
     journalEntries: JournalEntry[];
     completedHabits: Record<string, HabitId[]>;
@@ -60,24 +63,40 @@ const determineMessageTrigger = (data: {
   return 'no_activity';
 };
 
-export const useMotivationStore = create<MotivationState>((set, get) => ({
-  message: null,
-  isVisible: false,
-  
-  selectMessage: (data) => {
-    // Only show a new message if the current one is not visible
-    if (!get().isVisible) {
-      const trigger = determineMessageTrigger(data);
-      const newMessage = getRandomMessage(trigger);
-      set({ message: newMessage, isVisible: true });
+export const useMotivationStore = create<MotivationState>()(
+  persist(
+    (set, get) => ({
+      message: null,
+      isVisible: false,
+      notificationsEnabled: true,
+
+      toggleNotifications: () => {
+        set(state => ({ notificationsEnabled: !state.notificationsEnabled }));
+      },
+      
+      selectMessage: (data) => {
+        // Only show a new message if notifications are enabled and the current one is not visible
+        if (get().notificationsEnabled && !get().isVisible) {
+          const trigger = determineMessageTrigger(data);
+          const newMessage = getRandomMessage(trigger);
+          set({ message: newMessage, isVisible: true });
+        }
+      },
+
+      hideMessage: () => {
+        set({ isVisible: false });
+      },
+
+      showMessage: (message) => {
+        if (get().notificationsEnabled) {
+          set({ message, isVisible: true });
+        }
+      },
+    }),
+    {
+      name: 'motivation-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ notificationsEnabled: state.notificationsEnabled }),
     }
-  },
-
-  hideMessage: () => {
-    set({ isVisible: false });
-  },
-
-  showMessage: (message) => {
-    set({ message, isVisible: true });
-  },
-}));
+  )
+);
