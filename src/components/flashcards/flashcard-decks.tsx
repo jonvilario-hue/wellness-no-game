@@ -6,7 +6,7 @@ import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PlusCircle, Layers, Play } from 'lucide-react';
+import { PlusCircle, Layers, Play, Upload, Download } from 'lucide-react';
 import { DeckDialog } from '@/components/flashcards/deck-dialog';
 import type { Deck } from '@/types/flashcards';
 
@@ -36,7 +36,13 @@ export function FlashcardDecks() {
                 <CardDescription>Organize your cards into decks for focused study sessions.</CardDescription>
                 </div>
                 <div className="flex gap-2">
-                    <Button onClick={() => setIsDialogOpen(true)} variant="outline">
+                     <Button onClick={() => {}} variant="outline" disabled>
+                        <Upload className="mr-2 h-4 w-4" /> Import
+                    </Button>
+                     <Button onClick={() => {}} variant="outline" disabled>
+                        <Download className="mr-2 h-4 w-4" /> Export
+                    </Button>
+                    <Button onClick={() => setIsDialogOpen(true)} variant="secondary">
                         <PlusCircle className="mr-2 h-4 w-4" /> Create Deck
                     </Button>
                     <Button asChild disabled={totalDue === 0}>

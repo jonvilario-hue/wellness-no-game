@@ -8,11 +8,12 @@ import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Check, ThumbsUp, X } from 'lucide-react';
+import { ArrowLeft, ThumbsUp } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Card as CardType } from '@/types/flashcards';
 import { applySpacedRepetition } from '@/lib/srs';
+import { cn } from '@/lib/utils';
 
 const renderCloze = (text: string, reveal: boolean) => {
   const clozeContent = text.replace(/\{\{c\d::(.*?)\}\}/g, (_, match) => 
@@ -59,11 +60,7 @@ export default function StudyPage() {
     updateCard(updatedCard);
     
     // Show feedback
-    if(rating === 'again') {
-        setFeedback('incorrect');
-    } else {
-        setFeedback('correct');
-    }
+    setFeedback(rating === 'again' ? 'incorrect' : 'correct');
 
     setTimeout(() => {
         if (currentIndex >= sessionCards.length - 1) {
@@ -73,12 +70,12 @@ export default function StudyPage() {
             setFlipped(false);
             setFeedback(null);
         }
-    }, 1200);
+    }, 800); // Shorter delay for a snappier feel
   }, [currentCard, currentIndex, sessionCards.length, updateCard]);
   
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (sessionComplete || !currentCard) return;
+      if (sessionComplete || !currentCard || feedback) return;
       
       if (event.key === ' ') {
         event.preventDefault();
@@ -95,7 +92,7 @@ export default function StudyPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flipped, currentCard, sessionComplete, handleRating]);
+  }, [flipped, currentCard, sessionComplete, handleRating, feedback]);
 
 
   if (sessionComplete) {
@@ -141,6 +138,12 @@ export default function StudyPage() {
     const contentToShow = flipped ? currentCard.back : currentCard.front;
     return <ReactMarkdown className="prose dark:prose-invert max-w-none" remarkPlugins={[remarkGfm]}>{contentToShow}</ReactMarkdown>;
   };
+  
+  const cardBorderColor = cn({
+      'border-green-500/80': feedback === 'correct',
+      'border-destructive/80': feedback === 'incorrect',
+      'border-transparent': !feedback,
+  });
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -156,19 +159,11 @@ export default function StudyPage() {
         <Progress value={progress} />
         <Card 
             onClick={() => !feedback && setFlipped(!flipped)} 
-            className="cursor-pointer min-h-[400px] flex items-center justify-center p-6 text-center text-xl relative overflow-hidden"
+            className={cn("cursor-pointer min-h-[400px] flex items-center justify-center p-6 text-center text-xl relative overflow-hidden border-4 transition-colors duration-300", cardBorderColor)}
         >
           <CardContent className="w-full">
             {renderContent()}
           </CardContent>
-          {feedback && (
-             <div className="absolute inset-0 bg-background/80 flex items-center justify-center animate-in fade-in">
-                {feedback === 'correct' ? 
-                    <Check className="w-24 h-24 text-green-500 animate-in zoom-in-50" /> : 
-                    <X className="w-24 h-24 text-destructive animate-in zoom-in-50" />
-                }
-             </div>
-          )}
         </Card>
 
         {flipped && !feedback && (
