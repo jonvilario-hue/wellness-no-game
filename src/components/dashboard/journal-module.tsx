@@ -4,6 +4,9 @@
 import {
   Card,
   CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -135,7 +138,16 @@ export function JournalModule() {
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 col-span-1 md:col-span-2 relative overflow-hidden">
       {organicGrowth && <GrowthDecoration />}
-      <CardContent className="pt-6">
+       <CardHeader>
+        <CardTitle className="flex items-center gap-2 font-headline">
+          <BookMarked className="w-5 h-5 text-primary" />
+          Journal
+        </CardTitle>
+        <CardDescription>
+          Organize your thoughts, reflect on your progress, and build cognitive habits.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-0">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-[650px]">
             <JournalSidebar 
                 onSelectEntry={handleSelectFromList} 
