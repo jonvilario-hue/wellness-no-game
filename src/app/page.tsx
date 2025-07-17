@@ -36,16 +36,16 @@ export default function GamesPage() {
               {settings.mainDashboard && <MainDashboardView />}
             </div>
             <aside className="lg:col-span-1 flex flex-col gap-6">
+              {settings.performanceInsights && <PerformanceInsights />}
               {settings.weakAreaRecommendations && <WeakAreaRecommendations />}
               {settings.adaptiveDifficulty && <AdaptiveDifficulty />}
               {settings.hyperfocusBuilder && <HyperfocusBuilder />}
             </aside>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             {settings.gameProgressTracker && <GameProgressTracker />}
             {settings.milestoneBadges && <MilestoneBadges />}
-            {settings.performanceInsights && <PerformanceInsights />}
           </div>
         </div>
       </main>
