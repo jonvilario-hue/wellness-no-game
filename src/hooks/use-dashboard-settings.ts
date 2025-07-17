@@ -13,9 +13,6 @@ const defaultSettings = {
   gameProgressTracker: true,
   milestoneBadges: true,
   performanceInsights: true,
-  moodTracker: true,
-  effortTracker: true,
-  habitTracker: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;
@@ -78,7 +75,4 @@ export const componentLabels: Record<DashboardComponent, string> = {
   performanceInsights: 'Performance Insights',
   weakAreaRecommendations: 'Weak Area Targeting',
   adaptiveDifficulty: 'Adaptive Difficulty',
-  moodTracker: 'Mood Tracker',
-  effortTracker: 'Effort/Focus Tracker',
-  habitTracker: 'Habit Tracker',
 };
