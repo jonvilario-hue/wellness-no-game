@@ -11,7 +11,7 @@ export const PageNav = () => {
     const linkClass = (path: string) =>
       cn(
         "px-4 py-2.5 rounded-t-md text-sm font-medium transition-colors flex items-center gap-2 border-b-2",
-        pathname === path
+        pathname.startsWith(path) && path !== '/' || pathname === path
           ? "border-primary text-primary"
           : "border-transparent text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
       );
@@ -27,9 +27,9 @@ export const PageNav = () => {
                 <Pen className="w-4 h-4" />
                 <span>Tools</span>
             </Link>
-            <Link href="/flashcards" className={linkClass("/flashcards")}>
+            <Link href="/library" className={linkClass("/library")}>
                 <Layers className="w-4 h-4" />
-                <span>Flashcards</span>
+                <span>Decks</span>
             </Link>
         </nav>
       </div>
