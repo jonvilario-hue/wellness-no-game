@@ -25,7 +25,6 @@ type DomainPerformance = {
 type PerformanceState = {
   performance: Record<CHCDomain, DomainPerformance>;
   logGameResult: (domain: CHCDomain, mode: TrainingMode, result: { score: number; time: number }) => void;
-  getPerformanceForDomain: (domain: CHCDomain) => DomainPerformance;
 };
 
 const initialMetric = (): PerformanceMetric => ({
@@ -85,11 +84,6 @@ export const usePerformanceStore = create<PerformanceState>()(
           return { performance: newPerformance };
         });
       },
-
-      getPerformanceForDomain: (domain) => {
-        const state = get();
-        return state.performance[domain];
-      }
     }),
     {
       name: 'cognitive-performance-storage',
