@@ -13,12 +13,17 @@ const defaultSettings = {
   gameProgressTracker: true,
   milestoneBadges: true,
   performanceInsights: true,
+  // Tracker settings
+  habitTracker: true,
+  moodTracker: true,
+  effortTracker: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;
-export type DashboardComponent = keyof DashboardSettings;
+export type DashboardComponent = keyof Omit<DashboardSettings, 'habitTracker' | 'moodTracker' | 'effortTracker'>;
+export type TrackerComponent = 'habitTracker' | 'moodTracker' | 'effortTracker';
 
-const DASHBOARD_SETTINGS_KEY = 'dashboardSettings';
+const DASHBOARD_SETTINGS_KEY = 'dashboardSettings-v2';
 
 export const useDashboardSettings = () => {
   const [settings, setSettings] = useState<DashboardSettings>(defaultSettings);
@@ -51,7 +56,7 @@ export const useDashboardSettings = () => {
     }
   }, []);
 
-  const toggleSetting = useCallback((component: DashboardComponent) => {
+  const toggleSetting = useCallback((component: keyof DashboardSettings) => {
     saveSettings({
       ...settings,
       [component]: !settings[component],

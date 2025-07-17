@@ -9,6 +9,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveCo
 import { FocusCard } from './focus-card';
 import { JournalEditor } from '../journal/journal-editor';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -51,6 +52,7 @@ const FocusTrendChart = ({ data }: { data: { date: string, avgFocus: number }[] 
 
 export function FocusView() {
     const { entries, hasHydrated, updateEntry, setSelectedEntry, selectedEntry } = useJournal();
+    const { settings } = useDashboardSettings();
     const [isEditorOpen, setIsEditorOpen] = useState(false);
 
     const focusData = useMemo(() => {
@@ -98,7 +100,7 @@ export function FocusView() {
     }, [focusData]);
 
 
-    if (!hasHydrated) {
+    if (!hasHydrated || !settings.effortTracker) {
         return <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Skeleton className="h-[400px] w-full md:col-span-2 lg:col-span-3" />
             <Skeleton className="h-[200px] w-full" />

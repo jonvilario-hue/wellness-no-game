@@ -12,6 +12,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveCo
 import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
 import { MoodEditor, moodOptions } from './mood-editor';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 const moodLabels = moodOptions.map(m => m.emoji);
 
@@ -142,6 +143,7 @@ const MoodLogger = () => {
 
 export function MoodView() {
     const { entries, hasHydrated } = useJournal();
+    const { settings } = useDashboardSettings();
 
     const moodData = useMemo(() => {
         return entries
@@ -165,7 +167,7 @@ export function MoodView() {
         return Array.from(last7DaysMap.entries()).map(([date, mood]) => ({ date, mood }));
     }, [entries]);
 
-    if (!hasHydrated) {
+    if (!hasHydrated || !settings.moodTracker) {
         return <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Skeleton className="h-[400px] w-full" />
             <Skeleton className="h-[400px] w-full" />

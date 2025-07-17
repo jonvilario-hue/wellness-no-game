@@ -11,8 +11,11 @@ import { Separator } from '@/components/ui/separator';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 export default function ToolsPage() {
+  const { settings } = useDashboardSettings();
+
   return (
     <>
       <div className="sticky top-0 z-20">
@@ -39,9 +42,9 @@ export default function ToolsPage() {
               <CardTitle>Wellness Trackers</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-                <MoodView />
-                <HabitsView />
-                <FocusView />
+                {settings.moodTracker && <MoodView />}
+                {settings.habitTracker && <HabitsView />}
+                {settings.effortTracker && <FocusView />}
             </CardContent>
           </Card>
         </div>

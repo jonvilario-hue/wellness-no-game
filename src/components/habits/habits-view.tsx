@@ -35,6 +35,7 @@ import { Skeleton } from '../ui/skeleton';
 import { Progress } from '../ui/progress';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
@@ -176,6 +177,7 @@ const HabitDialog = ({
 
 export function HabitsView() {
     const { habits, completedHabits, toggleHabitForDay, addHabit, updateHabit, removeHabit, resetHabits, hasHydrated } = useJournal();
+    const { settings } = useDashboardSettings();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [habitToEdit, setHabitToEdit] = useState<Habit | null>(null);
     const { toast } = useToast();
@@ -226,7 +228,7 @@ export function HabitsView() {
         weeklyCompletion: 85,
     }
 
-    if (!hasHydrated) {
+    if (!hasHydrated || !settings.habitTracker) {
       return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-2"><Skeleton className="h-[400px] w-full" /></div>
