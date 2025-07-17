@@ -39,14 +39,13 @@ const moodColors = [
 
 export function CalendarView() {
   const { entries, hasHydrated } = useHydratedJournalStore();
-  const [date, setDate] = React.useState<Date | undefined>(undefined);
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [isClient, setIsClient] = React.useState(false);
   const { settings: dashboardSettings } = useDashboardSettings();
 
   React.useEffect(() => {
     // This effect runs only on the client, after the initial render.
     setIsClient(true);
-    setDate(new Date());
   }, []);
 
   const journalEntriesByDate = React.useMemo(() => {
