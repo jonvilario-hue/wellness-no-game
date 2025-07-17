@@ -102,14 +102,8 @@ export default function LibraryPage() {
             <CardContent>
                 <Tabs defaultValue="all">
                     <div className="flex justify-between items-start mb-4">
-                        <TabsList>
-                            <TabsTrigger value="all"><FileText className="w-4 h-4 mr-2"/>All Content</TabsTrigger>
-                            <TabsTrigger value="notes"><FileText className="w-4 h-4 mr-2"/>Notes</TabsTrigger>
-                             <TabsTrigger value="journal"><BookUser className="w-4 h-4 mr-2"/>Journal Entries</TabsTrigger>
-                            <TabsTrigger value="bookmarks" disabled><Bookmark className="w-4 h-4 mr-2"/>Bookmarks</TabsTrigger>
-                        </TabsList>
-                         <div className="flex flex-col gap-2">
-                            <div className="relative w-full max-w-sm">
+                        <div className="flex flex-col gap-2 w-full max-w-sm">
+                            <div className="relative">
                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input placeholder="Search your library..." className="pl-8" />
                             </div>
@@ -117,6 +111,12 @@ export default function LibraryPage() {
                                 <PlusCircle className="mr-2 h-4 w-4" /> Add Note
                             </Button>
                         </div>
+                        <TabsList>
+                            <TabsTrigger value="all"><FileText className="w-4 h-4 mr-2"/>All Content</TabsTrigger>
+                            <TabsTrigger value="notes"><FileText className="w-4 h-4 mr-2"/>Notes</TabsTrigger>
+                             <TabsTrigger value="journal"><BookUser className="w-4 h-4 mr-2"/>Journal Entries</TabsTrigger>
+                            <TabsTrigger value="bookmarks" disabled><Bookmark className="w-4 h-4 mr-2"/>Bookmarks</TabsTrigger>
+                        </TabsList>
                     </div>
                     <TabsContent value="all">
                         {allContent.length === 0 ? (
