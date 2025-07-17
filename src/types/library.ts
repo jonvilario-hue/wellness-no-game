@@ -9,4 +9,5 @@ export type LibraryItem = {
   description?: string; // For bookmarks or notes
   createdAt: string; // ISO string
   tags?: string[];
+  bookmarked?: boolean;
 };

@@ -14,6 +14,7 @@ import { useLibraryStore } from '@/hooks/use-library-store';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
 import { NoteDialog } from '@/components/library/note-dialog';
 import type { LibraryItem } from '@/types/library';
+import { cn } from '@/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,18 +28,18 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function LibraryPage() {
-  const { items: libraryItems, deleteItem } = useLibraryStore();
+  const { items: libraryItems, deleteItem, toggleBookmark } = useLibraryStore();
   const { entries: journalEntries } = useHydratedJournalStore();
 
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<LibraryItem | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleOpenNoteDialog = (item: LibraryItem | null) => {
     setItemToEdit(item);
     setIsNoteDialogOpen(true);
   };
-
-  const notes = libraryItems.filter(item => item.type === 'note');
+  
   const allContent = [
       ...libraryItems.map(item => ({...item, source: 'Library'})),
       ...journalEntries.map(entry => ({
@@ -46,19 +47,33 @@ export default function LibraryPage() {
           title: entry.label || entry.category,
           content: entry.field1 || entry.field2 || entry.field3,
           createdAt: entry.date,
+          bookmarked: false, // Journal entries are not bookmarkable in this implementation
           source: 'Journal'
       }))
   ].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const filteredContent = allContent.filter(item => 
+    item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.content.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const notes = filteredContent.filter(item => item.source === 'Library');
+  const journalContent = filteredContent.filter(item => item.source === 'Journal');
+  const bookmarks = filteredContent.filter(item => item.bookmarked && item.source === 'Library');
+
 
   const ItemCard = ({ item }: { item: any }) => (
     <div key={item.id} className="group flex items-center p-4 border rounded-lg hover:bg-muted/50">
         <div className="flex-grow">
             <p className="font-bold">{item.title}</p>
-            <p className="text-sm text-muted-foreground truncate">{item.description || item.content}</p>
+            <p className="text-sm text-muted-foreground truncate max-w-lg">{item.description || item.content}</p>
             <p className="text-xs text-primary font-semibold mt-1">{item.source}</p>
         </div>
         {item.source === 'Library' && (
             <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
+                <Button variant="ghost" size="icon" onClick={() => toggleBookmark(item.id)}>
+                    <Bookmark className={cn("w-4 h-4", item.bookmarked ? 'text-primary fill-current' : '')} />
+                </Button>
                 <Button variant="ghost" size="icon" onClick={() => handleOpenNoteDialog(item)}>
                     <Edit className="w-4 h-4" />
                 </Button>
@@ -105,7 +120,7 @@ export default function LibraryPage() {
                         <div className="flex flex-col gap-2 w-full max-w-sm">
                             <div className="relative">
                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input placeholder="Search your library..." className="pl-8" />
+                                <Input placeholder="Search your library..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                             </div>
                             <Button onClick={() => handleOpenNoteDialog(null)}>
                                 <PlusCircle className="mr-2 h-4 w-4" /> Add Note
@@ -114,19 +129,19 @@ export default function LibraryPage() {
                         <TabsList>
                             <TabsTrigger value="all"><FileText className="w-4 h-4 mr-2"/>All Content</TabsTrigger>
                             <TabsTrigger value="notes"><FileText className="w-4 h-4 mr-2"/>Notes</TabsTrigger>
-                             <TabsTrigger value="journal"><BookUser className="w-4 h-4 mr-2"/>Journal Entries</TabsTrigger>
-                            <TabsTrigger value="bookmarks" disabled><Bookmark className="w-4 h-4 mr-2"/>Bookmarks</TabsTrigger>
+                            <TabsTrigger value="journal"><BookUser className="w-4 h-4 mr-2"/>Journal Entries</TabsTrigger>
+                            <TabsTrigger value="bookmarks"><Bookmark className="w-4 h-4 mr-2"/>Bookmarks</TabsTrigger>
                         </TabsList>
                     </div>
                     <TabsContent value="all">
-                        {allContent.length === 0 ? (
+                        {filteredContent.length === 0 ? (
                              <div className="text-center py-16 border-2 border-dashed rounded-lg">
                                 <p className="text-muted-foreground">Your library is empty.</p>
                                 <p className="text-sm text-muted-foreground">Click "Add Note" to save your first item.</p>
                             </div>
                         ) : (
                              <div className="space-y-4">
-                                {allContent.map(item => <ItemCard key={item.id} item={item} />)}
+                                {filteredContent.map(item => <ItemCard key={item.id} item={item} />)}
                             </div>
                         )}
                        
@@ -144,22 +159,28 @@ export default function LibraryPage() {
                         )}
                     </TabsContent>
                      <TabsContent value="journal">
-                        {journalEntries.length === 0 ? (
+                        {journalContent.length === 0 ? (
                              <div className="text-center py-16 border-2 border-dashed rounded-lg">
                                 <p className="text-muted-foreground">You have no journal entries.</p>
                                 <p className="text-sm text-muted-foreground">Go to the journal to write an entry.</p>
                             </div>
                         ) : (
                              <div className="space-y-4">
-                                {journalEntries.map(item => <ItemCard key={item.id} item={{...item, source: 'Journal', title: item.label || item.category, content: item.field1 || item.field2 || item.field3 }} />)}
+                                {journalContent.map(item => <ItemCard key={item.id} item={{...item, source: 'Journal', title: item.label || item.category, content: item.field1 || item.field2 || item.field3 }} />)}
                             </div>
                         )}
                     </TabsContent>
                     <TabsContent value="bookmarks">
-                         <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                            <p className="text-muted-foreground">You have no bookmarks.</p>
-                             <p className="text-sm text-muted-foreground">Bookmark items to find them here later.</p>
-                        </div>
+                         {bookmarks.length === 0 ? (
+                            <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                                <p className="text-muted-foreground">You have no bookmarks.</p>
+                                <p className="text-sm text-muted-foreground">Click the bookmark icon on a note to save it here.</p>
+                            </div>
+                         ) : (
+                            <div className="space-y-4">
+                                {bookmarks.map(item => <ItemCard key={item.id} item={item} />)}
+                            </div>
+                         )}
                     </TabsContent>
                 </Tabs>
             </CardContent>
