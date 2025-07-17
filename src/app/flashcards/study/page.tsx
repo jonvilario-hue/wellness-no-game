@@ -95,7 +95,7 @@ export default function StudyPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flipped, currentCard, sessionComplete, currentIndex, sessionCards.length, handleRating]);
+  }, [flipped, currentCard, sessionComplete, handleRating]);
 
 
   if (sessionComplete) {

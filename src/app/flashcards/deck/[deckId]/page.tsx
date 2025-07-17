@@ -23,12 +23,13 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 export default function DeckPage() {
   const router = useRouter();
   const params = useParams();
   const deckId = params.deckId as string;
-  const { decks, cards, deleteDeck } = useFlashcardStore();
+  const { decks, cards, deleteDeck, deleteCard } = useFlashcardStore();
   
   const deck = decks.find(d => d.id === deckId);
   const cardsInDeck = cards.filter(c => c.deckId === deckId);
@@ -73,7 +74,7 @@ export default function DeckPage() {
           <p className="text-muted-foreground">{deck.description}</p>
         </div>
         <div className="flex gap-2">
-           <Button onClick={() => setIsDeckDialogOpen(true)} variant="secondary">
+           <Button onClick={() => setIsDeckDialogOpen(true)} variant="secondary" disabled={deck.id === 'default'}>
               <Settings className="mr-2 h-4 w-4" /> Deck Settings
             </Button>
             <Button onClick={() => handleOpenCardDialog(null)}>
@@ -89,7 +90,12 @@ export default function DeckPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {cardsInDeck.length === 0 && (
-            <p className="text-muted-foreground text-center py-8">This deck is empty. Add a card to get started!</p>
+            <div className="text-center py-8">
+                <p className="text-muted-foreground mb-4">This deck is empty. Add a card to get started!</p>
+                <Button onClick={() => handleOpenCardDialog(null)}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add First Card
+                </Button>
+            </div>
           )}
           {cardsInDeck.map(card => (
             <div key={card.id} className="flex justify-between items-center p-3 bg-muted/50 rounded-lg group">
@@ -120,7 +126,7 @@ export default function DeckPage() {
                       <AlertDialogDescription>Are you sure you want to delete this card? This action cannot be undone.</AlertDialogDescription>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => useFlashcardStore.getState().deleteCard(card.id)} variant="destructive">Delete</AlertDialogAction>
+                        <AlertDialogAction onClick={() => deleteCard(card.id)} variant="destructive">Delete</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
@@ -146,7 +152,7 @@ export default function DeckPage() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Button asChild size="lg">
+            <Button asChild size="lg" disabled={dueInDeck === 0}>
                 <Link href={`/flashcards/study?deckId=${deckId}`}>
                     <Play className="mr-2 h-4 w-4" />
                     Study This Deck ({dueInDeck})
@@ -161,11 +167,11 @@ export default function DeckPage() {
         cardToEdit={cardToEdit}
         deckId={deckId}
       />
-      <DeckDialog
+      {deck.id !== 'default' && <DeckDialog
         open={isDeckDialogOpen}
         onOpenChange={setIsDeckDialogOpen}
         deckToEdit={deck}
-      />
+      />}
     </div>
   );
 }

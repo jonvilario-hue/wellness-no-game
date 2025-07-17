@@ -39,7 +39,7 @@ export function FlashcardDecks() {
                     <Button onClick={() => setIsDialogOpen(true)} variant="outline">
                         <PlusCircle className="mr-2 h-4 w-4" /> Create Deck
                     </Button>
-                    <Button asChild>
+                    <Button asChild disabled={totalDue === 0}>
                         <Link href="/flashcards/study">
                             <Play className="mr-2 h-4 w-4" /> Study All ({totalDue})
                         </Link>
@@ -61,7 +61,7 @@ export function FlashcardDecks() {
                         <CardContent className="flex-grow"></CardContent>
                         <CardFooter className="text-sm text-muted-foreground justify-between">
                             <span>{total} cards</span>
-                            <span className="font-bold text-primary">{due} due</span>
+                            <span className="font-bold text-primary">{due > 0 ? `${due} due` : 'Up to date'}</span>
                         </CardFooter>
                         </Card>
                     </Link>
@@ -77,4 +77,3 @@ export function FlashcardDecks() {
     </Card>
   );
 }
-
