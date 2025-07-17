@@ -11,9 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
-import { MoodEditor } from './mood-editor';
+import { MoodEditor, moodOptions } from './mood-editor';
 
-const moodLabels = ['😔', '😐', '🙂', '😊', '😄'];
+const moodLabels = moodOptions.map(m => m.emoji);
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -79,29 +79,39 @@ const MoodLogger = () => {
             }
         }
     }, [hasHydrated, findOrCreateEntry]);
-
+    
     const handleSave = useCallback(() => {
         updateEntry(todayEntry.id, { mood, moodNote: note });
         toast({
-            title: 'Mood Saved',
+            title: '😃 Mood Saved',
             description: 'Your mood for today has been logged.',
         });
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 2000);
     }, [updateEntry, todayEntry.id, mood, note, toast]);
 
+    const handleQuickMoodSelect = useCallback((selectedMood: MoodState) => {
+        setMood(selectedMood);
+        updateEntry(todayEntry.id, { mood: selectedMood, moodNote: note });
+         toast({
+            title: '😃 Mood Saved',
+            description: 'Your mood for today has been logged.',
+        });
+    }, [todayEntry.id, note, updateEntry, toast]);
+
+
     useEffect(() => {
-        // Auto-save when mood or note changes, with a debounce
+        // Auto-save just the note with a debounce
         const handler = setTimeout(() => {
-            if(todayEntry.id && (mood !== todayEntry.mood || note !== todayEntry.moodNote)) {
-                handleSave();
+            if(todayEntry.id && note !== todayEntry.moodNote) {
+                updateEntry(todayEntry.id, { mood, moodNote: note });
             }
         }, 1500);
 
         return () => {
             clearTimeout(handler);
         };
-    }, [mood, note, todayEntry, handleSave]);
+    }, [note, todayEntry, mood, updateEntry]);
 
     if (!hasHydrated) {
         return <Skeleton className="h-[250px] w-full" />
@@ -117,12 +127,12 @@ const MoodLogger = () => {
                 <MoodEditor 
                     mood={mood}
                     moodNote={note}
-                    onMoodChange={setMood}
+                    onMoodChange={handleQuickMoodSelect}
                     onMoodNoteChange={setNote}
                 />
                  <Button onClick={handleSave} className="w-full" disabled={mood === null}>
                     {isSaved ? <Check className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
-                    {isSaved ? 'Saved!' : 'Save Mood'}
+                    {isSaved ? 'Saved!' : 'Save Mood Log'}
                  </Button>
             </CardContent>
         </Card>

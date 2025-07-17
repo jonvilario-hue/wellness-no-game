@@ -181,7 +181,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
       setFeedback(getSuccessFeedback('Gwm'));
 
       if (onComplete) {
-        setTimeout(() => onComplete(), 1500);
+        setTimeout(onComplete, 1500);
         return;
       }
       
@@ -205,7 +205,7 @@ export function DynamicSequenceTransformer({ difficulty = 'Medium', onComplete }
       
       if (onComplete) {
         // Even on failure in alarm mode, we eventually move on.
-        setTimeout(() => onComplete(), 3000);
+        setTimeout(onComplete, 3000);
       } else {
         setTimeout(() => {
             startLevel(level);

@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Target, PlusCircle, Trash2, Edit, TrendingUp, Zap, Calendar, Check } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useHydratedJournalStore as useJournal, type Habit } from '@/hooks/use-journal';
 import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
@@ -48,7 +48,7 @@ const HabitItem = ({
 }: { 
   habit: Habit; 
   isDone: boolean, 
-  onToggle: (checked: boolean) => void,
+  onToggle: () => void,
   onEdit: () => void,
   onDelete: () => void
 }) => {
@@ -64,13 +64,7 @@ const HabitItem = ({
         )}
       >
         <motion.div whileTap={{ scale: 1.2 }}>
-            <Checkbox id={checkboxId} checked={isDone} onCheckedChange={onToggle}>
-                {isDone && (
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                        <Check className="h-4 w-4" />
-                    </motion.div>
-                )}
-            </Checkbox>
+            <Checkbox id={checkboxId} checked={isDone} onCheckedChange={onToggle} />
         </motion.div>
         <div className={cn("p-1.5 rounded-md", isDone ? 'bg-primary/20' : 'bg-background/50')}>
           <Icon className={cn("w-5 h-5", isDone ? 'text-primary' : 'text-muted-foreground')} />
@@ -85,7 +79,7 @@ const HabitItem = ({
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
                     <Trash2 className="w-4 h-4" />
                 </Button>
             </AlertDialogTrigger>
@@ -131,7 +125,7 @@ const HabitDialog = ({
         }
     }, [habitToEdit, open]);
 
-    const handleSave = () => {
+    const handleSave = useCallback(() => {
         if (!label || !category) return;
         const newHabitData = {
             label,
@@ -139,7 +133,7 @@ const HabitDialog = ({
         };
         onSave(newHabitData, habitToEdit?.id);
         onOpenChange(false);
-    }
+    }, [label, category, onSave, habitToEdit, onOpenChange]);
     
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -188,14 +182,16 @@ export function HabitsView() {
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
     const todaysHabits = completedHabits[today] || [];
     
-    const handleToggleHabit = (habitId: HabitId) => {
+    const handleToggleHabit = useCallback((habitId: HabitId) => {
       const isCompleting = !todaysHabits.includes(habitId);
       toggleHabitForDay(today, habitId);
-      toast({
-          title: isCompleting ? "Habit Completed!" : "Habit Undone",
-          description: isCompleting ? "Great job building consistency." : "It's okay, you can do it later.",
-      })
-    };
+      if (isCompleting) {
+        toast({
+            title: "✅ Habit logged!",
+            description: "Great job building consistency.",
+        });
+      }
+    }, [todaysHabits, toggleHabitForDay, today, toast]);
     
     const handleOpenDialog = (habit: Habit | null) => {
         setHabitToEdit(habit);
@@ -247,7 +243,7 @@ export function HabitsView() {
                 </CardHeader>
                 <CardContent>
                     <ScrollArea className="h-[500px] pr-3 -mr-3">
-                        <Accordion type="multiple" className="w-full" defaultValue={[]}>
+                        <Accordion type="multiple" className="w-full" defaultValue={[journalConfig['Growth & Challenge Reflection'].title]}>
                         {habitsByCategory.map(({ category, categoryHabits }) => {
                             if (categoryHabits.length === 0) return null;
                             const completedInCategory = categoryHabits.filter(h => todaysHabits.includes(h.id)).length;
