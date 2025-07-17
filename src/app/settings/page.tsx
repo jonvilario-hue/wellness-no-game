@@ -14,6 +14,7 @@ import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { TrackerSettings } from '@/components/settings/tracker-settings';
 import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
+import { TimeToolsModule } from '@/components/dashboard/time-tools-module';
 
 export default function SettingsPage() {
     return (
@@ -61,24 +62,7 @@ export default function SettingsPage() {
                             <AppearanceSettings />
                             </TabsContent>
                             <TabsContent value="time">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Clock Tools Moved</CardTitle>
-                                        <CardDescription>
-                                            To make them easier to access, all clock-related tools have been moved to their own dedicated page.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="p-6 bg-muted/50 rounded-lg text-center space-y-4">
-                                            <p className="font-semibold">You can now find the Pomodoro Timer, Alarms, and Sleep Tracker by clicking the clock icon in the header.</p>
-                                            <Button asChild>
-                                                <Link href="/time">
-                                                    Go to Clock Tools <ExternalLink className="w-4 h-4 ml-2"/>
-                                                </Link>
-                                            </Button>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                <TimeToolsModule />
                             </TabsContent>
                             <TabsContent value="account">
                             <Card>
