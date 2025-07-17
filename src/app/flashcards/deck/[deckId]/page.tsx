@@ -44,7 +44,7 @@ export default function DeckPage() {
   
   const handleDeleteDeck = () => {
     deleteDeck(deckId);
-    router.push('/flashcards');
+    router.push('/tools');
   };
 
   if (!deck) {
@@ -52,7 +52,7 @@ export default function DeckPage() {
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold">Deck not found</h1>
         <Button asChild variant="link">
-          <Link href="/flashcards">Return to Decks</Link>
+          <Link href="/tools">Return to Decks</Link>
         </Button>
       </div>
     );
@@ -67,7 +67,7 @@ export default function DeckPage() {
       <div className="flex justify-between items-start">
         <div>
           <Button asChild variant="outline" className="mb-4">
-            <Link href="/flashcards"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Decks</Link>
+            <Link href="/tools"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Decks</Link>
           </Button>
           <h1 className="text-3xl font-bold">{deck.name}</h1>
           <p className="text-muted-foreground">{deck.description}</p>
