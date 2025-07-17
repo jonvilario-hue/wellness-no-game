@@ -63,8 +63,8 @@ export function SleepCycleTracker() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Sleep Cycle & Readiness</CardTitle>
-                <CardDescription>Analyze your simulated sleep patterns to understand your mental readiness.</CardDescription>
+                <CardTitle>Sleep & Readiness Simulator</CardTitle>
+                <CardDescription>This tool demonstrates how sleep quality affects mental readiness. It uses randomly generated data and does not track your actual sleep.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
@@ -72,7 +72,7 @@ export function SleepCycleTracker() {
                         <ReadinessGauge score={readinessScore} />
                         <Button onClick={generateNewSleepCycle} variant="outline" size="sm">
                             <RefreshCw className="w-4 h-4 mr-2"/>
-                            Simulate New Night
+                            Generate New Sleep Data
                         </Button>
                     </div>
                     <div className="md:col-span-2">
