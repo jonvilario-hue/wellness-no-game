@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { FlashcardStudy, type Flashcard } from '@/components/flashcards/FlashcardStudy';
 import { FlashcardEditor } from '@/components/flashcards/FlashcardEditor';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 const initialCards: Flashcard[] = [
   {
@@ -46,8 +47,8 @@ export default function FlashcardsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
             <CardHeader>
-                <CardTitle>Study Session</CardTitle>
-                <CardDescription>Review your cards that are due for today.</CardDescription>
+                <CardTitle>Internal Study Session</CardTitle>
+                <CardDescription>Review your custom cards that are due for today.</CardDescription>
             </CardHeader>
             <CardContent>
                 <FlashcardStudy cards={cards} onUpdateCards={handleUpdateCards} />
@@ -56,13 +57,29 @@ export default function FlashcardsPage() {
         <Card>
              <CardHeader>
                 <CardTitle>Create New Card</CardTitle>
-                <CardDescription>Add a new card to your collection.</CardDescription>
+                <CardDescription>Add a new card to your internal collection.</CardDescription>
             </CardHeader>
             <CardContent>
                 <FlashcardEditor onSave={handleSaveCard} />
             </CardContent>
         </Card>
       </div>
+
+      <Separator />
+
+      <Card>
+        <CardHeader>
+            <CardTitle>AnkiWeb</CardTitle>
+            <CardDescription>Access your existing AnkiWeb decks.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <iframe
+            src="https://ankiweb.net"
+            title="AnkiWeb"
+            className="w-full h-[600px] border rounded-xl"
+          />
+        </CardContent>
+      </Card>
 
     </div>
   );
