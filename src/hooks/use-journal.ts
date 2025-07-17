@@ -7,7 +7,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { JournalCategory } from '@/lib/journal-config';
 import { allHabits as defaultHabits, journalConfig } from '@/lib/journal-config';
 import type { LucideIcon } from 'lucide-react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 
 export type MoodState = number | null; // 0-4 scale, null if not set
 export type ReflectionFrequency = 'daily' | 'weekly' | 'monthly';
@@ -317,41 +317,22 @@ export const useJournal = create<JournalState>()(
 // Custom hook to safely access the store's state only after hydration
 export const useHydratedJournalStore = () => {
     const store = useJournal();
-    const [hydrated, setHydrated] = useState(false);
+    const [hydrated, setHydrated] = useState(store.hasHydrated);
 
     useEffect(() => {
-      setHydrated(true);
+        const unsub = useJournal.subscribe((state, prevState) => {
+            if (state.hasHydrated && !prevState.hasHydrated) {
+                setHydrated(true);
+            }
+        });
+        
+        // Initial check in case hydration already happened
+        if (useJournal.getState().hasHydrated) {
+            setHydrated(true);
+        }
+
+        return unsub;
     }, []);
 
-    const state = useMemo(() => {
-      if (typeof window === "undefined" || !hydrated) {
-        return {
-            entries: [],
-            trashedEntries: [],
-            habits: [],
-            completedHabits: {},
-            selectedEntry: null,
-            hasHydrated: false,
-            // Return dummy functions to prevent errors during SSR
-            setHasHydrated: () => {},
-            findOrCreateEntry: (opts: { date: string, category: JournalCategory, frequency: ReflectionFrequency, forceNew?: boolean }) => createNewEntryObject(opts.date, opts.category, opts.frequency),
-            addEntry: (entry: JournalEntry) => entry,
-            updateEntry: () => {},
-            deleteEntry: () => {},
-            restoreEntry: () => {},
-            deleteFromTrashPermanently: () => {},
-            emptyTrash: () => {},
-            toggleHabitForDay: () => {},
-            addHabit: () => {},
-            updateHabit: () => {},
-            removeHabit: () => {},
-            resetHabits: () => {},
-            createNewEntry: () => createNewEntryObject(new Date().toISOString().split('T')[0], 'Notebook', 'daily'),
-            setSelectedEntry: () => {},
-        };
-      }
-      return store;
-    }, [hydrated, store]);
-
-    return state;
+    return { ...store, hasHydrated: hydrated };
 };
