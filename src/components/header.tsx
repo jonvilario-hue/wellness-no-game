@@ -119,14 +119,14 @@ export function Header() {
             </Tooltip>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                  <Button asChild variant="ghost" size="icon">
-                    <Link href="/time">
-                      <Clock className="h-5 w-5" />
-                    </Link>
-                  </Button>
+                <Button asChild variant="ghost" size="icon">
+                  <Link href="/journal">
+                    <BookMarked className="h-5 w-5" />
+                  </Link>
+                </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Clock Tools</p>
+                <p>My Journal</p>
               </TooltipContent>
             </Tooltip>
         </div>
@@ -139,18 +139,6 @@ export function Header() {
         </Link>
         <TooltipProvider>
         <div className="flex-1 flex justify-end items-center gap-1">
-           <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button asChild variant="ghost" size="icon">
-                  <Link href="/journal">
-                    <BookMarked className="h-5 w-5" />
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>My Journal</p>
-              </TooltipContent>
-            </Tooltip>
            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <Button asChild variant="ghost" size="icon">
@@ -185,6 +173,18 @@ export function Header() {
               </TooltipTrigger>
               <TooltipContent>
                 <p>Focus Tracker</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href="/time">
+                      <Clock className="h-5 w-5" />
+                    </Link>
+                  </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Clock Tools</p>
               </TooltipContent>
             </Tooltip>
           <Tooltip delayDuration={0}>
