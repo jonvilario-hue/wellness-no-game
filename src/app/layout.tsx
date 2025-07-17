@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/hooks/use-theme';
 import { TrainingFocusProvider } from '@/hooks/use-training-focus';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
+import { MotivationalMessage } from '@/components/motivational-message';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -32,6 +33,7 @@ export default function RootLayout({
               <Header />
               <PageNav />
             </div>
+            <MotivationalMessage />
             <main className="flex-1 p-4 sm:p-6 md:p-8">
                 {children}
             </main>
