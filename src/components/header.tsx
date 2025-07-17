@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Brain, Settings, CalendarDays, BookMarked, Music } from 'lucide-react';
+import { Brain, Settings, CalendarDays, BookMarked, Music, FlaskConical } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -114,8 +114,8 @@ export function Header() {
         </TooltipProvider>
 
         <div className="flex items-center gap-2">
-             <Brain className="h-7 w-7 text-primary" />
-             <h1 className="text-xl font-bold text-foreground tracking-tight">Cognitive Crucible</h1>
+             <FlaskConical className="h-7 w-7 text-primary" />
+             <h1 className="text-xl font-bold text-foreground tracking-tight">Polymath Lab</h1>
         </div>
         
         <TooltipProvider>
