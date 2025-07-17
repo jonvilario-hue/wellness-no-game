@@ -8,7 +8,7 @@ import { Skeleton } from '../ui/skeleton';
 import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from 'recharts';
 import { FocusCard } from './focus-card';
 import { JournalEditor } from '../journal/journal-editor';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -163,7 +163,13 @@ export function FocusView() {
                 </div>
             </CardContent>
             <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                <DialogContent className="max-w-4xl h-[90vh]">
+                <DialogContent className="max-w-4xl h-[90vh] flex flex-col">
+                    <DialogHeader>
+                        <DialogTitle>Edit Journal Entry</DialogTitle>
+                        <DialogDescription>
+                            Make changes to your focus log. Changes will be saved automatically.
+                        </DialogDescription>
+                    </DialogHeader>
                      {selectedEntry && (
                          <JournalEditor 
                             key={selectedEntry.id}
