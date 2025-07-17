@@ -87,9 +87,9 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
             {cardToEdit ? 'Modify the details of your card.' : 'Add a new card to your collection.'}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex-grow overflow-y-auto pr-6 -mr-6">
+        <div className="flex-grow overflow-y-auto">
             <ScrollArea className="h-full">
-                <div className="space-y-4 py-4 pr-1">
+                <div className="space-y-4 py-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="card-type">Card Type</Label>
@@ -149,7 +149,7 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
                 </div>
             </ScrollArea>
         </div>
-        <DialogFooter className="flex-shrink-0 pt-4 border-t border-border -mx-6 px-6 -mb-6 pb-6">
+        <DialogFooter className="flex-shrink-0 pt-4 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={handleSave} disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -160,4 +160,3 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
     </Dialog>
   );
 }
-
