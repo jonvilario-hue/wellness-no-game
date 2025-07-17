@@ -53,7 +53,7 @@ const initialPerformanceState = (): Record<CHCDomain, DomainPerformance> => ({
 });
 
 
-export const usePerformanceStore = create<PerformanceState>()(
+const store = create<PerformanceState>()(
   persist(
     (set, get) => ({
       performance: initialPerformanceState(),
@@ -73,7 +73,7 @@ export const usePerformanceStore = create<PerformanceState>()(
             score: Math.round(newAverageScore),
             totalTime: modeData.totalTime + result.time,
             history: newHistory,
-            trend: Math.round(((newAverageScore - oldAverageScore) / (oldAverageScore || 50)) * 100),
+            trend: oldAverageScore > 0 ? Math.round(((newAverageScore - oldAverageScore) / oldAverageScore) * 100) : 0,
           };
 
           newPerformance[domain] = {
@@ -91,3 +91,10 @@ export const usePerformanceStore = create<PerformanceState>()(
     }
   )
 );
+
+// Export the raw state and actions for server-side usage
+export const performanceState = store.getState;
+export const { logGameResult } = store.getState();
+
+// Export the hook for client-side usage
+export const usePerformanceStore = store;

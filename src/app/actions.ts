@@ -3,10 +3,10 @@
 
 import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit } from '@/ai/flows';
 import type { AdaptDifficultyInput, TrainingRecommendationInput } from '@/ai/flows';
-import { usePerformanceStore } from '@/hooks/use-performance-store';
+import { performanceState } from '@/hooks/use-performance-store';
 
 export async function getWeakAreaRecommendationsAction() {
-  const performanceData = usePerformanceStore.getState().performance;
+  const performanceData = performanceState().performance;
   const flatPerformanceData = Object.entries(performanceData).map(([domain, data]) => ({
       domain,
       score: data.neutral.score,
@@ -32,7 +32,7 @@ export async function getAdaptiveDifficultyAction(input: AdaptDifficultyInput) {
 }
 
 export async function getTrainingRecommendationAction() {
-   const performanceData = usePerformanceStore.getState().performance;
+   const performanceData = performanceState().performance;
    const flatPerformanceData = Object.entries(performanceData).map(([domain, data]) => ({
       domain,
       score: data.neutral.score,
