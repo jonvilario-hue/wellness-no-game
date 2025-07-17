@@ -27,9 +27,9 @@ export const PageNav = () => {
                 <Pen className="w-4 h-4" />
                 <span>Tools</span>
             </Link>
-            <Link href="/library" className={linkClass("/library")}>
+            <Link href="/flashcards" className={linkClass("/flashcards")}>
                 <Layers className="w-4 h-4" />
-                <span>Decks</span>
+                <span>Flashcards</span>
             </Link>
         </nav>
       </div>

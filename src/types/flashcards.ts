@@ -7,7 +7,7 @@ export type Card = {
   front: string;
   back: string;
   type: CardType;
-  tags: string[]; // Added for tagging
+  tags?: string[]; // Added for tagging
   // SRS data
   interval: number; // in days
   easeFactor: number;
