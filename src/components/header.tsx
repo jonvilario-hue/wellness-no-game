@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTrainingFocus } from '@/hooks/use-training-focus';
-import { useTrainingOverride } from '@/hooks/use-training-override.tsx';
+import { useTrainingOverride } from '@/hooks/use-training-override';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { SigmaIcon } from './icons';
   
@@ -107,7 +107,7 @@ export function Header() {
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button asChild variant="ghost" size="icon">
-                    <Link href="/time">
+                    <Link href="/settings">
                       <Clock className="h-5 w-5" />
                     </Link>
                   </Button>
