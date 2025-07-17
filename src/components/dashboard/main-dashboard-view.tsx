@@ -9,52 +9,54 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { FullStrengthProfile } from './full-strength-profile';
 import { useTheme } from '@/hooks/use-theme';
 import { GrowthDecoration } from '../ui/growth-decoration';
+import { ChcProfileOverview } from './chc-profile-overview';
 
 export function MainDashboardView() {
-  const [view, setView] = useState<'efficiency' | 'profile'>('efficiency');
+  const [view, setView] = useState<'overview' | 'efficiency' | 'profile'>('overview');
   const { organicGrowth } = useTheme();
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
       {organicGrowth && <GrowthDecoration />}
-      <Tabs defaultValue="efficiency" onValueChange={(value) => setView(value as 'efficiency' | 'profile')}>
+      <Tabs defaultValue="overview" onValueChange={(value) => setView(value as any)}>
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="space-y-1.5">
               <CardTitle className="font-headline">
-                  {view === 'efficiency' ? 'Performance Index' : 'My Full Strength'}
+                  {view === 'overview' ? 'Performance Overview' : view === 'efficiency' ? 'Performance Index' : 'My Full Strength'}
               </CardTitle>
               <CardDescription>
-                  {view === 'efficiency' 
+                  {view === 'overview' ? 'A high-level look at your progress.' : view === 'efficiency' 
                       ? 'Your complexity-adjusted performance trend.' 
-                      : 'A holistic overview of your domain strengths and history.'}
+                      : 'A holistic overview of your domain strengths.'}
               </CardDescription>
           </div>
           <TooltipProvider>
-              <TabsList>
+              <TabsList className="grid grid-cols-3">
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <TabsTrigger value="efficiency">
-                        Performance Index
-                    </TabsTrigger>
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Tracks your speed and accuracy under challenge.</p>
-                  </TooltipContent>
+                  <TooltipContent><p>Summary of your overall performance.</p></TooltipContent>
                 </Tooltip>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                      <TabsTrigger value="profile">
-                        My Full Strength
-                      </TabsTrigger>
+                    <TabsTrigger value="efficiency">Index</TabsTrigger>
                   </TooltipTrigger>
-                    <TooltipContent>
-                    <p>Shows your full range of mental strengths and history.</p>
-                  </TooltipContent>
+                  <TooltipContent><p>Tracks your speed and accuracy under challenge.</p></TooltipContent>
+                </Tooltip>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                      <TabsTrigger value="profile">Profile</TabsTrigger>
+                  </TooltipTrigger>
+                    <TooltipContent><p>Shows your full range of mental strengths.</p></TooltipContent>
                 </Tooltip>
               </TabsList>
           </TooltipProvider>
         </CardHeader>
         <CardContent>
+          <TabsContent value="overview">
+              <ChcProfileOverview />
+          </TabsContent>
           <TabsContent value="efficiency">
               <CognitiveEfficiency />
           </TabsContent>

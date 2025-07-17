@@ -1,0 +1,43 @@
+
+'use client';
+
+import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
+import { JournalModule } from '@/components/dashboard/journal-module';
+import { TimeToolsCard } from '@/components/dashboard/time-tools-card';
+import { MoodView } from '@/components/mood/mood-view';
+import { HabitsView } from '@/components/habits/habits-view';
+import { FocusView } from '@/components/focus/focus-view';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+
+export default function ToolsPage() {
+  return (
+    <div className="space-y-8">
+      <Card>
+        <CardHeader>
+          <CardTitle>Productivity Tools</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <JournalModule />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CognitiveCalendar />
+            <TimeToolsCard />
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Separator />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Wellness Trackers</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+            <MoodView />
+            <HabitsView />
+            <FocusView />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
