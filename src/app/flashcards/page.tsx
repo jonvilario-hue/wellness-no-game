@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, BrainCircuit, Play, BarChart2 } from "lucide-react";
+import { PlusCircle, Play } from "lucide-react";
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { DeckDialog } from "@/components/flashcards/deck-dialog";
 import { useState } from "react";
@@ -11,6 +11,7 @@ import type { Deck } from "@/types/flashcards";
 import Link from "next/link";
 import { DeckListItem } from "@/components/flashcards/deck-list-item";
 import { StudySummary } from "@/components/flashcards/study-summary";
+import { ImportExport } from "@/components/flashcards/import-export";
 
 export default function FlashcardsPage() {
   const { decks, cards, addDeck, updateDeck, deleteDeck } = useFlashcardStore();
@@ -34,6 +35,7 @@ export default function FlashcardsPage() {
 
   return (
     <div className="space-y-6">
+       <h1 className="text-3xl font-bold">Internal Flashcard System</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
@@ -92,12 +94,29 @@ export default function FlashcardsPage() {
         </div>
       </div>
 
+      <ImportExport />
+
       <DeckDialog
         open={isDeckDialogOpen}
         onOpenChange={setIsDeckDialogOpen}
         onSave={handleSaveDeck}
         deckToEdit={deckToEdit}
       />
+      
+      {/* AnkiWeb Embed at the bottom */}
+      <Card>
+        <CardHeader>
+            <CardTitle>AnkiWeb</CardTitle>
+            <CardDescription>Legacy AnkiWeb integration.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <iframe
+            src="https://ankiweb.net"
+            title="AnkiWeb"
+            className="w-full h-[600px] border rounded-xl"
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

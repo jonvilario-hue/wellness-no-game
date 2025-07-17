@@ -9,7 +9,7 @@ import { sm2 } from '@/lib/srs';
 const createNewCard = (deckId: string, front: string, back: string, tags: string[] = []): Card => {
   const now = new Date().toISOString();
   return {
-    id: `card-${Date.now()}`,
+    id: `card-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
     front,
     back,
     tags,
@@ -40,6 +40,7 @@ interface FlashcardState {
   updateDeck: (id: string, deckData: Partial<Omit<Deck, 'id'>>) => void;
   deleteDeck: (id: string) => void;
   addCard: (cardData: Omit<Card, 'id' | 'interval' | 'easeFactor' | 'repetitions' | 'dueDate' | 'createdAt' | 'updatedAt' | 'type'>) => void;
+  bulkAddCards: (cardDataArray: Omit<Card, 'id' | 'interval' | 'easeFactor' | 'repetitions' | 'dueDate' | 'createdAt' | 'updatedAt' | 'type'>[]) => void;
   updateCard: (id: string, cardData: Partial<Omit<Card, 'id' | 'deckId'>>) => void;
   deleteCard: (id: string) => void;
   reviewCard: (cardId: string, rating: 1 | 2 | 3 | 4) => void;
@@ -76,6 +77,14 @@ export const useFlashcardStore = create<FlashcardState>()(
         const newCard = createNewCard(cardData.deckId, cardData.front, cardData.back, cardData.tags);
         set((state) => ({ cards: [...state.cards, newCard] }));
       },
+      
+      bulkAddCards: (cardDataArray) => {
+          const newCards = cardDataArray.map(cardData => 
+              createNewCard(cardData.deckId, cardData.front, cardData.back, cardData.tags)
+          );
+          set(state => ({ cards: [...state.cards, ...newCards] }));
+      },
+
       updateCard: (id, cardData) => {
         set((state) => ({
           cards: state.cards.map((c) =>
