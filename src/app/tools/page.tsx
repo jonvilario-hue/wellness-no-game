@@ -3,12 +3,12 @@
 
 import { CognitiveCalendar } from '@/components/dashboard/cognitive-calendar';
 import { JournalModule } from '@/components/dashboard/journal-module';
-import { TimeToolsCard } from '@/components/dashboard/time-tools-card';
 import { MoodView } from '@/components/mood/mood-view';
 import { HabitsView } from '@/components/habits/habits-view';
 import { FocusView } from '@/components/focus/focus-view';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { TimeToolsModule } from '@/components/dashboard/time-tools-module';
 
 export default function ToolsPage() {
   return (
@@ -19,10 +19,7 @@ export default function ToolsPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <JournalModule />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <CognitiveCalendar />
-            <TimeToolsCard />
-          </div>
+          <CognitiveCalendar />
         </CardContent>
       </Card>
       
@@ -38,6 +35,10 @@ export default function ToolsPage() {
             <FocusView />
         </CardContent>
       </Card>
+
+      <Separator />
+
+      <TimeToolsModule />
     </div>
   );
 }
