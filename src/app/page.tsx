@@ -9,12 +9,12 @@ import { PerformanceInsights } from '@/components/dashboard/performance-insights
 import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recommendations';
 import { AdaptiveDifficulty } from '@/components/dashboard/adaptive-difficulty';
 import { MainDashboardView } from '@/components/dashboard/main-dashboard-view';
-import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { useDashboardSettings, dashboardLayoutKeys } from '@/hooks/use-dashboard-settings';
 import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
-import { HabitTracker } from '@/components/dashboard/habit-tracker';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
+import { PageSpecificSettings } from '@/components/page-specific-settings';
 
 export default function GamesPage() {
   const { settings } = useDashboardSettings();
@@ -49,6 +49,7 @@ export default function GamesPage() {
           </div>
         </div>
       </main>
+      <PageSpecificSettings settingsKeys={dashboardLayoutKeys} />
     </>
   );
 }

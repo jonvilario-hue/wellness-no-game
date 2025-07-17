@@ -1,0 +1,96 @@
+
+'use client';
+
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Settings, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useDashboardSettings, componentLabels, type DashboardSettings } from '@/hooks/use-dashboard-settings';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+
+interface PageSpecificSettingsProps {
+  settingsKeys: (keyof DashboardSettings)[];
+}
+
+export function PageSpecificSettings({ settingsKeys }: PageSpecificSettingsProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const { settings, toggleSetting } = useDashboardSettings();
+
+  return (
+    <>
+      <div className="fixed bottom-6 right-6 z-50">
+        <motion.div
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+        >
+            <Button
+              size="icon"
+              className="rounded-full w-14 h-14 shadow-lg"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle Page Settings"
+            >
+              <AnimatePresence initial={false}>
+                {isOpen ? (
+                    <motion.div
+                        key="close"
+                        initial={{ scale: 0, rotate: 90 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        exit={{ scale: 0, rotate: -90 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <X className="h-6 w-6" />
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="settings"
+                        initial={{ scale: 0, rotate: -90 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        exit={{ scale: 0, rotate: 90 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <Settings className="h-6 w-6" />
+                    </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+        </motion.div>
+      </div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-24 right-6 z-40"
+          >
+            <Card className="w-80 shadow-2xl">
+              <CardHeader>
+                <CardTitle>Page Layout</CardTitle>
+                <CardDescription>Toggle components on this page.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                 {settingsKeys.map((key) => (
+                    <div key={key} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+                      <Label htmlFor={`switch-${key}`} className="font-medium text-sm">
+                        {componentLabels[key] || key}
+                      </Label>
+                      <Switch
+                        id={`switch-${key}`}
+                        checked={settings[key]}
+                        onCheckedChange={() => toggleSetting(key)}
+                      />
+                    </div>
+                  ))}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

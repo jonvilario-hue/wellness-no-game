@@ -5,7 +5,6 @@ import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DashboardLayoutSettings } from '@/components/settings/dashboard-layout-settings';
 import { TrainingSettings } from '@/components/settings/training-settings';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,11 +25,8 @@ export default function SettingsPage() {
             <MotivationalMessage />
             <main className="flex-1 p-4 sm:p-6 md:p-8">
                 <div className="mx-auto max-w-5xl">
-                    <Tabs defaultValue="layout" orientation="vertical" className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <Tabs defaultValue="training" orientation="vertical" className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <TabsList className="flex flex-col h-auto justify-start items-stretch p-2 space-y-1 bg-muted/50 rounded-lg w-full">
-                            <TabsTrigger value="layout" className="justify-start gap-2">
-                            <LayoutDashboard className="h-4 w-4"/> Dashboard
-                            </TabsTrigger>
                             <TabsTrigger value="training" className="justify-start gap-2">
                             <Sliders className="h-4 w-4"/> Game Trainer
                             </TabsTrigger>
@@ -49,9 +45,6 @@ export default function SettingsPage() {
                         </TabsList>
 
                         <div className="col-span-1 md:col-span-3">
-                            <TabsContent value="layout">
-                            <DashboardLayoutSettings />
-                            </TabsContent>
                             <TabsContent value="training">
                             <TrainingSettings />
                             </TabsContent>

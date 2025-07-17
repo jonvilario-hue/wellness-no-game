@@ -11,8 +11,9 @@ import { Separator } from '@/components/ui/separator';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
-import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { useDashboardSettings, trackerLayoutKeys } from '@/hooks/use-dashboard-settings';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PageSpecificSettings } from '@/components/page-specific-settings';
 
 export default function ToolsPage() {
   const { settings, isLoaded } = useDashboardSettings();
@@ -62,6 +63,7 @@ export default function ToolsPage() {
 
         </div>
       </main>
+      <PageSpecificSettings settingsKeys={trackerLayoutKeys} />
     </>
   );
 }
