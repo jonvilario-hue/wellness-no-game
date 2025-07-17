@@ -171,10 +171,7 @@ export const useJournal = create<JournalState>()(
             );
             
             if (existingEntry) {
-                 const hasContent = existingEntry.field1 || existingEntry.field2 || existingEntry.field3 || existingEntry.affirmations.some(a => a) || (existingEntry.label !== (journalConfig[existingEntry.category]?.title || 'New Entry'));
-                 if (hasContent || existingEntry.mood !== null || existingEntry.effort > 0) {
-                    return existingEntry;
-                 }
+                return existingEntry;
             }
             
             return {
