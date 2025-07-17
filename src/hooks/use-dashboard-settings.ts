@@ -4,18 +4,18 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const defaultSettings = {
+  mainDashboard: true,
   dailyChallenge: true,
   allGames: true,
-  mainDashboard: true,
+  weakAreaRecommendations: true,
+  adaptiveDifficulty: true,
   hyperfocusBuilder: true,
-  habitTracker: false,
   gameProgressTracker: true,
   milestoneBadges: true,
   performanceInsights: true,
-  weakAreaRecommendations: true,
-  adaptiveDifficulty: true,
   moodTracker: true,
   effortTracker: true,
+  habitTracker: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;
@@ -69,11 +69,10 @@ export const useDashboardSettings = () => {
 };
 
 export const componentLabels: Record<DashboardComponent, string> = {
+  mainDashboard: 'Main Dashboard (Performance/Strength)',
   dailyChallenge: 'Daily Training Sequence',
   allGames: 'All Training Games',
-  mainDashboard: 'Main Dashboard (Performance/Strength)',
   hyperfocusBuilder: 'Hyperfocus Builder',
-  habitTracker: 'Habit Tracker',
   gameProgressTracker: 'Game Progress Tracker',
   milestoneBadges: 'Milestone Badges',
   performanceInsights: 'Performance Insights',
@@ -81,4 +80,5 @@ export const componentLabels: Record<DashboardComponent, string> = {
   adaptiveDifficulty: 'Adaptive Difficulty',
   moodTracker: 'Mood Tracker',
   effortTracker: 'Effort/Focus Tracker',
+  habitTracker: 'Habit Tracker',
 };
