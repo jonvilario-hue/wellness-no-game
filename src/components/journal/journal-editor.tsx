@@ -7,7 +7,6 @@ import {
     Trash2,
     Loader2,
     CheckCircle,
-    AlertDialogTrigger,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -18,6 +17,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
