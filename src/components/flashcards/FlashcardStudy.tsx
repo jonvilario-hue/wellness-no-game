@@ -1,11 +1,9 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-// Type for flashcard
 export type Flashcard = {
   id: string;
   front: string;
@@ -16,17 +14,18 @@ export type Flashcard = {
   dueDate: string;
 };
 
-export function FlashcardStudy({ cards, onUpdateCards }: { cards: Flashcard[]; onUpdateCards: (cards: Flashcard[]) => void; }) {
-  const [dueCards, setDueCards] = useState<Flashcard[]>([]);
+export function FlashcardStudy({ cards, onUpdate }: { cards: Flashcard[]; onUpdate: (updatedCard: Flashcard) => void }) {
+  const [currentCards, setCurrentCards] = useState<Flashcard[]>([]);
   const [currentCard, setCurrentCard] = useState<Flashcard | null>(null);
   const [flipped, setFlipped] = useState(false);
 
   useEffect(() => {
-    const filteredDueCards = cards.filter(
+    const dueCards = cards.filter(
       (card) => new Date(card.dueDate) <= new Date()
     );
-    setDueCards(filteredDueCards);
-    setCurrentCard(filteredDueCards[0] || null);
+    setCurrentCards(dueCards);
+    setCurrentCard(dueCards[0] || null);
+    setFlipped(false); // Unflip when card changes
   }, [cards]);
 
   const rateCard = (rating: "again" | "hard" | "good" | "easy") => {
@@ -55,18 +54,14 @@ export function FlashcardStudy({ cards, onUpdateCards }: { cards: Flashcard[]; o
       repetitions,
       dueDate: new Date(Date.now() + interval * 24 * 60 * 60 * 1000).toISOString(),
     };
-    
-    // Update the card in the main list
-    const updatedCardsList = cards.map(c => c.id === updatedCard.id ? updatedCard : c);
-    onUpdateCards(updatedCardsList);
 
-    const remaining = dueCards.slice(1);
-    setDueCards(remaining);
-    setCurrentCard(remaining[0] || null);
-    setFlipped(false);
+    onUpdate(updatedCard);
+
+    // This logic was flawed, it should re-evaluate from the updated `cards` prop in the next render via useEffect
+    // The immediate update is handled by the parent component's state change triggering a re-render.
   };
 
-  if (!currentCard) return <p className="text-center text-muted-foreground py-12">No cards due right now.</p>;
+  if (!currentCard) return <div className="text-center text-muted-foreground py-12">No cards due for review.</div>;
 
   return (
     <div className="space-y-4">
@@ -87,4 +82,3 @@ export function FlashcardStudy({ cards, onUpdateCards }: { cards: Flashcard[]; o
     </div>
   );
 }
-

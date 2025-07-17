@@ -1,18 +1,17 @@
-
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { type Flashcard } from "./FlashcardStudy";
 
-export function FlashcardEditor({ onSave }: { onSave: (card: any) => void }) {
+export function FlashcardEditor({ onSave }: { onSave: (card: Flashcard) => void }) {
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
 
   const handleSubmit = () => {
-    const newCard = {
+    if (!front || !back) return;
+    const newCard: Flashcard = {
       id: crypto.randomUUID(),
       front,
       back,

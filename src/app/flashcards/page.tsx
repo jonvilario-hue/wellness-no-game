@@ -1,11 +1,10 @@
+"use client";
 
-'use client';
-
-import { useState } from 'react';
-import { FlashcardStudy, type Flashcard } from '@/components/flashcards/FlashcardStudy';
-import { FlashcardEditor } from '@/components/flashcards/FlashcardEditor';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { useState } from "react";
+import { FlashcardStudy, type Flashcard } from "@/components/flashcards/FlashcardStudy";
+import { FlashcardEditor } from "@/components/flashcards/FlashcardEditor";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 const initialCards: Flashcard[] = [
   {
@@ -32,12 +31,16 @@ const initialCards: Flashcard[] = [
 export default function FlashcardsPage() {
   const [cards, setCards] = useState<Flashcard[]>(initialCards);
 
-  const handleSaveCard = (newCard: Flashcard) => {
-    setCards((prevCards) => [...prevCards, newCard]);
+  const handleAddCard = (card: Flashcard) => {
+    setCards((prev) => [...prev, card]);
   };
 
-  const handleUpdateCards = (updatedCards: Flashcard[]) => {
-    setCards(updatedCards);
+  const handleUpdateCard = (updatedCard: Flashcard) => {
+    setCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === updatedCard.id ? updatedCard : card
+      )
+    );
   };
   
   return (
@@ -51,7 +54,7 @@ export default function FlashcardsPage() {
                 <CardDescription>Review your custom cards that are due for today.</CardDescription>
             </CardHeader>
             <CardContent>
-                <FlashcardStudy cards={cards} onUpdateCards={handleUpdateCards} />
+                <FlashcardStudy cards={cards} onUpdate={handleUpdateCard} />
             </CardContent>
         </Card>
         <Card>
@@ -60,7 +63,7 @@ export default function FlashcardsPage() {
                 <CardDescription>Add a new card to your internal collection.</CardDescription>
             </CardHeader>
             <CardContent>
-                <FlashcardEditor onSave={handleSaveCard} />
+                <FlashcardEditor onSave={handleAddCard} />
             </CardContent>
         </Card>
       </div>
