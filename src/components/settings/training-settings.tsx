@@ -33,7 +33,7 @@ export function TrainingSettings() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Training Preferences</CardTitle>
+                <CardTitle>Game Training Preferences</CardTitle>
                 <CardDescription>
                     Adjust how your training sessions are configured and presented.
                 </CardDescription>
