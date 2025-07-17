@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass, BarChart2, ListChecks } from 'lucide-react';
@@ -35,7 +34,7 @@ export default function SettingsPage() {
                             <LayoutDashboard className="h-4 w-4"/> Dashboard
                             </TabsTrigger>
                             <TabsTrigger value="training" className="justify-start gap-2">
-                            <Sliders className="h-4 w-4"/> Training
+                            <Sliders className="h-4 w-4"/> Game Trainer
                             </TabsTrigger>
                              <TabsTrigger value="trackers" className="justify-start gap-2">
                             <ListChecks className="h-4 w-4"/> Trackers
