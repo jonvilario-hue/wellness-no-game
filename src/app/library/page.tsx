@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Flashcard, getStoredCards } from "@/components/FlashcardStudy";
+import { Label } from "@/components/ui/label";
 
 // Deck helpers for card stats
 export const getDeckStats = (deckId: string, cards: Flashcard[]) => {
@@ -44,9 +45,10 @@ export default function DeckLibraryPage() {
   }, [decks]);
 
   const createDeck = () => {
+    if (!newName.trim()) return;
     const newDeck: Deck = {
       id: crypto.randomUUID(),
-      name: newName || `New Deck ${decks.length + 1}`,
+      name: newName,
       settings: {
         newCardsPerDay: 10,
         maxReviewsPerDay: 100,
@@ -108,25 +110,25 @@ export default function DeckLibraryPage() {
                   {total} cards, {due} due
                 </p>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">New Cards/Day</label>
+                  <Label className="text-sm font-medium">New Cards/Day</Label>
                   <Input
                     type="number"
                     value={deck.settings.newCardsPerDay}
                     onChange={(e) => updateDeckSetting(deck.id, "newCardsPerDay", Number(e.target.value))}
                   />
-                  <label className="text-sm font-medium">Max Reviews/Day</label>
+                  <Label className="text-sm font-medium">Max Reviews/Day</Label>
                   <Input
                     type="number"
                     value={deck.settings.maxReviewsPerDay}
                     onChange={(e) => updateDeckSetting(deck.id, "maxReviewsPerDay", Number(e.target.value))}
                   />
-                  <label className="text-sm font-medium">Learning Steps (minutes)</label>
+                  <Label className="text-sm font-medium">Learning Steps (minutes)</Label>
                   <Input
                     type="text"
                     value={deck.settings.learningSteps.join(",")}
                     onChange={(e) => updateDeckSetting(deck.id, "learningSteps", e.target.value.split(",").map(Number))}
                   />
-                  <label className="text-sm font-medium">Starting Ease</label>
+                  <Label className="text-sm font-medium">Starting Ease</Label>
                    <Input
                     type="number"
                     step="0.1"
