@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, PlusCircle, Edit, Trash2, Play, Settings } from 'lucide-react';
+import { ArrowLeft, PlusCircle, Edit, Trash2, Play, Settings, Tag } from 'lucide-react';
 import { CardDialog } from '@/components/flashcards/card-dialog';
 import { DeckDialog } from '@/components/flashcards/deck-dialog';
 import type { Card as CardType, Deck } from '@/types/flashcards';
@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
 
 export default function DeckPage() {
   const router = useRouter();
@@ -92,9 +93,17 @@ export default function DeckPage() {
           )}
           {cardsInDeck.map(card => (
             <div key={card.id} className="flex justify-between items-center p-3 bg-muted/50 rounded-lg group">
-              <div className="flex-grow">
+              <div>
                 <p className="font-medium">{card.front.length > 50 ? `${card.front.substring(0, 50)}...` : card.front}</p>
                 <p className="text-sm text-muted-foreground">{card.back.length > 60 ? `${card.back.substring(0, 60)}...` : card.back}</p>
+                 {card.tags && card.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2 items-center">
+                    <Tag className="w-3 h-3 text-muted-foreground" />
+                    {card.tags.map(tag => (
+                      <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenCardDialog(card)}>

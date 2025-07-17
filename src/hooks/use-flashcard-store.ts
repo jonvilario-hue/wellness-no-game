@@ -11,7 +11,7 @@ type FlashcardStore = {
   addDeck: (deck: { name: string; description?: string }) => void;
   updateDeck: (deckId: string, updates: Partial<Deck>) => void;
   deleteDeck: (deckId: string) => void;
-  addCard: (card: { front: string; back: string; deckId: string; type: CardType }) => void;
+  addCard: (card: { front: string; back: string; deckId: string; type: CardType; tags?: string[] }) => void;
   updateCard: (updatedCard: Card) => void;
   deleteCard: (cardId: string) => void;
 };
@@ -67,7 +67,11 @@ export const useFlashcardStore = create<FlashcardStore>()(
             ...state.cards,
             {
               id: crypto.randomUUID(),
-              ...card,
+              front: card.front,
+              back: card.back,
+              deckId: card.deckId,
+              type: card.type,
+              tags: card.tags || [],
               interval: 1,
               easeFactor: 2.5,
               repetitions: 0,

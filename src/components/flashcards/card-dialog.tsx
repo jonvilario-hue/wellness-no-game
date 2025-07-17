@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import type { Card, CardType } from '@/types/flashcards';
 
 interface CardDialogProps {
@@ -23,6 +24,7 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
   const [back, setBack] = useState('');
   const [type, setType] = useState<CardType>('basic');
   const [currentDeckId, setCurrentDeckId] = useState(deckId || 'default');
+  const [tags, setTags] = useState('');
 
   useEffect(() => {
     if (cardToEdit && open) {
@@ -30,17 +32,21 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
       setBack(cardToEdit.back);
       setType(cardToEdit.type);
       setCurrentDeckId(cardToEdit.deckId);
+      setTags(cardToEdit.tags?.join(', ') || '');
     } else if (open) {
       // Reset for new card
       setFront('');
       setBack('');
       setType('basic');
       setCurrentDeckId(deckId || 'default');
+      setTags('');
     }
   }, [cardToEdit, open, deckId]);
 
   const handleSave = () => {
     if (!front || !back || !currentDeckId) return;
+    
+    const tagArray = tags.split(',').map(t => t.trim()).filter(Boolean);
 
     if (cardToEdit) {
       updateCard({
@@ -49,6 +55,7 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
         back,
         type,
         deckId: currentDeckId,
+        tags: tagArray,
       });
     } else {
       addCard({
@@ -56,6 +63,7 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
         back,
         type,
         deckId: currentDeckId,
+        tags: tagArray,
       });
     }
     onOpenChange(false);
@@ -116,6 +124,15 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
               onChange={(e) => setBack(e.target.value)}
               placeholder="Back of the card..."
               rows={5}
+            />
+          </div>
+           <div>
+            <Label htmlFor="tags">Tags (comma-separated)</Label>
+            <Input
+              id="tags"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="e.g., biology, chapter-1, important"
             />
           </div>
         </div>
