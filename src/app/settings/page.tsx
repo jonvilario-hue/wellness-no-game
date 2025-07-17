@@ -2,6 +2,7 @@
 'use client';
 
 import { ArrowLeft, SlidersHorizontal, LayoutDashboard, Sliders, User, Palette, Moon, ExternalLink, Brain, Zap, Sun, Check, Music, PlusCircle, Trash2, CirclePlay, Timer as TimerIcon, Hourglass, BarChart2, ListChecks, Clock } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,6 +17,9 @@ import { PlaceholderSettings } from '@/components/settings/placeholder-settings'
 import { TimeToolsModule } from '@/components/dashboard/time-tools-module';
 
 export default function SettingsPage() {
+    const searchParams = useSearchParams();
+    const tab = searchParams.get('tab') || 'training';
+
     return (
         <>
             <div className="sticky top-0 z-20">
@@ -25,7 +29,7 @@ export default function SettingsPage() {
             <MotivationalMessage />
             <main className="flex-1 p-4 sm:p-6 md:p-8">
                 <div className="mx-auto max-w-5xl">
-                    <Tabs defaultValue="training" orientation="vertical" className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <Tabs defaultValue={tab} orientation="vertical" className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <TabsList className="flex flex-col h-auto justify-start items-stretch p-2 space-y-1 bg-muted/50 rounded-lg w-full">
                             <TabsTrigger value="training" className="justify-start gap-2">
                             <Sliders className="h-4 w-4"/> Game Trainer

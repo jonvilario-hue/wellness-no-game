@@ -107,7 +107,7 @@ export function Header() {
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button asChild variant="ghost" size="icon">
-                    <Link href="/settings">
+                    <Link href="/settings?tab=time">
                       <Clock className="h-5 w-5" />
                     </Link>
                   </Button>
