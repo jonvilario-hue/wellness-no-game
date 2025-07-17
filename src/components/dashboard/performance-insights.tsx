@@ -11,6 +11,7 @@ import { getTrainingRecommendationAction } from '@/app/actions';
 import { Skeleton } from '../ui/skeleton';
 import { useTheme } from '@/hooks/use-theme';
 import { GrowthDecoration } from '../ui/growth-decoration';
+import { usePerformanceStore } from '@/hooks/use-performance-store';
 
 const recommendationIcons = {
   weakArea: TrendingUp,
@@ -25,10 +26,17 @@ export function PerformanceInsights() {
   const [isPending, startTransition] = useTransition();
   const [isInsightVisible, setIsInsightVisible] = useState(false);
   const { organicGrowth } = useTheme();
+  const { performance } = usePerformanceStore();
+
 
   useEffect(() => {
     startTransition(async () => {
-      const result = await getTrainingRecommendationAction();
+      const flatPerformanceData = Object.entries(performance).map(([domain, data]) => ({
+        domain,
+        score: data.neutral.score,
+        trend: data.neutral.trend,
+      })) as any;
+      const result = await getTrainingRecommendationAction(flatPerformanceData);
       setRecommendation(result);
     });
 
@@ -36,7 +44,7 @@ export function PerformanceInsights() {
     if (dismissed !== 'true') {
       setIsInsightVisible(true);
     }
-  }, []);
+  }, [performance]);
 
   const handleDismissInsight = () => {
     setIsInsightVisible(false);

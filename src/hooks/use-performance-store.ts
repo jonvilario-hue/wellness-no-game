@@ -4,7 +4,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { CHCDomain } from '@/types';
-import { useMemo } from 'react';
 
 type TrainingMode = 'neutral' | 'math' | 'music';
 
@@ -53,7 +52,7 @@ const initialPerformanceState = (): Record<CHCDomain, DomainPerformance> => ({
 });
 
 
-const store = create<PerformanceState>()(
+export const usePerformanceStore = create<PerformanceState>()(
   persist(
     (set, get) => ({
       performance: initialPerformanceState(),
@@ -91,10 +90,3 @@ const store = create<PerformanceState>()(
     }
   )
 );
-
-// Export the raw state and actions for server-side usage
-export const performanceState = store.getState;
-export const { logGameResult } = store.getState();
-
-// Export the hook for client-side usage
-export const usePerformanceStore = store;

@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { Skeleton } from '../ui/skeleton';
 import { useTheme } from '@/hooks/use-theme';
 import { GrowthDecoration } from '../ui/growth-decoration';
+import { usePerformanceStore } from '@/hooks/use-performance-store';
 
 const INSIGHT_KEY = 'weakAreaInsightDismissed';
 
@@ -23,11 +24,18 @@ export function WeakAreaRecommendations() {
   const [error, setError] = useState<string | null>(null);
   const [isInsightVisible, setIsInsightVisible] = useState(false);
   const { organicGrowth } = useTheme();
+  const { performance } = usePerformanceStore();
 
   useEffect(() => {
     startTransition(async () => {
       try {
-        const res = await getWeakAreaRecommendationsAction();
+        const flatPerformanceData = Object.entries(performance).map(([domain, data]) => ({
+          domain,
+          score: data.neutral.score,
+          sessions: data.neutral.sessions,
+        })) as any; // Cast as any to satisfy the input type
+
+        const res = await getWeakAreaRecommendationsAction(flatPerformanceData);
         setResult(res);
       } catch (e) {
         setError('Failed to get recommendations. Please try again.');
@@ -39,7 +47,7 @@ export function WeakAreaRecommendations() {
     if (dismissed !== 'true') {
       setIsInsightVisible(true);
     }
-  }, []);
+  }, [performance]);
 
   const handleDismissInsight = () => {
     setIsInsightVisible(false);

@@ -2,19 +2,11 @@
 'use server';
 
 import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit } from '@/ai/flows';
-import type { AdaptDifficultyInput, TrainingRecommendationInput } from '@/ai/flows';
-import { performanceState } from '@/hooks/use-performance-store';
+import type { AdaptDifficultyInput, TrainingRecommendationInput, WeakAreaRecommendationInput } from '@/ai/flows';
 
-export async function getWeakAreaRecommendationsAction() {
-  const performanceData = performanceState().performance;
-  const flatPerformanceData = Object.entries(performanceData).map(([domain, data]) => ({
-      domain,
-      score: data.neutral.score,
-      sessions: data.neutral.sessions,
-  })) as any; // Cast as any to satisfy the input type
-  
+export async function getWeakAreaRecommendationsAction(performanceData: WeakAreaRecommendationInput['performanceData']) {
   try {
-    return await weakAreaRecommendation({ performanceData: flatPerformanceData });
+    return await weakAreaRecommendation({ performanceData });
   } catch (error)
   {
     console.error(error);
@@ -31,17 +23,9 @@ export async function getAdaptiveDifficultyAction(input: AdaptDifficultyInput) {
   }
 }
 
-export async function getTrainingRecommendationAction() {
-   const performanceData = performanceState().performance;
-   const flatPerformanceData = Object.entries(performanceData).map(([domain, data]) => ({
-      domain,
-      score: data.neutral.score,
-      trend: data.neutral.trend,
-   })) as any;
-
-  // This input will trigger the "Performance Insight" for morning training.
-  const input: TrainingRecommendationInput = {
-    performanceData: flatPerformanceData,
+export async function getTrainingRecommendationAction(performanceData: TrainingRecommendationInput['performanceData']) {
+   const input: TrainingRecommendationInput = {
+    performanceData: performanceData,
     sessionStreak: 5,
     hoursSinceLastSession: 12,
     timeOfDay: 'morning', 
@@ -51,7 +35,7 @@ export async function getTrainingRecommendationAction() {
   try {
     const result = await getTrainingRecommendation(input);
     if (!result.performanceData) {
-      result.performanceData = flatPerformanceData;
+      result.performanceData = performanceData;
     }
     return result;
   } catch (error) {
