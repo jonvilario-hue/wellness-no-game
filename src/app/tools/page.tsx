@@ -9,10 +9,15 @@ import { FocusView } from '@/components/focus/focus-view';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { TimeToolsModule } from '@/components/dashboard/time-tools-module';
+import { FlashcardDecks } from '@/components/flashcards/flashcard-decks';
 
 export default function ToolsPage() {
   return (
     <div className="space-y-8">
+      <FlashcardDecks />
+
+      <Separator />
+
       <Card>
         <CardHeader>
           <CardTitle>Productivity Tools</CardTitle>
