@@ -192,6 +192,7 @@ export function HabitsView() {
         toast({
             title: "✅ Habit logged!",
             description: "Great job building consistency.",
+            variant: 'success',
         });
       }
     }, [todaysHabits, toggleHabitForDay, today, toast]);

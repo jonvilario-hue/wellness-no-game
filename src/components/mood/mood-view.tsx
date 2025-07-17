@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useHydratedJournalStore as useJournal, type MoodState } from '@/hooks/use-journal';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { Save, Check } from 'lucide-react';
+import { Save, Check, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { ScrollArea } from '../ui/scroll-area';
@@ -64,7 +64,7 @@ const MoodLogger = () => {
     const [todayEntry, setTodayEntry] = useState(findOrCreateEntry({ date: new Date().toISOString().split('T')[0], category: 'Freeform Exploration', frequency: 'daily' }));
     const [mood, setMood] = useState<MoodState>(null);
     const [note, setNote] = useState('');
-    const [isSaved, setIsSaved] = useState(false);
+    const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
     const { toast } = useToast();
     
      useEffect(() => {
@@ -82,13 +82,19 @@ const MoodLogger = () => {
     }, [hasHydrated, findOrCreateEntry]);
     
     const handleSave = useCallback(() => {
+        setSaveState('saving');
         updateEntry(todayEntry.id, { mood, moodNote: note });
-        toast({
-            title: '😃 Mood Saved',
-            description: 'Your mood for today has been logged.',
-        });
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 2000);
+        
+        setTimeout(() => {
+            toast({
+                title: '😃 Mood Saved',
+                description: 'Your mood for today has been logged.',
+                variant: 'success'
+            });
+            setSaveState('saved');
+            setTimeout(() => setSaveState('idle'), 2000);
+        }, 500); // Simulate network latency
+
     }, [updateEntry, todayEntry.id, mood, note, toast]);
 
     const handleQuickMoodSelect = useCallback((selectedMood: MoodState) => {
@@ -97,6 +103,7 @@ const MoodLogger = () => {
          toast({
             title: '😃 Mood Saved',
             description: 'Your mood for today has been logged.',
+            variant: 'success'
         });
     }, [todayEntry.id, note, updateEntry, toast]);
 
@@ -131,9 +138,11 @@ const MoodLogger = () => {
                     onMoodChange={handleQuickMoodSelect}
                     onMoodNoteChange={setNote}
                 />
-                 <Button onClick={handleSave} className="w-full" disabled={mood === null}>
-                    {isSaved ? <Check className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
-                    {isSaved ? 'Saved!' : 'Save Mood Log'}
+                 <Button onClick={handleSave} className="w-full" disabled={mood === null || saveState !== 'idle'}>
+                    {saveState === 'saving' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {saveState === 'saved' && <Check className="mr-2 h-4 w-4" />}
+                    {saveState === 'idle' && <Save className="mr-2 h-4 w-4" />}
+                    {saveState === 'saved' ? 'Saved!' : 'Save Mood Log'}
                  </Button>
             </CardContent>
         </Card>
