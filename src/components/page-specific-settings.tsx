@@ -36,14 +36,14 @@ export function PageSpecificSettings({ settingsKeys }: PageSpecificSettingsProps
             </Button>
           </motion.div>
         </PopoverTrigger>
-        <PopoverContent className="w-80" side="top" align="end">
+        <PopoverContent className="w-[300px]" side="top" align="end">
             <Card className="shadow-none border-none">
               <CardHeader>
                 <CardTitle>Page Layout</CardTitle>
                 <CardDescription>Toggle components on this page.</CardDescription>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="h-[400px] pr-4">
+                <ScrollArea className="max-h-[400px] pr-4">
                   <div className="space-y-3">
                     {settingsKeys.map((key) => (
                       <div key={key} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
