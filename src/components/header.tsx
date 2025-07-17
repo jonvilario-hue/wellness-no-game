@@ -146,30 +146,6 @@ export function Header() {
         <TooltipProvider>
             <div className="flex-1 flex justify-end items-center gap-1">
               <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button asChild variant="ghost" size="icon">
-                    <Link href="/focus">
-                      <Star className="h-5 w-5" />
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Focus Tracker</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button asChild variant="ghost" size="icon">
-                    <Link href="/time">
-                      <Clock className="h-5 w-5" />
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Clock Tools</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button asChild variant="ghost" size="icon">
                       <Link href="/settings">
