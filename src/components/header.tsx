@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Brain, Settings, CalendarDays, BookMarked, Music, Gamepad2 } from 'lucide-react';
+import { Brain, Settings, CalendarDays, BookMarked, Music, Gamepad2, Star, Clock } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -43,12 +43,12 @@ const NavTabs = () => {
       cn(
         "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
         pathname === path
-          ? "bg-muted text-primary font-semibold"
-          : "text-muted-foreground hover:bg-muted/50"
+          ? "bg-background text-primary shadow-sm"
+          : "text-muted-foreground hover:bg-background/70"
       );
   
     return (
-      <nav className="flex space-x-2 border bg-muted/50 p-1 rounded-lg">
+      <nav className="flex space-x-1 border bg-muted p-1 rounded-lg">
         <Link href="/" className={linkClass("/")}>
             <span className="flex items-center gap-2"><Gamepad2 className="w-4 h-4" /> Games</span>
         </Link>
@@ -145,6 +145,30 @@ export function Header() {
         
         <TooltipProvider>
             <div className="flex-1 flex justify-end items-center gap-1">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href="/focus">
+                      <Star className="h-5 w-5" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Focus Tracker</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href="/time">
+                      <Clock className="h-5 w-5" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Clock Tools</p>
+                </TooltipContent>
+              </Tooltip>
               <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button asChild variant="ghost" size="icon">
