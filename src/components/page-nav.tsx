@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Gamepad2, Pen, Layers } from 'lucide-react';
+import { Gamepad2, Pen, Layers, ClipboardCheck } from 'lucide-react';
 
 export const PageNav = () => {
     const pathname = usePathname();
@@ -24,8 +24,12 @@ export const PageNav = () => {
                 <span>Games</span>
             </Link>
             <Link href="/tools" className={linkClass("/tools")}>
-                <Pen className="w-4 h-4" />
+                <ClipboardCheck className="w-4 h-4" />
                 <span>Tools</span>
+            </Link>
+             <Link href="/flashcards" className={linkClass("/flashcards")}>
+                <Layers className="w-4 h-4" />
+                <span>Flashcards</span>
             </Link>
         </nav>
       </div>
