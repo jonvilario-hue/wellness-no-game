@@ -43,7 +43,7 @@ interface FlashcardState {
   bulkAddCards: (cardDataArray: Omit<Card, 'id' | 'interval' | 'easeFactor' | 'repetitions' | 'dueDate' | 'createdAt' | 'updatedAt' | 'type'>[]) => void;
   updateCard: (id: string, cardData: Partial<Omit<Card, 'id' | 'deckId'>>) => void;
   deleteCard: (id: string) => void;
-  reviewCard: (cardId: string, rating: 1 | 2 | 3 | 4) => void;
+  reviewCard: (cardId: string, rating: 1 | 2 | 3 | 4) => { isCorrect: boolean };
 }
 
 const defaultDecks: Deck[] = [
@@ -67,9 +67,14 @@ export const useFlashcardStore = create<FlashcardState>()(
         }));
       },
       deleteDeck: (id) => {
+        if (id === 'default-deck') {
+            console.warn("The default deck cannot be deleted.");
+            return;
+        }
         set((state) => ({
+          // Move cards to default deck instead of deleting them
+          cards: state.cards.map(c => c.deckId === id ? { ...c, deckId: 'default-deck' } : c),
           decks: state.decks.filter((d) => d.id !== id),
-          cards: state.cards.filter((c) => c.deckId !== id), // Also delete cards in the deck
         }));
       },
 
@@ -79,10 +84,18 @@ export const useFlashcardStore = create<FlashcardState>()(
       },
       
       bulkAddCards: (cardDataArray) => {
+          let decks = get().decks;
+          const defaultDeckExists = decks.some(d => d.id === 'default-deck');
+          
+          if (!defaultDeckExists) {
+              const defaultDeck = { id: 'default-deck', name: 'Default', description: 'A deck for imported cards.' };
+              decks = [...decks, defaultDeck];
+          }
+
           const newCards = cardDataArray.map(cardData => 
               createNewCard(cardData.deckId, cardData.front, cardData.back, cardData.tags)
           );
-          set(state => ({ cards: [...state.cards, ...newCards] }));
+          set(state => ({ cards: [...state.cards, ...newCards], decks }));
       },
 
       updateCard: (id, cardData) => {
@@ -98,7 +111,7 @@ export const useFlashcardStore = create<FlashcardState>()(
       
       reviewCard: (cardId, rating) => {
           const card = get().cards.find(c => c.id === cardId);
-          if (!card) return;
+          if (!card) return { isCorrect: false };
 
           const { interval, easeFactor, repetitions, isCorrect } = sm2(card, rating);
           
@@ -124,6 +137,8 @@ export const useFlashcardStore = create<FlashcardState>()(
               ),
               reviewLogs: [log, ...state.reviewLogs].slice(0, 200) // Keep last 200 logs
           }));
+
+          return { isCorrect };
       }
     }),
     {

@@ -4,7 +4,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useFlashcardStore } from "@/hooks/use-flashcard-store";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, PlusCircle, Play, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -68,9 +68,16 @@ export default function DeckPage() {
             <CardTitle>Cards in Deck ({cardsInDeck.length})</CardTitle>
             <CardDescription>Manage the cards in this deck.</CardDescription>
           </div>
-          <Button onClick={() => handleOpenCardDialog(null)}>
-            <PlusCircle className="mr-2 h-4 w-4" /> Add New Card
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild disabled={cardsInDeck.length === 0}>
+                <Link href="/flashcards/study">
+                    <Play className="mr-2 h-4 w-4" /> Study Deck
+                </Link>
+            </Button>
+            <Button onClick={() => handleOpenCardDialog(null)}>
+                <PlusCircle className="mr-2 h-4 w-4" /> Add New Card
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>

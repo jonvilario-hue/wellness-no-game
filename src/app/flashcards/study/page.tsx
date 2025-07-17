@@ -4,8 +4,8 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useFlashcardStore } from "@/hooks/use-flashcard-store";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { ArrowLeft, Check, CheckCircle, XCircle, X } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, Check, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
@@ -14,14 +14,38 @@ import { cn } from "@/lib/utils";
 const cardVariants = {
   hidden: { opacity: 0, y: 20, scale: 0.95 },
   visible: { opacity: 1, y: 0, scale: 1 },
-  exit: { opacity: 0, y: -20, scale: 1.05 },
+  exit: (isCorrect: boolean) => ({
+      opacity: 0,
+      x: isCorrect ? 50 : -50,
+      transition: { duration: 0.3 }
+  }),
 };
+
+const ReviewStatusIndicator = ({ status }: { status: 'correct' | 'incorrect' | null }) => {
+  if (!status) return null;
+  
+  const Icon = status === 'correct' ? CheckCircle : XCircle;
+  const color = status === 'correct' ? 'text-green-500' : 'text-red-500';
+
+  return (
+    <motion.div
+      key={status + Date.now()}
+      initial={{ scale: 0.5, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      className="absolute inset-0 flex items-center justify-center"
+    >
+      <Icon className={cn("h-32 w-32", color)} />
+    </motion.div>
+  );
+};
+
 
 export default function StudyPage() {
   const { cards, reviewCard } = useFlashcardStore();
   const [studyDeck, setStudyDeck] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [lastReviewStatus, setLastReviewStatus] = useState<'correct' | 'incorrect' | null>(null);
 
   useEffect(() => {
     const dueCards = cards
@@ -34,12 +58,15 @@ export default function StudyPage() {
     if (currentIndex >= studyDeck.length) return;
     
     const cardId = studyDeck[currentIndex].id;
-    reviewCard(cardId, rating);
+    const { isCorrect } = reviewCard(cardId, rating);
     
-    setIsFlipped(false);
+    setLastReviewStatus(isCorrect ? 'correct' : 'incorrect');
+
     setTimeout(() => {
+        setIsFlipped(false);
         setCurrentIndex(prev => prev + 1);
-    }, 200); // allow flip back animation to start
+        setLastReviewStatus(null);
+    }, 800);
 
   }, [currentIndex, studyDeck, reviewCard]);
   
@@ -99,37 +126,43 @@ export default function StudyPage() {
        <div className="w-full max-w-2xl">
          <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-muted-foreground">Progress</span>
-            <span className="text-sm font-mono">{currentIndex} / {studyDeck.length}</span>
+            <span className="text-sm font-mono">{currentIndex + 1} / {studyDeck.length}</span>
          </div>
          <Progress value={progress} />
        </div>
 
       <div 
         className="w-full max-w-2xl h-[400px] cursor-pointer"
-        onClick={() => setIsFlipped(f => !f)}
+        onClick={() => !lastReviewStatus && setIsFlipped(f => !f)}
         style={{ perspective: "1000px" }}
       >
-        <AnimatePresence>
-            <motion.div
-                key={currentCard.id + (isFlipped ? '-back' : '-front')}
-                className="relative w-full h-full"
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={cardVariants}
-                transition={{ duration: 0.3 }}
-            >
-                <Card className={cn("absolute w-full h-full flex items-center justify-center p-6 text-center", isFlipped && "opacity-0")}>
-                    <CardTitle className="text-3xl">{currentCard.front}</CardTitle>
-                </Card>
-                <Card className={cn("absolute w-full h-full flex flex-col items-center justify-center p-6 text-center gap-4", !isFlipped && "opacity-0")}>
-                    <CardTitle className="text-2xl">{currentCard.back}</CardTitle>
-                </Card>
-            </motion.div>
+        <AnimatePresence custom={lastReviewStatus}>
+            {currentCard && (
+                <motion.div
+                    key={currentCard.id}
+                    className="relative w-full h-full"
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    custom={lastReviewStatus === 'correct'}
+                    variants={cardVariants}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                >
+                  <div className={cn("absolute w-full h-full transition-transform duration-500", isFlipped && "[transform:rotateY(180deg)]")} style={{ transformStyle: "preserve-3d" }}>
+                     <Card className="absolute w-full h-full flex items-center justify-center p-6 text-center [backface-visibility:hidden]">
+                        <p className="text-3xl">{currentCard.front}</p>
+                     </Card>
+                     <Card className="absolute w-full h-full flex flex-col items-center justify-center p-6 text-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                        <p className="text-2xl">{currentCard.back}</p>
+                     </Card>
+                  </div>
+                  <ReviewStatusIndicator status={lastReviewStatus} />
+                </motion.div>
+            )}
         </AnimatePresence>
       </div>
       
-      {isFlipped ? (
+      {isFlipped && !lastReviewStatus ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-2xl animate-in fade-in">
            <Button onClick={() => handleReview(1)} variant="destructive" className="h-20 flex-col gap-1">
              <XCircle className="w-5 h-5"/>
@@ -152,9 +185,11 @@ export default function StudyPage() {
         </div>
       ) : (
         <div className="w-full max-w-2xl h-20 flex items-center justify-center">
-            <Button onClick={() => setIsFlipped(true)} variant="outline" className="animate-in fade-in">
-                Show Answer (Space)
-            </Button>
+            {!lastReviewStatus && (
+                <Button onClick={() => setIsFlipped(true)} variant="outline" className="animate-in fade-in">
+                    Show Answer (Space)
+                </Button>
+            )}
         </div>
       )}
     </div>
