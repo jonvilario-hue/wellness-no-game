@@ -1,8 +1,11 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export type Flashcard = {
   id: string;
@@ -12,6 +15,13 @@ export type Flashcard = {
   easeFactor: number;
   repetitions: number;
   dueDate: string;
+  type: 'basic' | 'cloze';
+};
+
+const renderCloze = (text: string, reveal: boolean) => {
+    return text.replace(/\{\{c\d::(.*?)\}\}/g, (_, match) => 
+        reveal ? `<span class="font-bold text-blue-500">${match}</span>` : `<span class="font-bold text-primary">[...]</span>`
+    );
 };
 
 export function FlashcardStudy({ cards, onUpdate }: { cards: Flashcard[]; onUpdate: (updatedCard: Flashcard) => void }) {
@@ -25,7 +35,7 @@ export function FlashcardStudy({ cards, onUpdate }: { cards: Flashcard[]; onUpda
     );
     setCurrentCards(dueCards);
     setCurrentCard(dueCards[0] || null);
-    setFlipped(false); // Unflip when card changes
+    setFlipped(false);
   }, [cards]);
 
   const rateCard = (rating: "again" | "hard" | "good" | "easy") => {
@@ -56,9 +66,28 @@ export function FlashcardStudy({ cards, onUpdate }: { cards: Flashcard[]; onUpda
     };
 
     onUpdate(updatedCard);
+    setFlipped(false);
+  };
 
-    // This logic was flawed, it should re-evaluate from the updated `cards` prop in the next render via useEffect
-    // The immediate update is handled by the parent component's state change triggering a re-render.
+  const renderContent = () => {
+    if (!currentCard) return null;
+    const isCloze = currentCard.type === 'cloze';
+    const contentToShow = flipped ? currentCard.back : currentCard.front;
+
+    if (isCloze && !flipped) {
+      const html = renderCloze(contentToShow, flipped);
+      return <div dangerouslySetInnerHTML={{ __html: html }} />;
+    } else if (isCloze && flipped) {
+       const revealedFront = renderCloze(currentCard.front, true);
+       return (
+            <div>
+                <div className="mb-4 pb-4 border-b" dangerouslySetInnerHTML={{ __html: revealedFront }} />
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentCard.back}</ReactMarkdown>
+            </div>
+       )
+    }
+
+    return <ReactMarkdown remarkPlugins={[remarkGfm]}>{contentToShow}</ReactMarkdown>;
   };
 
   if (!currentCard) return <div className="text-center text-muted-foreground py-12">No cards due for review.</div>;
@@ -66,8 +95,8 @@ export function FlashcardStudy({ cards, onUpdate }: { cards: Flashcard[]; onUpda
   return (
     <div className="space-y-4">
       <Card onClick={() => setFlipped(!flipped)} className="cursor-pointer min-h-[150px] flex items-center justify-center">
-        <CardContent className="text-center py-12 text-xl">
-          {flipped ? currentCard.back : currentCard.front}
+        <CardContent className="text-center py-12 text-xl prose dark:prose-invert max-w-none">
+          {renderContent()}
         </CardContent>
       </Card>
 
