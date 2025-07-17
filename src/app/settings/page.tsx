@@ -40,7 +40,7 @@ export default function SettingsPage() {
                             <Palette className="h-4 w-4"/> Appearance
                             </TabsTrigger>
                             <TabsTrigger value="time" className="justify-start gap-2">
-                            <Clock className="h-4 w-4"/> Time Tools
+                            <Clock className="h-4 w-4"/> Clock Tools
                             </TabsTrigger>
                             <TabsTrigger value="account" className="justify-start gap-2" disabled>
                             <User className="h-4 w-4"/> Account
@@ -61,10 +61,24 @@ export default function SettingsPage() {
                             <AppearanceSettings />
                             </TabsContent>
                             <TabsContent value="time">
-                                <PlaceholderSettings 
-                                    title="Time Tools"
-                                    description="Time management tools have been moved to their own dedicated page, accessible via the clock icon in the header."
-                                />
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Clock Tools Moved</CardTitle>
+                                        <CardDescription>
+                                            To make them easier to access, all clock-related tools have been moved to their own dedicated page.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="p-6 bg-muted/50 rounded-lg text-center space-y-4">
+                                            <p className="font-semibold">You can now find the Pomodoro Timer, Alarms, and Sleep Tracker by clicking the clock icon in the header.</p>
+                                            <Button asChild>
+                                                <Link href="/time">
+                                                    Go to Clock Tools <ExternalLink className="w-4 h-4 ml-2"/>
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             </TabsContent>
                             <TabsContent value="account">
                             <Card>
