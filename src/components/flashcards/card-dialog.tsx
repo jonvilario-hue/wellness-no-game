@@ -88,7 +88,7 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
           </DialogDescription>
           {type === 'cloze' && (
             <DialogDescription className="pt-2 text-blue-500 italic">
-              Cloze cards create "fill-in-the-blank" style tests. Wrap the text you want to hide in double curly braces, like this: `{{c1::answer}}`.
+              Cloze cards create "fill-in-the-blank" style tests. Wrap the text you want to hide in double curly braces, like this: `{'{{c1::answer}}'}`.
             </DialogDescription>
           )}
         </DialogHeader>
