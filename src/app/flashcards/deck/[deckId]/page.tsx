@@ -100,7 +100,7 @@ export default function DeckPage() {
             </div>
           )}
           {cardsInDeck.map(card => (
-            <div key={card.id} className="flex justify-between items-center p-3 bg-muted/50 rounded-lg group">
+            <div key={card.id} className="flex justify-between items-center p-3 pr-0 bg-muted/50 rounded-lg group">
               <div>
                 <p className="font-medium">{card.front.length > 50 ? `${card.front.substring(0, 50)}...` : card.front}</p>
                 <p className="text-sm text-muted-foreground">{card.back.length > 60 ? `${card.back.substring(0, 60)}...` : card.back}</p>
@@ -113,7 +113,7 @@ export default function DeckPage() {
                   </div>
                 )}
               </div>
-              <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenCardDialog(card)}>
                   <Edit className="w-4 h-4" />
                 </Button>
