@@ -360,6 +360,6 @@ export function HabitsView() {
                 </div>
             </CardContent>
             <HabitDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onSave={handleSaveHabit} habitToEdit={habitToEdit} />
-        </div>
+        </Card>
     );
 }
