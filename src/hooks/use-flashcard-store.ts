@@ -14,7 +14,6 @@ type FlashcardStore = {
   addCard: (card: { front: string; back: string; deckId: string; type: CardType }) => void;
   updateCard: (updatedCard: Card) => void;
   deleteCard: (cardId: string) => void;
-  bulkAddCards: (newCards: Omit<Card, 'id' | 'interval' | 'easeFactor' | 'repetitions' | 'dueDate'>[]) => void;
 };
 
 const createInitialState = () => {
@@ -84,36 +83,14 @@ export const useFlashcardStore = create<FlashcardStore>()(
         set((state) => ({
           cards: state.cards.filter((c) => c.id !== cardId),
         })),
-       bulkAddCards: (newCards) => {
-          set((state) => {
-            // Ensure default deck exists
-            let currentDecks = state.decks;
-            if (!currentDecks.find(d => d.id === 'default')) {
-                currentDecks = [...currentDecks, { id: 'default', name: 'Default', description: 'Default deck for imports.' }];
-            }
-
-            const transformedCards: Card[] = newCards.map(c => ({
-                id: crypto.randomUUID(),
-                ...c,
-                interval: 1,
-                easeFactor: 2.5,
-                repetitions: 0,
-                dueDate: new Date().toISOString(),
-            }));
-            return {
-                cards: [...state.cards, ...transformedCards],
-                decks: currentDecks,
-            };
-          });
-      },
     }),
     {
       name: 'flashcard-storage-v2',
       storage: createJSONStorage(() => localStorage),
        onRehydrateStorage: (state) => {
         if (!state) return;
-        const s = state as FlashcardStore;
-        if (!s.decks || s.decks.length === 0 || !s.decks.find(d => d.id === 'default')) {
+        const s = state as any;
+        if (!s.decks || s.decks.length === 0 || !s.decks.find((d: Deck) => d.id === 'default')) {
             const defaults = createInitialState();
             s.decks = defaults.decks;
         }
