@@ -1,10 +1,9 @@
 
 'use client';
 
-import { Brain, Settings, CalendarDays, BookMarked, Music, Gamepad2, Star, Clock } from 'lucide-react';
+import { Brain, Settings, CalendarDays, BookMarked, Music } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,8 +16,6 @@ import {
 import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { useTrainingOverride } from '@/hooks/use-training-override';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
-import { cn } from '@/lib/utils';
-
 
 const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -36,30 +33,7 @@ const SigmaIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d="M18 7H6l6 5-6 5h12" />
   </svg>
 );
-
-const NavTabs = () => {
-    const pathname = usePathname();
-    const linkClass = (path: string) =>
-      cn(
-        "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-        pathname === path
-          ? "bg-background text-primary shadow-sm"
-          : "text-muted-foreground hover:bg-background/70"
-      );
   
-    return (
-      <nav className="flex space-x-1 border bg-muted p-1 rounded-lg">
-        <Link href="/" className={linkClass("/")}>
-            <span className="flex items-center gap-2"><Gamepad2 className="w-4 h-4" /> Games</span>
-        </Link>
-        <Link href="/tools" className={linkClass("/tools")}>
-           <span className="flex items-center gap-2"><Brain className="w-4 h-4" /> Tools</span>
-        </Link>
-      </nav>
-    );
-};
-  
-
 export function Header() {
   const { focus, setFocus, isLoaded } = useTrainingFocus();
   const { setOverride } = useTrainingOverride();
@@ -79,7 +53,7 @@ export function Header() {
   const { Icon, label } = focusInfo[focus] || focusInfo.neutral;
 
   return (
-    <header className="px-4 sm:px-6 md:px-8 py-4 border-b bg-card sticky top-0 z-20">
+    <header className="px-4 sm:px-6 md:px-8 py-2 border-b bg-card">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
         <TooltipProvider>
             <div className="flex-1 flex justify-start items-center gap-1">
@@ -139,8 +113,9 @@ export function Header() {
             </div>
         </TooltipProvider>
 
-        <div className="flex items-center gap-3">
-             <NavTabs />
+        <div className="flex items-center gap-2">
+             <Brain className="h-7 w-7 text-primary" />
+             <h1 className="text-xl font-bold text-foreground tracking-tight">Cognitive Crucible</h1>
         </div>
         
         <TooltipProvider>
