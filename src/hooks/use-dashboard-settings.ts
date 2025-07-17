@@ -14,11 +14,6 @@ const defaultSettings = {
   performanceInsights: true,
   weakAreaRecommendations: true,
   adaptiveDifficulty: true,
-  cognitiveCalendar: true,
-  moodTracker: false,
-  effortTracker: false,
-  journal: true,
-  timeTools: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;
@@ -35,7 +30,9 @@ export const useDashboardSettings = () => {
       const savedSettingsStr = window.localStorage.getItem(DASHBOARD_SETTINGS_KEY);
       if (savedSettingsStr) {
         const savedSettings = JSON.parse(savedSettingsStr);
-        setSettings({ ...defaultSettings, ...savedSettings });
+        // Ensure all keys from defaultSettings are present
+        const mergedSettings = { ...defaultSettings, ...savedSettings };
+        setSettings(mergedSettings);
       } else {
         setSettings(defaultSettings);
       }
@@ -56,15 +53,11 @@ export const useDashboardSettings = () => {
   }, []);
 
   const toggleSetting = useCallback((component: DashboardComponent) => {
-    setSettings(prevSettings => {
-        const newSettings = {
-            ...prevSettings,
-            [component]: !prevSettings[component],
-        };
-        saveSettings(newSettings);
-        return newSettings;
+    saveSettings({
+      ...settings,
+      [component]: !settings[component],
     });
-  }, [saveSettings]);
+  }, [settings, saveSettings]);
 
   const resetSettings = useCallback(() => {
     saveSettings(defaultSettings);
@@ -84,9 +77,4 @@ export const componentLabels: Record<DashboardComponent, string> = {
   performanceInsights: 'Performance Insights',
   weakAreaRecommendations: 'Weak Area Targeting',
   adaptiveDifficulty: 'Adaptive Difficulty',
-  cognitiveCalendar: 'Training Log',
-  moodTracker: 'Mood Tracker',
-  effortTracker: 'Focus / Effort Tracker',
-  journal: 'Journal Module',
-  timeTools: 'Clock Tools Card',
 };

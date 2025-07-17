@@ -101,8 +101,8 @@ const JournalSidebarComponent = ({
         });
     }, [entries, searchQuery, sortMode]);
 
-    const groupEntriesByDate = (entries: JournalEntry[]) => {
-      return entries.reduce((acc, entry) => {
+    const groupEntriesByDate = (entriesToSort: JournalEntry[]) => {
+      return entriesToSort.reduce((acc, entry) => {
         const date = entry.date;
         if (!acc[date]) {
           acc[date] = [];
@@ -316,7 +316,6 @@ const JournalSidebarComponent = ({
             </div>
         </div>
     );
-}
+};
 
 export const JournalSidebar = memo(JournalSidebarComponent);
-JournalSidebar.displayName = 'JournalSidebar';

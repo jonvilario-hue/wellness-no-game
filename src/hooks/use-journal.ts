@@ -1,12 +1,10 @@
 
-
 'use client';
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { JournalCategory } from '@/lib/journal-config';
 import { allHabits as defaultHabits, journalConfig } from '@/lib/journal-config';
-import type { LucideIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export type MoodState = number | null; // 0-4 scale, null if not set
@@ -317,22 +315,12 @@ export const useJournal = create<JournalState>()(
 // Custom hook to safely access the store's state only after hydration
 export const useHydratedJournalStore = () => {
     const store = useJournal();
-    const [hydrated, setHydrated] = useState(store.hasHydrated);
-
+    // This trick ensures that we render the initial state on the server,
+    // and then the hydrated state on the client.
+    const [hasHydrated, setHasHydrated] = useState(false);
     useEffect(() => {
-        const unsub = useJournal.subscribe((state, prevState) => {
-            if (state.hasHydrated && !prevState.hasHydrated) {
-                setHydrated(true);
-            }
-        });
-        
-        // Initial check in case hydration already happened
-        if (useJournal.getState().hasHydrated) {
-            setHydrated(true);
-        }
-
-        return unsub;
+        setHasHydrated(true);
     }, []);
 
-    return { ...store, hasHydrated: hydrated };
+    return hasHydrated ? store : { ...store, hasHydrated: false, entries: [], habits: [], completedHabits: {}, trashedEntries: [], selectedEntry: null };
 };

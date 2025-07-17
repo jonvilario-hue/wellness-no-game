@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Target, PlusCircle, Trash2, Edit, TrendingUp, Zap, Calendar, Check } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { useHydratedJournalStore as useJournal, type Habit } from '@/hooks/use-journal';
 import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
@@ -39,7 +39,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
 
-const HabitItem = ({ 
+const HabitItemComponent = ({ 
   habit, 
   isDone, 
   onToggle,
@@ -100,6 +100,7 @@ const HabitItem = ({
     </div>
   );
 };
+const HabitItem = memo(HabitItemComponent);
 
 const HabitDialog = ({
     open,
@@ -193,22 +194,22 @@ export function HabitsView() {
       }
     }, [todaysHabits, toggleHabitForDay, today, toast]);
     
-    const handleOpenDialog = (habit: Habit | null) => {
+    const handleOpenDialog = useCallback((habit: Habit | null) => {
         setHabitToEdit(habit);
         setIsDialogOpen(true);
-    };
+    }, []);
 
-    const handleSaveHabit = (habitData: Omit<Habit, 'id' | 'icon'>, id?: HabitId) => {
+    const handleSaveHabit = useCallback((habitData: Omit<Habit, 'id' | 'icon'>, id?: HabitId) => {
         if(id) {
             updateHabit(id, habitData);
         } else {
             addHabit(habitData);
         }
-    };
+    }, [updateHabit, addHabit]);
     
-    const handleDeleteHabit = (id: HabitId) => {
+    const handleDeleteHabit = useCallback((id: HabitId) => {
         removeHabit(id);
-    };
+    }, [removeHabit]);
     
     const habitsByCategory = habitCategories.map(categoryKey => {
       const category = journalConfig[categoryKey];

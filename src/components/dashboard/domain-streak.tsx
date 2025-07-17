@@ -32,7 +32,7 @@ const DomainStreakComponent = ({ domainKey, name, streak, isTop }: DomainStreakP
               <div className={cn("p-1.5 rounded-md", isTop ? 'bg-primary/20' : 'bg-background/50')}>
                 <Icon className={cn("w-5 h-5", isTop ? 'text-primary' : 'text-muted-foreground')} />
               </div>
-              <span className={cn("font-medium", isTop && 'text-primary-foreground font-semibold')}>{name}</span>
+              <span className={cn("font-medium", isTop ? 'text-foreground font-semibold' : '')}>{name}</span>
             </div>
             <div className="flex items-center gap-1 font-bold text-lg">
               <Flame className={cn('w-5 h-5', isTop ? 'text-amber-400' : 'text-muted-foreground/80')} />

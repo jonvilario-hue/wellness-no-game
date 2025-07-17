@@ -53,23 +53,23 @@ function StopwatchInstance({
         };
     }, [stopwatch.isActive, stopwatch.id, stopwatch.startTime, updateStopwatch]);
 
-    const handleStartPause = () => {
+    const handleStartPause = useCallback(() => {
         if(stopwatch.isActive) {
             updateStopwatch(stopwatch.id, { isActive: false });
         } else {
             updateStopwatch(stopwatch.id, { isActive: true, startTime: Date.now() - stopwatch.time });
         }
-    };
+    }, [stopwatch.isActive, stopwatch.id, stopwatch.time, updateStopwatch]);
     
-    const handleReset = () => {
+    const handleReset = useCallback(() => {
         updateStopwatch(stopwatch.id, { isActive: false, time: 0, laps: [] });
-    };
+    }, [stopwatch.id, updateStopwatch]);
 
-    const handleLap = () => {
+    const handleLap = useCallback(() => {
         if (stopwatch.isActive) {
             updateStopwatch(stopwatch.id, { laps: [...stopwatch.laps, stopwatch.time] });
         }
-    };
+    }, [stopwatch.isActive, stopwatch.id, stopwatch.laps, stopwatch.time, updateStopwatch]);
 
     return (
         <Card className="w-full">
@@ -122,7 +122,7 @@ export function Stopwatch() {
     const [stopwatches, setStopwatches] = useState<StopwatchState[]>([]);
     const nextId = useRef(1);
 
-    const addStopwatch = () => {
+    const addStopwatch = useCallback(() => {
         setStopwatches(prev => {
             const existingNumbers = prev.map(sw => {
                 const match = sw.label.match(/#(\d+)/);
@@ -142,11 +142,11 @@ export function Stopwatch() {
                 label: `Stopwatch #${newNumber}`
             }];
         });
-    };
+    }, []);
 
-    const removeStopwatch = (id: number) => {
+    const removeStopwatch = useCallback((id: number) => {
         setStopwatches(prev => prev.filter(sw => sw.id !== id));
-    };
+    }, []);
 
     const updateStopwatch = useCallback((id: number, newState: Partial<StopwatchState>) => {
         setStopwatches(prev => prev.map(sw => sw.id === id ? { ...sw, ...newState } : sw));
@@ -156,8 +156,7 @@ export function Stopwatch() {
         if (stopwatches.length === 0) {
             addStopwatch();
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [stopwatches.length, addStopwatch]);
 
 
     return (

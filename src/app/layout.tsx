@@ -8,6 +8,7 @@ import { TrainingFocusProvider } from '@/hooks/use-training-focus';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
+import { TrainingOverrideProvider } from '@/hooks/use-training-override';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,15 +30,17 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning={true}>
         <ThemeProvider>
           <TrainingFocusProvider>
-            <div className="sticky top-0 z-20">
-              <Header />
-              <PageNav />
-            </div>
-            <MotivationalMessage />
-            <main className="flex-1 p-4 sm:p-6 md:p-8">
-                {children}
-            </main>
-            <Toaster />
+            <TrainingOverrideProvider>
+              <div className="sticky top-0 z-20">
+                <Header />
+                <PageNav />
+              </div>
+              <MotivationalMessage />
+              <main className="flex-1 p-4 sm:p-6 md:p-8">
+                  {children}
+              </main>
+              <Toaster />
+            </TrainingOverrideProvider>
           </TrainingFocusProvider>
         </ThemeProvider>
       </body>
