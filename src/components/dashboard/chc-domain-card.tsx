@@ -68,7 +68,7 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
   
   const perfData = isLoaded ? performance[domain.key] : null;
   const scoreData = perfData ? perfData[modeToDisplay] : null;
-  const score = scoreData?.score ?? 0;
+  const score = Math.round(scoreData?.score ?? 0);
   const trend = scoreData?.trend ?? 0;
   
   const { Icon: TrendIcon, color: trendColor, text: trendText } = getTrendInfo(trend);
@@ -119,7 +119,7 @@ const ChcDomainCardComponent = ({ domain }: ChcDomainCardProps) => {
                       <p className="font-bold capitalize">{modeToDisplay} Mode</p>
                     </TooltipContent>
                   </Tooltip>
-                <span className="text-sm font-bold text-primary">{Math.round(score)}</span>
+                <span className="text-sm font-bold text-primary">{score}</span>
               </div>
               <Progress value={score} />
             </div>

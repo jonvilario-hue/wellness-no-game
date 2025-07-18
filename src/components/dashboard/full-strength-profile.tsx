@@ -48,7 +48,7 @@ export function FullStrengthProfile() {
     return {
       subject: domain.key,
       name: domain.name,
-      score: score > 0 ? score : Math.random() * 20 + 20, // Use real score or fallback for display
+      score: score > 0 ? score : Math.round(Math.random() * 20 + 20), // Use real score or fallback for display
       fullMark: 100,
     };
   });
