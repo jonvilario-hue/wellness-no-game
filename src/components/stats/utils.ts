@@ -6,7 +6,28 @@ import type { Card, Deck } from "@/types/flashcards";
 // --- Main Data Processing Function ---
 
 export function processReviewData(reviews: ReviewEvent[], cards: Card[], decks: Deck[]) {
-  const sessions = generateMockSessions(reviews, decks);
+  const sessions: StudySession[] = Object.values(
+    reviews.reduce((acc, review) => {
+      const date = new Date(review.timestamp).toISOString().split('T')[0];
+      if (!acc[date]) {
+        acc[date] = {
+          date: date,
+          deckName: decks.find(d => d.id === review.deckId)?.name || 'Mixed',
+          cardsStudied: 0,
+          correct: 0,
+          total: 0,
+          duration: 0, // Duration would need a more complex calculation
+        };
+      }
+      acc[date].cardsStudied++;
+      acc[date].total++;
+      if (review.rating !== 'again') {
+        acc[date].correct++;
+      }
+      return acc;
+    }, {} as Record<string, StudySession>)
+  ).sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0,3);
+
   const reviewQuality = getReviewQuality(reviews);
   const deckEngagement = getDeckEngagement(reviews, decks);
   const cardDifficulty = getCardDifficultyIndex(reviews, cards);
@@ -82,24 +103,6 @@ export function getStreak(dates: string[]): { current: number, longest: number }
 }
 
 // --- Mock Data Generation and Processing ---
-
-function generateMockSessions(reviews: ReviewEvent[], decks: Deck[]): StudySession[] {
-    const sessionsByDay: Record<string, StudySession> = {};
-    reviews.forEach(review => {
-        const date = new Date(review.timestamp).toISOString().split('T')[0];
-        const deckName = decks.find(d => d.id === review.deckId)?.name || 'Unknown Deck';
-        if (!sessionsByDay[date]) {
-            sessionsByDay[date] = { date, deckName, cardsStudied: 0, correct: 0, total: 0, duration: 0 };
-        }
-        sessionsByDay[date].cardsStudied++;
-        sessionsByDay[date].total++;
-        if (review.rating !== 'again') {
-            sessionsByDay[date].correct++;
-        }
-    });
-
-    return Object.values(sessionsByDay).sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 3);
-}
 
 function getReviewQuality(reviews: ReviewEvent[]): ReviewStats {
     return reviews.reduce((acc, review) => {
@@ -194,7 +197,8 @@ function getTagPerformance(reviews: ReviewEvent[]): TagPerformanceData[] {
 /********************************************************************************
  * FOR TESTING PURPOSES ONLY
  * This function generates mock review data to populate the stats page
- * when no real user data is present.
+ * when no real user data is present. This is explicitly for testing and
+ * should not be removed in general cleanup tasks.
  ********************************************************************************/
 export function generateMockTestingReviews(cards: Card[], decks: Deck[]): ReviewEvent[] {
   if (cards.length === 0 || decks.length === 0) return [];

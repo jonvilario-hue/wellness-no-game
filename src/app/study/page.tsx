@@ -175,15 +175,18 @@ function StatsView() {
   );
 }
 
-const PairedTool = ({ tool, tracker }: { tool: React.ReactNode, tracker: React.ReactNode }) => (
-    <Card>
-        {tool}
-        <Separator className="my-4" />
-        <div className="px-6 pb-6">
-            {tracker}
-        </div>
-    </Card>
-);
+const toolTrackerPairs = [
+    { tool: <SelfQuizCreator />, tracker: <QuizAccuracyTracker /> },
+    { tool: <CornellNotesEditor />, tracker: <RetentionRateTracker /> },
+    { tool: <MindMapTool />, tracker: <MindMapActivityTracker /> },
+    { tool: <SmartGoalWizard />, tracker: <GoalCompletionTracker /> },
+    { tool: <TeachBackRecorder />, tracker: <FeynmanTeachBackPerformanceTracker /> },
+    { tool: <ExamSimulator />, tracker: <ExamReadinessTracker /> },
+    { tool: <InterleavingPlanner />, tracker: <InterleavingSessionStats /> },
+    { tool: <SmartHighlightExporter />, tracker: <ConsistencyStreakTracker /> },
+    { tool: <StudyBreakOptimizer />, tracker: <StudyTimeTracker /> },
+    { tool: <DistractionLog />, tracker: <FocusDistractionRatioTracker /> },
+];
 
 export default function StudyPage() {
   return (
@@ -214,16 +217,15 @@ export default function StudyPage() {
                 </TabsContent>
                 <TabsContent value="study-tools" className="mt-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <PairedTool tool={<SelfQuizCreator />} tracker={<QuizAccuracyTracker />} />
-                        <PairedTool tool={<CornellNotesEditor />} tracker={<RetentionRateTracker />} />
-                        <PairedTool tool={<MindMapTool />} tracker={<MindMapActivityTracker />} />
-                        <PairedTool tool={<SmartGoalWizard />} tracker={<GoalCompletionTracker />} />
-                        <PairedTool tool={<TeachBackRecorder />} tracker={<FeynmanTeachBackPerformanceTracker />} />
-                        <PairedTool tool={<ExamSimulator />} tracker={<ExamReadinessTracker />} />
-                        <PairedTool tool={<InterleavingPlanner />} tracker={<InterleavingSessionStats />} />
-                        <PairedTool tool={<SmartHighlightExporter />} tracker={<ConsistencyStreakTracker />} />
-                        <PairedTool tool={<StudyBreakOptimizer />} tracker={<StudyTimeTracker />} />
-                        <PairedTool tool={<DistractionLog />} tracker={<FocusDistractionRatioTracker />} />
+                       {toolTrackerPairs.map((pair, index) => (
+                         <Card key={index}>
+                            {pair.tool}
+                            <Separator className="my-4" />
+                            <div className="px-6 pb-6">
+                                {pair.tracker}
+                            </div>
+                        </Card>
+                       ))}
                     </div>
                 </TabsContent>
                 <TabsContent value="guides" className="mt-6">
