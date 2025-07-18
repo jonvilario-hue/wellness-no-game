@@ -1,28 +1,33 @@
 
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ShieldAlert, ListChecks } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { ShieldAlert, ListChecks, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { AnimatePresence, motion } from "framer-motion";
 
 export function DistractionLog() {
   const [distractionInput, setDistractionInput] = useState('');
   const [loggedDistractions, setLoggedDistractions] = useState<string[]>([]);
-  const { toast } = useToast();
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+
+  useEffect(() => {
+    if (feedbackMessage) {
+      const timer = setTimeout(() => {
+        setFeedbackMessage('');
+      }, 2000); // Message visible for 2 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [feedbackMessage]);
 
   const handleLogDistraction = () => {
     if (!distractionInput.trim()) return;
 
     setLoggedDistractions(prev => [distractionInput.trim(), ...prev].slice(0, 5)); // Keep last 5
-    toast({
-      title: "Distraction Logged",
-      description: `"${distractionInput.trim()}" has been recorded.`,
-      variant: 'success'
-    });
+    setFeedbackMessage(`"${distractionInput.trim()}" logged!`);
     setDistractionInput('');
   };
 
@@ -44,6 +49,21 @@ export function DistractionLog() {
                 onKeyDown={(e) => e.key === 'Enter' && handleLogDistraction()}
             />
             <Button onClick={handleLogDistraction}>Log</Button>
+        </div>
+        <div className="h-6 text-center">
+            <AnimatePresence>
+                {feedbackMessage && (
+                    <motion.p 
+                        key="feedback"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="text-sm font-semibold text-green-600 flex items-center justify-center gap-2"
+                    >
+                       <CheckCircle className="w-4 h-4" /> {feedbackMessage}
+                    </motion.p>
+                )}
+            </AnimatePresence>
         </div>
         {loggedDistractions.length > 0 && (
             <div className="space-y-2 pt-2">
