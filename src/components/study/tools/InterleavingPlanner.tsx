@@ -16,4 +16,8 @@ export function InterleavingPlanner() {
         </CardHeader>
       <CardContent className="space-y-4">
         <Input placeholder="Enter topics separated by commas..." />
-        <Button className="w
+        <Button className="w-full">Generate Plan</Button>
+      </CardContent>
+    </Card>
+  );
+}

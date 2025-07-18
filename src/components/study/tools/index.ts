@@ -7,4 +7,5 @@ export { TeachBackRecorder } from './TeachBackRecorder';
 export { ExamSimulator } from './ExamSimulator';
 export { InterleavingPlanner } from './InterleavingPlanner';
 export { SmartHighlightExporter } from './SmartHighlightExporter';
-export { StudyBreakOptimizer } from
+export { StudyBreakOptimizer } from './StudyBreakOptimizer';
+export { DistractionLog } from './DistractionLog';

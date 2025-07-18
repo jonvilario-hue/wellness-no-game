@@ -18,4 +18,8 @@ export function CornellNotesEditor() {
         <Textarea placeholder="Main Notes..." rows={4}/>
         <Textarea placeholder="Questions/Keywords..." rows={2}/>
         <Textarea placeholder="Summary..." rows={2}/>
-        <Button className
+        <Button className="w-full mt-2">Save Notes</Button>
+      </CardContent>
+    </Card>
+  );
+}

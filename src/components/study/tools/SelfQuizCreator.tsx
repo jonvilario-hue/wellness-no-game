@@ -11,11 +11,13 @@ export function SelfQuizCreator() {
         <CardTitle className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-primary"/>
             Self-Quiz Creator
-        </CardTitle>
+        </Title>
         <CardDescription>Enter key points from your notes to generate quiz questions.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Textarea placeholder="Paste key points here..." rows={6}/>
         <Button className="w-full">Create Quiz</Button>
       </CardContent>
-    </Card
+    </Card>
+  );
+}

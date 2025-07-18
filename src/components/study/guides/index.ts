@@ -8,4 +8,4 @@ export { FeynmanTechniqueGuide } from './FeynmanTechniqueGuide';
 export { ExamPreparationGuide } from './ExamPreparationGuide';
 export { EffectiveMindMappingGuide } from './EffectiveMindMappingGuide';
 export { ActiveReadingStrategiesGuide } from './ActiveReadingStrategiesGuide';
-export {
+export { TimeManagementGuide } from './TimeManagementGuide';

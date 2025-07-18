@@ -8,4 +8,4 @@ export { MindMapActivityTracker } from './MindMapActivityTracker';
 export { FocusDistractionRatioTracker } from './FocusDistractionRatioTracker';
 export { FeynmanTeachBackPerformanceTracker } from './FeynmanTeachBackPerformanceTracker';
 export { ExamReadinessTracker } from './ExamReadinessTracker';
-export { ConsistencyStreakTracker } from
+export { ConsistencyStreakTracker } from './ConsistencyStreakTracker';
