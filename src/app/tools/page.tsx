@@ -49,7 +49,7 @@ export default function ToolsPage() {
         <div className="space-y-8">
           <Card>
             <CardHeader>
-              <CardTitle>Productivity Tools</CardTitle>
+              <CardTitle>Productivity Tools & Reflections</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <JournalModule />

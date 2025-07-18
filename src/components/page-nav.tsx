@@ -25,7 +25,7 @@ export const PageNav = () => {
             </Link>
             <Link href="/tools" className={linkClass("/tools")}>
                 <ClipboardCheck className="w-4 h-4" />
-                <span>Tools</span>
+                <span>Reflections</span>
             </Link>
             <Link href="/study" className={linkClass("/study")}>
                 <GraduationCap className="w-4 h-4" />
