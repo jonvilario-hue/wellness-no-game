@@ -213,63 +213,64 @@ export default function StudyPage() {
       </div>
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="mx-auto max-w-7xl space-y-6">
+        <div className="mx-auto max-w-7xl space-y-6">
+          <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
             <div className="flex justify-center items-center text-center mb-8 relative">
-                <div className="flex flex-col items-center">
-                    <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
-                    <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
-                    <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
-                </div>
-                 <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2">
-                      <ChevronDown className="h-6 w-6 transition-transform duration-300 data-[state=open]:rotate-180" />
-                      <span className="sr-only">Toggle</span>
-                    </Button>
-                  </CollapsibleTrigger>
+              <CollapsibleContent className="flex flex-col items-center">
+                <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
+                <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
+                <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
+              </CollapsibleContent>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2">
+                  <ChevronDown className="h-6 w-6 transition-transform duration-300 data-[state=open]:rotate-180" />
+                  <span className="sr-only">Toggle</span>
+                </Button>
+              </CollapsibleTrigger>
             </div>
-            <CollapsibleContent>
-             <Tabs defaultValue="decks" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="decks"><Layers className="mr-2 h-4 w-4" /> Decks & Stats</TabsTrigger>
-                    <TabsTrigger value="study-tools"><FlaskConical className="mr-2 h-4 w-4" /> Study Tools</TabsTrigger>
-                    <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" /> Guides</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="decks" className="mt-6 space-y-6">
-                    <FlashcardDecks />
-                    <Separator />
-                    <StatsView />
-                </TabsContent>
-                <TabsContent value="study-tools" className="mt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                       {toolTrackerPairs.map((pair, index) => (
-                         <Card key={index}>
-                            {pair.tool}
-                            <Separator className="my-4" />
-                            <div className="px-6 pb-6">
-                                {pair.tracker}
-                            </div>
-                        </Card>
-                       ))}
-                    </div>
-                </TabsContent>
-                <TabsContent value="guides" className="mt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <ActiveRecallGuide />
-                    <SpacedRepetitionGuide />
-                    <CornellNotesGuide />
-                    <InterleavingGuide />
-                    <SmartGoalSettingGuide />
-                    <FeynmanTechniqueGuide />
-                    <ExamPreparationGuide />
-                    <EffectiveMindMappingGuide />
-                    <ActiveReadingStrategiesGuide />
-                    <TimeManagementGuide />
-                    </div>
-                </TabsContent>
-            </Tabs>
-           </CollapsibleContent>
-        </Collapsible>
+          </Collapsible>
+          
+          <Tabs defaultValue="decks" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="decks"><Layers className="mr-2 h-4 w-4" /> Decks & Stats</TabsTrigger>
+              <TabsTrigger value="study-tools"><FlaskConical className="mr-2 h-4 w-4" /> Study Tools</TabsTrigger>
+              <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" /> Guides</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="decks" className="mt-6 space-y-6">
+              <FlashcardDecks />
+              <Separator />
+              <StatsView />
+            </TabsContent>
+            <TabsContent value="study-tools" className="mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 {toolTrackerPairs.map((pair, index) => (
+                   <Card key={index}>
+                      {pair.tool}
+                      <Separator className="my-4" />
+                      <div className="px-6 pb-6">
+                          {pair.tracker}
+                      </div>
+                  </Card>
+                 ))}
+              </div>
+            </TabsContent>
+            <TabsContent value="guides" className="mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ActiveRecallGuide />
+              <SpacedRepetitionGuide />
+              <CornellNotesGuide />
+              <InterleavingGuide />
+              <SmartGoalSettingGuide />
+              <FeynmanTechniqueGuide />
+              <ExamPreparationGuide />
+              <EffectiveMindMappingGuide />
+              <ActiveReadingStrategiesGuide />
+              <TimeManagementGuide />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </main>
     </>
   );
