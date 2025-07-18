@@ -5,7 +5,7 @@ import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, Book, BarChart3, FlaskConical, Target, GraduationCap, Layers, Library, Search, Play, FileText, Bookmark, Edit, Trash2, ChevronDown } from 'lucide-react';
+import { Brain, Book, BarChart3, FlaskConical, Target, GraduationCap, Layers, Library, Search, Play, FileText, Bookmark, Edit, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -216,17 +216,19 @@ export default function StudyPage() {
         <div className="mx-auto max-w-7xl space-y-6">
           <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="space-y-4">
             <div className="flex justify-between items-start">
-              <CollapsibleContent asChild>
-                  <div className="flex flex-col items-center text-center flex-grow">
-                      <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
-                      <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
-                      <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
-                  </div>
-              </CollapsibleContent>
+              <div className="flex-grow">
+                <CollapsibleContent asChild>
+                    <div className="flex flex-col items-center text-center">
+                        <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
+                        <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
+                        <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
+                    </div>
+                </CollapsibleContent>
+              </div>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="icon">
-                  <ChevronDown className="h-6 w-6 transition-transform duration-300 data-[state=open]:rotate-180" />
-                  <span className="sr-only">Toggle</span>
+                    {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
+                    <span className="sr-only">Toggle</span>
                 </Button>
               </CollapsibleTrigger>
             </div>
@@ -245,31 +247,45 @@ export default function StudyPage() {
               <StatsView />
             </TabsContent>
             <TabsContent value="study-tools" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                 {toolTrackerPairs.map((pair, index) => (
-                   <Card key={index}>
-                      {pair.tool}
-                      <Separator className="my-4" />
-                      <div className="px-6 pb-6">
-                          {pair.tracker}
-                      </div>
-                  </Card>
-                 ))}
-              </div>
+              <Card>
+                <CardHeader>
+                    <CardTitle>Study Tools & Techniques</CardTitle>
+                    <CardDescription>A suite of tools designed to enhance your learning process, paired with trackers to monitor their effectiveness.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {toolTrackerPairs.map((pair, index) => (
+                      <Card key={index} className="flex flex-col">
+                        <div className="flex-grow">
+                            {pair.tool}
+                        </div>
+                        <Separator className="my-4" />
+                        <div className="px-6 pb-6">
+                            {pair.tracker}
+                        </div>
+                    </Card>
+                    ))}
+                </CardContent>
+              </Card>
             </TabsContent>
             <TabsContent value="guides" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ActiveRecallGuide />
-              <SpacedRepetitionGuide />
-              <CornellNotesGuide />
-              <InterleavingGuide />
-              <SmartGoalSettingGuide />
-              <FeynmanTechniqueGuide />
-              <ExamPreparationGuide />
-              <EffectiveMindMappingGuide />
-              <ActiveReadingStrategiesGuide />
-              <TimeManagementGuide />
-              </div>
+              <Card>
+                <CardHeader>
+                    <CardTitle>Learning Guides</CardTitle>
+                    <CardDescription>Explore evidence-based strategies to optimize your study habits and improve long-term retention.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <ActiveRecallGuide />
+                    <SpacedRepetitionGuide />
+                    <CornellNotesGuide />
+                    <InterleavingGuide />
+                    <SmartGoalSettingGuide />
+                    <FeynmanTechniqueGuide />
+                    <ExamPreparationGuide />
+                    <EffectiveMindMappingGuide />
+                    <ActiveReadingStrategiesGuide />
+                    <TimeManagementGuide />
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>
