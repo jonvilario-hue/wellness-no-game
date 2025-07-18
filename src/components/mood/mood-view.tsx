@@ -100,12 +100,7 @@ const MoodLogger = () => {
     const handleQuickMoodSelect = useCallback((selectedMood: MoodState) => {
         setMood(selectedMood);
         updateEntry(todayEntry.id, { mood: selectedMood, moodNote: note });
-         toast({
-            title: '😃 Mood Saved',
-            description: 'Your mood for today has been logged.',
-            variant: 'success'
-        });
-    }, [todayEntry.id, note, updateEntry, toast]);
+    }, [todayEntry.id, note, updateEntry]);
 
 
     useEffect(() => {
