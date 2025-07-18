@@ -197,6 +197,16 @@ function StatsView() {
   );
 }
 
+const PairedTool = ({ tool, tracker }: { tool: React.ReactNode, tracker: React.ReactNode }) => (
+    <Card>
+        {tool}
+        <Separator className="my-4" />
+        <div className="px-6 pb-6">
+            {tracker}
+        </div>
+    </Card>
+);
+
 export default function StudyPage() {
   return (
     <>
@@ -213,11 +223,10 @@ export default function StudyPage() {
                 <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
             </div>
              <Tabs defaultValue="decks" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="decks"><Layers className="mr-2 h-4 w-4" /> Decks & Stats</TabsTrigger>
                     <TabsTrigger value="study-tools"><FlaskConical className="mr-2 h-4 w-4" /> Study Tools</TabsTrigger>
                     <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" /> Guides</TabsTrigger>
-                    <TabsTrigger value="trackers"><BarChart3 className="mr-2 h-4 w-4" /> Trackers</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="decks" className="mt-6 space-y-6">
@@ -227,16 +236,16 @@ export default function StudyPage() {
                 </TabsContent>
                 <TabsContent value="study-tools" className="mt-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <SelfQuizCreator />
-                        <CornellNotesEditor />
-                        <MindMapTool />
-                        <SmartGoalWizard />
-                        <TeachBackRecorder />
-                        <ExamSimulator />
-                        <InterleavingPlanner />
-                        <SmartHighlightExporter />
-                        <StudyBreakOptimizer />
-                        <DistractionLog />
+                        <PairedTool tool={<SelfQuizCreator />} tracker={<QuizAccuracyTracker />} />
+                        <PairedTool tool={<CornellNotesEditor />} tracker={<RetentionRateTracker />} />
+                        <PairedTool tool={<MindMapTool />} tracker={<MindMapActivityTracker />} />
+                        <PairedTool tool={<SmartGoalWizard />} tracker={<GoalCompletionTracker />} />
+                        <PairedTool tool={<TeachBackRecorder />} tracker={<FeynmanTeachBackPerformanceTracker />} />
+                        <PairedTool tool={<ExamSimulator />} tracker={<ExamReadinessTracker />} />
+                        <PairedTool tool={<InterleavingPlanner />} tracker={<InterleavingSessionStats />} />
+                        <PairedTool tool={<SmartHighlightExporter />} tracker={<ConsistencyStreakTracker />} />
+                        <PairedTool tool={<StudyBreakOptimizer />} tracker={<StudyTimeTracker />} />
+                        <PairedTool tool={<DistractionLog />} tracker={<FocusDistractionRatioTracker />} />
                     </div>
                 </TabsContent>
                 <TabsContent value="guides" className="mt-6">
@@ -251,20 +260,6 @@ export default function StudyPage() {
                     <EffectiveMindMappingGuide />
                     <ActiveReadingStrategiesGuide />
                     <TimeManagementGuide />
-                    </div>
-                </TabsContent>
-                <TabsContent value="trackers" className="mt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <StudyTimeTracker />
-                    <RetentionRateTracker />
-                    <GoalCompletionTracker />
-                    <QuizAccuracyTracker />
-                    <InterleavingSessionStats />
-                    <MindMapActivityTracker />
-                    <FocusDistractionRatioTracker />
-                    <FeynmanTeachBackPerformanceTracker />
-                    <ExamReadinessTracker />
-                    <ConsistencyStreakTracker />
                     </div>
                 </TabsContent>
             </Tabs>

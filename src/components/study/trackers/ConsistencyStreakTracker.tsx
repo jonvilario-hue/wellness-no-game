@@ -1,16 +1,16 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ConsistencyStreakTracker() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Consistency Streak</CardTitle>
+    <div>
+      <CardHeader className="p-0 mb-2">
+        <CardTitle className="text-base">Consistency Streak</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <p className="text-3xl font-bold">14 days</p>
         <p className="text-sm text-muted-foreground">Consecutive days with study activity</p>
       </CardContent>
-    </Card>
+    </div>
   );
 }
