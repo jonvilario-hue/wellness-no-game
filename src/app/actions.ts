@@ -1,8 +1,8 @@
 
 'use server';
 
-import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit } from '@/ai/flows';
-import type { AdaptDifficultyInput, TrainingRecommendationInput, WeakAreaRecommendationInput } from '@/ai/flows';
+import { weakAreaRecommendation, adaptDifficulty, getTrainingRecommendation, getDailyCircuit, generateQuiz } from '@/ai/flows';
+import type { AdaptDifficultyInput, TrainingRecommendationInput, WeakAreaRecommendationInput, QuizInput } from '@/ai/flows';
 
 export async function getWeakAreaRecommendationsAction(performanceData: WeakAreaRecommendationInput['performanceData']) {
   try {
@@ -50,6 +50,15 @@ export async function getDailyCircuitAction() {
     return result;
   } catch (error) {
     console.error('Error getting daily circuit:', error);
+    return null;
+  }
+}
+
+export async function generateQuizAction(input: QuizInput) {
+  try {
+    return await generateQuiz(input);
+  } catch (error) {
+    console.error('Error generating quiz:', error);
     return null;
   }
 }

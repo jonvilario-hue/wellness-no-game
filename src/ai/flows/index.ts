@@ -6,3 +6,5 @@ export { getTrainingRecommendation } from './training-recommendation-flow';
 export type { TrainingRecommendationInput, TrainingRecommendationOutput } from './training-recommendation-flow';
 export { getDailyCircuit } from './daily-circuit-flow';
 export type { DailyCircuitOutput } from './daily-circuit-flow';
+export { generateQuiz } from './quiz-flow';
+export type { QuizInput, QuizOutput } from './quiz-flow';
