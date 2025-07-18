@@ -29,7 +29,7 @@ export const PageNav = () => {
             </Link>
             <Link href="/study" className={linkClass("/study")}>
                 <GraduationCap className="w-4 h-4" />
-                <span>Study</span>
+                <span>Study Hub</span>
             </Link>
             <Link href="/library" className={linkClass("/library")}>
                 <Library className="w-4 h-4" />
