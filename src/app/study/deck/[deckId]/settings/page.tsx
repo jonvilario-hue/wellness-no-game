@@ -63,7 +63,7 @@ export default function DeckSettingsPage() {
       description: `Settings for "${deck?.name}" have been updated.`,
       variant: 'success',
     });
-    router.push(`/flashcards/deck/${deckId}`);
+    router.push(`/study/deck/${deckId}`);
   };
 
   if (!deck) {
@@ -75,7 +75,7 @@ export default function DeckSettingsPage() {
         <div className="text-center py-12">
             <h1 className="text-2xl font-bold">The Default deck has no settings.</h1>
             <Button asChild variant="link">
-            <Link href={`/flashcards/deck/default`}>Return to Deck</Link>
+            <Link href={`/study/deck/default`}>Return to Deck</Link>
             </Button>
       </div>
      )
@@ -86,7 +86,7 @@ export default function DeckSettingsPage() {
       <div className="flex justify-between items-center">
         <div>
           <Button asChild variant="outline" className="mb-4">
-            <Link href={`/flashcards/deck/${deckId}`}><ArrowLeft className="mr-2 h-4 w-4" /> Back to Deck</Link>
+            <Link href={`/study/deck/${deckId}`}><ArrowLeft className="mr-2 h-4 w-4" /> Back to Deck</Link>
           </Button>
           <h1 className="text-3xl font-bold">Deck Settings: {deck.name}</h1>
           <p className="text-muted-foreground">Customize the learning behavior for this deck.</p>
@@ -127,7 +127,7 @@ export default function DeckSettingsPage() {
             <CardHeader>
                 <CardTitle>Reviews</CardTitle>
                 <CardDescription>Control the maximum number of reviews.</CardDescription>
-            </CardHeader>
+            </Header>
             <CardContent>
                  <div>
                     <Label htmlFor="maxReviewsPerDay">Maximum reviews/day</Label>

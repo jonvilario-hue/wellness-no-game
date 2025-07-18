@@ -45,7 +45,7 @@ export default function DeckPage() {
   
   const handleDeleteDeck = () => {
     deleteDeck(deckId);
-    router.push('/flashcards');
+    router.push('/study');
   };
 
   if (!deck) {
@@ -53,7 +53,7 @@ export default function DeckPage() {
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold">Deck not found</h1>
         <Button asChild variant="link">
-          <Link href="/flashcards">Return to Decks</Link>
+          <Link href="/study">Return to Study Hub</Link>
         </Button>
       </div>
     );
@@ -68,14 +68,14 @@ export default function DeckPage() {
       <div className="flex justify-between items-start">
         <div>
           <Button asChild variant="outline" className="mb-4">
-            <Link href="/flashcards"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Decks</Link>
+            <Link href="/study"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Study Hub</Link>
           </Button>
           <h1 className="text-3xl font-bold">{deck.name}</h1>
           <p className="text-muted-foreground">{deck.description}</p>
         </div>
         <div className="flex gap-2">
             <Button asChild variant="secondary" disabled={deck.id === 'default'}>
-                <Link href={`/flashcards/deck/${deckId}/settings`}>
+                <Link href={`/study/deck/${deckId}/settings`}>
                     <Settings className="mr-2 h-4 w-4" /> Deck Settings
                 </Link>
             </Button>
@@ -157,7 +157,7 @@ export default function DeckPage() {
                 </AlertDialog>
             </div>
             <Button asChild size="lg" disabled={dueInDeck === 0}>
-                <Link href={`/flashcards/study?deckId=${deckId}`}>
+                <Link href={`/study/session?deckId=${deckId}`}>
                     <Play className="mr-2 h-4 w-4" />
                     Study This Deck ({dueInDeck})
                 </Link>

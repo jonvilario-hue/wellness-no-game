@@ -46,7 +46,7 @@ export function FlashcardDecks() {
                         <PlusCircle className="mr-2 h-4 w-4" /> Create Deck
                     </Button>
                     <Button asChild disabled={totalDue === 0}>
-                        <Link href="/flashcards/study">
+                        <Link href="/study/session">
                             <Play className="mr-2 h-4 w-4" /> Study All ({totalDue})
                         </Link>
                     </Button>
@@ -58,7 +58,7 @@ export function FlashcardDecks() {
                 {decks.map(deck => {
                 const { total, due } = getDeckStats(deck.id);
                 return (
-                    <Link key={deck.id} href={`/flashcards/deck/${deck.id}`}>
+                    <Link key={deck.id} href={`/study/deck/${deck.id}`}>
                         <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-300 hover:border-primary/50">
                         <CardHeader>
                             <CardTitle>{deck.name}</CardTitle>

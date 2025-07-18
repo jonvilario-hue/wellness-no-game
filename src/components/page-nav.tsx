@@ -27,10 +27,6 @@ export const PageNav = () => {
                 <ClipboardCheck className="w-4 h-4" />
                 <span>Tools</span>
             </Link>
-             <Link href="/flashcards" className={linkClass("/flashcards")}>
-                <Layers className="w-4 h-4" />
-                <span>Flashcards</span>
-            </Link>
             <Link href="/study" className={linkClass("/study")}>
                 <GraduationCap className="w-4 h-4" />
                 <span>Study</span>

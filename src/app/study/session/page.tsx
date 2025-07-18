@@ -22,7 +22,7 @@ const renderCloze = (text: string, reveal: boolean) => {
   return <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: clozeContent }} />;
 };
 
-export default function StudyPage() {
+export default function StudySessionPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const deckId = searchParams.get('deckId');
@@ -102,7 +102,7 @@ export default function StudyPage() {
         <h1 className="text-3xl font-bold mb-2">Study Session Complete!</h1>
         <p className="text-muted-foreground mb-6">You've reviewed all due cards for this session. Great work!</p>
         <Button asChild>
-          <Link href="/flashcards">Back to Decks</Link>
+          <Link href="/study">Back to Study Hub</Link>
         </Button>
       </div>
     );
@@ -149,7 +149,7 @@ export default function StudyPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-4">
         <Button asChild variant="outline">
-          <Link href={deckId ? `/flashcards/deck/${deckId}` : '/flashcards'}>
+          <Link href={deckId ? `/study/deck/${deckId}` : '/study'}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Exit Session
           </Link>
         </Button>
