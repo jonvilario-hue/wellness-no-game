@@ -74,7 +74,8 @@ export function getStreak(dates: string[]): { current: number, longest: number }
     currentStreak = 1;
     for (let i = 0; i < uniqueDates.length - 1; i++) {
         const diff = uniqueDates[i].getTime() - uniqueDates[i+1].getTime();
-        if (diff === 24 * 60 * 60 * 1000) {
+        // Check for 24 hours in milliseconds
+        if (diff > 0 && diff <= 24 * 60 * 60 * 1000 * 1.5) { // Allow for some fuzziness
             currentStreak++;
         } else {
             break;
@@ -89,7 +90,7 @@ export function getStreak(dates: string[]): { current: number, longest: number }
   }
   for (let i = 0; i < uniqueDates.length - 1; i++) {
       const diff = uniqueDates[i].getTime() - uniqueDates[i+1].getTime();
-      if (diff === 24 * 60 * 60 * 1000) {
+       if (diff > 0 && diff <= 24 * 60 * 60 * 1000 * 1.5) {
           tempStreak++;
       } else {
           tempStreak = 1;
@@ -191,37 +192,4 @@ function getTagPerformance(reviews: ReviewEvent[]): TagPerformanceData[] {
     lapses: data.lapses,
     reviews: data.total
   })).sort((a, b) => b.reviews - a.reviews);
-}
-
-
-/********************************************************************************
- * FOR TESTING PURPOSES ONLY
- * This function generates mock review data to populate the stats page
- * when no real user data is present. This is explicitly for testing and
- * should not be removed in general cleanup tasks.
- ********************************************************************************/
-export function generateMockTestingReviews(cards: Card[], decks: Deck[]): ReviewEvent[] {
-  if (cards.length === 0 || decks.length === 0) return [];
-  
-  const reviews: ReviewEvent[] = [];
-  const ratings: ReviewEvent['rating'][] = ['easy', 'good', 'good', 'hard', 'good', 'again', 'easy'];
-
-  for (let i = 0; i < 50; i++) {
-    const card = cards[i % cards.length];
-    const rating = ratings[i % ratings.length];
-    const date = new Date();
-    date.setDate(date.getDate() - (i % 20)); // Reviews over the last 20 days
-    
-    reviews.push({
-      cardId: card.id,
-      deckId: card.deckId,
-      tag: card.tags?.[0],
-      timestamp: date.toISOString(),
-      rating: rating,
-      ease: 2.5 + (Math.random() - 0.5) * 0.2,
-      interval: Math.floor(Math.random() * 10) + 1,
-      lapses: rating === 'again' ? 1 : 0
-    });
-  }
-  return reviews;
 }

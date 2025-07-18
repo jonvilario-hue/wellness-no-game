@@ -39,8 +39,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { FlashcardDecks } from '@/components/flashcards/flashcard-decks';
-import { processReviewData, generateMockTestingReviews } from '@/components/stats/utils';
-import type { ReviewEvent } from '@/types/stats';
+import { processReviewData } from '@/components/stats/utils';
 import { StudySessions } from '@/components/stats/StudySessions';
 import { ReviewQuality } from '@/components/stats/ReviewQuality';
 import { RetentionCurve } from '@/components/stats/RetentionCurve';
@@ -58,9 +57,8 @@ function StatsView() {
     const { cards, decks } = useFlashcardStore();
 
     const stats = useMemo(() => {
-        const reviewData = reviews.length > 0 ? reviews : generateMockTestingReviews(cards, decks);
-        if(reviewData.length === 0) return null;
-        return processReviewData(reviewData, cards, decks);
+        if (reviews.length === 0) return null;
+        return processReviewData(reviews, cards, decks);
     }, [reviews, cards, decks]);
 
   if (!stats) {
@@ -214,9 +212,8 @@ export default function StudyPage() {
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-7xl space-y-6">
-          <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="space-y-4">
-            <div className="flex justify-between items-start">
-              <div className="flex-grow">
+          <div className="flex justify-between items-start">
+            <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="space-y-4 flex-grow">
                 <CollapsibleContent asChild>
                     <div className="flex flex-col items-center text-center">
                         <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
@@ -224,15 +221,14 @@ export default function StudyPage() {
                         <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
                     </div>
                 </CollapsibleContent>
-              </div>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="icon">
+            </Collapsible>
+            <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={() => handleOpenChange(!isOpen)}>
                     {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
                     <span className="sr-only">Toggle</span>
                 </Button>
-              </CollapsibleTrigger>
-            </div>
-          </Collapsible>
+            </CollapsibleTrigger>
+          </div>
           
           <Tabs defaultValue="decks" className="w-full">
             <TabsList className="grid w-full grid-cols-3">

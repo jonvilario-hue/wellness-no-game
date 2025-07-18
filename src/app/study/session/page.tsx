@@ -65,7 +65,6 @@ export default function StudySessionPage() {
         cardId: currentCard.id,
         deckId: currentCard.deckId,
         tag: currentCard.tags?.[0], // For simplicity, log the first tag
-        timestamp: new Date().toISOString(),
         rating,
         ease: updatedCard.easeFactor,
         interval: updatedCard.interval,
