@@ -5,7 +5,7 @@ import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, Book, BarChart3, FlaskConical, Target, GraduationCap, Layers, Library, Search, Play, FileText, Bookmark, Edit, Trash2 } from 'lucide-react';
+import { Brain, Book, BarChart3, FlaskConical, Target, GraduationCap, Layers, Library, Search, Play, FileText, Bookmark, Edit, Trash2, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ import {
     StudyTimeTracker, RetentionRateTracker, GoalCompletionTracker, QuizAccuracyTracker, InterleavingSessionStats,
     MindMapActivityTracker, FocusDistractionRatioTracker, FeynmanTeachBackPerformanceTracker, ExamReadinessTracker, ConsistencyStreakTracker
 } from '@/components/study/trackers';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useLibraryStore } from '@/hooks/use-library-store';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
 import { cn } from '@/lib/utils';
@@ -51,6 +51,7 @@ import { StreakSystem } from '@/components/stats/StreakSystem';
 import { TagPerformance } from '@/components/stats/TagPerformance';
 import { Separator } from '@/components/ui/separator';
 import { useStatsStore } from '@/hooks/use-stats-store';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 function StatsView() {
     const { reviews } = useStatsStore();
@@ -189,6 +190,21 @@ const toolTrackerPairs = [
 ];
 
 export default function StudyPage() {
+  const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    const savedState = localStorage.getItem('study-hub-collapsible-state');
+    if (savedState !== null) {
+      setIsOpen(JSON.parse(savedState));
+    }
+  }, []);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    localStorage.setItem('study-hub-collapsible-state', JSON.stringify(open));
+  };
+
+
   return (
     <>
       <div className="sticky top-0 z-20">
@@ -197,12 +213,21 @@ export default function StudyPage() {
       </div>
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-7xl space-y-6">
-            <div className="text-center mb-8">
-                <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
-                <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
-                <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
+        <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="mx-auto max-w-7xl space-y-6">
+            <div className="flex justify-center items-center text-center mb-8 relative">
+                <div className="flex flex-col items-center">
+                    <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
+                    <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
+                    <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
+                </div>
+                 <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2">
+                      <ChevronDown className="h-6 w-6 transition-transform duration-300 data-[state=open]:rotate-180" />
+                      <span className="sr-only">Toggle</span>
+                    </Button>
+                  </CollapsibleTrigger>
             </div>
+            <CollapsibleContent>
              <Tabs defaultValue="decks" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="decks"><Layers className="mr-2 h-4 w-4" /> Decks & Stats</TabsTrigger>
@@ -243,7 +268,8 @@ export default function StudyPage() {
                     </div>
                 </TabsContent>
             </Tabs>
-        </div>
+           </CollapsibleContent>
+        </Collapsible>
       </main>
     </>
   );
