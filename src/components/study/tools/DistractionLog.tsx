@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ShieldAlert, ListChecks, CheckCircle } from "lucide-react";
+import { ShieldAlert, ListChecks, CheckCircle, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -29,6 +29,10 @@ export function DistractionLog() {
     setLoggedDistractions(prev => [distractionInput.trim(), ...prev].slice(0, 5)); // Keep last 5
     setFeedbackMessage(`"${distractionInput.trim()}" logged!`);
     setDistractionInput('');
+  };
+
+  const handleRemoveDistraction = (indexToRemove: number) => {
+    setLoggedDistractions(prev => prev.filter((_, index) => index !== indexToRemove));
   };
 
   return (
@@ -70,9 +74,19 @@ export function DistractionLog() {
                  <h4 className="font-semibold text-sm flex items-center gap-2 text-muted-foreground"><ListChecks className="w-4 h-4" />Recent Logs:</h4>
                 <div className="flex flex-col-reverse gap-2">
                     {loggedDistractions.map((log, index) => (
-                        <Badge key={index} variant="secondary" className="w-full justify-start py-1 text-wrap h-auto">
-                            {log}
-                        </Badge>
+                        <div key={index} className="group flex items-center gap-1">
+                            <Badge variant="secondary" className="w-full justify-start py-1 text-wrap h-auto flex-grow">
+                                {log}
+                            </Badge>
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => handleRemoveDistraction(index)}
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
                     ))}
                 </div>
             </div>
