@@ -50,39 +50,16 @@ import { ProgressTimeline } from '@/components/stats/ProgressTimeline';
 import { StreakSystem } from '@/components/stats/StreakSystem';
 import { TagPerformance } from '@/components/stats/TagPerformance';
 import { Separator } from '@/components/ui/separator';
-
-const generateMockReviews = (cards: any[]): ReviewEvent[] => {
-    const reviews: ReviewEvent[] = [];
-    const ratings: Array<'again' | 'hard' | 'good' | 'easy'> = ['again', 'hard', 'good', 'easy'];
-    
-    cards.forEach(card => {
-        const reviewCount = card.repetitions > 0 ? card.repetitions : Math.floor(Math.random() * 5);
-        for(let i=0; i<reviewCount; i++){
-             const date = new Date();
-             date.setDate(date.getDate() - Math.floor(Math.random() * 60));
-             reviews.push({
-                 cardId: card.id,
-                 deckId: card.deckId,
-                 tag: card.tags?.[0],
-                 timestamp: date.toISOString(),
-                 rating: ratings[Math.floor(Math.random() * ratings.length)],
-                 ease: card.easeFactor,
-                 interval: card.interval,
-                 lapses: card.repetitions > 0 && Math.random() > 0.8 ? 1 : 0
-             });
-        }
-    });
-    return reviews;
-};
+import { useStatsStore } from '@/hooks/use-stats-store';
 
 function StatsView() {
+    const { reviews } = useStatsStore();
     const { cards, decks } = useFlashcardStore();
 
     const stats = useMemo(() => {
-        if(cards.length === 0) return null;
-        const mockReviews = generateMockReviews(cards);
-        return processReviewData(mockReviews, cards, decks);
-    }, [cards, decks]);
+        if(reviews.length === 0) return null;
+        return processReviewData(reviews, cards, decks);
+    }, [reviews, cards, decks]);
 
   if (!stats) {
     return (

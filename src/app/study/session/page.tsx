@@ -14,6 +14,7 @@ import remarkGfm from 'remark-gfm';
 import type { Card as CardType } from '@/types/flashcards';
 import { applySpacedRepetition } from '@/lib/srs';
 import { cn } from '@/lib/utils';
+import { useStatsStore } from '@/hooks/use-stats-store';
 
 const renderCloze = (text: string, reveal: boolean) => {
   const clozeContent = text.replace(/\{\{c\d::(.*?)\}\}/g, (_, match) => 
@@ -28,6 +29,7 @@ export default function StudySessionPage() {
   const deckId = searchParams.get('deckId');
 
   const { cards, updateCard } = useFlashcardStore();
+  const { addReview } = useStatsStore();
 
   const dueCards = useMemo(() => {
     const now = new Date();
@@ -59,6 +61,17 @@ export default function StudySessionPage() {
     const updatedCard = applySpacedRepetition(currentCard, rating);
     updateCard(updatedCard);
     
+    addReview({
+        cardId: currentCard.id,
+        deckId: currentCard.deckId,
+        tag: currentCard.tags?.[0], // For simplicity, log the first tag
+        timestamp: new Date().toISOString(),
+        rating,
+        ease: updatedCard.easeFactor,
+        interval: updatedCard.interval,
+        lapses: rating === 'again' ? 1 : 0
+    });
+    
     // Show feedback
     setFeedback(rating === 'again' ? 'incorrect' : 'correct');
 
@@ -71,7 +84,7 @@ export default function StudySessionPage() {
             setFeedback(null);
         }
     }, 800); // Shorter delay for a snappier feel
-  }, [currentCard, currentIndex, sessionCards.length, updateCard]);
+  }, [currentCard, currentIndex, sessionCards.length, updateCard, addReview]);
   
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
