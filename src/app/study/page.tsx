@@ -214,23 +214,23 @@ export default function StudyPage() {
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-7xl space-y-6">
-          <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
-            <div className="flex justify-center items-center text-center mb-8 relative">
-                <div className="flex-grow">
-                    <CollapsibleContent>
-                        <div className="flex flex-col items-center">
-                            <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
-                            <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
-                            <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
-                        </div>
-                    </CollapsibleContent>
-                </div>
-                <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon" className="absolute right-0 top-0">
-                    <ChevronDown className="h-6 w-6 transition-transform duration-300 data-[state=open]:rotate-180" />
-                    <span className="sr-only">Toggle</span>
-                    </Button>
-                </CollapsibleTrigger>
+          <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="space-y-4">
+            <div className="flex justify-between items-start">
+              <div className="flex-grow">
+                <CollapsibleContent>
+                    <div className="flex flex-col items-center text-center">
+                        <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
+                        <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
+                        <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
+                    </div>
+                </CollapsibleContent>
+              </div>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <ChevronDown className="h-6 w-6 transition-transform duration-300" data-state={isOpen ? 'open' : 'closed'} />
+                  <span className="sr-only">Toggle</span>
+                </Button>
+              </CollapsibleTrigger>
             </div>
           </Collapsible>
           
@@ -279,3 +279,8 @@ export default function StudyPage() {
     </>
   );
 }
+<style jsx>{`
+    [data-state='open'] {
+        transform: rotate(180deg);
+    }
+`}</style>
