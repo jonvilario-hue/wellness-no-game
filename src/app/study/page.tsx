@@ -49,6 +49,7 @@ import { CardDifficultyIndex } from '@/components/stats/CardDifficultyIndex';
 import { ProgressTimeline } from '@/components/stats/ProgressTimeline';
 import { StreakSystem } from '@/components/stats/StreakSystem';
 import { TagPerformance } from '@/components/stats/TagPerformance';
+import { Separator } from '@/components/ui/separator';
 
 const generateMockReviews = (cards: any[]): ReviewEvent[] => {
     const reviews: ReviewEvent[] = [];
@@ -212,21 +213,19 @@ export default function StudyPage() {
                 <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
             </div>
              <Tabs defaultValue="decks" className="w-full">
-                <TabsList className="grid w-full grid-cols-5">
-                    <TabsTrigger value="decks"><Layers className="mr-2 h-4 w-4" /> Decks</TabsTrigger>
-                    <TabsTrigger value="stats"><BarChart3 className="mr-2 h-4 w-4" /> Statistics</TabsTrigger>
-                    <TabsTrigger value="tools"><FlaskConical className="mr-2 h-4 w-4" /> Tools</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-4">
+                    <TabsTrigger value="decks"><Layers className="mr-2 h-4 w-4" /> Decks & Stats</TabsTrigger>
+                    <TabsTrigger value="study-tools"><FlaskConical className="mr-2 h-4 w-4" /> Study Tools</TabsTrigger>
                     <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" /> Guides</TabsTrigger>
                     <TabsTrigger value="trackers"><BarChart3 className="mr-2 h-4 w-4" /> Trackers</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="decks" className="mt-6">
+                <TabsContent value="decks" className="mt-6 space-y-6">
                     <FlashcardDecks />
-                </TabsContent>
-                <TabsContent value="stats" className="mt-6">
+                    <Separator />
                     <StatsView />
                 </TabsContent>
-                <TabsContent value="tools" className="mt-6">
+                <TabsContent value="study-tools" className="mt-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <SelfQuizCreator />
                         <CornellNotesEditor />
