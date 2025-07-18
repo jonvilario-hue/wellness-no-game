@@ -1,10 +1,16 @@
+
 'use client';
 
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, Book, BarChart3, FlaskConical, Target, GraduationCap } from 'lucide-react';
+import { Brain, Book, BarChart3, FlaskConical, Target, GraduationCap, Layers, Library, Search, Play } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useFlashcardStore } from '@/hooks/use-flashcard-store';
+import Link from 'next/link';
 import { 
     SelfQuizCreator, CornellNotesEditor, MindMapTool, SmartGoalWizard, TeachBackRecorder, 
     ExamSimulator, InterleavingPlanner, SmartHighlightExporter, StudyBreakOptimizer, DistractionLog 
@@ -17,6 +23,59 @@ import {
     StudyTimeTracker, RetentionRateTracker, GoalCompletionTracker, QuizAccuracyTracker, InterleavingSessionStats,
     MindMapActivityTracker, FocusDistractionRatioTracker, FeynmanTeachBackPerformanceTracker, ExamReadinessTracker, ConsistencyStreakTracker
 } from '@/components/study/trackers';
+
+function QuickAccessWidgets() {
+    const { cards } = useFlashcardStore();
+    const dueCardsCount = cards.filter(c => new Date(c.dueDate) <= new Date()).length;
+
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Layers className="w-5 h-5 text-primary" />
+                        Flashcard Hub
+                    </CardTitle>
+                    <CardDescription>Review your flashcards to reinforce your knowledge.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center justify-center text-center gap-4">
+                    <p className="text-6xl font-bold text-primary">{dueCardsCount}</p>
+                    <p className="text-muted-foreground -mt-2">cards due for review</p>
+                    <div className="flex gap-2">
+                        <Button asChild size="lg" disabled={dueCardsCount === 0}>
+                            <Link href="/flashcards/study">
+                                <Play className="mr-2 h-4 w-4" /> Study Now
+                            </Link>
+                        </Button>
+                        <Button asChild variant="secondary" size="lg">
+                            <Link href="/flashcards">
+                                Manage Decks
+                            </Link>
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+                <CardHeader>
+                     <CardTitle className="flex items-center gap-2">
+                        <Library className="w-5 h-5 text-primary" />
+                        Library Search
+                    </CardTitle>
+                    <CardDescription>Find insights from your saved notes and journal entries.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center justify-center h-full pb-12">
+                     <div className="w-full max-w-md space-y-2">
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                            <Input placeholder="Search your knowledge base..." className="pl-10 h-12 text-lg" />
+                        </div>
+                        <p className="text-xs text-center text-muted-foreground">Search notes, journal entries, and highlights.</p>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
 
 export default function StudyPage() {
   return (
@@ -33,6 +92,9 @@ export default function StudyPage() {
                 <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
                 <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
             </div>
+
+            <QuickAccessWidgets />
+            
             <Tabs defaultValue="tools" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="tools">
