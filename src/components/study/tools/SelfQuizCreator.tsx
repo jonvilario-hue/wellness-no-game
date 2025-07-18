@@ -11,7 +11,7 @@ export function SelfQuizCreator() {
         <CardTitle className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-primary"/>
             Self-Quiz Creator
-        </Title>
+        </CardTitle>
         <CardDescription>Enter key points from your notes to generate quiz questions.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
