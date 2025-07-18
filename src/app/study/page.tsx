@@ -39,7 +39,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { FlashcardDecks } from '@/components/flashcards/flashcard-decks';
-import { processReviewData } from '@/components/stats/utils';
+import { processReviewData, generateMockTestingReviews } from '@/components/stats/utils';
 import type { ReviewEvent } from '@/types/stats';
 import { StudySessions } from '@/components/stats/StudySessions';
 import { ReviewQuality } from '@/components/stats/ReviewQuality';
@@ -57,8 +57,9 @@ function StatsView() {
     const { cards, decks } = useFlashcardStore();
 
     const stats = useMemo(() => {
-        if(reviews.length === 0) return null;
-        return processReviewData(reviews, cards, decks);
+        const reviewData = reviews.length > 0 ? reviews : generateMockTestingReviews(cards, decks);
+        if(reviewData.length === 0) return null;
+        return processReviewData(reviewData, cards, decks);
     }, [reviews, cards, decks]);
 
   if (!stats) {

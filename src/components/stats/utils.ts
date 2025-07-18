@@ -189,3 +189,35 @@ function getTagPerformance(reviews: ReviewEvent[]): TagPerformanceData[] {
     reviews: data.total
   })).sort((a, b) => b.reviews - a.reviews);
 }
+
+
+/********************************************************************************
+ * FOR TESTING PURPOSES ONLY
+ * This function generates mock review data to populate the stats page
+ * when no real user data is present.
+ ********************************************************************************/
+export function generateMockTestingReviews(cards: Card[], decks: Deck[]): ReviewEvent[] {
+  if (cards.length === 0 || decks.length === 0) return [];
+  
+  const reviews: ReviewEvent[] = [];
+  const ratings: ReviewEvent['rating'][] = ['easy', 'good', 'good', 'hard', 'good', 'again', 'easy'];
+
+  for (let i = 0; i < 50; i++) {
+    const card = cards[i % cards.length];
+    const rating = ratings[i % ratings.length];
+    const date = new Date();
+    date.setDate(date.getDate() - (i % 20)); // Reviews over the last 20 days
+    
+    reviews.push({
+      cardId: card.id,
+      deckId: card.deckId,
+      tag: card.tags?.[0],
+      timestamp: date.toISOString(),
+      rating: rating,
+      ease: 2.5 + (Math.random() - 0.5) * 0.2,
+      interval: Math.floor(Math.random() * 10) + 1,
+      lapses: rating === 'again' ? 1 : 0
+    });
+  }
+  return reviews;
+}
