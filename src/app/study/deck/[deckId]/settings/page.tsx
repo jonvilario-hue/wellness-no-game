@@ -93,59 +93,61 @@ export default function DeckSettingsPage() {
         </div>
       </div>
       
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Card>
-          <CardHeader>
-            <CardTitle>New Cards</CardTitle>
-            <CardDescription>Control how new cards are introduced.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="newCardsPerDay">New cards/day</Label>
-              <Controller
-                name="newCardsPerDay"
-                control={control}
-                render={({ field }) => <Input {...field} type="number" id="newCardsPerDay" />}
-              />
-              {errors.newCardsPerDay && <p className="text-destructive text-sm mt-1">{errors.newCardsPerDay.message}</p>}
-              <p className="text-xs text-muted-foreground mt-1">The maximum number of new cards to introduce in a day.</p>
-            </div>
-            <div>
-              <Label htmlFor="learningSteps">Learning steps (in minutes)</Label>
-               <Controller
-                name="learningSteps"
-                control={control}
-                render={({ field }) => <Input {...field} type="text" id="learningSteps" />}
-              />
-               {errors.learningSteps && <p className="text-destructive text-sm mt-1">{errors.learningSteps.message}</p>}
-               <p className="text-xs text-muted-foreground mt-1">Space-separated list of delays. E.g., "1 10" for 1min then 10min.</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          <Card>
             <CardHeader>
-                <CardTitle>Reviews</CardTitle>
-                <CardDescription>Control the maximum number of reviews.</CardDescription>
-            </Header>
-            <CardContent>
-                 <div>
-                    <Label htmlFor="maxReviewsPerDay">Maximum reviews/day</Label>
-                    <Controller
-                        name="maxReviewsPerDay"
-                        control={control}
-                        render={({ field }) => <Input {...field} type="number" id="maxReviewsPerDay" />}
-                    />
-                    {errors.maxReviewsPerDay && <p className="text-destructive text-sm mt-1">{errors.maxReviewsPerDay.message}</p>}
-                     <p className="text-xs text-muted-foreground mt-1">The maximum number of review cards to show in a day.</p>
-                </div>
+              <CardTitle>New Cards</CardTitle>
+              <CardDescription>Control how new cards are introduced.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="newCardsPerDay">New cards/day</Label>
+                <Controller
+                  name="newCardsPerDay"
+                  control={control}
+                  render={({ field }) => <Input {...field} type="number" id="newCardsPerDay" />}
+                />
+                {errors.newCardsPerDay && <p className="text-destructive text-sm mt-1">{errors.newCardsPerDay.message}</p>}
+                <p className="text-xs text-muted-foreground mt-1">The maximum number of new cards to introduce in a day.</p>
+              </div>
+              <div>
+                <Label htmlFor="learningSteps">Learning steps (in minutes)</Label>
+                 <Controller
+                  name="learningSteps"
+                  control={control}
+                  render={({ field }) => <Input {...field} type="text" id="learningSteps" />}
+                />
+                 {errors.learningSteps && <p className="text-destructive text-sm mt-1">{errors.learningSteps.message}</p>}
+                 <p className="text-xs text-muted-foreground mt-1">Space-separated list of delays. E.g., "1 10" for 1min then 10min.</p>
+              </div>
             </CardContent>
-        </Card>
-        
-         <div className="flex justify-end">
-            <Button type="submit" disabled={!isDirty}>
-                <Save className="mr-2 h-4 w-4"/> Save Changes
-            </Button>
+          </Card>
+
+          <Card>
+              <CardHeader>
+                  <CardTitle>Reviews</CardTitle>
+                  <CardDescription>Control the maximum number of reviews.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                   <div>
+                      <Label htmlFor="maxReviewsPerDay">Maximum reviews/day</Label>
+                      <Controller
+                          name="maxReviewsPerDay"
+                          control={control}
+                          render={({ field }) => <Input {...field} type="number" id="maxReviewsPerDay" />}
+                      />
+                      {errors.maxReviewsPerDay && <p className="text-destructive text-sm mt-1">{errors.maxReviewsPerDay.message}</p>}
+                       <p className="text-xs text-muted-foreground mt-1">The maximum number of review cards to show in a day.</p>
+                  </div>
+              </CardContent>
+          </Card>
+          
+           <div className="flex justify-end">
+              <Button type="submit" disabled={!isDirty}>
+                  <Save className="mr-2 h-4 w-4"/> Save Changes
+              </Button>
+          </div>
         </div>
       </form>
     </div>
