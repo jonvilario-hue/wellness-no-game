@@ -9,10 +9,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { PlusCircle, Layers, Play, Upload, Download } from 'lucide-react';
 import { DeckDialog } from '@/components/flashcards/deck-dialog';
 import type { Deck } from '@/types/flashcards';
+import { useToast } from '@/hooks/use-toast';
 
 export function FlashcardDecks() {
   const { decks, cards } = useFlashcardStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast();
   
   const getDeckStats = (deckId: string) => {
     const deckCards = cards.filter(c => c.deckId === deckId);
@@ -25,6 +27,22 @@ export function FlashcardDecks() {
   
   const totalDue = cards.filter(c => new Date(c.dueDate) <= new Date()).length;
 
+  const handleImport = () => {
+    toast({
+        title: "Import Coming Soon",
+        description: "This feature will allow you to import decks from other apps like Anki. For now, please add cards manually.",
+        variant: 'default',
+    });
+  }
+
+  const handleExport = () => {
+      toast({
+        title: "Export Coming Soon",
+        description: "This feature will allow you to export your decks to a file compatible with other flashcard apps.",
+        variant: 'default',
+    });
+  }
+
   return (
      <Card>
         <CardHeader>
@@ -36,10 +54,10 @@ export function FlashcardDecks() {
                 <CardDescription>Organize your cards into decks for focused study sessions.</CardDescription>
                 </div>
                 <div className="flex gap-2">
-                     <Button onClick={() => {}} variant="outline" disabled>
+                     <Button onClick={handleImport} variant="outline">
                         <Upload className="mr-2 h-4 w-4" /> Import
                     </Button>
-                     <Button onClick={() => {}} variant="outline" disabled>
+                     <Button onClick={handleExport} variant="outline">
                         <Download className="mr-2 h-4 w-4" /> Export
                     </Button>
                     <Button onClick={() => setIsDialogOpen(true)} variant="secondary">
