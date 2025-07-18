@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shuffle, Mix, BrainCog, ArrowRight } from "lucide-react";
+import { Shuffle, Combine, BrainCog, ArrowRight } from "lucide-react";
 
 export function InterleavingGuide() {
   return (
@@ -18,7 +18,7 @@ export function InterleavingGuide() {
             <h4 className="font-semibold mb-2">Step-by-Step Instructions:</h4>
             <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-3">
-                    <div className="p-1 bg-primary/10 rounded-full mt-1"><Mix className="w-4 h-4 text-primary"/></div>
+                    <div className="p-1 bg-primary/10 rounded-full mt-1"><Combine className="w-4 h-4 text-primary"/></div>
                     <div><span className="font-semibold">Identify Topics:</span> Choose 2-3 related subjects or problem types you want to study (e.g., algebra and geometry).</div>
                 </li>
                 <li className="flex items-start gap-3">
