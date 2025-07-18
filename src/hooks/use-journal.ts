@@ -165,8 +165,7 @@ export const useJournal = create<JournalState>()(
             if (forceNew) {
                 return createNewEntryObject(date, category, frequency);
             }
-            const state = get();
-            const existingEntry = state.entries.find(
+            const existingEntry = get().entries.find(
                 (e) => e.date === date && e.category === category && e.frequency === frequency
             );
             

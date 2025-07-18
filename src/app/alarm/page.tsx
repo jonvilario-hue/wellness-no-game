@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlarmClock, Loader2, ThumbsUp, BrainCircuit } from 'lucide-react';
 import { DynamicSequenceTransformer } from '@/components/training/gwm/dynamic-sequence-transformer';
