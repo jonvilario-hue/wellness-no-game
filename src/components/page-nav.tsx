@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -21,7 +20,7 @@ export const PageNav = () => {
         <nav className="flex space-x-2 justify-center -mb-px">
             <Link href="/" className={linkClass("/", true)}>
                 <Gamepad2 className="w-4 h-4" />
-                <span>Games</span>
+                <span>Puzzlemaster</span>
             </Link>
             <Link href="/tools" className={linkClass("/tools")}>
                 <ClipboardCheck className="w-4 h-4" />
