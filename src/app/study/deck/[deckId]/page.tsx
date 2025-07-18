@@ -53,7 +53,7 @@ export default function DeckPage() {
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold">Deck not found</h1>
         <Button asChild variant="link">
-          <Link href="/study">Return to Study Hub</Link>
+          <Link href="/study">Return to Scholar Hub</Link>
         </Button>
       </div>
     );
@@ -68,7 +68,7 @@ export default function DeckPage() {
       <div className="flex justify-between items-start">
         <div>
           <Button asChild variant="outline" className="mb-4">
-            <Link href="/study"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Study Hub</Link>
+            <Link href="/study"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Scholar Hub</Link>
           </Button>
           <h1 className="text-3xl font-bold">{deck.name}</h1>
           <p className="text-muted-foreground">{deck.description}</p>

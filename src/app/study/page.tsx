@@ -191,7 +191,7 @@ export default function StudyPage() {
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
-    const savedState = localStorage.getItem('study-hub-collapsible-state');
+    const savedState = localStorage.getItem('scholar-hub-collapsible-state');
     if (savedState !== null) {
       setIsOpen(JSON.parse(savedState));
     }
@@ -199,7 +199,7 @@ export default function StudyPage() {
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    localStorage.setItem('study-hub-collapsible-state', JSON.stringify(open));
+    localStorage.setItem('scholar-hub-collapsible-state', JSON.stringify(open));
   };
 
 
@@ -218,7 +218,7 @@ export default function StudyPage() {
                     <CollapsibleContent>
                         <div className="flex flex-col items-center text-center pb-4">
                             <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
-                            <h1 className="text-4xl font-bold font-headline">Study Hub</h1>
+                            <h1 className="text-4xl font-bold font-headline">Scholar Hub</h1>
                             <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
                         </div>
                     </CollapsibleContent>

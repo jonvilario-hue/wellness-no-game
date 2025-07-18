@@ -114,7 +114,7 @@ export default function StudySessionPage() {
         <h1 className="text-3xl font-bold mb-2">Study Session Complete!</h1>
         <p className="text-muted-foreground mb-6">You've reviewed all due cards for this session. Great work!</p>
         <Button asChild>
-          <Link href="/study">Back to Study Hub</Link>
+          <Link href="/study">Back to Scholar Hub</Link>
         </Button>
       </div>
     );
