@@ -20,7 +20,7 @@ export const PageNav = () => {
         <nav className="flex space-x-2 justify-center -mb-px">
             <Link href="/" className={linkClass("/", true)}>
                 <Gamepad2 className="w-4 h-4" />
-                <span>Puzzlemaster</span>
+                <span>PuzzleMaster</span>
             </Link>
             <Link href="/tools" className={linkClass("/tools")}>
                 <ClipboardCheck className="w-4 h-4" />
