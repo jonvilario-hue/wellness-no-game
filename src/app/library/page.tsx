@@ -48,14 +48,28 @@ export default function LibraryPage() {
           content: entry.field1 || entry.field2 || entry.field3 || 'No content',
           createdAt: entry.date,
           bookmarked: entry.bookmarked || false,
-          source: 'Journal'
+          source: 'Journal',
+          tags: entry.tags, // Keep tags as a string for journal entries
       }))
   ].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-  const filteredContent = allContent.filter(item => 
-    item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.content.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredContent = allContent.filter(item => {
+    const term = searchTerm.toLowerCase();
+    
+    const titleMatch = item.title.toLowerCase().includes(term);
+    const contentMatch = item.content.toLowerCase().includes(term);
+    
+    let tagsMatch = false;
+    if (item.tags) {
+        if (Array.isArray(item.tags)) { // LibraryItem tags
+            tagsMatch = item.tags.some(tag => tag.toLowerCase().includes(term));
+        } else if (typeof item.tags === 'string') { // JournalEntry tags
+            tagsMatch = item.tags.toLowerCase().includes(term);
+        }
+    }
+
+    return titleMatch || contentMatch || tagsMatch;
+  });
 
   const notes = filteredContent.filter(item => item.source === 'Library');
   const journalContent = filteredContent.filter(item => item.source === 'Journal');
@@ -130,7 +144,7 @@ export default function LibraryPage() {
                         <div className="flex flex-col gap-2 w-full max-w-sm">
                             <div className="relative">
                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input placeholder="Search your library..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                                <Input placeholder="Search by title, content, or tag..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                             </div>
                             <Button onClick={() => handleOpenNoteDialog(null)}>
                                 <PlusCircle className="mr-2 h-4 w-4" /> Add Note
