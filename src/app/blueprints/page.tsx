@@ -12,6 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { StrategySelection } from './components/StrategySelection';
 import type { GoalStrategy } from '@/data/goal-strategies';
 import { BlueprintCreator } from './components/BlueprintCreator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function BlueprintsPage() {
   const { projects, addProject, updateProject, deleteProject, addMilestone, toggleTask, updateMilestoneStatus, addTask, updateTask, deleteTask, updateMilestoneDetails } = useBlueprintStore();
