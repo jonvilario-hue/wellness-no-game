@@ -23,10 +23,57 @@ type BlueprintState = {
   deleteTask: (projectId: string, milestoneId: string, taskId: string) => void;
 };
 
+const initialData: Blueprint[] = [
+    {
+      id: "vision-1",
+      title: "Become a Published Author",
+      description: "Write and publish a science fiction novel, exploring themes of AI and consciousness.",
+      identityGoal: "A disciplined writer who shares complex ideas with clarity and creativity.",
+      tags: ["creative", "writing", "career"],
+      archived: false,
+      milestones: [
+        {
+          id: "m-1-1",
+          title: "Complete First Draft (100k words)",
+          description: "Focus on getting the story down from beginning to end without self-editing.",
+          dueDate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString(),
+          status: "In Progress",
+          reflection: "The initial burst of creativity was fantastic, but maintaining momentum in the middle was tough. Learned a lot about my own discipline and the importance of just showing up.",
+          tasks: [
+            { id: "t-1-1-1", title: "Outline Act I", completed: true },
+            { id: "t-1-1-2", title: "Write Chapters 1-10", completed: true },
+            { id: "t-1-1-3", title: "Outline Act II", completed: false },
+            { id: "t-1-1-4", title: "Write Chapters 11-25", completed: false },
+          ],
+        },
+        {
+          id: "m-1-2",
+          title: "Developmental Edit & Revisions",
+          description: "Incorporate feedback from beta readers and restructure the narrative for maximum impact.",
+          status: "Not Started",
+          tasks: [
+            { id: "t-1-2-1", title: "Send draft to beta readers", completed: false },
+            { id: "t-1-2-2", title: "Consolidate feedback", completed: false },
+            { id: "t-1-2-3", title: "Create revision plan", completed: false },
+          ],
+        },
+      ],
+    },
+     {
+      id: "vision-2",
+      title: "Run a Half Marathon",
+      description: "Complete a 13.1 mile race, focusing on consistent training and injury prevention.",
+      identityGoal: "An athlete who understands their body and perseveres through physical challenges.",
+      tags: ["fitness", "health"],
+      archived: true,
+      milestones: [],
+    }
+];
+
 export const useBlueprintStore = create<BlueprintState>()(
   persist(
     immer((set) => ({
-      projects: [],
+      projects: initialData,
 
       addProject: (project) => {
         const newProject: Blueprint = {
@@ -153,7 +200,7 @@ export const useBlueprintStore = create<BlueprintState>()(
       },
     })),
     {
-      name: 'blueprint-store-v3',
+      name: 'blueprint-store-v4',
       storage: createJSONStorage(() => localStorage),
     }
   )
