@@ -236,7 +236,7 @@ export default function StudyPage() {
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="decks"><Layers className="mr-2 h-4 w-4" /> Decks & Stats</TabsTrigger>
               <TabsTrigger value="study-tools"><FlaskConical className="mr-2 h-4 w-4" /> Study Tools</TabsTrigger>
-              <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" /> Guides</TabsTrigger>
+              <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" /> Study Strategies</TabsTrigger>
             </TabsList>
             
             <TabsContent value="decks" className="mt-6 space-y-6">
