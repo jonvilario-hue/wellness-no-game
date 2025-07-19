@@ -4,60 +4,47 @@
 import { useState } from 'react';
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Archive, List, PlusCircle } from 'lucide-react';
-import { ProjectList } from '@/components/blueprints/project-list';
+import { Plus } from 'lucide-react';
+import BlueprintProject from './components/BlueprintProject';
+import AddProjectDialog from './components/AddProjectDialog';
 
 export default function BlueprintsPage() {
-    const { projects, addProject } = useBlueprintStore();
-    const [newProjectTitle, setNewProjectTitle] = useState('');
+  const { projects, addProject, updateProject, deleteProject, addMilestone, toggleTask } = useBlueprintStore();
+  const [isAddProjectDialogOpen, setIsAddProjectDialogOpen] = useState(false);
 
-    const handleCreateProject = () => {
-        if (newProjectTitle.trim()) {
-            addProject(newProjectTitle.trim());
-            setNewProjectTitle('');
-        }
-    };
+  return (
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">My Architecture</h1>
+        <Button onClick={() => setIsAddProjectDialogOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          New Blueprint
+        </Button>
+      </div>
 
-    const activeProjects = projects.filter(p => !p.archived);
-    const archivedProjects = projects.filter(p => p.archived);
-
-    return (
-        <div className="space-y-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Create a New Blueprint</CardTitle>
-                    <CardDescription>
-                        A blueprint can be a long-term goal, a learning plan, or any theme you want to track over time.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="flex gap-2">
-                    <Input
-                        placeholder="e.g., Learn Quantum Physics, Build a Mobile App..."
-                        value={newProjectTitle}
-                        onChange={(e) => setNewProjectTitle(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleCreateProject()}
-                    />
-                    <Button onClick={handleCreateProject} disabled={!newProjectTitle.trim()}>
-                        <PlusCircle className="mr-2 h-4 w-4" /> Add Blueprint
-                    </Button>
-                </CardContent>
-            </Card>
-            
-            <Tabs defaultValue="active">
-                <TabsList className="grid w-full grid-cols-2">
-                   <TabsTrigger value="active"><List className="mr-2 h-4 w-4" />Active Blueprints ({activeProjects.length})</TabsTrigger>
-                   <TabsTrigger value="archived"><Archive className="mr-2 h-4 w-4" />Archived Blueprints ({archivedProjects.length})</TabsTrigger>
-                </TabsList>
-                <TabsContent value="active" className="mt-6">
-                    <ProjectList projects={activeProjects} />
-                </TabsContent>
-                 <TabsContent value="archived" className="mt-6">
-                    <ProjectList projects={archivedProjects} />
-                </TabsContent>
-            </Tabs>
+      {projects.map(project => (
+        <BlueprintProject
+          key={project.id}
+          project={project}
+          onUpdateProject={updateProject}
+          onDeleteProject={deleteProject}
+          onAddMilestone={addMilestone}
+          onToggleTask={toggleTask}
+        />
+      ))}
+      
+      {projects.length === 0 && (
+        <div className="text-center py-16 border-2 border-dashed rounded-lg">
+          <p className="text-muted-foreground">You have no blueprints yet.</p>
+          <p className="text-sm text-muted-foreground">Click "New Blueprint" to map out your first vision.</p>
         </div>
-    );
+      )}
+
+      <AddProjectDialog
+        open={isAddProjectDialogOpen}
+        onOpenChange={setIsAddProjectDialogOpen}
+        onAdd={addProject}
+      />
+    </div>
+  );
 }

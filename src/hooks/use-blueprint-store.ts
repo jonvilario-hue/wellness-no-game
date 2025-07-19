@@ -4,41 +4,21 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-
-export interface Task {
-  id: string;
-  name: string;
-  done: boolean;
-}
-
-export interface Milestone {
-  id: string;
-  title: string;
-  dueDate?: string; // Storing as ISO string
-  tasks: Task[];
-  notes: string;
-}
-
-export interface Project {
-  id: string;
-  title: string;
-  tags: string[];
-  milestones: Milestone[];
-  archived: boolean;
-}
+import type { Blueprint, Milestone, Task } from '@/types/blueprint';
 
 type BlueprintState = {
-  projects: Project[];
-  addProject: (title: string) => void;
-  updateProject: (id: string, updates: Partial<Pick<Project, 'title' | 'tags' | 'archived'>>) => void;
+  projects: Blueprint[];
+  addProject: (project: Omit<Blueprint, 'id' | 'milestones' | 'archived'>) => void;
+  updateProject: (id: string, updates: Partial<Blueprint>) => void;
   deleteProject: (id: string) => void;
 
-  addMilestone: (projectId: string, title: string) => void;
-  updateMilestone: (projectId: string, milestoneId: string, updates: Partial<Pick<Milestone, 'title' | 'dueDate' | 'notes'>>) => void;
+  addMilestone: (projectId: string, milestone: Omit<Milestone, 'id'>) => void;
+  updateMilestone: (projectId: string, milestoneId: string, updates: Partial<Milestone>) => void;
   deleteMilestone: (projectId: string, milestoneId: string) => void;
 
-  addTask: (projectId: string, milestoneId: string, name: string) => void;
-  updateTask: (projectId: string, milestoneId: string, taskId: string, updates: Partial<Pick<Task, 'name' | 'done'>>) => void;
+  addTask: (projectId: string, milestoneId: string, title: string) => void;
+  updateTask: (projectId: string, milestoneId: string, taskId: string, updates: Partial<Task>) => void;
+  toggleTask: (projectId: string, milestoneId: string, taskId: string) => void;
   deleteTask: (projectId: string, milestoneId: string, taskId: string) => void;
 };
 
@@ -47,17 +27,15 @@ export const useBlueprintStore = create<BlueprintState>()(
     immer((set) => ({
       projects: [],
 
-      // Project Actions
-      addProject: (title) => {
-        const newProject: Project = {
+      addProject: (project) => {
+        const newProject: Blueprint = {
+          ...project,
           id: crypto.randomUUID(),
-          title,
-          tags: [],
           milestones: [],
           archived: false,
         };
         set((state) => {
-          state.projects.push(newProject);
+          state.projects.unshift(newProject);
         });
       },
       updateProject: (id, updates) => {
@@ -74,13 +52,10 @@ export const useBlueprintStore = create<BlueprintState>()(
         });
       },
 
-      // Milestone Actions
-      addMilestone: (projectId, title) => {
+      addMilestone: (projectId, milestoneData) => {
         const newMilestone: Milestone = {
+          ...milestoneData,
           id: crypto.randomUUID(),
-          title,
-          tasks: [],
-          notes: '',
         };
         set((state) => {
           const project = state.projects.find((p) => p.id === projectId);
@@ -109,12 +84,11 @@ export const useBlueprintStore = create<BlueprintState>()(
         });
       },
 
-      // Task Actions
-      addTask: (projectId, milestoneId, name) => {
+      addTask: (projectId, milestoneId, title) => {
         const newTask: Task = {
           id: crypto.randomUUID(),
-          name,
-          done: false,
+          title,
+          completed: false,
         };
         set((state) => {
           const project = state.projects.find((p) => p.id === projectId);
@@ -140,6 +114,20 @@ export const useBlueprintStore = create<BlueprintState>()(
           }
         });
       },
+      toggleTask: (projectId, milestoneId, taskId) => {
+        set((state) => {
+            const project = state.projects.find((p) => p.id === projectId);
+            if (project) {
+              const milestone = project.milestones.find((m) => m.id === milestoneId);
+              if (milestone) {
+                const task = milestone.tasks.find((t) => t.id === taskId);
+                if (task) {
+                  task.completed = !task.completed;
+                }
+              }
+            }
+        });
+      },
       deleteTask: (projectId, milestoneId, taskId) => {
         set((state) => {
           const project = state.projects.find((p) => p.id === projectId);
@@ -153,7 +141,7 @@ export const useBlueprintStore = create<BlueprintState>()(
       },
     })),
     {
-      name: 'blueprint-store',
+      name: 'blueprint-store-v2',
       storage: createJSONStorage(() => localStorage),
     }
   )
