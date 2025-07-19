@@ -16,9 +16,12 @@ export default function BlueprintsPage() {
   const [isAddProjectDialogOpen, setIsAddProjectDialogOpen] = useState(false);
   
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active');
+  const [viewMode, setViewMode] = useState<'list' | 'timeline'>('list');
   
   const activeProjects = projects.filter(p => !p.archived);
   const archivedProjects = projects.filter(p => p.archived);
+  
+  const projectsToDisplay = activeTab === 'active' ? activeProjects : archivedProjects;
 
   const getTimelineMilestones = (blueprintProjects: Blueprint[]) => {
     return blueprintProjects.flatMap(project =>
@@ -44,77 +47,62 @@ export default function BlueprintsPage() {
         </Button>
       </div>
     
-      <Tabs defaultValue="list" className="w-full">
-        <div className="flex justify-between items-center mb-4">
-            <TabsList>
-                <TabsTrigger value="active">Active ({activeProjects.length})</TabsTrigger>
-                <TabsTrigger value="archived">Archived ({archivedProjects.length})</TabsTrigger>
-            </TabsList>
-            <TabsList>
-                <TabsTrigger value="list"><LayoutList className="w-4 h-4 mr-2"/>List View</TabsTrigger>
-                <TabsTrigger value="timeline"><GanttChartSquare className="w-4 h-4 mr-2"/>Timeline View</TabsTrigger>
-            </TabsList>
-        </div>
+      <div className="flex justify-between items-center mb-4">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+              <TabsList>
+                  <TabsTrigger value="active">Active ({activeProjects.length})</TabsTrigger>
+                  <TabsTrigger value="archived">Archived ({archivedProjects.length})</TabsTrigger>
+              </TabsList>
+          </Tabs>
+          <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
+              <TabsList>
+                  <TabsTrigger value="list"><LayoutList className="w-4 h-4 mr-2"/>List View</TabsTrigger>
+                  <TabsTrigger value="timeline"><GanttChartSquare className="w-4 h-4 mr-2"/>Timeline View</TabsTrigger>
+              </TabsList>
+          </Tabs>
+      </div>
 
-        <TabsContent value="active">
-            <TabsContent value="list" className="space-y-6">
-                {activeProjects.map(project => (
-                    <BlueprintProject
-                        key={project.id}
-                        project={project}
-                        onUpdateProject={updateProject}
-                        onDeleteProject={deleteProject}
-                        onAddMilestone={addMilestone}
-                        onUpdateMilestone={updateMilestoneDetails}
-                        onDeleteMilestone={(milestoneId) => {}}
-                        onToggleTask={toggleTask}
-                        onAddTask={addTask}
-                        onUpdateTask={updateTask}
-                        onDeleteTask={deleteTask}
-                        onUpdateMilestoneStatus={updateMilestoneStatus}
-                    />
-                ))}
-                {activeProjects.length === 0 && (
-                     <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                        <p className="text-muted-foreground">You have no active blueprints.</p>
-                        <p className="text-sm text-muted-foreground">Click "New Blueprint" to map out your first vision.</p>
-                    </div>
+      <div>
+        {viewMode === 'list' && (
+          <div className="space-y-6">
+            {projectsToDisplay.length === 0 ? (
+              <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                <p className="text-muted-foreground">
+                  {activeTab === 'active'
+                    ? 'You have no active blueprints.'
+                    : 'You have no archived blueprints.'}
+                </p>
+                {activeTab === 'active' && (
+                  <p className="text-sm text-muted-foreground">
+                    Click "New Blueprint" to map out your first vision.
+                  </p>
                 )}
-            </TabsContent>
-            <TabsContent value="timeline">
-                <TimelineView milestones={getTimelineMilestones(activeProjects)} />
-            </TabsContent>
-        </TabsContent>
+              </div>
+            ) : (
+              projectsToDisplay.map(project => (
+                <BlueprintProject
+                    key={project.id}
+                    project={project}
+                    onUpdateProject={updateProject}
+                    onDeleteProject={deleteProject}
+                    onAddMilestone={addMilestone}
+                    onUpdateMilestone={updateMilestoneDetails}
+                    onDeleteMilestone={(milestoneId) => {}}
+                    onToggleTask={toggleTask}
+                    onAddTask={addTask}
+                    onUpdateTask={updateTask}
+                    onDeleteTask={deleteTask}
+                    onUpdateMilestoneStatus={updateMilestoneStatus}
+                />
+              ))
+            )}
+          </div>
+        )}
 
-        <TabsContent value="archived">
-            <TabsContent value="list" className="space-y-6">
-                 {archivedProjects.map(project => (
-                    <BlueprintProject
-                        key={project.id}
-                        project={project}
-                        onUpdateProject={updateProject}
-                        onDeleteProject={deleteProject}
-                        onAddMilestone={addMilestone}
-                        onUpdateMilestone={updateMilestoneDetails}
-                        onDeleteMilestone={(milestoneId) => {}}
-                        onToggleTask={toggleTask}
-                        onAddTask={addTask}
-                        onUpdateTask={updateTask}
-                        onDeleteTask={deleteTask}
-                        onUpdateMilestoneStatus={updateMilestoneStatus}
-                    />
-                ))}
-                 {archivedProjects.length === 0 && (
-                     <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                        <p className="text-muted-foreground">You have no archived blueprints.</p>
-                    </div>
-                )}
-            </TabsContent>
-            <TabsContent value="timeline">
-                 <TimelineView milestones={getTimelineMilestones(archivedProjects)} />
-            </TabsContent>
-        </TabsContent>
-      </Tabs>
+        {viewMode === 'timeline' && (
+          <TimelineView milestones={getTimelineMilestones(projectsToDisplay)} />
+        )}
+      </div>
       
       <AddProjectDialog
         open={isAddProjectDialogOpen}
