@@ -1,5 +1,5 @@
 
-'use client'
+'use client';
 
 import {
   Dialog,
@@ -17,34 +17,45 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-import { useState } from "react"
-import { Milestone } from "@/types/blueprint"
+import { useState, useEffect } from "react"
+import type { Milestone } from "@/types/blueprint"
 
 type AddMilestoneDialogProps = {
-  onAdd: (milestone: Omit<Milestone, 'id'>) => void
-  children: React.ReactNode
+  onSave: (milestone: Omit<Milestone, 'id'>) => void;
+  milestoneToEdit?: Milestone | null;
+  children: React.ReactNode;
 }
 
-export default function AddMilestoneDialog({ onAdd, children }: AddMilestoneDialogProps) {
+export default function AddMilestoneDialog({ onSave, milestoneToEdit, children }: AddMilestoneDialogProps) {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [date, setDate] = useState<Date | undefined>()
 
-  const handleAdd = () => {
-    if (!title) return
+  useEffect(() => {
+    if (milestoneToEdit && open) {
+      setTitle(milestoneToEdit.title);
+      setDescription(milestoneToEdit.description || '');
+      setDate(milestoneToEdit.dueDate ? new Date(milestoneToEdit.dueDate) : undefined);
+    } else {
+      setTitle('');
+      setDescription('');
+      setDate(undefined);
+    }
+  }, [milestoneToEdit, open]);
+
+
+  const handleSave = () => {
+    if (!title) return;
     const newMilestone: Omit<Milestone, 'id'> = {
       title,
       description,
       dueDate: date?.toISOString() || undefined,
-      status: "Not Started",
-      tasks: [],
-      reflection: '',
+      status: milestoneToEdit?.status || "Not Started",
+      tasks: milestoneToEdit?.tasks || [],
+      reflection: milestoneToEdit?.reflection || '',
     }
-    onAdd(newMilestone)
-    setTitle("")
-    setDescription("")
-    setDate(undefined)
+    onSave(newMilestone)
     setOpen(false)
   }
 
@@ -53,7 +64,7 @@ export default function AddMilestoneDialog({ onAdd, children }: AddMilestoneDial
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Milestone</DialogTitle>
+          <DialogTitle>{milestoneToEdit ? 'Edit Milestone' : 'Add Milestone'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <Input
@@ -82,7 +93,7 @@ export default function AddMilestoneDialog({ onAdd, children }: AddMilestoneDial
           </Popover>
         </div>
         <DialogFooter>
-          <Button onClick={handleAdd}>Add Milestone</Button>
+          <Button onClick={handleSave}>Save Milestone</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

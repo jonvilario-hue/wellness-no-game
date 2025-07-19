@@ -3,11 +3,11 @@
 
 import type { Blueprint, Milestone, Task } from "@/types/blueprint"
 import { useState } from "react"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Plus, Archive, Trash2, Edit, MoreVertical } from "lucide-react"
+import { Plus, Archive, Trash2, Edit, MoreVertical, ArchiveRestore } from "lucide-react"
 import MilestoneCard from "./MilestoneCard"
 import AddMilestoneDialog from "./AddMilestoneDialog"
 import {
@@ -33,7 +33,13 @@ type BlueprintProjectProps = {
   onUpdateProject: (id: string, updates: Partial<Blueprint>) => void;
   onDeleteProject: (id: string) => void;
   onAddMilestone: (projectId: string, milestone: Omit<Milestone, 'id'>) => void;
+  onUpdateMilestone: (projectId: string, milestoneId: string, updates: Partial<Milestone>) => void;
+  onDeleteMilestone: (projectId: string, milestoneId: string) => void;
   onToggleTask: (projectId: string, milestoneId: string, taskId: string) => void;
+  onAddTask: (projectId: string, milestoneId: string, task: Omit<Task, 'id' | 'completed'>) => void;
+  onUpdateTask: (projectId: string, milestoneId: string, taskId: string, updates: Partial<Task>) => void;
+  onDeleteTask: (projectId: string, milestoneId: string, taskId: string) => void;
+  onUpdateMilestoneStatus: (projectId: string, milestoneId: string, status: Milestone['status']) => void;
 }
 
 export default function BlueprintProject({
@@ -41,7 +47,13 @@ export default function BlueprintProject({
   onUpdateProject,
   onDeleteProject,
   onAddMilestone,
+  onUpdateMilestone,
+  onDeleteMilestone,
   onToggleTask,
+  onAddTask,
+  onUpdateTask,
+  onDeleteTask,
+  onUpdateMilestoneStatus
 }: BlueprintProjectProps) {
 
   const calculateProjectProgress = (proj: Blueprint) => {
@@ -78,12 +90,13 @@ export default function BlueprintProject({
                         <Edit className="w-4 h-4 mr-2" /> Edit Blueprint
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onUpdateProject(project.id, { archived: !project.archived })}>
-                       <Archive className="w-4 h-4 mr-2" /> {project.archived ? 'Unarchive' : 'Archive'}
+                       {project.archived ? <ArchiveRestore className="w-4 h-4 mr-2" /> : <Archive className="w-4 h-4 mr-2" />} 
+                       {project.archived ? 'Unarchive' : 'Archive'}
                     </DropdownMenuItem>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                            <Trash2 className="w-4 h-4 mr-2 text-destructive" /> Delete
+                         <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                            <Trash2 className="w-4 h-4 mr-2" /> Delete
                         </DropdownMenuItem>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -107,10 +120,13 @@ export default function BlueprintProject({
             key={milestone.id}
             milestone={milestone}
             onToggleTask={(taskId) => onToggleTask(project.id, milestone.id, taskId)}
+            onAddTask={(task) => onAddTask(project.id, milestone.id, task)}
+            onUpdateMilestoneStatus={(status) => onUpdateMilestoneStatus(project.id, milestone.id, status)}
+            onUpdateMilestone={(updates) => onUpdateMilestone(project.id, milestone.id, updates)}
           />
         ))}
 
-        <AddMilestoneDialog onAdd={(milestone) => onAddMilestone(project.id, milestone)}>
+        <AddMilestoneDialog onSave={(milestone) => onAddMilestone(project.id, milestone)}>
           <Button variant="outline" className="mt-4 w-full">
             <Plus className="w-4 h-4 mr-2" />
             Add Milestone

@@ -13,10 +13,11 @@ type BlueprintState = {
   deleteProject: (id: string) => void;
 
   addMilestone: (projectId: string, milestone: Omit<Milestone, 'id'>) => void;
-  updateMilestone: (projectId: string, milestoneId: string, updates: Partial<Milestone>) => void;
+  updateMilestoneDetails: (projectId: string, milestoneId: string, updates: Partial<Milestone>) => void;
+  updateMilestoneStatus: (projectId: string, milestoneId: string, status: Milestone['status']) => void;
   deleteMilestone: (projectId: string, milestoneId: string) => void;
 
-  addTask: (projectId: string, milestoneId: string, title: string) => void;
+  addTask: (projectId: string, milestoneId: string, task: Omit<Task, 'id' | 'completed'>) => void;
   updateTask: (projectId: string, milestoneId: string, taskId: string, updates: Partial<Task>) => void;
   toggleTask: (projectId: string, milestoneId: string, taskId: string) => void;
   deleteTask: (projectId: string, milestoneId: string, taskId: string) => void;
@@ -64,13 +65,24 @@ export const useBlueprintStore = create<BlueprintState>()(
           }
         });
       },
-      updateMilestone: (projectId, milestoneId, updates) => {
+      updateMilestoneDetails: (projectId, milestoneId, updates) => {
         set((state) => {
           const project = state.projects.find((p) => p.id === projectId);
           if (project) {
             const milestone = project.milestones.find((m) => m.id === milestoneId);
             if (milestone) {
               Object.assign(milestone, updates);
+            }
+          }
+        });
+      },
+      updateMilestoneStatus: (projectId, milestoneId, status) => {
+          set((state) => {
+          const project = state.projects.find((p) => p.id === projectId);
+          if (project) {
+            const milestone = project.milestones.find((m) => m.id === milestoneId);
+            if (milestone) {
+              milestone.status = status;
             }
           }
         });
@@ -84,10 +96,10 @@ export const useBlueprintStore = create<BlueprintState>()(
         });
       },
 
-      addTask: (projectId, milestoneId, title) => {
+      addTask: (projectId, milestoneId, taskData) => {
         const newTask: Task = {
+          ...taskData,
           id: crypto.randomUUID(),
-          title,
           completed: false,
         };
         set((state) => {
@@ -141,7 +153,7 @@ export const useBlueprintStore = create<BlueprintState>()(
       },
     })),
     {
-      name: 'blueprint-store-v2',
+      name: 'blueprint-store-v3',
       storage: createJSONStorage(() => localStorage),
     }
   )

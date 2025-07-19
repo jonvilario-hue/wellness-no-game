@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import type { Blueprint } from '@/types/blueprint';
+import TagSelector from './TagSelector';
 
 type AddProjectDialogProps = {
   open: boolean;
@@ -26,7 +27,7 @@ export default function AddProjectDialog({ open, onOpenChange, onAdd }: AddProje
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [identityGoal, setIdentityGoal] = useState('');
-  const [tags, setTags] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
 
   const handleAdd = () => {
     if (!title) return;
@@ -34,13 +35,13 @@ export default function AddProjectDialog({ open, onOpenChange, onAdd }: AddProje
       title,
       description,
       identityGoal,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+      tags,
     });
     // Reset form
     setTitle('');
     setDescription('');
     setIdentityGoal('');
-    setTags('');
+    setTags([]);
     onOpenChange(false);
   };
 
@@ -65,8 +66,8 @@ export default function AddProjectDialog({ open, onOpenChange, onAdd }: AddProje
             <Textarea id="description" placeholder="A summary of the vision." value={description} onChange={e => setDescription(e.target.value)} />
           </div>
           <div>
-            <Label htmlFor="tags">Tags (comma-separated)</Label>
-            <Input id="tags" placeholder="e.g., career, creative, learning" value={tags} onChange={e => setTags(e.target.value)} />
+            <Label>Tags</Label>
+            <TagSelector selected={tags} onChange={setTags} />
           </div>
         </div>
         <DialogFooter>

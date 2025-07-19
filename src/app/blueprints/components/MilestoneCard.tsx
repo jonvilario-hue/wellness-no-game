@@ -3,9 +3,8 @@
 
 import type { Milestone, Task } from '@/types/blueprint';
 import { Progress } from '@/components/ui/progress';
-import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
-import { Calendar, Check, ChevronDown, MoreVertical } from 'lucide-react';
+import { Calendar, ChevronDown, Edit, MoreVertical, Plus } from 'lucide-react';
 import TaskItem from './TaskItem';
 import {
   Collapsible,
@@ -15,13 +14,21 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
+import ReflectionTextarea from './ReflectionTextarea';
+import AddTaskDialog from './AddTaskDialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import AddMilestoneDialog from './AddMilestoneDialog';
 
 type MilestoneCardProps = {
   milestone: Milestone;
   onToggleTask: (taskId: string) => void;
+  onAddTask: (task: Omit<Task, 'id' | 'completed'>) => void;
+  onUpdateMilestoneStatus: (status: Milestone['status']) => void;
+  onUpdateMilestone: (updates: Partial<Milestone>) => void;
 };
 
-export default function MilestoneCard({ milestone, onToggleTask }: MilestoneCardProps) {
+export default function MilestoneCard({ milestone, onToggleTask, onAddTask, onUpdateMilestoneStatus, onUpdateMilestone }: MilestoneCardProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const calculateMilestoneProgress = (m: Milestone) => {
@@ -51,8 +58,23 @@ export default function MilestoneCard({ milestone, onToggleTask }: MilestoneCard
                 </div>
             </div>
             <div className="flex items-center gap-2">
-                <Badge variant={milestone.status === 'Completed' ? 'default' : 'secondary'}>{milestone.status}</Badge>
-                <Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="w-4 h-4" /></Button>
+                 <Select
+                    value={milestone.status}
+                    onValueChange={(value) => onUpdateMilestoneStatus(value as Milestone["status"])}
+                >
+                    <SelectTrigger className="w-[140px] h-8 text-xs">
+                        <SelectValue placeholder="Set status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Not Started">Not Started</SelectItem>
+                        <SelectItem value="In Progress">In Progress</SelectItem>
+                        <SelectItem value="Paused">Paused</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                    </SelectContent>
+                </Select>
+                <AddMilestoneDialog onSave={onUpdateMilestone} milestoneToEdit={milestone}>
+                   <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="w-4 h-4" /></Button>
+                </AddMilestoneDialog>
             </div>
         </div>
       
@@ -65,12 +87,17 @@ export default function MilestoneCard({ milestone, onToggleTask }: MilestoneCard
                 {milestone.tasks.map(task => (
                     <TaskItem key={task.id} task={task} onToggle={() => onToggleTask(task.id)} />
                 ))}
+                 <AddTaskDialog onAddTask={onAddTask}>
+                    <Button size="sm" variant="ghost" className="w-full justify-start mt-1">
+                        <Plus className="w-4 h-4 mr-2"/>
+                        Add Task
+                    </Button>
+                </AddTaskDialog>
             </div>
 
-            <Textarea 
-                placeholder="Reflections and notes for this milestone..."
-                defaultValue={milestone.reflection}
-                className="mt-2"
+            <ReflectionTextarea
+                initialText={milestone.reflection}
+                onSave={(newText) => onUpdateMilestone({ reflection: newText })}
             />
         </CollapsibleContent>
     </Collapsible>
