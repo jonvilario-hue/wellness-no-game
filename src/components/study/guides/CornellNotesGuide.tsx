@@ -9,7 +9,7 @@ export function CornellNotesGuide() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <NotebookTabs className="w-6 h-6 text-primary"/>
-            Cornell Three-Section Method
+            Cornell Three Section Method
         </CardTitle>
         <CardDescription>A system for taking, organizing, and reviewing notes to significantly improve retention and understanding.</CardDescription>
       </CardHeader>

@@ -9,7 +9,7 @@ export function FeynmanTechniqueGuide() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <GraduationCap className="w-6 h-6 text-primary"/>
-            Feynman ELI5 Method
+            Feynman Teach Back Method
         </CardTitle>
         <CardDescription>A powerful mental model for learning anything by explaining it in simple terms, as if teaching it to someone else.</CardDescription>
       </CardHeader>
