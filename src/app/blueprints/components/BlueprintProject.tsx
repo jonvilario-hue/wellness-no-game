@@ -27,6 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import EditBlueprintDialog from "./EditBlueprintDialog"
 
 type BlueprintProjectProps = {
   project: Blueprint;
@@ -86,9 +87,11 @@ export default function BlueprintProject({
                     <Button variant="ghost" size="icon"><MoreVertical className="w-4 h-4" /></Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                        <Edit className="w-4 h-4 mr-2" /> Edit Blueprint
-                    </DropdownMenuItem>
+                    <EditBlueprintDialog blueprint={project} onSave={(updates) => onUpdateProject(project.id, updates)}>
+                       <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                            <Edit className="w-4 h-4 mr-2" /> Edit Blueprint
+                       </DropdownMenuItem>
+                    </EditBlueprintDialog>
                     <DropdownMenuItem onClick={() => onUpdateProject(project.id, { archived: !project.archived })}>
                        {project.archived ? <ArchiveRestore className="w-4 h-4 mr-2" /> : <Archive className="w-4 h-4 mr-2" />} 
                        {project.archived ? 'Unarchive' : 'Archive'}

@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
 import { Button } from '@/components/ui/button';
-import { Plus, LayoutList, GanttChartSquare, Target, ChevronUp, ChevronDown, Book } from 'lucide-react';
+import { Plus, LayoutList, GanttChartSquare, Target, ChevronUp, ChevronDown, Book, BrainCircuit } from 'lucide-react';
 import BlueprintProject from './components/BlueprintProject';
 import TimelineView from './components/TimelineView';
 import type { Blueprint, Milestone, Task } from '@/types/blueprint';
@@ -168,7 +168,7 @@ export default function BlueprintsPage() {
                 <div className="flex-grow">
                     <CollapsibleContent>
                         <div className="flex flex-col items-center text-center pb-4">
-                            <Target className="mx-auto h-12 w-12 text-primary mb-2"/>
+                            <BrainCircuit className="mx-auto h-12 w-12 text-primary mb-2"/>
                             <h1 className="text-4xl font-bold font-headline">Vision Architecture</h1>
                             <p className="text-lg text-muted-foreground">Design your future, one blueprint at a time.</p>
                         </div>
