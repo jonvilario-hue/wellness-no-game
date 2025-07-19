@@ -3,7 +3,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { goalStrategies, type GoalStrategy } from "@/data/goal-strategies";
-import { ListChecks, Check, Link as LinkIcon, Clock, PenLine, FileQuestion, Pilcrow, Users, Brain, Repeat, HelpCircle, Shuffle, GitBranch, BoxSelect, Palette, Image as ImageIcon, Eye, ShieldAlert, CheckSquare, Target, PieChart, Sparkles } from "lucide-react";
+import { ListChecks, Check, Link as LinkIcon, Clock, PenLine, FileQuestion, Pilcrow, Users, Brain, Repeat, HelpCircle, Shuffle, GitBranch, BoxSelect, Palette, Image as ImageIcon, Eye, ShieldAlert, CheckSquare, Target, PieChart, Sparkles, Lightbulb, Trophy, CalendarCheck, Gamepad, Zap, BatteryCharging, Flag } from "lucide-react";
 
 type StrategyGuideProps = {
   strategy: GoalStrategy;
@@ -31,6 +31,21 @@ const iconMap: Record<string, React.ElementType> = {
     "Centralize Topic": BoxSelect,
     "Branch Out": GitBranch,
     "Use Visuals": ImageIcon,
+    // Gamified Progress
+    "Challenge": Gamepad,
+    "Level Up": Zap,
+    "Streaks": Flag,
+    "Rewards": Trophy,
+    // Pre-Mortem
+    "Predict": Lightbulb,
+    "Analyze": PieChart,
+    "Prevent": ShieldAlert,
+    "Review": CalendarCheck,
+    // Energy Mapping
+    "Observe": Eye,
+    "Tag Tasks": Target,
+    "Schedule": Clock,
+    "Protect": ShieldAlert,
     "default": HelpCircle,
 };
 

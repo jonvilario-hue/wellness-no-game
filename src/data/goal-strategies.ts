@@ -1,6 +1,6 @@
 
 import type { LucideIcon } from "lucide-react";
-import { ArrowLeftRight, CheckSquare, Clock, Eye, Gamepad, HelpCircle, Map, PieChart, ShieldAlert, Users, Target, Sparkles, Brain, Repeat, Pen, BookUp, GitBranch, BoxSelect, Palette, Image as ImageIcon, Link as LinkIcon, PenLine, FileQuestion, Pilcrow } from "lucide-react";
+import { ArrowLeftRight, CheckSquare, Clock, Eye, Gamepad, HelpCircle, Map, PieChart, ShieldAlert, Users, Target, Sparkles, Brain, Repeat, Pen, BookUp, GitBranch, BoxSelect, Palette, Image as ImageIcon, Link as LinkIcon, PenLine, FileQuestion, Pilcrow, Trophy, CalendarCheck, Lightbulb, BatteryCharging } from "lucide-react";
 
 export type GoalStrategy = {
     id: 'backcasting' | 'woop' | 'smart' | 'identity' | 'okrs' | 'review_loop' | 'milestone_mapping' | 'pre_mortem' | 'energy_mapping' | 'gamified';
@@ -151,10 +151,10 @@ export const goalStrategies: GoalStrategy[] = [
         description: 'Think ahead to what might go wrong and plan around it.',
         icon: HelpCircle,
         steps: [
-            "Assume temporary failure. Why did it happen?",
-            "Write out 3 reasons your goal might be derailed.",
-            "Create a prevention or recovery plan for each risk.",
-            "Set a reminder to check in on risks."
+            "Predict: Imagine this goal has failed. Why?",
+            "Analyze: Write out 3-5 specific reasons for the failure.",
+            "Prevent: Create a prevention or recovery plan for each risk.",
+            "Review: Set a reminder to check in on these risks."
         ],
         useFor: 'High-stakes or habit-breaking goals',
         prompts: {
@@ -169,10 +169,10 @@ export const goalStrategies: GoalStrategy[] = [
         description: 'Align your goals with the times you have the most energy and focus.',
         icon: Eye,
         steps: [
-            "Observe your energy levels over 1-2 days.",
-            "Tag tasks as 'deep' or 'shallow'.",
-            "Schedule deep tasks for peak energy times.",
-            "Move admin tasks to off-peak times."
+            "Observe: Track your energy and focus levels for 2-3 days.",
+            "Tag Tasks: Categorize your tasks as 'deep' or 'shallow'.",
+            "Schedule: Align deep work with your peak energy windows.",
+            "Protect: Defend your high-energy times from distractions."
         ],
         useFor: 'Focus-intensive, creative, or strategic goals',
         prompts: {
@@ -187,10 +187,10 @@ export const goalStrategies: GoalStrategy[] = [
         description: 'Turn your progress into a game with levels, streaks, and rewards.',
         icon: Gamepad,
         steps: [
-            "Define your goal as a 'Level 1' challenge.",
-            "Every milestone is a 'level up'.",
-            "Keep a streak counter for daily/weekly progress.",
-            "Create personal rewards for each phase."
+            "Challenge: Define your goal as a 'Level 1' challenge.",
+            "Level Up: Frame every milestone as a level up.",
+            "Streaks: Keep a streak counter for daily/weekly progress.",
+            "Rewards: Create personal rewards for each phase."
         ],
         useFor: 'Creative people, students, neurodivergent minds',
         prompts: {
