@@ -59,7 +59,7 @@ export default function BlueprintsPage() {
                   <CollapsibleContent>
                       <div className="flex flex-col items-center text-center pb-4">
                           <Target className="mx-auto h-12 w-12 text-primary mb-2"/>
-                          <h1 className="text-4xl font-bold font-headline">Architecture Vision</h1>
+                          <h1 className="text-4xl font-bold font-headline">Vision Architecture</h1>
                           <p className="text-lg text-muted-foreground">Design your future, one blueprint at a time.</p>
                       </div>
                   </CollapsibleContent>
