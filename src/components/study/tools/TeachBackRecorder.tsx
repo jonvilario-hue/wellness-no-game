@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Mic, CheckCircle } from "lucide-react";
+import { Mic, CheckCircle, GraduationCap } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -26,8 +26,8 @@ export function TeachBackRecorder() {
     <Card>
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
-                <Mic className="w-5 h-5 text-primary"/>
-                Teach-Back Recorder
+                <GraduationCap className="w-5 h-5 text-primary"/>
+                Teach Back Technique
             </CardTitle>
             <CardDescription>Explain a topic in simple terms to find knowledge gaps.</CardDescription>
         </CardHeader>
