@@ -7,10 +7,10 @@ import { Gamepad2, Pen, Layers, ClipboardCheck, Library, GraduationCap, Target }
 
 export const PageNav = () => {
     const pathname = usePathname();
-    const linkClass = (path: string, exact: boolean = false) =>
+    const linkClass = (path: string) =>
       cn(
         "px-4 py-2.5 rounded-t-md text-sm font-medium transition-colors flex items-center gap-2 border-b-2",
-        (exact ? pathname === path : pathname.startsWith(path))
+        pathname.startsWith(path) && path !== '/' || pathname === path
           ? "border-primary text-primary"
           : "border-transparent text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
       );
@@ -18,7 +18,7 @@ export const PageNav = () => {
     return (
       <div className="border-b bg-card">
         <nav className="flex space-x-2 justify-center -mb-px">
-            <Link href="/" className={linkClass("/", true)}>
+            <Link href="/" className={linkClass("/")}>
                 <Gamepad2 className="w-4 h-4" />
                 <span>PuzzleMaster</span>
             </Link>
@@ -32,7 +32,7 @@ export const PageNav = () => {
             </Link>
              <Link href="/blueprints" className={linkClass("/blueprints")}>
                 <Target className="w-4 h-4" />
-                <span>Blueprints</span>
+                <span>Architect Lab</span>
             </Link>
         </nav>
       </div>

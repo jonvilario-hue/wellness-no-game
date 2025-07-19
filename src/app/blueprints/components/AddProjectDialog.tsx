@@ -1,3 +1,2 @@
-// This component is no longer used and will be replaced by the new strategy-based creator flow.
-// I am leaving this file with a comment to signify its removal, as I cannot delete files directly.
-// The build system should handle the removal of the old path.
+// This component is no longer used and has been marked for deletion.
+// The "select_strategy" and "create_blueprint" views in the main blueprints page have replaced this component's functionality.
