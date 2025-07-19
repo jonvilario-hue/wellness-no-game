@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReflectionTextarea from './ReflectionTextarea';
 import AddTaskDialog from './AddTaskDialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -30,6 +30,11 @@ type MilestoneCardProps = {
 
 export default function MilestoneCard({ milestone, onToggleTask, onAddTask, onUpdateMilestoneStatus, onUpdateMilestone }: MilestoneCardProps) {
   const [isOpen, setIsOpen] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const calculateMilestoneProgress = (m: Milestone) => {
     if (m.tasks.length === 0) return 0;
@@ -50,7 +55,7 @@ export default function MilestoneCard({ milestone, onToggleTask, onAddTask, onUp
                 </CollapsibleTrigger>
                 <div className='flex-grow'>
                     <h4 className="font-semibold">{milestone.title}</h4>
-                     {milestone.dueDate && (
+                     {milestone.dueDate && isClient && (
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                             <Calendar className="w-3 h-3" /> Due: {format(new Date(milestone.dueDate), 'PPP')}
                         </p>
