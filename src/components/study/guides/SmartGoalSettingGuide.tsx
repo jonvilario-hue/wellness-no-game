@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Target, ListChecks, Check, Link, Clock, ArrowRight } from "lucide-react";
+import { Target, ListChecks, Check, Link as LinkIcon, Clock, ArrowRight } from "lucide-react";
 
 export function SmartGoalSettingGuide() {
   return (
@@ -19,7 +19,7 @@ export function SmartGoalSettingGuide() {
             <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-3"><ListChecks className="w-4 h-4 text-primary"/><div><strong>S</strong>pecific: Clearly define what you want to accomplish.</div></li>
                 <li className="flex items-center gap-3"><Check className="w-4 h-4 text-primary"/><div><strong>M</strong>easurable: How will you track progress?</div></li>
-                <li className="flex items-center gap-3"><Link className="w-4 h-4 text-primary"/><div><strong>A</strong>chievable: Is the goal realistic?</div></li>
+                <li className="flex items-center gap-3"><LinkIcon className="w-4 h-4 text-primary"/><div><strong>A</strong>chievable: Is the goal realistic?</div></li>
                 <li className="flex items-center gap-3"><Clock className="w-4 h-4 text-primary"/><div><strong>R</strong>elevant: Does it align with your broader objectives?</div></li>
                 <li className="flex items-center gap-3"><Clock className="w-4 h-4 text-primary"/><div><strong>T</strong>ime-bound: When will you achieve it?</div></li>
             </ul>

@@ -1,6 +1,6 @@
 
 import type { LucideIcon } from "lucide-react";
-import { ArrowLeftRight, CheckSquare, Clock, Eye, Gamepad, HelpCircle, Map, PieChart, ShieldAlert, Users } from "lucide-react";
+import { ArrowLeftRight, CheckSquare, Clock, Eye, Gamepad, HelpCircle, Map, PieChart, ShieldAlert, Users, Target, Sparkles, Brain, Repeat, Pen, BookUp, GitBranch, BoxSelect, Palette, Image as ImageIcon, Link as LinkIcon, PenLine, FileQuestion, Pilcrow } from "lucide-react";
 
 export type GoalStrategy = {
     id: 'backcasting' | 'woop' | 'smart' | 'identity' | 'okrs' | 'review_loop' | 'milestone_mapping' | 'pre_mortem' | 'energy_mapping' | 'gamified';
@@ -78,10 +78,10 @@ export const goalStrategies: GoalStrategy[] = [
         description: 'Anchor goals to your evolving self-image rather than just outcomes.',
         icon: Users,
         steps: [
-            "Frame as 'I want to become the kind of person who...'",
-            "Define habits that reinforce this identity.",
-            "Review weekly: 'Is this helping me become that person?'",
-            "Celebrate small wins as identity confirmations."
+            "Frame: Frame as 'I want to become the kind of person who...'",
+            "Define habits: Define habits that reinforce this identity.",
+            "Review weekly: Review weekly: 'Is this helping me become that person?'",
+            "Celebrate: Celebrate small wins as identity confirmations."
         ],
         useFor: 'Creative, fitness, discipline, lifestyle goals',
         prompts: {
