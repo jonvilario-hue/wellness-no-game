@@ -41,10 +41,10 @@ export const goalStrategies: GoalStrategy[] = [
         description: 'A psychology-backed method to handle obstacles with mental planning.',
         icon: ShieldAlert,
         steps: [
-            "Define your Wish.",
-            "Visualize the best possible Outcome.",
-            "Identify an internal Obstacle.",
-            "Create an 'If-Then' Plan for the obstacle."
+            "<strong>W</strong>ish: Define your most important wish.",
+            "<strong>O</strong>utcome: Visualize the best possible outcome.",
+            "<strong>O</strong>bstacle: Identify one key internal obstacle.",
+            "<strong>P</strong>lan: Create an 'If-Then' plan for that obstacle."
         ],
         useFor: 'Internal blockers, self-sabotage, goal resistance',
         prompts: {
@@ -59,11 +59,11 @@ export const goalStrategies: GoalStrategy[] = [
         description: 'A system to define goals clearly by making them Specific, Measurable, Achievable, Relevant, and Time-bound.',
         icon: CheckSquare,
         steps: [
-            "Make it Specific.",
-            "Make it Measurable.",
-            "Make it Achievable.",
-            "Ensure it's Relevant.",
-            "Set a Time-bound deadline."
+            "<strong>S</strong>pecific: Clearly define what you want to accomplish.",
+            "<strong>M</strong>easurable: How will you track progress?",
+            "<strong>A</strong>chievable: Is the goal realistic?",
+            "<strong>R</strong>elevant: Does it align with your broader objectives?",
+            "<strong>T</strong>ime-bound: When will you achieve it?"
         ],
         useFor: 'Concrete goals, task planning, accountability',
         prompts: {
@@ -96,8 +96,8 @@ export const goalStrategies: GoalStrategy[] = [
         description: 'A system to track ambitious goals through measurable outputs.',
         icon: PieChart,
         steps: [
-            "Write your ambitious Objective.",
-            "Create 3-5 measurable Key Results.",
+            "<strong>O</strong>bjective: Write your ambitious, qualitative goal.",
+            "<strong>K</strong>ey <strong>R</strong>esults: Create 3-5 measurable outputs.",
             "Check in weekly on KR progress.",
             "Mark Objective complete when most KRs are done."
         ],
