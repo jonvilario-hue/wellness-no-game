@@ -70,30 +70,6 @@ export function Header() {
                     </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                      <Button asChild variant="ghost" size="icon">
-                        <Link href="/calendar">
-                          <CalendarDays className="h-5 w-5" />
-                        </Link>
-                      </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Training Calendar</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Button asChild variant="ghost" size="icon">
-                      <Link href="/journal">
-                        <BookMarked className="h-5 w-5" />
-                      </Link>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>My Journal</p>
-                  </TooltipContent>
-                </Tooltip>
             </div>
         </TooltipProvider>
 
