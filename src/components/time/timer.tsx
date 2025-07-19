@@ -130,7 +130,7 @@ function TimerInstance({
                         <Trash2 className="w-4 h-4"/>
                     </Button>
                 </div>
-                 <div className="relative w-64 h-64 flex items-center justify-center">
+                 <div className="relative w-56 h-56 flex items-center justify-center">
                     <CircularTimerVisual progress={progress} />
                      <div className="absolute inset-0 flex flex-col items-center justify-center">
                         <span className="font-mono text-6xl tracking-tighter">
