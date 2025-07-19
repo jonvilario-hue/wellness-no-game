@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Brain, Settings, CalendarDays, BookMarked, Music, FlaskConical, Clock } from 'lucide-react';
+import { Settings, Clock } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -13,63 +13,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useTrainingFocus } from '@/hooks/use-training-focus';
-import { useTrainingOverride } from '@/hooks/use-training-override';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
-import { SigmaIcon } from './icons';
+import { FlaskConical } from 'lucide-react';
   
 export function Header() {
-  const { focus, setFocus, isLoaded } = useTrainingFocus();
-  const { setOverride } = useTrainingOverride();
-
-  const handleFocusChange = (value: string) => {
-    const newFocus = value as 'neutral' | 'math' | 'music';
-    setFocus(newFocus);
-    setOverride(null); 
-  };
-  
-  const focusInfo = {
-    neutral: { Icon: Brain, label: 'Core Thinking' },
-    math: { Icon: SigmaIcon, label: 'Math Reasoning' },
-    music: { Icon: Music, label: 'Music Cognition' },
-  }
-
-  const { Icon, label } = focusInfo[focus] || focusInfo.neutral;
-
   return (
     <header className="px-4 sm:px-6 md:px-8 py-2 border-b bg-card">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
         <TooltipProvider>
             <div className="flex-1 flex justify-start items-center gap-1">
-                <DropdownMenu>
-                  <Tooltip delayDuration={0}>
-                      <TooltipTrigger asChild>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" disabled={!isLoaded}>
-                              <Icon className="h-5 w-5" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                      </TooltipTrigger>
-                       <TooltipContent>
-                          <p>Global Training Focus: {label}</p>
-                       </TooltipContent>
-                  </Tooltip>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>Global Training Focus</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuRadioGroup value={focus} onValueChange={handleFocusChange}>
-                      <DropdownMenuRadioItem value="neutral" className="gap-2">
-                        <Brain className="w-4 h-4"/> Core Thinking
-                      </DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="math" className="gap-2">
-                         <SigmaIcon className="w-4 h-4"/> Math Reasoning
-                      </DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="music" className="gap-2">
-                         <Music className="w-4 h-4"/> Music Cognition
-                      </DropdownMenuRadioItem>
-                    </DropdownMenuRadioGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {/* Intentionally left blank */}
             </div>
         </TooltipProvider>
 
