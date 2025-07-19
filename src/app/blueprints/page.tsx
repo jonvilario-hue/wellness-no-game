@@ -37,6 +37,15 @@ export default function BlueprintsPage() {
     setIsOpen(open);
     localStorage.setItem('blueprints-collapsible-state', JSON.stringify(open));
   };
+  
+  const handleQuickAdd = () => {
+    addProject({
+        title: "Untitled Blueprint",
+        description: "",
+        identityGoal: "",
+        tags: [],
+    });
+  }
 
   const handleSelectStrategy = (strategy: GoalStrategy) => {
     setSelectedStrategy(strategy);
@@ -107,10 +116,15 @@ export default function BlueprintsPage() {
                         </TabsList>
                     </Tabs>
                   </div>
-                  <Button onClick={() => setViewState('select_strategy')}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    New Blueprint
-                </Button>
+                  <div className="flex items-center gap-2">
+                    <Button onClick={() => setViewState('select_strategy')} variant="outline">
+                        Create from Strategy...
+                    </Button>
+                    <Button onClick={handleQuickAdd}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        New Blueprint
+                    </Button>
+                  </div>
               </div>
 
               <div>
