@@ -7,7 +7,7 @@ import { useFutureStore } from '@/hooks/use-future-store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { Button } from '../ui/button';
-import { Archive, Trash2, PlusCircle, Edit, Tag, Unarchive } from 'lucide-react';
+import { Archive, Trash2, PlusCircle, Edit, Tag, ArchiveRestore } from 'lucide-react';
 import { MilestoneList } from './milestone-list';
 import { EditableLabel } from '../time/editable-label';
 import {
@@ -76,7 +76,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </div>
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" onClick={handleToggleArchive}>
-              {project.archived ? <Unarchive className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
+              {project.archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
             </Button>
              <AlertDialog>
                 <AlertDialogTrigger asChild>
