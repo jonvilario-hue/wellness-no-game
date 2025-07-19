@@ -9,7 +9,7 @@ export function CornellNotesGuide() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <NotebookTabs className="w-6 h-6 text-primary"/>
-            Cornell Notes Method
+            Cornell Three-Section Method
         </CardTitle>
         <CardDescription>A system for taking, organizing, and reviewing notes to significantly improve retention and understanding.</CardDescription>
       </CardHeader>
@@ -32,7 +32,7 @@ export function CornellNotesGuide() {
             </ul>
         </div>
         <Button className="w-full" disabled>
-            Try the Cornell Notes Editor <ArrowRight className="ml-2 h-4 w-4"/>
+            Try the Three Section Notes Editor <ArrowRight className="ml-2 h-4 w-4"/>
         </Button>
       </CardContent>
     </Card>

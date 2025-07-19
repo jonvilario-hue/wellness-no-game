@@ -10,7 +10,7 @@ export function CornellNotesEditor() {
         <CardHeader>
             <CardTitle className="flex items-center gap-2">
                 <NotebookTabs className="w-5 h-5 text-primary"/>
-                Three Column Editor
+                Three Section Notes
             </CardTitle>
             <CardDescription>Use a structured 3-column format to separate concepts clearly.</CardDescription>
         </CardHeader>
