@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { Milestone } from '@/hooks/use-future-store';
+import type { Milestone } from '@/hooks/use-architecture-store';
 import { MilestoneCard } from './milestone-card';
 import { AnimatePresence, motion } from 'framer-motion';
 

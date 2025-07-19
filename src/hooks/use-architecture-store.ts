@@ -27,7 +27,7 @@ export interface Project {
   archived: boolean;
 }
 
-type FutureState = {
+type ArchitectureState = {
   projects: Project[];
   addProject: (title: string) => void;
   updateProject: (id: string, updates: Partial<Pick<Project, 'title' | 'tags' | 'archived'>>) => void;
@@ -42,7 +42,7 @@ type FutureState = {
   deleteTask: (projectId: string, milestoneId: string, taskId: string) => void;
 };
 
-export const useFutureStore = create<FutureState>()(
+export const useArchitectureStore = create<ArchitectureState>()(
   persist(
     immer((set) => ({
       projects: [],
@@ -153,7 +153,7 @@ export const useFutureStore = create<FutureState>()(
       },
     })),
     {
-      name: 'future-thoughts-store',
+      name: 'architecture-store',
       storage: createJSONStorage(() => localStorage),
     }
   )

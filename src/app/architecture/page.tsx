@@ -2,16 +2,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useFutureStore } from '@/hooks/use-future-store';
+import { useArchitectureStore } from '@/hooks/use-architecture-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Archive, List, PlusCircle } from 'lucide-react';
-import { ProjectList } from '@/components/future/project-list';
+import { ProjectList } from '@/components/architecture/project-list';
 
-export default function FuturePage() {
-    const { projects, addProject } = useFutureStore();
+export default function ArchitecturePage() {
+    const { projects, addProject } = useArchitectureStore();
     const [newProjectTitle, setNewProjectTitle] = useState('');
 
     const handleCreateProject = () => {

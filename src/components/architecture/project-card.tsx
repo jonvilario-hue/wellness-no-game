@@ -2,8 +2,8 @@
 'use client';
 
 import { useState } from 'react';
-import type { Project } from '@/hooks/use-future-store';
-import { useFutureStore } from '@/hooks/use-future-store';
+import type { Project } from '@/hooks/use-architecture-store';
+import { useArchitectureStore } from '@/hooks/use-architecture-store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { Button } from '../ui/button';
@@ -29,7 +29,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
-  const { updateProject, deleteProject, addMilestone } = useFutureStore();
+  const { updateProject, deleteProject, addMilestone } = useArchitectureStore();
   const [newMilestoneTitle, setNewMilestoneTitle] = useState('');
 
   const calculateProjectProgress = (project: Project) => {

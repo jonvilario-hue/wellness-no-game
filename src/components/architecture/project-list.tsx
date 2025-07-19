@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { Project } from '@/hooks/use-future-store';
+import type { Project } from '@/hooks/use-architecture-store';
 import { ProjectCard } from './project-card';
 import { AnimatePresence, motion } from 'framer-motion';
 

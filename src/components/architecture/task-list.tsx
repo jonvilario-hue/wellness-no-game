@@ -2,8 +2,8 @@
 'use client';
 
 import { useState } from 'react';
-import type { Task } from '@/hooks/use-future-store';
-import { useFutureStore } from '@/hooks/use-future-store';
+import type { Task } from '@/hooks/use-architecture-store';
+import { useArchitectureStore } from '@/hooks/use-architecture-store';
 import { EditableLabel } from '../time/editable-label';
 import { Checkbox } from '../ui/checkbox';
 import { Button } from '../ui/button';
@@ -17,7 +17,7 @@ interface TaskListProps {
 }
 
 export function TaskList({ projectId, milestoneId, tasks }: TaskListProps) {
-  const { addTask, updateTask, deleteTask } = useFutureStore();
+  const { addTask, updateTask, deleteTask } = useArchitectureStore();
   const [newTaskName, setNewTaskName] = useState('');
 
   const handleAddTask = () => {

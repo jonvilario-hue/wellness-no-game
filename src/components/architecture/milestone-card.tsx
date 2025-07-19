@@ -1,8 +1,8 @@
 
 'use client';
 
-import type { Milestone } from '@/hooks/use-future-store';
-import { useFutureStore } from '@/hooks/use-future-store';
+import type { Milestone } from '@/hooks/use-architecture-store';
+import { useArchitectureStore } from '@/hooks/use-architecture-store';
 import { useState } from 'react';
 import { TaskList } from './task-list';
 import { EditableLabel } from '../time/editable-label';
@@ -29,7 +29,7 @@ interface MilestoneCardProps {
 }
 
 export function MilestoneCard({ projectId, milestone }: MilestoneCardProps) {
-  const { updateMilestone, deleteMilestone } = useFutureStore();
+  const { updateMilestone, deleteMilestone } = useArchitectureStore();
   const [isOpen, setIsOpen] = useState(true);
 
   const calculateMilestoneProgress = (milestone: Milestone) => {

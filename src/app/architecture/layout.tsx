@@ -3,7 +3,7 @@ import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 
-export default function FutureLayout({
+export default function ArchitectureLayout({
   children,
 }: {
   children: React.ReactNode;
