@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Settings, Clock } from 'lucide-react';
+import { Settings, Clock, Library } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -22,7 +22,18 @@ export function Header() {
       <div className="mx-auto max-w-7xl flex items-center justify-between">
         <TooltipProvider>
             <div className="flex-1 flex justify-start items-center gap-1">
-                {/* Intentionally left blank */}
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button asChild variant="ghost" size="icon">
+                      <Link href="/library">
+                        <Library className="h-5 w-5" />
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Library</p>
+                  </TooltipContent>
+                </Tooltip>
             </div>
         </TooltipProvider>
 

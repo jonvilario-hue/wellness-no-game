@@ -34,10 +34,6 @@ export const PageNav = () => {
                 <Target className="w-4 h-4" />
                 <span>Blueprints</span>
             </Link>
-            <Link href="/library" className={linkClass("/library")}>
-                <Library className="w-4 h-4" />
-                <span>Library</span>
-            </Link>
         </nav>
       </div>
     );
