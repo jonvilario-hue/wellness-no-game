@@ -186,7 +186,7 @@ export default function BlueprintsPage() {
        <Tabs defaultValue="blueprints" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="blueprints"><Target className="mr-2 h-4 w-4" />Blueprints</TabsTrigger>
-                <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" />Path Strategies</TabsTrigger>
+                <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" />Vision Techniques</TabsTrigger>
             </TabsList>
             <TabsContent value="blueprints" className="mt-6">
                 {renderContent()}
