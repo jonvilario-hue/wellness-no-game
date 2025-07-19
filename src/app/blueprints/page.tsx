@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
 import { Button } from '@/components/ui/button';
-import { Plus, LayoutList, GanttChartSquare, Target, ChevronUp, ChevronDown, ArrowLeft, Book } from 'lucide-react';
+import { Plus, LayoutList, GanttChartSquare, Target, ChevronUp, ChevronDown, Book } from 'lucide-react';
 import BlueprintProject from './components/BlueprintProject';
 import TimelineView from './components/TimelineView';
 import type { Blueprint, Milestone, Task } from '@/types/blueprint';
@@ -47,11 +47,6 @@ export default function BlueprintsPage() {
     });
   }
 
-  const handleSelectStrategy = (strategy: GoalStrategy) => {
-    setSelectedStrategy(strategy);
-    setViewState('create_blueprint');
-  };
-
   const handleCreateBlueprint = (projectData: Omit<Blueprint, 'id' | 'milestones' | 'archived'>) => {
     addProject(projectData);
     setViewState('list');
@@ -80,20 +75,16 @@ export default function BlueprintsPage() {
   const renderContent = () => {
     switch (viewState) {
       case 'select_strategy':
+        // This case is now un-reachable but kept for potential future use
         return (
-          <>
-            <Button variant="outline" onClick={() => setViewState('list')} className="mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blueprints
-            </Button>
-            <StrategySelection onSelectStrategy={handleSelectStrategy} />
-          </>
+            <StrategySelection onSelectStrategy={() => {}} />
         );
       case 'create_blueprint':
         if (!selectedStrategy) return null;
         return (
            <BlueprintCreator
               strategy={selectedStrategy}
-              onBack={() => setViewState('select_strategy')}
+              onBack={() => setViewState('list')}
               onCreate={handleCreateBlueprint}
             />
         );
@@ -117,9 +108,6 @@ export default function BlueprintsPage() {
                     </Tabs>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button onClick={() => setViewState('select_strategy')} variant="outline">
-                        Create from Strategy...
-                    </Button>
                     <Button onClick={handleQuickAdd}>
                         <Plus className="w-4 h-4 mr-2" />
                         New Blueprint
