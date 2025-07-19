@@ -132,7 +132,7 @@ function TimerInstance({
                 </div>
                  <div className="relative w-48 h-48 flex items-center justify-center">
                     <CircularTimerVisual progress={progress} />
-                     <div className="absolute flex flex-col items-center justify-center">
+                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                         <span className="font-mono text-4xl tracking-tighter">
                             {formatTime(timer.timeLeft)}
                         </span>
