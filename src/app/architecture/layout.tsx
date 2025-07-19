@@ -1,25 +1,3 @@
-
-import { Header } from '@/components/header';
-import { PageNav } from '@/components/page-nav';
-import { MotivationalMessage } from '@/components/motivational-message';
-
-export default function ArchitectureLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <>
-      <div className="sticky top-0 z-20">
-        <Header />
-        <PageNav />
-      </div>
-      <MotivationalMessage />
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-7xl">
-            {children}
-        </div>
-      </main>
-    </>
-  );
-}
+// This file is effectively deleted by renaming it. The new file is at /src/app/blueprints/layout.tsx.
+// I am leaving this file with a comment to signify its removal, as I cannot delete files directly.
+// The build system should handle the removal of the old path.

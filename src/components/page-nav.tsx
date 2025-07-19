@@ -30,9 +30,9 @@ export const PageNav = () => {
                 <GraduationCap className="w-4 h-4" />
                 <span>Scholar Hub</span>
             </Link>
-             <Link href="/architecture" className={linkClass("/architecture")}>
+             <Link href="/blueprints" className={linkClass("/blueprints")}>
                 <Target className="w-4 h-4" />
-                <span>Architecture</span>
+                <span>Blueprints</span>
             </Link>
             <Link href="/library" className={linkClass("/library")}>
                 <Library className="w-4 h-4" />
