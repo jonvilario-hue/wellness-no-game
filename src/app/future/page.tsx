@@ -2,9 +2,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Header } from '@/components/header';
-import { PageNav } from '@/components/page-nav';
-import { MotivationalMessage } from '@/components/motivational-message';
 import { useFutureStore } from '@/hooks/use-future-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,48 +25,39 @@ export default function FuturePage() {
     const archivedProjects = projects.filter(p => p.archived);
 
     return (
-        <>
-            <div className="sticky top-0 z-20">
-                <Header />
-                <PageNav />
-            </div>
-            <MotivationalMessage />
-            <main className="flex-1 p-4 sm:p-6 md:p-8">
-                <div className="mx-auto max-w-7xl space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Create a New Project</CardTitle>
-                            <CardDescription>
-                                A project can be a long-term goal, a learning plan, or any theme you want to track over time.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex gap-2">
-                            <Input
-                                placeholder="e.g., Learn Quantum Physics, Build a Mobile App..."
-                                value={newProjectTitle}
-                                onChange={(e) => setNewProjectTitle(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleCreateProject()}
-                            />
-                            <Button onClick={handleCreateProject} disabled={!newProjectTitle.trim()}>
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Project
-                            </Button>
-                        </CardContent>
-                    </Card>
-                    
-                    <Tabs defaultValue="active">
-                        <TabsList className="grid w-full grid-cols-2">
-                           <TabsTrigger value="active"><List className="mr-2 h-4 w-4" />Active Projects ({activeProjects.length})</TabsTrigger>
-                           <TabsTrigger value="archived"><Archive className="mr-2 h-4 w-4" />Archived Projects ({archivedProjects.length})</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="active" className="mt-6">
-                            <ProjectList projects={activeProjects} />
-                        </TabsContent>
-                         <TabsContent value="archived" className="mt-6">
-                            <ProjectList projects={archivedProjects} />
-                        </TabsContent>
-                    </Tabs>
-                </div>
-            </main>
-        </>
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Create a New Project</CardTitle>
+                    <CardDescription>
+                        A project can be a long-term goal, a learning plan, or any theme you want to track over time.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex gap-2">
+                    <Input
+                        placeholder="e.g., Learn Quantum Physics, Build a Mobile App..."
+                        value={newProjectTitle}
+                        onChange={(e) => setNewProjectTitle(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleCreateProject()}
+                    />
+                    <Button onClick={handleCreateProject} disabled={!newProjectTitle.trim()}>
+                        <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                    </Button>
+                </CardContent>
+            </Card>
+            
+            <Tabs defaultValue="active">
+                <TabsList className="grid w-full grid-cols-2">
+                   <TabsTrigger value="active"><List className="mr-2 h-4 w-4" />Active Projects ({activeProjects.length})</TabsTrigger>
+                   <TabsTrigger value="archived"><Archive className="mr-2 h-4 w-4" />Archived Projects ({archivedProjects.length})</TabsTrigger>
+                </TabsList>
+                <TabsContent value="active" className="mt-6">
+                    <ProjectList projects={activeProjects} />
+                </TabsContent>
+                 <TabsContent value="archived" className="mt-6">
+                    <ProjectList projects={archivedProjects} />
+                </TabsContent>
+            </Tabs>
+        </div>
     );
 }
