@@ -37,14 +37,14 @@ const formatTime = (totalSeconds: number) => {
 };
 
 const CircularTimerVisual = ({ progress }: { progress: number }) => {
-    const radius = 80;
-    const stroke = 10;
+    const radius = 90;
+    const stroke = 12;
     const normalizedRadius = radius - stroke * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
     const strokeDashoffset = circumference - (progress / 100) * circumference;
 
     return (
-        <div className="relative w-48 h-48">
+        <div className="relative w-56 h-56">
             <svg
                 height="100%"
                 width="100%"
@@ -56,8 +56,8 @@ const CircularTimerVisual = ({ progress }: { progress: number }) => {
                     fill="transparent"
                     strokeWidth={stroke}
                     r={normalizedRadius}
-                    cx={radius + stroke}
-                    cy={radius + stroke}
+                    cx={radius + stroke / 2}
+                    cy={radius + stroke / 2}
                 />
                 <circle
                     stroke="hsl(var(--primary))"
@@ -66,8 +66,8 @@ const CircularTimerVisual = ({ progress }: { progress: number }) => {
                     strokeDasharray={circumference + ' ' + circumference}
                     style={{ strokeDashoffset, strokeLinecap: 'round' }}
                     r={normalizedRadius}
-                    cx={radius + stroke}
-                    cy={radius + stroke}
+                    cx={radius + stroke / 2}
+                    cy={radius + stroke / 2}
                     className="transition-all duration-300"
                 />
             </svg>
@@ -130,10 +130,10 @@ function TimerInstance({
                         <Trash2 className="w-4 h-4"/>
                     </Button>
                 </div>
-                 <div className="relative w-48 h-48 flex items-center justify-center">
+                 <div className="relative w-64 h-64 flex items-center justify-center">
                     <CircularTimerVisual progress={progress} />
                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="font-mono text-4xl tracking-tighter">
+                        <span className="font-mono text-6xl tracking-tighter">
                             {formatTime(timer.timeLeft)}
                         </span>
                         {!timer.isActive && (
