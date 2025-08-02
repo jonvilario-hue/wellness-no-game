@@ -1,50 +1,29 @@
 
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { movementExercises, type ExerciseCategory } from "@/data/exercises"
+import { ExerciseCard } from "../exercises/exercise-card"
 
-const movementExercises = [
-  {
-    title: "Neck Rolls",
-    duration: "30 sec",
-    level: "Easy",
-  },
-  {
-    title: "Chair Squats",
-    duration: "1 min",
-    level: "Medium",
-  },
-  {
-    title: "Wall Sit",
-    duration: "1 min",
-    level: "Medium",
-  },
-  {
-    title: "Jumping Jacks",
-    duration: "30 sec",
-    level: "Hard",
-  },
-  {
-    title: "Spinal Twist",
-    duration: "1 min",
-    level: "Easy",
-  },
-]
+const categories: ExerciseCategory[] = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
 export default function MovementContent() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
-      {movementExercises.map((exercise, i) => (
-        <Card key={i} className="hover:shadow-lg">
-          <CardContent className="p-4">
-            <h3 className="text-lg font-semibold mb-1">{exercise.title}</h3>
-            <p className="text-sm text-muted-foreground">Duration: {exercise.duration}</p>
-            <p className="text-sm text-muted-foreground">Level: {exercise.level}</p>
-            <Button variant="outline" className="mt-3 w-full">Start</Button>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="space-y-8">
+        {categories.map(category => {
+            const exercises = movementExercises.filter(e => e.category === category);
+            if(exercises.length === 0) return null;
+            return (
+                <div key={category}>
+                    <h2 className="text-2xl font-bold mb-4">{category}</h2>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {exercises.map((exercise) => (
+                            <ExerciseCard key={exercise.id} exercise={exercise} />
+                        ))}
+                    </div>
+                </div>
+            )
+        })}
     </div>
   )
 }

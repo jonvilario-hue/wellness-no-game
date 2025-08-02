@@ -34,14 +34,22 @@ export default function ExercisesPage() {
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-7xl space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <DailyPractice />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-2">
+                <CardHeader>
+                    <CardTitle>Today's Practice</CardTitle>
+                    <CardDescription>A suggested movement and stillness practice to balance your day.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <DailyPractice />
+                </CardContent>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Build Your Own Routine</CardTitle>
-                <CardDescription>Create a personalized wellness routine by combining different movement and stillness practices.</CardDescription>
+                <CardDescription>Create a personalized wellness routine by combining different practices.</CardDescription>
               </CardHeader>
-              <CardContent className="flex items-center justify-center">
+              <CardContent className="flex items-center justify-center h-full">
                 <RoutineBuilderModal />
               </CardContent>
             </Card>

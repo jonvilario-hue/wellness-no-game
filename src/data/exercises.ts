@@ -1,11 +1,12 @@
 
 import type { LucideIcon } from 'lucide-react';
-import { Dumbbell, HeartPulse, StretchHorizontal, Brain, Wind, Waves, PersonStanding, Cat, Mountain, Bird, TreeDeciduous, Zap } from 'lucide-react';
+import { Dumbbell, StretchHorizontal, Brain, Wind, Waves, PersonStanding, Cat, Mountain, Bird, TreeDeciduous, Zap, Shield, HeartHandshake, Eye, Sunrise, Moon } from 'lucide-react';
 
-export type ExerciseCategory = 'Stretching' | 'Strength' | 'Energizer';
-export type MindfulnessCategory = 'Breathing' | 'Meditation' | 'Relaxation';
+// --- CATEGORY TYPES ---
+export type ExerciseCategory = 'Stretching' | 'Strength' | 'Energizer' | 'Wakeup & Wind-Down';
+export type MindfulnessCategory = 'Breathwork' | 'Clarity & Focus' | 'Grounding & Safety' | 'Self-Compassion';
 
-type BaseExercise = {
+type BasePractice = {
   id: string;
   name: string;
   description: string;
@@ -13,47 +14,58 @@ type BaseExercise = {
   icon: LucideIcon;
 };
 
-export type Exercise = BaseExercise & {
+export type Exercise = BasePractice & {
   category: ExerciseCategory;
 };
 
-export type MindfulnessPractice = BaseExercise & {
+export type MindfulnessPractice = BasePractice & {
   category: MindfulnessCategory;
 };
 
-export const movementExercises: Exercise[] = [
-  // Stretching
-  { id: 'stretch_neck', name: 'Neck Rolls', description: 'Gently roll your head from side to side to release neck tension.', duration: 60, icon: PersonStanding, category: 'Stretching' },
-  { id: 'stretch_shoulders', name: 'Shoulder Openers', description: 'Clasp hands behind your back and lift to open the chest.', duration: 60, icon: PersonStanding, category: 'Stretching' },
-  { id: 'stretch_cat_cow', name: 'Spinal Twists', description: 'Gently twist your torso while seated or lying down.', duration: 90, icon: Cat, category: 'Stretching' },
-  { id: 'stretch_hamstring', name: 'Standing Hamstring Stretch', description: 'Reach for your toes while keeping your legs straight.', duration: 60, icon: PersonStanding, category: 'Stretching' },
-  
-  // Strength
-  { id: 'strength_squats', name: 'Chair Squats', description: 'Perform squats to build leg and core strength using a chair for support.', duration: 120, icon: Dumbbell, category: 'Strength' },
-  { id: 'strength_wall_sit', name: 'Wall Sit', description: 'Hold a seated position against a wall to build isometric strength.', duration: 60, icon: Dumbbell, category: 'Strength' },
-  { id: 'strength_glute_bridge', name: 'Glute Bridges', description: 'Lift your hips off the floor to strengthen your glutes and lower back.', duration: 90, icon: Dumbbell, category: 'Strength' },
-  { id: 'strength_balance', name: 'Standing Balance', description: 'Stand on one leg to improve stability and focus.', duration: 60, icon: Dumbbell, category: 'Strength' },
+// --- MOVEMENT MODULES ---
 
-  // Energizers
-  { id: 'energizer_jumping_jacks', name: 'Jumping Jacks', description: 'A full-body exercise to get your heart rate up quickly.', duration: 60, icon: Zap, category: 'Energizer' },
-  { id: 'energizer_high_knees', name: 'High Knees', description: 'Run in place, bringing your knees up towards your chest.', duration: 60, icon: Zap, category: 'Energizer' },
-  { id: 'energizer_mountain_climbers', name: 'Mountain Climbers', description: 'A dynamic core exercise that simulates climbing.', duration: 60, icon: Zap, category: 'Energizer' },
-  { id: 'energizer_shadow_boxing', name: 'Shadow Boxing', description: 'Practice punches and footwork for a dynamic cardio workout.', duration: 120, icon: Zap, category: 'Energizer' },
+export const movementExercises: Exercise[] = [
+  // Mobility & Release -> Stretching
+  { id: 'stretch_neck', name: 'Neck & Shoulder Release', description: 'Gently release tension from sitting or stress.', duration: 120, icon: PersonStanding, category: 'Stretching' },
+  { id: 'stretch_hips', name: 'Hip Openers', description: 'Counteract the effects of long sitting periods.', duration: 180, icon: PersonStanding, category: 'Stretching' },
+  { id: 'stretch_spine', name: 'Thoracic Spine Rotations', description: 'Improve mid-back mobility and posture.', duration: 90, icon: Cat, category: 'Stretching' },
+  
+  // Functional Strength -> Strength
+  { id: 'strength_wall_pushups', name: 'Wall Push-ups', description: 'Build shoulder integrity and upper body strength.', duration: 120, icon: Dumbbell, category: 'Strength' },
+  { id: 'strength_balance', name: 'Single-Leg Balance', description: 'Enhance stability, focus, and knee health.', duration: 60, icon: Mountain, category: 'Strength' },
+  { id: 'strength_core', name: 'Core Awakening', description: 'Engage deep core muscles with plank variations.', duration: 90, icon: Dumbbell, category: 'Strength' },
+  
+  // Quick Energy Boosters -> Energizer
+  { id: 'energizer_high_knees', name: '1-Min High Knees', description: 'Quickly elevate your heart rate and energy.', duration: 60, icon: Zap, category: 'Energizer' },
+  { id: 'energizer_shadow_boxing', name: 'Shadow Boxing', description: 'A dynamic cardio workout to shake off sluggishness.', duration: 120, icon: Zap, category: 'Energizer' },
+  { id: 'energizer_breath_squats', name: 'Breath & Squat Pulses', description: 'Sync breath with movement to energize the body.', duration: 90, icon: Zap, category: 'Energizer' },
+
+  // Gentle Wakeups / Wind-Downs -> Wakeup & Wind-Down
+  { id: 'wakeup_flow', name: 'Morning Mobility Flow', description: 'Wake up your spine, ankles, and shoulders.', duration: 180, icon: Sunrise, category: 'Wakeup & Wind-Down' },
+  { id: 'wind_down_stretch', name: 'Pre-Bedtime Stretch', description: 'Release the day\'s tension from hamstrings and neck.', duration: 240, icon: Moon, category: 'Wakeup & Wind-Down' },
 ];
 
+
+// --- STILLNESS MODULES ---
+
 export const mindfulnessPractices: MindfulnessPractice[] = [
-  // Breathing
-  { id: 'breath_box', name: 'Box Breathing', description: 'Inhale for 4s, hold for 4s, exhale for 4s, hold for 4s. Repeat.', duration: 180, icon: Wind, category: 'Breathing' },
-  { id: 'breath_478', name: '4-7-8 Breathing', description: 'Inhale for 4s, hold for 7s, exhale slowly for 8s. A powerful relaxation technique.', duration: 180, icon: Wind, category: 'Breathing' },
-  { id: 'breath_diaphragmatic', name: 'Diaphragmatic Breathing', description: 'Focus on deep belly breaths to engage the diaphragm and calm the nervous system.', duration: 300, icon: Wind, category: 'Breathing' },
+  // Breathwork for State Shifting -> Breathwork
+  { id: 'breath_box', name: 'Box Breathing', description: 'Inhale 4s, hold 4s, exhale 4s, hold 4s. For calm and focus.', duration: 180, icon: Wind, category: 'Breathwork' },
+  { id: 'breath_478', name: '4-7-8 Breath', description: 'A powerful technique to reduce anxiety and promote rest.', duration: 120, icon: Wind, category: 'Breathwork' },
+  { id: 'breath_resonant', name: 'Resonant Breathing', description: 'Breathe at a rate of 5-6 breaths per minute to balance the nervous system.', duration: 300, icon: Wind, category: 'Breathwork' },
 
-  // Meditation
-  { id: 'meditation_awareness', name: 'Mindfulness of Breath', description: 'Gently guide your attention to the sensation of your breath without trying to change it.', duration: 300, icon: Brain, category: 'Meditation' },
-  { id: 'meditation_body_scan', name: 'Body Scan', description: 'Bring awareness to each part of your body sequentially, noticing sensations without judgment.', duration: 600, icon: Brain, category: 'Meditation' },
-  { id: 'meditation_loving_kindness', name: 'Affirmation Meditation', description: 'Repeat a positive affirmation to cultivate a specific mindset.', duration: 180, icon: Brain, category: 'Meditation' },
+  // Mental Clarity & Focus Tools -> Clarity & Focus
+  { id: 'focus_wins', name: 'Name 3 Wins', description: 'A self-coaching exercise to build momentum and clarity.', duration: 120, icon: Brain, category: 'Clarity & Focus' },
+  { id: 'focus_visualization', name: 'Focus Visualization', description: 'Mentally rehearse a task to improve performance and reduce anxiety.', duration: 180, icon: Eye, category: 'Clarity & Focus' },
+  { id: 'focus_reset', name: 'Two-Minute Reset', description: 'A brief mindfulness pause to break from overwhelm and regain focus.', duration: 120, icon: Brain, category: 'Clarity & Focus' },
+  
+  // Grounding & Safety Practices -> Grounding & Safety
+  { id: 'grounding_54321', name: '5-4-3-2-1 Senses', description: 'Engage all five senses to anchor yourself in the present moment.', duration: 180, icon: Shield, category: 'Grounding & Safety' },
+  { id:d: 'grounding_tactile', name: 'Tactile Object Focus', description: 'Hold an object and focus on its texture, temperature, and weight.', duration: 120, icon: Shield, category: 'Grounding & Safety' },
+  { id: 'grounding_nature', name: 'Nature Visualization', description: 'Imagine a safe, natural place and sync your breath with its rhythm.', duration: 300, icon: TreeDeciduous, category: 'Grounding & Safety' },
 
-  // Relaxation
-  { id: 'relaxation_visualization', name: 'Guided Visualization', description: 'Imagine a calm, peaceful place in detail to transport your mind and relax your body.', duration: 300, icon: Waves, category: 'Relaxation' },
-  { id: 'relaxation_pmr', name: 'Progressive Muscle Relaxation', description: 'Tense and then release different muscle groups to achieve a state of deep physical relaxation.', duration: 600, icon: Waves, category: 'Relaxation' },
-  { id: 'relaxation_5_senses', name: '5-4-3-2-1 Grounding', description: 'Ground yourself by noticing 5 things you see, 4 you feel, 3 you hear, 2 you smell, and 1 you taste.', duration: 180, icon: Waves, category: 'Relaxation' },
+  // Self-Compassion & Emotional Support -> Self-Compassion
+  { id: 'compassion_metta', name: 'Loving-Kindness Meditation', description: 'Extend wishes of well-being to yourself and others.', duration: 300, icon: HeartHandshake, category: 'Self-Compassion' },
+  { id: 'compassion_journal', name: '"What do I need?"', description: 'A journaling prompt to check in with your inner needs.', duration: 180, icon: HeartHandshake, category: 'Self-Compassion' },
+  { id: 'compassion_mantra', name: 'Gentle Inner Voice', description: 'Practice a supportive mantra to counter self-criticism.', duration: 120, icon: HeartHandshake, category: 'Self-Compassion' },
 ];

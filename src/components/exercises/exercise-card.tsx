@@ -4,14 +4,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, RotateCcw, Timer } from 'lucide-react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 import type { Exercise, MindfulnessPractice } from '@/data/exercises';
-import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
-
-interface ExerciseCardProps {
-  exercise: Exercise | MindfulnessPractice;
-}
+import { motion } from 'framer-motion';
 
 const formatTime = (totalSeconds: number): string => {
   if (totalSeconds < 0) return '00:00';
@@ -20,7 +15,7 @@ const formatTime = (totalSeconds: number): string => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
-export const ExerciseCard = ({ exercise }: ExerciseCardProps) => {
+export const ExerciseCard = ({ exercise }: { exercise: Exercise | MindfulnessPractice }) => {
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(exercise.duration);
 
@@ -55,13 +50,13 @@ export const ExerciseCard = ({ exercise }: ExerciseCardProps) => {
   return (
     <Card className="flex flex-col hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-lg">
-                <ExerciseIcon className="w-5 h-5 text-primary" />
+                <ExerciseIcon className="w-6 h-6 text-primary" />
             </div>
-            {exercise.name}
-        </CardTitle>
-        <CardDescription className="flex-grow min-h-[40px]">{exercise.description}</CardDescription>
+            <CardTitle>{exercise.name}</CardTitle>
+        </div>
+        <CardDescription className="flex-grow min-h-[40px] pt-2">{exercise.description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col items-center justify-center gap-4">
         <div className="relative w-32 h-32">
