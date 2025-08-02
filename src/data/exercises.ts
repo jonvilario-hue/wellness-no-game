@@ -61,7 +61,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
   
   // Grounding & Safety Practices -> Grounding & Safety
   { id: 'grounding_54321', name: '5-4-3-2-1 Senses', description: 'Engage all five senses to anchor yourself in the present moment.', duration: 180, icon: Shield, category: 'Grounding & Safety' },
-  { id:d: 'grounding_tactile', name: 'Tactile Object Focus', description: 'Hold an object and focus on its texture, temperature, and weight.', duration: 120, icon: Shield, category: 'Grounding & Safety' },
+  { id: 'grounding_tactile', name: 'Tactile Object Focus', description: 'Hold an object and focus on its texture, temperature, and weight.', duration: 120, icon: Shield, category: 'Grounding & Safety' },
   { id: 'grounding_nature', name: 'Nature Visualization', description: 'Imagine a safe, natural place and sync your breath with its rhythm.', duration: 300, icon: TreeDeciduous, category: 'Grounding & Safety' },
 
   // Self-Compassion & Emotional Support -> Self-Compassion
