@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -27,4 +28,5 @@ const TooltipContent = React.forwardRef<
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
+// Exporting ReactTooltip for the heatmap
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }

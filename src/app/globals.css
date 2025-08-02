@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,6 +74,22 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* react-calendar-heatmap styles */
+  .react-calendar-heatmap .color-empty {
+    fill: hsl(var(--muted));
+  }
+  .react-calendar-heatmap .color-scale-1 {
+    fill: hsl(var(--primary) / 0.2);
+  }
+  .react-calendar-heatmap .color-scale-2 {
+    fill: hsl(var(--primary) / 0.5);
+  }
+  .react-calendar-heatmap .color-scale-3 {
+    fill: hsl(var(--primary) / 0.8);
   }
 }
 
