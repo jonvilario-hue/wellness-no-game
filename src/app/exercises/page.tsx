@@ -7,6 +7,8 @@ import { MotivationalMessage } from '@/components/motivational-message';
 import WellnessTabs from '@/components/wellness/WellnessTabs';
 import DailyPractice from '@/components/wellness/DailyPractice';
 import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
+import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const mockActivityData = [
   { date: '2024-07-01', count: 1 },
@@ -32,7 +34,18 @@ export default function ExercisesPage() {
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-7xl space-y-6">
-          <DailyPractice />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <DailyPractice />
+            <Card>
+              <CardHeader>
+                <CardTitle>Build Your Own Routine</CardTitle>
+                <CardDescription>Create a personalized wellness routine by combining different movement and stillness practices.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex items-center justify-center">
+                <RoutineBuilderModal />
+              </CardContent>
+            </Card>
+          </div>
           <WellnessTabs />
           <WellnessHeatmap activityData={mockActivityData} />
         </div>
