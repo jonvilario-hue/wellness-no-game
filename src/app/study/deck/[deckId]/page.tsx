@@ -137,25 +137,23 @@ export default function DeckPage() {
           ))}
         </CardContent>
          <CardFooter className="flex justify-between items-center">
-            <div className="flex gap-2">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive-outline" disabled={deck.id === 'default'}>
-                      <Trash2 className="mr-2 h-4 w-4"/> Delete Deck
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader><AlertDialogTitle>Delete Deck?</AlertDialogTitle></AlertDialogHeader>
-                    <AlertDialogDescription>
-                        Are you sure you want to delete this deck? All cards within it will be moved to the "Default" deck. This action cannot be undone.
-                    </AlertDialogDescription>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDeleteDeck} variant="destructive">Delete Deck</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-            </div>
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                <Button variant="destructive-outline" disabled={deck.id === 'default'}>
+                    <Trash2 className="mr-2 h-4 w-4"/> Delete Deck
+                </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                <AlertDialogHeader><AlertDialogTitle>Delete Deck?</AlertDialogTitle></AlertDialogHeader>
+                <AlertDialogDescription>
+                    Are you sure you want to delete this deck? All cards within it will be moved to the "Default" deck. This action cannot be undone.
+                </AlertDialogDescription>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteDeck} variant="destructive">Delete Deck</AlertDialogAction>
+                </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             <Button asChild size="lg" disabled={dueInDeck === 0}>
                 <Link href={`/study/session?deckId=${deckId}`}>
                     <Play className="mr-2 h-4 w-4" />

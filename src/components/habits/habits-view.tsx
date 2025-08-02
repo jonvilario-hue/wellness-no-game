@@ -57,8 +57,7 @@ const HabitItemComponent = ({
   const checkboxId = `habit-tracker-${habit.id}`;
   return (
     <div className="flex items-center group">
-       <Label
-        htmlFor={checkboxId}
+       <div
         className={cn(
           "flex items-center gap-3 p-3 rounded-lg transition-all w-full cursor-pointer",
           isDone ? 'bg-primary/10 hover:bg-primary/20' : 'bg-muted/50 hover:bg-muted'
@@ -67,13 +66,18 @@ const HabitItemComponent = ({
         <motion.div whileTap={{ scale: 1.2 }}>
             <Checkbox id={checkboxId} checked={isDone} onCheckedChange={onToggle} />
         </motion.div>
-        <div className={cn("p-1.5 rounded-md", isDone ? 'bg-primary/20' : 'bg-background/50')}>
-          <Icon className={cn("w-5 h-5", isDone ? 'text-primary' : 'text-muted-foreground')} />
-        </div>
-        <span className={cn("flex-grow font-medium text-sm", isDone ? 'text-foreground line-through' : 'text-muted-foreground')}>
-          {habit.label}
-        </span>
-      </Label>
+        <Label
+          htmlFor={checkboxId}
+          className="flex items-center gap-3 w-full cursor-pointer"
+        >
+          <div className={cn("p-1.5 rounded-md", isDone ? 'bg-primary/20' : 'bg-background/50')}>
+            <Icon className={cn("w-5 h-5", isDone ? 'text-primary' : 'text-muted-foreground')} />
+          </div>
+          <span className={cn("flex-grow font-medium text-sm", isDone ? 'text-foreground line-through' : 'text-muted-foreground')}>
+            {habit.label}
+          </span>
+        </Label>
+       </div>
        <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEdit}>
             <Edit className="w-4 h-4" />

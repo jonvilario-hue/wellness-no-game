@@ -5,39 +5,42 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Gamepad2, Pen, Layers, ClipboardCheck, Library, GraduationCap, Target, HeartPulse } from 'lucide-react';
 
+const navLinks = [
+    { href: '/', icon: Gamepad2, label: 'PuzzleMaster' },
+    { href: '/tools', icon: ClipboardCheck, label: 'Reflections' },
+    { href: '/exercises', icon: HeartPulse, label: 'Exercises' },
+    { href: '/study', icon: GraduationCap, label: 'Scholar Hub' },
+    { href: '/blueprints', icon: Target, label: 'Architect Lab' },
+];
+
 export const PageNav = () => {
     const pathname = usePathname();
-    const linkClass = (path: string) =>
-      cn(
-        "px-4 py-2.5 rounded-t-md text-sm font-medium transition-colors flex items-center gap-2 border-b-2",
-        pathname.startsWith(path) && path !== '/' || pathname === path
-          ? "border-primary text-primary"
-          : "border-transparent text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
-      );
-  
+    
+    const isLinkActive = (href: string) => {
+        if (href === '/') {
+            return pathname === '/';
+        }
+        return pathname.startsWith(href);
+    };
+
     return (
       <div className="border-b bg-card">
         <nav className="flex space-x-2 justify-center -mb-px">
-            <Link href="/" className={linkClass("/")}>
-                <Gamepad2 className="w-4 h-4" />
-                <span>PuzzleMaster</span>
-            </Link>
-            <Link href="/tools" className={linkClass("/tools")}>
-                <ClipboardCheck className="w-4 h-4" />
-                <span>Reflections</span>
-            </Link>
-             <Link href="/exercises" className={linkClass("/exercises")}>
-                <HeartPulse className="w-4 h-4" />
-                <span>Exercises</span>
-            </Link>
-            <Link href="/study" className={linkClass("/study")}>
-                <GraduationCap className="w-4 h-4" />
-                <span>Scholar Hub</span>
-            </Link>
-             <Link href="/blueprints" className={linkClass("/blueprints")}>
-                <Target className="w-4 h-4" />
-                <span>Architect Lab</span>
-            </Link>
+            {navLinks.map(({ href, icon: Icon, label }) => (
+                <Link 
+                    key={href} 
+                    href={href} 
+                    className={cn(
+                        "px-4 py-2.5 rounded-t-md text-sm font-medium transition-colors flex items-center gap-2 border-b-2",
+                        isLinkActive(href)
+                          ? "border-primary text-primary"
+                          : "border-transparent text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
+                    )}
+                >
+                    <Icon className="w-4 h-4" />
+                    <span>{label}</span>
+                </Link>
+            ))}
         </nav>
       </div>
     );
