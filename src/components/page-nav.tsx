@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Gamepad2, Pen, Layers, ClipboardCheck, Library, GraduationCap, Target } from 'lucide-react';
+import { Gamepad2, Pen, Layers, ClipboardCheck, Library, GraduationCap, Target, HeartPulse } from 'lucide-react';
 
 export const PageNav = () => {
     const pathname = usePathname();
@@ -25,6 +25,10 @@ export const PageNav = () => {
             <Link href="/tools" className={linkClass("/tools")}>
                 <ClipboardCheck className="w-4 h-4" />
                 <span>Reflections</span>
+            </Link>
+             <Link href="/exercises" className={linkClass("/exercises")}>
+                <HeartPulse className="w-4 h-4" />
+                <span>Exercises</span>
             </Link>
             <Link href="/study" className={linkClass("/study")}>
                 <GraduationCap className="w-4 h-4" />
