@@ -17,24 +17,26 @@ export default function WellnessHeatmap({ activityData }: { activityData: { date
             <CardTitle>Wellness Progress</CardTitle>
         </CardHeader>
         <CardContent>
-            <CalendarHeatmap
-                startDate={subDays(today, 90)}
-                endDate={today}
-                values={activityData}
-                classForValue={(value) => {
-                    if (!value || value.count === 0) return "color-empty"
-                    if (value.count <= 1) return "color-scale-1"
-                    if (value.count <= 2) return "color-scale-2"
-                    return "color-scale-3"
-                }}
-                tooltipDataAttrs={(value: { date: string, count: number}) => {
-                    return {
-                        'data-tooltip-id': 'heatmap-tooltip',
-                        'data-tooltip-content': value.date ? `${new Date(value.date).toDateString()}: ${value.count || 0} practice(s)` : 'No data',
-                    };
-                }}
-                showWeekdayLabels
-            />
+            <div className="w-full h-full text-[10px] pl-2">
+              <CalendarHeatmap
+                  startDate={subDays(today, 90)}
+                  endDate={today}
+                  values={activityData}
+                  classForValue={(value) => {
+                      if (!value || value.count === 0) return "color-empty"
+                      if (value.count <= 1) return "color-scale-1"
+                      if (value.count <= 2) return "color-scale-2"
+                      return "color-scale-3"
+                  }}
+                  tooltipDataAttrs={(value: { date: string, count: number}) => {
+                      return {
+                          'data-tooltip-id': 'heatmap-tooltip',
+                          'data-tooltip-content': value.date ? `${new Date(value.date).toDateString()}: ${value.count || 0} practice(s)` : 'No data',
+                      };
+                  }}
+                  showWeekdayLabels
+              />
+            </div>
             <ReactTooltip id="heatmap-tooltip" />
         </CardContent>
     </Card>
