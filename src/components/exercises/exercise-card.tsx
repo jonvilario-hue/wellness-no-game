@@ -53,7 +53,7 @@ export const ExerciseCard = ({ exercise }: ExerciseCardProps) => {
   const ExerciseIcon = exercise.icon;
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <div className="p-2 bg-primary/10 rounded-lg">
@@ -61,7 +61,7 @@ export const ExerciseCard = ({ exercise }: ExerciseCardProps) => {
             </div>
             {exercise.name}
         </CardTitle>
-        <CardDescription>{exercise.description}</CardDescription>
+        <CardDescription className="flex-grow min-h-[40px]">{exercise.description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col items-center justify-center gap-4">
         <div className="relative w-32 h-32">
