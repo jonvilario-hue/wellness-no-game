@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import MovementContent from "./MovementContent"
 import StillnessContent from "./StillnessContent"
 import { HeartPulse, Waves, Package } from "lucide-react"
+import { wellnessPlans } from "@/data/wellness-plans"
+import { PlanCard } from "./PlanCard"
 
 export default function WellnessTabs() {
   return (
@@ -28,8 +30,12 @@ export default function WellnessTabs() {
 
       <TabsContent value="packs">
           <Card>
-            <CardContent className="pt-6 text-center text-muted-foreground">
-                <p>Curated packs and plans are coming soon!</p>
+            <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {wellnessPlans.map(plan => (
+                        <PlanCard key={plan.id} plan={plan} />
+                    ))}
+                </div>
             </CardContent>
           </Card>
       </TabsContent>
