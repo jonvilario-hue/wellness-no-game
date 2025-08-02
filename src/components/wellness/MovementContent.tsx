@@ -1,34 +1,50 @@
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Dumbbell, StretchHorizontal, Zap } from 'lucide-react';
-import { movementExercises } from '@/data/exercises';
-import { ExerciseCard } from '@/components/exercises/exercise-card';
+"use client"
+
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+
+const movementExercises = [
+  {
+    title: "Neck Rolls",
+    duration: "30 sec",
+    level: "Easy",
+  },
+  {
+    title: "Chair Squats",
+    duration: "1 min",
+    level: "Medium",
+  },
+  {
+    title: "Wall Sit",
+    duration: "1 min",
+    level: "Medium",
+  },
+  {
+    title: "Jumping Jacks",
+    duration: "30 sec",
+    level: "Hard",
+  },
+  {
+    title: "Spinal Twist",
+    duration: "1 min",
+    level: "Easy",
+  },
+]
 
 export default function MovementContent() {
-    const stretching = movementExercises.filter(e => e.category === 'Stretching');
-    const strength = movementExercises.filter(e => e.category === 'Strength');
-    const energizers = movementExercises.filter(e => e.category === 'Energizer');
-
-    return (
-        <div className="space-y-6">
-            <section>
-                <h3 className="text-xl font-bold flex items-center gap-2 mb-4"><StretchHorizontal className="w-5 h-5 text-primary"/>Stretch & Mobility</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {stretching.map(exercise => <ExerciseCard key={exercise.id} exercise={exercise} />)}
-                </div>
-            </section>
-            <section>
-                 <h3 className="text-xl font-bold flex items-center gap-2 mb-4"><Dumbbell className="w-5 h-5 text-primary"/>Strength & Stability</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {strength.map(exercise => <ExerciseCard key={exercise.id} exercise={exercise} />)}
-                </div>
-            </section>
-            <section>
-                 <h3 className="text-xl font-bold flex items-center gap-2 mb-4"><Zap className="w-5 h-5 text-primary"/>Quick Energizers</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {energizers.map(exercise => <ExerciseCard key={exercise.id} exercise={exercise} />)}
-                </div>
-            </section>
-        </div>
-    );
-};
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
+      {movementExercises.map((exercise, i) => (
+        <Card key={i} className="hover:shadow-lg">
+          <CardContent className="p-4">
+            <h3 className="text-lg font-semibold mb-1">{exercise.title}</h3>
+            <p className="text-sm text-muted-foreground">Duration: {exercise.duration}</p>
+            <p className="text-sm text-muted-foreground">Level: {exercise.level}</p>
+            <Button variant="outline" className="mt-3 w-full">Start</Button>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+}

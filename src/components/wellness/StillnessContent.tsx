@@ -1,34 +1,50 @@
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Brain, Wind, Waves } from 'lucide-react';
-import { mindfulnessPractices } from '@/data/exercises';
-import { ExerciseCard } from '@/components/exercises/exercise-card';
+"use client"
+
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+
+const stillnessPractices = [
+  {
+    title: "Box Breathing",
+    duration: "1 min",
+    focus: "Calm",
+  },
+  {
+    title: "5-4-3-2-1 Grounding",
+    duration: "2 min",
+    focus: "Anxiety Relief",
+  },
+  {
+    title: "Body Scan Meditation",
+    duration: "3 min",
+    focus: "Awareness",
+  },
+  {
+    title: "Gratitude Prompt",
+    duration: "1 min",
+    focus: "Positivity",
+  },
+  {
+    title: "Deep Breathing",
+    duration: "2 min",
+    focus: "Focus",
+  },
+]
 
 export default function StillnessContent() {
-    const breathing = mindfulnessPractices.filter(p => p.category === 'Breathing');
-    const meditation = mindfulnessPractices.filter(p => p.category === 'Meditation');
-    const relaxation = mindfulnessPractices.filter(p => p.category === 'Relaxation');
-
-    return (
-        <div className="space-y-6">
-            <section>
-                 <h3 className="text-xl font-bold flex items-center gap-2 mb-4"><Wind className="w-5 h-5 text-primary"/>Breathing</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {breathing.map(practice => <ExerciseCard key={practice.id} exercise={practice} />)}
-                </div>
-            </section>
-             <section>
-                 <h3 className="text-xl font-bold flex items-center gap-2 mb-4"><Brain className="w-5 h-5 text-primary"/>Meditation</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {meditation.map(practice => <ExerciseCard key={practice.id} exercise={practice} />)}
-                </div>
-            </section>
-             <section>
-                 <h3 className="text-xl font-bold flex items-center gap-2 mb-4"><Waves className="w-5 h-5 text-primary"/>Relaxation</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {relaxation.map(practice => <ExerciseCard key={practice.id} exercise={practice} />)}
-                </div>
-            </section>
-        </div>
-    );
-};
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
+      {stillnessPractices.map((practice, i) => (
+        <Card key={i} className="hover:shadow-lg">
+          <CardContent className="p-4">
+            <h3 className="text-lg font-semibold mb-1">{practice.title}</h3>
+            <p className="text-sm text-muted-foreground">Duration: {practice.duration}</p>
+            <p className="text-sm text-muted-foreground">Focus: {practice.focus}</p>
+            <Button variant="outline" className="mt-3 w-full">Start</Button>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+}
