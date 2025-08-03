@@ -11,22 +11,12 @@ interface PlaceholderSettingsProps {
 
 export function PlaceholderSettings({ title, description }: PlaceholderSettingsProps) {
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{title}</CardTitle>
-                <CardDescription>
-                    {description}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="flex items-center justify-center text-center text-muted-foreground p-8 bg-muted/50 rounded-lg">
-                    <div className="space-y-2">
-                        <Info className="mx-auto h-8 w-8" />
-                        <p className="font-semibold">Coming Soon</p>
-                        <p className="text-sm">This section is under construction.</p>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
+        <div className="flex items-center justify-center text-center text-muted-foreground p-8 bg-muted/50 rounded-lg">
+            <div className="space-y-2">
+                <Info className="mx-auto h-8 w-8" />
+                <p className="font-semibold">{title}</p>
+                <p className="text-sm">{description}</p>
+            </div>
+        </div>
     );
 }

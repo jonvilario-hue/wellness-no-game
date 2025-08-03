@@ -68,7 +68,7 @@ export default function SettingsPage() {
                                         <CardDescription>Manage your profile, subscription, and data.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <p>Account settings are not yet implemented.</p>
+                                        <PlaceholderSettings title="Account Management" description="This feature is not yet available."/>
                                     </CardContent>
                             </Card>
                             </TabsContent>

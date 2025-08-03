@@ -62,10 +62,9 @@ const HabitItemComponent = ({
           "flex items-center gap-3 p-3 rounded-lg transition-all w-full cursor-pointer",
           isDone ? 'bg-primary/10 hover:bg-primary/20' : 'bg-muted/50 hover:bg-muted'
         )}
+        onClick={onToggle}
       >
-        <motion.div whileTap={{ scale: 1.2 }}>
-            <Checkbox id={checkboxId} checked={isDone} onCheckedChange={onToggle} />
-        </motion.div>
+        <Checkbox id={checkboxId} checked={isDone} />
         <Label
           htmlFor={checkboxId}
           className="flex items-center gap-3 w-full cursor-pointer"

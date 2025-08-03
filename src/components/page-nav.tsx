@@ -18,7 +18,7 @@ export const PageNav = () => {
     
     const isLinkActive = (href: string) => {
         if (href === '/') {
-            return pathname === '/';
+            return pathname === href;
         }
         return pathname.startsWith(href);
     };

@@ -54,7 +54,7 @@ export default function PlanDetailPage() {
           <div className="space-y-3">
             {plan.steps.map((step, index) => (
               <Card key={index} className={completedSteps[index] ? "bg-muted/50 opacity-70" : "bg-card"}>
-                <CardContent className="flex items-start justify-between gap-4 p-4">
+                <CardContent className="flex items-center justify-between gap-4 p-4">
                   <div className="flex items-center gap-4">
                      <Checkbox 
                         id={`step-${index}`} 

@@ -139,7 +139,7 @@ export default function DeckPage() {
          <CardFooter className="flex justify-between items-center">
             <AlertDialog>
                 <AlertDialogTrigger asChild>
-                <Button variant="destructive-outline" disabled={deck.id === 'default'}>
+                <Button variant="outline" className="text-destructive" disabled={deck.id === 'default'}>
                     <Trash2 className="mr-2 h-4 w-4"/> Delete Deck
                 </Button>
                 </AlertDialogTrigger>
