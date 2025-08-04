@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Settings, Clock, Library, LayoutGrid } from 'lucide-react';
+import { Settings, Clock, Library, Utensils } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
