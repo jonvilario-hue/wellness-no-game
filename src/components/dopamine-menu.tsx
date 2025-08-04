@@ -121,7 +121,7 @@ export function DopamineMenu() {
     };
 
     return (
-        <Dialog open={open} onOpenChange={handleClose}>
+        <Dialog open={open} onOpenChange={setOpen}>
             <TooltipProvider>
                 <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
