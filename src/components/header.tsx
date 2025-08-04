@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Settings, Clock, Library } from 'lucide-react';
+import { Settings, Clock, Library, Brain } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { FlaskConical } from 'lucide-react';
+import { DopamineMenu } from './dopamine-menu';
   
 export function Header() {
   return (
@@ -44,6 +45,7 @@ export function Header() {
         
         <TooltipProvider>
             <div className="flex-1 flex justify-end items-center gap-1">
+              <DopamineMenu />
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button asChild variant="ghost" size="icon">
