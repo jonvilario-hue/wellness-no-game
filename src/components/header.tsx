@@ -23,7 +23,6 @@ export function Header() {
       <div className="mx-auto max-w-7xl flex items-center justify-between">
         <TooltipProvider>
             <div className="flex-1 flex justify-start items-center gap-1">
-                <DopamineMenu />
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Button asChild variant="ghost" size="icon">
@@ -36,6 +35,7 @@ export function Header() {
                     <p>Library</p>
                   </TooltipContent>
                 </Tooltip>
+                <DopamineMenu />
             </div>
         </TooltipProvider>
 
