@@ -81,7 +81,7 @@ const allPractices: LibraryItem[] = [...movementExercises, ...mindfulnessPractic
     description: p.description,
     icon: p.icon,
     tags: getPracticeTags(p),
-    actionLink: '#', // Placeholder link
+    actionLink: '/exercises',
     content: p
 }));
 
@@ -92,7 +92,7 @@ const allKits: LibraryItem[] = kits.map(k => ({
     description: k.description,
     icon: Package,
     tags: getKitTags(k),
-    actionLink: '#', // Placeholder link
+    actionLink: '/exercises',
     content: k
 }));
 
