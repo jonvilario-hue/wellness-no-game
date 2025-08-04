@@ -8,7 +8,7 @@ import { Gamepad2, Pen, Layers, ClipboardCheck, Library, GraduationCap, Target, 
 const navLinks = [
     { href: '/', icon: Gamepad2, label: 'PuzzleMaster' },
     { href: '/tools', icon: ClipboardCheck, label: 'Reflections' },
-    { href: '/exercises', icon: HeartPulse, label: 'Exercises' },
+    { href: '/exercises', icon: HeartPulse, label: 'Health Check' },
     { href: '/study', icon: GraduationCap, label: 'Scholar Hub' },
     { href: '/blueprints', icon: Target, label: 'Architect Lab' },
 ];
