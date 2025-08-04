@@ -30,7 +30,9 @@ export default function StillnessContent() {
                     />
                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {practices.map((practice) => (
-                            <ExerciseCard key={practice.id} exercise={practice} />
+                             <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-20">
+                                <ExerciseCard exercise={practice} />
+                            </div>
                         ))}
                     </div>
                 </div>

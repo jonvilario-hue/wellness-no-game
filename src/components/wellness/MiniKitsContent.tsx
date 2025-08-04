@@ -7,9 +7,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Brain, HelpCircle, Info } from "lucide-react"
 
 interface MiniKit {
-  title: string
-  emoji: string
-  description: string
+  title: string;
+  emoji: string;
+  description: string;
   practices: { type: "Movement" | "Stillness"; title: string }[]
   whenToUse: string;
   whyItWorks: string;
@@ -182,7 +182,7 @@ export function MiniKitsContent() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {kits.map((kit, index) => (
-        <Card key={index} className="hover:shadow-md">
+        <Card key={index} id={`kit-${kit.title.toLowerCase().replace(/ /g, '-')}`} className="hover:shadow-md scroll-mt-20">
           <CardContent className="p-6 space-y-3">
             <div className="flex items-center space-x-2">
               <span className="text-2xl">{kit.emoji}</span>
@@ -232,5 +232,3 @@ export function MiniKitsContent() {
     </div>
   )
 }
-
-    

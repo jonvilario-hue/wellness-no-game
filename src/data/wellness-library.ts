@@ -1,7 +1,8 @@
 
 import { movementExercises, mindfulnessPractices, type Exercise, type MindfulnessPractice } from './exercises';
 import { wellnessPlans, type WellnessPlan } from './wellness-plans';
-import { kits, type MiniKit } from './wellness-kits'; // Assuming kits are in their own file
+import { kits } from './wellness-kits';
+import type { MiniKit } from './wellness-kits';
 import type { LucideIcon } from 'lucide-react';
 import { Leaf, Dumbbell, Zap, Sunrise, Wind, Brain, Shield, HeartHandshake, Package, ClipboardCheck, Play } from 'lucide-react';
 
@@ -60,6 +61,9 @@ const getKitTags = (kit: MiniKit): LibraryTag[] => {
     if (kit.title.includes('Morning')) tags.push('Energy');
     if (kit.title.includes('Creative')) tags.push('Creativity', 'Focus');
     if (kit.title.includes('Boundaries') || kit.title.includes('Self-Talk')) tags.push('Self-Compassion');
+    if (kit.title.includes('Unfreeze') || kit.title.includes('SOS')) tags.push('Grounding');
+    if (kit.title.includes('Evening') || kit.title.includes('Sleep')) tags.push('Sleep', 'Calm');
+
     return [...new Set(tags)];
 }
 
@@ -69,6 +73,7 @@ const getPlanTags = (plan: WellnessPlan): LibraryTag[] => {
     if (plan.title.includes('Sleep')) tags.push('Sleep');
     if (plan.title.includes('Morning')) tags.push('Energy', 'Focus');
     if (plan.title.includes('Desk')) tags.push('Recovery');
+    if (plan.title.includes('Regulate')) tags.push('Anxiety Relief', 'Grounding');
     return [...new Set(tags)];
 }
 
@@ -81,7 +86,7 @@ const allPractices: LibraryItem[] = [...movementExercises, ...mindfulnessPractic
     description: p.description,
     icon: p.icon,
     tags: getPracticeTags(p),
-    actionLink: '/exercises',
+    actionLink: `/exercises#practice-${p.id}`,
     content: p
 }));
 
@@ -92,7 +97,7 @@ const allKits: LibraryItem[] = kits.map(k => ({
     description: k.description,
     icon: Package,
     tags: getKitTags(k),
-    actionLink: '/exercises',
+    actionLink: `/exercises#kit-${k.title.toLowerCase().replace(/ /g, '-')}`,
     content: k
 }));
 
