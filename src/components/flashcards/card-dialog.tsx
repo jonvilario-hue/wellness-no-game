@@ -72,7 +72,7 @@ export function CardDialog({ open, onOpenChange, cardToEdit, deckId }: CardDialo
             deckId: currentDeckId,
             tags: tagArray,
         });
-        toast({ title: "Card Created!", description: "A new card has been added to your deck.", variant: "success" });
+        toast({ title: "Card Created!", description: "A new card has been added to your collection.", variant: "success" });
         }
         onOpenChange(false);
     });

@@ -19,7 +19,7 @@ import { goalStrategies } from '@/data/goal-strategies';
 export default function BlueprintsPage() {
   const { projects, addProject, updateProject, deleteProject, addMilestone, toggleTask, updateMilestoneStatus, addTask, updateTask, deleteTask, updateMilestoneDetails, deleteMilestone } = useBlueprintStore();
   
-  const [viewState, setViewState] = useState<'list' | 'select_strategy' | 'create_blueprint'>('list');
+  const [viewState, setViewState] = useState<'list' | 'create_blueprint'>('list');
   const [selectedStrategy, setSelectedStrategy] = useState<GoalStrategy | null>(null);
 
   const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active');

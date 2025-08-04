@@ -324,12 +324,15 @@ export const useJournal = create<JournalState>()(
 // Custom hook to safely access the store's state only after hydration
 export const useHydratedJournalStore = () => {
     const store = useJournal();
-    // This trick ensures that we render the initial state on the server,
-    // and then the hydrated state on the client.
-    const [hasHydrated, setHasHydrated] = useState(false);
-    useEffect(() => {
-        setHasHydrated(true);
-    }, []);
+    const hasHydrated = useJournal((s) => s.hasHydrated);
 
-    return hasHydrated ? store : { ...store, hasHydrated: false, entries: [], habits: [], completedHabits: {}, trashedEntries: [], selectedEntry: null };
+    const [clientState, setClientState] = useState(store);
+
+    useEffect(() => {
+        if (hasHydrated) {
+            setClientState(store);
+        }
+    }, [hasHydrated, store]);
+
+    return hasHydrated ? clientState : { ...store, hasHydrated: false, entries: [], habits: [], completedHabits: {}, trashedEntries: [], selectedEntry: null };
 };

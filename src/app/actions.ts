@@ -6,7 +6,12 @@ import type { AdaptDifficultyInput, TrainingRecommendationInput, WeakAreaRecomme
 
 export async function getWeakAreaRecommendationsAction(performanceData: WeakAreaRecommendationInput['performanceData']) {
   try {
-    return await weakAreaRecommendation({ performanceData });
+    const inputData = performanceData.map(({ domain, score, sessions }) => ({
+        domain,
+        score,
+        sessions: sessions || 0, // Ensure sessions is a number
+    }));
+    return await weakAreaRecommendation({ performanceData: inputData });
   } catch (error)
   {
     console.error(error);
