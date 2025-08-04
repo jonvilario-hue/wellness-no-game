@@ -62,7 +62,7 @@ export default function ExercisesPage() {
                             <h1 className="text-4xl font-bold font-headline">Health Check</h1>
                             <p className="text-lg text-muted-foreground">Wellness practices for body and mind.</p>
                         </div>
-                    </CollapsiibleContent>
+                    </CollapsibleContent>
                   </div>
                 <CollapsibleTrigger asChild>
                     <Button variant="ghost" size="icon">
