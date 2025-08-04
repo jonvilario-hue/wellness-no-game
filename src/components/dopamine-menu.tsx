@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Brain, Zap, HeartPulse, HelpCircle, Wind, Rocket, X, ArrowLeft, Menu } from 'lucide-react';
+import { Brain, Zap, HeartPulse, HelpCircle, Wind, Rocket, X, ArrowLeft, LayoutGrid } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { dopamineWizardData, type Feeling, type Craving } from '@/data/dopamine-menu';
 import { Card } from './ui/card';
@@ -127,7 +127,7 @@ export function DopamineMenu() {
                     <TooltipTrigger asChild>
                          <DialogTrigger asChild>
                             <Button variant="ghost" size="icon">
-                                <Menu className="h-5 w-5"/>
+                                <LayoutGrid className="h-5 w-5"/>
                             </Button>
                         </DialogTrigger>
                     </TooltipTrigger>
