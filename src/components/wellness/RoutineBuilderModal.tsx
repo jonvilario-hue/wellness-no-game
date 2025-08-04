@@ -2,12 +2,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { DndContext, closestCenter } from "@dnd-kit/core"
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
+import { Play } from "lucide-react"
 
 const allItems = [
   "Neck Rolls",
@@ -37,6 +38,7 @@ function SortableItem({ id }: { id: string }) {
 
 export default function RoutineBuilderModal() {
   const [selected, setSelected] = useState<string[]>([])
+  const [open, setOpen] = useState(false)
 
   const toggleItem = (item: string) => {
     setSelected(prev =>
@@ -55,14 +57,24 @@ export default function RoutineBuilderModal() {
     }
   }
 
+  const handleStartRoutine = () => {
+    // This would trigger the routine timer or save the routine.
+    // For now, it can just close the modal.
+    console.log("Starting routine:", selected)
+    setOpen(false)
+  }
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Build a Routine</Button>
+        <Button variant="secondary">Build a Routine</Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Create Your Routine</DialogTitle>
+          <DialogDescription>
+            Select practices from the list, then drag and drop to reorder them.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
           {allItems.map((item, index) => (
@@ -92,42 +104,17 @@ export default function RoutineBuilderModal() {
             </DndContext>
           </div>
         )}
-
-        {selected.length > 0 && (
-          <div className="pt-4">
-            <p className="text-sm text-muted-foreground">Timer Preview (5 sec per item):</p>
-            <RoutineTimer routine={selected} />
-          </div>
-        )}
+        <DialogFooter className="mt-4">
+          <Button
+            onClick={handleStartRoutine}
+            disabled={selected.length === 0}
+            className="w-full"
+          >
+            <Play className="w-4 h-4 mr-2" />
+            Start Routine ({selected.length} steps)
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function RoutineTimer({ routine }: { routine: string[] }) {
-  const [index, setIndex] = useState(0)
-  const [active, setActive] = useState(false)
-
-  const start = () => {
-    setActive(true)
-    setIndex(0)
-  }
-
-  useEffect(() => {
-    if (!active || index >= routine.length) return
-    const timer = setTimeout(() => setIndex(index + 1), 5000) // 5 sec per item
-    return () => clearTimeout(timer)
-  }, [index, active, routine.length])
-
-  return (
-    <div className="mt-2">
-      <Button variant="secondary" onClick={start}>Start Routine</Button>
-      {active && index < routine.length && (
-        <p className="mt-2 text-sm">Now doing: <strong>{routine[index]}</strong></p>
-      )}
-      {active && index >= routine.length && (
-        <p className="mt-2 text-sm text-green-600">Routine complete! 🎉</p>
-      )}
-    </div>
   )
 }
