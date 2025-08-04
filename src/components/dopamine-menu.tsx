@@ -4,11 +4,12 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Brain, Zap, HeartPulse, HelpCircle, Wind, Rocket, X, ArrowLeft } from 'lucide-react';
+import { Brain, Zap, HeartPulse, HelpCircle, Wind, Rocket, X, ArrowLeft, Menu } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { dopamineWizardData, type Feeling, type Craving } from '@/data/dopamine-menu';
 import { Card } from './ui/card';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 type Step = 1 | 2 | 3;
 
@@ -121,12 +122,20 @@ export function DopamineMenu() {
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogTrigger asChild>
-                <Button variant="ghost">
-                    <Brain className="mr-2 h-5 w-5"/>
-                    Dopamine Menu
-                </Button>
-            </DialogTrigger>
+            <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                         <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Menu className="h-5 w-5"/>
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Dopamine Menu</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
             <DialogContent className="sm:max-w-2xl">
                  <div className="flex items-center justify-between min-h-[400px]">
                     <AnimatePresence mode="wait">
