@@ -17,7 +17,7 @@ import { StrategyGuide } from './components/StrategyGuide';
 import { goalStrategies } from '@/data/goal-strategies';
 
 export default function BlueprintsPage() {
-  const { projects, addProject, updateProject, deleteProject, addMilestone, toggleTask, updateMilestoneStatus, addTask, updateTask, deleteTask, updateMilestoneDetails } = useBlueprintStore();
+  const { projects, addProject, updateProject, deleteProject, addMilestone, toggleTask, updateMilestoneStatus, addTask, updateTask, deleteTask, updateMilestoneDetails, deleteMilestone } = useBlueprintStore();
   
   const [viewState, setViewState] = useState<'list' | 'select_strategy' | 'create_blueprint'>('list');
   const [selectedStrategy, setSelectedStrategy] = useState<GoalStrategy | null>(null);
@@ -74,11 +74,6 @@ export default function BlueprintsPage() {
 
   const renderContent = () => {
     switch (viewState) {
-      case 'select_strategy':
-        // This case is now un-reachable but kept for potential future use
-        return (
-            <StrategySelection onSelectStrategy={() => {}} />
-        );
       case 'create_blueprint':
         if (!selectedStrategy) return null;
         return (
@@ -140,7 +135,7 @@ export default function BlueprintsPage() {
                             onDeleteProject={deleteProject}
                             onAddMilestone={addMilestone}
                             onUpdateMilestone={updateMilestoneDetails}
-                            onDeleteMilestone={(milestoneId) => {}}
+                            onDeleteMilestone={deleteMilestone}
                             onToggleTask={toggleTask}
                             onAddTask={addTask}
                             onUpdateTask={updateTask}
