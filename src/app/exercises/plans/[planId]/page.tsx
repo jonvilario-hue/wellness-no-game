@@ -11,22 +11,18 @@ import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 
 export default function PlanDetailPage() {
   const params = useParams();
   const planId = params.planId as string;
   const plan = wellnessPlans.find(p => p.id === planId);
 
-  const [completedSteps, setCompletedSteps] = useState<boolean[]>(
-    plan ? Array(plan.steps.length).fill(false) : []
-  );
+  const [completedSteps, setCompletedSteps] = useState<Record<string, boolean>>({});
 
-  const toggleStep = (index: number) => {
-    setCompletedSteps(prev => {
-      const updated = [...prev];
-      updated[index] = !updated[index];
-      return updated;
-    });
+  const toggleStep = (dayIndex: number, practiceIndex: number) => {
+    const key = `${dayIndex}-${practiceIndex}`;
+    setCompletedSteps(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   if (!plan) {
@@ -46,33 +42,47 @@ export default function PlanDetailPage() {
       </div>
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="max-w-2xl mx-auto py-6 space-y-4">
-          <h1 className="text-3xl font-bold">{plan.title}</h1>
-          <p className="text-lg text-muted-foreground italic">“{plan.tagline}”</p>
-          <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
+        <div className="max-w-2xl mx-auto py-6 space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold">{plan.title}</h1>
+            <p className="text-lg text-muted-foreground italic">“{plan.tagline}”</p>
+            <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
+          </div>
 
-          <div className="space-y-3">
-            {plan.steps.map((step, index) => (
-              <Card key={index} className={completedSteps[index] ? "bg-muted/50 opacity-70" : "bg-card"}>
-                <CardContent className="flex items-center justify-between gap-4 p-4">
-                  <div className="flex items-center gap-4">
-                     <Checkbox 
-                        id={`step-${index}`} 
-                        checked={completedSteps[index]} 
-                        onCheckedChange={() => toggleStep(index)} 
-                        className="mt-1"
-                    />
-                    <Label htmlFor={`step-${index}`} className="cursor-pointer">
-                        <h3 className="font-semibold text-base">{step.title}</h3>
-                        <p className="text-xs text-muted-foreground">{step.type} • {step.duration}</p>
-                    </Label>
+          <div className="space-y-4">
+            {plan.steps.map((day, dayIndex) => (
+              <Card key={dayIndex}>
+                <CardContent className="p-4">
+                  <h3 className="font-bold text-lg">Day {day.day}: {day.title}</h3>
+                  <Separator className="my-2" />
+                  <div className="space-y-3 mt-3">
+                    {day.practices.map((practice, practiceIndex) => {
+                      const stepId = `step-${dayIndex}-${practiceIndex}`;
+                      const isCompleted = completedSteps[stepId] || false;
+                      return (
+                        <div
+                          key={practiceIndex}
+                          className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg"
+                        >
+                          <Checkbox
+                            id={stepId}
+                            checked={isCompleted}
+                            onCheckedChange={() => toggleStep(dayIndex, practiceIndex)}
+                          />
+                          <Label htmlFor={stepId} className="cursor-pointer">
+                            <span className="font-semibold">{practice.title}</span>
+                            <p className="text-xs text-muted-foreground">{practice.type}</p>
+                          </Label>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
 
-          <Button className="w-full mt-6">Start from Beginning</Button>
+          <Button className="w-full mt-6">Restart Plan</Button>
         </div>
       </main>
     </>
