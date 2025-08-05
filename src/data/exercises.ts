@@ -15,7 +15,7 @@ type BasePractice = {
 };
 
 export type Exercise = BasePractice & {
-  category: ExerciseCategory;
+  category: ExerciseCategory | MindfulnessCategory;
   intention: string;
   setup: string[];
   steps: string[];
@@ -23,7 +23,7 @@ export type Exercise = BasePractice & {
   completionCue: string;
 };
 
-export type MindfulnessPractice = BasePractice & {
+export type MindfulnessPractice = Exercise & {
   category: MindfulnessCategory;
 };
 
@@ -243,23 +243,226 @@ export const movementExercises: Exercise[] = [
 // --- STILLNESS MODULES ---
 
 export const mindfulnessPractices: MindfulnessPractice[] = [
-  // Breathwork for State Shifting -> Breathwork
-  { id: 'breath_box', name: 'Box Breathing', description: 'Inhale 4s, hold 4s, exhale 4s, hold 4s. For calm and focus.', duration: 180, icon: Wind, category: 'Breathwork' },
-  { id: 'breath_478', name: '4-7-8 Breath', description: 'A powerful technique to reduce anxiety and promote rest.', duration: 120, icon: Wind, category: 'Breathwork' },
-  { id: 'breath_resonant', name: 'Resonant Breathing', description: 'Breathe at a rate of 5-6 breaths per minute to balance the nervous system.', duration: 300, icon: Wind, category: 'Breathwork' },
-
-  // Mental Clarity & Focus Tools -> Clarity & Focus
-  { id: 'focus_wins', name: 'Name 3 Wins', description: 'A self-coaching exercise to build momentum and clarity.', duration: 120, icon: Brain, category: 'Clarity & Focus' },
-  { id: 'focus_visualization', name: 'Focus Visualization', description: 'Mentally rehearse a task to improve performance and reduce anxiety.', duration: 180, icon: Eye, category: 'Clarity & Focus' },
-  { id: 'focus_reset', name: 'Two-Minute Reset', description: 'A brief mindfulness pause to break from overwhelm and regain focus.', duration: 120, icon: Brain, category: 'Clarity & Focus' },
-  
-  // Grounding & Safety Practices -> Grounding & Safety
-  { id: 'grounding_54321', name: '5-4-3-2-1 Senses', description: 'Engage all five senses to anchor yourself in the present moment.', duration: 180, icon: Shield, category: 'Grounding & Safety' },
-  { id: 'grounding_tactile', name: 'Tactile Object Focus', description: 'Hold an object and focus on its texture, temperature, and weight.', duration: 120, icon: Shield, category: 'Grounding & Safety' },
-  { id: 'grounding_nature', name: 'Nature Visualization', description: 'Imagine a safe, natural place and sync your breath with its rhythm.', duration: 300, icon: TreeDeciduous, category: 'Grounding & Safety' },
-
-  // Self-Compassion & Emotional Support -> Self-Compassion
-  { id: 'compassion_metta', name: 'Loving-Kindness Meditation', description: 'Extend wishes of well-being to yourself and others.', duration: 300, icon: HeartHandshake, category: 'Self-Compassion' },
-  { id: 'compassion_journal', name: '"What do I need?"', description: 'A journaling prompt to check in with your inner needs.', duration: 180, icon: HeartHandshake, category: 'Self-Compassion' },
-  { id: 'compassion_mantra', name: 'Gentle Inner Voice', description: 'Practice a supportive mantra to counter self-criticism.', duration: 120, icon: HeartHandshake, category: 'Self-Compassion' },
+  { 
+    id: 'breath_box', 
+    name: 'Box Breathing', 
+    description: 'Inhale 4s, hold 4s, exhale 4s, hold 4s. For calm and focus.', 
+    duration: 180, 
+    icon: Wind, 
+    category: 'Breathwork',
+    intention: "Regain calm and sharpen focus with structured breath.",
+    setup: ["Sit or lie down with back supported.", "Optional: Set a 2-minute timer."],
+    steps: [
+      "Inhale for 4 seconds.",
+      "Hold your breath for 4 seconds.",
+      "Exhale slowly for 4 seconds.",
+      "Hold again for 4 seconds.",
+      "Repeat the cycle 4–6 times."
+    ],
+    modifications: ["Use 3-second boxes if 4 feels too long.", "Trace a square in the air to visualize each phase."],
+    completionCue: "If your shoulders feel softer, you’ve done enough."
+  },
+  { 
+    id: 'breath_478', 
+    name: '4-7-8 Breath', 
+    description: 'A powerful technique to reduce anxiety and promote rest.', 
+    duration: 120, 
+    icon: Wind, 
+    category: 'Breathwork',
+    intention: "Calm anxiety and prepare the body for rest.",
+    setup: ["Sit or lie down with eyes closed.", "Optional: Hand on chest or belly."],
+    steps: [
+      "Inhale through your nose for 4 seconds.",
+      "Hold your breath for 7 seconds.",
+      "Exhale fully through your mouth for 8 seconds (slowly).",
+      "Do 3–4 rounds total."
+    ],
+    modifications: ["Shorten to 3-5-6 for gentler breathwork.", "Whisper “relax” while exhaling for more effect."],
+    completionCue: "When you feel slightly slower and quieter inside, you're done."
+  },
+  { 
+    id: 'breath_resonant', 
+    name: 'Resonant Breathing', 
+    description: 'Breathe at a rate of 5-6 breaths per minute to balance the nervous system.', 
+    duration: 300, 
+    icon: Wind, 
+    category: 'Breathwork',
+    intention: "Harmonize the nervous system by syncing your breath rhythm.",
+    setup: ["Sit or recline.", "Optional: Play calming music at 60 bpm."],
+    steps: [
+      "Inhale slowly for 5–6 seconds.",
+      "Exhale for 5–6 seconds.",
+      "Repeat for 1–3 minutes.",
+      "Focus on the even rhythm, like ocean waves."
+    ],
+    modifications: ["Use a breathing app as visual guidance.", "Place a hand on your heart or stomach."],
+    completionCue: "Once you feel like you’re riding a rhythm, pause or continue as needed."
+  },
+  { 
+    id: 'focus_wins', 
+    name: 'Name 3 Wins', 
+    description: 'A self-coaching exercise to build momentum and clarity.', 
+    duration: 120, 
+    icon: Brain, 
+    category: 'Clarity & Focus',
+    intention: "Boost confidence and sense of progress.",
+    setup: ["Open journal or note app.", "Optional: Set a 2-minute timer."],
+    steps: [
+      "Think of three things you did well today.",
+      "Write each one down or say aloud.",
+      "Focus on effort, not just outcome.",
+      "Smile or breathe deeply with each one."
+    ],
+    modifications: ["Use tiny wins (e.g. “I drank water” counts!).", "Voice record instead of writing."],
+    completionCue: "When you feel even slightly more capable, stop there."
+  },
+  { 
+    id: 'focus_visualization', 
+    name: 'Focus Visualization', 
+    description: 'Mentally rehearse a task to improve performance and reduce anxiety.', 
+    duration: 180, 
+    icon: Eye, 
+    category: 'Clarity & Focus',
+    intention: "Mentally rehearse a task to reduce anxiety and boost readiness.",
+    setup: ["Sit with eyes closed or gaze lowered.", "Choose 1 task you want to do soon."],
+    steps: [
+      "Imagine starting the task calmly.",
+      "Visualize each step, slowly and clearly.",
+      "Imagine staying focused and steady.",
+      "Picture finishing it and feeling relief.",
+      "Smile or nod to “lock it in.”"
+    ],
+    modifications: ["Use a 2-minute timer.", "Sketch the task afterward to reinforce it."],
+    completionCue: "When your body feels more ready to begin, you’re done."
+  },
+  { 
+    id: 'focus_reset', 
+    name: 'Two-Minute Reset', 
+    description: 'A brief mindfulness pause to break from overwhelm and regain focus.', 
+    duration: 120, 
+    icon: Brain, 
+    category: 'Clarity & Focus',
+    intention: "Stop the spin of distraction and restart mental focus.",
+    setup: ["Sit or lie down with no goal but stillness.", "Optional: Timer for 2 minutes."],
+    steps: [
+      "Close eyes or soften your gaze.",
+      "Breathe normally.",
+      "Let thoughts pass like clouds.",
+      "Do nothing. Just observe.",
+      "Gently stretch or blink at the end."
+    ],
+    modifications: ["Use background sound (fan, rain).", "Try with a weighted object or pillow."],
+    completionCue: "If your mind feels a little quieter, that’s a win."
+  },
+  { 
+    id: 'grounding_54321', 
+    name: '5-4-3-2-1 Senses', 
+    description: 'Engage all five senses to anchor yourself in the present moment.', 
+    duration: 180, 
+    icon: Shield, 
+    category: 'Grounding & Safety',
+    intention: "Ground yourself in the present during overwhelm or panic.",
+    setup: ["Sit wherever you are.", "Look around gently."],
+    steps: [
+      "Name 5 things you see.",
+      "Name 4 things you can touch.",
+      "Name 3 things you hear.",
+      "Name 2 things you can smell.",
+      "Name 1 thing you can taste (or like the taste of)."
+    ],
+    modifications: ["Tap fingers for each number.", "Use imaginary senses if surroundings are too dull."],
+    completionCue: "Feel even a little more here? That’s enough."
+  },
+  { 
+    id: 'grounding_tactile', 
+    name: 'Tactile Object Focus', 
+    description: 'Hold an object and focus on its texture, temperature, and weight.', 
+    duration: 120, 
+    icon: Shield, 
+    category: 'Grounding & Safety',
+    intention: "Anchor your attention by engaging one sense deeply.",
+    setup: ["Pick up a small object (rock, leaf, keychain, etc.).", "Sit comfortably."],
+    steps: [
+      "Focus only on the object in your hand.",
+      "Describe its texture out loud or silently.",
+      "Notice its weight, shape, temperature.",
+      "Trace its edges or surface slowly.",
+      "Hold it for 30 seconds, breathing gently."
+    ],
+    modifications: ["Close eyes for deeper focus.", "Switch to different object halfway."],
+    completionCue: "When your thoughts are quieter and attention narrowed, you’re done."
+  },
+  { 
+    id: 'grounding_nature', 
+    name: 'Nature Visualization', 
+    description: 'Imagine a safe, natural place and sync your breath with its rhythm.', 
+    duration: 300, 
+    icon: TreeDeciduous, 
+    category: 'Grounding & Safety',
+    intention: "Create a safe, calm mental space.",
+    setup: ["Sit or lie down in a quiet place.", "Close your eyes or gaze downward."],
+    steps: [
+      "Imagine a place in nature you love or make one up.",
+      "Picture the sights—trees, water, sky.",
+      "Hear the sounds—wind, birds, silence.",
+      "Sync your breath with the imagined scene.",
+      "Stay for 1–2 minutes, then slowly return."
+    ],
+    modifications: ["Use background nature sounds.", "Draw or journal about the place afterward."],
+    completionCue: "When your breath feels calmer and body softer, pause or return gently."
+  },
+  { 
+    id: 'compassion_metta', 
+    name: 'Loving-Kindness Meditation', 
+    description: 'Extend wishes of well-being to yourself and others.', 
+    duration: 300, 
+    icon: HeartHandshake, 
+    category: 'Self-Compassion',
+    intention: "Increase emotional warmth for self and others.",
+    setup: ["Sit or lie in a cozy position.", "Take one slow breath."],
+    steps: [
+      "Silently repeat: “May I be safe. May I be well. May I be at peace.”",
+      "After 3 rounds, shift to someone you care about.",
+      "Repeat the same words for them.",
+      "Optionally repeat for a neutral person or all beings."
+    ],
+    modifications: ["Change wording to what resonates with you.", "Visualize the person’s smile or energy."],
+    completionCue: "When you feel a tinge of warmth, you can stop there."
+  },
+  { 
+    id: 'compassion_journal', 
+    name: '"What do I need?"', 
+    description: 'A journaling prompt to check in with your inner needs.', 
+    duration: 180, 
+    icon: HeartHandshake, 
+    category: 'Self-Compassion',
+    intention: "Increase emotional clarity and meet your current need.",
+    setup: ["Open journal or notes app.", "Write or say aloud."],
+    steps: [
+      "Ask: “What do I need right now?”",
+      "Let answers flow: sleep? rest? joy? silence?",
+      "Write or name 1–3 real needs.",
+      "Choose one small action to meet one of them."
+    ],
+    modifications: ["Use emojis or voice memos instead of full sentences.", "Skip action step if awareness alone helps."],
+    completionCue: "Awareness = enough. Action is optional."
+  },
+  { 
+    id: 'compassion_mantra', 
+    name: 'Gentle Inner Voice', 
+    description: 'Practice a supportive mantra to counter self-criticism.', 
+    duration: 120, 
+    icon: HeartHandshake, 
+    category: 'Self-Compassion',
+    intention: "Reframe self-criticism with softness.",
+    setup: ["Sit still and breathe for 15 seconds.", "Recall a recent moment of struggle."],
+    steps: [
+      "Notice any harsh inner voice.",
+      "Ask: “What would I say to a friend in this situation?”",
+      "Replace the harsh phrase with a gentle one.",
+      "Repeat your new phrase slowly: “I’m doing my best.” “It’s okay to rest.” etc."
+    ],
+    modifications: ["Write it on a sticky note.", "Turn it into a lock screen or mantra."],
+    completionCue: "When your voice feels a touch kinder, stop there."
+  },
 ];

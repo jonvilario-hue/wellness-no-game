@@ -2,7 +2,7 @@
 "use client"
 
 import { mindfulnessPractices, type MindfulnessCategory } from "@/data/exercises"
-import { ExerciseCard } from "../exercises/exercise-card"
+import { PracticeInstructionCard } from "./PracticeInstructionCard"
 import CategoryOverview from "./CategoryOverview"
 import { stillnessCategoryDetails } from "@/data/wellness-categories"
 
@@ -31,7 +31,7 @@ export default function StillnessContent() {
                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {practices.map((practice) => (
                              <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-20">
-                                <ExerciseCard exercise={practice} />
+                                <PracticeInstructionCard exercise={practice} />
                             </div>
                         ))}
                     </div>
