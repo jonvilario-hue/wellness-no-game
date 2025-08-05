@@ -2,9 +2,9 @@
 "use client"
 
 import { movementExercises, type ExerciseCategory } from "@/data/exercises"
-import { ExerciseCard } from "../exercises/exercise-card"
 import CategoryOverview from "./CategoryOverview"
 import { movementCategoryDetails } from "@/data/wellness-categories"
+import { PracticeInstructionCard } from "./PracticeInstructionCard"
 
 const categories: ExerciseCategory[] = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
@@ -31,7 +31,7 @@ export default function MovementContent() {
                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {exercises.map((exercise) => (
                             <div key={exercise.id} id={`practice-${exercise.id}`} className="scroll-mt-20">
-                                <ExerciseCard exercise={exercise} />
+                                <PracticeInstructionCard exercise={exercise} />
                             </div>
                         ))}
                     </div>

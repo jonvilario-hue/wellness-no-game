@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw } from 'lucide-react';
-import type { Exercise, MindfulnessPractice } from '@/data/exercises';
+import type { MindfulnessPractice } from '@/data/exercises';
 import { motion } from 'framer-motion';
 
 const formatTime = (totalSeconds: number): string => {
@@ -15,7 +15,7 @@ const formatTime = (totalSeconds: number): string => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
-export const ExerciseCard = ({ exercise }: { exercise: Exercise | MindfulnessPractice }) => {
+export const ExerciseCard = ({ exercise }: { exercise: MindfulnessPractice }) => {
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(exercise.duration);
 
