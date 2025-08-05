@@ -1,4 +1,5 @@
 
+
 import { movementExercises, mindfulnessPractices, type Exercise, type MindfulnessPractice } from './exercises';
 import { wellnessPlans, type WellnessPlan } from './wellness-plans';
 import { kits } from './wellness-kits';
@@ -57,9 +58,9 @@ const getPracticeTags = (practice: Exercise | MindfulnessPractice): LibraryTag[]
 const getKitTags = (kit: MiniKit): LibraryTag[] => {
     const tags: LibraryTag[] = ['Short', 'Low Energy']; // Most kits are short and low energy
     if (kit.title.includes('Stress') || kit.title.includes('Emotional')) tags.push('Anxiety Relief', 'Recovery');
-    if (kit.title.includes('Focus')) tags.push('Focus', 'Clarity');
+    if (kit.title.includes('Focus') || kit.title.includes('Idea')) tags.push('Focus', 'Clarity');
     if (kit.title.includes('Morning')) tags.push('Energy');
-    if (kit.title.includes('Creative')) tags.push('Creativity', 'Focus');
+    if (kit.title.includes('Creative') || kit.title.includes('Muse') || kit.title.includes('Play')) tags.push('Creativity');
     if (kit.title.includes('Boundaries') || kit.title.includes('Self-Talk')) tags.push('Self-Compassion');
     if (kit.title.includes('Unfreeze') || kit.title.includes('SOS')) tags.push('Grounding');
     if (kit.title.includes('Evening') || kit.title.includes('Sleep')) tags.push('Sleep', 'Calm');
