@@ -60,7 +60,7 @@ const getKitTags = (kit: MiniKit): LibraryTag[] => {
     if (kit.title.includes('Stress') || kit.title.includes('Emotional')) tags.push('Anxiety Relief', 'Recovery');
     if (kit.title.includes('Focus') || kit.title.includes('Idea')) tags.push('Focus', 'Clarity');
     if (kit.title.includes('Morning')) tags.push('Energy');
-    if (kit.title.includes('Creative') || kit.title.includes('Muse') || kit.title.includes('Play')) tags.push('Creativity');
+    if (kit.title.includes('Creative') || kit.title.includes('Muse') || kit.title.includes('Play') || kit.title.includes('Spark')) tags.push('Creativity');
     if (kit.title.includes('Boundaries') || kit.title.includes('Self-Talk')) tags.push('Self-Compassion');
     if (kit.title.includes('Unfreeze') || kit.title.includes('SOS')) tags.push('Grounding');
     if (kit.title.includes('Evening') || kit.title.includes('Sleep')) tags.push('Sleep', 'Calm');

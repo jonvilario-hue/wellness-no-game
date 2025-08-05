@@ -1,5 +1,4 @@
 
-
 export type MiniKit = {
     title: string;
     emoji: string;

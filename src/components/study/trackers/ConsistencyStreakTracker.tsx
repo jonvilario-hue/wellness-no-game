@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ConsistencyStreakTracker() {
   const [streak, setStreak] = useState(0);
@@ -12,7 +12,7 @@ export function ConsistencyStreakTracker() {
   }, []);
 
   return (
-    <div>
+    <Card>
       <CardHeader className="p-0 mb-2">
         <CardTitle className="text-base">Consistency Streak</CardTitle>
       </CardHeader>
@@ -20,6 +20,6 @@ export function ConsistencyStreakTracker() {
         <p className="text-3xl font-bold">{streak} days</p>
         <p className="text-sm text-muted-foreground">Consecutive days with study activity</p>
       </CardContent>
-    </div>
+    </Card>
   );
 }
