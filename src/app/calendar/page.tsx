@@ -57,7 +57,7 @@ export default function CalendarCataloguePage() {
                     
                     <div className="space-y-8">
                         {calendarPlans.map(plan => (
-                            <CalendarPlanCard key={plan.id} plan={plan} />
+                           <CalendarPlanCard key={plan.id} plan={plan} />
                         ))}
                     </div>
                 </div>

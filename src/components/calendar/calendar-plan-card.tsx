@@ -19,10 +19,10 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
   const weekChunks = chunkArray(plan.tasks, 7);
 
   return (
-    <details className="group block" open>
-        <Card className="w-full overflow-hidden">
-            <summary className="list-none cursor-pointer">
-                <CardHeader className="flex flex-row justify-between items-start">
+    <Card className="w-full overflow-hidden">
+        <details className="group block" open>
+            <summary className="list-none cursor-pointer p-6">
+                 <div className="flex justify-between items-start">
                     <div className="flex-grow">
                         <CardTitle className="text-2xl">{plan.title}</CardTitle>
                         <CardDescription>{plan.goal}</CardDescription>
@@ -31,11 +31,11 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
                         </div>
                     </div>
                     <ChevronDown className="w-6 h-6 m-2 shrink-0 transition-transform duration-200 group-open:rotate-180" />
-                </CardHeader>
+                </div>
             </summary>
             
             <div className="animate-in fade-in-0 slide-in-from-top-4 duration-500">
-                <CardContent>
+                <CardContent className="p-6 pt-0">
                     <div className="overflow-x-auto">
                         <table className="w-full border-collapse text-sm">
                             <thead>
@@ -103,7 +103,7 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
 
                 </CardContent>
             </div>
-        </Card>
-    </details>
+        </details>
+    </Card>
   );
 }
