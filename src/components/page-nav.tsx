@@ -4,13 +4,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { GraduationCap, Target, HeartPulse, BookMarked } from 'lucide-react';
+import { GraduationCap, Target, HeartPulse, BookMarked, Calendar } from 'lucide-react';
 
 const navLinks = [
     { href: '/exercises', icon: HeartPulse, label: 'Health Check' },
     { href: '/study', icon: GraduationCap, label: 'Scholar Hub' },
     { href: '/blueprints', icon: Target, label: 'Architect Lab' },
     { href: '/tools', icon: BookMarked, label: 'Reflections' },
+    { href: '/calendar', icon: Calendar, label: 'Calendar' },
 ];
 
 export const PageNav = () => {
