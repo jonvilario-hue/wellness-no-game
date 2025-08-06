@@ -83,23 +83,3 @@ export const componentLabels: Record<keyof DashboardSettings, string> = {
   moodTracker: 'Mood Tracker',
   effortTracker: 'Focus Tracker',
 };
-
-// Keys for the main dashboard page
-export const dashboardLayoutKeys: DashboardComponent[] = [
-    'performanceOverview',
-    'dailyChallenge',
-    'allGames',
-    'performanceInsights',
-    'weakAreaRecommendations',
-    'adaptiveDifficulty',
-    'hyperfocusBuilder',
-    'gameProgressTracker',
-    'milestoneBadges',
-];
-
-// Keys for the tools page trackers
-export const trackerLayoutKeys: TrackerComponent[] = [
-    'habitTracker',
-    'moodTracker',
-    'effortTracker',
-];

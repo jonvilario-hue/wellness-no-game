@@ -97,7 +97,7 @@ interface JournalState {
     habits: Habit[];
     completedHabits: Record<string, HabitId[]>;
     selectedEntry: JournalEntry | null;
-    hasHydrated: boolean;
+    _hasHydrated: boolean; // Renamed to indicate it's for internal use
 
     // Actions
     setHasHydrated: (hydrated: boolean) => void;
@@ -157,9 +157,9 @@ export const useJournal = create<JournalState>()(
         habits: [],
         completedHabits: {},
         selectedEntry: null,
-        hasHydrated: false,
+        _hasHydrated: false,
 
-        setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
+        setHasHydrated: (hydrated) => set({ _hasHydrated: hydrated }),
         
         findOrCreateEntry: ({ date, category, frequency, forceNew = false }) => {
             if (forceNew) {
@@ -324,15 +324,7 @@ export const useJournal = create<JournalState>()(
 // Custom hook to safely access the store's state only after hydration
 export const useHydratedJournalStore = () => {
     const store = useJournal();
-    const hasHydrated = useJournal((s) => s.hasHydrated);
+    const hasHydrated = useJournal((s) => s._hasHydrated); // Use the internal flag
 
-    const [clientState, setClientState] = useState(store);
-
-    useEffect(() => {
-        if (hasHydrated) {
-            setClientState(store);
-        }
-    }, [hasHydrated, store]);
-
-    return hasHydrated ? clientState : { ...store, hasHydrated: false, entries: [], habits: [], completedHabits: {}, trashedEntries: [], selectedEntry: null };
+    return { ...store, hasHydrated };
 };

@@ -44,7 +44,7 @@ export function TimeToolsCard() {
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full">
-          <Link href="/time">
+          <Link href="/settings?tab=time">
             Open Clock Tools <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>

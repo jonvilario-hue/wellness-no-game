@@ -56,7 +56,7 @@ export default function TrainingPage() {
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <div className="flex-1 flex justify-start">
             <Button asChild variant="outline">
-              <Link href="/">
+              <Link href="/exercises">
                 <ArrowLeft className="mr-2" />
                 Back to Dashboard
               </Link>
@@ -82,8 +82,10 @@ export default function TrainingPage() {
             </div>
           </div>
           <div className="flex-1 flex justify-end">
-            <Button variant="ghost" size="icon">
-              <Settings />
+            <Button asChild variant="ghost" size="icon">
+              <Link href="/settings">
+                <Settings />
+              </Link>
             </Button>
           </div>
         </div>
