@@ -56,7 +56,7 @@ export const calendarPlans: CalendarPlan[] = [
             { day: 8, task: 'Screen-free morning' }, { day: 9, task: 'No-scroll meals' }, { day: 10, task: 'Screen-free morning' }, { day: 11, task: 'No-scroll meals' }, { day: 12, task: 'Half-day offline on weekend' }, { day: 13, task: 'Go for a walk without phone' }, { day: 14, task: 'Plan ongoing habits' },
         ]
     },
-     {
+    {
         id: 'hydration-nutrition',
         title: 'Hydration & Nutrition Tracker (30-Day)',
         goal: 'Build basic health consistency around hydration and meals.',
@@ -190,7 +190,7 @@ export const calendarPlans: CalendarPlan[] = [
         advanced: 'Increase the duration of each micro-workout to 10 minutes, or add a second micro-workout in the afternoon to break up sedentary time.',
         tasks: [
             { day: 1, task: '30s Jumping Jacks' }, { day: 2, task: '1m Wall Sit' }, { day: 3, task: '10 Squats' }, { day: 4, task: '30s High Knees' }, { day: 5, task: '10 Push-ups (on knees is ok!)' }, { day: 6, task: '1m Plank' }, { day: 7, task: 'Rest/Stretch' },
-            { day: 8, task: '30s Jumping Jacks' }, { day: 9, task: '1m Wall Sit' }, { day: 10, task: '10 Squats' }, { day: 11, task: '30s High Knees' }, { day: 12, task: '10 Push-ups' }, { day: 13, task: '1m Plank' }, { day: 14, task: 'Rest/Stretch' },
+            { day: 8, task: '30s Jumping Jacks' }, { day: 9, task: '1m Wall Sit' }, { day: 10, task: '10 Squats' }, { day: 11, task: '30s High Knees' }, { day: 12, 'task': '10 Push-ups' }, { day: 13, task: '1m Plank' }, { day: 14, task: 'Rest/Stretch' },
             { day: 15, task: '45s Jumping Jacks' }, { day: 16, task: '90s Wall Sit' }, { day: 17, task: '15 Squats' }, { day: 18, task: '45s High Knees' }, { day: 19, task: '12 Push-ups' }, { day: 20, task: '90s Plank' }, { day: 21, task: 'Rest/Stretch' },
             { day: 22, task: '45s Jumping Jacks' }, { day: 23, task: '90s Wall Sit' }, { day: 24, task: '15 Squats' }, { day: 25, task: '45s High Knees' }, { day: 26, task: '12 Push-ups' }, { day: 27, task: '90s Plank' }, { day: 28, task: 'Rest/Stretch' },
             { day: 29, task: 'Your Favorite Micro-Workout' }, { day: 30, task: 'Your Favorite Micro-Workout' },
@@ -221,6 +221,29 @@ export const calendarPlans: CalendarPlan[] = [
             { day: 8, task: 'Something you hear' }, { day: 9, task: 'A food you enjoy' }, { day: 10, task: 'A challenge that taught you' }, { day: 11, task: 'A piece of knowledge' }, { day: 12, task: 'Your body' }, { day: 13, task: 'A memory' }, { day: 14, task: 'Weekly review' },
             { day: 15, task: 'Something that smells good' }, { day: 16, task: 'A book or movie' }, { day: 17, task: 'A tough lesson' }, { day: 18, task: 'Something beautiful' }, { day: 19, task: 'A place' }, { day: 20, task: 'A song' }, { day: 21, task: 'Weekly review' },
             { day: 22, task: 'Something you touch' }, { day: 23, task: 'A stranger\'s kindness' }, { day: 24, task: 'A future event' }, { day: 25, task: 'A mistake you learned from' }, { day: 26, task: 'Yourself' }, { day: 27, task: 'Something that made you laugh' }, { day: 28, task: 'Final review' },
+        ]
+    },
+    {
+        id: 'study-calendar-plan',
+        title: 'Study Calendar Plan (21-Day)',
+        goal: 'Develop a consistent study habit with built-in time management and review periods.',
+        tags: ['Productivity', 'Focus', 'Learning'],
+        instructions: 'Week 1 focuses on foundations: setting up your environment and using basic techniques like Pomodoros. Week 2 is about applying active learning methods like the Feynman Technique. Week 3 consolidates knowledge through self-testing and review.',
+        advanced: 'Study in 90-minute ultradian rhythm blocks. Track your energy before/after each session. Use dual notebooks for Cornell notes and Active Recall. Simulate a full weekly test under timed conditions.',
+        enhancements: [
+            'How was your focus today? ☀️ Great / ⛅ Okay / 🌧️ Scattered',
+            'Tip of the Day: Try explaining what you learned to an imaginary student. This helps with memory and reveals weak spots.',
+            'Weekly Reflection: What went well? What was difficult? What can I improve next week?',
+            'Mini Flashcard: Q: What is the Feynman Technique? A: A method of learning by explaining a concept in simple terms, as if teaching it to someone else.',
+            'Downloadable Weekly Study Planner PDF'
+        ],
+        tasks: [
+            // Week 1
+            { day: 1, task: 'Choose subject + set goals' }, { day: 2, task: '25m study + 5m break' }, { day: 3, task: 'Review notes with colors' }, { day: 4, task: 'Flashcards only' }, { day: 5, task: 'Pomodoro ×2' }, { day: 6, task: 'Short practice test' }, { day: 7, task: 'Journal & Relax' },
+            // Week 2
+            { day: 8, task: 'Use Feynman Technique' }, { day: 9, task: 'Rotate subjects AM/PM' }, { day: 10, task: '2 Pomodoros + note rewrite' }, { day: 11, task: 'Record audio summary' }, { day: 12, task: 'Use Feynman Technique' }, { day: 13, task: 'Rotate subjects' }, { day: 14, task: 'Review & Plan' },
+            // Week 3
+            { day: 15, task: '3 study blocks' }, { day: 16, task: 'Self-quiz' }, { day: 17, task: 'Mind map main topic' }, { day: 18, task: '3 study blocks' }, { day: 19, task: 'Self-quiz' }, { day: 20, task: 'Mind map main topic' }, { day: 21, task: 'Final review + checklist' },
         ]
     },
 ];
