@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { calendarContent, getThemeForWeek, getDailyQuote, type CalendarDay } from '@/data/calendar-content';
 import { DayDetailsDialog } from './day-details-dialog';
 import { useCalendarTracker } from '@/hooks/use-calendar-tracker';
+import { Button } from '@/components/ui/button';
 
 export function ProductivityCalendar() {
   const [selectedDay, setSelectedDay] = React.useState<CalendarDay | null>(null);
