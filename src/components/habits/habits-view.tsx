@@ -8,7 +8,6 @@ import { useHydratedJournalStore as useJournal, type Habit } from '@/hooks/use-j
 import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '../ui/scroll-area';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
@@ -261,22 +260,19 @@ export function HabitsView() {
                         </CardHeader>
                         <CardContent>
                             <ScrollArea className="h-[500px] pr-3 -mr-3">
-                                <Accordion type="multiple" className="w-full">
+                                <div className="space-y-4">
                                 {habitsByCategory.map(({ category, categoryHabits }) => {
                                     if (categoryHabits.length === 0) return null;
                                     const completedInCategory = categoryHabits.filter(h => todaysHabits.includes(h.id)).length;
                                     return (
-                                    <AccordionItem value={category.title} key={category.title}>
-                                        <AccordionTrigger>
-                                        <div className="flex items-center justify-between w-full">
+                                    <div key={category.title}>
+                                        <h3 className="text-sm font-semibold mb-2 flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                            <category.icon className="w-4 h-4 text-muted-foreground" />
-                                            <span className="font-semibold">{category.title}</span>
+                                                <category.icon className="w-4 h-4 text-muted-foreground" />
+                                                {category.title}
                                             </div>
-                                            <span className="text-sm text-muted-foreground font-medium pr-2">{completedInCategory} / {categoryHabits.length}</span>
-                                        </div>
-                                        </AccordionTrigger>
-                                        <AccordionContent>
+                                            <span className="text-muted-foreground font-medium">{completedInCategory} / {categoryHabits.length}</span>
+                                        </h3>
                                         <div className="space-y-2 pl-2">
                                             {categoryHabits.map(habit => (
                                             habit && <HabitItem 
@@ -289,11 +285,10 @@ export function HabitsView() {
                                             />
                                             ))}
                                         </div>
-                                        </AccordionContent>
-                                    </AccordionItem>
+                                    </div>
                                     )
                                 })}
-                                </Accordion>
+                                </div>
                             </ScrollArea>
                         </CardContent>
                         <CardFooter className="border-t pt-4 flex-col gap-2">

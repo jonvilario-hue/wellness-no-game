@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState } from 'react';
@@ -105,14 +104,14 @@ const DetailedLibraryCard = ({ item }: { item: LibraryItem }) => {
 };
 
 export default function WellnessLibrary() {
-    const [activeFilter, setActiveFilter] = useState<LibraryTag | null>(null);
-
-    const filteredItems = activeFilter
-        ? wellnessLibrary.filter(item => item.tags.includes(activeFilter))
-        : wellnessLibrary;
+    
+    const groupedItems = intentFilters.reduce((acc, filter) => {
+        acc[filter.label] = wellnessLibrary.filter(item => item.tags.includes(filter.label));
+        return acc;
+    }, {} as Record<LibraryTag, LibraryItem[]>);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-10">
             <div className="flex flex-col items-center text-center">
                 <h1 className="text-3xl font-bold">Wellness Library</h1>
                 <p className="text-muted-foreground mt-2 max-w-2xl">
@@ -120,31 +119,19 @@ export default function WellnessLibrary() {
                 </p>
             </div>
             
-            <div className="flex justify-center flex-wrap gap-2">
-                <Button 
-                    variant={activeFilter === null ? 'default' : 'secondary'}
-                    onClick={() => setActiveFilter(null)}
-                >
-                    All
-                </Button>
-                {intentFilters.map(({ label, icon: Icon }) => (
-                    <Button 
-                        key={label}
-                        variant={activeFilter === label ? 'default' : 'secondary'}
-                        onClick={() => setActiveFilter(label)}
-                        className="gap-2"
-                    >
-                        <Icon className="w-4 h-4" />
+            {intentFilters.map(({ label, icon: Icon }) => (
+                <div key={label}>
+                    <h2 className="text-2xl font-semibold flex items-center gap-3 mb-4">
+                        <Icon className="w-6 h-6" />
                         {label}
-                    </Button>
-                ))}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredItems.map(item => (
-                    <DetailedLibraryCard key={`${item.type}-${item.id}`} item={item} />
-                ))}
-            </div>
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {groupedItems[label].map(item => (
+                           <DetailedLibraryCard key={`${item.type}-${item.id}`} item={item} />
+                        ))}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 }
