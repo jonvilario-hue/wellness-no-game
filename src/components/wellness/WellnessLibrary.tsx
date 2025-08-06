@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState } from 'react';
@@ -9,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Waves, HeartPulse, Zap, Brain, Shield, Moon, Palette, type LucideIcon, Target } from 'lucide-react';
+import { Waves, HeartPulse, Zap, Brain, Shield, Moon, Palette, type LucideIcon, Target, ChevronDown } from 'lucide-react';
 import type { MiniKit } from '@/data/wellness-kits';
 import type { WellnessPlan } from '@/data/wellness-plans';
 import type { Exercise, MindfulnessPractice } from '@/data/exercises';
@@ -146,11 +145,12 @@ export default function WellnessLibrary() {
                 
                 return (
                     <details key={label} open className="group">
-                        <summary className="list-none cursor-pointer">
-                             <h2 id={`tag-${label.toLowerCase().replace(/ /g, '-')}`} className="text-2xl font-semibold flex items-center gap-3 mb-4 scroll-mt-24 group-hover:text-primary transition-colors">
+                        <summary className="list-none cursor-pointer flex justify-between items-center">
+                             <h2 id={`tag-${label.toLowerCase().replace(/ /g, '-')}`} className="text-2xl font-semibold flex items-center gap-3 mb-4 scroll-mt-24 group-hover:text-primary transition-colors flex-grow">
                                 <Icon className="w-6 h-6" />
                                 {label} Kits
                             </h2>
+                             <ChevronDown className="w-6 h-6 m-4 shrink-0 transition-transform duration-200 group-open:rotate-180" />
                         </summary>
 
                         {/* Special section for ADHD-friendly kits under "Energy" */}
