@@ -19,23 +19,25 @@ export default function StillnessContent() {
             const CategoryIcon = details.icon;
 
             return (
-                <div key={category}>
-                    <CategoryOverview
-                        title={details.title}
-                        icon={<CategoryIcon className="w-6 h-6 text-primary" />}
-                        purpose={details.purpose}
-                        useWhen={details.useWhen}
-                        includes={details.includes}
-                        tagline={details.tagline}
-                    />
-                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <details key={category} open>
+                    <summary className="list-none cursor-pointer">
+                        <CategoryOverview
+                            title={details.title}
+                            icon={<CategoryIcon className="w-6 h-6 text-primary" />}
+                            purpose={details.purpose}
+                            useWhen={details.useWhen}
+                            includes={details.includes}
+                            tagline={details.tagline}
+                        />
+                    </summary>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                         {practices.map((practice) => (
                              <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-20">
                                 <PracticeInstructionCard exercise={practice} />
                             </div>
                         ))}
                     </div>
-                </div>
+                </details>
             )
         })}
     </div>
