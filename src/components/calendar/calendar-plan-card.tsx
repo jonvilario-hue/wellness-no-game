@@ -21,17 +21,15 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
   return (
     <Card className="w-full overflow-hidden">
         <details className="group block" open>
-            <summary className="list-none cursor-pointer p-6">
-                 <div className="flex justify-between items-start">
-                    <div className="flex-grow">
-                        <CardTitle className="text-2xl">{plan.title}</CardTitle>
-                        <CardDescription>{plan.goal}</CardDescription>
-                        <div className="flex flex-wrap gap-2 pt-2">
-                            {plan.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
-                        </div>
+            <summary className="list-none cursor-pointer p-6 flex justify-between items-start">
+                 <div className="flex-grow">
+                    <CardTitle className="text-2xl">{plan.title}</CardTitle>
+                    <CardDescription>{plan.goal}</CardDescription>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                        {plan.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
                     </div>
-                    <ChevronDown className="w-6 h-6 m-2 shrink-0 transition-transform duration-200 group-open:rotate-180" />
                 </div>
+                <ChevronDown className="w-6 h-6 m-2 shrink-0 transition-transform duration-200 group-open:rotate-180" />
             </summary>
             
             <div className="animate-in fade-in-0 slide-in-from-top-4 duration-500">

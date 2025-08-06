@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Button } from '@/components/ui/button';
 import { calendarPlans } from '@/data/calendar-plans';
 import { CalendarPlanCard } from '@/components/calendar/calendar-plan-card';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function CalendarCataloguePage() {
     const [isOpen, setIsOpen] = useState(true);
@@ -54,10 +55,28 @@ export default function CalendarCataloguePage() {
                             </CollapsibleTrigger>
                         </div>
                     </Collapsible>
+
+                    <Card>
+                        <CardContent className="p-4">
+                             <nav>
+                                <ul className="flex flex-wrap gap-2 justify-center">
+                                    {calendarPlans.map(plan => (
+                                        <li key={plan.id}>
+                                            <a href={`#${plan.id}`}>
+                                                <Button variant="outline" size="sm">{plan.title}</Button>
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </CardContent>
+                    </Card>
                     
                     <div className="space-y-8">
                         {calendarPlans.map(plan => (
-                           <CalendarPlanCard key={plan.id} plan={plan} />
+                           <div key={plan.id} id={plan.id} className="scroll-mt-24">
+                             <CalendarPlanCard plan={plan} />
+                           </div>
                         ))}
                     </div>
                 </div>
