@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import type { CalendarDay } from '@/data/calendar-content';
+import { ScrollArea } from '../ui/scroll-area';
 
 interface DayDetailsDialogProps {
   dayContent: CalendarDay;
@@ -44,7 +45,7 @@ export function DayDetailsDialog({ dayContent, isOpen, onClose, isCompleted, onT
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <Icon className="w-6 h-6 text-primary" />
@@ -55,11 +56,13 @@ export function DayDetailsDialog({ dayContent, isOpen, onClose, isCompleted, onT
           </DialogDescription>
         </DialogHeader>
         
-        <div className="py-4 space-y-4">
-            {renderTool()}
-        </div>
+        <ScrollArea className="flex-grow pr-4 -mr-4">
+          <div className="py-4 space-y-4 pr-2">
+              {renderTool()}
+          </div>
+        </ScrollArea>
         
-        <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+        <div className="flex-shrink-0 flex items-center justify-between p-4 bg-muted rounded-lg mt-auto">
           <Label htmlFor="task-completed-checkbox" className="font-semibold text-lg cursor-pointer">
             Mark as Complete
           </Label>
