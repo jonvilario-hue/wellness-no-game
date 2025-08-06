@@ -21,7 +21,7 @@ export const calendarPlans: CalendarPlan[] = [
         title: 'Morning Routine Reset (21-Day)',
         goal: 'Build a foundational and uplifting start to the day.',
         tags: ['Productivity', 'Wellness', 'Beginner'],
-        instructions: 'Start by waking up 15 mins earlier. Each week, add the next habit to your routine. Focus on consistency over perfection.',
+        instructions: 'Week 1: Wake up 15 mins earlier, drink water, and do 3 mins of light stretching. Week 2: Add 5-minute journaling. Week 3: Add 5 mins of movement.',
         advanced: 'Follow the 5 AM club model: 20 mins of high-intensity exercise, 20 mins of journaling/planning, and 20 mins of learning. Add cold showers for an extra boost.',
         enhancements: [
             'Daily Reflection Question: “What went well this morning?”',
@@ -29,12 +29,12 @@ export const calendarPlans: CalendarPlan[] = [
             'Link to a printable PDF version for offline use.'
         ],
         tasks: [
-            // Week 1: Wake up, Stretch, Hydrate
-            { day: 1, task: 'Wake up 15m early' }, { day: 2, task: 'Stretch' }, { day: 3, task: 'Hydrate' }, { day: 4, task: 'Wake up 15m early' }, { day: 5, task: 'Stretch' }, { day: 6, task: 'Hydrate' }, { day: 7, task: 'Review Week 1' },
-            // Week 2: Add Journaling
-            { day: 8, task: 'Routine + Journal' }, { day: 9, task: 'Routine + Journal' }, { day: 10, task: 'Routine + Journal' }, { day: 11, task: 'Routine + Journal' }, { day: 12, task: 'Routine + Journal' }, { day: 13, task: 'Routine + Journal' }, { day: 14, task: 'Review Week 2' },
-            // Week 3: Add Exercise
-            { day: 15, task: 'Routine + Exercise' }, { day: 16, task: 'Routine + Exercise' }, { day: 17, task: 'Routine + Exercise' }, { day: 18, task: 'Routine + Exercise' }, { day: 19, task: 'Routine + Exercise' }, { day: 20, task: 'Routine + Exercise' }, { day: 21, task: 'Plan Next Steps' },
+            // Week 1
+            { day: 1, task: 'Wake up 15m early' }, { day: 2, task: 'Hydrate' }, { day: 3, task: 'Stretch' }, { day: 4, task: 'Wake up 15m early' }, { day: 5, task: 'Hydrate' }, { day: 6, task: 'Stretch' }, { day: 7, task: 'Review Week 1' },
+            // Week 2
+            { day: 8, task: 'Routine + 5m Journal' }, { day: 9, task: 'Routine + 5m Journal' }, { day: 10, task: 'Routine + 5m Journal' }, { day: 11, task: 'Routine + 5m Journal' }, { day: 12, task: 'Routine + 5m Journal' }, { day: 13, task: 'Routine + 5m Journal' }, { day: 14, task: 'Review Week 2' },
+            // Week 3
+            { day: 15, task: 'Routine + 5m Movement' }, { day: 16, task: 'Routine + 5m Movement' }, { day: 17, task: 'Routine + 5m Movement' }, { day: 18, task: 'Routine + 5m Movement' }, { day: 19, task: 'Routine + 5m Movement' }, { day: 20, task: 'Routine + 5m Movement' }, { day: 21, task: 'Plan Next Steps' },
         ]
     },
     {
@@ -42,18 +42,38 @@ export const calendarPlans: CalendarPlan[] = [
         title: 'Digital Detox Challenge (14-Day)',
         goal: 'Reduce screen time and reclaim focus.',
         tags: ['Focus', 'Digital Wellness'],
-        instructions: 'Follow the daily focus. The goal is to create intentional time away from screens to let your mind recover.',
-        advanced: 'Commit to fully "unplugged weekends" with no social media or non-essential screen use. Use app time-limiters during the week.',
+        instructions: 'Week 1: No phone in bed, 30 min social media limit, and a 1-hour screen-free block. Week 2: Add screen-free mornings and no-scroll zones during meals.',
+        advanced: 'Commit to fully "unplugged weekends" with no social media or non-essential screen use. Use app time-limiters during the week and delete 3 time-wasting apps.',
         enhancements: [
             'Daily prompt: “What did you notice with less screen time today?”',
             'Static infographic: Average screen time reduction = +3 hours per week productivity.',
-            'Checklist of digital clutter items (unsubscribe from newsletters, clean inbox, etc.).'
+            'Checklist: Digital Clutter Items (unsubscribe, clean inbox, etc.).'
         ],
         tasks: [
             // Week 1
-            { day: 1, task: 'No phone in bed' }, { day: 2, task: '1hr social media fast' }, { day: 3, task: 'No phone in bed' }, { day: 4, task: '1hr social media fast' }, { day: 5, task: 'No phone in bed' }, { day: 6, task: 'Read a physical book' }, { day: 7, task: 'Review screen time report' },
+            { day: 1, task: 'No phone in bed' }, { day: 2, task: '30m social media limit' }, { day: 3, task: '1hr screen-free block' }, { day: 4, task: 'Replace 1 app with offline activity' }, { day: 5, task: 'No phone in bed' }, { day: 6, task: 'Read a physical book' }, { day: 7, task: 'Review screen time report' },
             // Week 2
-            { day: 8, task: 'Screen-free evening' }, { day: 9, task: 'Digital-free morning' }, { day: 10, task: 'Screen-free evening' }, { day: 11, task: 'Digital-free morning' }, { day: 12, task: 'Screen-free evening' }, { day: 13, task: 'Go for a walk without phone' }, { day: 14, task: 'Plan ongoing habits' },
+            { day: 8, task: 'Screen-free morning' }, { day: 9, task: 'No-scroll meals' }, { day: 10, task: 'Screen-free morning' }, { day: 11, task: 'No-scroll meals' }, { day: 12, task: 'Half-day offline on weekend' }, { day: 13, task: 'Go for a walk without phone' }, { day: 14, task: 'Plan ongoing habits' },
+        ]
+    },
+     {
+        id: 'hydration-nutrition',
+        title: 'Hydration & Nutrition Tracker (30-Day)',
+        goal: 'Build basic health consistency around hydration and meals.',
+        tags: ['Health', 'Wellness'],
+        instructions: 'Week 1: Track water intake (8 cups/day). Week 2: Swap one junk food item per day. Week 3: Add one veggie/fruit with every meal. Week 4: Track energy/mood after meals.',
+        advanced: 'Shift into calorie/macronutrient tracking, intermittent fasting, or mindful eating journaling. Follow a color-coded meal calendar (plant-based, lean protein, sugar-free).',
+        enhancements: [
+            'Static cup icons per day for coloring in.',
+            'Optional warm-up: “Just track water for first 3 days.”',
+            'Sample low-prep meal ideas.'
+        ],
+        tasks: [
+            { day: 1, task: 'Track water' }, { day: 2, task: 'Track water' }, { day: 3, task: 'Track water' }, { day: 4, task: 'Track water' }, { day: 5, task: 'Track water' }, { day: 6, task: 'Track water' }, { day: 7, task: 'Review Week 1' },
+            { day: 8, task: 'Swap 1 junk food' }, { day: 9, task: 'Swap 1 junk food' }, { day: 10, task: 'Swap 1 junk food' }, { day: 11, task: 'Swap 1 junk food' }, { day: 12, task: 'Swap 1 junk food' }, { day: 13, task: 'Swap 1 junk food' }, { day: 14, task: 'Review Week 2' },
+            { day: 15, task: 'Add veggie/fruit to meals' }, { day: 16, task: 'Add veggie/fruit to meals' }, { day: 17, task: 'Add veggie/fruit to meals' }, { day: 18, task: 'Add veggie/fruit to meals' }, { day: 19, task: 'Add veggie/fruit to meals' }, { day: 20, task: 'Add veggie/fruit to meals' }, { day: 21, task: 'Review Week 3' },
+            { day: 22, task: 'Track energy after meals' }, { day: 23, task: 'Track energy after meals' }, { day: 24, task: 'Track energy after meals' }, { day: 25, task: 'Track energy after meals' }, { day: 26, task: 'Track energy after meals' }, { day: 27, task: 'Track energy after meals' }, { day: 28, task: 'Track energy after meals' },
+            { day: 29, task: 'Plan next month' }, { day: 30, task: 'Final review' },
         ]
     },
     {
@@ -61,40 +81,21 @@ export const calendarPlans: CalendarPlan[] = [
         title: 'Focus Builder: Deep Work Sprint (14-Day)',
         goal: 'Build concentration and achieve flow states.',
         tags: ['Focus', 'Productivity'],
-        instructions: 'Dedicate specific time each day to uninterrupted, single-task focus. Start with two 25-minute Pomodoro sessions and increase the duration in week 2.',
-        advanced: 'Schedule full 90-minute flow sessions. Prepare the day before with a dopamine detox (reducing high-stimulation activities) to increase your ability to focus.',
+        instructions: 'Days 1-3: One 25-min Pomodoro. Days 4-7: Two 25-min Pomodoros. Days 8-10: One 50-min block. Days 11-14: Add a 5-min reflection after focus session.',
+        advanced: 'Schedule two 90-minute flow sessions per day. Track your focus energy level before and after each block. Add a pre-focus ritual (stretch, tea, music).',
         enhancements: [
             'Mini Journal prompt: “How distracted were you today?” [1–5 scale emoji: 🎯🔥🤔💨🐿️].',
-            'Include a “Flow Song” suggestion row for music-based focus.',
-            'Add links to printable focus timer templates or a no-JS Pomodoro timer embed.'
+            'Include a “Flow Song” suggestion.',
+            'Add links to printable focus timer templates.'
         ],
         tasks: [
             // Week 1
-            { day: 1, task: '2x25min Pomodoro' }, { day: 2, task: '2x25min Pomodoro' }, { day: 3, task: '2x25min Pomodoro' }, { day: 4, task: '2x25min Pomodoro' }, { day: 5, task: '2x25min Pomodoro' }, { day: 6, task: 'Rest' }, { day: 7, task: 'Review & Plan' },
+            { day: 1, task: '1x25min Pomodoro' }, { day: 2, task: '1x25min Pomodoro' }, { day: 3, task: '1x25min Pomodoro' }, { day: 4, task: '2x25min Pomodoro' }, { day: 5, task: '2x25min Pomodoro' }, { day: 6, task: '2x25min Pomodoro' }, { day: 7, task: '2x25min Pomodoro' },
             // Week 2
-            { day: 8, task: '2x50min Deep Work' }, { day: 9, task: '2x50min Deep Work' }, { day: 10, task: '2x50min Deep Work' }, { day: 11, task: '2x50min Deep Work' }, { day: 12, task: '2x50min Deep Work' }, { day: 13, task: 'Rest' }, { day: 14, task: 'Evaluate Focus' },
+            { day: 8, task: '1x50min Deep Work' }, { day: 9, task: '1x50min Deep Work' }, { day: 10, task: '1x50min Deep Work' }, { day: 11, task: 'Add 5m reflection' }, { day: 12, task: 'Add 5m reflection' }, { day: 13, task: 'Add 5m reflection' }, { day: 14, task: 'Evaluate Focus' },
         ]
     },
     {
-        id: 'sleep-optimization',
-        title: 'Sleep Optimization (14-Day)',
-        goal: 'Improve sleep quality and establish a healthy rhythm.',
-        tags: ['Wellness', 'Health', 'Recovery'],
-        instructions: 'Introduce one new habit every few days to gently build a powerful wind-down routine that signals to your body it\'s time for deep rest.',
-        advanced: 'Follow a strict circadian alignment protocol: aim for morning sunlight exposure within 30 minutes of waking and use blue-light filtering software/glasses after sunset.',
-        enhancements: [
-            'Static Sleep Tracker: HTML table with fields for “Sleep Time,” “Wake Time,” “Rest Quality”.',
-            'Add a “Wind-Down Playlist” suggestion.',
-            'Include “Caffeine cut-off” and blue light cutoff reminders as icons on the calendar.'
-        ],
-        tasks: [
-            // Week 1
-            { day: 1, task: 'Set consistent bedtime' }, { day: 2, task: 'Consistent bedtime' }, { day: 3, task: 'Consistent bedtime' }, { day: 4, task: 'Consistent bedtime' }, { day: 5, task: 'Add: No screens 1hr before bed' }, { day: 6, task: 'Add: No screens 1hr before bed' }, { day: 7, task: 'Add: No screens 1hr before bed' },
-            // Week 2
-            { day: 8, task: 'Add: Wind-down routine' }, { day: 9, task: 'Wind-down routine' }, { day: 10, task: 'Wind-down routine' }, { day: 11, task: 'Wind-down routine' }, { day: 12, task: 'Add: Journal sleep score' }, { day: 13, task: 'Journal sleep score' }, { day: 14, task: 'Review sleep data' },
-        ]
-    },
-     {
         id: 'declutter-challenge',
         title: 'Declutter Challenge (10-Day)',
         goal: 'Reduce physical and digital clutter for mental clarity.',
@@ -107,16 +108,51 @@ export const calendarPlans: CalendarPlan[] = [
             'Pre-filled list of clutter-prone spaces (digital + physical).'
         ],
         tasks: [
-            { day: 1, task: 'Clean computer desktop' },
-            { day: 2, task: 'Inbox Zero on email' },
-            { day: 3, task: 'Declutter one drawer' },
-            { day: 4, task: 'Clear one countertop' },
-            { day: 5, task: 'Organize junk mail pile' },
-            { day: 6, task: 'Delete unused apps' },
-            { day: 7, task: 'Tidy a single shelf' },
-            { day: 8, task: 'Review subscriptions' },
-            { day: 9, task: 'Clear out medicine cabinet' },
-            { day: 10, task: 'Plan next declutter area' },
+            { day: 1, task: 'Phone Apps' },
+            { day: 2, task: 'Email Inbox' },
+            { day: 3, task: 'Desk Space' },
+            { day: 4, task: 'Closet' },
+            { day: 5, task: 'Kitchen Counter' },
+            { day: 6, task: 'Bathroom Items' },
+            { day: 7, task: 'Junk Drawer' },
+            { day: 8, task: 'Bookshelf' },
+            { day: 9, task: 'Photos/Screenshots' },
+            { day: 10, task: 'Car or Bag' },
+        ]
+    },
+    {
+        id: 'sleep-optimization',
+        title: 'Sleep Optimization (14-Day)',
+        goal: 'Improve sleep quality and establish a healthy rhythm.',
+        tags: ['Wellness', 'Health', 'Recovery'],
+        instructions: 'Days 1-3: Set a consistent bedtime. Days 4-6: No screens 1 hour before sleep. Days 7-9: Create a wind-down routine. Days 10-14: Log sleep quality.',
+        advanced: 'Follow a strict circadian alignment protocol: aim for morning sunlight exposure within 30 minutes of waking and use blue-light filtering software/glasses after sunset.',
+        enhancements: [
+            'Static Sleep Tracker: HTML table with fields for “Sleep Time,” “Wake Time,” “Rest Quality”.',
+            'Add a “Wind-Down Playlist” suggestion.',
+            'Include “Caffeine cut-off” and blue light cutoff reminders as icons on the calendar.'
+        ],
+        tasks: [
+            // Week 1
+            { day: 1, task: 'Consistent bedtime' }, { day: 2, task: 'Consistent bedtime' }, { day: 3, task: 'Consistent bedtime' }, { day: 4, task: 'No screens 1hr pre-bed' }, { day: 5, task: 'No screens 1hr pre-bed' }, { day: 6, task: 'No screens 1hr pre-bed' }, { day: 7, task: 'Review Week 1' },
+            // Week 2
+            { day: 8, task: 'Wind-down routine' }, { day: 9, task: 'Wind-down routine' }, { day: 10, task: 'Wind-down routine' }, { day: 11, task: 'Log sleep quality' }, { day: 12, task: 'Log sleep quality' }, { day: 13, task: 'Log sleep quality' }, { day: 14, task: 'Final review' },
+        ]
+    },
+    {
+        id: 'confidence-builder',
+        title: 'Confidence Builder Plan (7-Day)',
+        goal: 'Build self-esteem through small daily wins.',
+        tags: ['Confidence', 'Mental Clarity'],
+        instructions: 'Day 1: Compliment yourself. Day 2: Record a voice memo pep talk. Day 3: Complete 1 micro-task. Day 4: Share your goals. Days 5-7: Increase social interaction.',
+        advanced: 'Do one brave thing per day. Create an "I’m proud of…" journal. Film a 30-sec confidence log daily.',
+        enhancements: [
+            'Add “Today’s Win” text box.',
+            '“Empowerment Quote” carousel (static).',
+            'Color-code each day’s card as a Confidence Level Up.'
+        ],
+        tasks: [
+            { day: 1, task: 'Mirror Affirmation' }, { day: 2, task: 'Complete 1 hard task' }, { day: 3, task: 'Compliment yourself' }, { day: 4, task: 'Share an idea' }, { day: 5, task: 'Dress with intention' }, { day: 6, task: 'Talk to someone new' }, { day: 7, task: 'Reflect on 3 wins' },
         ]
     },
     {
@@ -130,6 +166,19 @@ export const calendarPlans: CalendarPlan[] = [
             { day: 1, task: 'After brushing teeth, state 1 gratitude.' }, { day: 2, task: 'Gratitude after brushing' }, { day: 3, task: 'Gratitude after brushing' }, { day: 4, task: 'Gratitude after brushing' }, { day: 5, task: 'Gratitude after brushing' }, { day: 6, task: 'Gratitude after brushing' }, { day: 7, task: 'Review Week 1' },
             { day: 8, task: 'Add: 1-min breathwork after coffee' }, { day: 9, task: 'Habit Stack 1 & 2' }, { day: 10, task: 'Habit Stack 1 & 2' }, { day: 11, task: 'Habit Stack 1 & 2' }, { day: 12, task: 'Habit Stack 1 & 2' }, { day: 13, task: 'Habit Stack 1 & 2' }, { day: 14, task: 'Review Week 2' },
             { day: 15, task: 'Add: Review goals after lunch' }, { day: 16, task: 'Habit Stack 1, 2, & 3' }, { day: 17, task: 'Habit Stack 1, 2, & 3' }, { day: 18, task: 'Habit Stack 1, 2, & 3' }, { day: 19, task: 'Habit Stack 1, 2, & 3' }, { day: 20, task: 'Habit Stack 1, 2, & 3' }, { day: 21, task: 'Plan next habit stack' },
+        ]
+    },
+    {
+        id: 'social-recharge',
+        title: 'Social Recharge Calendar (14-Day)',
+        goal: 'Rebuild healthy social bonds and reduce loneliness.',
+        tags: ['Health', 'Mental Clarity'],
+        instructions: 'Each day, take one small step to connect with others. The goal is gentle, consistent effort, not overwhelming social events.',
+        advanced: 'Schedule one longer, meaningful conversation per week. Volunteer or join a club to meet new people with shared interests.',
+        enhancements: ['Include an "Energy after interaction" emoji row (⚡|🙂|😴).'],
+        tasks: [
+            { day: 1, task: 'Text a friend you miss' }, { day: 2, task: 'Comment on a post' }, { day: 3, task: 'Compliment a stranger' }, { day: 4, task: 'Ask a coworker about their day' }, { day: 5, task: 'Call a family member' }, { day: 6, task: 'Attend a community event' }, { day: 7, task: 'Review social energy' },
+            { day: 8, task: 'Text a friend you miss' }, { day: 9, task: 'Comment on a post' }, { day: 10, task: 'Compliment a stranger' }, { day: 11, task: 'Ask a coworker about their day' }, { day: 12, task: 'Call a family member' }, { day: 13, task: 'Attend a community event' }, { day: 14, task: 'Plan next steps' },
         ]
     },
     {
@@ -175,5 +224,3 @@ export const calendarPlans: CalendarPlan[] = [
         ]
     },
 ];
-
-    
