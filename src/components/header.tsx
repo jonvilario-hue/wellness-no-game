@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Settings, Clock, Library } from 'lucide-react';
+import { Settings, Clock, Library, Utensils } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import {
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { FlaskConical } from 'lucide-react';
+import { DopamineMenu } from './dopamine-menu';
   
 export function Header() {
   return (
@@ -34,6 +35,7 @@ export function Header() {
                     <p>Library</p>
                   </TooltipContent>
                 </Tooltip>
+                <DopamineMenu />
             </div>
         </TooltipProvider>
 
