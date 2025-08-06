@@ -1,12 +1,10 @@
 
 'use client';
 
-import { CalendarDays } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { CalendarView } from '@/components/calendar/calendar-view';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
+import { ProductivityCalendar } from '@/components/calendar/calendar-view';
 
 export default function CalendarPage() {
     return (
@@ -18,7 +16,7 @@ export default function CalendarPage() {
             <MotivationalMessage />
             <main className="flex-1 p-4 sm:p-6 md:p-8">
                 <div className="mx-auto max-w-5xl">
-                    <CalendarView />
+                    <ProductivityCalendar />
                 </div>
             </main>
         </>
