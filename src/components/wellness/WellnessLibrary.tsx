@@ -8,18 +8,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Waves, HeartPulse, Zap, Brain, Shield, Moon, Palette } from 'lucide-react';
+import { Waves, HeartPulse, Zap, Brain, Shield, Moon, Palette, type LucideIcon } from 'lucide-react';
 import type { MiniKit } from '@/data/wellness-kits';
 import type { WellnessPlan } from '@/data/wellness-plans';
 
-const intentFilters: { label: LibraryTag, icon: React.ElementType }[] = [
-    { label: 'Calm', icon: Waves },
-    { label: 'Focus', icon: Brain },
-    { label: 'Energy', icon: Zap },
-    { label: 'Recovery', icon: HeartPulse },
-    { label: 'Grounding', icon: Shield },
-    { label: 'Sleep', icon: Moon },
-    { label: 'Creativity', icon: Palette },
+const intentFilters: { label: LibraryTag, icon: React.ElementType, tags: LibraryTag[] }[] = [
+    { label: 'Calm', icon: Waves, tags: ['Calm', 'Anxiety Relief'] },
+    { label: 'Focus', icon: Brain, tags: ['Focus', 'Clarity'] },
+    { label: 'Energy', icon: Zap, tags: ['Energy', 'High Energy'] },
+    { label: 'Creativity', icon: Palette, tags: ['Creativity'] },
+    { label: 'Emotional Relief', icon: Shield, tags: ['Grounding', 'Self-Compassion'] },
+    { label: 'Sleep / Recovery', icon: Moon, tags: ['Sleep', 'Recovery'] },
 ];
 
 const DetailedLibraryCard = ({ item }: { item: LibraryItem }) => {
@@ -105,10 +104,13 @@ const DetailedLibraryCard = ({ item }: { item: LibraryItem }) => {
 
 export default function WellnessLibrary() {
     
-    const groupedItems = intentFilters.reduce((acc, filter) => {
-        acc[filter.label] = wellnessLibrary.filter(item => item.tags.includes(filter.label));
-        return acc;
-    }, {} as Record<LibraryTag, LibraryItem[]>);
+    const getGroupedItems = (groupTags: LibraryTag[]): LibraryItem[] => {
+        const items = wellnessLibrary.filter(item => 
+            item.type === 'Kit' && groupTags.some(tag => item.tags.includes(tag))
+        );
+        // Deduplicate items that match multiple tags in the same group
+        return Array.from(new Map(items.map(item => [item.id, item])).values());
+    };
 
     return (
         <div className="space-y-10">
@@ -119,19 +121,40 @@ export default function WellnessLibrary() {
                 </p>
             </div>
             
-            {intentFilters.map(({ label, icon: Icon }) => (
-                <div key={label}>
-                    <h2 className="text-2xl font-semibold flex items-center gap-3 mb-4">
-                        <Icon className="w-6 h-6" />
-                        {label}
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {groupedItems[label].map(item => (
-                           <DetailedLibraryCard key={`${item.type}-${item.id}`} item={item} />
-                        ))}
-                    </div>
-                </div>
-            ))}
+            <nav className="p-4 border rounded-lg bg-muted/50">
+                 <h2 className="text-lg font-semibold text-center mb-3">Table of Contents</h2>
+                <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 text-center">
+                    {intentFilters.map(({ label, icon: Icon }) => (
+                         <li key={label}>
+                            <a href={`#tag-${label.toLowerCase().replace(/ /g, '-')}`} className="flex flex-col items-center p-2 rounded-lg hover:bg-background transition-colors">
+                                <Icon className="w-6 h-6 mb-1"/>
+                                <span className="text-sm font-medium">{label}</span>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+
+            {intentFilters.map(({ label, icon: Icon, tags }) => {
+                const items = getGroupedItems(tags);
+                if (items.length === 0) return null;
+
+                return (
+                    <details key={label} open className="group">
+                        <summary className="list-none cursor-pointer">
+                             <h2 id={`tag-${label.toLowerCase().replace(/ /g, '-')}`} className="text-2xl font-semibold flex items-center gap-3 mb-4 scroll-mt-24 group-hover:text-primary transition-colors">
+                                <Icon className="w-6 h-6" />
+                                {label} Kits
+                            </h2>
+                        </summary>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {items.map(item => (
+                               <DetailedLibraryCard key={`${item.type}-${item.id}`} item={item} />
+                            ))}
+                        </div>
+                    </details>
+                )
+            })}
         </div>
     );
 }
