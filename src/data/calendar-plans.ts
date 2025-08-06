@@ -162,6 +162,7 @@ export const calendarPlans: CalendarPlan[] = [
         tags: ['Productivity', 'Behavioral Science'],
         instructions: 'Based on James Clear’s "Atomic Habits." Attach a new, small habit to a routine you already do without thinking.',
         advanced: 'Create "habit chains" where one stacked habit triggers the next, creating a cascade of productive actions with minimal willpower.',
+        enhancements: [],
         tasks: [
             { day: 1, task: 'After brushing teeth, state 1 gratitude.' }, { day: 2, task: 'Gratitude after brushing' }, { day: 3, task: 'Gratitude after brushing' }, { day: 4, task: 'Gratitude after brushing' }, { day: 5, task: 'Gratitude after brushing' }, { day: 6, task: 'Gratitude after brushing' }, { day: 7, task: 'Review Week 1' },
             { day: 8, task: 'Add: 1-min breathwork after coffee' }, { day: 9, task: 'Habit Stack 1 & 2' }, { day: 10, task: 'Habit Stack 1 & 2' }, { day: 11, task: 'Habit Stack 1 & 2' }, { day: 12, task: 'Habit Stack 1 & 2' }, { day: 13, task: 'Habit Stack 1 & 2' }, { day: 14, task: 'Review Week 2' },
@@ -244,6 +245,57 @@ export const calendarPlans: CalendarPlan[] = [
             { day: 8, task: 'Use Feynman Technique' }, { day: 9, task: 'Rotate subjects AM/PM' }, { day: 10, task: '2 Pomodoros + note rewrite' }, { day: 11, task: 'Record audio summary' }, { day: 12, task: 'Use Feynman Technique' }, { day: 13, task: 'Rotate subjects' }, { day: 14, task: 'Review & Plan' },
             // Week 3
             { day: 15, task: '3 study blocks' }, { day: 16, task: 'Self-quiz' }, { day: 17, task: 'Mind map main topic' }, { day: 18, task: '3 study blocks' }, { day: 19, task: 'Self-quiz' }, { day: 20, task: 'Mind map main topic' }, { day: 21, task: 'Final review + checklist' },
+        ]
+    },
+    {
+        id: 'math-study-plan',
+        title: 'Math Study Calendar (21-Day)',
+        goal: 'Build a strong foundation in core math concepts and problem-solving skills.',
+        tags: ['Learning', 'Math'],
+        instructions: 'Start with 25-minute Pomodoro blocks. Focus on fundamentals like algebra and geometry, gradually moving to practice tests.',
+        advanced: 'Use 90-minute study blocks. Add SAT-style timed tests and explain concepts to a peer or study group to solidify understanding.',
+        enhancements: [
+            'Daily Study Tip: Try explaining today\'s topic to an imaginary class. Teaching is the best test of mastery.',
+            'End-of-Week Reflection: What went well in your studies? What was challenging? What can you improve next week?',
+        ],
+        tasks: [
+            { day: 1, task: 'Set Goals' }, { day: 2, task: 'Basic Algebra' }, { day: 3, task: 'Quadratics' }, { day: 4, task: 'Fractions' }, { day: 5, task: 'Rest' }, { day: 6, task: 'Geometry' }, { day: 7, task: 'Review' },
+            { day: 8, task: 'Equations' }, { day: 9, task: 'Graphs' }, { day: 10, task: 'Practice' }, { day: 11, task: 'Math Game' }, { day: 12, task: 'Logic Puzzles' }, { day: 13, task: 'Rest' }, { day: 14, task: 'Reflection' },
+            { day: 15, task: 'Word Problems' }, { day: 16, task: 'Final Quiz' }, { day: 17, task: 'Flashcards' }, { day: 18, task: 'Proof Writing' }, { day: 19, task: 'Rest' }, { day: 20, task: 'Review' }, { day: 21, task: 'Celebrate' },
+        ]
+    },
+    {
+        id: 'coding-bootcamp-plan',
+        title: 'Coding Bootcamp Study Calendar (21-Day)',
+        goal: 'Master fundamental web development skills from HTML to deployment.',
+        tags: ['Learning', 'Coding', 'Productivity'],
+        instructions: 'Learn the basics of HTML, CSS, and JavaScript with short daily coding challenges. Progress from basic syntax to building and deploying small projects.',
+        advanced: 'Build full apps using fetch, async/await, and GitHub deployment. Track bugs and performance metrics for each project.',
+        enhancements: [
+            'Daily Coding Tip: When debugging, explain the bug out loud as if teaching someone — this reveals assumptions.',
+            'End-of-Week Reflection: What project milestone did I hit? What did I learn from bugs? What could I automate or reuse?',
+        ],
+        tasks: [
+            { day: 1, task: 'HTML Basics' }, { day: 2, task: 'CSS Styling' }, { day: 3, task: 'JS Syntax' }, { day: 4, task: 'Code Challenge' }, { day: 5, task: 'Rest' }, { day: 6, task: 'JS Project' }, { day: 7, task: 'Review' },
+            { day: 8, task: 'Git Commands' }, { day: 9, task: 'Responsive Design' }, { day: 10, task: 'APIs' }, { day: 11, task: 'Mini Project' }, { day: 12, task: 'Rest' }, { day: 13, task: 'Debugging' }, { day: 14, task: 'Reflection' },
+            { day: 15, task: 'Async JS' }, { day: 16, task: 'Project Start' }, { day: 17, task: 'Build' }, { day: 18, task: 'Deploy' }, { day: 19, task: 'Polish' }, { day: 20, task: 'Demo' }, { day: 21, task: 'Celebrate' },
+        ]
+    },
+    {
+        id: 'language-learning-plan',
+        title: 'Language Learning Calendar (21-Day)',
+        goal: 'Develop foundational vocabulary, grammar, and conversational skills in a new language.',
+        tags: ['Learning', 'Language'],
+        instructions: 'Focus on 10-15 new words a day with audio listening and writing practice. Gradually build up to simple conversations and cultural notes.',
+        advanced: 'Watch short videos, summarize them, and speak daily. Try mock conversation recordings to improve fluency and confidence.',
+        enhancements: [
+            'Daily Language Tip: Try to think in your target language during daily activities for passive immersion.',
+            'End-of-Week Reflection: What words or phrases felt easiest? What grammar rule confused you? How can you get more listening/speaking time?',
+        ],
+        tasks: [
+            { day: 1, task: 'Alphabet' }, { day: 2, task: 'Pronunciation' }, { day: 3, task: 'Basic Phrases' }, { day: 4, task: 'Numbers' }, { day: 5, task: 'Rest' }, { day: 6, task: 'Vocabulary' }, { day: 7, task: 'Review' },
+            { day: 8, task: 'Verbs' }, { day: 9, task: 'Simple Sentences' }, { day: 10, task: 'Audio Listening' }, { day: 11, task: 'Practice Writing' }, { day: 12, task: 'Rest' }, { day: 13, task: 'Roleplay' }, { day: 14, task: 'Reflection' },
+            { day: 15, task: 'Tenses' }, { day: 16, task: 'Conversation Drill' }, { day: 17, task: 'Cultural Notes' }, { day: 18, task: 'Exam Practice' }, { day: 19, task: 'Flashcards' }, { day: 20, task: 'Review' }, { day: 21, task: 'Celebrate' },
         ]
     },
 ];
