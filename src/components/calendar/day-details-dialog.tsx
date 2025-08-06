@@ -45,7 +45,7 @@ export function DayDetailsDialog({ dayContent, isOpen, onClose, isCompleted, onT
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-md max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <Icon className="w-6 h-6 text-primary" />
@@ -56,8 +56,8 @@ export function DayDetailsDialog({ dayContent, isOpen, onClose, isCompleted, onT
           </DialogDescription>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow pr-4 -mr-4">
-          <div className="py-4 space-y-4 pr-2">
+        <ScrollArea className="flex-grow pr-4 -mr-4 my-4">
+          <div className="space-y-4 pr-2">
               {renderTool()}
           </div>
         </ScrollArea>

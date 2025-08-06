@@ -82,12 +82,12 @@ export function ProductivityCalendar() {
                   <div className="relative h-full w-full flex items-center justify-center">
                     <span>{date.getDate()}</span>
                     {Icon && (
-                        <div className="absolute bottom-0 right-0">
-                            <Icon className="w-3 h-3 text-muted-foreground" />
+                        <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4">
+                            <Icon className="w-3 h-3 text-muted-foreground/70" />
                         </div>
                     )}
                     {isCompleted && (
-                        <div className="absolute top-0 left-0">
+                        <div className="absolute top-0 left-0 transform -translate-x-1/4 -translate-y-1/4">
                             <CheckCircle className="w-3 h-3 text-green-500" />
                         </div>
                     )}
