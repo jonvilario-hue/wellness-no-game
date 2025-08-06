@@ -4,10 +4,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ClipboardCheck, Target, HeartPulse } from 'lucide-react';
+import { GraduationCap, Target, HeartPulse } from 'lucide-react';
 
 const navLinks = [
     { href: '/exercises', icon: HeartPulse, label: 'Health Check' },
+    { href: '/study', icon: GraduationCap, label: 'Scholar Hub' },
     { href: '/blueprints', icon: Target, label: 'Architect Lab' },
 ];
 
