@@ -1,21 +1,23 @@
 
+
 'use client';
 
 import { useState } from 'react';
-import { wellnessLibrary, type LibraryTag, type LibraryItem, type Exercise, type MindfulnessPractice } from '@/data/wellness-library';
+import { wellnessLibrary, type LibraryTag, type LibraryItem } from '@/data/wellness-library';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Waves, HeartPulse, Zap, Brain, Shield, Moon, Palette, type LucideIcon } from 'lucide-react';
+import { Waves, HeartPulse, Zap, Brain, Shield, Moon, Palette, type LucideIcon, Target } from 'lucide-react';
 import type { MiniKit } from '@/data/wellness-kits';
 import type { WellnessPlan } from '@/data/wellness-plans';
+import type { Exercise, MindfulnessPractice } from '@/data/exercises';
 
 const intentFilters: { label: LibraryTag, icon: React.ElementType, tags: LibraryTag[] }[] = [
     { label: 'Calm', icon: Waves, tags: ['Calm', 'Anxiety Relief'] },
     { label: 'Focus', icon: Brain, tags: ['Focus', 'Clarity'] },
-    { label: 'Energy', icon: Zap, tags: ['Energy', 'High Energy'] },
+    { label: 'Energy', icon: Zap, tags: ['Energy', 'High Energy', 'ADHD-Friendly'] },
     { label: 'Creativity', icon: Palette, tags: ['Creativity'] },
     { label: 'Emotional Relief', icon: Shield, tags: ['Grounding', 'Self-Compassion'] },
     { label: 'Sleep / Recovery', icon: Moon, tags: ['Sleep', 'Recovery'] },
@@ -104,13 +106,17 @@ const DetailedLibraryCard = ({ item }: { item: LibraryItem }) => {
 
 export default function WellnessLibrary() {
     
-    const getGroupedItems = (groupTags: LibraryTag[]): LibraryItem[] => {
+    const getGroupedItems = (groupTags: LibraryTag[], excludeTags: LibraryTag[] = []): LibraryItem[] => {
         const items = wellnessLibrary.filter(item => 
-            item.type === 'Kit' && groupTags.some(tag => item.tags.includes(tag))
+            item.type === 'Kit' && 
+            groupTags.some(tag => item.tags.includes(tag)) &&
+            !excludeTags.some(tag => item.tags.includes(tag))
         );
         // Deduplicate items that match multiple tags in the same group
         return Array.from(new Map(items.map(item => [item.id, item])).values());
     };
+    
+    const adhdKits = wellnessLibrary.filter(item => item.tags.includes('ADHD-Friendly'));
 
     return (
         <div className="space-y-10">
@@ -136,9 +142,8 @@ export default function WellnessLibrary() {
             </nav>
 
             {intentFilters.map(({ label, icon: Icon, tags }) => {
-                const items = getGroupedItems(tags);
-                if (items.length === 0) return null;
-
+                const regularKits = getGroupedItems(tags, ['ADHD-Friendly']);
+                
                 return (
                     <details key={label} open className="group">
                         <summary className="list-none cursor-pointer">
@@ -147,14 +152,31 @@ export default function WellnessLibrary() {
                                 {label} Kits
                             </h2>
                         </summary>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {items.map(item => (
-                               <DetailedLibraryCard key={`${item.type}-${item.id}`} item={item} />
-                            ))}
-                        </div>
+
+                        {/* Special section for ADHD-friendly kits under "Energy" */}
+                        {label === 'Energy' && adhdKits.length > 0 && (
+                            <div className="mb-8">
+                                <h3 className="text-xl font-semibold text-muted-foreground mb-4 pl-10">ADHD-Friendly Kits for Energy & Momentum</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {adhdKits.map(item => (
+                                       <DetailedLibraryCard key={`${item.type}-${item.id}`} item={item} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {regularKits.length > 0 && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {regularKits.map(item => (
+                                   <DetailedLibraryCard key={`${item.type}-${item.id}`} item={item} />
+                                ))}
+                            </div>
+                        )}
                     </details>
                 )
             })}
         </div>
     );
 }
+
+    

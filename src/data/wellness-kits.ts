@@ -7,9 +7,88 @@ export type MiniKit = {
     whenToUse: string;
     whyItWorks: string;
     howToUse: string;
+    tags?: string[];
 };
 
 export const kits: MiniKit[] = [
+  // New ADHD-Friendly Energy Kits
+  {
+    title: "Body Jumpstart Kit",
+    emoji: "⚡",
+    description: "Wake up your body and shake off inertia.",
+    whenToUse: "You’ve been sitting too long or feel physically sluggish.",
+    whyItWorks: "Gentle movement boosts blood flow and dopamine.",
+    howToUse: "Follow these steps in order for a quick physical reset.",
+    practices: [
+      { type: "Movement", title: "Stand up and do 10 jumping jacks (slow is fine)." },
+      { type: "Movement", title: "Shake your arms out and bounce gently on your toes for 20 seconds." },
+      { type: "Movement", title: "Reach up to the ceiling and take 3 big breaths." },
+      { type: "Stillness", title: "Sit down and take 10 seconds to notice how your body feels." }
+    ],
+    tags: ["Energy", "ADHD-Friendly"]
+  },
+  {
+    title: "Brain Warm-Up Kit",
+    emoji: "🧠",
+    description: "Activate mental momentum when you feel foggy or frozen.",
+    whenToUse: "Your brain feels foggy, and you can’t get started.",
+    whyItWorks: "Combines breathwork and micro-tasking to activate mental momentum.",
+    howToUse: "Use this sequence to gently guide your brain from 'stuck' to 'started'.",
+    practices: [
+      { type: "Stillness", title: "Do 5 rounds of box breathing (Inhale 4, Hold 4, Exhale 4, Hold 4)." },
+      { type: "Stillness", title: "Write down just 1 small thing you could do next." },
+      { type: "Movement", title: "Do it for 1 minute only — set a timer." },
+      { type: "Stillness", title: "Check it off, even if not fully done." }
+    ],
+    tags: ["Energy", "ADHD-Friendly", "Focus"]
+  },
+  {
+    title: "Music & Move Kit",
+    emoji: "🎧",
+    description: "A fast, engaging pick-me-up for when you feel dull or disengaged.",
+    whenToUse: "You feel dull, disengaged, and want a fast pick-me-up.",
+    whyItWorks: "Music triggers dopamine, and pairing it with motion amplifies the effect.",
+    howToUse: "Put on a favorite upbeat song and follow the steps to reset your energy.",
+    practices: [
+      { type: "Movement", title: "Pick a 2–3 minute upbeat song." },
+      { type: "Movement", title: "Move in any way while the song plays (walk, stretch, bounce)." },
+      { type: "Movement", title: "Clap or tap rhythmically to the beat to engage your hands." },
+      { type: "Stillness", title: "When the song ends, close your eyes and take 3 deep breaths." }
+    ],
+    tags: ["Energy", "ADHD-Friendly"]
+  },
+  {
+    title: "Momentum Builder Kit",
+    emoji: "✍️",
+    description: "Create traction when you want to start something but just can't.",
+    whenToUse: "You want to “start” something but just… can’t.",
+    whyItWorks: "Physical motion + symbolic task starting = traction.",
+    howToUse: "A sequence to break through procrastination and build momentum.",
+    practices: [
+      { type: "Movement", title: "Do 10 slow air punches while breathing out sharply." },
+      { type: "Movement", title: "Grab a sticky note and write a task, as small as possible." },
+      { type: "Movement", title: "Do 30 seconds of the task (not perfection — just friction)." },
+      { type: "Movement", title: "Trash the sticky note or cross it out with a dramatic swipe." }
+    ],
+    tags: ["Energy", "ADHD-Friendly", "Focus"]
+  },
+  {
+    title: "Dopamine Ladder Kit",
+    emoji: "💡",
+    description: "For when you feel totally flat and nothing sounds appealing.",
+    whenToUse: "You feel totally flat, and no one thing sounds appealing.",
+    whyItWorks: "Structured layering of small sensory and mental cues rebuilds energy.",
+    howToUse: "Follow the steps in order to gradually climb out of a low-energy state.",
+    practices: [
+      { type: "Stillness", title: "Drink a glass of cold or flavored water." },
+      { type: "Stillness", title: "Touch something textured (ice, clay, warm object, etc.)" },
+      { type: "Movement", title: "Stretch your arms overhead and say aloud: “I’m rebooting.”" },
+      { type: "Stillness", title: "Write 1 idea, goal, or phrase you want to focus on next." },
+      { type: "Movement", title: "Begin a low-stakes activity like rearranging items on your desk." }
+    ],
+    tags: ["Energy", "ADHD-Friendly", "Recovery"]
+  },
+  // Existing Kits
   {
     title: "Emotional First Aid",
     emoji: "🌪️",
@@ -190,69 +269,6 @@ export const kits: MiniKit[] = [
         { type: "Stillness", title: "Resonant Breathing" },
     ],
   },
-  {
-    title: "Creative Spark Kit",
-    emoji: "🖌️",
-    description: "Jumpstart your brain with low-pressure creative tasks.",
-    whenToUse: "Use when you're foggy, bored, or stuck in a rut.",
-    whyItWorks: "Novelty and simple creation reignite dormant dopamine circuits.",
-    howToUse: "No pressure. Just play. Let these practices wake something up inside.",
-    practices: [
-      { type: "Stillness", title: "Draw 3 random shapes and make them characters" },
-      { type: "Stillness", title: "60-second free write without stopping" },
-      { type: "Movement", title: "Listen to unfamiliar music and move with it" },
-    ],
-  },
-  {
-    title: "Micro-Journaling Muse",
-    emoji: "📓",
-    description: "Gentle prompts to unblock your thoughts and feelings.",
-    whenToUse: "When you feel emotionally bottled up or mentally scattered.",
-    whyItWorks: "Writing helps you shape and shift mental/emotional loops.",
-    howToUse: "Use one prompt and follow with breathwork to integrate the insight.",
-    practices: [
-      { type: "Stillness", title: "Prompt: “If today had a color, what would it be and why?”" },
-      { type: "Stillness", title: "Prompt: “What’s one thing I’m curious about right now?”" },
-      { type: "Stillness", title: "4-6 Coherent Breathing before and after" },
-    ],
-  },
-  {
-    title: "Expressive Release Kit",
-    emoji: "🎭",
-    description: "Express your inner state without needing words.",
-    whenToUse: "When you’re overwhelmed and need to express without words.",
-    whyItWorks: "Creative movement, gesture, and sound release tension via symbolic energy.",
-    howToUse: "Find a private space and let go. The goal is expression, not performance.",
-    practices: [
-      { type: "Movement", title: "Free movement to music" },
-      { type: "Stillness", title: "Draw your current feeling as an abstract shape" },
-      { type: "Stillness", title: "30-second “vocal storm” (nonsense sounds or humming)" },
-    ],
-  },
-  {
-    title: "Idea Storm Reset",
-    emoji: "🧠",
-    description: "A quick sequence to get ideas flowing.",
-    whenToUse: "When you need momentum or energy to start something.",
-    whyItWorks: "Brainwriting and tactile input re-engage motivation and the frontal cortex.",
-    howToUse: "Do the list first to dump ideas, then use breath and movement to energize for action.",
-    practices: [
-      { type: "Stillness", title: "List 10 ideas in 2 minutes (no editing)" },
-      { type: "Stillness", title: "Alternate nostril breathing" },
-      { type: "Movement", title: "10 squats or punches to activate energy" },
-    ],
-  },
-  {
-    title: "Tinker & Play Kit",
-    emoji: "🧩",
-    description: "Satisfy your brain's need for novelty without the pressure of being productive.",
-    whenToUse: "When you're bored, but don’t want to “do something productive”.",
-    whyItWorks: "Light experimentation satisfies novelty-seeking without pressure.",
-    howToUse: "Embrace the pointlessness. This is about play, not achievement.",
-    practices: [
-      { type: "Stillness", title: "Rearrange 3 objects on your desk into something funny" },
-      { type: "Movement", title: "Make a sound using only your body and imitate it 5x" },
-      { type: "Stillness", title: "1 minute of “scribble and see what shows up” drawing" },
-    ],
-  },
 ];
+
+    

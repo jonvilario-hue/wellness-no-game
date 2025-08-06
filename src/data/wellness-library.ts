@@ -13,7 +13,7 @@ export type LibraryTag =
     | 'Movement' | 'Stillness' 
     | 'Short' | 'Medium' | 'Long' // Duration
     | 'Low Energy' | 'High Energy'
-    | 'Calm' | 'Focus' | 'Energy' | 'Recovery' | 'Sleep' | 'Clarity' | 'Anxiety Relief' | 'Grounding' | 'Self-Compassion' | 'Creativity'; // Intent
+    | 'Calm' | 'Focus' | 'Energy' | 'Recovery' | 'Sleep' | 'Clarity' | 'Anxiety Relief' | 'Grounding' | 'Self-Compassion' | 'Creativity' | 'ADHD-Friendly'; // Intent
 
 export type LibraryItem = {
     id: string;
@@ -56,10 +56,11 @@ const getPracticeTags = (practice: Exercise | MindfulnessPractice): LibraryTag[]
 };
 
 const getKitTags = (kit: MiniKit): LibraryTag[] => {
-    const tags: LibraryTag[] = ['Short', 'Low Energy']; // Most kits are short and low energy
+    const tags: LibraryTag[] = kit.tags ? (kit.tags as LibraryTag[]) : [];
+    tags.push('Short', 'Low Energy'); // Most kits are short and low energy
     if (kit.title.includes('Stress') || kit.title.includes('Emotional')) tags.push('Anxiety Relief', 'Recovery');
     if (kit.title.includes('Focus') || kit.title.includes('Idea')) tags.push('Focus', 'Clarity');
-    if (kit.title.includes('Morning')) tags.push('Energy');
+    if (kit.title.includes('Morning') || kit.title.includes('Jumpstart')) tags.push('Energy');
     if (kit.title.includes('Creative') || kit.title.includes('Muse') || kit.title.includes('Play') || kit.title.includes('Spark')) tags.push('Creativity');
     if (kit.title.includes('Boundaries') || kit.title.includes('Self-Talk')) tags.push('Self-Compassion');
     if (kit.title.includes('Unfreeze') || kit.title.includes('SOS')) tags.push('Grounding');
@@ -114,3 +115,5 @@ const allPlans: LibraryItem[] = wellnessPlans.map(p => ({
 }));
 
 export const wellnessLibrary: LibraryItem[] = [...allPractices, ...allKits, ...allPlans];
+
+    
