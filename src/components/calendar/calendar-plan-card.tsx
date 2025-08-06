@@ -6,6 +6,7 @@ import { type CalendarPlan } from "@/data/calendar-plans";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { useState, useEffect } from "react";
 
 const chunkArray = <T,>(array: T[], size: number): T[][] => {
   const chunks: T[][] = [];
@@ -17,10 +18,15 @@ const chunkArray = <T,>(array: T[], size: number): T[][] => {
 
 export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
   const weekChunks = chunkArray(plan.tasks, 7);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
-    <Card className="w-full overflow-hidden">
-        <details className="group block" open>
+    <Card className="w-full overflow-hidden" id={plan.id}>
+        <details className="group block" open={isClient}>
             <summary className="list-none cursor-pointer p-6 flex justify-between items-start">
                  <div className="flex-grow">
                     <CardTitle className="text-2xl">{plan.title}</CardTitle>
