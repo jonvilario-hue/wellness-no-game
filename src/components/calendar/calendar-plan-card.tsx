@@ -78,9 +78,24 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
                      <p className="text-sm text-muted-foreground">{plan.advanced}</p>
                 </div>
             </details>
+            {plan.enhancements && (
+                <details className="group">
+                    <summary className="list-none cursor-pointer flex justify-between items-center font-semibold text-lg p-3 bg-muted/50 rounded-lg">
+                        <span>Enhancements & Notes</span>
+                        <ChevronDown className="w-5 h-5 transition-transform duration-200 group-open:rotate-180" />
+                    </summary>
+                    <div className="p-4 border border-t-0 rounded-b-lg">
+                        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
+                           {plan.enhancements.map((item, i) => <li key={i}>{item}</li>)}
+                        </ul>
+                    </div>
+                </details>
+            )}
         </div>
 
       </CardContent>
     </Card>
   );
 }
+
+    
