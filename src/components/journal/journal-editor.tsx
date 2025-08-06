@@ -7,6 +7,7 @@ import {
     Trash2,
     Loader2,
     CheckCircle,
+    Copy,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -46,7 +47,7 @@ const JournalEditorComponent = ({
   onFrequencyChange: (newFrequency: ReflectionFrequency) => void;
 }) => {
   const [editorState, setEditorState] = useState<JournalEntry>(entry);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'copied'>('idle');
   const { toast } = useToast();
   const { settings: dashboardSettings } = useDashboardSettings();
   
@@ -107,7 +108,7 @@ const JournalEditorComponent = ({
 
 
   useEffect(() => {
-      if (saveStatus === 'saved') {
+      if (saveStatus === 'saved' || saveStatus === 'copied') {
           const timer = setTimeout(() => setSaveStatus('idle'), 2000);
           return () => clearTimeout(timer);
       }
@@ -130,6 +131,34 @@ const JournalEditorComponent = ({
       toast({ title: 'Journal Entry Saved' });
     }
   }
+
+  const handleCopyToClipboard = () => {
+    const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
+    const content = `
+Title: ${editorState.label || 'Untitled Entry'}
+Date: ${new Date(editorState.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+Type: ${config.title} (${editorState.frequency})
+
+---
+
+${currentPrompts[0] ? `Q1: ${currentPrompts[0]}\nA: ${editorState.field1 || 'N/A'}\n` : ''}
+${currentPrompts[1] ? `Q2: ${currentPrompts[1]}\nA: ${editorState.field2 || 'N/A'}\n` : ''}
+${currentPrompts[2] ? `Q3: ${currentPrompts[2]}\nA: ${editorState.field3 || 'N/A'}\n` : ''}
+${category === 'Notebook' ? `${editorState.field1 || ''}\n` : ''}
+---
+
+Mood Note: ${editorState.moodNote || 'N/A'}
+Focus Context: ${editorState.focusContext || 'N/A'}
+Focus Tags: ${(editorState.focusTags || []).join(', ')}
+    `.trim();
+
+    navigator.clipboard.writeText(content).then(() => {
+        setSaveStatus('copied');
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        toast({ title: 'Copy Failed', description: 'Could not copy content to clipboard.', variant: 'destructive'});
+    });
+  };
 
   const handleCategoryButtonClick = (newCategory: JournalCategory) => {
     if (editorState.category !== newCategory) {
@@ -177,10 +206,15 @@ const JournalEditorComponent = ({
                           <Loader2 className="w-4 h-4 animate-spin"/>
                           <span>Saving...</span>
                       </>
-                  ) : (
+                  ) : saveStatus === 'saved' ? (
                       <>
                            <CheckCircle className="w-4 h-4 text-green-500"/>
                           <span>Saved</span>
+                      </>
+                  ) : (
+                      <>
+                           <CheckCircle className="w-4 h-4 text-green-500"/>
+                          <span>Copied!</span>
                       </>
                   )}
               </div>
@@ -200,6 +234,10 @@ const JournalEditorComponent = ({
             </p>
         </div>
          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button variant="outline" onClick={handleCopyToClipboard}>
+                <Copy className="w-4 h-4 mr-2"/>
+                Copy Content
+            </Button>
           {!isNewEntry && (
               <>
                <AlertDialog>
@@ -334,3 +372,6 @@ const JournalEditorComponent = ({
 };
 export const JournalEditor = memo(JournalEditorComponent);
 JournalEditor.displayName = 'JournalEditor';
+
+
+    
