@@ -63,7 +63,9 @@ export default function CalendarCataloguePage() {
                                     {calendarPlans.map(plan => (
                                         <li key={plan.id}>
                                             <a href={`#${plan.id}`}>
-                                                <Button variant="outline" size="sm">{plan.title}</Button>
+                                                <Button variant="outline" size="sm" className="h-auto py-1 px-3">
+                                                    {plan.title.replace(/\s*\(\d+-Day\)/, '')}
+                                                </Button>
                                             </a>
                                         </li>
                                     ))}
