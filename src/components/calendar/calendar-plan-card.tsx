@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type CalendarPlan } from "@/data/calendar-plans";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ArrowRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { useState, useEffect } from "react";
 
@@ -24,10 +24,13 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
     setIsClient(true);
   }, []);
 
+  // Labels for sub-sections to avoid hydration issues and improve UX
+  const subjectName = plan.title.replace(/\s*\(\d+-Day\)/, '');
+
   return (
     <Card className="w-full overflow-hidden" id={plan.id}>
         <details className="group block" open={isClient}>
-            <summary className="list-none cursor-pointer p-6 flex justify-between items-start">
+            <summary className="list-none cursor-pointer p-6 flex justify-between items-start focus:outline-none hover:bg-muted/30 transition-colors">
                  <div className="flex-grow">
                     <CardTitle className="text-2xl">{plan.title}</CardTitle>
                     <CardDescription>{plan.goal}</CardDescription>
@@ -72,9 +75,9 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
                     </div>
 
                     <div className="mt-6 space-y-4">
-                        <details className="group/inner">
-                            <summary className="list-none cursor-pointer flex justify-between items-center font-semibold text-lg p-3 bg-muted/50 rounded-lg">
-                                <span>Instructions</span>
+                        <details className="group/inner" open={isClient}>
+                            <summary className="list-none cursor-pointer flex justify-between items-center font-semibold text-lg p-3 bg-muted/50 rounded-lg focus:outline-none">
+                                <span>{subjectName} Instructions</span>
                                 <ChevronDown className="w-5 h-5 transition-transform duration-200 group-open/inner:rotate-180" />
                             </summary>
                             <div className="p-4 border border-t-0 rounded-b-lg">
@@ -82,8 +85,8 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
                             </div>
                         </details>
                         <details className="group/inner">
-                            <summary className="list-none cursor-pointer flex justify-between items-center font-semibold text-lg p-3 bg-muted/50 rounded-lg">
-                                <span>Advanced Plan</span>
+                            <summary className="list-none cursor-pointer flex justify-between items-center font-semibold text-lg p-3 bg-muted/50 rounded-lg focus:outline-none">
+                                <span>Advanced {subjectName} Plan</span>
                                 <ChevronDown className="w-5 h-5 transition-transform duration-200 group-open/inner:rotate-180" />
                             </summary>
                             <div className="p-4 border border-t-0 rounded-b-lg">
@@ -92,7 +95,7 @@ export function CalendarPlanCard({ plan }: { plan: CalendarPlan }) {
                         </details>
                         {plan.enhancements && (
                             <details className="group/inner">
-                                <summary className="list-none cursor-pointer flex justify-between items-center font-semibold text-lg p-3 bg-muted/50 rounded-lg">
+                                <summary className="list-none cursor-pointer flex justify-between items-center font-semibold text-lg p-3 bg-muted/50 rounded-lg focus:outline-none">
                                     <span>Enhancements & Notes</span>
                                     <ChevronDown className="w-5 h-5 transition-transform duration-200 group-open/inner:rotate-180" />
                                 </summary>
