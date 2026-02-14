@@ -40,8 +40,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useHydratedJournalStore as useJournal, type JournalEntry } from '@/hooks/use-journal';
 import { journalConfig, type JournalCategory } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
-import { Label } from '../ui/label';
-import { EditableLabel } from '../time/editable-label';
 
 const JournalSidebarComponent = ({ 
     onSelectEntry, 
@@ -101,8 +99,9 @@ const JournalSidebarComponent = ({
         });
     }, [entries, searchQuery, sortMode]);
 
-    const groupEntriesByDate = (entriesToSort: JournalEntry[]) => {
-      return entriesToSort.reduce((acc, entry) => {
+    // Optimized grouping logic using useMemo to prevent re-computation on every render
+    const groupedEntries = useMemo(() => {
+      return filteredAndSortedEntries.reduce((acc, entry) => {
         const date = entry.date;
         if (!acc[date]) {
           acc[date] = [];
@@ -110,17 +109,13 @@ const JournalSidebarComponent = ({
         acc[date].push(entry);
         return acc;
       }, {} as Record<string, JournalEntry[]>);
-    };
+    }, [filteredAndSortedEntries]);
 
-    const handleSaveRename = (entry: JournalEntry, newLabel: string) => {
-        onUpdateEntry(entry.id, { label: newLabel });
-        toast({ title: 'Entry renamed' });
-    };
+    const sortedDates = useMemo(() => {
+      return Object.keys(groupedEntries).sort((a,b) => new Date(b).getTime() - new Date(a).getTime());
+    }, [groupedEntries]);
 
     const ListView = () => {
-        const groupedEntries = groupEntriesByDate(filteredAndSortedEntries);
-        const sortedDates = Object.keys(groupedEntries).sort((a,b) => new Date(b).getTime() - new Date(a).getTime());
-
         return (
             <ScrollArea className="flex-grow pr-3 -mr-3">
                 <div className="space-y-4 mt-2">

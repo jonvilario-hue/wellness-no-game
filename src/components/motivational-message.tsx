@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
@@ -14,15 +14,20 @@ import { usePathname } from 'next/navigation';
 export function MotivationalMessage() {
   const { message, isVisible, hideMessage, selectMessage } = useMotivationStore();
   const { entries, completedHabits, hasHydrated: journalHydrated } = useHydratedJournalStore();
-  const { cycles, preset } = usePomodoroStore();
+  const { cycles } = usePomodoroStore();
   const pathname = usePathname();
+  
+  // Use a ref to track the last pathname to prevent redundant calculations on shallow re-renders
+  const lastPathname = useRef(pathname);
 
-  // Trigger message selection on page navigation
+  // Trigger message selection on page navigation with stabilized logic
   useEffect(() => {
     if (journalHydrated) {
+      // Only process if the path actually changed or on initial hydration
       selectMessage({ journalEntries: entries, completedHabits, pomodoroCycles: cycles });
+      lastPathname.current = pathname;
     }
-  }, [pathname, journalHydrated, entries, completedHabits, cycles, selectMessage]);
+  }, [pathname, journalHydrated, selectMessage]); // Reduced dependencies to prevent infinite render loops
 
   // Auto-dismiss timer
   useEffect(() => {
