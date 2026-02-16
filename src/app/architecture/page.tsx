@@ -130,10 +130,10 @@ export default function ArchitecturePage() {
                           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
                             <Tooltip delayDuration={0}>
                               <TooltipTrigger asChild>
-                                <TabsList>
-                                    <TabsTrigger value="Active">Active</TabsTrigger>
-                                    <TabsTrigger value="Completed">Completed</TabsTrigger>
-                                    <TabsTrigger value="Archived">Archived</TabsTrigger>
+                                <TabsList className="bg-muted/50 border-primary/5">
+                                    <TabsTrigger value="Active" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Active</TabsTrigger>
+                                    <TabsTrigger value="Completed" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Completed</TabsTrigger>
+                                    <TabsTrigger value="Archived" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Archived</TabsTrigger>
                                 </TabsList>
                               </TooltipTrigger>
                               {settings.assistantMode && (
@@ -147,26 +147,32 @@ export default function ArchitecturePage() {
 
                         <TooltipProvider>
                           <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
-                              <TabsList>
+                              <TabsList className="bg-muted/50 border-primary/5">
                                   <Tooltip delayDuration={0}>
                                     <TooltipTrigger asChild>
-                                      <TabsTrigger value="dashboard"><LayoutDashboard className="w-4 h-4 mr-2"/>Board</TabsTrigger>
+                                      <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                                        <LayoutDashboard className="w-4 h-4 mr-2"/>Board
+                                      </TabsTrigger>
                                     </TooltipTrigger>
                                     {settings.assistantMode && <TooltipContent>A bird's-eye overview of all active blueprints. See upcoming deadlines, overdue tasks, and weekly priorities at a glance.</TooltipContent>}
                                   </Tooltip>
                                   
                                   <Tooltip delayDuration={0}>
                                     <TooltipTrigger asChild>
-                                      <TabsTrigger value="list"><LayoutList className="w-4 h-4 mr-2"/>List</TabsTrigger>
+                                      <TabsTrigger value="list" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                                        <LayoutList className="w-4 h-4 mr-2"/>List
+                                      </TabsTrigger>
                                     </TooltipTrigger>
                                     {settings.assistantMode && <TooltipContent>See your blueprints as expandable cards with milestones and tasks listed vertically.</TooltipContent>}
                                   </Tooltip>
 
                                   <Tooltip delayDuration={0}>
                                     <TooltipTrigger asChild>
-                                      <TabsTrigger value="timeline"><GanttChartSquare className="w-4 h-4 mr-2"/>Gantt</TabsTrigger>
+                                      <TabsTrigger value="timeline" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                                        <GanttChartSquare className="w-4 h-4 mr-2"/>Gantt
+                                      </TabsTrigger>
                                     </TooltipTrigger>
-                                    {settings.assistantMode && <TooltipContent className="max-w-xs">See your milestones on a Gantt-style timeline. Dependency arrows show which milestones must finish before others can start. The teal highlighted path is your critical path.</TooltipContent>}
+                                    {settings.assistantMode && <TooltipContent className="max-w-xs">See your milestones on a Gantt-style timeline. Dependency arrows show which milestones must finish before others can start. The highlighted path is your critical path.</TooltipContent>}
                                   </Tooltip>
                               </TabsList>
                           </Tabs>
