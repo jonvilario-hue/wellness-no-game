@@ -9,30 +9,27 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { 
-    Utensils, Droplets, Scale, Apple, 
-    PlusCircle, Info, Sparkles, CheckCircle2, 
-    Zap, ClipboardList, BookOpen, Coffee, MessageSquare, Copy, History, X,
-    ChevronLeft, ChevronRight
+    Utensils, Droplets, Scale, PlusCircle, Info, Sparkles, CheckCircle2, 
+    Zap, Coffee, Copy, History, X, Calendar as CalendarIcon
 } from 'lucide-react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import { cn } from '@/lib/utils';
 import { SynergyPanel } from './SynergyPanel';
 import { useWellnessData, type MealLog } from '@/hooks/use-wellness-data';
 import { format, subDays, isSameDay } from 'date-fns';
-
-type NutritionMode = 'Detailed' | 'Moderate' | 'Simple';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 
 export function DietTracker() {
     const { 
         mealLogs, addMealLog, copyDayLog, 
         waterLogs, addWater, 
-        weightLogs, addWeight,
-        lowEnergyMode, featurePhase
+        lowEnergyMode
     } = useWellnessData();
     
-    const [mode, setMode] = useState<NutritionMode>('Detailed');
     const [showAdd, setShowAdd] = useState(false);
-    const today = format(new Date(), 'yyyy-MM-dd');
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
     
     const [mealForm, setMealForm] = useState<Omit<MealLog, 'id' | 'date'>>({
         mealType: 'Breakfast',
@@ -50,20 +47,20 @@ export function DietTracker() {
         const avgCals = Math.round(totalCals / 7);
         
         const todayCals = mealLogs
-            .filter(l => l.date === today)
+            .filter(l => l.date === dateStr)
             .reduce((sum, l) => sum + l.calories, 0);
             
         return { avgCals, todayCals, target: 2200 };
-    }, [mealLogs, today]);
+    }, [mealLogs, dateStr]);
 
     const handleLogMeal = () => {
-        addMealLog({ ...mealForm, date: today });
+        addMealLog({ ...mealForm, date: dateStr });
         setShowAdd(false);
     };
 
     const handleCopyYesterday = () => {
-        const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
-        copyDayLog(yesterday, today);
+        const yesterday = format(subDays(selectedDate, 1), 'yyyy-MM-dd');
+        copyDayLog(yesterday, dateStr);
     };
 
     if (lowEnergyMode) {
@@ -85,24 +82,45 @@ export function DietTracker() {
 
     return (
         <div className="space-y-8 max-w-5xl mx-auto">
-            {/* Header Metrics */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Focus Date</Label>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline" className="h-9 px-4 font-bold border-primary/20 hover:bg-primary/5">
+                                <CalendarIcon className="w-4 h-4 mr-2 text-primary" />
+                                {format(selectedDate, 'MMMM d, yyyy')}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                            <Calendar mode="single" selected={selectedDate} onSelect={(d) => d && setSelectedDate(d)} />
+                        </PopoverContent>
+                    </Popover>
+                </div>
+                <div className="flex gap-2 w-full md:w-auto">
+                    <Button className="flex-1 md:flex-none h-10 gap-2 font-bold" onClick={() => setShowAdd(true)}>
+                        <PlusCircle className="w-4 h-4" /> Log Meal
+                    </Button>
+                    <Button variant="outline" className="flex-1 md:flex-none h-10 gap-2 border-primary/10" onClick={handleCopyYesterday}>
+                        <Copy className="w-4 h-4" /> Copy Previous
+                    </Button>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="bg-primary/5 border-primary/10">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center justify-between">
-                            7-Day Rolling Average
-                            <Badge variant="secondary" className="bg-primary/10 text-primary border-none">Focus: Consistency</Badge>
+                            7-Day Average
+                            <Badge variant="secondary" className="bg-primary/10 text-primary border-none">Consistency</Badge>
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4 py-4">
-                        <div className="text-center">
+                    <CardContent className="space-y-4 py-4 text-center">
+                        <div>
                             <span className="text-5xl font-black">{rollingStats.avgCals}</span>
-                            <span className="text-sm text-muted-foreground font-bold ml-2">CAL / DAY</span>
+                            <span className="text-sm text-muted-foreground font-bold ml-2 uppercase">Cal/Day</span>
                         </div>
                         <Progress value={(rollingStats.avgCals / rollingStats.target) * 100} className="h-2" />
-                        <p className="text-[10px] text-center text-muted-foreground">
-                            Today's specific intake: <span className="font-bold text-foreground">{rollingStats.todayCals} kcal</span>
-                        </p>
                     </CardContent>
                 </Card>
 
@@ -116,7 +134,7 @@ export function DietTracker() {
                     <CardContent className="space-y-3">
                         <div className="p-3 bg-background rounded-lg border text-xs flex gap-3">
                             <Zap className="w-4 h-4 text-primary shrink-0" />
-                            <p>You reported <span className="font-bold">low energy</span> on days where breakfast protein was below 20g. Aim for 30g tomorrow.</p>
+                            <p>Daily protein target for cognitive stability: <span className="font-bold">120g</span>. Today: <span className="font-bold">{mealLogs.filter(l => l.date === dateStr).reduce((s, l) => s + l.protein, 0)}g</span>.</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -124,20 +142,10 @@ export function DietTracker() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Log Actions */}
-                    <div className="flex gap-2">
-                        <Button className="flex-1 h-14 gap-2 text-lg font-bold" onClick={() => setShowAdd(true)}>
-                            <PlusCircle className="w-5 h-5" /> Log Meal
-                        </Button>
-                        <Button variant="outline" className="flex-1 h-14 gap-2" onClick={handleCopyYesterday}>
-                            <Copy className="w-4 h-4" /> Copy Yesterday
-                        </Button>
-                    </div>
-
                     {showAdd && (
                         <Card className="border-primary/20 animate-in zoom-in-95">
                             <CardHeader className="flex flex-row items-center justify-between">
-                                <CardTitle className="text-base">Quick Meal Log</CardTitle>
+                                <CardTitle className="text-base">Quick Meal Log ({format(selectedDate, 'MMM d')})</CardTitle>
                                 <Button variant="ghost" size="icon" onClick={() => setShowAdd(false)}><X className="w-4 h-4" /></Button>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -170,25 +178,24 @@ export function DietTracker() {
                                         <Input type="number" value={mealForm.fat || ''} onChange={e => setMealForm({ ...mealForm, fat: parseInt(e.target.value) || 0 })} />
                                     </div>
                                 </div>
-                                <Button className="w-full" onClick={handleLogMeal}>Save Meal</Button>
+                                <Button className="w-full font-bold" onClick={handleLogMeal}>Save Meal</Button>
                             </CardContent>
                         </Card>
                     )}
 
-                    {/* Daily History */}
                     <Card>
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
                                 <History className="w-4 h-4 text-muted-foreground" />
-                                Today's Meals
+                                Logs for {format(selectedDate, 'PPP')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">
-                            {mealLogs.filter(l => l.date === today).length === 0 ? (
-                                <div className="p-10 text-center opacity-50 italic text-sm">No meals logged for today.</div>
+                            {mealLogs.filter(l => l.date === dateStr).length === 0 ? (
+                                <div className="p-10 text-center opacity-50 italic text-sm">No meals logged for this date.</div>
                             ) : (
-                                mealLogs.filter(l => l.date === today).map(log => (
-                                    <div key={log.id} className="flex items-center justify-between p-4 border-b last:border-0">
+                                mealLogs.filter(l => l.date === dateStr).map(log => (
+                                    <div key={log.id} className="flex items-center justify-between p-4 border-b last:border-0 hover:bg-muted/20 transition-colors">
                                         <div className="flex items-center gap-3">
                                             <div className="p-2 bg-muted rounded-lg"><Coffee className="w-4 h-4 text-muted-foreground" /></div>
                                             <div>
@@ -207,26 +214,6 @@ export function DietTracker() {
                 </div>
 
                 <div className="space-y-6">
-                    {/* Weight Tracker */}
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                                <Scale className="w-4 h-4 text-primary" />
-                                Weight Trajectory
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex justify-between items-baseline mb-4">
-                                <span className="text-2xl font-black">183.5 lbs</span>
-                                <span className="text-[10px] font-bold text-green-600">Smoothed Trend</span>
-                            </div>
-                            <div className="h-32 w-full bg-muted/20 rounded-lg border border-dashed flex items-center justify-center">
-                                <p className="text-[10px] text-muted-foreground">Trajectory chart will populate after 3 logs.</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Hydration */}
                     <Card className="bg-blue-500/[0.03] border-blue-500/10">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-bold flex items-center gap-2 text-blue-600">
@@ -243,26 +230,19 @@ export function DietTracker() {
                                         size="icon" 
                                         className={cn(
                                             "w-8 h-8 rounded-full border border-blue-500/20", 
-                                            i < (waterLogs[today] || 0) ? "bg-blue-500 text-white" : "text-blue-500/40"
+                                            i < (waterLogs[dateStr] || 0) ? "bg-blue-500 text-white" : "text-blue-500/40"
                                         )}
-                                        onClick={() => addWater(today, 1)}
+                                        onClick={() => addWater(dateStr, 1)}
                                     >
                                         <Droplets className="w-4 h-4" />
                                     </Button>
                                 ))}
                             </div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Goal: 8 Glasses</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Daily Target Met: {Math.min(100, ((waterLogs[dateStr] || 0) / 8) * 100).toFixed(0)}%</p>
                         </CardContent>
                     </Card>
                 </div>
             </div>
-
-            {/* Disclaimer */}
-            <Card className="bg-muted/20 border-dashed">
-                <CardFooter className="pt-6">
-                    <p className="text-[10px] text-muted-foreground italic text-center w-full">Disclaimer: This tool is for tracking and educational purposes. Consult a medical professional for dietary advice.</p>
-                </CardFooter>
-            </Card>
         </div>
     );
 }

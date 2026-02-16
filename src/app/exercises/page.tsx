@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -9,18 +10,18 @@ import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
 import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Info, InfoIcon, Lightbulb } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, InfoIcon, Lightbulb } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Card } from '@/components/ui/card';
 import { QuickLogBar } from '@/components/wellness/QuickLogBar';
 import { WellnessRecommendations } from '@/components/wellness/WellnessRecommendations';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { WellnessActivityCalendar } from '@/components/wellness/WellnessActivityCalendar';
 
 export default function ExercisesPage() {
   const [isOpen, setIsOpen] = useState(true);
@@ -47,7 +48,6 @@ export default function ExercisesPage() {
     const moveToday = movementLogs.some(l => format(new Date(l.timestamp), 'yyyy-MM-dd') === today);
     const stillToday = stillnessLogs.some(l => format(new Date(l.timestamp), 'yyyy-MM-dd') === today);
     
-    // Breakdown for Phase 3
     const moveDates = new Set(movementLogs.map(l => format(new Date(l.timestamp), 'yyyy-MM-dd')));
     const stillDates = new Set(stillnessLogs.map(l => format(new Date(l.timestamp), 'yyyy-MM-dd')));
     
@@ -56,18 +56,13 @@ export default function ExercisesPage() {
         if (stillDates.has(date)) bothCount++;
     });
 
-    const onlyMoveCount = moveDates.size - bothCount;
-    const onlyStillCount = stillDates.size - bothCount;
-
     return { 
         streak, 
         moveToday, 
         stillToday,
         moveDays: moveDates.size,
         stillDays: stillDates.size,
-        bothCount,
-        onlyMoveCount,
-        onlyStillCount
+        bothCount
     };
   }, [movementLogs, stillnessLogs]);
 
@@ -89,9 +84,9 @@ export default function ExercisesPage() {
       </div>
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24">
-        <div className="mx-auto max-w-7xl space-y-6">
+        <div className="mx-auto max-w-7xl space-y-8">
             
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center">
               <Popover>
                 <PopoverTrigger asChild>
                     <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 cursor-pointer hover:bg-primary/10 transition-colors shadow-sm">
@@ -103,8 +98,8 @@ export default function ExercisesPage() {
                         </div>
                         <div className="h-4 w-[1px] bg-border" />
                         <div className="flex gap-3">
-                            <div className={cn("w-3 h-3 rounded-full transition-colors", wellnessStats.moveToday ? "bg-primary" : "bg-muted")} />
-                            <div className={cn("w-3 h-3 rounded-full transition-colors", wellnessStats.stillToday ? "bg-blue-400" : "bg-muted")} />
+                            <div className={cn("w-3 h-3 rounded-full transition-colors border", wellnessStats.moveToday ? "bg-primary border-primary" : "bg-muted border-transparent")} />
+                            <div className={cn("w-3 h-3 rounded-full transition-colors border", wellnessStats.stillToday ? "bg-blue-400 border-blue-400" : "bg-muted border-transparent")} />
                         </div>
                         <InfoIcon className="w-3 h-3 text-muted-foreground opacity-40" />
                         </div>
@@ -112,7 +107,7 @@ export default function ExercisesPage() {
                 </PopoverTrigger>
                 <PopoverContent className="w-64">
                     <div className="space-y-3">
-                        <h4 className="font-bold text-sm uppercase tracking-wider">Streak Breakdown</h4>
+                        <h4 className="font-bold text-sm uppercase tracking-wider">Streak Analytics</h4>
                         <div className="space-y-2 text-xs">
                             <div className="flex justify-between items-center p-2 bg-muted/50 rounded-md">
                                 <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-primary" /> Movement Days</span>
@@ -122,13 +117,9 @@ export default function ExercisesPage() {
                                 <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-400" /> Stillness Days</span>
                                 <span className="font-bold">{wellnessStats.stillDays}</span>
                             </div>
-                            <div className="flex justify-between items-center p-2 bg-primary/10 rounded-md border border-primary/20">
-                                <span className="font-bold">Total Progress Days</span>
-                                <span className="font-bold">{wellnessStats.moveDays + wellnessStats.stillDays - wellnessStats.bothCount}</span>
-                            </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground italic">
-                            Your combined streak continues as long as you log at least one practice (with 1 grace day).
+                            Keep either streak going to maintain your combined Wellness momentum.
                         </p>
                     </div>
                 </PopoverContent>
@@ -145,7 +136,7 @@ export default function ExercisesPage() {
                             <div className="flex flex-col items-center text-center pb-4">
                                 <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
                                 <h1 className="text-4xl font-bold font-headline tracking-tight">Health Check</h1>
-                                <p className="text-lg text-muted-foreground">Actionable wellness practices for body and mind. Train your reps.</p>
+                                <p className="text-lg text-muted-foreground">Actionable wellness for body and brain. Log your daily reps.</p>
                             </div>
                         </CollapsibleContent>
                       </div>
@@ -179,9 +170,7 @@ export default function ExercisesPage() {
                             <p className="text-xs flex items-start gap-2 text-left">
                                 <Lightbulb className="w-4 h-4 mt-0.5 text-primary shrink-0" />
                                 <span className="text-foreground">
-                                    <span className="font-bold">MVD Logic (Minimum Viable Day):</span> This mode prevents "all-or-nothing" thinking. 
-                                    It collapses complex tracking into a single streak-saver question. 
-                                    <strong>Procedural Rule:</strong> Completing an MVD question satisfies the daily requirement for your Wellness Streak.
+                                    <span className="font-bold">MVD Logic:</span> Minimum Viable Day mode preserves your streak with low-friction check-ins when energy is low.
                                 </span>
                             </p>
                         </div>
@@ -192,7 +181,11 @@ export default function ExercisesPage() {
             </div>
             
             <WellnessTabs />
-            <WellnessHeatmap activityData={activityData} />
+
+            <div className="space-y-8 pt-8 border-t border-primary/5">
+              <WellnessActivityCalendar />
+              <WellnessHeatmap activityData={activityData} />
+            </div>
         </div>
       </main>
       <QuickLogBar />
