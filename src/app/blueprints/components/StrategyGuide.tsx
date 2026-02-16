@@ -8,8 +8,8 @@ import { usePlaybookStore } from '@/hooks/use-playbook-store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { AssistantTooltip } from "@/components/assistant-tooltip";
 
 type StrategyGuideProps = {
   strategy: GoalStrategy;
@@ -53,16 +53,16 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 const strategyTooltips: Record<string, string> = {
-  backcasting: "Start from your desired future and work backward to today. Ask 'what must have already happened for me to reach my goal?'",
-  woop: "Wish, Outcome, Obstacle, Plan. A research-backed method that pairs positive visualization with realistic obstacle planning.",
-  smart: "Specific, Measurable, Achievable, Relevant, Time-bound. Best used for defining individual milestones within a larger blueprint.",
-  identity: "Focus on who you want to become. Every action is a vote for the type of person you're building.",
-  okrs: "Set a qualitative Objective and define 2-5 measurable Key Results. Used to maintain focus and alignment.",
-  review_loop: "A recurring check-in ritual: review what you accomplished, what learned, and what you'll prioritize next week.",
-  milestone_mapping: "Break an overwhelming goal into a visual sequence of milestones with clear dependencies.",
-  pre_mortem: "Imagine your goal has failed. Ask: 'What went wrong?' List every reason, then build preventive actions.",
-  energy_mapping: "Track when your energy peaks. Schedule hardest tasks during high-energy windows.",
-  gamified: "Apply game mechanics to your goals: points, streaks, and levels to add immediate reward to long-term pursuits.",
+  backcasting: "Start from your desired future and work backward to today. Instead of asking 'what should I do next?', ask 'what must have already happened for me to reach my goal?' — then build those steps into milestones.",
+  woop: "Wish, Outcome, Obstacle, Plan. A research-backed method that pairs positive visualization with realistic obstacle planning. Proven to outperform pure positive thinking.",
+  smart: "Specific, Measurable, Achievable, Relevant, Time-bound. The classic framework for turning vague intentions into concrete targets. Best used for defining individual milestones within a larger blueprint.",
+  identity: "Instead of focusing on what you want to achieve, focus on who you want to become. Every action is a vote for the type of person you're building. This strategy aligns with the 'BECOMING' identity statement in your blueprints.",
+  okrs: "Set a qualitative Objective (the 'what' and 'why'), then define 2-5 measurable Key Results that prove you've achieved it. Used by high-performing teams and individuals to maintain focus and alignment.",
+  review_loop: "A recurring check-in ritual: review what you accomplished, what learned, and what you'll prioritize next week. Keeps blueprints from drifting and builds self-awareness over time.",
+  milestone_mapping: "Break an overwhelming goal into a visual sequence of milestones with clear dependencies. Helps you see the full path, identify what's blocking progress, and celebrate incremental wins.",
+  pre_mortem: "Before you start, imagine your goal has failed. Ask: 'What went wrong?' List every plausible reason, then build preventive actions into your plan. Turns anxiety into preparation.",
+  energy_mapping: "Track when during the day and week your energy and focus peak. Schedule your hardest blueprint tasks during high-energy windows and routine tasks during low-energy periods.",
+  gamified: "Apply game mechanics to your goals: points for completed tasks, streaks for consistency, levels for milestones reached. Adds a layer of immediate reward to long-term pursuits.",
 };
 
 export function StrategyGuide({ strategy }: StrategyGuideProps) {
@@ -96,62 +96,51 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
 
 
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <Card className={cn("flex flex-col h-full hover:shadow-md transition-shadow relative group", settings.assistantMode && "cursor-help")}>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute top-2 right-2 z-10" 
-                    onClick={() => toggleFavorite(strategy.id, strategy.name)}
-                  >
-                    <Star className={cn("w-4 h-4 transition-all", isFavorite ? "fill-primary text-primary" : "text-muted-foreground opacity-0 group-hover:opacity-100")} />
-                  </Button>
-                </TooltipTrigger>
-                {settings.assistantMode && <TooltipContent>Add this strategy to your Personal Playbook for quick access and tracking.</TooltipContent>}
-              </Tooltip>
+    <AssistantTooltip text={strategyTooltips[strategy.id]} side="bottom">
+      <Card className="flex flex-col h-full hover:shadow-md transition-shadow relative group">
+          <AssistantTooltip text="Add this strategy to your Personal Playbook for quick access and tracking.">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute top-2 right-2 z-10" 
+              onClick={() => toggleFavorite(strategy.id, strategy.name)}
+            >
+              <Star className={cn("w-4 h-4 transition-all", isFavorite ? "fill-primary text-primary" : "text-muted-foreground opacity-0 group-hover:opacity-100")} />
+            </Button>
+          </AssistantTooltip>
 
-              <CardHeader>
-                  <div className="flex items-center gap-3 mb-2">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                          <Icon className="w-6 h-6 text-primary"/>
-                      </div>
-                      <CardTitle>{strategy.name}</CardTitle>
+          <CardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                      <Icon className="w-6 h-6 text-primary"/>
                   </div>
-                  <CardDescription>{strategy.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow space-y-4">
-                  <div className="space-y-4">
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">The Protocol:</h4>
-                      <ul className="space-y-4 text-sm">
-                          {strategy.steps.map((step, index) => (
-                            <div key={index}>{renderStepWithIcon(step)}</div>
-                          ))}
-                      </ul>
-                  </div>
+                  <CardTitle>{strategy.name}</CardTitle>
+              </div>
+              <CardDescription>{strategy.description}</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-grow space-y-4">
+              <div className="space-y-4">
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">The Protocol:</h4>
+                  <ul className="space-y-4 text-sm">
+                      {strategy.steps.map((step, index) => (
+                        <div key={index}>{renderStepWithIcon(step)}</div>
+                      ))}
+                  </ul>
+              </div>
 
-                   <div className="pt-4 border-t">
-                      <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-1">Ideal Context:</h4>
-                      <p className="text-sm italic">{strategy.useFor}</p>
-                  </div>
-              </CardContent>
-              {entry?.status && (
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <div className={cn("px-6 pb-4 w-fit", settings.assistantMode && "cursor-help")}>
-                      <Badge variant="secondary" className="text-[9px] uppercase tracking-widest">{entry.status}</Badge>
-                    </div>
-                  </TooltipTrigger>
-                  {settings.assistantMode && <TooltipContent>Track your relationship with this strategy: Not Tried, Currently Using, or Used Before.</TooltipContent>}
-                </Tooltip>
-              )}
-          </Card>
-        </TooltipTrigger>
-        {settings.assistantMode && <TooltipContent className="max-w-xs" side="bottom">{strategyTooltips[strategy.id]}</TooltipContent>}
-      </Tooltip>
-    </TooltipProvider>
+               <div className="pt-4 border-t">
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-1">Ideal Context:</h4>
+                  <p className="text-sm italic">{strategy.useFor}</p>
+              </div>
+          </CardContent>
+          {entry?.status && (
+            <AssistantTooltip text="Track your relationship with this strategy: Not Tried, Currently Using, or Used Before.">
+              <div className="px-6 pb-4 w-fit">
+                <Badge variant="secondary" className="text-[9px] uppercase tracking-widest">{entry.status}</Badge>
+              </div>
+            </AssistantTooltip>
+          )}
+      </Card>
+    </AssistantTooltip>
   );
 }

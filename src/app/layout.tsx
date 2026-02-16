@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/hooks/use-theme';
 import { TrainingFocusProvider } from '@/hooks/use-training-focus';
 import { TrainingOverrideProvider } from '@/hooks/use-training-override.tsx';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,12 +27,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning={true}>
         <ThemeProvider>
-          <TrainingFocusProvider>
-            <TrainingOverrideProvider>
-              {children}
-              <Toaster />
-            </TrainingOverrideProvider>
-          </TrainingFocusProvider>
+          <TooltipProvider>
+            <TrainingFocusProvider>
+              <TrainingOverrideProvider>
+                {children}
+                <Toaster />
+              </TrainingOverrideProvider>
+            </TrainingFocusProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

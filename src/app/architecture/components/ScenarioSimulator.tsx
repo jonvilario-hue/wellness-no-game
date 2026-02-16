@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { goalStrategies } from '@/data/goal-strategies';
 import { ArrowRight, Sparkles, Rocket } from 'lucide-react';
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { cn } from '@/lib/utils'
 
@@ -60,68 +61,63 @@ export default function ScenarioSimulator() {
   };
 
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <Card className={cn("border-primary/20 shadow-lg relative overflow-hidden group", settings.assistantMode && "cursor-help")}>
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 font-headline text-2xl">
-                <Sparkles className="w-6 h-6 text-primary" />
-                Scenario Simulator
-              </CardTitle>
-              <CardTitle className="sr-only">Scenario Simulator Card</CardTitle>
-              <CardDescription>Simulate a goal and find the perfect strategy stack to conquer it.</CardDescription>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              {step === 1 ? (
-                <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-bold uppercase text-primary">The Vision</Label>
-                    <Input placeholder="What do you want to achieve?" value={goal} onChange={e => setGoal(e.target.value)} />
+    <AssistantTooltip text="Describe a goal and obstacle, and the simulator will recommend a combination of strategies tailored to your situation." side="bottom">
+      <Card className="border-primary/20 shadow-lg relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 font-headline text-2xl">
+            <Sparkles className="w-6 h-6 text-primary" />
+            Scenario Simulator
+          </CardTitle>
+          <CardTitle className="sr-only">Scenario Simulator Card</CardTitle>
+          <CardDescription>Simulate a goal and find the perfect strategy stack to conquer it.</CardDescription>
+        </CardHeader>
+        <CardContent className="relative z-10">
+          {step === 1 ? (
+            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase text-primary">The Vision</Label>
+                <Input placeholder="What do you want to achieve?" value={goal} onChange={e => setGoal(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase text-primary">The Primary Friction</Label>
+                <Input placeholder="What is the biggest obstacle?" value={obstacle} onChange={e => setObstacle(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase text-primary">Goal Type</Label>
+                <Select value={type} onValueChange={setType}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {['Career', 'Creative', 'Health', 'Learning', 'Business', 'Personal'].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button className="w-full h-12 text-sm font-bold" onClick={() => setStep(2)} disabled={!goal}>
+                Generate Strategy Stack <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-500">
+              <div className="space-y-3">
+                <h4 className="text-xs font-black uppercase tracking-widest text-primary">Recommended Stack:</h4>
+                {getRecommendations().map((rec, i) => (
+                  <div key={rec.id} className="p-3 bg-muted/50 rounded-lg border border-primary/10 flex gap-3">
+                    <div className="p-2 bg-primary/10 rounded-md h-fit"><rec.icon className="w-4 h-4 text-primary" /></div>
+                    <div>
+                      <p className="font-bold text-sm">{rec.name}</p>
+                      <p className="text-[11px] text-muted-foreground italic">{rec.whyFits}</p>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-bold uppercase text-primary">The Primary Friction</Label>
-                    <Input placeholder="What is the biggest obstacle?" value={obstacle} onChange={e => setObstacle(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-bold uppercase text-primary">Goal Type</Label>
-                    <Select value={type} onValueChange={setType}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {['Career', 'Creative', 'Health', 'Learning', 'Business', 'Personal'].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button className="w-full h-12 text-sm font-bold" onClick={() => setStep(2)} disabled={!goal}>
-                    Generate Strategy Stack <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-500">
-                  <div className="space-y-3">
-                    <h4 className="text-xs font-black uppercase tracking-widest text-primary">Recommended Stack:</h4>
-                    {getRecommendations().map((rec, i) => (
-                      <div key={rec.id} className="p-3 bg-muted/50 rounded-lg border border-primary/10 flex gap-3">
-                        <div className="p-2 bg-primary/10 rounded-md h-fit"><rec.icon className="w-4 h-4 text-primary" /></div>
-                        <div>
-                          <p className="font-bold text-sm">{rec.name}</p>
-                          <p className="text-[11px] text-muted-foreground italic">{rec.whyFits}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Back</Button>
-                    <Button className="flex-1" onClick={handleCreate}>Build Blueprint <Rocket className="w-4 h-4 ml-2" /></Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TooltipTrigger>
-        {settings.assistantMode && <TooltipContent className="max-w-xs" side="bottom">Describe a goal and obstacle, and the simulator will recommend a combination of strategies tailored to your situation.</TooltipContent>}
-      </Tooltip>
-    </TooltipProvider>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Back</Button>
+                <Button className="flex-1" onClick={handleCreate}>Build Blueprint <Rocket className="w-4 h-4 ml-2" /></Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </AssistantTooltip>
   );
 }

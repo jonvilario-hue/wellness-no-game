@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 const defaultSettings = {
   habitTracker: true,
@@ -12,46 +13,36 @@ const defaultSettings = {
 
 export type DashboardSettings = typeof defaultSettings;
 
-const DASHBOARD_SETTINGS_KEY = 'dashboardSettings-v5';
+interface DashboardSettingsState {
+  settings: DashboardSettings;
+  isLoaded: boolean;
+  toggleSetting: (component: keyof DashboardSettings) => void;
+  setHasHydrated: (state: boolean) => void;
+}
 
-export const useDashboardSettings = () => {
-  const [settings, setSettings] = useState<DashboardSettings>(defaultSettings);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    try {
-      const savedSettingsStr = window.localStorage.getItem(DASHBOARD_SETTINGS_KEY);
-      if (savedSettingsStr) {
-        const savedSettings = JSON.parse(savedSettingsStr);
-        setSettings({ ...defaultSettings, ...savedSettings });
-      } else {
-        setSettings(defaultSettings);
-      }
-    } catch (error) {
-      console.error("Failed to load dashboard settings from localStorage", error);
-      setSettings(defaultSettings);
+export const useDashboardSettings = create<DashboardSettingsState>()(
+  persist(
+    (set) => ({
+      settings: defaultSettings,
+      isLoaded: false,
+      setHasHydrated: (state) => set({ isLoaded: state }),
+      toggleSetting: (component) =>
+        set((state) => ({
+          settings: {
+            ...state.settings,
+            [component]: !state.settings[component],
+          },
+        })),
+    }),
+    {
+      name: 'dashboard-settings-storage-v6',
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
-    setIsLoaded(true);
-  }, []);
-
-  const saveSettings = useCallback((newSettings: DashboardSettings) => {
-    try {
-      setSettings(newSettings);
-      window.localStorage.setItem(DASHBOARD_SETTINGS_KEY, JSON.stringify(newSettings));
-    } catch (error) {
-      console.error("Failed to save dashboard settings to localStorage", error);
-    }
-  }, []);
-
-  const toggleSetting = useCallback((component: keyof DashboardSettings) => {
-    saveSettings({
-      ...settings,
-      [component]: !settings[component],
-    });
-  }, [settings, saveSettings]);
-
-  return { settings, toggleSetting, isLoaded };
-};
+  )
+);
 
 export const componentLabels: Record<keyof DashboardSettings, string> = {
   habitTracker: 'Habit Tracker',
