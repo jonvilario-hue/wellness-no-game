@@ -7,6 +7,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import type { CalendarDay } from '@/data/calendar-content';
 import { ScrollArea } from '../ui/scroll-area';
+import { Badge } from '../ui/badge';
+import { Play, GraduationCap } from 'lucide-react';
+import Link from 'next/link';
 
 interface DayDetailsDialogProps {
   dayContent: CalendarDay;
@@ -14,12 +17,43 @@ interface DayDetailsDialogProps {
   onClose: () => void;
   isCompleted: boolean;
   onToggleCompletion: () => void;
+  // Dynamic study info passed from calendar page
+  studyInfo?: {
+    toolId: string;
+    resourceId: string;
+    status: string;
+  };
 }
 
-export function DayDetailsDialog({ dayContent, isOpen, onClose, isCompleted, onToggleCompletion }: DayDetailsDialogProps) {
+export function DayDetailsDialog({ dayContent, isOpen, onClose, isCompleted, onToggleCompletion, studyInfo }: DayDetailsDialogProps) {
   const { icon: Icon, prompt, description, toolType, toolContent } = dayContent;
 
   const renderTool = () => {
+    if (studyInfo) {
+      return (
+        <div className="space-y-4 animate-in fade-in">
+          <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl space-y-3">
+            <div className="flex items-center gap-2">
+              <Badge className="bg-primary/20 text-primary border-none uppercase text-[9px] font-black tracking-widest">
+                Study Session
+              </Badge>
+              <Badge variant="secondary" className="text-[9px] uppercase tracking-tighter">
+                {studyInfo.toolId}
+              </Badge>
+            </div>
+            <p className="text-sm font-medium leading-relaxed">
+              This event is linked to your Scholar Hub. Complete the activity to update your cognitive map.
+            </p>
+            <Button asChild className="w-full h-12 text-sm font-bold gap-2">
+              <Link href={`/study/session?deckId=${studyInfo.resourceId}`}>
+                <Play className="h-4 w-4 fill-current" /> Start Training Session
+              </Link>
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
     switch (toolType) {
       case 'embed':
         return (
@@ -48,11 +82,11 @@ export function DayDetailsDialog({ dayContent, isOpen, onClose, isCompleted, onT
       <DialogContent className="max-w-md max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            <Icon className="w-6 h-6 text-primary" />
-            Day {dayContent.day}: {prompt}
+            {studyInfo ? <GraduationCap className="w-6 h-6 text-primary" /> : <Icon className="w-6 h-6 text-primary" />}
+            {studyInfo ? 'Active Study Session' : `Day ${dayContent.day}: ${prompt}`}
           </DialogTitle>
           <DialogDescription>
-            {description}
+            {studyInfo ? `Scheduled training for ${prompt}` : description}
           </DialogDescription>
         </DialogHeader>
         

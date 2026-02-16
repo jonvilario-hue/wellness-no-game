@@ -6,10 +6,11 @@ import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PlusCircle, Layers, Play, Upload, Download, Settings } from 'lucide-react';
+import { PlusCircle, Layers, Play, Upload, Download, Settings, CalendarDays } from 'lucide-react';
 import { DeckDialog } from '@/components/flashcards/deck-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { AddToCalendarDialog } from '../study/add-to-calendar-dialog';
 
 export function FlashcardDecks() {
   const { decks, cards } = useFlashcardStore();
@@ -71,6 +72,13 @@ export function FlashcardDecks() {
                         </Link>
                         
                         <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <AddToCalendarDialog 
+                              toolId="Flashcards" 
+                              resourceId={deck.id} 
+                              resourceName={deck.name} 
+                              buttonSize="icon"
+                              buttonVariant="ghost"
+                            />
                             <TooltipProvider>
                                 <Tooltip delayDuration={0}>
                                     <TooltipTrigger asChild>

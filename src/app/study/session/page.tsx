@@ -15,6 +15,7 @@ import type { Card as CardType } from '@/types/flashcards';
 import { applySpacedRepetition } from '@/lib/srs';
 import { cn } from '@/lib/utils';
 import { useStatsStore } from '@/hooks/use-stats-store';
+import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 
 const renderCloze = (text: string, reveal: boolean) => {
   const clozeContent = text.replace(/\{\{c\d::(.*?)\}\}/g, (_, match) => 
@@ -30,6 +31,7 @@ function SessionContent() {
 
   const { cards, updateCard, decks } = useFlashcardStore();
   const { addReview } = useStatsStore();
+  const { markStudySessionComplete } = useCalendarPlansStore();
 
   const dueCards = useMemo(() => {
     const now = new Date();
@@ -58,6 +60,13 @@ function SessionContent() {
         setSessionComplete(true);
     }
   }, [dueCards]);
+
+  // Handle completion tracking
+  useEffect(() => {
+    if (sessionComplete && deckId) {
+      markStudySessionComplete('Flashcards', deckId);
+    }
+  }, [sessionComplete, deckId, markStudySessionComplete]);
 
   const currentCard = sessionCards[currentIndex];
 

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { create } from 'zustand';
@@ -20,6 +21,10 @@ interface CalendarPlansState {
   syncFromTracker: (category: PlanCategory, activityName: string) => { matched: boolean; instanceId?: string };
   addAdHocActivity: (date: string, activity: Partial<CalendarActivityInstance>) => void;
   
+  // Study Tool Integration
+  addStudySessionEvent: (date: string, toolId: string, resourceId: string, name: string, time?: string) => string;
+  markStudySessionComplete: (toolId: string, resourceId: string) => void;
+
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
 }
@@ -129,9 +134,51 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
           };
         });
       },
+
+      addStudySessionEvent: (date, toolId, resourceId, name, time) => {
+        const id = `study-${Date.now()}`;
+        set((state) => {
+          const dayInstances = state.activityInstances[date] || [];
+          const newInstance: CalendarActivityInstance = {
+            id,
+            planId: 'study-sessions',
+            activityId: toolId,
+            activityName: name,
+            status: 'not-started',
+            date,
+            scheduledTime: time,
+            studyToolId: toolId,
+            studyResourceId: resourceId,
+            completedVia: 'calendar'
+          };
+          return {
+            activityInstances: {
+              ...state.activityInstances,
+              [date]: [...dayInstances, newInstance]
+            }
+          };
+        });
+        return id;
+      },
+
+      markStudySessionComplete: (toolId, resourceId) => {
+        const { activityInstances } = get();
+        const today = format(new Date(), 'yyyy-MM-dd');
+        const dayInstances = activityInstances[today] || [];
+        
+        const match = dayInstances.find(inst => 
+          inst.studyToolId === toolId && 
+          inst.studyResourceId === resourceId && 
+          inst.status !== 'completed'
+        );
+
+        if (match) {
+          get().updateActivityStatus(today, match.id, 'completed', 'tracker');
+        }
+      }
     }),
     {
-      name: 'calendar-plans-storage-v2',
+      name: 'calendar-plans-storage-v3',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useTransition } from "react";
@@ -7,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { HelpCircle, Loader2, CheckCircle, XCircle, ArrowRight } from "lucide-react";
 import { generateQuizAction } from "@/app/actions";
 import { cn } from "@/lib/utils";
+import { AddToCalendarDialog } from "../add-to-calendar-dialog";
 
 export function SelfQuizCreator() {
   const [notes, setNotes] = useState('');
@@ -59,7 +61,14 @@ export function SelfQuizCreator() {
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle>{quiz.title}</CardTitle>
+                <div className="flex justify-between items-start">
+                  <CardTitle>{quiz.title}</CardTitle>
+                  <AddToCalendarDialog 
+                    toolId="Self-Quiz" 
+                    resourceId="quiz-session" 
+                    resourceName={quiz.title} 
+                  />
+                </div>
                 {submitted && (
                     <CardDescription>
                         Quiz Complete! You scored {score} out of {quiz.questions.length}.

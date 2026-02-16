@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -9,6 +10,7 @@ import { Trash2, Save, Image as ImageIcon, Eraser, Pencil } from 'lucide-react';
 import { useScholarStore } from '@/hooks/use-scholar-store';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { AddToCalendarDialog } from './add-to-calendar-dialog';
 
 export function VisualPairingTool() {
   const [concept, setConcept] = useState('');
@@ -85,7 +87,16 @@ export function VisualPairingTool() {
     <div className="space-y-10 animate-in fade-in">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-3">
-          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Verbal Description</Label>
+          <div className="flex justify-between items-center">
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Verbal Description</Label>
+            {concept.trim() && (
+              <AddToCalendarDialog 
+                toolId="Visual Pairing" 
+                resourceId="visual-pair" 
+                resourceName={concept} 
+              />
+            )}
+          </div>
           <textarea
             className="w-full h-[350px] p-4 rounded-xl border-2 bg-card resize-none focus:ring-2 ring-primary border-primary/5 transition-all text-sm leading-relaxed"
             placeholder="Explain the concept in your own words. Why does it work? What are the key rules?"

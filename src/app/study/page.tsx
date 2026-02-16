@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Brain, Layers, HelpCircle, PenTool, TrendingUp, Sparkles, 
   BookOpen, GraduationCap, ChevronRight, Zap, Inbox, BarChart3,
-  ChevronUp, ChevronDown, Target, ShieldAlert, History
+  ChevronUp, ChevronDown, Target, ShieldAlert, History, CalendarDays
 } from 'lucide-react';
 import Link from 'next/link';
 import { VisualPairingTool } from '@/components/study/visual-pairing-tool';
@@ -34,6 +34,7 @@ import {
   TimeManagementGuide 
 } from '@/components/study/guides';
 import { SelfQuizCreator, DistractionLog } from '@/components/study/tools';
+import { StudyScheduleView } from '@/components/study/study-schedule-view';
 
 export default function ScholarHub() {
   const { sessions, visualPairs } = useScholarStore();
@@ -149,9 +150,12 @@ export default function ScholarHub() {
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center mb-8">
-              <TabsList className="grid w-full max-w-xl grid-cols-3 bg-muted/50 p-1">
+              <TabsList className="grid w-full max-w-2xl grid-cols-4 bg-muted/50 p-1">
                 <TabsTrigger value="decks" className="gap-2">
-                  <Layers className="h-4 w-4" /> Flashcard Decks
+                  <Layers className="h-4 w-4" /> Decks
+                </TabsTrigger>
+                <TabsTrigger value="schedule" className="gap-2">
+                  <CalendarDays className="h-4 w-4" /> Schedule
                 </TabsTrigger>
                 <TabsTrigger value="tools" className="gap-2">
                   <Zap className="h-4 w-4" /> Study Tools
@@ -164,6 +168,10 @@ export default function ScholarHub() {
 
             <TabsContent value="decks" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
               <FlashcardDecks />
+            </TabsContent>
+
+            <TabsContent value="schedule" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <StudyScheduleView />
             </TabsContent>
 
             <TabsContent value="tools" className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">

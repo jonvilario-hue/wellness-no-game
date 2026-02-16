@@ -50,4 +50,9 @@ export type CalendarActivityInstance = {
   status: ActivityStatus;
   completedAt?: string;
   completedVia: 'calendar' | 'tracker-auto-sync';
+  // Study tool integration
+  studyToolId?: string; // Reference to tool type
+  studyResourceId?: string; // Reference to specific deck/topic
+  scheduledTime?: string;
+  activityName: string;
 };

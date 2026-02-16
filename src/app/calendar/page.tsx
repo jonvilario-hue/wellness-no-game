@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -13,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { presetPlans } from '@/data/preset-calendar-plans';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -32,6 +33,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { PlanCategory } from '@/types/calendar-plans';
+import { DayDetailsDialog } from '@/components/calendar/day-details-dialog';
+import { calendarContent } from '@/data/calendar-content';
 
 export default function CalendarPage() {
   const { 
@@ -51,6 +54,7 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [plansOpen, setPlansOpen] = useState(true);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
+  const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
 
   // Form State for Custom Plan
   const [newPlanName, setNewPlanName] = useState('');
@@ -70,19 +74,34 @@ export default function CalendarPage() {
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
     const instances = activityInstances[dateStr] || [];
     
-    // For MVP, if no instances exist for active plans on this day, we generate virtual ones
-    const activeTasks = activePlans.flatMap(plan => 
-      plan.activities.map(act => {
-        const existing = instances.find(i => i.activityId === act.id);
-        return {
-          ...act,
-          planName: plan.name,
-          planColor: plan.color,
-          status: existing?.status || 'not-started',
-          instanceId: existing?.id || `v-${plan.id}-${act.id}`
-        };
-      })
-    );
+    // Merge plan-based tasks and ad-hoc/study sessions
+    const activeTasks = [
+      ...activePlans.flatMap(plan => 
+        plan.activities.map(act => {
+          const existing = instances.find(i => i.activityId === act.id);
+          return {
+            ...act,
+            planName: plan.name,
+            planColor: plan.color,
+            status: existing?.status || 'not-started',
+            instanceId: existing?.id || `v-${plan.id}-${act.id}`
+          };
+        })
+      ),
+      ...instances.filter(inst => inst.planId === 'adhoc' || inst.planId === 'study-sessions').map(inst => ({
+        id: inst.activityId,
+        name: inst.activityName,
+        category: (inst.planId === 'study-sessions' ? 'Study/Learning' : 'Custom') as PlanCategory,
+        planName: inst.planId === 'study-sessions' ? 'Study Hub' : 'One-off',
+        planColor: inst.planId === 'study-sessions' ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
+        status: inst.status,
+        instanceId: inst.id,
+        scheduledTime: inst.scheduledTime,
+        duration: 30,
+        studyToolId: inst.studyToolId,
+        studyResourceId: inst.studyResourceId
+      }))
+    ];
     return activeTasks;
   }, [selectedDate, activePlans, activityInstances]);
 
@@ -99,7 +118,7 @@ export default function CalendarPage() {
       startDate: new Date().toISOString(),
       categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
       color: `hsl(${Math.floor(Math.random() * 360)} 70% 50%)`,
-      activities: [] // Activities can be added in Step 3 of the full wizard
+      activities: [] 
     });
 
     // Reset Form
@@ -107,6 +126,21 @@ export default function CalendarPage() {
     setNewPlanDesc('');
     setSelectedCategories([]);
     setIsBuilderOpen(false);
+  };
+
+  const handleDayClick = (date: Date | undefined) => {
+    if (!date) return;
+    setSelectedDate(date);
+    const day = date.getDate();
+    const content = calendarContent.find(c => c.day === day) || {
+      day,
+      icon: CalendarIcon,
+      prompt: "Custom Focus",
+      description: "Log your activities for this day.",
+      toolType: 'text',
+      toolContent: ""
+    };
+    setSelectedDayContent(content);
   };
 
   const toggleCategory = (cat: PlanCategory) => {
@@ -265,11 +299,14 @@ export default function CalendarPage() {
                   <Calendar
                     mode="single"
                     selected={selectedDate}
-                    onSelect={(d) => d && setSelectedDate(d)}
+                    onSelect={handleDayClick}
                     className="w-full"
                     components={{
                       DayContent: ({ date }) => {
-                        const hasActive = activePlanIds.length > 0;
+                        const dateStr = format(date, 'yyyy-MM-dd');
+                        const instances = activityInstances[dateStr] || [];
+                        const hasActive = activePlanIds.length > 0 || instances.length > 0;
+                        
                         return (
                           <div className="relative w-full h-full flex items-center justify-center">
                             <span>{date.getDate()}</span>
@@ -278,6 +315,9 @@ export default function CalendarPage() {
                                 {activePlans.slice(0, 3).map(p => (
                                   <div key={p.id} className="w-1 h-1 rounded-full" style={{ backgroundColor: p.color }} />
                                 ))}
+                                {instances.some(i => i.planId === 'study-sessions') && (
+                                  <div className="w-1 h-1 rounded-full bg-primary" />
+                                )}
                               </div>
                             )}
                           </div>
@@ -295,24 +335,38 @@ export default function CalendarPage() {
                         </div>
                       ) : (
                         todaysTasks.map(task => (
-                          <div key={task.id} className="flex items-center gap-4 p-4 rounded-xl border bg-card shadow-sm">
+                          <div key={task.instanceId} className="flex items-center gap-4 p-4 rounded-xl border bg-card shadow-sm group">
                             <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: task.planColor }} />
                             <div className="flex-grow">
-                              <p className="font-bold text-sm">{task.name}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-sm">{task.name}</p>
+                                {task.studyToolId && (
+                                  <Badge variant="outline" className="text-[8px] h-3.5 border-primary/30 text-primary">STUDY</Badge>
+                                )}
+                              </div>
                               <div className="flex gap-2 mt-1">
                                 <Badge variant="secondary" className="text-[9px] h-4">{task.category}</Badge>
-                                <span className="text-[10px] text-muted-foreground">{task.timeOfDay || 'Anytime'} • {task.duration}m</span>
+                                <span className="text-[10px] text-muted-foreground">{task.scheduledTime || task.timeOfDay || 'Anytime'} • {task.duration}m</span>
                               </div>
                             </div>
-                            <Button 
-                              size="sm" 
-                              variant={task.status === 'completed' ? 'default' : 'outline'}
-                              className="rounded-full gap-2 h-8"
-                              onClick={() => updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, task.status === 'completed' ? 'not-started' : 'completed')}
-                            >
-                              {task.status === 'completed' ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
-                              {task.status === 'completed' ? 'Done' : 'Log'}
-                            </Button>
+                            <div className="flex items-center gap-2">
+                              {task.studyToolId && task.status !== 'completed' && (
+                                <Button asChild size="icon" variant="ghost" className="h-8 w-8 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Link href={`/study/session?deckId=${task.studyResourceId}`}>
+                                    <Play className="h-4 w-4 fill-current" />
+                                  </Link>
+                                </Button>
+                              )}
+                              <Button 
+                                size="sm" 
+                                variant={task.status === 'completed' ? 'default' : 'outline'}
+                                className="rounded-full gap-2 h-8"
+                                onClick={() => updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, task.status === 'completed' ? 'not-started' : 'completed')}
+                              >
+                                {task.status === 'completed' ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
+                                {task.status === 'completed' ? 'Done' : 'Log'}
+                              </Button>
+                            </div>
                           </div>
                         ))
                       )}
@@ -352,14 +406,14 @@ export default function CalendarPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {activePlans.length === 0 ? (
+                    {activePlans.length === 0 && todaysTasks.length === 0 ? (
                       <p className="text-xs text-muted-foreground italic">Activate a plan to see upcoming tasks.</p>
                     ) : (
-                      activePlans.flatMap(p => p.activities).slice(0, 3).map(a => (
-                        <div key={a.id} className="flex items-center gap-3 text-xs">
+                      todaysTasks.filter(t => t.status !== 'completed').slice(0, 3).map(a => (
+                        <div key={a.instanceId} className="flex items-center gap-3 text-xs">
                           <Circle className="w-2 h-2 text-primary" />
-                          <span className="font-medium">{a.name}</span>
-                          <span className="text-muted-foreground ml-auto">{a.timeOfDay || 'Next'}</span>
+                          <span className="font-medium truncate max-w-[120px]">{a.name}</span>
+                          <span className="text-muted-foreground ml-auto">{a.scheduledTime || a.timeOfDay || 'Next'}</span>
                         </div>
                       ))
                     )}
@@ -370,6 +424,21 @@ export default function CalendarPage() {
           </div>
         </div>
       </main>
+
+      {selectedDayContent && (
+        <DayDetailsDialog 
+          dayContent={selectedDayContent}
+          isOpen={!!selectedDayContent}
+          onClose={() => setSelectedDayContent(null)}
+          isCompleted={false} // Simplification for MVP
+          onToggleCompletion={() => {}}
+          studyInfo={todaysTasks.find(t => t.studyToolId)? { 
+            toolId: todaysTasks.find(t => t.studyToolId)!.studyToolId!,
+            resourceId: todaysTasks.find(t => t.studyToolId)!.studyResourceId!,
+            status: todaysTasks.find(t => t.studyToolId)!.status
+          } : undefined}
+        />
+      )}
     </>
   );
 }
