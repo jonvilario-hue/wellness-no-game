@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Plus, Archive, Trash2, Edit, MoreVertical, ArchiveRestore, CheckCircle2, Copy, Layers, Rocket } from "lucide-react"
+import { Plus, Archive, Trash2, Edit, MoreVertical, ArchiveRestore, CheckCircle2, Copy, Layers, Rocket, History } from "lucide-react"
 import MilestoneCard from "./MilestoneCard"
 import AddMilestoneDialog from "./AddMilestoneDialog"
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
@@ -29,6 +29,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import EditBlueprintDialog from "./EditBlueprintDialog"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useDashboardSettings } from "@/hooks/use-dashboard-settings"
 
 type BlueprintProjectProps = {
   project: Blueprint;
@@ -58,6 +60,7 @@ export default function BlueprintProject({
   onUpdateMilestoneStatus
 }: BlueprintProjectProps) {
   const { cloneBlueprint } = useBlueprintStore();
+  const { settings } = useDashboardSettings();
 
   const calculateProjectProgress = (proj: Blueprint) => {
     const allTasks = proj.milestones.flatMap(m => m.tasks);
@@ -79,18 +82,35 @@ export default function BlueprintProject({
                     <Badge variant="outline" className="text-[10px] font-black h-5">V{project.versionNumber || 1}</Badge>
                 </div>
                 {project.description && <p className="text-muted-foreground text-sm max-w-2xl">{project.description}</p>}
+                
                 {project.identityGoal && (
-                <div className="text-xs font-medium text-primary mt-2 flex items-center gap-2">
-                    <Badge variant="outline" className="font-bold uppercase tracking-tighter text-[9px] bg-primary/5">Becoming</Badge>
-                    <span className="italic">{project.identityGoal}</span>
-                </div>
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <div className="text-xs font-medium text-primary mt-2 flex items-center gap-2 cursor-help">
+                            <Badge variant="outline" className="font-bold uppercase tracking-tighter text-[9px] bg-primary/5">Becoming</Badge>
+                            <span className="italic">{project.identityGoal}</span>
+                        </div>
+                      </TooltipTrigger>
+                      {settings.assistantMode && <TooltipContent className="max-w-xs">This is who you're growing into through this blueprint. Research shows identity-based goals are more sustainable.</TooltipContent>}
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
-                <div className="flex gap-2 mt-3 flex-wrap">
-                {project.tags.map(tag => (
-                    <Badge key={tag} variant="secondary" className="text-[10px] uppercase font-bold tracking-tight">{tag}</Badge>
-                ))}
-                </div>
+
+                <TooltipProvider>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <div className="flex gap-2 mt-3 flex-wrap">
+                      {project.tags.map(tag => (
+                          <Badge key={tag} variant="secondary" className="text-[10px] uppercase font-bold tracking-tight">{tag}</Badge>
+                      ))}
+                      </div>
+                    </TooltipTrigger>
+                    {settings.assistantMode && <TooltipContent>Labels used to categorize and match relevant strategies from the Vision Library.</TooltipContent>}
+                  </Tooltip>
+                </TooltipProvider>
             </div>
+            
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon"><MoreVertical className="w-4 h-4" /></Button>
@@ -109,15 +129,34 @@ export default function BlueprintProject({
 
                     <DropdownMenuSeparator />
                     
-                    <DropdownMenuItem onClick={() => cloneBlueprint(project.id, {})}>
-                       <Copy className="w-4 h-4 mr-2" /> Clone Blueprint
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => cloneBlueprint(project.id, { asTemplate: true })}>
-                       <Layers className="w-4 h-4 mr-2" /> Save as Template
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => cloneBlueprint(project.id, { asV2: true })}>
-                       <Rocket className="w-4 h-4 mr-2" /> Create V2 Iteration
-                    </DropdownMenuItem>
+                    <TooltipProvider>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <DropdownMenuItem onClick={() => cloneBlueprint(project.id, {})}>
+                             <Copy className="w-4 h-4 mr-2" /> Clone Blueprint
+                          </DropdownMenuItem>
+                        </TooltipTrigger>
+                        {settings.assistantMode && <TooltipContent side="left">Create an exact copy with progress reset to zero.</TooltipContent>}
+                      </Tooltip>
+
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <DropdownMenuItem onClick={() => cloneBlueprint(project.id, { asTemplate: true })}>
+                             <Layers className="w-4 h-4 mr-2" /> Save as Template
+                          </DropdownMenuItem>
+                        </TooltipTrigger>
+                        {settings.assistantMode && <TooltipContent side="left">Save the structure to your Templates library for reuse.</TooltipContent>}
+                      </Tooltip>
+
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <DropdownMenuItem onClick={() => cloneBlueprint(project.id, { asV2: true })}>
+                             <Rocket className="w-4 h-4 mr-2" /> Create V2 Iteration
+                          </DropdownMenuItem>
+                        </TooltipTrigger>
+                        {settings.assistantMode && <TooltipContent side="left">Clone but carry over all reflections into a "Lessons from v1" section.</TooltipContent>}
+                      </Tooltip>
+                    </TooltipProvider>
 
                     <DropdownMenuSeparator />
 
@@ -145,11 +184,20 @@ export default function BlueprintProject({
             </DropdownMenu>
         </div>
         <div className="mt-4 space-y-1">
-            <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground">
-                <span>Blueprint Progress</span>
-                <span>{Math.round(progress)}%</span>
-            </div>
-            <Progress value={progress} className="h-1.5" />
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <div className="space-y-1 cursor-help">
+                    <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground">
+                        <span>Blueprint Progress</span>
+                        <span>{Math.round(progress)}%</span>
+                    </div>
+                    <Progress value={progress} className="h-1.5" />
+                  </div>
+                </TooltipTrigger>
+                {settings.assistantMode && <TooltipContent>Your overall completion percentage, calculated from completed tasks vs total tasks.</TooltipContent>}
+              </Tooltip>
+            </TooltipProvider>
         </div>
       </CardHeader>
 

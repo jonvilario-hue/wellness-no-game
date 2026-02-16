@@ -39,9 +39,12 @@ import PlaybookView from './components/PlaybookView';
 import ScenarioSimulator from './components/ScenarioSimulator';
 import AdviceMatcher from './components/AdviceMatcher';
 import ArchitectureHelp from './components/ArchitectureHelp';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 export default function ArchitecturePage() {
   const { projects, addProject, updateProject, deleteProject, addMilestone, toggleTask, updateMilestoneStatus, addTask, updateTask, deleteTask, updateMilestoneDetails, deleteMilestone } = useBlueprintStore();
+  const { settings } = useDashboardSettings();
   
   const [viewState, setViewState] = useState<'list' | 'select_strategy' | 'create_blueprint'>('list');
   const [selectedStrategy, setSelectedStrategy] = useState<GoalStrategy | null>(null);
@@ -123,20 +126,51 @@ export default function ArchitecturePage() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                   <div className="flex flex-col gap-4 w-full sm:w-auto">
                     <div className="flex items-center gap-2">
-                        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
-                        <TabsList>
-                            <TabsTrigger value="Active">Active</TabsTrigger>
-                            <TabsTrigger value="Completed">Completed</TabsTrigger>
-                            <TabsTrigger value="Archived">Archived</TabsTrigger>
-                        </TabsList>
-                        </Tabs>
-                        <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
-                            <TabsList>
-                                <TabsTrigger value="dashboard"><LayoutDashboard className="w-4 h-4 mr-2"/>Board</TabsTrigger>
-                                <TabsTrigger value="list"><LayoutList className="w-4 h-4 mr-2"/>List</TabsTrigger>
-                                <TabsTrigger value="timeline"><GanttChartSquare className="w-4 h-4 mr-2"/>Gantt</TabsTrigger>
-                            </TabsList>
-                        </Tabs>
+                        <TooltipProvider>
+                          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+                            <Tooltip delayDuration={0}>
+                              <TooltipTrigger asChild>
+                                <TabsList>
+                                    <TabsTrigger value="Active">Active</TabsTrigger>
+                                    <TabsTrigger value="Completed">Completed</TabsTrigger>
+                                    <TabsTrigger value="Archived">Archived</TabsTrigger>
+                                </TabsList>
+                              </TooltipTrigger>
+                              {settings.assistantMode && (
+                                <TooltipContent className="max-w-xs">
+                                  Filter your blueprints by status. Active ones are in progress, Completed ones are finished, and Archived ones are paused or shelved for later.
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          </Tabs>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
+                              <TabsList>
+                                  <Tooltip delayDuration={0}>
+                                    <TooltipTrigger asChild>
+                                      <TabsTrigger value="dashboard"><LayoutDashboard className="w-4 h-4 mr-2"/>Board</TabsTrigger>
+                                    </TooltipTrigger>
+                                    {settings.assistantMode && <TooltipContent>A bird's-eye overview of all active blueprints. See upcoming deadlines, overdue tasks, and weekly priorities at a glance.</TooltipContent>}
+                                  </Tooltip>
+                                  
+                                  <Tooltip delayDuration={0}>
+                                    <TooltipTrigger asChild>
+                                      <TabsTrigger value="list"><LayoutList className="w-4 h-4 mr-2"/>List</TabsTrigger>
+                                    </TooltipTrigger>
+                                    {settings.assistantMode && <TooltipContent>See your blueprints as expandable cards with milestones and tasks listed vertically.</TooltipContent>}
+                                  </Tooltip>
+
+                                  <Tooltip delayDuration={0}>
+                                    <TooltipTrigger asChild>
+                                      <TabsTrigger value="timeline"><GanttChartSquare className="w-4 h-4 mr-2"/>Gantt</TabsTrigger>
+                                    </TooltipTrigger>
+                                    {settings.assistantMode && <TooltipContent className="max-w-xs">See your milestones on a Gantt-style timeline. Dependency arrows show which milestones must finish before others can start. The teal highlighted path is your critical path.</TooltipContent>}
+                                  </Tooltip>
+                              </TabsList>
+                          </Tabs>
+                        </TooltipProvider>
                     </div>
                     
                     {allTags.length > 0 && (
@@ -161,13 +195,28 @@ export default function ArchitecturePage() {
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setIsTemplatesOpen(true)} className="border-primary/20 hover:bg-primary/5">
-                        <Layers className="w-4 h-4 mr-2" /> Templates
-                    </Button>
-                    <Button onClick={handleStartCreation} className="shadow-lg hover:scale-105 transition-transform bg-primary text-primary-foreground">
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Guided Blueprint
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" onClick={() => setIsTemplatesOpen(true)} className="border-primary/20 hover:bg-primary/5">
+                              <Layers className="w-4 h-4 mr-2" /> Templates
+                          </Button>
+                        </TooltipTrigger>
+                        {settings.assistantMode && <TooltipContent className="max-w-xs">Browse pre-built blueprint structures for common goals like launching a business, learning a language, or completing a creative project.</TooltipContent>}
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <Button onClick={handleStartCreation} className="shadow-lg hover:scale-105 transition-transform bg-primary text-primary-foreground">
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Guided Blueprint
+                          </Button>
+                        </TooltipTrigger>
+                        {settings.assistantMode && <TooltipContent className="max-w-xs">Walk through a step-by-step flow to create a new blueprint. You'll define your goal, identity statement, category, and milestones with prompts.</TooltipContent>}
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
               </div>
 
@@ -253,21 +302,48 @@ export default function ArchitecturePage() {
         </Collapsible>
        
        <Tabs defaultValue="blueprints" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
-                <TabsTrigger value="blueprints"><Target className="mr-2 h-4 w-4" />Blueprints</TabsTrigger>
-                <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" />Vision Library</TabsTrigger>
-            </TabsList>
+            <TooltipProvider>
+              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="blueprints"><Target className="mr-2 h-4 w-4" />Blueprints</TabsTrigger>
+                    </TooltipTrigger>
+                    {settings.assistantMode && <TooltipContent>Your long-term goals, broken into milestones and tasks. Each blueprint represents a major project or life direction you're actively building toward.</TooltipContent>}
+                  </Tooltip>
+                  
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" />Vision Library</TabsTrigger>
+                    </TooltipTrigger>
+                    {settings.assistantMode && <TooltipContent>A collection of proven goal-achievement strategies. Each one includes a step-by-step protocol you can learn, practice, and apply.</TooltipContent>}
+                  </Tooltip>
+              </TabsList>
+            </TooltipProvider>
+
             <TabsContent value="blueprints" className="mt-0">
                 {renderContent()}
             </TabsContent>
             <TabsContent value="guides" className="mt-0 space-y-12">
                 <Tabs defaultValue="library">
                   <div className="flex justify-center mb-8">
-                    <TabsList className="grid w-full grid-cols-3 max-w-lg h-auto p-1 bg-muted/50">
-                      <TabsTrigger value="library" className="gap-2"><Book className="w-4 h-4" /> Strategy Library</TabsTrigger>
-                      <TabsTrigger value="playbook" className="gap-2"><Star className="w-4 h-4" /> My Playbook</TabsTrigger>
-                      <TabsTrigger value="advisor" className="gap-2"><BrainCircuit className="w-4 h-4" /> Advisor</TabsTrigger>
-                    </TabsList>
+                    <TooltipProvider>
+                      <TabsList className="grid w-full grid-cols-3 max-w-lg h-auto p-1 bg-muted/50">
+                        <TabsTrigger value="library" className="gap-2"><Book className="w-4 h-4" /> Strategy Library</TabsTrigger>
+                        <Tooltip delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <TabsTrigger value="playbook" className="gap-2"><Star className="w-4 h-4" /> My Playbook</TabsTrigger>
+                          </TooltipTrigger>
+                          {settings.assistantMode && <TooltipContent className="max-w-xs">View only the strategies you've bookmarked as favorites. Tracks usage stats and personal execution notes.</TooltipContent>}
+                        </Tooltip>
+                        
+                        <Tooltip delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <TabsTrigger value="advisor" className="gap-2"><BrainCircuit className="w-4 h-4" /> Advisor</TabsTrigger>
+                          </TooltipTrigger>
+                          {settings.assistantMode && <TooltipContent className="max-w-xs">Get personalized strategy recommendations based on your active blueprints' status and categories.</TooltipContent>}
+                        </Tooltip>
+                      </TabsList>
+                    </TooltipProvider>
                   </div>
                   
                   <TabsContent value="library" className="space-y-12">
