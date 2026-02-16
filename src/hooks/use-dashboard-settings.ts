@@ -16,13 +16,13 @@ const defaultSettings = {
   habitTracker: true,
   moodTracker: true,
   effortTracker: true,
+  assistantMode: true, // New: Controls feature explanations
 };
 
 export type DashboardSettings = typeof defaultSettings;
-export type DashboardComponent = keyof Omit<DashboardSettings, 'habitTracker' | 'moodTracker' | 'effortTracker'>;
-export type TrackerComponent = 'habitTracker' | 'moodTracker' | 'effortTracker';
+export type DashboardComponent = keyof Omit<DashboardSettings, 'habitTracker' | 'moodTracker' | 'effortTracker' | 'assistantMode'>;
 
-const DASHBOARD_SETTINGS_KEY = 'dashboardSettings-v3';
+const DASHBOARD_SETTINGS_KEY = 'dashboardSettings-v4';
 
 export const useDashboardSettings = () => {
   const [settings, setSettings] = useState<DashboardSettings>(defaultSettings);
@@ -33,9 +33,7 @@ export const useDashboardSettings = () => {
       const savedSettingsStr = window.localStorage.getItem(DASHBOARD_SETTINGS_KEY);
       if (savedSettingsStr) {
         const savedSettings = JSON.parse(savedSettingsStr);
-        // Ensure all keys from defaultSettings are present
-        const mergedSettings = { ...defaultSettings, ...savedSettings };
-        setSettings(mergedSettings);
+        setSettings({ ...defaultSettings, ...savedSettings });
       } else {
         setSettings(defaultSettings);
       }
@@ -62,11 +60,7 @@ export const useDashboardSettings = () => {
     });
   }, [settings, saveSettings]);
 
-  const resetSettings = useCallback(() => {
-    saveSettings(defaultSettings);
-  }, [saveSettings]);
-
-  return { settings, toggleSetting, resetSettings, isLoaded };
+  return { settings, toggleSetting, isLoaded };
 };
 
 export const componentLabels: Record<keyof DashboardSettings, string> = {
@@ -82,4 +76,5 @@ export const componentLabels: Record<keyof DashboardSettings, string> = {
   habitTracker: 'Habit Tracker',
   moodTracker: 'Mood Tracker',
   effortTracker: 'Focus Tracker',
+  assistantMode: 'Assistant Mode',
 };

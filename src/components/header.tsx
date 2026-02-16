@@ -1,22 +1,18 @@
+
 'use client';
 
-import { Settings, Clock, Library, Moon } from 'lucide-react';
+import { Settings, Clock, Library, Moon, Lightbulb, LightbulbOff } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { FlaskConical } from 'lucide-react';
 import { DopamineMenu } from './dopamine-menu';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { cn } from '@/lib/utils';
   
 export function Header() {
+  const { settings, toggleSetting } = useDashboardSettings();
+
   return (
     <header className="px-4 sm:px-6 md:px-8 py-2 border-b bg-card">
       <div className="mx-auto max-w-7xl flex items-center justify-between">
@@ -45,6 +41,24 @@ export function Header() {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Sleep Pro</p>
+                  </TooltipContent>
+                </Tooltip>
+                
+                <div className="w-[1px] h-4 bg-border mx-1" />
+
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => toggleSetting('assistantMode')}
+                      className={cn(settings.assistantMode ? "text-primary" : "text-muted-foreground")}
+                    >
+                      {settings.assistantMode ? <Lightbulb className="h-5 w-5" /> : <LightbulbOff className="h-5 w-5" />}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{settings.assistantMode ? 'Disable Assistant Mode' : 'Enable Assistant Mode'}</p>
                   </TooltipContent>
                 </Tooltip>
             </div>

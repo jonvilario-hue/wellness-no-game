@@ -4,8 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { RefreshCw, Smile, Target, ClipboardCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Smile, Target, ClipboardCheck, Lightbulb } from 'lucide-react';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 export function TrackerSettings() {
@@ -14,13 +13,27 @@ export function TrackerSettings() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Trackers</CardTitle>
+                <CardTitle>Trackers & Assistance</CardTitle>
                 <CardDescription>
-                    Enable or disable specific tracking modules within your journal entries and tools.
+                    Enable or disable specific tracking modules and the contextual assistant.
                 </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
+                 <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/10">
+                    <Label htmlFor="assistant-mode-switch" className="flex items-center gap-3 font-medium">
+                        <Lightbulb className="w-5 h-5 text-primary" />
+                        <div>
+                            Assistant Mode
+                            <p className="text-xs text-muted-foreground font-normal">Show "How it works" explanations and tooltips across the app.</p>
+                        </div>
+                    </Label>
+                    <Switch
+                        id="assistant-mode-switch"
+                        checked={settings.assistantMode}
+                        onCheckedChange={() => toggleSetting('assistantMode')}
+                    />
+                </div>
                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                     <Label htmlFor="habit-tracker-switch" className="flex items-center gap-3 font-medium">
                         <ClipboardCheck className="w-5 h-5 text-primary" />

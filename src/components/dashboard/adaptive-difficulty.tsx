@@ -12,28 +12,18 @@ import { chcDomains, type CHCDomain } from '@/types';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { useTheme } from '@/hooks/use-theme';
 import { GrowthDecoration } from '../ui/growth-decoration';
-
-const INSIGHT_KEY = 'adaptiveDifficultyInsightDismissed';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 export function AdaptiveDifficulty() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<AdaptDifficultyOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedFactor, setSelectedFactor] = useState<CHCDomain>('Gf');
-  const [isInsightVisible, setIsInsightVisible] = useState(false);
   const [skillLevel, setSkillLevel] = useState(50);
   const { organicGrowth } = useTheme();
+  const { settings } = useDashboardSettings();
 
   useEffect(() => {
-    const dismissed = localStorage.getItem(INSIGHT_KEY);
-    if (dismissed !== 'true') {
-      setIsInsightVisible(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    // In a real app, you might fetch this data. Here we simulate it.
-    // This pseudo-random generation ensures a consistent score for each domain.
     const keySeed = selectedFactor.charCodeAt(0) + selectedFactor.charCodeAt(1);
     const pseudoRandom = (seed: number) => {
         let x = Math.sin(seed) * 10000;
@@ -57,11 +47,6 @@ export function AdaptiveDifficulty() {
         setError('Failed to get difficulty suggestion. Please try again.');
       }
     });
-  };
-
-  const handleDismissInsight = () => {
-    setIsInsightVisible(false);
-    localStorage.setItem(INSIGHT_KEY, 'true');
   };
 
   return (
@@ -120,7 +105,7 @@ export function AdaptiveDifficulty() {
         )}
         
         {result && (
-          <Alert className="mt-4">
+          <Alert className="mt-4 border-primary/20 bg-primary/5">
             <AlertTitle className="flex items-center gap-2">
               Suggested Difficulty: 
               <span className="font-bold text-primary">{result.adjustedDifficulty}</span>
@@ -131,21 +116,16 @@ export function AdaptiveDifficulty() {
           </Alert>
         )}
 
-        {isInsightVisible && (
-          <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2">
-            <p className="text-sm flex items-start gap-2 pr-6">
-              <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0" />
-              <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This tool automatically uses your skill score to suggest the perfect difficulty. No more guessing!</span>
+        {settings.assistantMode && (
+          <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2 animate-in fade-in slide-in-from-top-1">
+            <p className="text-xs flex items-start gap-2 text-left">
+              <Lightbulb className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+              <span className="text-foreground">
+                <span className="font-bold">How it works:</span> This tool uses procedural thresholding. 
+                Scores below 30 are assigned <strong>Easy</strong>, 30-70 are <strong>Medium</strong>, and 70+ are <strong>Hard</strong>. 
+                The logic ensures you remain in the "Zone of Proximal Development."
+              </span>
             </p>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-1 right-1 h-6 w-6"
-              onClick={handleDismissInsight}
-              aria-label="Dismiss insight"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         )}
       </CardContent>

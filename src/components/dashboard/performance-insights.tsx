@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import { Skeleton } from '../ui/skeleton';
 import { useTheme } from '@/hooks/use-theme';
 import { GrowthDecoration } from '../ui/growth-decoration';
 import { usePerformanceStore } from '@/hooks/use-performance-store';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 const recommendationIcons = {
   weakArea: TrendingUp,
@@ -18,14 +20,12 @@ const recommendationIcons = {
   momentumStarter: Zap,
 };
 
-const INSIGHT_KEY = 'performanceInsightsInsightDismissed';
-
 export function PerformanceInsights() {
   const [recommendation, setRecommendation] = useState<TrainingRecommendationOutput | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [isInsightVisible, setIsInsightVisible] = useState(false);
   const { organicGrowth } = useTheme();
   const { performance } = usePerformanceStore();
+  const { settings } = useDashboardSettings();
 
 
   useEffect(() => {
@@ -38,17 +38,7 @@ export function PerformanceInsights() {
       const result = await getTrainingRecommendationAction(flatPerformanceData);
       setRecommendation(result);
     });
-
-    const dismissed = localStorage.getItem(INSIGHT_KEY);
-    if (dismissed !== 'true') {
-      setIsInsightVisible(true);
-    }
   }, [performance]);
-
-  const handleDismissInsight = () => {
-    setIsInsightVisible(false);
-    localStorage.setItem(INSIGHT_KEY, 'true');
-  };
 
   const renderBody = () => {
     if (isPending || !recommendation) {
@@ -85,30 +75,27 @@ export function PerformanceInsights() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Sparkles className="w-5 h-5 text-primary" />
-          Performance Insights
+          Procedural Insights
         </CardTitle>
         <CardDescription>
-          Personalized tips based on your recent activity.
+          Personalized tips based on your recent activity logs.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4">
         {renderBody()}
 
-        {isInsightVisible && (
-          <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2">
-            <p className="text-sm flex items-start gap-2 pr-6">
-              <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0" />
-              <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This card analyzes your recent activity logs to provide smart suggestions for your next training session.</span>
+        {settings.assistantMode && (
+          <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2 animate-in fade-in slide-in-from-top-1">
+            <p className="text-xs flex items-start gap-2 text-left">
+              <Lightbulb className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+              <span className="text-foreground">
+                <span className="font-bold">Logic Engine:</span> This card uses a deterministic decision tree. 
+                Priority 1: Time of day (AM favors EF). 
+                Priority 2: Momentum (returns after breaks favor strengths). 
+                Priority 3: Growth (lowest score targeted). 
+                <strong>No LLM used.</strong>
+              </span>
             </p>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-1 right-1 h-6 w-6"
-              onClick={handleDismissInsight}
-              aria-label="Dismiss insight"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         )}
       </CardContent>
