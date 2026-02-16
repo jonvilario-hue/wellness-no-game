@@ -1,88 +1,254 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
-import { Calendar as CalendarIcon, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { calendarPlans } from '@/data/calendar-plans';
-import { CalendarPlanCard } from '@/components/calendar/calendar-plan-card';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { presetPlans } from '@/data/preset-calendar-plans';
+import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
+import { Calendar } from '@/components/ui/calendar';
+import { format, isSameDay } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 
-export default function CalendarCataloguePage() {
-    const [isOpen, setIsOpen] = useState(true);
+export default function CalendarPage() {
+  const { activePlanIds, togglePlan, activityInstances, updateActivityStatus, _hasHydrated } = useCalendarPlansStore();
+  const [view, setView] = useState<'month' | 'day'>('month');
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [plansOpen, setPlansOpen] = useState(true);
 
-    useEffect(() => {
-        const savedState = localStorage.getItem('calendar-catalogue-collapsible-state');
-        if (savedState !== null) {
-        setIsOpen(JSON.parse(savedState));
-        }
-    }, []);
+  const activePlans = useMemo(() => {
+    return presetPlans.filter(p => activePlanIds.includes(p.id));
+  }, [activePlanIds]);
 
-    const handleOpenChange = (open: boolean) => {
-        setIsOpen(open);
-        localStorage.setItem('calendar-catalogue-collapsible-state', JSON.stringify(open));
-    };
+  const todaysTasks = useMemo(() => {
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    const instances = activityInstances[dateStr] || [];
+    
+    // For MVP, if no instances exist for active plans on this day, we generate virtual ones
+    const activeTasks = activePlans.flatMap(plan => 
+      plan.activities.map(act => {
+        const existing = instances.find(i => i.activityId === act.id);
+        return {
+          ...act,
+          planName: plan.name,
+          planColor: plan.color,
+          status: existing?.status || 'not-started',
+          instanceId: existing?.id || `v-${plan.id}-${act.id}`
+        };
+      })
+    );
+    return activeTasks;
+  }, [selectedDate, activePlans, activityInstances]);
 
-    return (
-        <>
-            <div className="sticky top-0 z-20">
-                <Header />
-                <PageNav />
+  if (!_hasHydrated) return null;
+
+  return (
+    <>
+      <div className="sticky top-0 z-20">
+        <Header />
+        <PageNav />
+      </div>
+      <MotivationalMessage />
+      <main className="flex-1 p-4 sm:p-6 md:p-8">
+        <div className="mx-auto max-w-7xl space-y-6">
+          
+          <Collapsible open={plansOpen} onOpenChange={setPlansOpen} className="w-full">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <LayoutGrid className="w-5 h-5 text-primary" />
+                Active Plans ({activePlanIds.length})
+              </h2>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  {plansOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </Button>
+              </CollapsibleTrigger>
             </div>
-            <MotivationalMessage />
-            <main className="flex-1 p-4 sm:p-6 md:p-8">
-                <div className="mx-auto max-w-7xl space-y-6">
-                     <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
-                        <div className="flex justify-between items-start">
-                            <div className="flex-grow">
-                                <CollapsibleContent>
-                                    <div className="flex flex-col items-center text-center pb-4">
-                                        <CalendarIcon className="mx-auto h-12 w-12 text-primary mb-2"/>
-                                        <h1 className="text-4xl font-bold font-headline">Calendar Catalogue</h1>
-                                        <p className="text-lg text-muted-foreground">Curated plans to build powerful routines.</p>
-                                    </div>
-                                </CollapsibleContent>
-                            </div>
-                            <CollapsibleTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
-                                    <span className="sr-only">Toggle</span>
-                                </Button>
-                            </CollapsibleTrigger>
-                        </div>
-                    </Collapsible>
-
-                    <Card>
-                        <CardContent className="p-4">
-                             <nav>
-                                <ul className="flex flex-wrap gap-2 justify-center">
-                                    {calendarPlans.map(plan => (
-                                        <li key={plan.id}>
-                                            <a href={`#${plan.id}`}>
-                                                <Button variant="outline" size="sm" className="h-auto py-1 px-3 text-xs font-semibold uppercase tracking-wider">
-                                                    {plan.title.replace(/\s*\(\d+-Day\)/, '')}
-                                                </Button>
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </CardContent>
-                    </Card>
-                    
-                    <div className="space-y-8">
-                        {calendarPlans.map(plan => (
-                           <div key={plan.id} id={plan.id} className="scroll-mt-24">
-                             <CalendarPlanCard plan={plan} />
-                           </div>
-                        ))}
+            <CollapsibleContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
+              {presetPlans.map(plan => (
+                <Card key={plan.id} className={cn("transition-all", activePlanIds.includes(plan.id) && "border-primary bg-primary/5")}>
+                  <CardHeader className="p-4 pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-sm font-bold">{plan.name}</CardTitle>
+                      <Switch 
+                        checked={activePlanIds.includes(plan.id)} 
+                        onCheckedChange={() => togglePlan(plan.id)}
+                      />
                     </div>
+                    <CardDescription className="text-xs line-clamp-2">{plan.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="p-4 pt-0 flex gap-2">
+                    <Badge variant="outline" className="text-[10px] uppercase">{plan.categories[0]}</Badge>
+                    <span className="text-[10px] text-muted-foreground">{plan.activities.length} daily steps</span>
+                  </CardFooter>
+                </Card>
+              ))}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Card className="border-dashed cursor-pointer hover:bg-muted/50 flex flex-col items-center justify-center p-6 text-center">
+                    <Plus className="w-8 h-8 text-muted-foreground mb-2" />
+                    <p className="text-sm font-bold">Create Custom Plan</p>
+                    <p className="text-xs text-muted-foreground">Design your own routine</p>
+                  </Card>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader><DialogTitle>Custom Plan Builder (MVP)</DialogTitle></DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label>Plan Name</Label>
+                      <Input placeholder="e.g. Morning Focus" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Categories</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {['Movement', 'Stillness', 'Nutrition', 'Finance'].map(c => (
+                          <Badge key={c} variant="outline" className="cursor-pointer hover:bg-primary/10">{c}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <Button className="w-full">Initialize Plan</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-2">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <div>
+                  <CardTitle className="text-xl">Monthly Schedule</CardTitle>
+                  <CardDescription>Select a day to view your routine</CardDescription>
                 </div>
-            </main>
-        </>
-      );
+                <div className="flex gap-2">
+                  <Button variant={view === 'month' ? 'default' : 'outline'} size="sm" onClick={() => setView('month')}>Month</Button>
+                  <Button variant={view === 'day' ? 'default' : 'outline'} size="sm" onClick={() => setView('day')}>Day</Button>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0 sm:p-6">
+                {view === 'month' ? (
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(d) => d && setSelectedDate(d)}
+                    className="w-full"
+                    components={{
+                      DayContent: ({ date }) => {
+                        const dateStr = format(date, 'yyyy-MM-dd');
+                        // Simple dot indicators for MVP
+                        const hasActive = activePlanIds.length > 0;
+                        return (
+                          <div className="relative w-full h-full flex items-center justify-center">
+                            <span>{date.getDate()}</span>
+                            {hasActive && (
+                              <div className="absolute bottom-1 flex gap-0.5">
+                                {activePlans.slice(0, 3).map(p => (
+                                  <div key={p.id} className="w-1 h-1 rounded-full" style={{ backgroundColor: p.color }} />
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }
+                    }}
+                  />
+                ) : (
+                  <div className="p-4 space-y-4">
+                    <h3 className="font-bold text-lg">{format(selectedDate, 'PPPP')}</h3>
+                    <div className="space-y-3">
+                      {todaysTasks.length === 0 ? (
+                        <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
+                          No activities scheduled for this day.
+                        </div>
+                      ) : (
+                        todaysTasks.map(task => (
+                          <div key={task.id} className="flex items-center gap-4 p-4 rounded-xl border bg-card shadow-sm">
+                            <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: task.planColor }} />
+                            <div className="flex-grow">
+                              <p className="font-bold text-sm">{task.name}</p>
+                              <div className="flex gap-2 mt-1">
+                                <Badge variant="secondary" className="text-[9px] h-4">{task.category}</Badge>
+                                <span className="text-[10px] text-muted-foreground">{task.timeOfDay || 'Anytime'} • {task.duration}m</span>
+                              </div>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant={task.status === 'completed' ? 'default' : 'outline'}
+                              className="rounded-full gap-2 h-8"
+                              onClick={() => updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, task.status === 'completed' ? 'not-started' : 'completed')}
+                            >
+                              {task.status === 'completed' ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
+                              {task.status === 'completed' ? 'Done' : 'Log'}
+                            </Button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <div className="space-y-6">
+              <Card className="bg-primary/5 border-primary/10">
+                <CardHeader>
+                  <CardTitle className="text-sm font-bold flex items-center gap-2">
+                    <ListChecks className="w-4 h-4 text-primary" />
+                    Plan Performance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="font-medium text-muted-foreground">Overall Adherence</span>
+                      <span className="font-bold">85%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-primary w-[85%]" />
+                    </div>
+                  </div>
+                  <div className="p-3 bg-background rounded-lg border text-[11px] leading-relaxed">
+                    <p><b>Analysis:</b> You're highly consistent with <b>Movement</b> (92%) but missing <b>Finance</b> check-ins (40%) this week.</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm font-bold">Upcoming</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {activePlans.length === 0 ? (
+                      <p className="text-xs text-muted-foreground italic">Activate a plan to see upcoming tasks.</p>
+                    ) : (
+                      activePlans.flatMap(p => p.activities).slice(0, 3).map(a => (
+                        <div key={a.id} className="flex items-center gap-3 text-xs">
+                          <Circle className="w-2 h-2 text-primary" />
+                          <span className="font-medium">{a.name}</span>
+                          <span className="text-muted-foreground ml-auto">{a.timeOfDay || 'Next'}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </main>
+    </>
+  );
 }

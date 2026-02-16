@@ -2,10 +2,11 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { PlusCircle, HeartPulse, Waves, SlidersHorizontal } from "lucide-react";
+import { PlusCircle, HeartPulse, Waves, SlidersHorizontal, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useWellnessData } from "@/hooks/use-wellness-data";
+import { useCalendarPlansStore } from "@/hooks/use-calendar-plans-store";
 import { movementExercises, mindfulnessPractices } from "@/data/exercises";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,7 @@ export function QuickLogBar() {
   const [postCalm, setPostCalm] = useState("7");
 
   const { addMovementLog, addStillnessLog } = useWellnessData();
+  const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
 
   const handleOpen = (t: 'movement' | 'stillness') => {
@@ -46,6 +48,7 @@ export function QuickLogBar() {
         timestamp: new Date().toISOString(),
         difficulty
       });
+      syncFromTracker('Movement', item.name);
     } else {
       addStillnessLog({
         techniqueId: item.id,
@@ -55,6 +58,7 @@ export function QuickLogBar() {
         preStress: parseInt(preStress),
         postCalm: parseInt(postCalm)
       });
+      syncFromTracker('Stillness', item.name);
     }
 
     toast({ title: "✅ Practice Logged!", variant: 'success' });
