@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -10,7 +9,7 @@ import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
 import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Info, InfoIcon } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Info, InfoIcon, Lightbulb } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -21,10 +20,12 @@ import { QuickLogBar } from '@/components/wellness/QuickLogBar';
 import { WellnessRecommendations } from '@/components/wellness/WellnessRecommendations';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 export default function ExercisesPage() {
   const [isOpen, setIsOpen] = useState(true);
   const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs } = useWellnessData();
+  const { settings } = useDashboardSettings();
 
   useEffect(() => {
     const savedState = localStorage.getItem('health-check-collapsible-state');
@@ -157,7 +158,7 @@ export default function ExercisesPage() {
                   </div>
                 </Collapsible>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div className="flex flex-col items-center gap-4">
                     <div className={cn(
                         "flex items-center gap-3 px-4 py-2 rounded-full border transition-all",
                         lowEnergyMode ? "bg-amber-500/10 border-amber-500/30" : "bg-muted/50 border-transparent"
@@ -172,6 +173,20 @@ export default function ExercisesPage() {
                             onCheckedChange={setLowEnergyMode}
                         />
                     </div>
+                    
+                    {settings.assistantMode && (
+                        <div className="max-w-md p-3 bg-primary/10 rounded-lg text-center relative animate-in fade-in slide-in-from-top-1">
+                            <p className="text-xs flex items-start gap-2 text-left">
+                                <Lightbulb className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                                <span className="text-foreground">
+                                    <span className="font-bold">MVD Logic (Minimum Viable Day):</span> This mode prevents "all-or-nothing" thinking. 
+                                    It collapses complex tracking into a single streak-saver question. 
+                                    <strong>Procedural Rule:</strong> Completing an MVD question satisfies the daily requirement for your Wellness Streak.
+                                </span>
+                            </p>
+                        </div>
+                    )}
+
                     {!lowEnergyMode && <RoutineBuilderModal />}
                 </div>
             </div>
