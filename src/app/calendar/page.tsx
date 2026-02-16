@@ -15,7 +15,7 @@ import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -30,6 +30,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import type { PlanCategory } from '@/types/calendar-plans';
 
 export default function CalendarPage() {
   const { 
@@ -40,13 +42,20 @@ export default function CalendarPage() {
     deletePlan, 
     resetDefaults, 
     activityInstances, 
-    updateActivityStatus, 
+    updateActivityStatus,
+    addCustomPlan,
     _hasHydrated 
   } = useCalendarPlansStore();
   
   const [view, setView] = useState<'month' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [plansOpen, setPlansOpen] = useState(true);
+  const [isBuilderOpen, setIsBuilderOpen] = useState(false);
+
+  // Form State for Custom Plan
+  const [newPlanName, setNewPlanName] = useState('');
+  const [newPlanDesc, setNewPlanDesc] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<PlanCategory[]>([]);
 
   const availablePlans = useMemo(() => {
     const presets = presetPlans.filter(p => !deletedPresetIds.includes(p.id));
@@ -76,6 +85,35 @@ export default function CalendarPage() {
     );
     return activeTasks;
   }, [selectedDate, activePlans, activityInstances]);
+
+  const handleInitializePlan = () => {
+    if (!newPlanName.trim()) return;
+
+    addCustomPlan({
+      id: `custom-${Date.now()}`,
+      name: newPlanName,
+      description: newPlanDesc || "Personalized wellness protocol.",
+      isPreset: false,
+      isActive: true,
+      durationType: 'ongoing',
+      startDate: new Date().toISOString(),
+      categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
+      color: `hsl(${Math.floor(Math.random() * 360)} 70% 50%)`,
+      activities: [] // Activities can be added in Step 3 of the full wizard
+    });
+
+    // Reset Form
+    setNewPlanName('');
+    setNewPlanDesc('');
+    setSelectedCategories([]);
+    setIsBuilderOpen(false);
+  };
+
+  const toggleCategory = (cat: PlanCategory) => {
+    setSelectedCategories(prev => 
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
+  };
 
   if (!_hasHydrated) return null;
 
@@ -151,7 +189,7 @@ export default function CalendarPage() {
                   </CardFooter>
                 </Card>
               ))}
-              <Dialog>
+              <Dialog open={isBuilderOpen} onOpenChange={setIsBuilderOpen}>
                 <DialogTrigger asChild>
                   <Card className="border-dashed cursor-pointer hover:bg-muted/50 flex flex-col items-center justify-center p-6 text-center h-full min-h-[120px]">
                     <Plus className="w-8 h-8 text-muted-foreground mb-2" />
@@ -160,22 +198,51 @@ export default function CalendarPage() {
                   </Card>
                 </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader><DialogTitle>Custom Plan Builder (MVP)</DialogTitle></DialogHeader>
+                  <DialogHeader><DialogTitle>Custom Plan Builder</DialogTitle></DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label>Plan Name</Label>
-                      <Input placeholder="e.g. Morning Focus" />
+                      <Label htmlFor="plan-name">Plan Name</Label>
+                      <Input 
+                        id="plan-name"
+                        placeholder="e.g. Morning Focus" 
+                        value={newPlanName}
+                        onChange={e => setNewPlanName(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="plan-desc">Description (Optional)</Label>
+                      <Input 
+                        id="plan-desc"
+                        placeholder="Purpose of this protocol..." 
+                        value={newPlanDesc}
+                        onChange={e => setNewPlanDesc(e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label>Categories</Label>
                       <div className="flex flex-wrap gap-2">
-                        {['Movement', 'Stillness', 'Nutrition', 'Finance'].map(c => (
-                          <Badge key={c} variant="outline" className="cursor-pointer hover:bg-primary/10">{c}</Badge>
+                        {(['Movement', 'Stillness', 'Nutrition', 'Finance', 'Study/Learning'] as PlanCategory[]).map(c => (
+                          <Badge 
+                            key={c} 
+                            variant={selectedCategories.includes(c) ? 'default' : 'outline'} 
+                            className="cursor-pointer hover:bg-primary/10 transition-colors"
+                            onClick={() => toggleCategory(c)}
+                          >
+                            {c}
+                          </Badge>
                         ))}
                       </div>
                     </div>
-                    <Button className="w-full">Initialize Plan</Button>
                   </div>
+                  <DialogFooter>
+                    <Button 
+                      className="w-full" 
+                      disabled={!newPlanName.trim()}
+                      onClick={handleInitializePlan}
+                    >
+                      Initialize Plan
+                    </Button>
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </CollapsibleContent>
