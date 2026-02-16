@@ -14,13 +14,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Brain, Layers, HelpCircle, PenTool, TrendingUp, Sparkles, 
   BookOpen, GraduationCap, ChevronRight, Zap, Inbox, BarChart3,
-  ChevronUp, ChevronDown, Target
+  ChevronUp, ChevronDown, Target, ShieldAlert, History
 } from 'lucide-react';
 import Link from 'next/link';
 import { VisualPairingTool } from '@/components/study/visual-pairing-tool';
 import { ForgettingCurveVisualizer } from '@/components/study/forgetting-curve-tool';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { FlashcardDecks } from '@/components/flashcards/flashcard-decks';
+import { 
+  ActiveRecallGuide, 
+  SpacedRepetitionGuide, 
+  CornellNotesGuide, 
+  InterleavingGuide, 
+  SmartGoalSettingGuide, 
+  FeynmanTechniqueGuide, 
+  ExamPreparationGuide, 
+  EffectiveMindMappingGuide, 
+  ActiveReadingStrategiesGuide, 
+  TimeManagementGuide 
+} from '@/components/study/guides';
+import { SelfQuizCreator, DistractionLog } from '@/components/study/tools';
 
 export default function ScholarHub() {
   const { sessions, visualPairs } = useScholarStore();
@@ -49,6 +62,14 @@ export default function ScholarHub() {
       link: '#decks'
     },
     {
+      id: 'quiz',
+      title: 'Self-Quiz Creator',
+      desc: 'Generate procedural quizzes from your notes.',
+      icon: HelpCircle,
+      stat: 'Interactive Prep',
+      link: '#quiz'
+    },
+    {
       id: 'visual',
       title: 'Dual Coding',
       desc: 'Pair text with sketches for memory.',
@@ -63,23 +84,7 @@ export default function ScholarHub() {
       icon: TrendingUp,
       stat: 'Predictive Map',
       link: '#curve'
-    },
-    {
-      id: 'insights',
-      title: 'Study Insights',
-      desc: 'Track focus and tool usage.',
-      icon: BarChart3,
-      stat: `${sessions.length} Sessions`,
-      link: '#insights'
     }
-  ];
-
-  const guideCards = [
-    { id: 'leitner', title: 'Leitner System', desc: 'Organizational flashcard method.' },
-    { id: 'interrogation', title: 'Elaborative Interrogation', desc: 'Ask why & how questions.' },
-    { id: 'dual-coding', title: 'Dual Coding', desc: 'Verbal + Visual integration.' },
-    { id: 'retrieval', title: 'Retrieval Practice', desc: 'Active recall vs. reading.' },
-    { id: 'explanation', title: 'Self-Explanation', desc: 'Step-by-step reasoning.' }
   ];
 
   const aggregateStats = useMemo(() => {
@@ -187,10 +192,15 @@ export default function ScholarHub() {
                   <FlashcardDecks />
                 </section>
 
+                <section id="quiz" className="scroll-mt-24 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <SelfQuizCreator />
+                  <DistractionLog />
+                </section>
+
                 <section id="visual" className="scroll-mt-24">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="h-10 w-1 bg-primary rounded-full" />
-                    <h2 className="text-2xl font-black tracking-tight">Visual Pairing Tool</h2>
+                    <h2 className="text-2xl font-black tracking-tight uppercase">Visual Pairing Tool</h2>
                   </div>
                   <VisualPairingTool />
                 </section>
@@ -198,30 +208,24 @@ export default function ScholarHub() {
                 <section id="curve" className="scroll-mt-24">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="h-10 w-1 bg-primary rounded-full" />
-                    <h2 className="text-2xl font-black tracking-tight">Forgetting Curve Visualizer</h2>
+                    <h2 className="text-2xl font-black tracking-tight uppercase">Forgetting Curve Visualizer</h2>
                   </div>
                   <ForgettingCurveVisualizer />
                 </section>
               </div>
             </TabsContent>
 
-            <TabsContent value="guides" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {guideCards.map(guide => (
-                <Card key={guide.id} className="hover:border-primary/30 transition-all flex flex-col h-full">
-                  <CardHeader>
-                    <CardTitle>{guide.title}</CardTitle>
-                    <CardDescription>{guide.desc}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <div className="p-4 bg-muted/30 rounded-lg text-xs italic text-muted-foreground">
-                      Evidence-backed learning strategy used by top performers.
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button className="w-full" variant="outline">Read Strategy Guide</Button>
-                  </CardFooter>
-                </Card>
-              ))}
+            <TabsContent value="guides" className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ActiveRecallGuide />
+              <SpacedRepetitionGuide />
+              <CornellNotesGuide />
+              <FeynmanTechniqueGuide />
+              <InterleavingGuide />
+              <EffectiveMindMappingGuide />
+              <SmartGoalSettingGuide />
+              <ActiveReadingStrategiesGuide />
+              <TimeManagementGuide />
+              <ExamPreparationGuide />
             </TabsContent>
           </Tabs>
         </div>
