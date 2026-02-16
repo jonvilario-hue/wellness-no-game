@@ -5,6 +5,8 @@ import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { SettingsContent } from './settings-content';
 
+export const dynamic = 'force-dynamic';
+
 export default function SettingsPage() {
     return (
         <>
