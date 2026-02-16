@@ -4,40 +4,55 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Smile, Target, ClipboardCheck, Lightbulb, RefreshCcw, Download, Upload, ShieldAlert, Database } from 'lucide-react';
+import { 
+  Smile, 
+  Target, 
+  ClipboardCheck, 
+  Lightbulb, 
+  RefreshCcw, 
+  Download, 
+  Upload, 
+  ShieldAlert, 
+  Database,
+  History,
+  Trash2,
+  Undo2,
+  Clock
+} from 'lucide-react';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { Button } from '../ui/button';
 import { useJournal } from '@/hooks/use-journal';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
-
-const STORAGE_KEYS = [
-  'blueprint-store-local-v1',
-  'calendar-plans-storage-v3',
-  'flashcard-storage-v3',
-  'srs-master-storage-v1',
-  'journal-storage-v2',
-  'wellness-data-storage-v2',
-  'alarm-storage',
-  'dashboard-settings-storage-v6',
-  'motivation-storage',
-  'cognitive-performance-storage',
-  'playbook-storage-v2',
-  'pomodoro-storage',
-  'sleep-pro-storage',
-  'stats-storage-v2',
-  'library-storage',
-  'polymath-lab-ui-settings',
-  'calendar-completion-tracker',
-  'focusBuilderState',
-  'trainingFocus',
-];
+import { useSnapshotStore, ALL_STORAGE_KEYS } from '@/hooks/use-snapshot-store';
+import { Input } from '../ui/input';
+import { format } from 'date-fns';
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle, 
+  AlertDialogTrigger 
+} from '../ui/alert-dialog';
 
 export function TrackerSettings() {
     const { settings, toggleSetting } = useDashboardSettings();
     const { migrateEntries } = useJournal();
     const { toast } = useToast();
     const [storageUsage, setStorageUsage] = useState<string>('Checking...');
+    
+    const { 
+      snapshots, 
+      maxSnapshots, 
+      setMaxSnapshots, 
+      createSnapshot, 
+      restoreSnapshot, 
+      deleteSnapshot 
+    } = useSnapshotStore();
 
     useEffect(() => {
         if (navigator.storage && navigator.storage.estimate) {
@@ -61,7 +76,7 @@ export function TrackerSettings() {
 
     const handleExport = () => {
         const data: Record<string, string | null> = {};
-        STORAGE_KEYS.forEach(key => {
+        ALL_STORAGE_KEYS.forEach(key => {
             data[key] = localStorage.getItem(key);
         });
         
@@ -87,11 +102,9 @@ export function TrackerSettings() {
             try {
                 const data = JSON.parse(event.target?.result as string);
                 
-                // Safety check: ensure it looks like a valid backup
                 const keys = Object.keys(data);
                 if (keys.length === 0) throw new Error("Empty backup file");
 
-                // Write to localStorage
                 Object.entries(data).forEach(([key, value]) => {
                     if (typeof value === 'string') {
                         localStorage.setItem(key, value);
@@ -99,8 +112,6 @@ export function TrackerSettings() {
                 });
 
                 toast({ title: "Import Successful", description: "Data restored. The application will now reload.", variant: "success" });
-                
-                // Force reload to re-hydrate all stores with new data
                 setTimeout(() => window.location.reload(), 2000);
             } catch (err) {
                 console.error("Import error:", err);
@@ -183,17 +194,101 @@ export function TrackerSettings() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Data Maintenance</CardTitle>
-                    <CardDescription>Manage your local data, backups, and structural integrity.</CardDescription>
+                    <CardTitle className="flex items-center gap-2">
+                      <History className="w-5 h-5 text-primary" />
+                      Rolling Snapshots
+                    </CardTitle>
+                    <CardDescription>Automated local backups. The system keeps a weekly cycle of your data.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="flex items-center justify-between p-4 bg-primary/5 rounded-xl border border-primary/10">
+                      <div className="space-y-1">
+                        <Label className="text-sm font-bold">Snapshot Limit</Label>
+                        <p className="text-xs text-muted-foreground">Number of historical versions to keep before deleting the oldest.</p>
+                      </div>
+                      <div className="flex items-center gap-3 w-32">
+                        <Input 
+                          type="number" 
+                          value={maxSnapshots} 
+                          onChange={e => setMaxSnapshots(parseInt(e.target.value) || 1)} 
+                          className="text-center font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center px-1">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Historical Timestamps</h4>
+                        <Button variant="ghost" size="sm" onClick={() => createSnapshot()} className="h-7 text-[10px] font-bold uppercase tracking-tight">
+                          <PlusCircle className="w-3 h-3 mr-1.5" /> Manual Snapshot
+                        </Button>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        {snapshots.length === 0 ? (
+                          <div className="py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-sm">
+                            No snapshots recorded yet.
+                          </div>
+                        ) : (
+                          snapshots.map(snapshot => (
+                            <div key={snapshot.id} className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/30 transition-all group">
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 bg-muted rounded-md"><Clock className="w-4 h-4 text-muted-foreground" /></div>
+                                <div>
+                                  <p className="text-sm font-bold">{snapshot.label}</p>
+                                  <p className="text-[10px] text-muted-foreground uppercase font-medium">{format(new Date(snapshot.timestamp), 'PPP p')}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-primary font-bold">
+                                      <Undo2 className="w-3.5 h-3.5" /> Restore
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Restore this snapshot?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Your current data will be replaced with the state from {format(new Date(snapshot.timestamp), 'PPP p')}. The app will reload automatically.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => restoreSnapshot(snapshot.id)}>Confirm Restore</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                  onClick={() => deleteSnapshot(snapshot.id)}
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Data Portability</CardTitle>
+                    <CardDescription>Download your entire history as a JSON file for manual backup or transfer.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center justify-between p-3 rounded-lg border border-dashed bg-primary/[0.02]">
                         <div className="space-y-1">
                             <Label className="text-sm font-bold flex items-center gap-2">
                                 <Database className="w-4 h-4 text-primary" />
-                                Data Portability (Backup & Restore)
+                                Master Backup
                             </Label>
-                            <p className="text-xs text-muted-foreground">Download your entire history as a JSON file to use on another device.</p>
+                            <p className="text-xs text-muted-foreground">Download all local data into a single portable file.</p>
                         </div>
                         <div className="flex gap-2">
                             <Button variant="outline" size="sm" onClick={handleExport} className="h-9 gap-2">

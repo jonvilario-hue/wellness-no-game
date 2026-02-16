@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/hooks/use-theme';
 import { TrainingFocusProvider } from '@/hooks/use-training-focus';
 import { TrainingOverrideProvider } from '@/hooks/use-training-override.tsx';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { SnapshotManager } from '@/components/snapshot-manager';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,6 +31,7 @@ export default function RootLayout({
           <TooltipProvider>
             <TrainingFocusProvider>
               <TrainingOverrideProvider>
+                <SnapshotManager />
                 {children}
                 <Toaster />
               </TrainingOverrideProvider>

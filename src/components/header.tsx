@@ -9,9 +9,29 @@ import { FlaskConical } from 'lucide-react';
 import { DopamineMenu } from './dopamine-menu';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
   
 export function Header() {
   const { settings, toggleSetting } = useDashboardSettings();
+  const [mounted, setMounted] = useState(false);
+
+  // Fix for Radix UI hydration mismatches with dynamic IDs
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return (
+    <header className="px-4 sm:px-6 md:px-8 py-2 border-b bg-card">
+      <div className="mx-auto max-w-7xl flex items-center justify-between h-10">
+        <div className="flex-1" />
+        <div className="flex items-center gap-2">
+             <FlaskConical className="h-7 w-7 text-primary" />
+             <h1 className="text-xl font-bold text-foreground tracking-tight">Polymath Lab</h1>
+        </div>
+        <div className="flex-1" />
+      </div>
+    </header>
+  );
 
   return (
     <header className="px-4 sm:px-6 md:px-8 py-2 border-b bg-card">
