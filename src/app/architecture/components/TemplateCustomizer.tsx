@@ -7,11 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, Zap, CheckCircle2, Info, Rocket, Shield, Users } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Zap, CheckCircle2, Rocket, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type TemplateCustomizerProps = {
@@ -26,7 +24,6 @@ export default function TemplateCustomizer({ template, onCancel, onComplete }: T
     timeline: 'sprint',
     intensity: 'committed',
     skillLevel: 'intermediate',
-    learningStyle: template.category === 'Academic' ? 'theoryFirst' : undefined,
     accountability: 'solo',
   });
 
@@ -59,10 +56,7 @@ export default function TemplateCustomizer({ template, onCancel, onComplete }: T
                   <span className={cn(settings.timeline === 'lifelong' && "text-primary")}>Lifelong</span>
                 </div>
                 <p className="text-xs italic text-muted-foreground text-center">
-                  {settings.timeline === 'ultraSprint' ? "Compresses the goal into half the standard time with high task density." :
-                   settings.timeline === 'sprint' ? "Standard pace recommended for most balanced growth." :
-                   settings.timeline === 'marathon' ? "Extended timeline with more rest and deeper dives into each phase." :
-                   "A cyclical, recurring framework for ongoing improvement."}
+                  {template.variations.timeline[settings.timeline].description}
                 </p>
               </div>
             </div>
@@ -79,17 +73,13 @@ export default function TemplateCustomizer({ template, onCancel, onComplete }: T
                   onValueChange={(v) => setSettings({ ...settings, intensity: v as any })}
                   className="space-y-2"
                 >
-                  {[
-                    { id: 'hobby', label: 'Hobbyist', desc: 'Relaxed schedule, optional reflections.' },
-                    { id: 'committed', label: 'Committed', desc: 'Standard pace, regular tracking.' },
-                    { id: 'professional', label: 'Professional', desc: 'High stakes, contingency planning added.' },
-                  ].map(opt => (
-                    <Label key={opt.id} className={cn("flex flex-col p-3 border rounded-xl cursor-pointer hover:bg-muted/50", settings.intensity === opt.id && "border-primary bg-primary/5")}>
+                  {(['hobby', 'committed', 'professional'] as const).map(id => (
+                    <Label key={id} className={cn("flex flex-col p-3 border rounded-xl cursor-pointer hover:bg-muted/50", settings.intensity === id && "border-primary bg-primary/5")}>
                       <div className="flex items-center gap-2">
-                        <RadioGroupItem value={opt.id} id={opt.id} />
-                        <span className="font-bold">{opt.label}</span>
+                        <RadioGroupItem value={id} id={id} />
+                        <span className="font-bold">{template.variations.intensity[id].label}</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground ml-6">{opt.desc}</span>
+                      <span className="text-[10px] text-muted-foreground ml-6">{template.variations.intensity[id].description}</span>
                     </Label>
                   ))}
                 </RadioGroup>
@@ -102,17 +92,13 @@ export default function TemplateCustomizer({ template, onCancel, onComplete }: T
                   onValueChange={(v) => setSettings({ ...settings, skillLevel: v as any })}
                   className="space-y-2"
                 >
-                  {[
-                    { id: 'beginner', label: 'Complete Beginner', desc: 'Adds foundational milestones and fine-grained tasks.' },
-                    { id: 'intermediate', label: 'Intermediate', desc: 'Standard task granularity.' },
-                    { id: 'advanced', label: 'Advanced', desc: 'Removes intros, adds optimization cycles.' },
-                  ].map(opt => (
-                    <Label key={opt.id} className={cn("flex flex-col p-3 border rounded-xl cursor-pointer hover:bg-muted/50", settings.skillLevel === opt.id && "border-primary bg-primary/5")}>
+                  {(['beginner', 'intermediate', 'advanced'] as const).map(id => (
+                    <Label key={id} className={cn("flex flex-col p-3 border rounded-xl cursor-pointer hover:bg-muted/50", settings.skillLevel === id && "border-primary bg-primary/5")}>
                       <div className="flex items-center gap-2">
-                        <RadioGroupItem value={opt.id} id={opt.id} />
-                        <span className="font-bold">{opt.label}</span>
+                        <RadioGroupItem value={id} id={id} />
+                        <span className="font-bold">{template.variations.skillLevel[id].label}</span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground ml-6">{opt.desc}</span>
+                      <span className="text-[10px] text-muted-foreground ml-6">{template.variations.skillLevel[id].description}</span>
                     </Label>
                   ))}
                 </RadioGroup>
@@ -150,7 +136,7 @@ export default function TemplateCustomizer({ template, onCancel, onComplete }: T
               <CheckCircle2 className="w-12 h-12 text-primary mx-auto" />
               <div>
                 <h3 className="text-xl font-bold">Architecture Ready</h3>
-                <p className="text-sm text-muted-foreground">Your adaptive blueprint has been configured with {template.milestones.length + (settings.skillLevel === 'beginner' ? 1 : 0)} checkpoints.</p>
+                <p className="text-sm text-muted-foreground">Your adaptive blueprint has been configured.</p>
               </div>
               <div className="flex flex-wrap justify-center gap-2">
                 <Badge variant="secondary" className="uppercase text-[9px]">{settings.timeline}</Badge>
@@ -165,7 +151,7 @@ export default function TemplateCustomizer({ template, onCancel, onComplete }: T
   };
 
   return (
-    <Card className="max-w-3xl mx-auto border-primary/20 shadow-2xl overflow-hidden bg-background">
+    <Card className="max-w-3xl mx-auto border-none shadow-none overflow-hidden bg-background">
       <div className="h-1.5 w-full bg-muted">
         <div className="h-full bg-primary transition-all duration-500" style={{ width: `${(step / totalSteps) * 100}%` }} />
       </div>
@@ -173,7 +159,7 @@ export default function TemplateCustomizer({ template, onCancel, onComplete }: T
         <div className="flex justify-between items-start">
           <div>
             <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-1 block">Step {step} of {totalSteps}</span>
-            <CardTitle className="text-2xl font-black uppercase tracking-tighter">Customize: {template.name}</CardTitle>
+            <CardTitle className="text-2xl font-black uppercase tracking-tighter">Customize: {template.title}</CardTitle>
             <CardDescription className="max-w-md">Fine-tune the architecture to match your current capacity.</CardDescription>
           </div>
           <Badge variant="outline" className="border-primary/20 font-black">{template.category}</Badge>
