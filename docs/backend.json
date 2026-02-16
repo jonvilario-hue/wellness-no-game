@@ -1,0 +1,66 @@
+
+{
+  "entities": {
+    "FinanceTransaction": {
+      "title": "Finance Transaction",
+      "description": "A record of an income or expense event.",
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "category": { "type": "string" },
+        "merchant": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "note": { "type": "string" },
+        "moodTag": { "type": "string" },
+        "paymentMethod": { "type": "string" }
+      },
+      "required": ["amount", "type", "category", "date"]
+    },
+    "FinanceGoal": {
+      "title": "Financial Goal",
+      "description": "A specific savings or debt payoff target.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "targetAmount": { "type": "number" },
+        "currentAmount": { "type": "number" },
+        "targetDate": { "type": "string", "format": "date" },
+        "type": { "type": "string", "enum": ["savings", "debt"] }
+      },
+      "required": ["title", "targetAmount", "targetDate"]
+    },
+    "NutritionEntry": {
+      "title": "Nutrition Entry",
+      "description": "A record of food or drink consumption.",
+      "type": "object",
+      "properties": {
+        "mealType": { "type": "string", "enum": ["Breakfast", "Lunch", "Dinner", "Snacks"] },
+        "items": { "type": "array", "items": { "type": "string" } },
+        "calories": { "type": "number" },
+        "protein": { "type": "number" },
+        "carbs": { "type": "number" },
+        "fat": { "type": "number" },
+        "date": { "type": "string", "format": "date" }
+      },
+      "required": ["mealType", "date"]
+    }
+  },
+  "auth": {
+    "providers": ["google.com", "password"]
+  },
+  "firestore": {
+    "/users/{userId}/financeTransactions/{txId}": {
+      "schema": "#/entities/FinanceTransaction",
+      "description": "Individual financial records."
+    },
+    "/users/{userId}/financeGoals/{goalId}": {
+      "schema": "#/entities/FinanceGoal",
+      "description": "User defined financial targets."
+    },
+    "/users/{userId}/nutritionEntries/{entryId}": {
+      "schema": "#/entities/NutritionEntry",
+      "description": "Food logs for dietary tracking."
+    }
+  }
+}

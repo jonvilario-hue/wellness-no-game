@@ -1,9 +1,13 @@
 
-import { Dumbbell, StretchHorizontal, Zap, Sunrise, Wind, Brain, Shield, HeartHandshake, type LucideIcon } from "lucide-react";
+import { 
+    Dumbbell, StretchHorizontal, Zap, Sunrise, Wind, 
+    Brain, Shield, HeartHandshake, type LucideIcon,
+    Wallet, Utensils, TrendingUp, Apple
+} from "lucide-react";
 import type { ExerciseCategory, MindfulnessCategory } from "./exercises";
 
 export type WellnessCategoryDetails = {
-    title: ExerciseCategory | MindfulnessCategory;
+    title: string;
     icon: LucideIcon;
     purpose: string;
     useWhen: string[];
@@ -15,33 +19,33 @@ export const movementCategoryDetails: Record<ExerciseCategory, WellnessCategoryD
     'Stretching': {
         title: 'Stretching',
         icon: StretchHorizontal,
-        purpose: 'Restore ease of movement in areas of tension from sitting, stress, or inactivity. Helps improve joint range of motion and reduce pain or stiffness.',
-        useWhen: ['After long work sessions', 'First thing in the morning', 'Before/after workouts'],
-        includes: ['Neck & Shoulder Release', 'Hip Openers', 'Thoracic Spine Rotations'],
+        purpose: 'Restore ease of movement in areas of tension from sitting, stress, or inactivity.',
+        useWhen: ['After long work sessions', 'First thing in the morning'],
+        includes: ['Neck & Shoulder Release', 'Hip Openers'],
         tagline: 'Loosen up. Move freely.'
     },
     'Strength': {
         title: 'Strength',
         icon: Dumbbell,
-        purpose: 'Build support for your daily posture, balance, and energy. Low-impact movements that strengthen without strain.',
-        useWhen: ['Recovering from fatigue', 'Wanting sustainable strength', 'Fixing imbalances'],
-        includes: ['Wall Push-ups', 'Single-Leg Balance', 'Core Awakening'],
+        purpose: 'Build support for your daily posture, balance, and energy.',
+        useWhen: ['Recovering from fatigue', 'Sustainable strength'],
+        includes: ['Wall Push-ups', 'Core Awakening'],
         tagline: 'Build a better base.'
     },
     'Energizer': {
         title: 'Energizer',
         icon: Zap,
-        purpose: 'Reboot your brain and body in under 2 minutes. Combines light cardio and nervous system stimulation.',
-        useWhen: ['Feeling sluggish or foggy', 'Mid-afternoon crash', 'Pre-meeting or creative session'],
-        includes: ['1-Min High Knees', 'Shadow Boxing', 'Breath & Squat Pulses'],
+        purpose: 'Reboot your brain and body in under 2 minutes.',
+        useWhen: ['Feeling sluggish', 'Mid-afternoon crash'],
+        includes: ['1-Min High Knees', 'Shadow Boxing'],
         tagline: 'Get fired up—fast.'
     },
     'Wakeup & Wind-Down': {
         title: 'Wakeup & Wind-Down',
         icon: Sunrise,
-        purpose: 'Regulate your circadian rhythm with slow, breath-guided movement. Ease into or out of the day with intentional mobility.',
-        useWhen: ['Starting your morning', 'Preparing for sleep', 'Transitioning out of stress'],
-        includes: ['Morning Mobility Flow', 'Pre-Bedtime Stretch', 'Parasympathetic Breath Movement'],
+        purpose: 'Regulate your circadian rhythm with slow, breath-guided movement.',
+        useWhen: ['Starting your morning', 'Preparing for sleep'],
+        includes: ['Morning Mobility Flow', 'Pre-Bedtime Stretch'],
         tagline: 'Begin and end with presence.'
     }
 };
@@ -50,33 +54,55 @@ export const stillnessCategoryDetails: Record<MindfulnessCategory, WellnessCateg
     'Breathwork': {
         title: 'Breathwork',
         icon: Wind,
-        purpose: 'Train your breath to influence your nervous system. Calm down, focus up, or regulate emotions on command.',
-        useWhen: ['Feeling anxious or overwhelmed', 'Need to reset your energy', 'Preparing to meditate or sleep'],
-        includes: ['Box Breathing', '4-7-8 Breath', 'Resonant Breathing'],
+        purpose: 'Train your breath to influence your nervous system.',
+        useWhen: ['Feeling anxious', 'Preparing to sleep'],
+        includes: ['Box Breathing', '4-7-8 Breath'],
         tagline: 'Your breath is your remote control.'
     },
     'Clarity & Focus': {
         title: 'Clarity & Focus',
         icon: Brain,
-        purpose: 'Reduce cognitive clutter and re-engage with presence and purpose. Designed to reset executive function.',
-        useWhen: ['Scattered brain', 'Mid-task transitions', 'Starting a deep work session'],
-        includes: ['Two-Minute Reset', 'Focus Visualization', 'Name 3 Wins'],
+        purpose: 'Reduce cognitive clutter and re-engage with purpose.',
+        useWhen: ['Scattered brain', 'Mid-task transitions'],
+        includes: ['Two-Minute Reset', 'Focus Visualization'],
         tagline: 'Clear mind, calm drive.'
     },
     'Grounding & Safety': {
         title: 'Grounding & Safety',
         icon: Shield,
-        purpose: 'Support users in feeling safe in their body during anxiety, freeze responses, or emotional storms.',
-        useWhen: ['Panic or sensory overload', 'Feeling disconnected', 'Recovering from emotional activation'],
-        includes: ['5-4-3-2-1 Senses', 'Tactile Object Focus', 'Nature Visualization'],
+        purpose: 'Support users in feeling safe in their body during stress.',
+        useWhen: ['Panic or overload', 'Feeling disconnected'],
+        includes: ['5-4-3-2-1 Senses', 'Nature Visualization'],
         tagline: 'Come home to yourself.'
     },
     'Self-Compassion': {
         title: 'Self-Compassion',
         icon: HeartHandshake,
-        purpose: 'Cultivate emotional resilience through kindness and inner connection. Rewire harsh inner voices.',
-        useWhen: ['After burnout or rejection', 'Working through inner critic', 'Building self-worth'],
-        includes: ['Loving-Kindness Meditation', 'Journaling Prompts', 'Heart-Focused Breath'],
+        purpose: 'Cultivate emotional resilience through kindness.',
+        useWhen: ['Burnout', 'Inner critic'],
+        includes: ['Loving-Kindness Meditation', 'Journaling Prompts'],
         tagline: 'Be gentle with the one inside.'
+    }
+};
+
+export const financialCategoryDetails: Record<string, WellnessCategoryDetails> = {
+    'Tracking': {
+        title: 'Financial Health',
+        icon: Wallet,
+        purpose: 'Manage your resources to reduce survival stress and build future freedom.',
+        useWhen: ['Payday', 'Making discretionary purchases', 'Monthly reviews'],
+        includes: ['Expense Logging', 'Budget Setting', 'Bill Reminders'],
+        tagline: 'Resource management is stress management.'
+    }
+};
+
+export const nutritionCategoryDetails: Record<string, WellnessCategoryDetails> = {
+    'Fueling': {
+        title: 'Nutrition Lab',
+        icon: Utensils,
+        purpose: 'Optimize your intake for cognitive performance and physical recovery.',
+        useWhen: ['After meals', 'Planning your week', 'Energy crashes'],
+        includes: ['Calorie & Macro Tracking', 'Water Intake', 'Weight Trajectory'],
+        tagline: 'Fuel the polymath within.'
     }
 };
