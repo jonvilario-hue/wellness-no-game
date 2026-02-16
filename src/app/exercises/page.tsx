@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,7 +10,11 @@ import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
 import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff } from 'lucide-react';
+import { useWellnessData } from '@/hooks/use-wellness-data';
+import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 const mockActivityData = [
   { date: '2024-07-01', count: 1 },
@@ -27,6 +32,7 @@ const mockActivityData = [
 
 export default function ExercisesPage() {
   const [isOpen, setIsOpen] = useState(true);
+  const { lowEnergyMode, setLowEnergyMode } = useWellnessData();
 
   useEffect(() => {
     const savedState = localStorage.getItem('health-check-collapsible-state');
@@ -49,28 +55,44 @@ export default function ExercisesPage() {
       <MotivationalMessage />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="mx-auto max-w-7xl space-y-6">
-            <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
-              <div className="flex justify-between items-start">
-                  <div className="flex-grow">
-                    <CollapsibleContent>
-                        <div className="flex flex-col items-center text-center pb-4">
-                            <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
-                            <h1 className="text-4xl font-bold font-headline">Health Check</h1>
-                            <p className="text-lg text-muted-foreground">Actionable wellness practices for body and mind. Train your reps.</p>
-                        </div>
-                    </CollapsibleContent>
+            <div className="flex flex-col gap-4">
+                <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
+                  <div className="flex justify-between items-start">
+                      <div className="flex-grow">
+                        <CollapsibleContent>
+                            <div className="flex flex-col items-center text-center pb-4">
+                                <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
+                                <h1 className="text-4xl font-bold font-headline tracking-tight">Health Check</h1>
+                                <p className="text-lg text-muted-foreground">Actionable wellness practices for body and mind. Train your reps.</p>
+                            </div>
+                        </CollapsibleContent>
+                      </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
+                            <span className="sr-only">Toggle</span>
+                        </Button>
+                    </CollapsibleTrigger>
                   </div>
-                <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
-                        <span className="sr-only">Toggle</span>
-                    </Button>
-                </CollapsibleTrigger>
-              </div>
-            </Collapsible>
+                </Collapsible>
 
-            <div className="flex justify-center">
-                <RoutineBuilderModal />
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div className={cn(
+                        "flex items-center gap-3 px-4 py-2 rounded-full border transition-all",
+                        lowEnergyMode ? "bg-amber-500/10 border-amber-500/30" : "bg-muted/50 border-transparent"
+                    )}>
+                        {lowEnergyMode ? <ZapOff className="w-4 h-4 text-amber-500" /> : <Zap className="w-4 h-4 text-primary" />}
+                        <Label htmlFor="mvd-toggle" className="text-sm font-bold cursor-pointer">
+                            Low Energy Mode (MVD)
+                        </Label>
+                        <Switch 
+                            id="mvd-toggle" 
+                            checked={lowEnergyMode} 
+                            onCheckedChange={setLowEnergyMode}
+                        />
+                    </div>
+                    {!lowEnergyMode && <RoutineBuilderModal />}
+                </div>
             </div>
             
             <WellnessTabs />
