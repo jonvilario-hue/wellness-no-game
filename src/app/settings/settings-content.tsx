@@ -1,7 +1,7 @@
 
 'use client';
 
-import { User, Palette, ListChecks, Clock, Database } from 'lucide-react';
+import { User, Palette, ListChecks, Clock, Database, Moon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
@@ -10,6 +10,7 @@ import { TrackerSettings } from '@/components/settings/tracker-settings';
 import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
 import { TimeToolsModule } from '@/components/dashboard/time-tools-module';
 import { DataSettings } from '@/components/settings/data-settings';
+import { SleepSettings } from '@/components/sleep/sleep-settings';
 
 export function SettingsContent() {
     const searchParams = useSearchParams();
@@ -30,6 +31,9 @@ export function SettingsContent() {
                 <TabsTrigger value="time" className="justify-start gap-2">
                 <Clock className="h-4 w-4"/> Clock Tools
                 </TabsTrigger>
+                <TabsTrigger value="sleep" className="justify-start gap-2">
+                <Moon className="h-4 w-4"/> Sleep Pro
+                </TabsTrigger>
                 <TabsTrigger value="account" className="justify-start gap-2" disabled>
                 <User className="h-4 w-4"/> Account
                 </TabsTrigger>
@@ -47,6 +51,9 @@ export function SettingsContent() {
                 </TabsContent>
                 <TabsContent value="time">
                     <TimeToolsModule />
+                </TabsContent>
+                <TabsContent value="sleep">
+                    <SleepSettings />
                 </TabsContent>
                 <TabsContent value="account">
                 <Card>
