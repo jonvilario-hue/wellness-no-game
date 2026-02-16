@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -11,6 +10,7 @@ import { DeckDialog } from '@/components/flashcards/deck-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AddToCalendarDialog } from '../study/add-to-calendar-dialog';
+import { AssistantTooltip } from '../assistant-tooltip';
 
 export function FlashcardDecks() {
   const { decks, cards } = useFlashcardStore();
@@ -42,11 +42,13 @@ export function FlashcardDecks() {
                     <Button onClick={() => setIsDialogOpen(true)} variant="secondary" size="sm" className="font-bold">
                         <PlusCircle className="mr-2 h-4 w-4" /> Create Deck
                     </Button>
-                    <Button asChild disabled={totalDue === 0} size="sm" className="font-bold bg-primary shadow-md hover:scale-105 transition-transform">
-                        <Link href="/study/session">
-                            <Play className="mr-2 h-4 w-4 fill-current" /> Study All ({totalDue})
-                        </Link>
-                    </Button>
+                    <AssistantTooltip text="Launch a session with all cards currently scheduled for review across all your decks.">
+                      <Button asChild disabled={totalDue === 0} size="sm" className="font-bold bg-primary shadow-md hover:scale-105 transition-transform">
+                          <Link href="/study/session">
+                              <Play className="mr-2 h-4 w-4 fill-current" /> Study All ({totalDue})
+                          </Link>
+                      </Button>
+                    </AssistantTooltip>
                 </div>
             </div>
         </CardHeader>
@@ -66,33 +68,30 @@ export function FlashcardDecks() {
                                 </CardHeader>
                                 <CardFooter className="text-[10px] uppercase font-bold text-muted-foreground justify-between border-t border-primary/5 pt-4 mt-auto">
                                     <span>{total} cards</span>
-                                    <span className={due > 0 ? "text-primary" : ""}>{due > 0 ? `${due} due` : 'Complete'}</span>
+                                    <AssistantTooltip text="'Complete' means you've reviewed everything currently due. The algorithm will show these cards again when your retention probability drops.">
+                                      <span className={due > 0 ? "text-primary" : ""}>{due > 0 ? `${due} due` : 'Complete'}</span>
+                                    </AssistantTooltip>
                                 </CardFooter>
                             </Card>
                         </Link>
                         
                         <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <AddToCalendarDialog 
-                              toolId="Flashcards" 
-                              resourceId={deck.id} 
-                              resourceName={deck.name} 
-                              buttonSize="icon"
-                              buttonVariant="ghost"
-                            />
-                            <TooltipProvider>
-                                <Tooltip delayDuration={0}>
-                                    <TooltipTrigger asChild>
-                                        <Button asChild variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10">
-                                            <Link href={`/study/deck/${deck.id}/settings`}>
-                                                <Settings className="w-4 h-4" />
-                                            </Link>
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>Algorithm Settings</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <AssistantTooltip text="Add this deck to your study calendar.">
+                              <AddToCalendarDialog 
+                                toolId="Flashcards" 
+                                resourceId={deck.id} 
+                                resourceName={deck.name} 
+                                buttonSize="icon"
+                                buttonVariant="ghost"
+                              />
+                            </AssistantTooltip>
+                            <AssistantTooltip text="Configure the Spaced Repetition (SM-2) settings for this specific deck.">
+                                <Button asChild variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10">
+                                    <Link href={`/study/deck/${deck.id}/settings`}>
+                                        <Settings className="w-4 h-4" />
+                                    </Link>
+                                </Button>
+                            </AssistantTooltip>
                         </div>
                     </div>
                 );

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -35,6 +34,7 @@ import {
 } from '@/components/study/guides';
 import { SelfQuizCreator, DistractionLog } from '@/components/study/tools';
 import { StudyScheduleView } from '@/components/study/study-schedule-view';
+import { AssistantTooltip } from '@/components/assistant-tooltip';
 
 export default function ScholarHub() {
   const { sessions, visualPairs } = useScholarStore();
@@ -61,7 +61,8 @@ export default function ScholarHub() {
       desc: 'Generate procedural quizzes from your notes.',
       icon: HelpCircle,
       stat: 'Interactive Prep',
-      link: '#quiz'
+      link: '#quiz',
+      tooltip: "Turn passive notes into active testing. Research shows self-testing is significantly more effective than re-reading."
     },
     {
       id: 'visual',
@@ -69,7 +70,8 @@ export default function ScholarHub() {
       desc: 'Pair text with sketches for memory.',
       icon: PenTool,
       stat: `${visualPairs.length} Pairs Created`,
-      link: '#visual'
+      link: '#visual',
+      tooltip: "The Dual Coding theory suggests that combining verbal and visual information creates two distinct mental representations, doubling your chances of recall."
     },
     {
       id: 'curve',
@@ -77,7 +79,8 @@ export default function ScholarHub() {
       desc: 'Visualize knowledge decay.',
       icon: TrendingUp,
       stat: 'Predictive Map',
-      link: '#curve'
+      link: '#curve',
+      tooltip: "Based on Ebbinghaus's Forgetting Curve. This tool predicts when you will forget information, allowing you to review just in time."
     }
   ];
 
@@ -109,7 +112,9 @@ export default function ScholarHub() {
                       <div className="p-3 bg-primary/10 rounded-full mb-3">
                         <GraduationCap className="h-10 w-10 text-primary"/>
                       </div>
-                      <h1 className="text-4xl font-bold font-headline tracking-tight text-foreground">Scholar Hub</h1>
+                      <AssistantTooltip text="Evidence-backed study center. Combine active recall, spaced repetition, and mental models to accelerate your learning.">
+                        <h1 className="text-4xl font-bold font-headline tracking-tight text-foreground">Scholar Hub</h1>
+                      </AssistantTooltip>
                       <p className="text-lg text-muted-foreground max-w-2xl">Evidence-backed strategies meets interactive learning tools. Train your mind like a polymath.</p>
                     </div>
                   </CollapsibleContent>
@@ -124,45 +129,59 @@ export default function ScholarHub() {
             </Collapsible>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Card className="bg-primary/5 border-primary/10">
-                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                  <Zap className="w-5 h-5 text-primary mb-1" />
-                  <p className="text-2xl font-black">{aggregateStats.sessionsThisMonth}</p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sessions This Month</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-primary/5 border-primary/10">
-                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                  <Target className="w-5 h-5 text-primary mb-1" />
-                  <p className="text-2xl font-black">{aggregateStats.avgFocus}/10</p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Avg focus rating</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-primary/5 border-primary/10">
-                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                  <Layers className="w-5 h-5 text-primary mb-1" />
-                  <p className="text-2xl font-black">{cards.length}</p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Flashcards</p>
-                </CardContent>
-              </Card>
+              <AssistantTooltip text="The number of deep learning sessions you've completed this month. Consistency is the primary driver of neuroplasticity.">
+                <Card className="bg-primary/5 border-primary/10">
+                  <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                    <Zap className="w-5 h-5 text-primary mb-1" />
+                    <p className="text-2xl font-black">{aggregateStats.sessionsThisMonth}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sessions This Month</p>
+                  </CardContent>
+                </Card>
+              </AssistantTooltip>
+              <AssistantTooltip text="Your average focus rating for study sessions. High-intensity focus sessions are more effective for encoding memories than long, distracted blocks.">
+                <Card className="bg-primary/5 border-primary/10">
+                  <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                    <Target className="w-5 h-5 text-primary mb-1" />
+                    <p className="text-2xl font-black">{aggregateStats.avgFocus}/10</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Avg focus rating</p>
+                  </CardContent>
+                </Card>
+              </AssistantTooltip>
+              <AssistantTooltip text="The total number of individual concepts saved in your memory vault. These are cards scheduled for Spaced Repetition review.">
+                <Card className="bg-primary/5 border-primary/10">
+                  <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                    <Layers className="w-5 h-5 text-primary mb-1" />
+                    <p className="text-2xl font-black">{cards.length}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Flashcards</p>
+                  </CardContent>
+                </Card>
+              </AssistantTooltip>
             </div>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center mb-8">
               <TabsList className="grid w-full max-w-2xl grid-cols-4 bg-muted/50 p-1">
-                <TabsTrigger value="decks" className="gap-2">
-                  <Layers className="h-4 w-4" /> Decks
-                </TabsTrigger>
-                <TabsTrigger value="schedule" className="gap-2">
-                  <CalendarDays className="h-4 w-4" /> Schedule
-                </TabsTrigger>
-                <TabsTrigger value="tools" className="gap-2">
-                  <Zap className="h-4 w-4" /> Study Tools
-                </TabsTrigger>
-                <TabsTrigger value="guides" className="gap-2">
-                  <BookOpen className="h-4 w-4" /> Strategy Guides
-                </TabsTrigger>
+                <AssistantTooltip text="Your Spaced Repetition System (SRS). Organizes knowledge into card decks that are scheduled for review precisely when you're about to forget them.">
+                  <TabsTrigger value="decks" className="gap-2 w-full">
+                    <Layers className="h-4 w-4" /> Decks
+                  </TabsTrigger>
+                </AssistantTooltip>
+                <AssistantTooltip text="A unified view of your upcoming study sessions. Tasks appear here when you schedule them from specific tools or decks.">
+                  <TabsTrigger value="schedule" className="gap-2 w-full">
+                    <CalendarDays className="h-4 w-4" /> Schedule
+                  </TabsTrigger>
+                </AssistantTooltip>
+                <AssistantTooltip text="Interactive tools designed to facilitate deep encoding of new information through dual coding, self-testing, and visualization.">
+                  <TabsTrigger value="tools" className="gap-2 w-full">
+                    <Zap className="h-4 w-4" /> Tools
+                  </TabsTrigger>
+                </AssistantTooltip>
+                <AssistantTooltip text="Step-by-step breakdowns of proven academic techniques like the Feynman Technique or Cornell Note-taking.">
+                  <TabsTrigger value="guides" className="gap-2 w-full">
+                    <BookOpen className="h-4 w-4" /> Guides
+                  </TabsTrigger>
+                </AssistantTooltip>
               </TabsList>
             </div>
 
@@ -177,21 +196,23 @@ export default function ScholarHub() {
             <TabsContent value="tools" className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {toolCards.map(tool => (
-                  <Card key={tool.id} className="hover:shadow-md transition-all group border-primary/10">
-                    <CardHeader className="pb-2">
-                      <div className="p-2 bg-primary/10 rounded-lg w-fit group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <tool.icon className="h-5 w-5" />
-                      </div>
-                      <CardTitle className="text-lg mt-4">{tool.title}</CardTitle>
-                      <CardDescription className="text-xs">{tool.desc}</CardDescription>
-                    </CardHeader>
-                    <CardFooter className="pt-4 flex justify-between items-center border-t border-primary/5">
-                      <Badge variant="secondary" className="font-bold text-[10px]">{tool.stat}</Badge>
-                      <Button variant="ghost" size="sm" asChild className="h-8 px-2 hover:bg-primary/10">
-                        <Link href={tool.link}>Launch <ChevronRight className="ml-1 h-3 w-3"/></Link>
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                  <AssistantTooltip key={tool.id} text={tool.tooltip}>
+                    <Card className="hover:shadow-md transition-all group border-primary/10 h-full">
+                      <CardHeader className="pb-2">
+                        <div className="p-2 bg-primary/10 rounded-lg w-fit group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                          <tool.icon className="h-5 w-5" />
+                        </div>
+                        <CardTitle className="text-lg mt-4">{tool.title}</CardTitle>
+                        <CardDescription className="text-xs">{tool.desc}</CardDescription>
+                      </CardHeader>
+                      <CardFooter className="pt-4 flex justify-between items-center border-t border-primary/5">
+                        <Badge variant="secondary" className="font-bold text-[10px]">{tool.stat}</Badge>
+                        <Button variant="ghost" size="sm" asChild className="h-8 px-2 hover:bg-primary/10">
+                          <Link href={tool.link}>Launch <ChevronRight className="ml-1 h-3 w-3"/></Link>
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </AssistantTooltip>
                 ))}
               </div>
 
