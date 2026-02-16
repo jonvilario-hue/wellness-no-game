@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useEffect, Suspense } from "react"
-import { useSearchParams } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import MovementContent from "./MovementContent"
 import StillnessContent from "./StillnessContent"
@@ -11,10 +11,14 @@ import { DietTracker } from "./DietTracker"
 import { HeartPulse, Waves, Wallet, Utensils } from "lucide-react"
 
 function WellnessTabsContent() {
+  const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
+  
   const initialTab = searchParams.get('tab') || 'movement'
   const [activeTab, setActiveTab] = useState(initialTab)
 
+  // Sync state with URL changes (e.g. back/forward buttons)
   useEffect(() => {
     const tab = searchParams.get('tab')
     if (tab && ['movement', 'stillness', 'finance', 'diet'].includes(tab)) {
@@ -22,8 +26,16 @@ function WellnessTabsContent() {
     }
   }, [searchParams])
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    // Update URL without a full page reload to keep state in sync
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('tab', value)
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
         <TabsList className="grid grid-cols-4 w-full max-w-2xl h-auto p-1 bg-muted/50">
             <TabsTrigger value="movement" className="gap-2 py-2 text-xs sm:text-sm">

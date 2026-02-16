@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
 import { 
     PlusCircle, Wallet, Target, DollarSign, Sparkles, 
     ShoppingCart, Utensils, Car, Tv, CreditCard,
@@ -39,7 +40,7 @@ const defaultCategories = [
 export function FinanceTracker() {
     const { 
         transactions, addTransaction, deleteTransaction, 
-        subscriptions, lowEnergyMode, featurePhase, assets
+        subscriptions, toggleSubscription, lowEnergyMode, assets
     } = useWellnessData();
     
     const [showAdd, setShowAdd] = useState(false);
@@ -104,7 +105,7 @@ export function FinanceTracker() {
                     <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Focus Date</Label>
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" className="h-9 px-4 font-bold border-primary/20">
+                            <Button variant="outline" className="h-9 px-4 font-bold border-primary/20 hover:bg-primary/5 transition-colors">
                                 <CalendarIcon className="w-4 h-4 mr-2 text-primary" />
                                 {format(selectedDate, 'MMM d, yyyy')}
                             </Button>
@@ -138,7 +139,7 @@ export function FinanceTracker() {
 
             <SynergyPanel />
 
-            <Tabs defaultValue="overview" onValueChange={setActiveView}>
+            <Tabs defaultValue="overview" onValueChange={setActiveView} className="w-full">
                 <TabsList className="h-8 bg-muted/50 p-1 mb-4">
                     <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
                     <TabsTrigger value="history" className="text-xs">History</TabsTrigger>
@@ -147,7 +148,7 @@ export function FinanceTracker() {
 
                 <TabsContent value="overview" className="space-y-6">
                     {showAdd && (
-                        <Card className="border-primary/20 animate-in slide-in-from-top-2">
+                        <Card className="border-primary/20 animate-in slide-in-from-top-2 duration-300">
                             <CardHeader><CardTitle className="text-base">Quick Entry ({format(selectedDate, 'MMM d')})</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
@@ -181,7 +182,7 @@ export function FinanceTracker() {
                     </div>
                 </TabsContent>
 
-                <TabsContent value="history">
+                <TabsContent value="history" className="space-y-4">
                     <Card>
                         <CardContent className="p-0">
                             {transactions.length === 0 ? (
@@ -197,6 +198,33 @@ export function FinanceTracker() {
                                             <p className={cn("text-sm font-black", tx.type === 'income' ? "text-green-600" : "text-foreground")}>{tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}</p>
                                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => deleteTransaction(tx.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
                                         </div>
+                                    </div>
+                                ))
+                            )}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="subs" className="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-base">Active Subscriptions</CardTitle>
+                            <CardDescription>Toggle to include or exclude from monthly burn rate calculations.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            {subscriptions.length === 0 ? (
+                                <div className="p-10 text-center opacity-50 italic text-sm">No subscriptions added.</div>
+                            ) : (
+                                subscriptions.map(s => (
+                                    <div key={s.id} className="flex items-center justify-between p-4 border-b last:border-0 hover:bg-muted/10 transition-colors">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-muted rounded-lg"><CreditCard className="w-4 h-4" /></div>
+                                            <div>
+                                                <p className="text-sm font-bold">{s.name}</p>
+                                                <p className="text-[10px] text-muted-foreground uppercase">{s.category} • ${s.amount}/{s.billingCycle === 'monthly' ? 'mo' : 'yr'}</p>
+                                            </div>
+                                        </div>
+                                        <Switch checked={s.active} onCheckedChange={() => toggleSubscription(s.id)} />
                                     </div>
                                 ))
                             )}

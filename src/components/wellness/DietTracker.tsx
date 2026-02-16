@@ -41,21 +41,28 @@ export function DietTracker() {
 
     const rollingStats = useMemo(() => {
         const last7Days = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd'));
-        const totalCals = mealLogs
-            .filter(l => last7Days.includes(l.date))
-            .reduce((sum, l) => sum + l.calories, 0);
-        const avgCals = Math.round(totalCals / 7);
+        const last7Logs = mealLogs.filter(l => last7Days.includes(l.date));
+        const totalCals = last7Logs.reduce((sum, l) => sum + l.calories, 0);
+        const avgCals = last7Logs.length > 0 ? Math.round(totalCals / 7) : 0;
         
-        const todayCals = mealLogs
-            .filter(l => l.date === dateStr)
-            .reduce((sum, l) => sum + l.calories, 0);
+        const todayLogs = mealLogs.filter(l => l.date === dateStr);
+        const todayCals = todayLogs.reduce((sum, l) => sum + l.calories, 0);
+        const todayProtein = todayLogs.reduce((sum, l) => sum + l.protein, 0);
             
-        return { avgCals, todayCals, target: 2200 };
+        return { avgCals, todayCals, todayProtein, target: 2200 };
     }, [mealLogs, dateStr]);
 
     const handleLogMeal = () => {
         addMealLog({ ...mealForm, date: dateStr });
         setShowAdd(false);
+        // Reset form for next entry
+        setMealForm({
+            mealType: 'Breakfast',
+            calories: 0,
+            protein: 0,
+            carbs: 0,
+            fat: 0
+        });
     };
 
     const handleCopyYesterday = () => {
@@ -87,7 +94,7 @@ export function DietTracker() {
                     <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Focus Date</Label>
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" className="h-9 px-4 font-bold border-primary/20 hover:bg-primary/5">
+                            <Button variant="outline" className="h-9 px-4 font-bold border-primary/20 hover:bg-primary/5 transition-colors">
                                 <CalendarIcon className="w-4 h-4 mr-2 text-primary" />
                                 {format(selectedDate, 'MMMM d, yyyy')}
                             </Button>
@@ -116,11 +123,18 @@ export function DietTracker() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4 py-4 text-center">
-                        <div>
-                            <span className="text-5xl font-black">{rollingStats.avgCals}</span>
-                            <span className="text-sm text-muted-foreground font-bold ml-2 uppercase">Cal/Day</span>
+                        <div className="flex justify-center items-baseline gap-4">
+                            <div className="text-center">
+                                <span className="text-4xl font-black">{rollingStats.todayCals}</span>
+                                <p className="text-[9px] font-black uppercase text-primary mt-1">Today</p>
+                            </div>
+                            <div className="w-[1px] h-10 bg-border mx-2" />
+                            <div className="text-center opacity-60">
+                                <span className="text-2xl font-black">{rollingStats.avgCals}</span>
+                                <p className="text-[9px] font-black uppercase mt-1">Average</p>
+                            </div>
                         </div>
-                        <Progress value={(rollingStats.avgCals / rollingStats.target) * 100} className="h-2" />
+                        <Progress value={(rollingStats.todayCals / rollingStats.target) * 100} className="h-2" />
                     </CardContent>
                 </Card>
 
@@ -134,7 +148,7 @@ export function DietTracker() {
                     <CardContent className="space-y-3">
                         <div className="p-3 bg-background rounded-lg border text-xs flex gap-3">
                             <Zap className="w-4 h-4 text-primary shrink-0" />
-                            <p>Daily protein target for cognitive stability: <span className="font-bold">120g</span>. Today: <span className="font-bold">{mealLogs.filter(l => l.date === dateStr).reduce((s, l) => s + l.protein, 0)}g</span>.</p>
+                            <p>Daily protein target for cognitive stability: <span className="font-bold">120g</span>. Logged for {format(selectedDate, 'MMM d')}: <span className="font-bold text-primary">{rollingStats.todayProtein}g</span>.</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -143,7 +157,7 @@ export function DietTracker() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                     {showAdd && (
-                        <Card className="border-primary/20 animate-in zoom-in-95">
+                        <Card className="border-primary/20 animate-in zoom-in-95 duration-200">
                             <CardHeader className="flex flex-row items-center justify-between">
                                 <CardTitle className="text-base">Quick Meal Log ({format(selectedDate, 'MMM d')})</CardTitle>
                                 <Button variant="ghost" size="icon" onClick={() => setShowAdd(false)}><X className="w-4 h-4" /></Button>
@@ -151,7 +165,7 @@ export function DietTracker() {
                             <CardContent className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Meal</Label>
+                                        <Label className="text-[10px] font-bold uppercase">Meal Type</Label>
                                         <Select value={mealForm.mealType} onValueChange={(v: any) => setMealForm({ ...mealForm, mealType: v })}>
                                             <SelectTrigger><SelectValue /></SelectTrigger>
                                             <SelectContent>
@@ -166,19 +180,19 @@ export function DietTracker() {
                                 </div>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Protein</Label>
+                                        <Label className="text-[10px] font-bold uppercase">Protein (g)</Label>
                                         <Input type="number" value={mealForm.protein || ''} onChange={e => setMealForm({ ...mealForm, protein: parseInt(e.target.value) || 0 })} />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Carbs</Label>
+                                        <Label className="text-[10px] font-bold uppercase">Carbs (g)</Label>
                                         <Input type="number" value={mealForm.carbs || ''} onChange={e => setMealForm({ ...mealForm, carbs: parseInt(e.target.value) || 0 })} />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Fat</Label>
+                                        <Label className="text-[10px] font-bold uppercase">Fat (g)</Label>
                                         <Input type="number" value={mealForm.fat || ''} onChange={e => setMealForm({ ...mealForm, fat: parseInt(e.target.value) || 0 })} />
                                     </div>
                                 </div>
-                                <Button className="w-full font-bold" onClick={handleLogMeal}>Save Meal</Button>
+                                <Button className="w-full font-bold h-12" onClick={handleLogMeal}>Save Meal Entry</Button>
                             </CardContent>
                         </Card>
                     )}
@@ -229,8 +243,8 @@ export function DietTracker() {
                                         variant="ghost" 
                                         size="icon" 
                                         className={cn(
-                                            "w-8 h-8 rounded-full border border-blue-500/20", 
-                                            i < (waterLogs[dateStr] || 0) ? "bg-blue-500 text-white" : "text-blue-500/40"
+                                            "w-8 h-8 rounded-full border border-blue-500/20 transition-all", 
+                                            i < (waterLogs[dateStr] || 0) ? "bg-blue-500 text-white" : "text-blue-500/40 hover:bg-blue-500/10"
                                         )}
                                         onClick={() => addWater(dateStr, 1)}
                                     >
