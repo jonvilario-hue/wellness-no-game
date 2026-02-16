@@ -1,4 +1,3 @@
-
 'use client';
 
 import { memo, useCallback, useMemo, useState } from 'react';
@@ -90,19 +89,23 @@ const JournalSidebarComponent = ({
         });
 
         return filtered.sort((a, b) => {
-            const dateA = dateGroupingMode === 'display' ? new Date(a.displayDate || a.date).getTime() : new Date(a.createdAt).getTime();
-            const dateB = dateGroupingMode === 'display' ? new Date(b.displayDate || b.date).getTime() : new Date(b.createdAt).getTime();
+            const dateA = dateGroupingMode === 'display' 
+                ? new Date(a.displayDate || a.date + 'T12:00:00').getTime() 
+                : new Date(a.createdAt || a.date + 'T12:00:00').getTime();
+            const dateB = dateGroupingMode === 'display' 
+                ? new Date(b.displayDate || b.date + 'T12:00:00').getTime() 
+                : new Date(b.createdAt || b.date + 'T12:00:00').getTime();
 
             switch (sortMode) {
                 case 'date-asc':
                     if (dateA !== dateB) return dateA - dateB;
-                    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+                    return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
                 case 'category':
                     return a.category.localeCompare(b.category);
                 case 'date-desc':
                 default:
                     if (dateA !== dateB) return dateB - dateA;
-                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
             }
         });
     }, [entries, searchQuery, sortMode, dateGroupingMode]);
@@ -110,8 +113,8 @@ const JournalSidebarComponent = ({
     const groupedEntries = useMemo(() => {
       return filteredAndSortedEntries.reduce((acc, entry) => {
         const dateKey = dateGroupingMode === 'display' 
-            ? (entry.displayDate ? entry.displayDate.split('T')[0] : entry.date)
-            : entry.createdAt.split('T')[0];
+            ? (entry.displayDate?.split('T')[0] || entry.date)
+            : (entry.createdAt?.split('T')[0] || entry.date);
             
         if (!acc[dateKey]) {
           acc[dateKey] = [];

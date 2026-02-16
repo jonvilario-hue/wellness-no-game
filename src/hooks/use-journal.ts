@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -293,7 +292,7 @@ export const useJournal = create<JournalState>()(
 
         migrateEntries: () => {
             set(state => ({
-                entries: state.entries.map(entry => {
+                entries: (state.entries || []).map(entry => {
                     const createdAt = entry.createdAt || new Date(entry.date + 'T12:00:00').toISOString();
                     const displayDate = entry.displayDate || createdAt;
                     return { ...entry, createdAt, displayDate };
@@ -306,12 +305,23 @@ export const useJournal = create<JournalState>()(
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
           if (!state) return;
-          if (!state.habits || state.habits.length === 0 || state.entries.length === 0) {
+          if (!state.habits || state.habits.length === 0 || (state.entries && state.entries.length === 0)) {
               const { entries, habits, habitConfig } = createSeedData();
               state.entries = entries;
               state.completedHabits = habits;
               state.habits = habitConfig;
           }
+          
+          // Auto-migrate missing date fields
+          if (state.entries && state.entries.length > 0) {
+              state.entries = state.entries.map(entry => {
+                  if (entry.createdAt && entry.displayDate) return entry;
+                  const createdAt = entry.createdAt || new Date(entry.date + 'T12:00:00').toISOString();
+                  const displayDate = entry.displayDate || createdAt;
+                  return { ...entry, createdAt, displayDate };
+              });
+          }
+
           const thirtyDaysAgo = Date.now() - TRASH_EXPIRATION_DAYS * 24 * 60 * 60 * 1000;
           state.trashedEntries = (state.trashedEntries || []).filter(item => item.deletedAt > thirtyDaysAgo);
           state.setHasHydrated(true);
