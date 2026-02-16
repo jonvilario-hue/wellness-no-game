@@ -1,18 +1,19 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Eraser, Pencil, Trash2, Save, Image as ImageIcon, Download } from 'lucide-react';
+import { Trash2, Save, Image as ImageIcon, Eraser, Pencil } from 'lucide-react';
 import { useScholarStore } from '@/hooks/use-scholar-store';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export function VisualPairingTool() {
   const [concept, setConcept] = useState('');
-  const [color, setColor] = useState('#4f46e5');
+  const [color, setColor] = useState('#2dd4bf'); // Match theme teal
   const [isDrawing, setIsDrawing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { addVisualPair, visualPairs } = useScholarStore();
@@ -60,14 +61,14 @@ export function VisualPairingTool() {
 
   const handleSave = () => {
     if (!concept.trim()) {
-      toast({ title: "Concept required", description: "Please name the concept before saving." });
+      toast({ title: "Concept required", description: "Please name the concept before saving.", variant: 'destructive' });
       return;
     }
     const canvas = canvasRef.current;
     if (canvas) {
       const image = canvas.toDataURL('image/png');
       addVisualPair({ concept, image });
-      toast({ title: "Pair Saved", variant: "success" });
+      toast({ title: "Visual-Verbal pair saved to vault!", variant: "success" });
       setConcept('');
       clearCanvas();
     }
@@ -82,71 +83,84 @@ export function VisualPairingTool() {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <Label>Concept Description</Label>
+    <div className="space-y-10 animate-in fade-in">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="space-y-3">
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Verbal Description</Label>
           <textarea
-            className="w-full h-[400px] p-4 rounded-lg border bg-background resize-none focus:ring-2 ring-primary"
-            placeholder="Explain the concept in words here..."
+            className="w-full h-[350px] p-4 rounded-xl border-2 bg-card resize-none focus:ring-2 ring-primary border-primary/5 transition-all text-sm leading-relaxed"
+            placeholder="Explain the concept in your own words. Why does it work? What are the key rules?"
             value={concept}
             onChange={(e) => setConcept(e.target.value)}
           />
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <Label>Visual Representation</Label>
-            <div className="flex gap-2">
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Visual Representation</Label>
+            <div className="flex gap-2 items-center">
               <input 
                 type="color" 
                 value={color} 
                 onChange={(e) => setColor(e.target.value)}
-                className="w-8 h-8 rounded cursor-pointer"
+                className="w-6 h-6 rounded-full cursor-pointer border-none bg-transparent"
               />
-              <Button variant="outline" size="icon" onClick={clearCanvas}><Trash2 className="h-4 w-4"/></Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={clearCanvas}>
+                <Trash2 className="h-4 w-4"/>
+              </Button>
             </div>
           </div>
-          <canvas
-            ref={canvasRef}
-            width={600}
-            height={400}
-            onMouseDown={startDrawing}
-            onMouseUp={stopDrawing}
-            onMouseMove={draw}
-            onTouchStart={startDrawing}
-            onTouchEnd={stopDrawing}
-            onTouchMove={draw}
-            className="w-full h-[400px] border-2 border-dashed rounded-lg bg-white cursor-crosshair touch-none"
-          />
+          <div className="relative group">
+            <canvas
+              ref={canvasRef}
+              width={600}
+              height={350}
+              onMouseDown={startDrawing}
+              onMouseUp={stopDrawing}
+              onMouseMove={draw}
+              onTouchStart={startDrawing}
+              onTouchEnd={stopDrawing}
+              onTouchMove={draw}
+              className="w-full h-[350px] border-2 border-dashed rounded-xl bg-white cursor-crosshair touch-none border-primary/10 group-hover:border-primary/30 transition-colors"
+            />
+            <div className="absolute top-2 right-2 pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity">
+              <Pencil className="w-4 h-4 text-primary" />
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="flex justify-center">
-        <Button size="lg" className="px-12 h-14 text-lg" onClick={handleSave}>
-          <Save className="mr-2 h-5 w-5" /> Save Visual-Verbal Pair
+        <Button size="lg" className="px-12 h-14 text-sm font-bold shadow-lg gap-2" onClick={handleSave}>
+          <Save className="h-4 w-4" /> Save Dual-Coded Pair
         </Button>
       </div>
 
-      <Separator />
+      <Separator className="bg-primary/5" />
 
-      <div className="space-y-4">
-        <h3 className="text-xl font-bold flex items-center gap-2">
-          <ImageIcon className="h-5 w-5 text-indigo-500" />
-          Your Visual Vault
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {visualPairs.map((pair) => (
-            <Card key={pair.id} className="overflow-hidden group">
-              <div className="aspect-video relative overflow-hidden bg-white border-b">
-                <img src={pair.image} alt={pair.concept} className="w-full h-full object-contain p-2" />
-              </div>
-              <CardHeader className="p-4">
-                <CardTitle className="text-sm line-clamp-2">{pair.concept}</CardTitle>
-                <CardDescription>{new Date(pair.date).toLocaleDateString()}</CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+      <div className="space-y-6">
+        <div className="flex items-center gap-2">
+          <ImageIcon className="h-5 w-5 text-primary" />
+          <h3 className="text-xl font-black tracking-tight uppercase">Visual Vault</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {visualPairs.length === 0 ? (
+            <div className="col-span-full py-20 text-center border-2 border-dashed rounded-xl opacity-30">
+              <p className="text-sm font-bold uppercase tracking-widest italic">No dual-coded pairs yet.</p>
+            </div>
+          ) : (
+            visualPairs.map((pair) => (
+              <Card key={pair.id} className="overflow-hidden group hover:shadow-md transition-shadow border-primary/5">
+                <div className="aspect-video relative overflow-hidden bg-white border-b border-primary/5">
+                  <img src={pair.image} alt={pair.concept} className="w-full h-full object-contain p-4" />
+                </div>
+                <CardHeader className="p-4">
+                  <CardTitle className="text-sm line-clamp-2 leading-tight">{pair.concept}</CardTitle>
+                  <CardDescription className="text-[10px] font-bold uppercase mt-1">{new Date(pair.date).toLocaleDateString()}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -8,9 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, XCircle, Inbox, Layers, TrendingUp } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-
-// Leitner specific state extension (simplified for MVP using existing Card object)
-// Card.repetitions will serve as the "Box" index (0-4)
 
 export function LeitnerBoxManager() {
   const { cards, updateCard } = useFlashcardStore();
@@ -33,7 +31,7 @@ export function LeitnerBoxManager() {
     const now = new Date();
     return cards.filter(c => {
       const box = Math.min(c.repetitions || 0, 4);
-      const lastReview = new Date(c.dueDate); // Borrowing dueDate as last review or next due
+      const lastReview = new Date(c.dueDate);
       return lastReview <= now;
     }).sort((a, b) => (a.repetitions || 0) - (b.repetitions || 0));
   }, [cards]);
@@ -65,28 +63,31 @@ export function LeitnerBoxManager() {
   if (activeSession && dueCards.length > 0) {
     const currentCard = dueCards[currentIndex];
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4">
         <div className="flex justify-between items-center">
-          <Badge variant="outline">Box {(currentCard.repetitions || 0) + 1}</Badge>
-          <span className="text-sm font-mono">{currentIndex + 1} / {dueCards.length}</span>
+          <Badge variant="outline" className="border-primary/20 text-primary">Box {(currentCard.repetitions || 0) + 1}</Badge>
+          <span className="text-sm font-mono text-muted-foreground">{currentIndex + 1} / {dueCards.length}</span>
         </div>
-        <Card className="min-h-[300px] flex items-center justify-center text-center p-8 cursor-pointer border-2" onClick={() => setFlipped(!flipped)}>
+        <Card 
+          className="min-h-[300px] flex items-center justify-center text-center p-8 cursor-pointer border-2 hover:border-primary/30 transition-all shadow-sm" 
+          onClick={() => setFlipped(!flipped)}
+        >
           <CardContent>
-            <p className="text-2xl font-semibold">
+            <p className="text-2xl font-bold">
               {flipped ? currentCard.back : currentCard.front}
             </p>
-            <p className="text-xs text-muted-foreground mt-4 uppercase tracking-widest">
-              Click to flip
+            <p className="text-[10px] text-muted-foreground mt-8 uppercase tracking-widest font-bold opacity-60">
+              {flipped ? 'Correct?' : 'Click to see answer'}
             </p>
           </CardContent>
         </Card>
         {flipped && (
           <div className="grid grid-cols-2 gap-4 animate-in fade-in">
-            <Button variant="destructive" size="lg" onClick={() => handleResponse(false)}>
-              <XCircle className="mr-2 h-5 w-5" /> Missed It (To Box 1)
+            <Button variant="outline" size="lg" className="h-14 border-destructive/20 text-destructive hover:bg-destructive/5" onClick={() => handleResponse(false)}>
+              <XCircle className="mr-2 h-5 w-5" /> Missed It
             </Button>
-            <Button variant="default" size="lg" className="bg-green-600 hover:bg-green-700" onClick={() => handleResponse(true)}>
-              <CheckCircle2 className="mr-2 h-5 w-5" /> Got It (Next Box)
+            <Button variant="default" size="lg" className="h-14 bg-primary hover:bg-primary/90" onClick={() => handleResponse(true)}>
+              <CheckCircle2 className="mr-2 h-5 w-5" /> Got It
             </Button>
           </div>
         )}
@@ -95,23 +96,26 @@ export function LeitnerBoxManager() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="md:col-span-2">
+        <Card className="md:col-span-2 border-primary/5">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Layers className="h-5 w-5 text-indigo-500" />
-              Box Distribution
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Layers className="h-4 w-4 text-primary" />
+              Progress across Boxes
             </CardTitle>
           </CardHeader>
           <CardContent className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={distributionData}>
-                <XAxis dataKey="name" fontSize={12} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{ fill: 'transparent' }} />
+                <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip 
+                  cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
+                  contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                   {distributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${0.2 + (index * 0.2)})`} />
+                    <Cell key={`cell-${index}`} fill={`hsl(var(--primary) / ${0.3 + (index * 0.15)})`} />
                   ))}
                 </Bar>
               </BarChart>
@@ -119,21 +123,21 @@ export function LeitnerBoxManager() {
           </CardContent>
         </Card>
 
-        <Card className="bg-indigo-50/50 dark:bg-indigo-950/10 border-indigo-100">
-          <CardHeader>
-            <CardTitle className="text-sm uppercase tracking-wider text-muted-foreground">Session Stats</CardTitle>
+        <Card className="bg-primary/5 border-primary/10 flex flex-col justify-center">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Review Queue</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-end">
-              <span className="text-4xl font-bold">{dueCards.length}</span>
-              <span className="text-xs font-bold text-indigo-600">CARDS DUE</span>
+          <CardContent className="space-y-6 text-center">
+            <div>
+              <span className="text-6xl font-black text-primary">{dueCards.length}</span>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Cards Due Now</p>
             </div>
-            <div className="flex justify-between items-end">
-              <span className="text-4xl font-bold text-green-600">{distributionData[4].count}</span>
-              <span className="text-xs font-bold text-green-600">BOX 5 MASTERY</span>
+            <div className="flex justify-between items-center px-4 py-2 bg-background/50 rounded-lg border border-primary/5 text-[10px]">
+              <span className="font-bold text-muted-foreground uppercase">Box 5 Mastery:</span>
+              <span className="font-black text-primary">{distributionData[4].count}</span>
             </div>
-            <Button className="w-full h-12 text-lg" disabled={dueCards.length === 0} onClick={() => setActiveSession(true)}>
-              <Inbox className="mr-2 h-5 w-5" /> Review Now
+            <Button className="w-full h-12 text-sm font-bold shadow-sm" disabled={dueCards.length === 0} onClick={() => setActiveSession(true)}>
+              <Inbox className="mr-2 h-4 w-4" /> Start Review Session
             </Button>
           </CardContent>
         </Card>
