@@ -1,11 +1,11 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useWellnessData, calculateStreak } from "@/hooks/use-wellness-data";
-import { Sparkles, Clock, Wind, Zap, Brain, TrendingDown } from "lucide-react";
+import { Sparkles, Clock, Wind, TrendingDown } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
-import { Badge } from "../ui/badge";
 import { TodayScheduleWidget } from "./TodayScheduleWidget";
 
 export function StillnessDashboard() {
@@ -27,12 +27,10 @@ export function StillnessDashboard() {
     
     const mostUsed = Object.values(counts).sort((a, b) => b.count - a.count)[0]?.name || 'None yet';
 
-    // Trigger-Response Logic
     const triggerStats: Record<string, { sum: number, count: number }> = {};
     stillnessLogs.forEach(log => {
       if (log.preStress !== undefined && log.postCalm !== undefined && log.trigger === 'Stress') {
         if (!triggerStats[log.techniqueId]) triggerStats[log.techniqueId] = { sum: 0, count: 0 };
-        // Average 'Stress Reduction' points
         const reduction = log.preStress - (10 - log.postCalm);
         triggerStats[log.techniqueId].sum += Math.max(0, log.postCalm - (10 - log.preStress));
         triggerStats[log.techniqueId].count++;
@@ -54,7 +52,7 @@ export function StillnessDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="bg-primary/5 border-primary/10">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Sparkles className="w-5 h-5 text-blue-400 mb-1" />
+            <Sparkles className="w-5 h-5 text-primary mb-1" />
             <p className="text-2xl font-black">{stats.streak}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Zen Streak</p>
           </CardContent>
@@ -70,7 +68,7 @@ export function StillnessDashboard() {
 
         <Card className="bg-primary/5 border-primary/10">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Wind className="w-5 h-5 text-teal-500 mb-1" />
+            <Wind className="w-5 h-5 text-primary opacity-80 mb-1" />
             <p className="text-sm font-bold truncate w-full">{stats.mostUsed}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Technique</p>
           </CardContent>

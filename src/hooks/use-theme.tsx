@@ -32,7 +32,6 @@ export function ThemeProvider({
   const [organicGrowth, setOrganicGrowthState] = useState(true);
 
   useEffect(() => {
-    // Load settings from localStorage on initial client render
     try {
       const savedSettings = window.localStorage.getItem(UI_SETTINGS_KEY);
       if (savedSettings) {
@@ -42,7 +41,6 @@ export function ThemeProvider({
         setOrganicGrowthState(typeof growthEnabled === 'boolean' ? growthEnabled : true);
       }
     } catch (e) {
-      // Local storage not available or error parsing
       console.error("Failed to load UI settings from localStorage", e);
     }
   }, []);
@@ -76,13 +74,27 @@ export function ThemeProvider({
     root.classList.add(theme.colorScheme.isDark ? 'dark' : 'light');
 
     const themeColors = {
-        '--theme-bg': theme.colorScheme.background,
-        '--theme-panel': theme.colorScheme.panels,
-        '--theme-text-primary': theme.colorScheme.textPrimary,
-        '--theme-text-secondary': theme.colorScheme.textSecondary,
-        '--theme-accent': theme.colorScheme.accent,
-        '--theme-accent-fg': theme.colorScheme.accentForeground,
-        '--theme-success': theme.colorScheme.success,
+        '--background': theme.colorScheme.background,
+        '--foreground': theme.colorScheme.textPrimary,
+        '--card': theme.colorScheme.panels,
+        '--card-foreground': theme.colorScheme.textPrimary,
+        '--popover': theme.colorScheme.panels,
+        '--popover-foreground': theme.colorScheme.textPrimary,
+        '--primary': theme.colorScheme.accent,
+        '--primary-foreground': theme.colorScheme.accentForeground,
+        '--secondary': theme.colorScheme.tertiary,
+        '--secondary-foreground': theme.colorScheme.textPrimary,
+        '--muted': theme.colorScheme.tertiary,
+        '--muted-foreground': theme.colorScheme.textSecondary,
+        '--accent': theme.colorScheme.tertiary,
+        '--accent-foreground': theme.colorScheme.textPrimary,
+        '--destructive': theme.colorScheme.destructive,
+        '--destructive-foreground': theme.colorScheme.accentForeground,
+        '--border': theme.colorScheme.textPrimary + ' / 0.1',
+        '--input': theme.colorScheme.textPrimary + ' / 0.1',
+        '--ring': theme.colorScheme.accent,
+        '--success': theme.colorScheme.success,
+        '--warning': theme.colorScheme.warning,
     };
     
     for (const [key, value] of Object.entries(themeColors)) {
@@ -109,10 +121,8 @@ export function ThemeProvider({
 
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
-
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-
   return context;
 };

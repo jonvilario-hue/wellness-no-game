@@ -6,19 +6,29 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription }
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Trash2, Save, Image as ImageIcon, Eraser, Pencil } from 'lucide-react';
+import { Trash2, Save, Image as ImageIcon, Pencil } from 'lucide-react';
 import { useScholarStore } from '@/hooks/use-scholar-store';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { AddToCalendarDialog } from './add-to-calendar-dialog';
+import { useTheme } from '@/hooks/use-theme';
 
 export function VisualPairingTool() {
   const [concept, setConcept] = useState('');
-  const [color, setColor] = useState('#2dd4bf'); // Match theme teal
+  const { theme } = useTheme();
+  // Pull the accent color from the active theme
+  const themeAccent = `hsl(${theme.colorScheme.accent})`;
+  
+  const [color, setColor] = useState(themeAccent);
   const [isDrawing, setIsDrawing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { addVisualPair, visualPairs } = useScholarStore();
   const { toast } = useToast();
+
+  // Reset color when theme changes
+  useEffect(() => {
+    setColor(themeAccent);
+  }, [themeAccent]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -98,7 +108,7 @@ export function VisualPairingTool() {
             )}
           </div>
           <textarea
-            className="w-full h-[350px] p-4 rounded-xl border-2 bg-card resize-none focus:ring-2 ring-primary border-primary/5 transition-all text-sm leading-relaxed"
+            className="w-full h-[350px] p-4 rounded-xl border-2 bg-card resize-none focus:ring-2 ring-primary border-primary/10 transition-all text-sm leading-relaxed"
             placeholder="Explain the concept in your own words. Why does it work? What are the key rules?"
             value={concept}
             onChange={(e) => setConcept(e.target.value)}
@@ -116,7 +126,7 @@ export function VisualPairingTool() {
                 className="w-6 h-6 rounded-full cursor-pointer border-none bg-transparent"
               />
               <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={clearCanvas}>
-                <Trash2 className="h-4 w-4"/>
+                <Trash2 className="w-4 h-4"/>
               </Button>
             </div>
           </div>
@@ -165,8 +175,10 @@ export function VisualPairingTool() {
                   <img src={pair.image} alt={pair.concept} className="w-full h-full object-contain p-4" />
                 </div>
                 <CardHeader className="p-4">
-                  <CardTitle className="text-sm line-clamp-2 leading-tight">{pair.concept}</CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase mt-1">{new Date(pair.date).toLocaleDateString()}</CardDescription>
+                  <CardTitle className="text-sm line-clamp-1 leading-tight">{pair.concept}</CardTitle>
+                  <CardDescription className="text-[10px] font-bold uppercase mt-1">
+                    {new Date(pair.date).toLocaleDateString()}
+                  </CardDescription>
                 </CardHeader>
               </Card>
             ))

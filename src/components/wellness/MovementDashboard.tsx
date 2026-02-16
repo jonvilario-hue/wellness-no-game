@@ -1,11 +1,11 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useWellnessData, calculateStreak } from "@/hooks/use-wellness-data";
-import { Flame, Clock, Trophy, Scale, ArrowRight, Zap } from "lucide-react";
+import { Flame, Clock, Trophy, Scale } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
-import { Progress } from "../ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { TodayScheduleWidget } from "./TodayScheduleWidget";
 
@@ -32,7 +32,6 @@ export function MovementDashboard() {
     
     const mostPracticed = Object.values(counts).sort((a, b) => b.count - a.count)[0]?.name || 'None yet';
 
-    // Balance Ratio
     const totalMins = weekMovementMins + weekStillnessMins;
     const movementPercent = totalMins > 0 ? (weekMovementMins / totalMins) * 100 : 50;
 
@@ -44,7 +43,7 @@ export function MovementDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="bg-primary/5 border-primary/10">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Flame className="w-5 h-5 text-orange-500 mb-1" />
+            <Flame className="w-5 h-5 text-warning mb-1" />
             <p className="text-2xl font-black">{stats.streak}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Day Streak</p>
           </CardContent>
@@ -60,7 +59,7 @@ export function MovementDashboard() {
 
         <Card className="bg-primary/5 border-primary/10">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Trophy className="w-5 h-5 text-yellow-500 mb-1" />
+            <Trophy className="w-5 h-5 text-primary opacity-80 mb-1" />
             <p className="text-sm font-bold truncate w-full">{stats.mostPracticed}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Choice</p>
           </CardContent>
@@ -82,7 +81,7 @@ export function MovementDashboard() {
           <TooltipProvider>
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <div className="relative h-2 w-full bg-blue-400/20 rounded-full overflow-hidden">
+                <div className="relative h-2 w-full bg-primary/10 rounded-full overflow-hidden">
                   <div 
                     className="absolute left-0 top-0 h-full bg-primary transition-all duration-1000" 
                     style={{ width: `${stats.movementPercent}%` }} 
@@ -99,7 +98,7 @@ export function MovementDashboard() {
           </TooltipProvider>
           <div className="flex justify-between mt-1 text-[9px] font-bold uppercase text-muted-foreground">
             <span className="text-primary">Action</span>
-            <span className="text-blue-400">Recovery</span>
+            <span className="text-muted-foreground">Recovery</span>
           </div>
         </CardContent>
       </Card>
