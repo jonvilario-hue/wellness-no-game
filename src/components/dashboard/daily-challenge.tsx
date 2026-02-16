@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { useState, useEffect, useTransition } from 'react';
 import { getDailyCircuitAction } from '@/app/actions';
 import type { DailyCircuitOutput } from '@/ai/flows';
 import { domainIcons } from '../icons';
+import { chcDomains } from '@/types';
 import { Skeleton } from '../ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { useTheme } from '@/hooks/use-theme';
@@ -86,7 +86,7 @@ export function DailyChallenge() {
   }
 
   if (!circuit) {
-    return null; // Don't render anything if there's no circuit and no error
+    return null; 
   }
 
   return (
@@ -98,7 +98,7 @@ export function DailyChallenge() {
             {circuit.circuitTitle}
         </CardTitle>
         <CardDescription>
-          Your daily 3-part AI-curated workout to sharpen your mind.
+          A smart-curated 3-part workout to sharpen your mind daily.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

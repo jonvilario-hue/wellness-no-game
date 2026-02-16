@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -89,7 +88,7 @@ export function PerformanceInsights() {
           Performance Insights
         </CardTitle>
         <CardDescription>
-          Personalized tips based on your training habits.
+          Personalized tips based on your recent activity.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col gap-4">
@@ -99,7 +98,7 @@ export function PerformanceInsights() {
           <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2">
             <p className="text-sm flex items-start gap-2 pr-6">
               <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0" />
-              <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This card uses AI to analyze your recent activity and provide a smart suggestion for your next training session.</span>
+              <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This card analyzes your recent activity logs to provide smart suggestions for your next training session.</span>
             </p>
             <Button
               variant="ghost"

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useTransition } from "react";
@@ -7,12 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { HelpCircle, Loader2, CheckCircle, XCircle, ArrowRight } from "lucide-react";
 import { generateQuizAction } from "@/app/actions";
-import type { QuizOutput } from "@/ai/flows";
 import { cn } from "@/lib/utils";
 
 export function SelfQuizCreator() {
   const [notes, setNotes] = useState('');
-  const [quiz, setQuiz] = useState<QuizOutput | null>(null);
+  const [quiz, setQuiz] = useState<any>(null);
   const [isPending, startTransition] = useTransition();
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -51,7 +49,7 @@ export function SelfQuizCreator() {
   if (quiz) {
     let score = 0;
     if (submitted) {
-        quiz.questions.forEach((q, i) => {
+        quiz.questions.forEach((q: any, i: number) => {
             if (userAnswers[i] === q.answer) {
                 score++;
             }
@@ -69,11 +67,11 @@ export function SelfQuizCreator() {
                 )}
             </CardHeader>
             <CardContent className="space-y-6">
-                {quiz.questions.map((q, qIndex) => (
+                {quiz.questions.map((q: any, qIndex: number) => (
                 <div key={qIndex} className="space-y-2">
                     <p className="font-semibold">{qIndex + 1}. {q.question}</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {q.options.map((option, oIndex) => {
+                    {q.options.map((option: string, oIndex: number) => {
                         const isSelected = userAnswers[qIndex] === option;
                         const isCorrect = option === q.answer;
                         let buttonVariant: "default" | "secondary" | "destructive" | "outline" | "ghost" | "link" = "secondary";
@@ -124,9 +122,9 @@ export function SelfQuizCreator() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-primary" />
-            AI Self-Quiz Creator
+            Procedural Quiz Generator
           </CardTitle>
-          <CardDescription>Paste key points from your notes to generate a self-assessment quiz.</CardDescription>
+          <CardDescription>Paste key points from your notes to generate a logic-based concept check instantly.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
@@ -33,7 +32,7 @@ export function WeakAreaRecommendations() {
           domain,
           score: data.neutral.score,
           sessions: data.neutral.sessions,
-        })) as any; // Cast as any to satisfy the input type
+        })) as any;
 
         const res = await getWeakAreaRecommendationsAction(flatPerformanceData);
         setResult(res);
@@ -125,7 +124,7 @@ export function WeakAreaRecommendations() {
           Weak Area Targeting
         </CardTitle>
         <CardDescription>
-          AI-powered suggestions to turn weaknesses into strengths.
+          Logic-driven suggestions to turn weaknesses into strengths.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -135,7 +134,7 @@ export function WeakAreaRecommendations() {
           <div className="p-3 bg-primary/10 rounded-lg text-center relative mt-2">
             <p className="text-sm flex items-start gap-2 pr-6">
               <Lightbulb className="w-5 h-5 mt-0.5 text-primary shrink-0" />
-              <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This AI tool analyzes your performance to find your biggest area for growth and recommends a specific game to train it.</span>
+              <span className="text-foreground text-left"><span className="font-bold">Insight:</span> This tool analyzes your performance data to find your biggest area for growth and recommends a specific game to train it.</span>
             </p>
             <Button
               variant="ghost"
