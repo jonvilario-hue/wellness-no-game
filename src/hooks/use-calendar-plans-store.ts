@@ -17,6 +17,7 @@ interface CalendarPlansState {
   deletePlan: (planId: string) => void;
   resetDefaults: () => void;
   addCustomPlan: (plan: CalendarPlan) => void;
+  updateCustomPlan: (planId: string, updates: Partial<CalendarPlan>) => void;
   updateActivityStatus: (date: string, instanceId: string, status: ActivityStatus, source?: string) => void;
   syncFromTracker: (category: PlanCategory, activityName: string) => { matched: boolean; instanceId?: string };
   addAdHocActivity: (date: string, activity: Partial<CalendarActivityInstance>) => void;
@@ -70,6 +71,12 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
         set((state) => ({
           customPlans: [...state.customPlans, plan],
           activePlanIds: [...state.activePlanIds, plan.id]
+        }));
+      },
+
+      updateCustomPlan: (planId, updates) => {
+        set((state) => ({
+          customPlans: state.customPlans.map(p => p.id === planId ? { ...p, ...updates } : p)
         }));
       },
 

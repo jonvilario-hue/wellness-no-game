@@ -5,7 +5,7 @@ import { useState, useMemo } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
-import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw, Edit, Play } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -20,21 +20,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { PlanCategory } from '@/types/calendar-plans';
+import type { PlanCategory, CalendarPlan } from '@/types/calendar-plans';
 import { DayDetailsDialog } from '@/components/calendar/day-details-dialog';
 import { calendarContent } from '@/data/calendar-content';
+import Link from 'next/link';
 
 export default function CalendarPage() {
   const { 
@@ -47,6 +37,7 @@ export default function CalendarPage() {
     activityInstances, 
     updateActivityStatus,
     addCustomPlan,
+    updateCustomPlan,
     _hasHydrated 
   } = useCalendarPlansStore();
   
@@ -54,6 +45,7 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [plansOpen, setPlansOpen] = useState(true);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
+  const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
   const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
 
   // Form State for Custom Plan
@@ -105,26 +97,50 @@ export default function CalendarPage() {
     return activeTasks;
   }, [selectedDate, activePlans, activityInstances]);
 
-  const handleInitializePlan = () => {
+  const handleOpenBuilder = (plan?: CalendarPlan) => {
+    if (plan) {
+      setEditingPlan(plan);
+      setNewPlanName(plan.name);
+      setNewPlanDesc(plan.description);
+      setSelectedCategories(plan.categories);
+    } else {
+      setEditingPlan(null);
+      setNewPlanName('');
+      setNewPlanDesc('');
+      setSelectedCategories([]);
+    }
+    setIsBuilderOpen(true);
+  };
+
+  const handleSavePlan = () => {
     if (!newPlanName.trim()) return;
 
-    addCustomPlan({
-      id: `custom-${Date.now()}`,
-      name: newPlanName,
-      description: newPlanDesc || "Personalized wellness protocol.",
-      isPreset: false,
-      isActive: true,
-      durationType: 'ongoing',
-      startDate: new Date().toISOString(),
-      categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
-      color: `hsl(${Math.floor(Math.random() * 360)} 70% 50%)`,
-      activities: [] 
-    });
+    if (editingPlan) {
+      updateCustomPlan(editingPlan.id, {
+        name: newPlanName,
+        description: newPlanDesc,
+        categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
+      });
+    } else {
+      addCustomPlan({
+        id: `custom-${Date.now()}`,
+        name: newPlanName,
+        description: newPlanDesc || "Personalized wellness protocol.",
+        isPreset: false,
+        isActive: true,
+        durationType: 'ongoing',
+        startDate: new Date().toISOString(),
+        categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
+        color: `hsl(${Math.floor(Math.random() * 360)} 70% 50%)`,
+        activities: [] 
+      });
+    }
 
     // Reset Form
     setNewPlanName('');
     setNewPlanDesc('');
     setSelectedCategories([]);
+    setEditingPlan(null);
     setIsBuilderOpen(false);
   };
 
@@ -200,85 +216,29 @@ export default function CalendarPage() {
                       <Badge variant="outline" className="text-[10px] uppercase">{plan.categories[0]}</Badge>
                       <span className="text-[10px] text-muted-foreground">{plan.activities.length} daily steps</span>
                     </div>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Trash2 className="w-3.5 h-3.5" />
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {!plan.isPreset && (
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-primary" onClick={() => handleOpenBuilder(plan)}>
+                          <Edit className="w-3.5 h-3.5" />
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Plan?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to remove "{plan.name}"? 
-                            {plan.isPreset ? " You can restore built-in plans using the 'Reset Defaults' button." : " Custom plans cannot be restored once deleted."}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => deletePlan(plan.id)} variant="destructive">Delete</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                      )}
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                        onClick={() => deletePlan(plan.id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
                   </CardFooter>
                 </Card>
               ))}
-              <Dialog open={isBuilderOpen} onOpenChange={setIsBuilderOpen}>
-                <DialogTrigger asChild>
-                  <Card className="border-dashed cursor-pointer hover:bg-muted/50 flex flex-col items-center justify-center p-6 text-center h-full min-h-[120px]">
-                    <Plus className="w-8 h-8 text-muted-foreground mb-2" />
-                    <p className="text-sm font-bold">Create Custom Plan</p>
-                    <p className="text-xs text-muted-foreground">Design your own routine</p>
-                  </Card>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader><DialogTitle>Custom Plan Builder</DialogTitle></DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="plan-name">Plan Name</Label>
-                      <Input 
-                        id="plan-name"
-                        placeholder="e.g. Morning Focus" 
-                        value={newPlanName}
-                        onChange={e => setNewPlanName(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="plan-desc">Description (Optional)</Label>
-                      <Input 
-                        id="plan-desc"
-                        placeholder="Purpose of this protocol..." 
-                        value={newPlanDesc}
-                        onChange={e => setNewPlanDesc(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Categories</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {(['Movement', 'Stillness', 'Nutrition', 'Finance', 'Study/Learning'] as PlanCategory[]).map(c => (
-                          <Badge 
-                            key={c} 
-                            variant={selectedCategories.includes(c) ? 'default' : 'outline'} 
-                            className="cursor-pointer hover:bg-primary/10 transition-colors"
-                            onClick={() => toggleCategory(c)}
-                          >
-                            {c}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button 
-                      className="w-full" 
-                      disabled={!newPlanName.trim()}
-                      onClick={handleInitializePlan}
-                    >
-                      Initialize Plan
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <Card className="border-dashed cursor-pointer hover:bg-muted/50 flex flex-col items-center justify-center p-6 text-center h-full min-h-[120px]" onClick={() => handleOpenBuilder()}>
+                <Plus className="w-8 h-8 text-muted-foreground mb-2" />
+                <p className="text-sm font-bold">Create Custom Plan</p>
+                <p className="text-xs text-muted-foreground">Design your own routine</p>
+              </Card>
             </CollapsibleContent>
           </Collapsible>
 
@@ -424,6 +384,56 @@ export default function CalendarPage() {
           </div>
         </div>
       </main>
+
+      <Dialog open={isBuilderOpen} onOpenChange={setIsBuilderOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>{editingPlan ? 'Edit Custom Plan' : 'Custom Plan Builder'}</DialogTitle></DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="plan-name">Plan Name</Label>
+              <Input 
+                id="plan-name"
+                placeholder="e.g. Morning Focus" 
+                value={newPlanName}
+                onChange={e => setNewPlanName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="plan-desc">Description (Optional)</Label>
+              <Input 
+                id="plan-desc"
+                placeholder="Purpose of this protocol..." 
+                value={newPlanDesc}
+                onChange={e => setNewPlanDesc(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Categories</Label>
+              <div className="flex flex-wrap gap-2">
+                {(['Movement', 'Stillness', 'Nutrition', 'Finance', 'Study/Learning'] as PlanCategory[]).map(c => (
+                  <Badge 
+                    key={c} 
+                    variant={selectedCategories.includes(c) ? 'default' : 'outline'} 
+                    className="cursor-pointer hover:bg-primary/10 transition-colors"
+                    onClick={() => toggleCategory(c)}
+                  >
+                    {c}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              className="w-full" 
+              disabled={!newPlanName.trim()}
+              onClick={handleSavePlan}
+            >
+              {editingPlan ? 'Save Changes' : 'Initialize Plan'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {selectedDayContent && (
         <DayDetailsDialog 
