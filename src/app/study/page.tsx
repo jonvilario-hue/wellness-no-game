@@ -1,293 +1,178 @@
-
 'use client';
 
-import { Header } from '@/components/header';
-import { PageNav } from '@/components/page-nav';
-import { MotivationalMessage } from '@/components/motivational-message';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, Book, BarChart3, FlaskConical, Target, GraduationCap, Layers, Library, Search, Play, FileText, Bookmark, Edit, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useScholarStore } from '@/hooks/use-scholar-store';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Brain, Layers, HelpCircle, PenTool, TrendingUp, Sparkles, BookOpen, GraduationCap, ChevronRight, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { 
-    SelfQuizCreator, CornellNotesEditor, MindMapTool, SmartGoalWizard, TeachBackRecorder, 
-    ExamSimulator, InterleavingPlanner, SmartHighlightExporter, StudyBreakOptimizer, DistractionLog 
-} from '@/components/study/tools';
-import { 
-    ActiveRecallGuide, SpacedRepetitionGuide, CornellNotesGuide, InterleavingGuide, SmartGoalSettingGuide,
-    FeynmanTechniqueGuide, ExamPreparationGuide, EffectiveMindMappingGuide, ActiveReadingStrategiesGuide, TimeManagementGuide
-} from '@/components/study/guides';
-import {
-    StudyTimeTracker, RetentionRateTracker, GoalCompletionTracker, QuizAccuracyTracker, InterleavingSessionStats,
-    MindMapActivityTracker, FocusDistractionRatioTracker, FeynmanTeachBackPerformanceTracker, ExamReadinessTracker, ConsistencyStreakTracker
-} from '@/components/study/trackers';
-import { useState, useMemo, useEffect } from 'react';
-import { useLibraryStore } from '@/hooks/use-library-store';
-import { useHydratedJournalStore } from '@/hooks/use-journal';
-import { cn } from '@/lib/utils';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { FlashcardDecks } from '@/components/flashcards/flashcard-decks';
-import { processReviewData } from '@/components/stats/utils';
-import { StudySessions } from '@/components/stats/StudySessions';
-import { ReviewQuality } from '@/components/stats/ReviewQuality';
-import { RetentionCurve } from '@/components/stats/RetentionCurve';
-import { DeckEngagement } from '@/components/stats/DeckEngagement';
-import { CardDifficultyIndex } from '@/components/stats/CardDifficultyIndex';
-import { ProgressTimeline } from '@/components/stats/ProgressTimeline';
-import { StreakSystem } from '@/components/stats/StreakSystem';
-import { TagPerformance } from '@/components/stats/TagPerformance';
-import { Separator } from '@/components/ui/separator';
-import { useStatsStore } from '@/hooks/use-stats-store';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { LeitnerBoxManager } from '@/components/study/leitner-box-manager';
+import { VisualPairingTool } from '@/components/study/visual-pairing-tool';
+import { ForgettingCurveVisualizer } from '@/components/study/forgetting-curve-tool';
+import { useMemo } from 'react';
 
-function StatsView() {
-    const { reviews } = useStatsStore();
-    const { cards, decks } = useFlashcardStore();
+export default function ScholarHub() {
+  const { whyChains, visualPairs, sessions, explanations, examples } = useScholarStore();
+  const { cards } = useFlashcardStore();
 
-    const stats = useMemo(() => {
-        if (reviews.length === 0) return null;
-        return processReviewData(reviews, cards, decks);
-    }, [reviews, cards, decks]);
+  const toolCards = [
+    {
+      id: 'leitner',
+      title: 'Leitner Box Manager',
+      desc: 'Spaced repetition system with 5-box logic.',
+      icon: Inbox,
+      stat: `${cards.filter(c => c.repetitions === 4).length} Mastered`,
+      link: 'leitner'
+    },
+    {
+      id: 'visual',
+      title: 'Visual Pairing Tool',
+      desc: 'Combine text and sketches for dual coding.',
+      icon: PenTool,
+      stat: `${visualPairs.length} Pairs Created`,
+      link: 'visual'
+    },
+    {
+      id: 'curve',
+      title: 'Forgetting Curve',
+      desc: 'Visualize retention decay and stability.',
+      icon: TrendingUp,
+      stat: 'Predictive Map',
+      link: 'curve'
+    },
+    {
+      id: 'insights',
+      title: 'Session Insights',
+      desc: 'Focus trends and tool effectiveness.',
+      icon: BarChart3,
+      stat: `${sessions.length} Sessions`,
+      link: 'insights'
+    }
+  ];
 
-  if (!stats) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Flashcard Statistics</CardTitle>
-                <CardDescription>Review your study habits and track your memory retention over time.</CardDescription>
-            </CardHeader>
-            <CardContent className="text-center text-muted-foreground py-16">
-                <p>Not enough data to generate statistics.</p>
-                <p className="text-sm">Study some cards to get started!</p>
-            </CardContent>
-        </Card>
-    )
-  }
+  const guideCards = [
+    { id: 'leitner', title: 'Leitner System', desc: 'Organizational flashcard method.' },
+    { id: 'interrogation', title: 'Elaborative Interrogation', desc: 'Ask why & how questions.' },
+    { id: 'dual-coding', title: 'Dual Coding', desc: 'Verbal + Visual integration.' },
+    { id: 'retrieval', title: 'Retrieval Practice', desc: 'Active recall vs. reading.' },
+    { id: 'explanation', title: 'Self-Explanation', desc: 'Step-by-step reasoning.' }
+  ];
 
-  const {
-    sessions,
-    reviewQuality,
-    deckEngagement,
-    cardDifficulty,
-    progressTimeline,
-    streakSystem,
-    tagPerformance,
-    retentionCurve
-  } = stats;
-  
+  const aggregateStats = useMemo(() => {
+    const month = new Date().getMonth();
+    const sessionsThisMonth = sessions.filter(s => new Date(s.timestamp).getMonth() === month).length;
+    const avgFocus = sessions.length > 0 
+      ? (sessions.reduce((acc, s) => acc + s.focus, 0) / sessions.length).toFixed(1)
+      : '0';
+    return { sessionsThisMonth, avgFocus };
+  }, [sessions]);
+
   return (
-    <div className="space-y-6">
-        <Card>
-             <CardHeader>
-                <CardTitle>Recent Study Sessions</CardTitle>
-                <CardDescription>A look at your most recent study sessions.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <StudySessions sessions={sessions} />
-            </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Review Quality</CardTitle>
-                    <CardDescription>How you've rated cards during reviews.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ReviewQuality data={reviewQuality} />
-                </CardContent>
-            </Card>
-             <Card>
-                <CardHeader>
-                    <CardTitle>Study Streaks</CardTitle>
-                    <CardDescription>Your consistency in studying daily.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <StreakSystem streak={streakSystem.streak} longest={streakSystem.longest} />
-                </CardContent>
-            </Card>
+    <div className="space-y-8 pb-20">
+      {/* Aggregate Banner */}
+      <div className="bg-indigo-600 rounded-2xl p-8 text-white flex flex-col md:flex-row justify-between items-center gap-6 shadow-xl relative overflow-hidden">
+        <div className="relative z-10 space-y-2">
+          <h1 className="text-4xl font-black tracking-tight">Scholar Hub</h1>
+          <p className="text-indigo-100 max-w-md">Evidence-backed strategies meets interactive learning tools.</p>
         </div>
-        
-         <Card>
-            <CardHeader>
-                <CardTitle>Progress Timeline</CardTitle>
-                <CardDescription>The total number of cards you've learned over time.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ProgressTimeline timeline={progressTimeline} />
-            </CardContent>
-        </Card>
-        
-        <Card>
-            <CardHeader>
-                <CardTitle>Estimated Retention Curve</CardTitle>
-                <CardDescription>An estimation of how well you retain information over time.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <RetentionCurve days={retentionCurve.days} retention={retentionCurve.retention} />
-            </CardContent>
-        </Card>
-
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Deck Engagement</CardTitle>
-                    <CardDescription>Your accuracy across different decks.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <DeckEngagement stats={deckEngagement} />
-                </CardContent>
-            </Card>
-             <Card>
-                <CardHeader>
-                    <CardTitle>Tag Performance</CardTitle>
-                    <CardDescription>Performance breakdown by the tags you've assigned.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                   <TagPerformance data={tagPerformance} />
-                </CardContent>
-            </Card>
+        <div className="flex gap-8 relative z-10">
+          <div className="text-center">
+            <p className="text-3xl font-black">{aggregateStats.sessionsThisMonth}</p>
+            <p className="text-[10px] uppercase font-bold text-indigo-200">Sessions / Month</p>
+          </div>
+          <div className="text-center">
+            <p className="text-3xl font-black">{aggregateStats.avgFocus}/10</p>
+            <p className="text-[10px] uppercase font-bold text-indigo-200">Avg Focus</p>
+          </div>
+          <div className="text-center">
+            <p className="text-3xl font-black">{cards.length}</p>
+            <p className="text-[10px] uppercase font-bold text-indigo-200">Total Cards</p>
+          </div>
         </div>
+        <Zap className="absolute -bottom-10 -right-10 w-64 h-64 text-indigo-500 opacity-20 rotate-12" />
+      </div>
 
-         <Card>
-            <CardHeader>
-                <CardTitle>Card Difficulty Index</CardTitle>
-                <CardDescription>The cards you find most difficult, based on ease factor.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <CardDifficultyIndex cards={cardDifficulty} />
-            </CardContent>
-        </Card>
+      <Tabs defaultValue="tools" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8 bg-muted/50 p-1">
+          <TabsTrigger value="tools" className="gap-2">
+            <Zap className="h-4 w-4" /> Study Tools
+          </TabsTrigger>
+          <TabsTrigger value="guides" className="gap-2">
+            <BookOpen className="h-4 w-4" /> Learning Guides
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="tools" className="space-y-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {toolCards.map(tool => (
+              <Card key={tool.id} className="hover:shadow-lg transition-all group border-indigo-100/50">
+                <CardHeader className="pb-2">
+                  <div className="p-2 bg-indigo-50 dark:bg-indigo-950/20 rounded-lg w-fit group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <tool.icon className="h-5 w-5" />
+                  </div>
+                  <CardTitle className="text-lg mt-4">{tool.title}</CardTitle>
+                  <CardDescription className="text-xs">{tool.desc}</CardDescription>
+                </CardHeader>
+                <CardFooter className="pt-4 flex justify-between items-center border-t border-indigo-50 dark:border-indigo-950/20">
+                  <Badge variant="secondary" className="font-bold text-[10px]">{tool.stat}</Badge>
+                  <Button variant="ghost" size="sm" asChild className="h-8 px-2 hover:bg-indigo-50 dark:hover:bg-indigo-950/30">
+                    <Link href={`#${tool.id}`}>Launch <ChevronRight className="ml-1 h-3 w-3"/></Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+
+          <div className="space-y-20 pt-10">
+            <section id="leitner" className="scroll-mt-24">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-10 w-1 bg-indigo-600 rounded-full" />
+                <h2 className="text-2xl font-black tracking-tight">Leitner Box Manager</h2>
+              </div>
+              <LeitnerBoxManager />
+            </section>
+
+            <section id="visual" className="scroll-mt-24">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-10 w-1 bg-indigo-600 rounded-full" />
+                <h2 className="text-2xl font-black tracking-tight">Visual Pairing Tool</h2>
+              </div>
+              <VisualPairingTool />
+            </section>
+
+            <section id="curve" className="scroll-mt-24">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-10 w-1 bg-indigo-600 rounded-full" />
+                <h2 className="text-2xl font-black tracking-tight">Forgetting Curve Visualizer</h2>
+              </div>
+              <ForgettingCurveVisualizer />
+            </section>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="guides" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {guideCards.map(guide => (
+            <Card key={guide.id} className="hover:border-indigo-300 transition-all flex flex-col h-full">
+              <CardHeader>
+                <CardTitle>{guide.title}</CardTitle>
+                <CardDescription>{guide.desc}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <div className="p-4 bg-muted/30 rounded-lg text-xs italic text-muted-foreground">
+                  Includes research citations from Dunlosky et al. (2013).
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full" variant="outline">Read Guide</Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
 
-const toolTrackerPairs = [
-    { tool: <SelfQuizCreator />, tracker: <QuizAccuracyTracker /> },
-    { tool: <CornellNotesEditor />, tracker: <RetentionRateTracker /> },
-    { tool: <MindMapTool />, tracker: <MindMapActivityTracker /> },
-    { tool: <SmartGoalWizard />, tracker: <GoalCompletionTracker /> },
-    { tool: <TeachBackRecorder />, tracker: <FeynmanTeachBackPerformanceTracker /> },
-    { tool: <ExamSimulator />, tracker: <ExamReadinessTracker /> },
-    { tool: <InterleavingPlanner />, tracker: <InterleavingSessionStats /> },
-    { tool: <SmartHighlightExporter />, tracker: <ConsistencyStreakTracker /> },
-    { tool: <StudyBreakOptimizer />, tracker: <StudyTimeTracker /> },
-    { tool: <DistractionLog />, tracker: <FocusDistractionRatioTracker /> },
-];
-
-export default function StudyPage() {
-  const [isOpen, setIsOpen] = useState(true);
-
-  useEffect(() => {
-    const savedState = localStorage.getItem('scholar-hub-collapsible-state');
-    if (savedState !== null) {
-      setIsOpen(JSON.parse(savedState));
-    }
-  }, []);
-
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    localStorage.setItem('scholar-hub-collapsible-state', JSON.stringify(open));
-  };
-
-
-  return (
-    <>
-      <div className="sticky top-0 z-20">
-        <Header />
-        <PageNav />
-      </div>
-      <MotivationalMessage />
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-7xl space-y-6">
-            <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
-              <div className="flex justify-between items-start">
-                  <div className="flex-grow">
-                    <CollapsibleContent>
-                        <div className="flex flex-col items-center text-center pb-4">
-                            <GraduationCap className="mx-auto h-12 w-12 text-primary mb-2"/>
-                            <h1 className="text-4xl font-bold font-headline">Scholar Hub</h1>
-                            <p className="text-lg text-muted-foreground">Learn, practice, and track your study methods.</p>
-                        </div>
-                    </CollapsibleContent>
-                  </div>
-                <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
-                        <span className="sr-only">Toggle</span>
-                    </Button>
-                </CollapsibleTrigger>
-              </div>
-            </Collapsible>
-          
-          <Tabs defaultValue="decks" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="decks"><Layers className="mr-2 h-4 w-4" /> Decks & Stats</TabsTrigger>
-              <TabsTrigger value="study-tools"><FlaskConical className="mr-2 h-4 w-4" /> Study Tools</TabsTrigger>
-              <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" /> Study Strategies</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="decks" className="mt-6 space-y-6">
-              <FlashcardDecks />
-              <Separator />
-              <StatsView />
-            </TabsContent>
-            <TabsContent value="study-tools" className="mt-6">
-              <Card>
-                <CardHeader>
-                    <CardTitle>Study Tools & Techniques</CardTitle>
-                    <CardDescription>A suite of tools designed to enhance your learning process, paired with trackers to monitor their effectiveness.</CardDescription>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {toolTrackerPairs.map((pair, index) => (
-                      <Card key={index} className="flex flex-col">
-                        <div className="flex-grow">
-                            {pair.tool}
-                        </div>
-                        <Separator className="my-4" />
-                        <div className="px-6 pb-6">
-                            {pair.tracker}
-                        </div>
-                    </Card>
-                    ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="guides" className="mt-6">
-              <Card>
-                <CardHeader>
-                    <CardTitle>Learning Guides</CardTitle>
-                    <CardDescription>Explore evidence-based strategies to optimize your study habits and improve long-term retention.</CardDescription>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <ActiveRecallGuide />
-                    <SpacedRepetitionGuide />
-                    <CornellNotesGuide />
-                    <InterleavingGuide />
-                    <SmartGoalSettingGuide />
-                    <FeynmanTechniqueGuide />
-                    <ExamPreparationGuide />
-                    <EffectiveMindMappingGuide />
-                    <ActiveReadingStrategiesGuide />
-                    <TimeManagementGuide />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-    </>
-  );
-}
+import { Inbox, BarChart3, Separator } from 'lucide-react';
