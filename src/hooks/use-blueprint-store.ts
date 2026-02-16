@@ -4,7 +4,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import type { Blueprint, Milestone, Task, BlueprintTemplate, ReflectionEntry } from '@/types/blueprint';
+import type { Blueprint, Milestone, Task, BlueprintTemplate, ReflectionEntry, TemplateVariationSettings } from '@/types/blueprint';
+import { systemTemplates } from '@/data/blueprint-templates';
 
 type BlueprintState = {
   projects: Blueprint[];
@@ -13,17 +14,15 @@ type BlueprintState = {
   updateProject: (id: string, updates: Partial<Blueprint>) => void;
   deleteProject: (id: string) => void;
   
-  // A1 & A4
   cloneBlueprint: (id: string, options: { asTemplate?: boolean, asV2?: boolean }) => void;
-  saveAsTemplate: (blueprint: Blueprint) => void;
-  useTemplate: (templateId: string) => void;
+  saveAsTemplate: (blueprint: Blueprint, metadata: { category: string, description: string, isPublic: boolean }) => void;
+  useTemplate: (templateId: string, settings: TemplateVariationSettings) => void;
 
   addMilestone: (projectId: string, milestone: Omit<Milestone, 'id'>) => void;
   updateMilestoneDetails: (projectId: string, milestoneId: string, updates: Partial<Milestone>) => void;
   updateMilestoneStatus: (projectId: string, milestoneId: string, status: Milestone['status']) => void;
   deleteMilestone: (projectId: string, milestoneId: string) => void;
 
-  // A3
   addReflection: (projectId: string, milestoneId: string, entry: Omit<ReflectionEntry, 'id' | 'createdAt'>) => void;
 
   addTask: (projectId: string, milestoneId: string, task: Omit<Task, 'id' | 'completed'>) => void;
@@ -32,41 +31,11 @@ type BlueprintState = {
   deleteTask: (projectId: string, milestoneId: string, taskId: string) => void;
 };
 
-const initialTemplates: BlueprintTemplate[] = [
-  {
-    id: 't-biz-1',
-    name: 'Launch a Business',
-    description: 'A structured roadmap for validating an idea and launching a MVP.',
-    category: 'Business',
-    estimatedDuration: '3-6 Months',
-    suggestedStrategies: ['OKRs', 'SMART Goals', 'Obstacle Pre-Mortem'],
-    isSystemTemplate: true,
-    milestones: [
-      { title: 'Market Validation', description: 'Interview 10 potential customers.', tasks: ['Define target persona', 'Draft interview script', 'Conduct interviews'] },
-      { title: 'Prototype/MVP Build', description: 'Build the core value proposition.', tasks: ['Select tech stack', 'Design wireframes', 'Core feature implementation'] },
-      { title: 'Public Launch', description: 'Go live and get first users.', tasks: ['Set up analytics', 'Product Hunt launch', 'Social media announcement'] }
-    ]
-  },
-  {
-    id: 't-learn-1',
-    name: 'Learn a Language',
-    description: 'Fluency-focused blueprint using immersion and consistency.',
-    category: 'Learning',
-    estimatedDuration: '6-12 Months',
-    suggestedStrategies: ['Identity-Based Goals', 'Gamified Progress'],
-    isSystemTemplate: true,
-    milestones: [
-      { title: 'Foundational Vocab', description: 'First 500 words.', tasks: ['Complete Duolingo unit 1', 'Flashcards for daily items', 'Learn basic grammar'] },
-      { title: 'Immersion Phase', description: 'Start consuming media.', tasks: ['Watch 1 movie with subtitles', 'Listen to 5 podcasts', 'Write daily journal entry'] }
-    ]
-  }
-];
-
 export const useBlueprintStore = create<BlueprintState>()(
   persist(
     immer((set, get) => ({
       projects: [],
-      templates: initialTemplates,
+      templates: systemTemplates,
 
       addProject: (project) => {
         const newProject: Blueprint = {
@@ -85,11 +54,6 @@ export const useBlueprintStore = create<BlueprintState>()(
       cloneBlueprint: (id, options) => {
         const original = get().projects.find(p => p.id === id);
         if (!original) return;
-
-        if (options.asTemplate) {
-          get().saveAsTemplate(original);
-          return;
-        }
 
         const newId = crypto.randomUUID();
         const newBlueprint: Blueprint = {
@@ -116,46 +80,106 @@ export const useBlueprintStore = create<BlueprintState>()(
         });
       },
 
-      saveAsTemplate: (bp) => {
+      saveAsTemplate: (bp, meta) => {
         const template: BlueprintTemplate = {
           id: crypto.randomUUID(),
           name: bp.title,
-          description: bp.description || '',
-          category: 'Personal',
-          estimatedDuration: 'Variable',
-          suggestedStrategies: [],
-          isSystemTemplate: false,
+          description: meta.description,
+          category: meta.category as any,
+          defaultIdentityStatement: bp.identityGoal || '',
+          baseTimelineWeeks: 12,
           milestones: bp.milestones.map(m => ({
             title: m.title,
-            description: m.description,
-            tasks: m.tasks.map(t => t.title)
-          }))
+            description: m.description || '',
+            suggestedDurationWeeks: 2,
+            tasks: m.tasks.map(t => ({ title: t.title, description: t.notes || '' }))
+          })),
+          adaptiveSettings: {
+            supportsTimeline: false,
+            supportsIntensity: false,
+            supportsSkillLevel: false,
+            supportsLearningStyle: false,
+            supportsAccountability: false
+          },
+          suggestedStrategies: [],
+          createdBy: 'user',
+          isPublic: meta.isPublic,
+          isSystemTemplate: false
         };
         set((state) => {
           state.templates.unshift(template);
         });
       },
 
-      useTemplate: (templateId) => {
+      useTemplate: (templateId, settings) => {
         const template = get().templates.find(t => t.id === templateId);
         if (!template) return;
 
+        let multiplier = 1.0;
+        if (settings.timeline === 'ultraSprint') multiplier = 0.5;
+        if (settings.timeline === 'marathon') multiplier = 2.5;
+
+        const newMilestones: Milestone[] = template.milestones.map((m, idx) => ({
+          id: crypto.randomUUID(),
+          title: m.title,
+          description: m.description,
+          status: 'Not Started',
+          dependsOn: m.dependencies?.map(dIdx => `m-${dIdx}`),
+          tasks: m.tasks.map(t => ({
+            id: crypto.randomUUID(),
+            title: t.title,
+            notes: t.description,
+            completed: false
+          }))
+        }));
+
+        // Apply Intensity: Professional adds review loops
+        if (settings.intensity === 'professional') {
+          newMilestones.forEach(m => {
+            m.tasks.push({
+              id: crypto.randomUUID(),
+              title: 'Weekly Contingency Audit',
+              notes: 'Professional Intensity: Identify risks and blockers for this phase.',
+              completed: false
+            });
+          });
+        }
+
+        // Apply Skill Level: Beginner adds foundational milestone
+        if (settings.skillLevel === 'beginner') {
+          newMilestones.unshift({
+            id: crypto.randomUUID(),
+            title: 'Foundational Knowledge Setup',
+            description: 'Beginner Mode: Establishing core concepts and basic tools.',
+            status: 'Not Started',
+            tasks: [{ id: crypto.randomUUID(), title: 'Glossary of terms', notes: 'Master basic vocabulary.', completed: false }]
+          });
+        }
+
+        // Apply Accountability
+        if (settings.accountability !== 'solo') {
+          newMilestones.push({
+            id: crypto.randomUUID(),
+            title: 'Accountability & Feedback Loop',
+            description: `${settings.accountability === 'buddy' ? 'Buddy' : 'Public'} Mode active.`,
+            status: 'Not Started',
+            tasks: [{ id: crypto.randomUUID(), title: 'Share progress with partner/network', notes: 'Build public commitment.', completed: false }]
+          });
+        }
+
         const newProject: Blueprint = {
           id: crypto.randomUUID(),
+          templateId: template.id,
           title: template.name,
           description: template.description,
           status: 'Active',
           tags: [template.category.toUpperCase()],
+          identityGoal: template.defaultIdentityStatement,
           createdAt: new Date().toISOString(),
           versionNumber: 1,
-          milestones: template.milestones.map(m => ({
-            id: crypto.randomUUID(),
-            title: m.title,
-            description: m.description,
-            status: 'Not Started',
-            tasks: m.tasks.map(t => ({ id: crypto.randomUUID(), title: t, completed: false }))
-          }))
+          milestones: newMilestones
         };
+
         set((state) => {
           state.projects.unshift(newProject);
         });
@@ -220,7 +244,7 @@ export const useBlueprintStore = create<BlueprintState>()(
               };
               if (!milestone.reflections) milestone.reflections = [];
               milestone.reflections.unshift(newReflection);
-              milestone.reflection = entry.content; // Keep sync with current
+              milestone.reflection = entry.content;
             }
           }
         });
@@ -274,7 +298,7 @@ export const useBlueprintStore = create<BlueprintState>()(
       },
     })),
     {
-      name: 'architecture-store-v2',
+      name: 'architecture-store-v3',
       storage: createJSONStorage(() => localStorage),
     }
   )
