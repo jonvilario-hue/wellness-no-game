@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { Progress } from "../ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { TodayScheduleWidget } from "./TodayScheduleWidget";
 
 export function MovementDashboard() {
   const { movementLogs, stillnessLogs } = useWellnessData();
@@ -40,7 +40,7 @@ export function MovementDashboard() {
   }, [movementLogs, stillnessLogs]);
 
   return (
-    <div className="space-y-4 mb-8">
+    <div className="space-y-6 mb-8">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="bg-primary/5 border-primary/10">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
@@ -66,6 +66,8 @@ export function MovementDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <TodayScheduleWidget category="Movement" />
 
       <Card className="bg-muted/30 border-none">
         <CardContent className="p-4">

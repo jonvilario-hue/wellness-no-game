@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +6,7 @@ import { Sparkles, Clock, Wind, Zap, Brain, TrendingDown } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { Badge } from "../ui/badge";
+import { TodayScheduleWidget } from "./TodayScheduleWidget";
 
 export function StillnessDashboard() {
   const { stillnessLogs } = useWellnessData();
@@ -31,15 +31,10 @@ export function StillnessDashboard() {
     const triggerStats: Record<string, { sum: number, count: number }> = {};
     stillnessLogs.forEach(log => {
       if (log.preStress !== undefined && log.postCalm !== undefined && log.trigger === 'Stress') {
-        const diff = log.preStress - (10 - log.postCalm); // This is just one way to normalize
-        const effectiveDiff = log.preStress - (10 - log.postCalm); // Placeholder logic
-        
-        // Simpler logic: How much postCalm increased vs preStress (assuming postCalm is good)
-        // Actual logic: Stress reduction
         if (!triggerStats[log.techniqueId]) triggerStats[log.techniqueId] = { sum: 0, count: 0 };
-        // We'll calculate average 'Stress Reduction' points
-        const reduction = log.preStress - (10 - log.postCalm); // Example formula
-        triggerStats[log.techniqueId].sum += Math.max(0, log.postCalm - (10 - log.preStress)); // High postCalm is better
+        // Average 'Stress Reduction' points
+        const reduction = log.preStress - (10 - log.postCalm);
+        triggerStats[log.techniqueId].sum += Math.max(0, log.postCalm - (10 - log.preStress));
         triggerStats[log.techniqueId].count++;
       }
     });
@@ -55,7 +50,7 @@ export function StillnessDashboard() {
   }, [stillnessLogs]);
 
   return (
-    <div className="space-y-4 mb-8">
+    <div className="space-y-6 mb-8">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="bg-primary/5 border-primary/10">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
@@ -81,6 +76,8 @@ export function StillnessDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <TodayScheduleWidget category="Stillness" />
 
       {stats.reliverName && (
         <Card className="bg-primary/5 border-none">

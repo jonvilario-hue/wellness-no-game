@@ -1,8 +1,7 @@
-
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { PlusCircle, HeartPulse, Waves, SlidersHorizontal, CheckCircle2 } from "lucide-react";
+import { PlusCircle, HeartPulse, Waves, SlidersHorizontal, CheckCircle2, Calendar } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useWellnessData } from "@/hooks/use-wellness-data";
@@ -13,20 +12,24 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { format } from "date-fns";
 
 export function QuickLogBar() {
   const [open, setOpen] = useState(false);
+  const [showSchedulePrompt, setShowSchedulePrompt] = useState(false);
+  const [lastLoggedName, setLastLogName] = useState("");
+  const [lastLoggedCategory, setLastLogCategory] = useState("");
+  
   const [type, setType] = useState<'movement' | 'stillness' | null>(null);
   const [selectedId, setSelectedId] = useState("");
   const [duration, setDuration] = useState("5");
   
-  // Phase 2 Optional Fields
   const [difficulty, setDifficulty] = useState(3);
   const [preStress, setPreStress] = useState("5");
   const [postCalm, setPostCalm] = useState("7");
 
   const { addMovementLog, addStillnessLog } = useWellnessData();
-  const { syncFromTracker } = useCalendarPlansStore();
+  const { syncFromTracker, addAdHocActivity } = useCalendarPlansStore();
   const { toast } = useToast();
 
   const handleOpen = (t: 'movement' | 'stillness') => {
@@ -40,6 +43,8 @@ export function QuickLogBar() {
     
     if (!item) return;
 
+    const categoryName = type === 'movement' ? 'Movement' : 'Stillness';
+    
     if (type === 'movement') {
       addMovementLog({
         exerciseId: item.id,
@@ -48,7 +53,6 @@ export function QuickLogBar() {
         timestamp: new Date().toISOString(),
         difficulty
       });
-      syncFromTracker('Movement', item.name);
     } else {
       addStillnessLog({
         techniqueId: item.id,
@@ -58,12 +62,30 @@ export function QuickLogBar() {
         preStress: parseInt(preStress),
         postCalm: parseInt(postCalm)
       });
-      syncFromTracker('Stillness', item.name);
     }
 
-    toast({ title: "✅ Practice Logged!", variant: 'success' });
+    const { matched } = syncFromTracker(categoryName as any, item.name);
+    
+    if (matched) {
+      toast({ title: "✓ Calendar activity marked complete", variant: 'success' });
+    } else {
+      setLastLogName(item.name);
+      setLastLogCategory(categoryName);
+      setShowSchedulePrompt(true);
+    }
+
     setOpen(false);
     setSelectedId("");
+  };
+
+  const handleAddToSchedule = () => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    addAdHocActivity(today, {
+      activityName: lastLoggedName,
+      status: 'completed',
+    });
+    toast({ title: "Added to today's schedule", variant: 'success' });
+    setShowSchedulePrompt(false);
   };
 
   return (
@@ -90,6 +112,7 @@ export function QuickLogBar() {
         </Button>
       </div>
 
+      {/* Main Logging Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
@@ -102,7 +125,7 @@ export function QuickLogBar() {
           <Tabs defaultValue="basic" className="w-full">
             <TabsList className="grid w-full grid-cols-2 h-8 text-[10px]">
               <TabsTrigger value="basic">Basic Log</TabsTrigger>
-              <TabsTrigger value="details">Details (Phase 2)</TabsTrigger>
+              <TabsTrigger value="details">Details</TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-4 py-4">
@@ -175,6 +198,31 @@ export function QuickLogBar() {
           <DialogFooter>
             <Button className="w-full" disabled={!selectedId} onClick={handleLog}>
               Complete Entry
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Off-Schedule Prompt Dialog */}
+      <Dialog open={showSchedulePrompt} onOpenChange={setShowSchedulePrompt}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-primary" />
+              Add to Schedule?
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              You just completed <strong>{lastLoggedName}</strong>. Want to add this to your schedule so it tracks automatically?
+            </p>
+          </div>
+          <DialogFooter className="grid grid-cols-2 gap-2">
+            <Button variant="outline" onClick={() => setShowSchedulePrompt(false)}>
+              One-time only
+            </Button>
+            <Button onClick={handleAddToSchedule}>
+              Add to Schedule
             </Button>
           </DialogFooter>
         </DialogContent>

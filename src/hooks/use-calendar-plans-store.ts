@@ -1,9 +1,8 @@
-
 'use client';
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { CalendarPlan, CalendarActivityInstance, ActivityStatus } from '@/types/calendar-plans';
+import type { CalendarPlan, CalendarActivityInstance, ActivityStatus, PlanCategory } from '@/types/calendar-plans';
 import { presetPlans } from '@/data/preset-calendar-plans';
 import { format, isSameDay } from 'date-fns';
 
@@ -14,8 +13,10 @@ interface CalendarPlansState {
   
   togglePlan: (planId: string) => void;
   addCustomPlan: (plan: CalendarPlan) => void;
-  updateActivityStatus: (date: string, instanceId: string, status: ActivityStatus) => void;
-  syncFromTracker: (category: string, activityName?: string) => void;
+  updateActivityStatus: (date: string, instanceId: string, status: ActivityStatus, source?: string) => void;
+  syncFromTracker: (category: PlanCategory, activityName: string) => { matched: boolean; instanceId?: string };
+  addAdHocActivity: (date: string, activity: Partial<CalendarActivityInstance>) => void;
+  
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
 }
@@ -48,11 +49,16 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
         }));
       },
 
-      updateActivityStatus: (date, instanceId, status) => {
+      updateActivityStatus: (date, instanceId, status, source) => {
         set((state) => {
           const dayInstances = state.activityInstances[date] || [];
           const updatedInstances = dayInstances.map(inst => 
-            inst.id === instanceId ? { ...inst, status, completedAt: status === 'completed' ? new Date().toISOString() : undefined } : inst
+            inst.id === instanceId ? { 
+              ...inst, 
+              status, 
+              completedAt: status === 'completed' ? new Date().toISOString() : undefined,
+              completedVia: source === 'tracker' ? 'tracker-auto-sync' : 'calendar'
+            } : inst
           );
           
           return {
@@ -70,20 +76,45 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
         const dayInstances = activityInstances[today] || [];
         
         // Find matching incomplete activity for today
+        // In a real app, we'd use fuzzy matching on activityName
         const match = dayInstances.find(inst => {
           if (inst.status === 'completed') return false;
-          // In a real app, we'd lookup the activity definition via planId/activityId
-          // For MVP, we'll assume a match based on category for now
-          return true; // Simple logic for MVP sync
+          return inst.activityName.toLowerCase().includes(activityName.toLowerCase());
         });
 
         if (match) {
-          get().updateActivityStatus(today, match.id, 'completed');
+          get().updateActivityStatus(today, match.id, 'completed', 'tracker');
+          return { matched: true, instanceId: match.id };
         }
+        
+        return { matched: false };
+      },
+
+      addAdHocActivity: (date, activity) => {
+        set((state) => {
+          const dayInstances = state.activityInstances[date] || [];
+          const newInstance: CalendarActivityInstance = {
+            id: `adhoc-${Date.now()}`,
+            planId: 'adhoc',
+            activityId: 'adhoc',
+            activityName: activity.activityName || 'Activity',
+            status: 'completed',
+            completedAt: new Date().toISOString(),
+            completedVia: 'tracker-auto-sync',
+            ...activity
+          };
+          
+          return {
+            activityInstances: {
+              ...state.activityInstances,
+              [date]: [...dayInstances, newInstance]
+            }
+          };
+        });
       },
     }),
     {
-      name: 'calendar-plans-storage',
+      name: 'calendar-plans-storage-v2',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
