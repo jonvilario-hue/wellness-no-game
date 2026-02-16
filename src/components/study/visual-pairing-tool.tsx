@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { Eraser, Pencil, Trash2, Save, Image as ImageIcon, Download } from 'lucide-react';
 import { useScholarStore } from '@/hooks/use-scholar-store';
 import { useToast } from '@/hooks/use-toast';
