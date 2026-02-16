@@ -279,101 +279,99 @@ export default function ArchitecturePage() {
   }
 
   return (
-    <div className="space-y-6">
-       <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
-            <div className="flex justify-between items-start">
-                <div className="flex-grow">
-                    <CollapsibleContent>
-                        <div className="flex flex-col items-center text-center pb-4">
-                            <div className="p-3 bg-primary/10 rounded-full mb-3">
-                                <Target className="h-10 w-10 text-primary"/>
-                            </div>
-                            <div className="flex items-center justify-center gap-3">
-                              <h1 className="text-4xl font-bold font-headline tracking-tight">My Architecture</h1>
-                              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setIsHelpOpen(true)}>
-                                <Info className="w-5 h-5 text-muted-foreground" />
-                              </Button>
-                            </div>
-                            <p className="text-lg text-muted-foreground max-w-2xl">Design your future with precision. Map identity-driven goals to actionable steps.</p>
-                        </div>
-                    </CollapsibleContent>
-                </div>
-                <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
-                        <span className="sr-only">Toggle</span>
-                    </Button>
-                </CollapsibleTrigger>
-            </div>
-        </Collapsible>
-       
-       <Tabs defaultValue="blueprints" className="w-full">
-            <TooltipProvider>
-              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger value="blueprints"><Target className="mr-2 h-4 w-4" />Blueprints</TabsTrigger>
-                    </TooltipTrigger>
-                    {settings.assistantMode && <TooltipContent>Your long-term goals, broken into milestones and tasks. Each blueprint represents a major project or life direction you're actively building toward.</TooltipContent>}
-                  </Tooltip>
-                  
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" />Vision Library</TabsTrigger>
-                    </TooltipTrigger>
-                    {settings.assistantMode && <TooltipContent>A collection of proven goal-achievement strategies. Each one includes a step-by-step protocol you can learn, practice, and apply.</TooltipContent>}
-                  </Tooltip>
-              </TabsList>
-            </TooltipProvider>
-
-            <TabsContent value="blueprints" className="mt-0">
-                {renderContent()}
-            </TabsContent>
-            <TabsContent value="guides" className="mt-0 space-y-12">
-                <Tabs defaultValue="library">
-                  <div className="flex justify-center mb-8">
-                    <TooltipProvider>
-                      <TabsList className="grid w-full grid-cols-3 max-w-lg h-auto p-1 bg-muted/50">
-                        <TabsTrigger value="library" className="gap-2"><Book className="w-4 h-4" /> Strategy Library</TabsTrigger>
-                        <Tooltip delayDuration={0}>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger value="playbook" className="gap-2"><Star className="w-4 h-4" /> My Playbook</TabsTrigger>
-                          </TooltipTrigger>
-                          {settings.assistantMode && <TooltipContent className="max-w-xs">View only the strategies you've bookmarked as favorites. Tracks usage stats and personal execution notes.</TooltipContent>}
-                        </Tooltip>
-                        
-                        <Tooltip delayDuration={0}>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger value="advisor" className="gap-2"><BrainCircuit className="w-4 h-4" /> Advisor</TabsTrigger>
-                          </TooltipTrigger>
-                          {settings.assistantMode && <TooltipContent className="max-w-xs">Get personalized strategy recommendations based on your active blueprints' status and categories.</TooltipContent>}
-                        </Tooltip>
-                      </TabsList>
-                    </TooltipProvider>
+    <TooltipProvider>
+      <div className="space-y-6">
+        <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
+              <div className="flex justify-between items-start">
+                  <div className="flex-grow">
+                      <CollapsibleContent>
+                          <div className="flex flex-col items-center text-center pb-4">
+                              <div className="p-3 bg-primary/10 rounded-full mb-3">
+                                  <Target className="h-10 w-10 text-primary"/>
+                              </div>
+                              <div className="flex items-center justify-center gap-3">
+                                <h1 className="text-4xl font-bold font-headline tracking-tight">My Architecture</h1>
+                                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setIsHelpOpen(true)}>
+                                  <Info className="w-5 h-5 text-muted-foreground" />
+                                </Button>
+                              </div>
+                              <p className="text-lg text-muted-foreground max-w-2xl">Design your future with precision. Map identity-driven goals to actionable steps.</p>
+                          </div>
+                      </CollapsibleContent>
                   </div>
-                  
-                  <TabsContent value="library" className="space-y-12">
-                    <ScenarioSimulator />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
-                        {goalStrategies.map(strategy => (
-                            <StrategyGuide key={strategy.id} strategy={strategy} />
-                        ))}
+                  <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                          {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
+                          <span className="sr-only">Toggle</span>
+                      </Button>
+                  </CollapsibleTrigger>
+              </div>
+          </Collapsible>
+        
+        <Tabs defaultValue="blueprints" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="blueprints"><Target className="mr-2 h-4 w-4" />Blueprints</TabsTrigger>
+                      </TooltipTrigger>
+                      {settings.assistantMode && <TooltipContent>Your long-term goals, broken into milestones and tasks. Each blueprint represents a major project or life direction you're actively building toward.</TooltipContent>}
+                    </Tooltip>
+                    
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger value="guides"><Book className="mr-2 h-4 w-4" />Vision Library</TabsTrigger>
+                      </TooltipTrigger>
+                      {settings.assistantMode && <TooltipContent>A collection of proven goal-achievement strategies. Each one includes a step-by-step protocol you can learn, practice, and apply.</TooltipContent>}
+                    </Tooltip>
+                </TabsList>
+
+              <TabsContent value="blueprints" className="mt-0">
+                  {renderContent()}
+              </TabsContent>
+              <TabsContent value="guides" className="mt-0 space-y-12">
+                  <Tabs defaultValue="library">
+                    <div className="flex justify-center mb-8">
+                        <TabsList className="grid w-full grid-cols-3 max-w-lg h-auto p-1 bg-muted/50">
+                          <TabsTrigger value="library" className="gap-2"><Book className="w-4 h-4" /> Strategy Library</TabsTrigger>
+                          <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                              <TabsTrigger value="playbook" className="gap-2"><Star className="w-4 h-4" /> My Playbook</TabsTrigger>
+                            </TooltipTrigger>
+                            {settings.assistantMode && <TooltipContent className="max-w-xs">View only the strategies you've bookmarked as favorites. Tracks usage stats and personal execution notes.</TooltipContent>}
+                          </Tooltip>
+                          
+                          <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                              <TabsTrigger value="advisor" className="gap-2"><BrainCircuit className="w-4 h-4" /> Advisor</TabsTrigger>
+                            </TooltipTrigger>
+                            {settings.assistantMode && <TooltipContent className="max-w-xs">Get personalized strategy recommendations based on your active blueprints' status and categories.</TooltipContent>}
+                          </Tooltip>
+                        </TabsList>
                     </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="playbook">
-                    <PlaybookView />
-                  </TabsContent>
+                    
+                    <TabsContent value="library" className="space-y-12">
+                      <ScenarioSimulator />
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
+                          {goalStrategies.map(strategy => (
+                              <StrategyGuide key={strategy.id} strategy={strategy} />
+                          ))}
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="playbook">
+                      <PlaybookView />
+                    </TabsContent>
 
-                  <TabsContent value="advisor">
-                    <AdviceMatcher />
-                  </TabsContent>
-                </Tabs>
-            </TabsContent>
-        </Tabs>
+                    <TabsContent value="advisor">
+                      <AdviceMatcher />
+                    </TabsContent>
+                  </Tabs>
+              </TabsContent>
+          </Tabs>
 
-        <TemplatesLibrary open={isTemplatesOpen} onOpenChange={setIsTemplatesOpen} />
-        <ArchitectureHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
-    </div>
+          <TemplatesLibrary open={isTemplatesOpen} onOpenChange={setIsTemplatesOpen} />
+          <ArchitectureHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
+      </div>
+    </TooltipProvider>
   );
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -123,34 +124,24 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
                   <CardDescription>{strategy.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex-grow space-y-4">
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <div>
-                          <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">The Protocol:</h4>
-                          <ul className="space-y-4 text-sm">
-                              {strategy.steps.map((step, index) => (
-                                <div key={index}>{renderStepWithIcon(step)}</div>
-                              ))}
-                          </ul>
-                      </div>
-                    </TooltipTrigger>
-                    {settings.assistantMode && <TooltipContent>The core steps of this strategy, distilled into a clear sequence you can follow.</TooltipContent>}
-                  </Tooltip>
+                  <div className="space-y-4">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">The Protocol:</h4>
+                      <ul className="space-y-4 text-sm">
+                          {strategy.steps.map((step, index) => (
+                            <div key={index}>{renderStepWithIcon(step)}</div>
+                          ))}
+                      </ul>
+                  </div>
 
-                   <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <div className="pt-4 border-t">
-                          <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-1">Ideal Context:</h4>
-                          <p className="text-sm italic">{strategy.useFor}</p>
-                      </div>
-                    </TooltipTrigger>
-                    {settings.assistantMode && <TooltipContent>When this strategy works best — the type of goal or situation it's designed for.</TooltipContent>}
-                  </Tooltip>
+                   <div className="pt-4 border-t">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-1">Ideal Context:</h4>
+                      <p className="text-sm italic">{strategy.useFor}</p>
+                  </div>
               </CardContent>
               {entry?.status && (
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <div className="px-6 pb-4">
+                    <div className={cn("px-6 pb-4 w-fit", settings.assistantMode && "cursor-help")}>
                       <Badge variant="secondary" className="text-[9px] uppercase tracking-widest">{entry.status}</Badge>
                     </div>
                   </TooltipTrigger>

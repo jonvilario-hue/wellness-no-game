@@ -1,3 +1,4 @@
+
 'use client'
 
 import type { Blueprint, Milestone, Task } from "@/types/blueprint"
@@ -87,7 +88,7 @@ export default function BlueprintProject({
                   <TooltipProvider>
                     <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
-                        <div className={cn("text-xs font-medium text-primary mt-2 flex items-center gap-2", settings.assistantMode && "cursor-help")}>
+                        <div className={cn("text-xs font-medium text-primary mt-2 flex items-center gap-2 w-fit", settings.assistantMode && "cursor-help")}>
                             <Badge variant="outline" className="font-bold uppercase tracking-tighter text-[9px] bg-primary/5">Becoming</Badge>
                             <span className="italic">{project.identityGoal}</span>
                         </div>
@@ -100,7 +101,7 @@ export default function BlueprintProject({
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                      <div className={cn("flex gap-2 mt-3 flex-wrap", settings.assistantMode && "cursor-help")}>
+                      <div className={cn("flex gap-2 mt-3 flex-wrap w-fit", settings.assistantMode && "cursor-help")}>
                       {project.tags.map(tag => (
                           <Badge key={tag} variant="secondary" className="text-[10px] uppercase font-bold tracking-tight">{tag}</Badge>
                       ))}

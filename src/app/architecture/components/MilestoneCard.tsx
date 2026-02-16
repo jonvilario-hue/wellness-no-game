@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState } from 'react';
@@ -73,19 +74,19 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
   });
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border rounded-lg p-4 bg-muted/30">
-        <div className="flex justify-between items-center">
-            <div className='flex items-center gap-2 flex-grow'>
-                <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                       <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
-                    </Button>
-                </CollapsibleTrigger>
-                <div className='flex-grow'>
-                    <TooltipProvider>
+    <TooltipProvider>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen} className="border rounded-lg p-4 bg-muted/30">
+          <div className="flex justify-between items-center">
+              <div className='flex items-center gap-2 flex-grow'>
+                  <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+                      </Button>
+                  </CollapsibleTrigger>
+                  <div className='flex-grow'>
                       <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
-                          <div className={cn("flex items-center gap-2", settings.assistantMode && "cursor-help")}>
+                          <div className={cn("flex items-center gap-2 w-fit", settings.assistantMode && "cursor-help")}>
                             <h4 className="font-semibold">{milestone.title}</h4>
                             {milestone.dependsOn && milestone.dependsOn.length > 0 && (
                               <Badge variant="outline" className="text-[8px] h-4 py-0 gap-1 uppercase tracking-tighter text-primary border-primary/20">
@@ -96,18 +97,17 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                         </TooltipTrigger>
                         {settings.assistantMode && <TooltipContent>A major checkpoint in your goal. Think of milestones as chapters.</TooltipContent>}
                       </Tooltip>
-                    </TooltipProvider>
-                     {milestone.dueDate && (
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-primary" /> Due: {format(new Date(milestone.dueDate), 'PPP')}
-                        </p>
-                    )}
-                </div>
-            </div>
-            <div className="flex items-center gap-2">
-                 <TooltipProvider>
-                   <Tooltip delayDuration={0}>
-                     <Popover>
+                      
+                      {milestone.dueDate && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Calendar className="w-3 h-3 text-primary" /> Due: {format(new Date(milestone.dueDate), 'PPP')}
+                          </p>
+                      )}
+                  </div>
+              </div>
+              <div className="flex items-center gap-2">
+                  <Tooltip delayDuration={0}>
+                    <Popover>
                         <PopoverTrigger asChild>
                           <TooltipTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8"><Link2 className={cn("w-4 h-4", milestone.dependsOn?.length ? "text-primary" : "text-muted-foreground")} /></Button>
@@ -130,15 +130,13 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                             </div>
                           </div>
                         </PopoverContent>
-                     </Popover>
-                     {settings.assistantMode && <TooltipContent>Set which milestones must finish before this one starts.</TooltipContent>}
-                   </Tooltip>
-                 </TooltipProvider>
+                    </Popover>
+                    {settings.assistantMode && <TooltipContent>Set which milestones must finish before this one starts.</TooltipContent>}
+                  </Tooltip>
 
-                 <TooltipProvider>
-                   <Tooltip delayDuration={0}>
-                     <TooltipTrigger asChild>
-                       <div>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <div>
                         <Select
                             value={milestone.status}
                             onValueChange={(value) => onUpdateMilestoneStatus(value as Milestone["status"])}
@@ -153,45 +151,43 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                                 <SelectItem value="Completed">Completed</SelectItem>
                             </SelectContent>
                         </Select>
-                       </div>
-                     </TooltipTrigger>
-                     {settings.assistantMode && <TooltipContent>Track current progress stage.</TooltipContent>}
-                   </Tooltip>
-                 </TooltipProvider>
-                
-                <AddMilestoneDialog onSave={onUpdateMilestone} milestoneToEdit={milestone}>
-                   <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="w-4 h-4" /></Button>
-                </AddMilestoneDialog>
-            </div>
-        </div>
-      
-        <Progress value={progress} className="my-2 h-1" />
-
-        <CollapsibleContent className="space-y-3 mt-3">
-            {milestone.description && <p className="text-sm text-muted-foreground">{milestone.description}</p>}
-            
-            {dependencyWarning && milestone.status === 'In Progress' && (
-              <div className="p-2 bg-warning/10 border border-warning/20 rounded-md flex items-start gap-2 text-[10px] text-warning">
-                <AlertCircle className="w-3 h-3 mt-0.5 shrink-0" />
-                <p>Dependency Alert: Milestones this depends on are not yet complete.</p>
+                      </div>
+                    </TooltipTrigger>
+                    {settings.assistantMode && <TooltipContent>Track current progress stage.</TooltipContent>}
+                  </Tooltip>
+                  
+                  <AddMilestoneDialog onSave={onUpdateMilestone} milestoneToEdit={milestone}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="w-4 h-4" /></Button>
+                  </AddMilestoneDialog>
               </div>
-            )}
+          </div>
+        
+          <Progress value={progress} className="my-2 h-1" />
 
-            <div className="space-y-2">
-                {milestone.tasks.map(task => (
-                    <TaskItem key={task.id} task={task} onToggle={() => onToggleTask(task.id)} />
-                ))}
-                 <AddTaskDialog onAddTask={onAddTask}>
-                    <Button size="sm" variant="ghost" className="w-full justify-start mt-1">
-                        <Plus className="w-4 h-4 mr-2 text-primary"/>
-                        Add Task
-                    </Button>
-                </AddTaskDialog>
-            </div>
+          <CollapsibleContent className="space-y-3 mt-3">
+              {milestone.description && <p className="text-sm text-muted-foreground">{milestone.description}</p>}
+              
+              {dependencyWarning && milestone.status === 'In Progress' && (
+                <div className="p-2 bg-warning/10 border border-warning/20 rounded-md flex items-start gap-2 text-[10px] text-warning">
+                  <AlertCircle className="w-3 h-3 mt-0.5 shrink-0" />
+                  <p>Dependency Alert: Milestones this depends on are not yet complete.</p>
+                </div>
+              )}
 
-            <div className="pt-4 space-y-4 border-t border-primary/5">
               <div className="space-y-2">
-                <TooltipProvider>
+                  {milestone.tasks.map(task => (
+                      <TaskItem key={task.id} task={task} onToggle={() => onToggleTask(task.id)} />
+                  ))}
+                  <AddTaskDialog onAddTask={onAddTask}>
+                      <Button size="sm" variant="ghost" className="w-full justify-start mt-1">
+                          <Plus className="w-4 h-4 mr-2 text-primary"/>
+                          Add Task
+                      </Button>
+                  </AddTaskDialog>
+              </div>
+
+              <div className="pt-4 space-y-4 border-t border-primary/5">
+                <div className="space-y-2">
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <h5 className={cn("text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2 w-fit", settings.assistantMode && "cursor-help")}>
@@ -200,23 +196,21 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                     </TooltipTrigger>
                     {settings.assistantMode && <TooltipContent>Context-aware questions based on your current milestone status.</TooltipContent>}
                   </Tooltip>
-                </TooltipProvider>
-                <div className="flex flex-wrap gap-2">
-                  {statusPrompts[milestone.status].map(prompt => (
-                    <Button 
-                      key={prompt} 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-7 text-[10px] bg-primary/5 border-primary/10 hover:bg-primary/10"
-                      onClick={() => onUpdateMilestone({ reflection: `${milestone.reflection || ''}\n\n## ${prompt}\n` })}
-                    >
-                      {prompt}
-                    </Button>
-                  ))}
+                  <div className="flex flex-wrap gap-2">
+                    {statusPrompts[milestone.status].map(prompt => (
+                      <Button 
+                        key={prompt} 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-7 text-[10px] bg-primary/5 border-primary/10 hover:bg-primary/10"
+                        onClick={() => onUpdateMilestone({ reflection: `${milestone.reflection || ''}\n\n## ${prompt}\n` })}
+                      >
+                        {prompt}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <div className={cn(settings.assistantMode && "cursor-help")}>
@@ -228,11 +222,9 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                   </TooltipTrigger>
                   {settings.assistantMode && <TooltipContent className="max-w-xs">Write about your experience — learning, blockers, and growth. Reflections are saved to history.</TooltipContent>}
                 </Tooltip>
-              </TooltipProvider>
 
-              {milestone.reflections && milestone.reflections.length > 0 && (
-                <div className="space-y-2">
-                  <TooltipProvider>
+                {milestone.reflections && milestone.reflections.length > 0 && (
+                  <div className="space-y-2">
                     <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
                         <Button 
@@ -247,24 +239,24 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                       </TooltipTrigger>
                       {settings.assistantMode && <TooltipContent>All past reflections for this milestone, in chronological order.</TooltipContent>}
                     </Tooltip>
-                  </TooltipProvider>
-                  {showHistory && (
-                    <div className="space-y-2 pl-4 border-l-2 border-primary/10 ml-1">
-                      {milestone.reflections.map(r => (
-                        <div key={r.id} className="p-2 bg-muted/20 rounded-md">
-                          <div className="flex justify-between items-center mb-1">
-                            <Badge variant="secondary" className="text-[8px] h-3.5 py-0">{r.milestoneStatus}</Badge>
-                            <span className="text-[8px] text-muted-foreground">{format(new Date(r.createdAt), 'MMM d, h:mm a')}</span>
+                    {showHistory && (
+                      <div className="space-y-2 pl-4 border-l-2 border-primary/10 ml-1">
+                        {milestone.reflections.map(r => (
+                          <div key={r.id} className="p-2 bg-muted/20 rounded-md">
+                            <div className="flex justify-between items-center mb-1">
+                              <Badge variant="secondary" className="text-[8px] h-3.5 py-0">{r.milestoneStatus}</Badge>
+                              <span className="text-[8px] text-muted-foreground">{format(new Date(r.createdAt), 'MMM d, h:mm a')}</span>
+                            </div>
+                            <p className="text-[11px] line-clamp-2 italic">"{r.content}"</p>
                           </div>
-                          <p className="text-[11px] line-clamp-2 italic">"{r.content}"</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-        </CollapsibleContent>
-    </Collapsible>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+          </CollapsibleContent>
+      </Collapsible>
+    </TooltipProvider>
   );
 }
