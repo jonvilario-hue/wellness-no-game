@@ -32,9 +32,17 @@ export default function TemplatesLibrary({ open, onOpenChange }: { open: boolean
     });
   }, [templates, search, activeCategory]);
 
-  const handleUseTemplate = (settings: any) => {
+  const handleUseTemplate = (customization: any) => {
     if (!selectedTemplate) return;
-    addProject(selectedTemplate, settings);
+    
+    // We pass the updated Title and Identity Goal from the customizer
+    const synthesizedTemplate = {
+      ...selectedTemplate,
+      title: customization.title || selectedTemplate.title,
+      defaultIdentityStatement: customization.identityGoal || selectedTemplate.defaultIdentityStatement
+    };
+
+    addProject(synthesizedTemplate, customization);
     onOpenChange(false);
     setSelectedTemplate(null);
     setIsCustomizing(false);
@@ -43,7 +51,7 @@ export default function TemplatesLibrary({ open, onOpenChange }: { open: boolean
   if (isCustomizing && selectedTemplate) {
     return (
       <Dialog open={isCustomizing} onOpenChange={setIsCustomizing}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-background">
+        <DialogContent className="max-w-5xl p-0 overflow-hidden bg-background border-none">
           <TemplateCustomizer 
             template={selectedTemplate} 
             onCancel={() => setIsCustomizing(false)}
@@ -57,7 +65,7 @@ export default function TemplatesLibrary({ open, onOpenChange }: { open: boolean
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[95vh] flex flex-col p-0 overflow-hidden bg-background">
-        <DialogHeader className="p-8 bg-primary/5 border-b">
+        <DialogHeader className="p-8 bg-primary/5 border-b shrink-0">
           <div className="flex justify-between items-center">
             <div>
               <DialogTitle className="text-3xl font-black uppercase tracking-tighter">Blueprint Lab</DialogTitle>
@@ -70,8 +78,8 @@ export default function TemplatesLibrary({ open, onOpenChange }: { open: boolean
           </div>
         </DialogHeader>
 
-        <div className="flex-grow flex flex-col min-h-0">
-          <div className="p-6 border-b space-y-6">
+        <div className="flex-grow flex flex-col min-h-0 overflow-hidden">
+          <div className="p-6 border-b space-y-6 shrink-0">
             <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
               <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full md:w-auto">
                 <TabsList className="bg-muted/50 h-auto p-1 grid grid-cols-2 md:flex md:flex-wrap gap-1">
@@ -106,7 +114,7 @@ export default function TemplatesLibrary({ open, onOpenChange }: { open: boolean
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filtered.map(template => (
-                  <Card key={template.id} className="group hover:border-primary/50 transition-all cursor-pointer flex flex-col" onClick={() => setSelectedTemplate(template)}>
+                  <Card key={template.id} className="group hover:border-primary/50 transition-all cursor-pointer flex flex-col" onClick={() => { setSelectedTemplate(template); setIsCustomizing(true); }}>
                     <CardHeader className="p-5 pb-2">
                       <div className="flex justify-between items-start mb-3">
                         <Badge variant="secondary" className="text-[9px] uppercase tracking-widest bg-primary/10 text-primary border-none">
@@ -127,7 +135,7 @@ export default function TemplatesLibrary({ open, onOpenChange }: { open: boolean
                     </CardContent>
                     <CardFooter className="p-5 pt-0 mt-auto flex justify-between border-t border-primary/5 pt-4">
                       <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase">Preview Phases</Button>
-                      <Button size="sm" className="h-8 text-[10px] font-black uppercase" onClick={(e) => { e.stopPropagation(); setSelectedTemplate(template); setIsCustomizing(true); }}>Use Template</Button>
+                      <Button size="sm" className="h-8 text-[10px] font-black uppercase">Use Template</Button>
                     </CardFooter>
                   </Card>
                 ))}
