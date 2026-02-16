@@ -10,7 +10,7 @@ import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
 import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Info } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Info, InfoIcon } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -18,7 +18,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { QuickLogBar } from '@/components/wellness/QuickLogBar';
+import { WellnessRecommendations } from '@/components/wellness/WellnessRecommendations';
 import { format } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export default function ExercisesPage() {
   const [isOpen, setIsOpen] = useState(true);
@@ -44,7 +46,38 @@ export default function ExercisesPage() {
     const moveToday = movementLogs.some(l => format(new Date(l.timestamp), 'yyyy-MM-dd') === today);
     const stillToday = stillnessLogs.some(l => format(new Date(l.timestamp), 'yyyy-MM-dd') === today);
     
-    return { streak, moveToday, stillToday };
+    // Breakdown for Phase 3
+    const moveDates = new Set(movementLogs.map(l => format(new Date(l.timestamp), 'yyyy-MM-dd')));
+    const stillDates = new Set(stillnessLogs.map(l => format(new Date(l.timestamp), 'yyyy-MM-dd')));
+    
+    let bothCount = 0;
+    moveDates.forEach(date => {
+        if (stillDates.has(date)) bothCount++;
+    });
+
+    const onlyMoveCount = moveDates.size - bothCount;
+    const onlyStillCount = stillDates.size - bothCount;
+
+    return { 
+        streak, 
+        moveToday, 
+        stillToday,
+        moveDays: moveDates.size,
+        stillDays: stillDates.size,
+        bothCount,
+        onlyMoveCount,
+        onlyStillCount
+    };
+  }, [movementLogs, stillnessLogs]);
+
+  const activityData = useMemo(() => {
+    const combined = [...movementLogs, ...stillnessLogs];
+    const counts: Record<string, number> = {};
+    combined.forEach(l => {
+        const d = format(new Date(l.timestamp), 'yyyy-MM-dd');
+        counts[d] = (counts[d] || 0) + 1;
+    });
+    return Object.entries(counts).map(([date, count]) => ({ date, count }));
   }, [movementLogs, stillnessLogs]);
 
   return (
@@ -58,33 +91,50 @@ export default function ExercisesPage() {
         <div className="mx-auto max-w-7xl space-y-6">
             
             <div className="flex justify-center mb-4">
-              <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6">
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2">
-                    <Flame className="w-5 h-5 text-orange-500" />
-                    <span className="text-xl font-black">{wellnessStats.streak}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
-                  </div>
-                  <div className="h-4 w-[1px] bg-border" />
-                  <TooltipProvider>
-                    <div className="flex gap-3">
-                      <Tooltip delayDuration={0}>
-                        <TooltipTrigger asChild>
-                          <div className={cn("w-3 h-3 rounded-full transition-colors", wellnessStats.moveToday ? "bg-primary" : "bg-muted")} />
-                        </TooltipTrigger>
-                        <TooltipContent><p>Movement: {wellnessStats.moveToday ? 'Done' : 'Pending'}</p></TooltipContent>
-                      </Tooltip>
-                      <Tooltip delayDuration={0}>
-                        <TooltipTrigger asChild>
-                          <div className={cn("w-3 h-3 rounded-full transition-colors", wellnessStats.stillToday ? "bg-blue-400" : "bg-muted")} />
-                        </TooltipTrigger>
-                        <TooltipContent><p>Stillness: {wellnessStats.stillToday ? 'Done' : 'Pending'}</p></TooltipContent>
-                      </Tooltip>
+              <Popover>
+                <PopoverTrigger asChild>
+                    <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 cursor-pointer hover:bg-primary/10 transition-colors shadow-sm">
+                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2">
+                            <Flame className="w-5 h-5 text-orange-500" />
+                            <span className="text-xl font-black">{wellnessStats.streak}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
+                        </div>
+                        <div className="h-4 w-[1px] bg-border" />
+                        <div className="flex gap-3">
+                            <div className={cn("w-3 h-3 rounded-full transition-colors", wellnessStats.moveToday ? "bg-primary" : "bg-muted")} />
+                            <div className={cn("w-3 h-3 rounded-full transition-colors", wellnessStats.stillToday ? "bg-blue-400" : "bg-muted")} />
+                        </div>
+                        <InfoIcon className="w-3 h-3 text-muted-foreground opacity-40" />
+                        </div>
+                    </Card>
+                </PopoverTrigger>
+                <PopoverContent className="w-64">
+                    <div className="space-y-3">
+                        <h4 className="font-bold text-sm uppercase tracking-wider">Streak Breakdown</h4>
+                        <div className="space-y-2 text-xs">
+                            <div className="flex justify-between items-center p-2 bg-muted/50 rounded-md">
+                                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-primary" /> Movement Days</span>
+                                <span className="font-bold">{wellnessStats.moveDays}</span>
+                            </div>
+                            <div className="flex justify-between items-center p-2 bg-muted/50 rounded-md">
+                                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-400" /> Stillness Days</span>
+                                <span className="font-bold">{wellnessStats.stillDays}</span>
+                            </div>
+                            <div className="flex justify-between items-center p-2 bg-primary/10 rounded-md border border-primary/20">
+                                <span className="font-bold">Total Progress Days</span>
+                                <span className="font-bold">{wellnessStats.moveDays + wellnessStats.stillDays - wellnessStats.bothCount}</span>
+                            </div>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground italic">
+                            Your combined streak continues as long as you log at least one practice (with 1 grace day).
+                        </p>
                     </div>
-                  </TooltipProvider>
-                </div>
-              </Card>
+                </PopoverContent>
+              </Popover>
             </div>
+
+            {!lowEnergyMode && <WellnessRecommendations />}
 
             <div className="flex flex-col gap-4">
                 <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
@@ -127,7 +177,7 @@ export default function ExercisesPage() {
             </div>
             
             <WellnessTabs />
-            <WellnessHeatmap activityData={[]} />
+            <WellnessHeatmap activityData={activityData} />
         </div>
       </main>
       <QuickLogBar />
