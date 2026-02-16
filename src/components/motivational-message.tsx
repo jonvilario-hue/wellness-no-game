@@ -6,15 +6,16 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
 import { useMotivationStore } from '@/hooks/use-motivation-store';
-import { cn } from '@/lib/utils';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
 import { usePomodoroStore } from '@/hooks/use-pomodoro-store';
 import { usePathname } from 'next/navigation';
+import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 
 export function MotivationalMessage() {
   const { message, isVisible, hideMessage, selectMessage } = useMotivationStore();
   const { entries, completedHabits, hasHydrated: journalHydrated } = useHydratedJournalStore();
   const { cycles } = usePomodoroStore();
+  const { settings, isLoaded: settingsLoaded } = useDashboardSettings();
   const pathname = usePathname();
   
   // Use a ref to track the last pathname to prevent redundant calculations on shallow re-renders
@@ -22,12 +23,12 @@ export function MotivationalMessage() {
 
   // Trigger message selection on page navigation with stabilized logic
   useEffect(() => {
-    if (journalHydrated) {
+    if (journalHydrated && settingsLoaded && settings.assistantMode) {
       // Only process if the path actually changed or on initial hydration
       selectMessage({ journalEntries: entries, completedHabits, pomodoroCycles: cycles });
       lastPathname.current = pathname;
     }
-  }, [pathname, journalHydrated, selectMessage]); // Reduced dependencies to prevent infinite render loops
+  }, [pathname, journalHydrated, settingsLoaded, settings.assistantMode, selectMessage, entries, completedHabits, cycles]);
 
   // Auto-dismiss timer
   useEffect(() => {
@@ -39,6 +40,11 @@ export function MotivationalMessage() {
       return () => clearTimeout(timer);
     }
   }, [isVisible, hideMessage]);
+
+  // If assistant mode is off, don't show the message even if it's in state
+  if (!settingsLoaded || !settings.assistantMode) {
+    return null;
+  }
 
   return (
     <AnimatePresence>
