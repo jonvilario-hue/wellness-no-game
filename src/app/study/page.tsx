@@ -39,6 +39,7 @@ export default function ScholarHub() {
   const { sessions, visualPairs } = useScholarStore();
   const { cards } = useFlashcardStore();
   const [isOpen, setIsOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState('decks');
 
   useEffect(() => {
     const savedState = localStorage.getItem('scholar-hub-collapsible-state');
@@ -53,14 +54,6 @@ export default function ScholarHub() {
   };
 
   const toolCards = [
-    {
-      id: 'decks',
-      title: 'Flashcard Decks',
-      desc: 'Master material with Anki-style algorithms.',
-      icon: Layers,
-      stat: `${cards.length} Total Cards`,
-      link: '#decks'
-    },
     {
       id: 'quiz',
       title: 'Self-Quiz Creator',
@@ -154,9 +147,12 @@ export default function ScholarHub() {
             </div>
           </div>
 
-          <Tabs defaultValue="tools" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center mb-8">
-              <TabsList className="grid w-full max-w-md grid-cols-2 bg-muted/50 p-1">
+              <TabsList className="grid w-full max-w-xl grid-cols-3 bg-muted/50 p-1">
+                <TabsTrigger value="decks" className="gap-2">
+                  <Layers className="h-4 w-4" /> Flashcard Decks
+                </TabsTrigger>
                 <TabsTrigger value="tools" className="gap-2">
                   <Zap className="h-4 w-4" /> Study Tools
                 </TabsTrigger>
@@ -166,8 +162,12 @@ export default function ScholarHub() {
               </TabsList>
             </div>
 
-            <TabsContent value="tools" className="space-y-12">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <TabsContent value="decks" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <FlashcardDecks />
+            </TabsContent>
+
+            <TabsContent value="tools" className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {toolCards.map(tool => (
                   <Card key={tool.id} className="hover:shadow-md transition-all group border-primary/10">
                     <CardHeader className="pb-2">
@@ -188,10 +188,6 @@ export default function ScholarHub() {
               </div>
 
               <div className="space-y-20 pt-4">
-                <section id="decks" className="scroll-mt-24">
-                  <FlashcardDecks />
-                </section>
-
                 <section id="quiz" className="scroll-mt-24 grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <SelfQuizCreator />
                   <DistractionLog />
@@ -215,7 +211,7 @@ export default function ScholarHub() {
               </div>
             </TabsContent>
 
-            <TabsContent value="guides" className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TabsContent value="guides" className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
               <ActiveRecallGuide />
               <SpacedRepetitionGuide />
               <CornellNotesGuide />
