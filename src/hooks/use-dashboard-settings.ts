@@ -4,25 +4,15 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const defaultSettings = {
-  performanceOverview: true,
-  dailyChallenge: true,
-  allGames: true,
-  weakAreaRecommendations: true,
-  adaptiveDifficulty: true,
-  hyperfocusBuilder: true,
-  gameProgressTracker: true,
-  milestoneBadges: true,
-  performanceInsights: true,
   habitTracker: true,
   moodTracker: true,
   effortTracker: true,
-  assistantMode: true, // New: Controls feature explanations
+  assistantMode: true,
 };
 
 export type DashboardSettings = typeof defaultSettings;
-export type DashboardComponent = keyof Omit<DashboardSettings, 'habitTracker' | 'moodTracker' | 'effortTracker' | 'assistantMode'>;
 
-const DASHBOARD_SETTINGS_KEY = 'dashboardSettings-v4';
+const DASHBOARD_SETTINGS_KEY = 'dashboardSettings-v5';
 
 export const useDashboardSettings = () => {
   const [settings, setSettings] = useState<DashboardSettings>(defaultSettings);
@@ -64,15 +54,6 @@ export const useDashboardSettings = () => {
 };
 
 export const componentLabels: Record<keyof DashboardSettings, string> = {
-  performanceOverview: 'Performance Overview',
-  dailyChallenge: 'Daily Challenge',
-  allGames: 'All Training Games',
-  hyperfocusBuilder: 'Hyperfocus Builder',
-  gameProgressTracker: 'Game Progress',
-  milestoneBadges: 'Milestone Badges',
-  performanceInsights: 'Performance Insights',
-  weakAreaRecommendations: 'Weak Area Targeting',
-  adaptiveDifficulty: 'Adaptive Difficulty',
   habitTracker: 'Habit Tracker',
   moodTracker: 'Mood Tracker',
   effortTracker: 'Focus Tracker',
