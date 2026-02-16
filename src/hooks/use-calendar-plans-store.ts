@@ -4,14 +4,17 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { CalendarPlan, CalendarActivityInstance, ActivityStatus, PlanCategory } from '@/types/calendar-plans';
 import { presetPlans } from '@/data/preset-calendar-plans';
-import { format, isSameDay } from 'date-fns';
+import { format } from 'date-fns';
 
 interface CalendarPlansState {
   activePlanIds: string[];
   customPlans: CalendarPlan[];
+  deletedPresetIds: string[]; // Track which preset plans the user has "deleted"
   activityInstances: Record<string, CalendarActivityInstance[]>; // key: YYYY-MM-DD
   
   togglePlan: (planId: string) => void;
+  deletePlan: (planId: string) => void;
+  resetDefaults: () => void;
   addCustomPlan: (plan: CalendarPlan) => void;
   updateActivityStatus: (date: string, instanceId: string, status: ActivityStatus, source?: string) => void;
   syncFromTracker: (category: PlanCategory, activityName: string) => { matched: boolean; instanceId?: string };
@@ -26,6 +29,7 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
     (set, get) => ({
       activePlanIds: [],
       customPlans: [],
+      deletedPresetIds: [],
       activityInstances: {},
       _hasHydrated: false,
 
@@ -40,6 +44,21 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
         } else {
           set({ activePlanIds: [...activePlanIds, planId] });
         }
+      },
+
+      deletePlan: (planId) => {
+        set((state) => {
+          const isPreset = presetPlans.some(p => p.id === planId);
+          return {
+            activePlanIds: state.activePlanIds.filter(id => id !== planId),
+            customPlans: state.customPlans.filter(p => p.id !== planId),
+            deletedPresetIds: isPreset ? [...state.deletedPresetIds, planId] : state.deletedPresetIds
+          };
+        });
+      },
+
+      resetDefaults: () => {
+        set({ deletedPresetIds: [] });
       },
 
       addCustomPlan: (plan) => {
@@ -72,11 +91,9 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
 
       syncFromTracker: (category, activityName) => {
         const today = format(new Date(), 'yyyy-MM-dd');
-        const { activePlanIds, activityInstances } = get();
+        const { activityInstances } = get();
         const dayInstances = activityInstances[today] || [];
         
-        // Find matching incomplete activity for today
-        // In a real app, we'd use fuzzy matching on activityName
         const match = dayInstances.find(inst => {
           if (inst.status === 'completed') return false;
           return inst.activityName.toLowerCase().includes(activityName.toLowerCase());

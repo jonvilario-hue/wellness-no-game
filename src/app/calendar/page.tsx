@@ -1,11 +1,10 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
-import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -14,23 +13,49 @@ import { Badge } from '@/components/ui/badge';
 import { presetPlans } from '@/data/preset-calendar-plans';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { Calendar } from '@/components/ui/calendar';
-import { format, isSameDay } from 'date-fns';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function CalendarPage() {
-  const { activePlanIds, togglePlan, activityInstances, updateActivityStatus, _hasHydrated } = useCalendarPlansStore();
+  const { 
+    activePlanIds, 
+    customPlans, 
+    deletedPresetIds, 
+    togglePlan, 
+    deletePlan, 
+    resetDefaults, 
+    activityInstances, 
+    updateActivityStatus, 
+    _hasHydrated 
+  } = useCalendarPlansStore();
+  
   const [view, setView] = useState<'month' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [plansOpen, setPlansOpen] = useState(true);
 
+  const availablePlans = useMemo(() => {
+    const presets = presetPlans.filter(p => !deletedPresetIds.includes(p.id));
+    return [...presets, ...customPlans];
+  }, [deletedPresetIds, customPlans]);
+
   const activePlans = useMemo(() => {
-    return presetPlans.filter(p => activePlanIds.includes(p.id));
-  }, [activePlanIds]);
+    return availablePlans.filter(p => activePlanIds.includes(p.id));
+  }, [availablePlans, activePlanIds]);
 
   const todaysTasks = useMemo(() => {
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
@@ -66,10 +91,17 @@ export default function CalendarPage() {
           
           <Collapsible open={plansOpen} onOpenChange={setPlansOpen} className="w-full">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <LayoutGrid className="w-5 h-5 text-primary" />
-                Active Plans ({activePlanIds.length})
-              </h2>
+              <div className="flex items-center gap-4">
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <LayoutGrid className="w-5 h-5 text-primary" />
+                  Available Plans ({availablePlans.length})
+                </h2>
+                {deletedPresetIds.length > 0 && (
+                  <Button variant="outline" size="sm" onClick={resetDefaults} className="h-7 text-[10px] uppercase font-bold">
+                    <RotateCcw className="w-3 h-3 mr-1" /> Reset Defaults
+                  </Button>
+                )}
+              </div>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="sm">
                   {plansOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -77,27 +109,51 @@ export default function CalendarPage() {
               </CollapsibleTrigger>
             </div>
             <CollapsibleContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
-              {presetPlans.map(plan => (
-                <Card key={plan.id} className={cn("transition-all", activePlanIds.includes(plan.id) && "border-primary bg-primary/5")}>
+              {availablePlans.map(plan => (
+                <Card key={plan.id} className={cn("transition-all relative group", activePlanIds.includes(plan.id) && "border-primary bg-primary/5")}>
                   <CardHeader className="p-4 pb-2">
                     <div className="flex justify-between items-start">
-                      <CardTitle className="text-sm font-bold">{plan.name}</CardTitle>
-                      <Switch 
-                        checked={activePlanIds.includes(plan.id)} 
-                        onCheckedChange={() => togglePlan(plan.id)}
-                      />
+                      <CardTitle className="text-sm font-bold pr-8">{plan.name}</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Switch 
+                          checked={activePlanIds.includes(plan.id)} 
+                          onCheckedChange={() => togglePlan(plan.id)}
+                        />
+                      </div>
                     </div>
                     <CardDescription className="text-xs line-clamp-2">{plan.description}</CardDescription>
                   </CardHeader>
-                  <CardFooter className="p-4 pt-0 flex gap-2">
-                    <Badge variant="outline" className="text-[10px] uppercase">{plan.categories[0]}</Badge>
-                    <span className="text-[10px] text-muted-foreground">{plan.activities.length} daily steps</span>
+                  <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                    <div className="flex gap-2">
+                      <Badge variant="outline" className="text-[10px] uppercase">{plan.categories[0]}</Badge>
+                      <span className="text-[10px] text-muted-foreground">{plan.activities.length} daily steps</span>
+                    </div>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Plan?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to remove "{plan.name}"? 
+                            {plan.isPreset ? " You can restore built-in plans using the 'Reset Defaults' button." : " Custom plans cannot be restored once deleted."}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deletePlan(plan.id)} variant="destructive">Delete</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </CardFooter>
                 </Card>
               ))}
               <Dialog>
                 <DialogTrigger asChild>
-                  <Card className="border-dashed cursor-pointer hover:bg-muted/50 flex flex-col items-center justify-center p-6 text-center">
+                  <Card className="border-dashed cursor-pointer hover:bg-muted/50 flex flex-col items-center justify-center p-6 text-center h-full min-h-[120px]">
                     <Plus className="w-8 h-8 text-muted-foreground mb-2" />
                     <p className="text-sm font-bold">Create Custom Plan</p>
                     <p className="text-xs text-muted-foreground">Design your own routine</p>
@@ -146,8 +202,6 @@ export default function CalendarPage() {
                     className="w-full"
                     components={{
                       DayContent: ({ date }) => {
-                        const dateStr = format(date, 'yyyy-MM-dd');
-                        // Simple dot indicators for MVP
                         const hasActive = activePlanIds.length > 0;
                         return (
                           <div className="relative w-full h-full flex items-center justify-center">
