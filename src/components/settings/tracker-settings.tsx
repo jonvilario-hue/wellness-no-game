@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +16,8 @@ import {
   History,
   Trash2,
   Undo2,
-  Clock
+  Clock,
+  PlusCircle
 } from 'lucide-react';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { Button } from '../ui/button';
