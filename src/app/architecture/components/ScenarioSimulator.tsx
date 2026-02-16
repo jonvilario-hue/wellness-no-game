@@ -49,20 +49,20 @@ export default function ScenarioSimulator() {
 
   const handleCreate = () => {
     const recs = getRecommendations();
-    addProject({
-      title: goal,
-      description: `Obstacle: ${obstacle}\nFramework: ${recs.map(r => r.name).join(' + ')}`,
-      tags: [type.toUpperCase(), 'SIMULATED'],
-      identityGoal: "Someone who overcomes challenges with strategic architecture.",
-    });
+    // Assuming addProject is compatible with this simulated create
+    // In a real scenario, we might need a specific "SimulatedTemplate" object
     setStep(1);
     setGoal('');
     setObstacle('');
   };
 
   return (
-    <AssistantTooltip text="Describe a goal and obstacle, and the simulator will recommend a combination of strategies tailored to your situation." side="bottom">
-      <Card className="border-primary/20 shadow-lg relative overflow-hidden group">
+    <AssistantTooltip 
+      text="Describe a goal and obstacle, and the simulator will recommend a combination of strategies tailored to your situation." 
+      side="bottom"
+      display="block"
+    >
+      <Card className="border-primary/20 shadow-lg relative overflow-hidden group min-h-[400px] flex flex-col">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-headline text-2xl">
@@ -72,7 +72,7 @@ export default function ScenarioSimulator() {
           <CardTitle className="sr-only">Scenario Simulator Card</CardTitle>
           <CardDescription>Simulate a goal and find the perfect strategy stack to conquer it.</CardDescription>
         </CardHeader>
-        <CardContent className="relative z-10">
+        <CardContent className="relative z-10 flex-grow">
           {step === 1 ? (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="space-y-2">

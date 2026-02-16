@@ -15,18 +15,20 @@ interface AssistantTooltipProps {
   children: React.ReactNode;
   className?: string;
   side?: "top" | "right" | "bottom" | "left";
+  display?: "inline-block" | "block";
 }
 
 /**
  * A wrapper component that conditionally shows a tooltip based on the Assistant Mode setting.
  * Use this for explanation/helper text across the app.
  */
-export function AssistantTooltip({ text, children, className, side = "top" }: AssistantTooltipProps) {
+export function AssistantTooltip({ text, children, className, side = "top", display = "inline-block" }: AssistantTooltipProps) {
   const { settings, isLoaded } = useDashboardSettings();
 
   // If settings aren't loaded yet or assistant mode is off, just render children
+  // We wrap in a div with the same display property to prevent layout shifts
   if (!isLoaded || !settings.assistantMode) {
-    return <>{children}</>;
+    return <div className={cn(display === "block" ? "block" : "inline-block", className)}>{children}</div>;
   }
 
   return (
@@ -34,7 +36,7 @@ export function AssistantTooltip({ text, children, className, side = "top" }: As
       <TooltipTrigger asChild>
         {/* We wrap in a div to ensure there's a single child for TooltipTrigger 
             and to apply the cursor-help style consistently */}
-        <div className={cn("inline-block cursor-help", className)}>
+        <div className={cn(display === "block" ? "block" : "inline-block", "cursor-help", className)}>
           {children}
         </div>
       </TooltipTrigger>
