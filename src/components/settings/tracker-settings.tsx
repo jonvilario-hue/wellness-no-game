@@ -4,80 +4,111 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Smile, Target, ClipboardCheck, Lightbulb } from 'lucide-react';
+import { Smile, Target, ClipboardCheck, Lightbulb, RefreshCcw } from 'lucide-react';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { Button } from '../ui/button';
+import { useJournal } from '@/hooks/use-journal';
+import { useToast } from '@/hooks/use-toast';
 
 export function TrackerSettings() {
     const { settings, toggleSetting } = useDashboardSettings();
+    const { migrateEntries } = useJournal();
+    const { toast } = useToast();
+
+    const handleMigration = () => {
+        migrateEntries();
+        toast({ title: "Migration Complete", description: "All entries now have created and display dates." });
+    };
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Trackers & Assistance</CardTitle>
-                <CardDescription>
-                    Enable or disable specific tracking modules and the contextual assistant.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                 <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/10">
-                    <Label htmlFor="assistant-mode-switch" className="flex items-center gap-3 font-medium">
-                        <Lightbulb className="w-5 h-5 text-primary" />
-                        <div>
-                            Assistant Mode
-                            <p className="text-xs text-muted-foreground font-normal">Show "How it works" explanations and tooltips across the app.</p>
-                        </div>
-                    </Label>
-                    <Switch
-                        id="assistant-mode-switch"
-                        checked={settings.assistantMode}
-                        onCheckedChange={() => toggleSetting('assistantMode')}
-                    />
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Trackers & Assistance</CardTitle>
+                    <CardDescription>
+                        Enable or disable specific tracking modules and the contextual assistant.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/10">
+                        <Label htmlFor="assistant-mode-switch" className="flex items-center gap-3 font-medium">
+                            <Lightbulb className="w-5 h-5 text-primary" />
+                            <div>
+                                Assistant Mode
+                                <p className="text-xs text-muted-foreground font-normal">Show "How it works" explanations and tooltips across the app.</p>
+                            </div>
+                        </Label>
+                        <Switch
+                            id="assistant-mode-switch"
+                            checked={settings.assistantMode}
+                            onCheckedChange={() => toggleSetting('assistantMode')}
+                        />
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                        <Label htmlFor="habit-tracker-switch" className="flex items-center gap-3 font-medium">
+                            <ClipboardCheck className="w-5 h-5 text-primary" />
+                            <div>
+                                Enable Habit Tracker
+                                <p className="text-xs text-muted-foreground font-normal">Track daily habits and consistency.</p>
+                            </div>
+                        </Label>
+                        <Switch
+                            id="habit-tracker-switch"
+                            checked={settings.habitTracker}
+                            onCheckedChange={() => toggleSetting('habitTracker')}
+                        />
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                        <Label htmlFor="mood-tracker-switch" className="flex items-center gap-3 font-medium">
+                            <Smile className="w-5 h-5 text-primary" />
+                            <div>
+                                Enable Mood Tracker
+                                <p className="text-xs text-muted-foreground font-normal">Log your mood with each journal entry.</p>
+                            </div>
+                        </Label>
+                        <Switch
+                            id="mood-tracker-switch"
+                            checked={settings.moodTracker}
+                            onCheckedChange={() => toggleSetting('moodTracker')}
+                        />
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                        <Label htmlFor="effort-tracker-switch" className="flex items-center gap-3 font-medium">
+                            <Target className="w-5 h-5 text-primary" />
+                            <div>
+                                Enable Effort/Focus Tracker
+                                <p className="text-xs text-muted-foreground font-normal">Rate your focus level for each entry.</p>
+                            </div>
+                        </Label>
+                        <Switch
+                            id="effort-tracker-switch"
+                            checked={settings.effortTracker}
+                            onCheckedChange={() => toggleSetting('effortTracker')}
+                        />
+                    </div>
                 </div>
-                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                    <Label htmlFor="habit-tracker-switch" className="flex items-center gap-3 font-medium">
-                        <ClipboardCheck className="w-5 h-5 text-primary" />
-                        <div>
-                            Enable Habit Tracker
-                            <p className="text-xs text-muted-foreground font-normal">Track daily habits and consistency.</p>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Data Maintenance</CardTitle>
+                    <CardDescription>Advanced tools for maintaining your data integrity.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-dashed">
+                        <div className="space-y-1">
+                            <Label className="text-sm font-bold">Migrate Journal Timestamps</Label>
+                            <p className="text-xs text-muted-foreground">Sets display and created dates for all historical entries.</p>
                         </div>
-                    </Label>
-                    <Switch
-                        id="habit-tracker-switch"
-                        checked={settings.habitTracker}
-                        onCheckedChange={() => toggleSetting('habitTracker')}
-                    />
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                    <Label htmlFor="mood-tracker-switch" className="flex items-center gap-3 font-medium">
-                        <Smile className="w-5 h-5 text-primary" />
-                        <div>
-                            Enable Mood Tracker
-                            <p className="text-xs text-muted-foreground font-normal">Log your mood with each journal entry.</p>
-                        </div>
-                    </Label>
-                    <Switch
-                        id="mood-tracker-switch"
-                        checked={settings.moodTracker}
-                        onCheckedChange={() => toggleSetting('moodTracker')}
-                    />
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                    <Label htmlFor="effort-tracker-switch" className="flex items-center gap-3 font-medium">
-                        <Target className="w-5 h-5 text-primary" />
-                        <div>
-                            Enable Effort/Focus Tracker
-                            <p className="text-xs text-muted-foreground font-normal">Rate your focus level for each entry.</p>
-                        </div>
-                    </Label>
-                    <Switch
-                        id="effort-tracker-switch"
-                        checked={settings.effortTracker}
-                        onCheckedChange={() => toggleSetting('effortTracker')}
-                    />
-                </div>
-              </div>
-            </CardContent>
-        </Card>
+                        <Button variant="outline" size="sm" onClick={handleMigration}>
+                            <RefreshCcw className="w-4 h-4 mr-2" />
+                            Migrate
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

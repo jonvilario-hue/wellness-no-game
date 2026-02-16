@@ -9,7 +9,7 @@ import {
     ArrowDownUp,
     AlertTriangle,
     PlusCircle,
-    Edit,
+    Calendar,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -41,6 +41,9 @@ import { useHydratedJournalStore as useJournal, type JournalEntry } from '@/hook
 import { journalConfig, type JournalCategory } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
 
+type SortMode = 'date-desc' | 'date-asc' | 'category';
+type DateGroupingMode = 'display' | 'written';
+
 const JournalSidebarComponent = ({ 
     onSelectEntry, 
     onDeleteEntry,
@@ -55,7 +58,7 @@ const JournalSidebarComponent = ({
     onUpdateEntry: (id: string, updatedEntry: Partial<Omit<JournalEntry, 'id' | 'date' | 'category' | 'frequency'>>) => void,
 }) => {
     const [viewMode, setViewMode] = useState<'entries' | 'trash'>('entries');
-    type SortMode = 'date-desc' | 'date-asc' | 'category';
+    const [dateGroupingMode, setDateGroupingMode] = useState<DateGroupingMode>('display');
 
     const { entries, trashedEntries, restoreEntry, deleteFromTrashPermanently, emptyTrash } = useJournal();
     const [searchQuery, setSearchQuery] = useState('');
@@ -87,33 +90,44 @@ const JournalSidebarComponent = ({
         });
 
         return filtered.sort((a, b) => {
+            const dateA = dateGroupingMode === 'display' ? new Date(a.displayDate || a.date).getTime() : new Date(a.createdAt).getTime();
+            const dateB = dateGroupingMode === 'display' ? new Date(b.displayDate || b.date).getTime() : new Date(b.createdAt).getTime();
+
             switch (sortMode) {
                 case 'date-asc':
-                    return new Date(a.date).getTime() - new Date(b.date).getTime();
+                    if (dateA !== dateB) return dateA - dateB;
+                    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
                 case 'category':
                     return a.category.localeCompare(b.category);
                 case 'date-desc':
                 default:
-                    return new Date(b.date).getTime() - new Date(a.date).getTime();
+                    if (dateA !== dateB) return dateB - dateA;
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
             }
         });
-    }, [entries, searchQuery, sortMode]);
+    }, [entries, searchQuery, sortMode, dateGroupingMode]);
 
-    // Optimized grouping logic using useMemo to prevent re-computation on every render
     const groupedEntries = useMemo(() => {
       return filteredAndSortedEntries.reduce((acc, entry) => {
-        const date = entry.date;
-        if (!acc[date]) {
-          acc[date] = [];
+        const dateKey = dateGroupingMode === 'display' 
+            ? (entry.displayDate ? entry.displayDate.split('T')[0] : entry.date)
+            : entry.createdAt.split('T')[0];
+            
+        if (!acc[dateKey]) {
+          acc[dateKey] = [];
         }
-        acc[date].push(entry);
+        acc[dateKey].push(entry);
         return acc;
       }, {} as Record<string, JournalEntry[]>);
-    }, [filteredAndSortedEntries]);
+    }, [filteredAndSortedEntries, dateGroupingMode]);
 
     const sortedDates = useMemo(() => {
-      return Object.keys(groupedEntries).sort((a,b) => new Date(b).getTime() - new Date(a).getTime());
-    }, [groupedEntries]);
+      return Object.keys(groupedEntries).sort((a,b) => {
+          return sortMode === 'date-asc' 
+            ? new Date(a).getTime() - new Date(b).getTime()
+            : new Date(b).getTime() - new Date(a).getTime();
+      });
+    }, [groupedEntries, sortMode]);
 
     const ListView = () => {
         return (
@@ -122,7 +136,7 @@ const JournalSidebarComponent = ({
                     {sortedDates.map(date => (
                         <div key={date}>
                             <h4 className="font-bold text-sm text-muted-foreground px-2">
-                                {new Date(date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                {new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                             </h4>
                             <Separator className="my-1"/>
                             <div className="space-y-1">
@@ -131,6 +145,9 @@ const JournalSidebarComponent = ({
                                     const categoryTitle = journalConfig[entry.category as JournalCategory]?.title || entry.category;
                                     const preview = (entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.').substring(0, 100);
                                     const tags = (entry.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+                                    
+                                    const hasMovedDate = entry.displayDate && entry.createdAt && 
+                                        entry.displayDate.split('T')[0] !== entry.createdAt.split('T')[0];
 
                                     return (
                                         <div key={entry.id} className="group flex items-center gap-1">
@@ -151,6 +168,11 @@ const JournalSidebarComponent = ({
                                                 )}>
                                                     {preview}{preview.length === 100 && '...'}
                                                 </p>
+                                                {hasMovedDate && (
+                                                    <p className="text-[10px] text-muted-foreground italic mt-1">
+                                                        Originally written: {new Date(entry.createdAt).toLocaleDateString()}
+                                                    </p>
+                                                )}
                                                 {tags.length > 0 && (
                                                     <div className="flex flex-wrap gap-1 mt-1">
                                                         {tags.map(tag => <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>)}
@@ -200,7 +222,7 @@ const JournalSidebarComponent = ({
                     return (
                       <div key={entry.id} className="group flex items-center gap-1 p-2 rounded-md bg-muted/50">
                           <div className='flex-grow'>
-                              <p className="font-semibold">{new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{entry.label || categoryTitle}</span></p>
+                              <p className="font-semibold">{new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - <span className="text-sm font-normal text-muted-foreground">{entry.label || categoryTitle}</span></p>
                               <p className="text-sm text-muted-foreground truncate">{entry.field1 || entry.field2 || entry.field3 || 'No reflection yet.'}</p>
                           </div>
                           <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => handleRestore(entry.id)} title="Restore">
@@ -289,6 +311,21 @@ const JournalSidebarComponent = ({
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" size="icon">
+                                    <Calendar className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuLabel>Date Grouping</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuRadioGroup value={dateGroupingMode} onValueChange={(v) => setDateGroupingMode(v as DateGroupingMode)}>
+                                    <DropdownMenuRadioItem value="display">By display date</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="written">By date written</DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="icon">
                                     <ArrowDownUp className="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -296,8 +333,8 @@ const JournalSidebarComponent = ({
                                 <DropdownMenuLabel>Sort by</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuRadioGroup value={sortMode} onValueChange={(value) => setSortMode(value as SortMode)}>
-                                    <DropdownMenuRadioItem value="date-desc">Date (Newest)</DropdownMenuRadioItem>
-                                    <DropdownMenuRadioItem value="date-asc">Date (Oldest)</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="date-desc">Newest First</DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="date-asc">Oldest First</DropdownMenuRadioItem>
                                     <DropdownMenuRadioItem value="category">Category</DropdownMenuRadioItem>
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuContent>

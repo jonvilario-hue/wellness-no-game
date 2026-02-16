@@ -1,3 +1,4 @@
+
 'use client';
 
 import { create } from 'zustand';
@@ -20,6 +21,8 @@ export type JournalEntry = {
     id: string;
     label: string;
     date: string; // YYYY-MM-DD
+    createdAt: string; // ISO string
+    displayDate: string; // ISO string
     category: JournalCategory;
     frequency: ReflectionFrequency;
     field1: string;
@@ -53,9 +56,10 @@ export const getFrequencyForDate = (date: Date): ReflectionFrequency => {
 };
 
 const createSeedData = (): { entries: JournalEntry[], habits: Record<string, HabitId[]>, habitConfig: Habit[] } => {
-    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
     const category: JournalCategory = 'Notebook';
-    const frequency = getFrequencyForDate(new Date());
+    const frequency = getFrequencyForDate(now);
     const initialHabits: Habit[] = Object.values(defaultHabits);
 
     return {
@@ -64,6 +68,8 @@ const createSeedData = (): { entries: JournalEntry[], habits: Record<string, Hab
                 id: `${today}-${category}-${frequency}`,
                 label: `Today's Notebook`,
                 date: today,
+                createdAt: now.toISOString(),
+                displayDate: now.toISOString(),
                 category: category,
                 frequency: frequency,
                 field1: '',
@@ -110,6 +116,7 @@ interface JournalState {
     resetHabits: () => void;
     createNewEntry: () => JournalEntry;
     setSelectedEntry: (entry: JournalEntry | null) => void;
+    migrateEntries: () => void;
 }
 
 const createNewEntryObject = (date: string, category: JournalCategory, frequency: ReflectionFrequency): JournalEntry => {
@@ -127,6 +134,8 @@ const createNewEntryObject = (date: string, category: JournalCategory, frequency
         id: `new-${Date.now()}`,
         label: `Entry ${formattedDate} ${timeStamp}`,
         date,
+        createdAt: now.toISOString(),
+        displayDate: now.toISOString(),
         category,
         frequency,
         field1: '',
@@ -165,10 +174,13 @@ export const useJournal = create<JournalState>()(
             
             if (existingEntry) return existingEntry;
             
+            const now = new Date();
             return {
                 id: `${date}-${category}-${frequency}`,
                 label: journalConfig[category]?.title || 'New Entry',
                 date,
+                createdAt: now.toISOString(),
+                displayDate: now.toISOString(),
                 category,
                 frequency,
                 field1: '',
@@ -273,11 +285,21 @@ export const useJournal = create<JournalState>()(
         },
         
         createNewEntry: () => {
-            const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+            const today = new Date().toISOString().split('T')[0];
             return createNewEntryObject(today, 'Notebook', getFrequencyForDate(new Date()));
         },
 
         setSelectedEntry: (entry) => set({ selectedEntry: entry }),
+
+        migrateEntries: () => {
+            set(state => ({
+                entries: state.entries.map(entry => {
+                    const createdAt = entry.createdAt || new Date(entry.date + 'T12:00:00').toISOString();
+                    const displayDate = entry.displayDate || createdAt;
+                    return { ...entry, createdAt, displayDate };
+                })
+            }));
+        }
     }),
     {
       name: 'journal-storage-v2',

@@ -8,6 +8,8 @@ import {
     Loader2,
     CheckCircle,
     Copy,
+    Calendar as CalendarIcon,
+    RotateCcw,
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -32,6 +34,9 @@ import { EditableLabel } from '../time/editable-label';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { MoodEditor } from '../mood/mood-editor';
 import { FocusEditor } from '../focus/focus-editor';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Calendar } from '../ui/calendar';
+import { format } from 'date-fns';
 
 const JournalEditorComponent = ({
   entry,
@@ -136,7 +141,7 @@ const JournalEditorComponent = ({
     const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
     const content = `
 Title: ${editorState.label || 'Untitled Entry'}
-Date: ${new Date(editorState.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+Date: ${new Date(editorState.displayDate || editorState.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
 Type: ${config.title} (${editorState.frequency})
 
 ---
@@ -181,12 +186,30 @@ Focus Tags: ${(editorState.focusTags || []).join(', ')}
   };
 
   const handleFieldChange = (
-    field: keyof Omit<JournalEntry, 'id' | 'date'>,
+    field: keyof Omit<JournalEntry, 'id' | 'date' | 'createdAt' | 'displayDate'>,
     value: any
   ) => {
     setEditorState(prevState => ({ ...prevState, [field]: value }));
   };
   
+  const handleDateChange = (selectedDate: Date | undefined) => {
+    if (!selectedDate) return;
+    const isoString = selectedDate.toISOString();
+    const dateString = isoString.split('T')[0];
+    const updatedEntry = { ...editorState, displayDate: isoString, date: dateString };
+    setEditorState(updatedEntry);
+    handleSave(updatedEntry, { isFinal: true });
+  };
+
+  const resetToOriginalDate = () => {
+    const originalDate = editorState.createdAt;
+    const dateString = originalDate.split('T')[0];
+    const updatedEntry = { ...editorState, displayDate: originalDate, date: dateString };
+    setEditorState(updatedEntry);
+    handleSave(updatedEntry, { isFinal: true });
+    toast({ title: 'Reset to original date' });
+  };
+
   const currentPrompts = config.prompts[editorState.frequency] || config.prompts.daily;
   const categoryKeys = Object.keys(journalConfig) as JournalCategory[];
   
@@ -195,6 +218,10 @@ Focus Tags: ${(editorState.focusTags || []).join(', ')}
     setEditorState(updatedEntry);
     handleSave(updatedEntry, { isFinal: true });
   }
+
+  const currentDisplayDate = editorState.displayDate || (editorState.date + 'T12:00:00');
+  const hasMovedDate = editorState.displayDate && editorState.createdAt && 
+    editorState.displayDate.split('T')[0] !== editorState.createdAt.split('T')[0];
 
   return (
     <div className="p-4 h-full flex flex-col gap-2 relative">
@@ -229,9 +256,38 @@ Focus Tags: ${(editorState.focusTags || []).join(', ')}
                 className="w-full"
                 inputClassName="text-lg font-bold"
             />
-            <p className="text-sm text-muted-foreground ml-3">
-                 {new Date(editorState.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
+            <div className="flex items-center gap-3 ml-3">
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <button className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5 focus:outline-none">
+                            <CalendarIcon className="w-3.5 h-3.5" />
+                            {new Date(currentDisplayDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-background border-primary/20">
+                        <Calendar
+                            mode="single"
+                            selected={new Date(currentDisplayDate)}
+                            onSelect={handleDateChange}
+                            initialFocus
+                            className="bg-background text-foreground"
+                        />
+                        {hasMovedDate && (
+                            <div className="p-2 border-t border-primary/10">
+                                <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="w-full text-[10px] uppercase font-bold text-muted-foreground hover:text-primary"
+                                    onClick={resetToOriginalDate}
+                                >
+                                    <RotateCcw className="w-3 h-3 mr-1.5" />
+                                    Reset to original date
+                                </Button>
+                            </div>
+                        )}
+                    </PopoverContent>
+                </Popover>
+            </div>
         </div>
          <div className="flex items-center gap-2 flex-shrink-0">
             <Button variant="outline" onClick={handleCopyToClipboard}>
@@ -372,6 +428,3 @@ Focus Tags: ${(editorState.focusTags || []).join(', ')}
 };
 export const JournalEditor = memo(JournalEditorComponent);
 JournalEditor.displayName = 'JournalEditor';
-
-
-    
