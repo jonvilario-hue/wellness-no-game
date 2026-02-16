@@ -2,20 +2,28 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { PlusCircle, HeartPulse, Waves, Clock } from "lucide-react";
+import { PlusCircle, HeartPulse, Waves, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useWellnessData } from "@/hooks/use-wellness-data";
 import { movementExercises, mindfulnessPractices } from "@/data/exercises";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 export function QuickLogBar() {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<'movement' | 'stillness' | null>(null);
   const [selectedId, setSelectedId] = useState("");
   const [duration, setDuration] = useState("5");
+  
+  // Phase 2 Optional Fields
+  const [difficulty, setDifficulty] = useState(3);
+  const [preStress, setPreStress] = useState("5");
+  const [postCalm, setPostCalm] = useState("7");
+
   const { addMovementLog, addStillnessLog } = useWellnessData();
   const { toast } = useToast();
 
@@ -35,14 +43,17 @@ export function QuickLogBar() {
         exerciseId: item.id,
         exerciseName: item.name,
         duration: parseInt(duration),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        difficulty
       });
     } else {
       addStillnessLog({
         techniqueId: item.id,
         techniqueName: item.name,
         duration: parseInt(duration),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        preStress: parseInt(preStress),
+        postCalm: parseInt(postCalm)
       });
     }
 
@@ -84,38 +95,78 @@ export function QuickLogBar() {
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Practice</Label>
-              <Select value={selectedId} onValueChange={setSelectedId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose one..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {(type === 'movement' ? movementExercises : mindfulnessPractices).map(item => (
-                    <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <Tabs defaultValue="basic" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 h-8 text-[10px]">
+              <TabsTrigger value="basic">Basic Log</TabsTrigger>
+              <TabsTrigger value="details">Details (Phase 2)</TabsTrigger>
+            </TabsList>
 
-            <div className="space-y-2">
-              <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Duration (Minutes)</Label>
-              <div className="grid grid-cols-4 gap-2">
-                {['1', '5', '10', '15', '20', '30', '45', '60'].map(m => (
-                  <Button 
-                    key={m} 
-                    variant={duration === m ? 'default' : 'outline'} 
-                    size="sm" 
-                    onClick={() => setDuration(m)}
-                    className="h-8 text-xs"
-                  >
-                    {m}
-                  </Button>
-                ))}
+            <TabsContent value="basic" className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Practice</Label>
+                <Select value={selectedId} onValueChange={setSelectedId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose one..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(type === 'movement' ? movementExercises : mindfulnessPractices).map(item => (
+                      <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
-          </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Duration (Minutes)</Label>
+                <div className="grid grid-cols-4 gap-2">
+                  {['1', '5', '10', '15', '20', '30', '45', '60'].map(m => (
+                    <Button 
+                      key={m} 
+                      variant={duration === m ? 'default' : 'outline'} 
+                      size="sm" 
+                      onClick={() => setDuration(m)}
+                      className="h-8 text-xs"
+                    >
+                      {m}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="details" className="space-y-4 py-4">
+              <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
+                <h4 className="text-[10px] font-bold uppercase text-primary mb-2 flex items-center gap-2">
+                  <SlidersHorizontal className="w-3 h-3" /> Optional Metrics
+                </h4>
+                {type === 'movement' ? (
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-bold uppercase">Difficulty (1-5)</Label>
+                    <div className="flex gap-2">
+                      {[1,2,3,4,5].map(n => (
+                        <Button key={n} variant={difficulty === n ? 'default' : 'outline'} size="sm" className="h-8 w-8 p-0" onClick={() => setDifficulty(n)}>
+                          {n}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <Label className="text-[10px] font-bold uppercase">Pre-Stress</Label>
+                        <Input type="number" value={preStress} onChange={e => setPreStress(e.target.value)} className="h-8" />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-[10px] font-bold uppercase">Post-Calm</Label>
+                        <Input type="number" value={postCalm} onChange={e => setPostCalm(e.target.value)} className="h-8" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
 
           <DialogFooter>
             <Button className="w-full" disabled={!selectedId} onClick={handleLog}>

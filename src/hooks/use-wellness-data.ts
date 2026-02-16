@@ -43,6 +43,10 @@ export type MovementLog = {
   exerciseName: string;
   duration: number;
   timestamp: string;
+  difficulty?: number;
+  energyLevel?: 'Low' | 'Medium' | 'High';
+  reps?: number;
+  holdTime?: number;
 };
 
 export type StillnessLog = {
@@ -51,6 +55,16 @@ export type StillnessLog = {
   techniqueName: string;
   duration: number;
   timestamp: string;
+  preStress?: number;
+  postCalm?: number;
+  trigger?: 'Proactive' | 'Stress' | 'Anxiety' | "Can't Sleep" | 'Other';
+};
+
+export type MovementProgress = {
+  exerciseId: string;
+  bestReps?: number;
+  bestHoldTime?: number;
+  lastUpdated: string;
 };
 
 export type WellnessState = {
@@ -73,6 +87,7 @@ export type WellnessState = {
   // Movement & Stillness Logs
   movementLogs: MovementLog[];
   stillnessLogs: StillnessLog[];
+  movementProgress: Record<string, MovementProgress>;
 
   // Actions
   setLowEnergyMode: (enabled: boolean) => void;
@@ -114,6 +129,7 @@ export const useWellnessData = create<WellnessState>()(
 
       movementLogs: [],
       stillnessLogs: [],
+      movementProgress: {},
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
       setFeaturePhase: (featurePhase) => set({ featurePhase }),
@@ -147,9 +163,25 @@ export const useWellnessData = create<WellnessState>()(
         weightLogs: [...state.weightLogs.filter(w => w.date !== date), { date, weight }]
       })),
 
-      addMovementLog: (log) => set((state) => ({
-        movementLogs: [{ ...log, id: crypto.randomUUID() }, ...state.movementLogs]
-      })),
+      addMovementLog: (log) => set((state) => {
+        const newLog = { ...log, id: crypto.randomUUID() };
+        const newProgress = { ...state.movementProgress };
+        
+        if (log.reps || log.holdTime) {
+          const currentBest = newProgress[log.exerciseId] || { exerciseId: log.exerciseId, lastUpdated: new Date().toISOString() };
+          newProgress[log.exerciseId] = {
+            ...currentBest,
+            bestReps: Math.max(currentBest.bestReps || 0, log.reps || 0),
+            bestHoldTime: Math.max(currentBest.bestHoldTime || 0, log.holdTime || 0),
+            lastUpdated: new Date().toISOString()
+          };
+        }
+
+        return {
+          movementLogs: [newLog, ...state.movementLogs],
+          movementProgress: newProgress
+        };
+      }),
       addStillnessLog: (log) => set((state) => ({
         stillnessLogs: [{ ...log, id: crypto.randomUUID() }, ...state.stillnessLogs]
       })),
