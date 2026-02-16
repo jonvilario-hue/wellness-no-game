@@ -4,9 +4,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
 import { Button } from '@/components/ui/button';
-import { Plus, LayoutList, GanttChartSquare, Target, ChevronUp, ChevronDown, Book, Sparkles, Filter, X } from 'lucide-react';
+import { Plus, LayoutList, GanttChartSquare, Target, ChevronUp, ChevronDown, Book, Sparkles, Filter, X, LayoutDashboard, Layers, BrainCircuit } from 'lucide-react';
 import BlueprintProject from './components/BlueprintProject';
-import TimelineView from '../blueprints/components/TimelineView';
+import GanttTimeline from './components/GanttTimeline';
 import type { Blueprint } from '@/types/blueprint';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { StrategySelection } from '../blueprints/components/StrategySelection';
@@ -16,6 +16,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StrategyGuide } from '../blueprints/components/StrategyGuide';
 import { goalStrategies } from '@/data/goal-strategies';
 import { Badge } from '@/components/ui/badge';
+import BlueprintDashboard from './components/BlueprintDashboard';
+import TemplatesLibrary from './components/TemplatesLibrary';
+import PlaybookView from './components/PlaybookView';
+import ScenarioSimulator from './components/ScenarioSimulator';
+import AdviceMatcher from './components/AdviceMatcher';
 
 export default function ArchitecturePage() {
   const { projects, addProject, updateProject, deleteProject, addMilestone, toggleTask, updateMilestoneStatus, addTask, updateTask, deleteTask, updateMilestoneDetails, deleteMilestone } = useBlueprintStore();
@@ -24,9 +29,10 @@ export default function ArchitecturePage() {
   const [selectedStrategy, setSelectedStrategy] = useState<GoalStrategy | null>(null);
 
   const [activeTab, setActiveTab] = useState<'Active' | 'Completed' | 'Archived'>('Active');
-  const [viewMode, setViewMode] = useState<'list' | 'timeline'>('list');
+  const [viewMode, setViewMode] = useState<'dashboard' | 'list' | 'timeline'>('dashboard');
   const [isOpen, setIsOpen] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
 
   useEffect(() => {
     const savedState = localStorage.getItem('architecture-collapsible-state');
@@ -69,20 +75,6 @@ export default function ArchitecturePage() {
     });
   }, [projects, activeTab, selectedTag]);
 
-  const getTimelineMilestones = (blueprintProjects: Blueprint[]) => {
-    return blueprintProjects.flatMap(project =>
-      project.milestones
-        .filter(m => !!m.dueDate)
-        .map(m => ({
-          milestoneId: m.id,
-          milestoneTitle: m.title,
-          projectTitle: project.title,
-          dueDate: m.dueDate!,
-          status: m.status,
-        }))
-    );
-  };
-
   const renderContent = () => {
     switch (viewState) {
       case 'select_strategy':
@@ -121,8 +113,9 @@ export default function ArchitecturePage() {
                         </Tabs>
                         <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
                             <TabsList>
+                                <TabsTrigger value="dashboard"><LayoutDashboard className="w-4 h-4 mr-2"/>Board</TabsTrigger>
                                 <TabsTrigger value="list"><LayoutList className="w-4 h-4 mr-2"/>List</TabsTrigger>
-                                <TabsTrigger value="timeline"><GanttChartSquare className="w-4 h-4 mr-2"/>Timeline</TabsTrigger>
+                                <TabsTrigger value="timeline"><GanttChartSquare className="w-4 h-4 mr-2"/>Gantt</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
@@ -148,13 +141,20 @@ export default function ArchitecturePage() {
                         </div>
                     )}
                   </div>
-                  <Button onClick={handleStartCreation} className="shadow-lg hover:scale-105 transition-transform bg-primary">
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Guided Blueprint
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setIsTemplatesOpen(true)} className="border-primary/20 hover:bg-primary/5">
+                        <Layers className="w-4 h-4 mr-2" /> Templates
+                    </Button>
+                    <Button onClick={handleStartCreation} className="shadow-lg hover:scale-105 transition-transform bg-primary">
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Guided Blueprint
+                    </Button>
+                  </div>
               </div>
 
               <div>
+                {viewMode === 'dashboard' && <BlueprintDashboard />}
+
                 {viewMode === 'list' && (
                   <div className="space-y-6">
                     {filteredProjects.length === 0 ? (
@@ -196,7 +196,7 @@ export default function ArchitecturePage() {
                 )}
 
                 {viewMode === 'timeline' && (
-                  <TimelineView milestones={getTimelineMilestones(filteredProjects)} />
+                  <GanttTimeline />
                 )}
               </div>
             </div>
@@ -236,14 +236,37 @@ export default function ArchitecturePage() {
             <TabsContent value="blueprints" className="mt-0">
                 {renderContent()}
             </TabsContent>
-            <TabsContent value="guides" className="mt-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
-                    {goalStrategies.map(strategy => (
-                        <StrategyGuide key={strategy.id} strategy={strategy} />
-                    ))}
-                </div>
+            <TabsContent value="guides" className="mt-0 space-y-12">
+                <Tabs defaultValue="library">
+                  <div className="flex justify-center mb-8">
+                    <TabsList className="grid w-full grid-cols-3 max-w-lg h-auto p-1 bg-muted/50">
+                      <TabsTrigger value="library" className="gap-2"><Book className="w-4 h-4" /> Strategy Library</TabsTrigger>
+                      <TabsTrigger value="playbook" className="gap-2"><Star className="w-4 h-4" /> My Playbook</TabsTrigger>
+                      <TabsTrigger value="advisor" className="gap-2"><BrainCircuit className="w-4 h-4" /> Advisor</TabsTrigger>
+                    </TabsList>
+                  </div>
+                  
+                  <TabsContent value="library" className="space-y-12">
+                    <ScenarioSimulator />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
+                        {goalStrategies.map(strategy => (
+                            <StrategyGuide key={strategy.id} strategy={strategy} />
+                        ))}
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="playbook">
+                    <PlaybookView />
+                  </TabsContent>
+
+                  <TabsContent value="advisor">
+                    <AdviceMatcher />
+                  </TabsContent>
+                </Tabs>
             </TabsContent>
         </Tabs>
+
+        <TemplatesLibrary open={isTemplatesOpen} onOpenChange={setIsTemplatesOpen} />
     </div>
   );
 }

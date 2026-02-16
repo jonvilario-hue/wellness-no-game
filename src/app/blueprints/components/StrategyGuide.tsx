@@ -3,7 +3,11 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { type GoalStrategy } from "@/data/goal-strategies";
-import { ListChecks, Check, Link as LinkIcon, Clock, PenLine, FileQuestion, Pilcrow, Users, Brain, Repeat, HelpCircle, Shuffle, GitBranch, BoxSelect, Palette, Image as ImageIcon, Eye, ShieldAlert, CheckSquare, Target, PieChart, Sparkles, Lightbulb, Trophy, CalendarCheck, Gamepad, Zap, BatteryCharging, Flag } from "lucide-react";
+import { ListChecks, Check, Link as LinkIcon, Clock, PenLine, FileQuestion, Pilcrow, Users, Brain, Repeat, HelpCircle, Shuffle, GitBranch, BoxSelect, Palette, Image as ImageIcon, Eye, ShieldAlert, CheckSquare, Target, PieChart, Sparkles, Lightbulb, Trophy, CalendarCheck, Gamepad, Zap, BatteryCharging, Flag, Star } from "lucide-react";
+import { usePlaybookStore } from '@/hooks/use-playbook-store';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 type StrategyGuideProps = {
   strategy: GoalStrategy;
@@ -48,6 +52,9 @@ const iconMap: Record<string, React.ElementType> = {
 
 
 export function StrategyGuide({ strategy }: StrategyGuideProps) {
+    const { toggleFavorite, entries } = usePlaybookStore();
+    const entry = entries[strategy.id];
+    const isFavorite = entry?.isFavorite || false;
     const Icon = strategy.icon;
 
     const renderStepWithIcon = (step: string) => {
@@ -74,7 +81,15 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
 
 
   return (
-    <Card className="flex flex-col h-full hover:shadow-md transition-shadow">
+    <Card className="flex flex-col h-full hover:shadow-md transition-shadow relative group">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="absolute top-2 right-2 z-10" 
+          onClick={() => toggleFavorite(strategy.id, strategy.name)}
+        >
+          <Star className={cn("w-4 h-4 transition-all", isFavorite ? "fill-primary text-primary" : "text-muted-foreground opacity-0 group-hover:opacity-100")} />
+        </Button>
         <CardHeader>
             <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-primary/10 rounded-lg">
@@ -98,6 +113,11 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
                 <p className="text-sm italic">{strategy.useFor}</p>
             </div>
         </CardContent>
+        {entry?.status && (
+          <div className="px-6 pb-4">
+            <Badge variant="secondary" className="text-[9px] uppercase tracking-widest">{entry.status}</Badge>
+          </div>
+        )}
     </Card>
   );
 }

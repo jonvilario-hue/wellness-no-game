@@ -1,3 +1,4 @@
+
 'use client'
 
 import type { Blueprint, Milestone, Task } from "@/types/blueprint"
@@ -5,14 +6,16 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Plus, Archive, Trash2, Edit, MoreVertical, ArchiveRestore, CheckCircle2 } from "lucide-react"
+import { Plus, Archive, Trash2, Edit, MoreVertical, ArchiveRestore, CheckCircle2, Copy, Layers, Rocket } from "lucide-react"
 import MilestoneCard from "./MilestoneCard"
 import AddMilestoneDialog from "./AddMilestoneDialog"
+import { useBlueprintStore } from '@/hooks/use-blueprint-store';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import {
   AlertDialog,
@@ -54,6 +57,7 @@ export default function BlueprintProject({
   onDeleteTask,
   onUpdateMilestoneStatus
 }: BlueprintProjectProps) {
+  const { cloneBlueprint } = useBlueprintStore();
 
   const calculateProjectProgress = (proj: Blueprint) => {
     const allTasks = proj.milestones.flatMap(m => m.tasks);
@@ -72,6 +76,7 @@ export default function BlueprintProject({
                 <div className="flex items-center gap-2">
                     <CardTitle className="text-2xl font-bold">{project.title}</CardTitle>
                     {project.status === 'Completed' && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                    <Badge variant="outline" className="text-[10px] font-black h-5">V{project.versionNumber || 1}</Badge>
                 </div>
                 {project.description && <p className="text-muted-foreground text-sm max-w-2xl">{project.description}</p>}
                 {project.identityGoal && (
@@ -90,7 +95,7 @@ export default function BlueprintProject({
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon"><MoreVertical className="w-4 h-4" /></Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-56">
                     <EditBlueprintDialog blueprint={project} onSave={(updates) => onUpdateProject(project.id, updates)}>
                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                             <Edit className="w-4 h-4 mr-2" /> Edit Blueprint
@@ -101,6 +106,20 @@ export default function BlueprintProject({
                        <CheckCircle2 className="w-4 h-4 mr-2" /> 
                        {project.status === 'Completed' ? 'Mark Active' : 'Mark Completed'}
                     </DropdownMenuItem>
+
+                    <DropdownMenuSeparator />
+                    
+                    <DropdownMenuItem onClick={() => cloneBlueprint(project.id, {})}>
+                       <Copy className="w-4 h-4 mr-2" /> Clone Blueprint
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => cloneBlueprint(project.id, { asTemplate: true })}>
+                       <Layers className="w-4 h-4 mr-2" /> Save as Template
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => cloneBlueprint(project.id, { asV2: true })}>
+                       <Rocket className="w-4 h-4 mr-2" /> Create V2 Iteration
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator />
 
                     <DropdownMenuItem onClick={() => onUpdateProject(project.id, { status: project.status === 'Archived' ? 'Active' : 'Archived' })}>
                        {project.status === 'Archived' ? <ArchiveRestore className="w-4 h-4 mr-2" /> : <Archive className="w-4 h-4 mr-2" />} 
@@ -135,9 +154,19 @@ export default function BlueprintProject({
       </CardHeader>
 
       <CardContent className="space-y-4 pt-6">
+        {project.lessonsFromV1 && (
+          <div className="p-4 bg-primary/5 border border-dashed border-primary/20 rounded-lg mb-4">
+            <h5 className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 flex items-center gap-2">
+              <History className="w-3 h-3" /> Lessons from V1
+            </h5>
+            <p className="text-xs text-muted-foreground italic whitespace-pre-wrap">{project.lessonsFromV1}</p>
+          </div>
+        )}
+
         {project.milestones.map(milestone => (
           <MilestoneCard
             key={milestone.id}
+            projectId={project.id}
             milestone={milestone}
             onToggleTask={(taskId) => onToggleTask(project.id, milestone.id, taskId)}
             onAddTask={(task) => onAddTask(project.id, milestone.id, task)}
