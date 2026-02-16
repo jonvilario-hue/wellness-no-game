@@ -4,7 +4,23 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
 import { Button } from '@/components/ui/button';
-import { Plus, LayoutList, GanttChartSquare, Target, ChevronUp, ChevronDown, Book, Sparkles, Filter, X, LayoutDashboard, Layers, BrainCircuit } from 'lucide-react';
+import { 
+  Plus, 
+  LayoutList, 
+  GanttChartSquare, 
+  Target, 
+  ChevronUp, 
+  ChevronDown, 
+  Book, 
+  Sparkles, 
+  Filter, 
+  X, 
+  LayoutDashboard, 
+  Layers, 
+  BrainCircuit,
+  Star,
+  ArrowLeft
+} from 'lucide-react';
 import BlueprintProject from './components/BlueprintProject';
 import GanttTimeline from './components/GanttTimeline';
 import type { Blueprint } from '@/types/blueprint';
@@ -145,7 +161,7 @@ export default function ArchitecturePage() {
                     <Button variant="outline" onClick={() => setIsTemplatesOpen(true)} className="border-primary/20 hover:bg-primary/5">
                         <Layers className="w-4 h-4 mr-2" /> Templates
                     </Button>
-                    <Button onClick={handleStartCreation} className="shadow-lg hover:scale-105 transition-transform bg-primary">
+                    <Button onClick={handleStartCreation} className="shadow-lg hover:scale-105 transition-transform bg-primary text-primary-foreground">
                         <Sparkles className="w-4 h-4 mr-2" />
                         Guided Blueprint
                     </Button>
@@ -270,5 +286,3 @@ export default function ArchitecturePage() {
     </div>
   );
 }
-
-import { ArrowLeft } from 'lucide-react';
