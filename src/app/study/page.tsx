@@ -17,10 +17,10 @@ import {
   ChevronUp, ChevronDown, Target
 } from 'lucide-react';
 import Link from 'next/link';
-import { LeitnerBoxManager } from '@/components/study/leitner-box-manager';
 import { VisualPairingTool } from '@/components/study/visual-pairing-tool';
 import { ForgettingCurveVisualizer } from '@/components/study/forgetting-curve-tool';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { FlashcardDecks } from '@/components/flashcards/flashcard-decks';
 
 export default function ScholarHub() {
   const { sessions, visualPairs } = useScholarStore();
@@ -41,12 +41,12 @@ export default function ScholarHub() {
 
   const toolCards = [
     {
-      id: 'leitner',
-      title: 'Leitner Manager',
-      desc: 'Master flashcards with 5-box logic.',
-      icon: Inbox,
-      stat: `${cards.filter(c => c.repetitions >= 4).length} Mastered`,
-      link: '#leitner'
+      id: 'decks',
+      title: 'Flashcard Decks',
+      desc: 'Master material with Anki-style algorithms.',
+      icon: Layers,
+      stat: `${cards.length} Total Cards`,
+      link: '#decks'
     },
     {
       id: 'visual',
@@ -110,7 +110,7 @@ export default function ScholarHub() {
                       <div className="p-3 bg-primary/10 rounded-full mb-3">
                         <GraduationCap className="h-10 w-10 text-primary"/>
                       </div>
-                      <h1 className="text-4xl font-bold font-headline tracking-tight">Scholar Hub</h1>
+                      <h1 className="text-4xl font-bold font-headline tracking-tight text-foreground">Scholar Hub</h1>
                       <p className="text-lg text-muted-foreground max-w-2xl">Evidence-backed strategies meets interactive learning tools. Train your mind like a polymath.</p>
                     </div>
                   </CollapsibleContent>
@@ -183,12 +183,8 @@ export default function ScholarHub() {
               </div>
 
               <div className="space-y-20 pt-4">
-                <section id="leitner" className="scroll-mt-24">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-10 w-1 bg-primary rounded-full" />
-                    <h2 className="text-2xl font-black tracking-tight">Leitner Box Manager</h2>
-                  </div>
-                  <LeitnerBoxManager />
+                <section id="decks" className="scroll-mt-24">
+                  <FlashcardDecks />
                 </section>
 
                 <section id="visual" className="scroll-mt-24">

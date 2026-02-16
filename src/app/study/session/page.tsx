@@ -8,7 +8,7 @@ import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, ThumbsUp, Loader2 } from 'lucide-react';
+import { ArrowLeft, ThumbsUp, Loader2, Zap, Brain, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Card as CardType } from '@/types/flashcards';
@@ -18,7 +18,7 @@ import { useStatsStore } from '@/hooks/use-stats-store';
 
 const renderCloze = (text: string, reveal: boolean) => {
   const clozeContent = text.replace(/\{\{c\d::(.*?)\}\}/g, (_, match) => 
-    reveal ? `<span class="font-bold text-primary">${match}</span>` : `<span class="font-bold text-blue-500">[...]</span>`
+    reveal ? `<span class="font-bold text-primary border-b-2 border-primary/30">${match}</span>` : `<span class="font-bold text-primary bg-primary/10 px-2 rounded">[...]</span>`
   );
   return <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: clozeContent }} />;
 };
@@ -90,7 +90,7 @@ function SessionContent() {
             setFlipped(false);
             setFeedback(null);
         }
-    }, 800);
+    }, 600);
   }, [currentCard, currentIndex, sessionCards.length, updateCard, addReview, decks]);
   
   useEffect(() => {
@@ -117,12 +117,16 @@ function SessionContent() {
 
   if (sessionComplete) {
     return (
-      <div className="flex flex-col items-center justify-center h-[70vh] text-center">
-        <ThumbsUp className="w-16 h-16 text-green-500 mb-4" />
-        <h1 className="text-3xl font-bold mb-2">Study Session Complete!</h1>
-        <p className="text-muted-foreground mb-6">You've reviewed all due cards for this session. Great work!</p>
-        <Button asChild>
-          <Link href="/study">Back to Scholar Hub</Link>
+      <div className="flex flex-col items-center justify-center h-[70vh] text-center max-w-md mx-auto space-y-6">
+        <div className="p-6 bg-primary/10 rounded-full">
+            <Sparkles className="w-16 h-16 text-primary" />
+        </div>
+        <div>
+            <h1 className="text-4xl font-bold font-headline tracking-tight mb-2">Session Complete!</h1>
+            <p className="text-muted-foreground">Your cognitive map has been updated. All due cards have been processed.</p>
+        </div>
+        <Button asChild size="lg" className="w-full h-14 text-lg font-bold">
+          <Link href="/study">Return to Scholar Hub</Link>
         </Button>
       </div>
     );
@@ -131,7 +135,8 @@ function SessionContent() {
   if (!currentCard) {
      return (
         <div className="flex flex-col items-center justify-center h-[70vh] text-center">
-            <h1 className="text-2xl font-bold mb-2">Loading...</h1>
+            <Loader2 className="animate-spin h-10 w-10 text-primary mb-4" />
+            <h1 className="text-2xl font-bold">Loading Session...</h1>
         </div>
      )
   }
@@ -146,54 +151,97 @@ function SessionContent() {
         return renderCloze(currentCard.front, false);
       } else {
         return (
-          <div className="prose dark:prose-invert max-w-none text-left space-y-4">
-            {renderCloze(currentCard.front, true)}
-            <hr />
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentCard.back}</ReactMarkdown>
+          <div className="prose dark:prose-invert max-w-none text-left space-y-6">
+            <div className="p-4 bg-muted/30 rounded-xl border border-primary/5">
+                {renderCloze(currentCard.front, true)}
+            </div>
+            <div className="pt-4 border-t border-primary/10">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentCard.back}</ReactMarkdown>
+            </div>
           </div>
         );
       }
     }
     
     const contentToShow = flipped ? currentCard.back : currentCard.front;
-    return <ReactMarkdown className="prose dark:prose-invert max-w-none" remarkPlugins={[remarkGfm]}>{contentToShow}</ReactMarkdown>;
+    return (
+        <div className="prose dark:prose-invert max-w-none">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{contentToShow}</ReactMarkdown>
+        </div>
+    );
   };
   
   const cardBorderColor = cn({
-      'border-green-500/80': feedback === 'correct',
-      'border-destructive/80': feedback === 'incorrect',
-      'border-transparent': !feedback,
+      'border-green-500/50 shadow-lg shadow-green-500/10': feedback === 'correct',
+      'border-destructive/50 shadow-lg shadow-destructive/10': feedback === 'incorrect',
+      'border-primary/10': !feedback,
   });
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-4">
-        <Button asChild variant="outline">
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div className="flex items-center justify-between">
+        <Button asChild variant="ghost" className="text-muted-foreground hover:text-primary p-0">
           <Link href={deckId ? `/study/deck/${deckId}` : '/study'}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Exit Session
           </Link>
         </Button>
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+            <Brain className="w-3 h-3" />
+            Card {currentIndex + 1} of {sessionCards.length}
+        </div>
       </div>
       
-      <div className="space-y-4">
-        <Progress value={progress} />
+      <div className="space-y-6">
+        <div className="space-y-2">
+            <Progress value={progress} className="h-1.5" />
+            <div className="flex justify-between text-[9px] font-black uppercase tracking-tighter text-muted-foreground/60 px-1">
+                <span>Beginning</span>
+                <span>{Math.round(progress)}% Complete</span>
+                <span>Destination</span>
+            </div>
+        </div>
+
         <Card 
             onClick={() => !feedback && setFlipped(!flipped)} 
-            className={cn("cursor-pointer min-h-[400px] flex items-center justify-center p-6 text-center text-xl relative overflow-hidden border-4 transition-colors duration-300", cardBorderColor)}
+            className={cn(
+                "cursor-pointer min-h-[450px] flex items-center justify-center p-12 text-center text-2xl relative overflow-hidden border-2 transition-all duration-500 transform-gpu", 
+                cardBorderColor,
+                flipped ? "bg-card" : "bg-primary/[0.02]"
+            )}
         >
           <CardContent className="w-full">
             {renderContent()}
+            
+            {!flipped && (
+                <div className="absolute bottom-8 left-0 right-0 animate-pulse text-[10px] font-black uppercase tracking-[0.3em] text-primary opacity-40">
+                    Tap to reveal
+                </div>
+            )}
           </CardContent>
         </Card>
 
-        {flipped && !feedback && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in">
-            <Button onClick={() => handleRating("again")} variant="destructive" size="lg">Again <span className="ml-2 text-xs opacity-70">(1)</span></Button>
-            <Button onClick={() => handleRating("hard")} variant="secondary" size="lg">Hard <span className="ml-2 text-xs opacity-70">(2)</span></Button>
-            <Button onClick={() => handleRating("good")} size="lg">Good <span className="ml-2 text-xs opacity-70">(3)</span></Button>
-            <Button onClick={() => handleRating("easy")} className="bg-green-600 hover:bg-green-700" size="lg">Easy <span className="ml-2 text-xs opacity-70">(4)</span></Button>
-          </div>
-        )}
+        <div className="h-24">
+            {flipped && !feedback && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-2">
+                <Button onClick={() => handleRating("again")} variant="destructive" className="h-16 flex flex-col items-center justify-center group">
+                    <span className="font-bold">Again</span>
+                    <span className="text-[9px] opacity-60 uppercase font-black group-hover:opacity-100">(1)</span>
+                </Button>
+                <Button onClick={() => handleRating("hard")} variant="secondary" className="h-16 flex flex-col items-center justify-center group border-primary/10">
+                    <span className="font-bold">Hard</span>
+                    <span className="text-[9px] opacity-60 uppercase font-black group-hover:opacity-100">(2)</span>
+                </Button>
+                <Button onClick={() => handleRating("good")} variant="secondary" className="h-16 flex flex-col items-center justify-center group border-primary/10">
+                    <span className="font-bold">Good</span>
+                    <span className="text-[9px] opacity-60 uppercase font-black group-hover:opacity-100">(3)</span>
+                </Button>
+                <Button onClick={() => handleRating("easy")} className="h-16 flex flex-col items-center justify-center group bg-primary">
+                    <span className="font-bold">Easy</span>
+                    <span className="text-[9px] opacity-60 uppercase font-black group-hover:opacity-100">(4)</span>
+                </Button>
+            </div>
+            )}
+        </div>
       </div>
     </div>
   );
