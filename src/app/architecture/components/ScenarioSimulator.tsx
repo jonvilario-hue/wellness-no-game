@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -12,6 +11,7 @@ import { ArrowRight, Sparkles, Rocket } from 'lucide-react';
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { cn } from '@/lib/utils'
 
 export default function ScenarioSimulator() {
   const [step, setStep] = useState(1);
@@ -63,13 +63,14 @@ export default function ScenarioSimulator() {
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <Card className="border-primary/20 shadow-lg relative overflow-hidden group cursor-help">
+          <Card className={cn("border-primary/20 shadow-lg relative overflow-hidden group", settings.assistantMode && "cursor-help")}>
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-headline text-2xl">
                 <Sparkles className="w-6 h-6 text-primary" />
                 Scenario Simulator
               </CardTitle>
+              <CardTitle className="sr-only">Scenario Simulator Card</CardTitle>
               <CardDescription>Simulate a goal and find the perfect strategy stack to conquer it.</CardDescription>
             </CardHeader>
             <CardContent className="relative z-10">

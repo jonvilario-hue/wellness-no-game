@@ -1,4 +1,3 @@
-
 'use client'
 
 import type { Blueprint, Milestone, Task } from "@/types/blueprint"
@@ -31,6 +30,7 @@ import {
 import EditBlueprintDialog from "./EditBlueprintDialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useDashboardSettings } from "@/hooks/use-dashboard-settings"
+import { cn } from "@/lib/utils"
 
 type BlueprintProjectProps = {
   project: Blueprint;
@@ -87,7 +87,7 @@ export default function BlueprintProject({
                   <TooltipProvider>
                     <Tooltip delayDuration={0}>
                       <TooltipTrigger asChild>
-                        <div className="text-xs font-medium text-primary mt-2 flex items-center gap-2 cursor-help">
+                        <div className={cn("text-xs font-medium text-primary mt-2 flex items-center gap-2", settings.assistantMode && "cursor-help")}>
                             <Badge variant="outline" className="font-bold uppercase tracking-tighter text-[9px] bg-primary/5">Becoming</Badge>
                             <span className="italic">{project.identityGoal}</span>
                         </div>
@@ -100,7 +100,7 @@ export default function BlueprintProject({
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                      <div className="flex gap-2 mt-3 flex-wrap">
+                      <div className={cn("flex gap-2 mt-3 flex-wrap", settings.assistantMode && "cursor-help")}>
                       {project.tags.map(tag => (
                           <Badge key={tag} variant="secondary" className="text-[10px] uppercase font-bold tracking-tight">{tag}</Badge>
                       ))}
@@ -187,7 +187,7 @@ export default function BlueprintProject({
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <div className="space-y-1 cursor-help">
+                  <div className={cn("space-y-1", settings.assistantMode && "cursor-help")}>
                     <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground">
                         <span>Blueprint Progress</span>
                         <span>{Math.round(progress)}%</span>

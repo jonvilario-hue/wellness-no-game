@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -99,7 +98,7 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <Card className="flex flex-col h-full hover:shadow-md transition-shadow relative group cursor-help">
+          <Card className={cn("flex flex-col h-full hover:shadow-md transition-shadow relative group", settings.assistantMode && "cursor-help")}>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button 

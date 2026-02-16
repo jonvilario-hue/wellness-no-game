@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState } from 'react';
@@ -86,7 +85,7 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                     <TooltipProvider>
                       <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
-                          <div className="flex items-center gap-2 cursor-help">
+                          <div className={cn("flex items-center gap-2", settings.assistantMode && "cursor-help")}>
                             <h4 className="font-semibold">{milestone.title}</h4>
                             {milestone.dependsOn && milestone.dependsOn.length > 0 && (
                               <Badge variant="outline" className="text-[8px] h-4 py-0 gap-1 uppercase tracking-tighter text-primary border-primary/20">
@@ -195,7 +194,7 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                      <h5 className="text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2 cursor-help w-fit">
+                      <h5 className={cn("text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2 w-fit", settings.assistantMode && "cursor-help")}>
                         <Sparkles className="w-3 h-3" /> Suggested Prompts
                       </h5>
                     </TooltipTrigger>
@@ -220,7 +219,7 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
               <TooltipProvider>
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
-                    <div>
+                    <div className={cn(settings.assistantMode && "cursor-help")}>
                       <ReflectionTextarea
                           initialText={milestone.reflection}
                           onSave={handleSaveReflection}
@@ -239,7 +238,7 @@ export default function MilestoneCard({ projectId, milestone, onToggleTask, onAd
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="w-full justify-start text-[10px] uppercase font-bold text-muted-foreground h-8"
+                          className={cn("w-full justify-start text-[10px] uppercase font-bold text-muted-foreground h-8", settings.assistantMode && "cursor-help")}
                           onClick={() => setShowHistory(!showHistory)}
                         >
                           <History className="w-3 h-3 mr-2 text-primary" /> 
