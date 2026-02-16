@@ -6,12 +6,15 @@ import CategoryOverview from "./CategoryOverview"
 import { movementCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
 import { ChevronDown } from "lucide-react"
+import { MovementDashboard } from "./MovementDashboard"
 
 const categories: ExerciseCategory[] = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
 export default function MovementContent() {
   return (
     <div className="space-y-8">
+        <MovementDashboard />
+        
         {categories.map(category => {
             const exercises = movementExercises.filter(e => e.category === category);
             const details = movementCategoryDetails[category];

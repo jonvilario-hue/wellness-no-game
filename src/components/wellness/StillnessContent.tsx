@@ -6,12 +6,15 @@ import { PracticeInstructionCard } from "./PracticeInstructionCard"
 import CategoryOverview from "./CategoryOverview"
 import { stillnessCategoryDetails } from "@/data/wellness-categories"
 import { ChevronDown } from "lucide-react"
+import { StillnessDashboard } from "./StillnessDashboard"
 
 const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
 
 export default function StillnessContent() {
     return (
      <div className="space-y-8">
+        <StillnessDashboard />
+
         {categories.map(category => {
             const practices = mindfulnessPractices.filter(p => p.category === category);
             const details = stillnessCategoryDetails[category];

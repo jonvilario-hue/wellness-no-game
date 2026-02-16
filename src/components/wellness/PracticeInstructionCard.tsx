@@ -4,10 +4,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, RotateCcw, Check, Sparkles, SlidersHorizontal, Info, Goal } from 'lucide-react';
+import { Play, Pause, RotateCcw, Check, Sparkles, SlidersHorizontal, Info, Goal, ClipboardCheck } from 'lucide-react';
 import type { Exercise } from '@/data/exercises';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { useWellnessData } from '@/hooks/use-wellness-data';
+import { useToast } from '@/hooks/use-toast';
 
 const formatTime = (totalSeconds: number): string => {
   if (totalSeconds < 0) return '00:00';
@@ -20,6 +22,8 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(exercise.duration);
   const [isComplete, setIsComplete] = useState(false);
+  const { addMovementLog, addStillnessLog } = useWellnessData();
+  const { toast } = useToast();
   
   const ExerciseIcon = exercise.icon;
 
@@ -32,9 +36,30 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
       setIsComplete(true);
+      handleQuickLog();
     }
     return () => clearInterval(timer);
   }, [isActive, timeLeft]);
+
+  const handleQuickLog = () => {
+    const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'].includes(exercise.category);
+    if (isMovement) {
+      addMovementLog({
+        exerciseId: exercise.id,
+        exerciseName: exercise.name,
+        duration: Math.ceil(exercise.duration / 60),
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      addStillnessLog({
+        techniqueId: exercise.id,
+        techniqueName: exercise.name,
+        duration: Math.ceil(exercise.duration / 60),
+        timestamp: new Date().toISOString()
+      });
+    }
+    toast({ title: "Session Recorded!", variant: 'success' });
+  };
 
   const toggleTimer = useCallback(() => {
     if (isComplete || timeLeft === 0) {
@@ -111,9 +136,9 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
             {isActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
             {isActive ? formatTime(timeLeft) : 'Start'}
             </Button>
-            <Button onClick={resetTimer} variant="outline" size="lg">
-            <RotateCcw className="mr-2 h-4 w-4" />
-            Reset
+            <Button onClick={handleQuickLog} variant="outline" size="lg">
+              <ClipboardCheck className="mr-2 h-4 w-4" />
+              Log Only
             </Button>
         </div>
       </CardFooter>

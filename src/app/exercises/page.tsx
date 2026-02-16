@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
@@ -10,29 +10,19 @@ import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
 import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff } from 'lucide-react';
-import { useWellnessData } from '@/hooks/use-wellness-data';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Info } from 'lucide-react';
+import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-
-const mockActivityData = [
-  { date: '2024-07-01', count: 1 },
-  { date: '2024-07-03', count: 2 },
-  { date: '2024-07-04', count: 3 },
-  { date: '2024-07-06', count: 1 },
-  { date: '2024-07-08', count: 2 },
-  { date: '2024-07-09', count: 1 },
-  { date: '2024-07-11', count: 3 },
-  { date: '2024-07-12', count: 2 },
-  { date: '2024-07-13', count: 1 },
-  { date: '2024-07-15', count: 2 },
-  { date: '2024-07-17', count: 1 },
-];
+import { Card, CardContent } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { QuickLogBar } from '@/components/wellness/QuickLogBar';
+import { format } from 'date-fns';
 
 export default function ExercisesPage() {
   const [isOpen, setIsOpen] = useState(true);
-  const { lowEnergyMode, setLowEnergyMode } = useWellnessData();
+  const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs } = useWellnessData();
 
   useEffect(() => {
     const savedState = localStorage.getItem('health-check-collapsible-state');
@@ -46,6 +36,17 @@ export default function ExercisesPage() {
     localStorage.setItem('health-check-collapsible-state', JSON.stringify(open));
   };
 
+  const wellnessStats = useMemo(() => {
+    const combinedLogs = [...movementLogs, ...stillnessLogs];
+    const streak = calculateStreak(combinedLogs);
+    
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const moveToday = movementLogs.some(l => format(new Date(l.timestamp), 'yyyy-MM-dd') === today);
+    const stillToday = stillnessLogs.some(l => format(new Date(l.timestamp), 'yyyy-MM-dd') === today);
+    
+    return { streak, moveToday, stillToday };
+  }, [movementLogs, stillnessLogs]);
+
   return (
     <>
       <div className="sticky top-0 z-20">
@@ -53,8 +54,38 @@ export default function ExercisesPage() {
         <PageNav />
       </div>
       <MotivationalMessage />
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24">
         <div className="mx-auto max-w-7xl space-y-6">
+            
+            <div className="flex justify-center mb-4">
+              <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <Flame className="w-5 h-5 text-orange-500" />
+                    <span className="text-xl font-black">{wellnessStats.streak}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
+                  </div>
+                  <div className="h-4 w-[1px] bg-border" />
+                  <TooltipProvider>
+                    <div className="flex gap-3">
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <div className={cn("w-3 h-3 rounded-full transition-colors", wellnessStats.moveToday ? "bg-primary" : "bg-muted")} />
+                        </TooltipTrigger>
+                        <TooltipContent><p>Movement: {wellnessStats.moveToday ? 'Done' : 'Pending'}</p></TooltipContent>
+                      </Tooltip>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <div className={cn("w-3 h-3 rounded-full transition-colors", wellnessStats.stillToday ? "bg-blue-400" : "bg-muted")} />
+                        </TooltipTrigger>
+                        <TooltipContent><p>Stillness: {wellnessStats.stillToday ? 'Done' : 'Pending'}</p></TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
+                </div>
+              </Card>
+            </div>
+
             <div className="flex flex-col gap-4">
                 <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
                   <div className="flex justify-between items-start">
@@ -96,9 +127,10 @@ export default function ExercisesPage() {
             </div>
             
             <WellnessTabs />
-            <WellnessHeatmap activityData={mockActivityData} />
+            <WellnessHeatmap activityData={[]} />
         </div>
       </main>
+      <QuickLogBar />
     </>
   );
 }

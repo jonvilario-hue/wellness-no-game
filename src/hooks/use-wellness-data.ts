@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { subDays, isSameDay, format, startOfWeek } from 'date-fns';
+import { subDays, isSameDay, format, startOfWeek, differenceInDays } from 'date-fns';
 
 export type Transaction = {
   id: string;
@@ -37,6 +37,22 @@ export type MealLog = {
   isFlexMeal?: boolean;
 };
 
+export type MovementLog = {
+  id: string;
+  exerciseId: string;
+  exerciseName: string;
+  duration: number;
+  timestamp: string;
+};
+
+export type StillnessLog = {
+  id: string;
+  techniqueId: string;
+  techniqueName: string;
+  duration: number;
+  timestamp: string;
+};
+
 export type WellnessState = {
   // Global
   lowEnergyMode: boolean;
@@ -54,6 +70,10 @@ export type WellnessState = {
   weightLogs: { date: string; weight: number }[];
   flexMealsPerWeek: number;
 
+  // Movement & Stillness Logs
+  movementLogs: MovementLog[];
+  stillnessLogs: StillnessLog[];
+
   // Actions
   setLowEnergyMode: (enabled: boolean) => void;
   setFeaturePhase: (phase: number) => void;
@@ -68,6 +88,9 @@ export type WellnessState = {
   copyDayLog: (fromDate: string, toDate: string) => void;
   addWater: (date: string, amount: number) => void;
   addWeight: (date: string, weight: number) => void;
+
+  addMovementLog: (log: Omit<MovementLog, 'id'>) => void;
+  addStillnessLog: (log: Omit<StillnessLog, 'id'>) => void;
 };
 
 export const useWellnessData = create<WellnessState>()(
@@ -88,6 +111,9 @@ export const useWellnessData = create<WellnessState>()(
       waterLogs: {},
       weightLogs: [],
       flexMealsPerWeek: 2,
+
+      movementLogs: [],
+      stillnessLogs: [],
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
       setFeaturePhase: (featurePhase) => set({ featurePhase }),
@@ -120,10 +146,41 @@ export const useWellnessData = create<WellnessState>()(
       addWeight: (date, weight) => set((state) => ({
         weightLogs: [...state.weightLogs.filter(w => w.date !== date), { date, weight }]
       })),
+
+      addMovementLog: (log) => set((state) => ({
+        movementLogs: [{ ...log, id: crypto.randomUUID() }, ...state.movementLogs]
+      })),
+      addStillnessLog: (log) => set((state) => ({
+        stillnessLogs: [{ ...log, id: crypto.randomUUID() }, ...state.stillnessLogs]
+      })),
     }),
     {
-      name: 'wellness-data-storage',
+      name: 'wellness-data-storage-v2',
       storage: createJSONStorage(() => localStorage),
     }
   )
 );
+
+// Utility to calculate streak with a 1-day grace period
+export const calculateStreak = (logs: { timestamp: string }[]) => {
+  if (logs.length === 0) return 0;
+  
+  const dates = Array.from(new Set(logs.map(l => format(new Date(l.timestamp), 'yyyy-MM-dd'))))
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
+  
+  if (dates[0] !== today && dates[0] !== yesterday) return 0;
+  
+  let streak = 1;
+  for (let i = 0; i < dates.length - 1; i++) {
+    const diff = differenceInDays(new Date(dates[i]), new Date(dates[i+1]));
+    if (diff <= 2) { // 1 day gap allowed
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+};
