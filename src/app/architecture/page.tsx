@@ -20,7 +20,9 @@ import {
   Star,
   ArrowLeft,
   Info,
-  Rocket
+  Rocket,
+  ChevronRight,
+  Flame
 } from 'lucide-react';
 import BlueprintProject from './components/BlueprintProject';
 import GanttTimeline from './components/GanttTimeline';
@@ -36,6 +38,9 @@ import ScenarioSimulator from './components/ScenarioSimulator';
 import AdviceMatcher from './components/AdviceMatcher';
 import ArchitectureHelp from './components/ArchitectureHelp';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { StrategyGuide } from '@/app/blueprints/components/StrategyGuide';
 
 export default function ArchitecturePage() {
   const { projects, updateProject, deleteProject } = useBlueprintStore();

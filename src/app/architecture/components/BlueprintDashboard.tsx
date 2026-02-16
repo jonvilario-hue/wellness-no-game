@@ -2,7 +2,7 @@
 'use client';
 
 import { useBlueprintStore } from '@/hooks/use-blueprint-store';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,14 +12,11 @@ import {
   Target, 
   AlertCircle, 
   CheckCircle2, 
-  TrendingUp, 
-  Clock, 
   PlusCircle, 
-  MessageSquare,
-  Lock,
-  ChevronRight
+  ChevronRight,
+  Circle
 } from 'lucide-react';
-import type { Blueprint, Milestone, Task } from '@/types/blueprint';
+import type { Blueprint } from '@/types/blueprint';
 import { cn } from '@/lib/utils';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { useState } from 'react';
@@ -49,11 +46,10 @@ const MomentumGauge = ({ score }: { score: number }) => {
 };
 
 export default function BlueprintDashboard({ project }: { project: Blueprint }) {
-  const { logMetric, toggleHabit, logBlocker, resolveBlocker, toggleTask, completeMilestone } = useBlueprintStore();
+  const { logMetric, logBlocker, resolveBlocker, toggleTask } = useBlueprintStore();
   const [metricModal, setMetricModal] = useState<{ open: boolean; metricId: string | null }>({ open: false, metricId: null });
   const [metricValue, setMetricValue] = useState("");
 
-  const activeMilestones = project.milestones.filter(m => m.status !== 'Locked');
   const upcomingMilestone = project.milestones.find(m => m.status === 'Not Started' || m.status === 'In Progress');
 
   const handleMetricLog = () => {
@@ -70,7 +66,9 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
         {/* Left Col: Core Stats */}
         <div className="w-full md:w-80 space-y-6">
           <Card className="bg-primary/5 border-primary/10 text-center p-6">
-            <MomentumGauge score={project.momentumScore} />
+            <div className="flex justify-center mb-4">
+              <MomentumGauge score={project.momentumScore} />
+            </div>
             <div className="mt-4 flex items-center justify-center gap-2">
               <Flame className="w-5 h-5 text-orange-500" />
               <span className="text-xl font-black">{project.streaks.currentStreak} Day Streak</span>
@@ -179,8 +177,4 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
       </Dialog>
     </div>
   );
-}
-
-function Circle({ className }: { className?: string }) {
-  return <div className={cn("w-4 h-4 rounded-full border-2", className)} />;
 }

@@ -11,11 +11,10 @@ import type {
   BlueprintTemplate, 
   ReflectionEntry, 
   TemplateVariationSettings,
-  Blocker,
-  CelebrationTrigger
+  Blocker
 } from '@/types/blueprint';
 import { systemTemplates } from '@/data/system-templates';
-import { format, startOfDay, isSameDay } from 'date-fns';
+import { format, startOfDay, isSameDay, differenceInDays } from 'date-fns';
 
 type BlueprintState = {
   projects: Blueprint[];
@@ -25,6 +24,7 @@ type BlueprintState = {
   addProject: (template: BlueprintTemplate, settings: TemplateVariationSettings) => void;
   updateProject: (id: string, updates: Partial<Blueprint>) => void;
   deleteProject: (id: string) => void;
+  cloneBlueprint: (id: string, options: { asTemplate?: boolean; asV2?: boolean }) => void;
   
   logMetric: (id: string, metricId: string, value: number) => void;
   toggleHabit: (id: string, habitId: string) => void;
@@ -32,7 +32,8 @@ type BlueprintState = {
   resolveBlocker: (id: string, blockerId: string) => void;
   
   completeMilestone: (id: string, milestoneId: string, reflection: Omit<ReflectionEntry, 'id' | 'createdAt'>) => void;
-  toggleTask: (id: string, milestoneId: string, taskId: string) => void;
+  toggleTask: (projectId: string, milestoneId: string, taskId: string) => void;
+  addReflection: (projectId: string, milestoneId: string, reflection: { content: string; milestoneStatus: Milestone['status'] }) => void;
   
   // Internal logic
   calculateMomentum: (blueprint: Blueprint) => number;
@@ -58,7 +59,8 @@ export const useBlueprintStore = create<BlueprintState>()(
         // Adapt milestones based on variation
         let milestones = template.milestones.map(m => ({
           ...m,
-          status: m.dependsOn.length === 0 ? 'Not Started' : 'Locked' as Milestone['status']
+          status: m.dependsOn.length === 0 ? 'Not Started' : 'Locked' as Milestone['status'],
+          tasks: m.tasks.map(t => ({ ...t, completed: false }))
         }));
 
         // Intensity: Professional adds review tasks
@@ -110,8 +112,8 @@ export const useBlueprintStore = create<BlueprintState>()(
           const bp = state.projects.find(p => p.id === id);
           if (!bp) return;
           
-          const metric = bp.metricValues[metricId] || 0;
-          const delta = value - metric;
+          const oldValue = bp.metricValues[metricId] || 0;
+          const delta = value - oldValue;
           bp.metricValues[metricId] = value;
           bp.metricLog.push({ metricId, value, delta, loggedAt: new Date().toISOString() });
           
@@ -157,9 +159,9 @@ export const useBlueprintStore = create<BlueprintState>()(
         });
       },
 
-      toggleTask: (id, milestoneId, taskId) => {
+      toggleTask: (projectId, milestoneId, taskId) => {
         set(state => {
-          const bp = state.projects.find(p => p.id === id);
+          const bp = state.projects.find(p => p.id === projectId);
           if (!bp) return;
           const milestone = bp.milestones.find(m => m.id === milestoneId);
           const task = milestone?.tasks.find(t => t.id === taskId);
@@ -181,8 +183,7 @@ export const useBlueprintStore = create<BlueprintState>()(
             bp.milestoneReflections[milestoneId] = {
               ...reflection,
               id: crypto.randomUUID(),
-              createdAt: new Date().toISOString(),
-              milestoneStatus: 'Completed'
+              createdAt: new Date().toISOString()
             };
             
             // Unlock dependents
@@ -198,9 +199,77 @@ export const useBlueprintStore = create<BlueprintState>()(
         });
       },
 
+      addReflection: (projectId, milestoneId, reflection) => {
+        set(state => {
+          const project = state.projects.find(p => p.id === projectId);
+          if (!project) return;
+          const milestone = project.milestones.find(m => m.id === milestoneId);
+          if (!milestone) return;
+          
+          const newEntry: ReflectionEntry = {
+            id: crypto.randomUUID(),
+            content: reflection.content,
+            milestoneStatus: reflection.milestoneStatus,
+            createdAt: new Date().toISOString(),
+          };
+          
+          if (!milestone.reflections) milestone.reflections = [];
+          milestone.reflections.push(newEntry);
+          milestone.reflection = reflection.content; // Current draft
+        });
+      },
+
+      cloneBlueprint: (id, options) => {
+        set(state => {
+          const source = state.projects.find(p => p.id === id);
+          if (!source) return;
+
+          if (options.asTemplate) {
+            const newTemplate: BlueprintTemplate = {
+              id: crypto.randomUUID(),
+              title: source.title,
+              description: source.description || '',
+              category: 'creative', // default
+              defaultIdentityStatement: source.identityGoal || '',
+              icon: '📋',
+              baseTimeline: 12,
+              milestones: source.milestones.map(m => ({ ...m, status: 'Not Started', reflections: [], reflection: '' })),
+              customMetrics: [],
+              habits: [],
+              celebrationTriggers: [],
+              resourcePack: [],
+              adaptiveSettings: {
+                timelineFlexible: true, intensityAdjustable: true, skillLevelScalable: true,
+                canAddCustomMilestones: true, canRemoveOptionalMilestones: true
+              },
+              variations: {
+                timeline: {} as any, intensity: {} as any, skillLevel: {} as any
+              },
+              createdBy: 'user',
+              isPublic: false
+            };
+            state.templates.unshift(newTemplate);
+          } else {
+            const newProject: Blueprint = {
+              ...source,
+              id: crypto.randomUUID(),
+              activatedAt: new Date().toISOString(),
+              status: 'active',
+              milestones: source.milestones.map(m => ({ ...m, status: 'Not Started', reflections: [], reflection: '', tasks: m.tasks.map(t => ({ ...t, completed: false })) })),
+              momentumScore: 0,
+              streaks: { currentStreak: 0, longestStreak: 0, lastActivityDate: null, weeklyTarget: 5, thisWeekCount: 0 },
+              versionNumber: options.asV2 ? (source.versionNumber || 1) + 1 : 1,
+              lessonsFromV1: options.asV2 ? source.milestones.map(m => m.reflection).filter(Boolean).join('\n\n') : undefined
+            };
+            state.projects.unshift(newProject);
+          }
+        });
+      },
+
       calculateMomentum: (bp) => {
         const tasks = bp.milestones.flatMap(m => m.tasks);
-        const completionRate = tasks.filter(t => t.completed).length / (tasks.length || 1);
+        if (tasks.length === 0) return 0;
+        const completionRate = tasks.filter(t => t.completed).length / tasks.length;
         const streakBonus = bp.streaks.currentStreak > 0 ? Math.min(bp.streaks.currentStreak * 2, 30) : 0;
         return Math.min(100, Math.round(completionRate * 70 + streakBonus));
       },
@@ -233,7 +302,7 @@ export const useBlueprintStore = create<BlueprintState>()(
       }
     })),
     {
-      name: 'architecture-store-v4',
+      name: 'blueprint-store-local-v1',
       storage: createJSONStorage(() => localStorage),
     }
   )

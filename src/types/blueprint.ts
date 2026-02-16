@@ -3,6 +3,7 @@ export type Task = {
   id: string;
   title: string;
   completed: boolean;
+  description?: string;
   dueDate?: string;
   notes?: string;
   isOptional?: boolean;
@@ -20,22 +21,24 @@ export type ReflectionEntry = {
   milestoneStatus: Milestone['status'];
   difficultyRating?: number;
   satisfactionRating?: number;
+  lessonLearned?: string;
 };
 
 export type Milestone = {
   id: string;
   title: string;
-  description?: string;
-  dueDate?: string;
+  description: string;
+  weekStart: number;
+  weekEnd: number;
   status: 'Not Started' | 'In Progress' | 'Paused' | 'Completed' | 'Locked';
   tasks: Task[];
+  dependsOn: string[];
+  isOptional: boolean;
+  reflectionPrompts?: string[];
+  dueDate?: string;
+  startDate?: string;
   reflection?: string;
   reflections?: ReflectionEntry[];
-  dependsOn?: string[];
-  startDate?: string;
-  weekStart?: number;
-  weekEnd?: number;
-  isOptional?: boolean;
 };
 
 export type CustomMetric = {
@@ -51,10 +54,10 @@ export type CustomMetric = {
 export type RecurringHabit = {
   id: string;
   label: string;
-  frequency: string; // "daily" | "weekly" | "3x/week"
+  frequency: string; // "daily" | "weekly" | "3x/week" | "5x/week"
   linkedMilestoneId: string | null;
-  activeFrom?: string | null;
-  activeUntil?: string | null;
+  activeFrom: string | null;
+  activeUntil: string | null;
 };
 
 export type CelebrationTrigger = {
@@ -78,8 +81,6 @@ export type AdaptiveVariation = {
   weeks: number;
   label: string;
   description: string;
-  durationMultiplier?: number;
-  taskDensity?: 'high' | 'standard' | 'relaxed' | 'cyclical';
 };
 
 export type TemplateVariationSettings = {
@@ -111,9 +112,9 @@ export type BlueprintTemplate = {
     canRemoveOptionalMilestones: boolean;
   };
   variations: {
-    timeline: Record<TemplateVariationSettings['timeline'], AdaptiveVariation>;
-    intensity: Record<TemplateVariationSettings['intensity'], { label: string; description: string }>;
-    skillLevel: Record<TemplateVariationSettings['skillLevel'], { label: string; description: string }>;
+    timeline: Record<'ultraSprint' | 'sprint' | 'marathon' | 'lifelong', AdaptiveVariation>;
+    intensity: Record<'hobby' | 'committed' | 'professional', { label: string; description: string }>;
+    skillLevel: Record<'beginner' | 'intermediate' | 'advanced', { label: string; description: string }>;
   };
   createdBy: 'system' | string;
   isPublic: boolean;
@@ -124,6 +125,7 @@ export type WeeklySnapshot = {
   tasksCompleted: number;
   tasksTotal: number;
   momentumScore: number;
+  habitCompletionRate: number;
   autoSummary: string;
 };
 
@@ -148,6 +150,8 @@ export type Blueprint = {
   status: 'active' | 'paused' | 'completed' | 'abandoned' | 'Archived';
   activatedAt: string;
   selectedVariation: TemplateVariationSettings;
+  versionNumber?: number;
+  lessonsFromV1?: string;
   
   // Tracking
   metricValues: Record<string, number>;
@@ -164,6 +168,4 @@ export type Blueprint = {
   milestoneReflections: Record<string, ReflectionEntry>;
   blockers: Blocker[];
   weeklySnapshots: WeeklySnapshot[];
-  versionNumber?: number;
-  lessonsFromV1?: string;
 };
