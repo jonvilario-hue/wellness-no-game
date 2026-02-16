@@ -5,7 +5,7 @@ import { useState, useMemo } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
-import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw, Edit, Play } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw, Edit, Play, Clock, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { presetPlans } from '@/data/preset-calendar-plans';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { Calendar } from '@/components/ui/calendar';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, startOfWeek, addDays, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -41,7 +41,7 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
   
-  const [view, setView] = useState<'month' | 'day'>('month');
+  const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [plansOpen, setPlansOpen] = useState(true);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
@@ -62,12 +62,11 @@ export default function CalendarPage() {
     return availablePlans.filter(p => activePlanIds.includes(p.id));
   }, [availablePlans, activePlanIds]);
 
-  const todaysTasks = useMemo(() => {
-    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+  const getTasksForDate = (date: Date) => {
+    const dateStr = format(date, 'yyyy-MM-dd');
     const instances = activityInstances[dateStr] || [];
     
-    // Merge plan-based tasks and ad-hoc/study sessions
-    const activeTasks = [
+    return [
       ...activePlans.flatMap(plan => 
         plan.activities.map(act => {
           const existing = instances.find(i => i.activityId === act.id);
@@ -94,8 +93,14 @@ export default function CalendarPage() {
         studyResourceId: inst.studyResourceId
       }))
     ];
-    return activeTasks;
-  }, [selectedDate, activePlans, activityInstances]);
+  };
+
+  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, activePlans, activityInstances]);
+
+  const weekDays = useMemo(() => {
+    const start = startOfWeek(selectedDate);
+    return Array.from({ length: 7 }, (_, i) => addDays(start, i));
+  }, [selectedDate]);
 
   const handleOpenBuilder = (plan?: CalendarPlan) => {
     if (plan) {
@@ -136,7 +141,6 @@ export default function CalendarPage() {
       });
     }
 
-    // Reset Form
     setNewPlanName('');
     setNewPlanDesc('');
     setSelectedCategories([]);
@@ -165,6 +169,10 @@ export default function CalendarPage() {
     );
   };
 
+  const getDayFocus = (date: Date) => {
+    return calendarContent.find(c => c.day === date.getDate());
+  };
+
   if (!_hasHydrated) return null;
 
   return (
@@ -182,7 +190,7 @@ export default function CalendarPage() {
               <div className="flex items-center gap-4">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <LayoutGrid className="w-5 h-5 text-primary" />
-                  Available Plans ({availablePlans.length})
+                  Routine Architect
                 </h2>
                 {deletedPresetIds.length > 0 && (
                   <Button variant="outline" size="sm" onClick={resetDefaults} className="h-7 text-[10px] uppercase font-bold">
@@ -198,7 +206,7 @@ export default function CalendarPage() {
             </div>
             <CollapsibleContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
               {availablePlans.map(plan => (
-                <Card key={plan.id} className={cn("transition-all relative group", activePlanIds.includes(plan.id) && "border-primary bg-primary/5")}>
+                <Card key={plan.id} className={cn("transition-all relative group", activePlanIds.includes(plan.id) && "border-primary bg-primary/5 shadow-sm")}>
                   <CardHeader className="p-4 pb-2">
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-sm font-bold pr-8">{plan.name}</CardTitle>
@@ -213,12 +221,12 @@ export default function CalendarPage() {
                   </CardHeader>
                   <CardFooter className="p-4 pt-0 flex justify-between items-center">
                     <div className="flex gap-2">
-                      <Badge variant="outline" className="text-[10px] uppercase">{plan.categories[0]}</Badge>
-                      <span className="text-[10px] text-muted-foreground">{plan.activities.length} daily steps</span>
+                      <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">{plan.categories[0]}</Badge>
+                      <span className="text-[9px] text-muted-foreground uppercase font-bold">{plan.activities.length} Steps</span>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       {!plan.isPreset && (
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-primary" onClick={() => handleOpenBuilder(plan)}>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenBuilder(plan)}>
                           <Edit className="w-3.5 h-3.5" />
                         </Button>
                       )}
@@ -234,28 +242,32 @@ export default function CalendarPage() {
                   </CardFooter>
                 </Card>
               ))}
-              <Card className="border-dashed cursor-pointer hover:bg-muted/50 flex flex-col items-center justify-center p-6 text-center h-full min-h-[120px]" onClick={() => handleOpenBuilder()}>
+              <Card className="border-dashed cursor-pointer hover:bg-primary/[0.02] flex flex-col items-center justify-center p-6 text-center h-full min-h-[120px] transition-colors" onClick={() => handleOpenBuilder()}>
                 <Plus className="w-8 h-8 text-muted-foreground mb-2" />
-                <p className="text-sm font-bold">Create Custom Plan</p>
+                <p className="text-sm font-bold">New Custom Plan</p>
                 <p className="text-xs text-muted-foreground">Design your own routine</p>
               </Card>
             </CollapsibleContent>
           </Collapsible>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card className="lg:col-span-2">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <Card className="lg:col-span-3">
+              <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-primary/5">
                 <div>
-                  <CardTitle className="text-xl">Monthly Schedule</CardTitle>
-                  <CardDescription>Select a day to view your routine</CardDescription>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <CalendarIcon className="w-5 h-5 text-primary" />
+                    {view === 'month' ? format(selectedDate, 'MMMM yyyy') : view === 'week' ? `Week of ${format(weekDays[0], 'MMM d')}` : format(selectedDate, 'PPPP')}
+                  </CardTitle>
+                  <CardDescription>Plan and track your cognitive reps.</CardDescription>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant={view === 'month' ? 'default' : 'outline'} size="sm" onClick={() => setView('month')}>Month</Button>
-                  <Button variant={view === 'day' ? 'default' : 'outline'} size="sm" onClick={() => setView('day')}>Day</Button>
+                <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
+                  <Button variant={view === 'month' ? 'secondary' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
+                  <Button variant={view === 'week' ? 'secondary' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('week')}>Week</Button>
+                  <Button variant={view === 'day' ? 'secondary' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('day')}>Day</Button>
                 </div>
               </CardHeader>
-              <CardContent className="p-0 sm:p-6">
-                {view === 'month' ? (
+              <CardContent className="p-0">
+                {view === 'month' && (
                   <Calendar
                     mode="single"
                     selected={selectedDate}
@@ -269,7 +281,7 @@ export default function CalendarPage() {
                         
                         return (
                           <div className="relative w-full h-full flex items-center justify-center">
-                            <span>{date.getDate()}</span>
+                            <span className="relative z-10">{date.getDate()}</span>
                             {hasActive && (
                               <div className="absolute bottom-1 flex gap-0.5">
                                 {activePlans.slice(0, 3).map(p => (
@@ -285,50 +297,135 @@ export default function CalendarPage() {
                       }
                     }}
                   />
-                ) : (
-                  <div className="p-4 space-y-4">
-                    <h3 className="font-bold text-lg">{format(selectedDate, 'PPPP')}</h3>
-                    <div className="space-y-3">
+                )}
+
+                {view === 'week' && (
+                  <div className="p-4 grid grid-cols-1 md:grid-cols-7 gap-4">
+                    {weekDays.map(date => {
+                      const tasks = getTasksForDate(date);
+                      const focus = getDayFocus(date);
+                      const isToday = isSameDay(date, new Date());
+                      const isSelected = isSameDay(date, selectedDate);
+
+                      return (
+                        <div 
+                          key={date.toISOString()} 
+                          className={cn(
+                            "flex flex-col gap-2 p-3 rounded-xl border transition-all cursor-pointer min-h-[200px]",
+                            isToday ? "border-primary bg-primary/[0.02]" : "border-transparent hover:bg-muted/30",
+                            isSelected && "ring-2 ring-primary ring-offset-2"
+                          )}
+                          onClick={() => setSelectedDate(date)}
+                        >
+                          <div className="flex flex-col items-center border-b border-primary/5 pb-2">
+                            <span className="text-[10px] uppercase font-black text-muted-foreground">{format(date, 'EEE')}</span>
+                            <span className={cn("text-lg font-black", isToday && "text-primary")}>{format(date, 'd')}</span>
+                          </div>
+                          <div className="space-y-1 overflow-y-auto max-h-[150px] scrollbar-none">
+                            {focus && (
+                              <div className="p-1.5 rounded-lg bg-primary/5 border border-primary/10 flex items-center gap-1.5">
+                                <focus.icon className="w-3 h-3 text-primary shrink-0" />
+                                <span className="text-[9px] font-bold truncate">{focus.prompt}</span>
+                              </div>
+                            )}
+                            {tasks.map(task => (
+                              <div 
+                                key={task.instanceId} 
+                                className={cn(
+                                  "p-1 rounded flex items-center gap-1.5",
+                                  task.status === 'completed' ? "opacity-40" : ""
+                                )}
+                              >
+                                <div className="w-1 h-3 rounded-full shrink-0" style={{ backgroundColor: task.planColor }} />
+                                <span className="text-[9px] font-medium truncate">{task.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {view === 'day' && (
+                  <div className="p-6 space-y-8 animate-in fade-in">
+                    {/* Daily Focus Section */}
+                    {getDayFocus(selectedDate) && (
+                      <div className="space-y-3">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                          <Brain className="w-3 h-3 text-primary" /> Daily Training Prompt
+                        </h3>
+                        <Card className="bg-primary/5 border-primary/10 shadow-none">
+                          <CardContent className="p-4 flex items-center gap-4">
+                            <div className="p-3 bg-background rounded-full border border-primary/10">
+                              {(() => {
+                                const Icon = getDayFocus(selectedDate)!.icon;
+                                return <Icon className="w-6 h-6 text-primary" />;
+                              })()}
+                            </div>
+                            <div className="flex-grow">
+                              <h4 className="font-bold text-sm">{getDayFocus(selectedDate)!.prompt}</h4>
+                              <p className="text-xs text-muted-foreground">{getDayFocus(selectedDate)!.description}</p>
+                            </div>
+                            <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase" onClick={() => setSelectedDayContent(getDayFocus(selectedDate))}>
+                              Expand <ArrowRight className="ml-1 w-3 h-3" />
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    )}
+
+                    {/* Tasks Section */}
+                    <div className="space-y-4">
+                      <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                        <ListChecks className="w-3 h-3 text-primary" /> Scheduled Activities
+                      </h3>
                       {todaysTasks.length === 0 ? (
-                        <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
-                          No activities scheduled for this day.
+                        <div className="text-center py-16 text-muted-foreground border-2 border-dashed rounded-2xl bg-muted/10">
+                          <p className="text-sm font-bold italic">No routines or study sessions for this date.</p>
+                          <Button variant="link" size="sm" className="mt-2 text-primary" onClick={() => setPlansOpen(true)}>Activate a plan below</Button>
                         </div>
                       ) : (
-                        todaysTasks.map(task => (
-                          <div key={task.instanceId} className="flex items-center gap-4 p-4 rounded-xl border bg-card shadow-sm group">
-                            <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: task.planColor }} />
-                            <div className="flex-grow">
+                        <div className="grid grid-cols-1 gap-3">
+                          {todaysTasks.map(task => (
+                            <div key={task.instanceId} className={cn(
+                              "flex items-center gap-4 p-4 rounded-2xl border bg-card transition-all group",
+                              task.status === 'completed' && "opacity-60 bg-muted/20"
+                            )}>
+                              <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: task.planColor }} />
+                              <div className="flex-grow">
+                                <div className="flex items-center gap-2">
+                                  <p className="font-bold text-sm">{task.name}</p>
+                                  {task.studyToolId && (
+                                    <Badge variant="outline" className="text-[8px] h-3.5 border-primary/30 text-primary uppercase font-black tracking-widest">STUDY</Badge>
+                                  )}
+                                </div>
+                                <div className="flex gap-2 mt-1">
+                                  <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
+                                  <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || task.timeOfDay || 'Anytime'} • {task.duration}m</span>
+                                </div>
+                              </div>
                               <div className="flex items-center gap-2">
-                                <p className="font-bold text-sm">{task.name}</p>
-                                {task.studyToolId && (
-                                  <Badge variant="outline" className="text-[8px] h-3.5 border-primary/30 text-primary">STUDY</Badge>
+                                {task.studyToolId && task.status !== 'completed' && (
+                                  <Button asChild size="icon" variant="ghost" className="h-10 w-10 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Link href={`/study/session?deckId=${task.studyResourceId}`}>
+                                      <Play className="h-5 w-5 fill-current" />
+                                    </Link>
+                                  </Button>
                                 )}
-                              </div>
-                              <div className="flex gap-2 mt-1">
-                                <Badge variant="secondary" className="text-[9px] h-4">{task.category}</Badge>
-                                <span className="text-[10px] text-muted-foreground">{task.scheduledTime || task.timeOfDay || 'Anytime'} • {task.duration}m</span>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              {task.studyToolId && task.status !== 'completed' && (
-                                <Button asChild size="icon" variant="ghost" className="h-8 w-8 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <Link href={`/study/session?deckId=${task.studyResourceId}`}>
-                                    <Play className="h-4 w-4 fill-current" />
-                                  </Link>
+                                <Button 
+                                  size="sm" 
+                                  variant={task.status === 'completed' ? 'default' : 'outline'}
+                                  className="rounded-full gap-2 h-10 px-6 font-bold"
+                                  onClick={() => updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, task.status === 'completed' ? 'not-started' : 'completed')}
+                                >
+                                  {task.status === 'completed' ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
+                                  {task.status === 'completed' ? 'Done' : 'Complete'}
                                 </Button>
-                              )}
-                              <Button 
-                                size="sm" 
-                                variant={task.status === 'completed' ? 'default' : 'outline'}
-                                className="rounded-full gap-2 h-8"
-                                onClick={() => updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, task.status === 'completed' ? 'not-started' : 'completed')}
-                              >
-                                {task.status === 'completed' ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
-                                {task.status === 'completed' ? 'Done' : 'Log'}
-                              </Button>
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          ))}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -337,43 +434,40 @@ export default function CalendarPage() {
             </Card>
 
             <div className="space-y-6">
-              <Card className="bg-primary/5 border-primary/10">
-                <CardHeader>
-                  <CardTitle className="text-sm font-bold flex items-center gap-2">
-                    <ListChecks className="w-4 h-4 text-primary" />
-                    Plan Performance
+              <Card className="bg-primary/5 border-primary/10 overflow-hidden">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" />
+                    Weekly Adherence
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="font-medium text-muted-foreground">Overall Adherence</span>
-                      <span className="font-bold">85%</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary w-[85%]" />
-                    </div>
+                  <div className="text-center py-2">
+                    <span className="text-4xl font-black">85%</span>
                   </div>
-                  <div className="p-3 bg-background rounded-lg border text-[11px] leading-relaxed">
-                    <p><b>Analysis:</b> You're highly consistent with <b>Movement</b> (92%) but missing <b>Finance</b> check-ins (40%) this week.</p>
+                  <div className="h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-primary transition-all duration-1000" style={{ width: '85%' }} />
                   </div>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed italic">
+                    Analysis: You're highly consistent with <b>Movement</b> (92%) but missing <b>Study</b> sessions (40%) this week.
+                  </p>
                 </CardContent>
               </Card>
 
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-bold">Upcoming</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Up Next</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {activePlans.length === 0 && todaysTasks.length === 0 ? (
-                      <p className="text-xs text-muted-foreground italic">Activate a plan to see upcoming tasks.</p>
+                    {todaysTasks.filter(t => t.status !== 'completed').length === 0 ? (
+                      <p className="text-xs text-muted-foreground italic text-center py-4">All clear for today.</p>
                     ) : (
                       todaysTasks.filter(t => t.status !== 'completed').slice(0, 3).map(a => (
-                        <div key={a.instanceId} className="flex items-center gap-3 text-xs">
-                          <Circle className="w-2 h-2 text-primary" />
-                          <span className="font-medium truncate max-w-[120px]">{a.name}</span>
-                          <span className="text-muted-foreground ml-auto">{a.scheduledTime || a.timeOfDay || 'Next'}</span>
+                        <div key={a.instanceId} className="flex items-center gap-3 text-xs p-2 rounded-lg bg-muted/30">
+                          <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: a.planColor }} />
+                          <span className="font-bold truncate max-w-[120px]">{a.name}</span>
+                          <span className="text-[9px] text-muted-foreground ml-auto font-black uppercase">{a.scheduledTime || a.timeOfDay || 'Next'}</span>
                         </div>
                       ))
                     )}
@@ -387,28 +481,26 @@ export default function CalendarPage() {
 
       <Dialog open={isBuilderOpen} onOpenChange={setIsBuilderOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>{editingPlan ? 'Edit Custom Plan' : 'Custom Plan Builder'}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editingPlan ? 'Edit Routine' : 'Build Custom Routine'}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="plan-name">Plan Name</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Name</Label>
               <Input 
-                id="plan-name"
                 placeholder="e.g. Morning Focus" 
                 value={newPlanName}
                 onChange={e => setNewPlanName(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="plan-desc">Description (Optional)</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Description</Label>
               <Input 
-                id="plan-desc"
-                placeholder="Purpose of this protocol..." 
+                placeholder="Purpose of this rep..." 
                 value={newPlanDesc}
                 onChange={e => setNewPlanDesc(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label>Categories</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Categories</Label>
               <div className="flex flex-wrap gap-2">
                 {(['Movement', 'Stillness', 'Nutrition', 'Finance', 'Study/Learning'] as PlanCategory[]).map(c => (
                   <Badge 
@@ -425,11 +517,11 @@ export default function CalendarPage() {
           </div>
           <DialogFooter>
             <Button 
-              className="w-full" 
+              className="w-full font-bold h-12" 
               disabled={!newPlanName.trim()}
               onClick={handleSavePlan}
             >
-              {editingPlan ? 'Save Changes' : 'Initialize Plan'}
+              {editingPlan ? 'Save Changes' : 'Initialize Routine'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -440,15 +532,13 @@ export default function CalendarPage() {
           dayContent={selectedDayContent}
           isOpen={!!selectedDayContent}
           onClose={() => setSelectedDayContent(null)}
-          isCompleted={false} // Simplification for MVP
+          isCompleted={false}
           onToggleCompletion={() => {}}
-          studyInfo={todaysTasks.find(t => t.studyToolId)? { 
-            toolId: todaysTasks.find(t => t.studyToolId)!.studyToolId!,
-            resourceId: todaysTasks.find(t => t.studyToolId)!.studyResourceId!,
-            status: todaysTasks.find(t => t.studyToolId)!.status
-          } : undefined}
         />
       )}
     </>
   );
 }
+
+import { Brain } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
