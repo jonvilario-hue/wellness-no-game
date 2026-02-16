@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
-import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw, Edit, Play, Clock, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw, Edit, Play, Clock, ArrowLeft, ArrowRight, TrendingUp, Brain } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -64,21 +64,38 @@ export default function CalendarPage() {
 
   const getTasksForDate = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
+    const dayOfWeek = date.getDay();
+    const dayOfMonth = date.getDate();
     const instances = activityInstances[dateStr] || [];
     
-    return [
-      ...activePlans.flatMap(plan => 
-        plan.activities.map(act => {
+    const planTasks = activePlans.flatMap(plan => 
+      plan.activities
+        .filter(act => {
+          // Simple recurrence filtering
+          if (act.recurrence === 'daily') return true;
+          if (act.recurrence === 'weekly') {
+            const planStart = parseISO(plan.startDate);
+            return planStart.getDay() === dayOfWeek;
+          }
+          if (act.recurrence === 'monthly') {
+            const planStart = parseISO(plan.startDate);
+            return planStart.getDate() === dayOfMonth;
+          }
+          return true;
+        })
+        .map(act => {
           const existing = instances.find(i => i.activityId === act.id);
           return {
             ...act,
             planName: plan.name,
             planColor: plan.color,
             status: existing?.status || 'not-started',
-            instanceId: existing?.id || `v-${plan.id}-${act.id}`
+            instanceId: existing?.id || `v-${plan.id}-${act.id}-${dateStr}`
           };
         })
-      ),
+    );
+
+    const extraTasks = [
       ...instances.filter(inst => inst.planId === 'adhoc' || inst.planId === 'study-sessions').map(inst => ({
         id: inst.activityId,
         name: inst.activityName,
@@ -93,6 +110,8 @@ export default function CalendarPage() {
         studyResourceId: inst.studyResourceId
       }))
     ];
+
+    return [...planTasks, ...extraTasks];
   };
 
   const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, activePlans, activityInstances]);
@@ -137,7 +156,16 @@ export default function CalendarPage() {
         startDate: new Date().toISOString(),
         categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
         color: `hsl(${Math.floor(Math.random() * 360)} 70% 50%)`,
-        activities: [] 
+        activities: [
+          {
+            id: `act-${Date.now()}`,
+            name: `${newPlanName} Check-in`,
+            category: 'Custom',
+            recurrence: 'daily',
+            duration: 5,
+            reminderEnabled: true
+          }
+        ] 
       });
     }
 
@@ -539,6 +567,3 @@ export default function CalendarPage() {
     </>
   );
 }
-
-import { Brain } from 'lucide-react';
-import { TrendingUp } from 'lucide-react';
