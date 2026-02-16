@@ -130,10 +130,10 @@ export default function ArchitecturePage() {
                           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
                             <Tooltip delayDuration={0}>
                               <TooltipTrigger asChild>
-                                <TabsList className="bg-muted/50 border-primary/5">
-                                    <TabsTrigger value="Active" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Active</TabsTrigger>
-                                    <TabsTrigger value="Completed" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Completed</TabsTrigger>
-                                    <TabsTrigger value="Archived" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Archived</TabsTrigger>
+                                <TabsList className="bg-muted/50 border-primary/10">
+                                    <TabsTrigger value="Active" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm">Active</TabsTrigger>
+                                    <TabsTrigger value="Completed" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm">Completed</TabsTrigger>
+                                    <TabsTrigger value="Archived" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm">Archived</TabsTrigger>
                                 </TabsList>
                               </TooltipTrigger>
                               {settings.assistantMode && (
@@ -147,10 +147,10 @@ export default function ArchitecturePage() {
 
                         <TooltipProvider>
                           <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as any)}>
-                              <TabsList className="bg-muted/50 border-primary/5">
+                              <TabsList className="bg-muted/50 border-primary/10">
                                   <Tooltip delayDuration={0}>
                                     <TooltipTrigger asChild>
-                                      <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                                      <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm">
                                         <LayoutDashboard className="w-4 h-4 mr-2"/>Board
                                       </TabsTrigger>
                                     </TooltipTrigger>
@@ -159,7 +159,7 @@ export default function ArchitecturePage() {
                                   
                                   <Tooltip delayDuration={0}>
                                     <TooltipTrigger asChild>
-                                      <TabsTrigger value="list" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                                      <TabsTrigger value="list" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm">
                                         <LayoutList className="w-4 h-4 mr-2"/>List
                                       </TabsTrigger>
                                     </TooltipTrigger>
@@ -168,7 +168,7 @@ export default function ArchitecturePage() {
 
                                   <Tooltip delayDuration={0}>
                                     <TooltipTrigger asChild>
-                                      <TabsTrigger value="timeline" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                                      <TabsTrigger value="timeline" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm">
                                         <GanttChartSquare className="w-4 h-4 mr-2"/>Gantt
                                       </TabsTrigger>
                                     </TooltipTrigger>
