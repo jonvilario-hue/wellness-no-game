@@ -44,12 +44,66 @@
         "date": { "type": "string", "format": "date" }
       },
       "required": ["mealType", "date"]
+    },
+    "BlueprintTemplate": {
+      "title": "Blueprint Template",
+      "description": "A pre-built goal structure with milestones, habits, and metrics.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string", "enum": ["creative", "technical", "academic", "career", "health", "financial"] },
+        "subcategory": { "type": "string" },
+        "defaultIdentityStatement": { "type": "string" },
+        "baseTimeline": { "type": "number" },
+        "icon": { "type": "string" },
+        "milestones": { "type": "array", "items": { "type": "object" } },
+        "habits": { "type": "array", "items": { "type": "object" } },
+        "customMetrics": { "type": "array", "items": { "type": "object" } },
+        "celebrationTriggers": { "type": "array", "items": { "type": "object" } },
+        "adaptiveSettings": { "type": "object" },
+        "variations": { "type": "object" },
+        "resourcePack": { "type": "array", "items": { "type": "object" } },
+        "createdBy": { "type": "string" },
+        "isPublic": { "type": "boolean" }
+      },
+      "required": ["title", "category", "milestones"]
+    },
+    "UserBlueprint": {
+      "title": "User Blueprint",
+      "description": "An active goal being tracked by a user, cloned from a template.",
+      "type": "object",
+      "properties": {
+        "templateId": { "type": "string" },
+        "title": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "paused", "completed", "abandoned"] },
+        "identityStatement": { "type": "string" },
+        "activatedAt": { "type": "string", "format": "date-time" },
+        "momentumScore": { "type": "number" },
+        "metricValues": { "type": "object" },
+        "metricLog": { "type": "array", "items": { "type": "object" } },
+        "habitLog": { "type": "array", "items": { "type": "object" } },
+        "milestones": { "type": "array", "items": { "type": "object" } },
+        "milestoneReflections": { "type": "object" },
+        "blockers": { "type": "array", "items": { "type": "object" } },
+        "streaks": { "type": "object" },
+        "weeklySnapshots": { "type": "array", "items": { "type": "object" } }
+      },
+      "required": ["title", "status", "activatedAt"]
     }
   },
   "auth": {
     "providers": ["google.com", "password"]
   },
   "firestore": {
+    "/blueprintTemplates/{templateId}": {
+      "schema": "#/entities/BlueprintTemplate",
+      "description": "Global library of goal frameworks."
+    },
+    "/users/{userId}/blueprints/{blueprintId}": {
+      "schema": "#/entities/UserBlueprint",
+      "description": "Individual active goals for a user."
+    },
     "/users/{userId}/financeTransactions/{txId}": {
       "schema": "#/entities/FinanceTransaction",
       "description": "Individual financial records."
