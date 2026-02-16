@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -28,7 +27,7 @@ export function WellnessLogDialog({
   isOpen, 
   onOpenChange, 
   initialType = 'movement', 
-  initialDate = new Date() 
+  initialDate 
 }: WellnessLogDialogProps) {
   const [type, setType] = useState<'movement' | 'stillness'>(initialType);
   const [date, setDate] = useState<Date | undefined>(initialDate);
@@ -44,7 +43,7 @@ export function WellnessLogDialog({
   useEffect(() => {
     if (isOpen) {
       setType(initialType);
-      setDate(initialDate);
+      setDate(initialDate || new Date());
       setSelectedId("");
     }
   }, [isOpen, initialType, initialDate]);
