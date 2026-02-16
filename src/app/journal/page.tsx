@@ -5,6 +5,7 @@ import { JournalModule } from '@/components/dashboard/journal-module';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
+import { JournalCalendar } from '@/components/journal/journal-calendar';
 
 export default function JournalPage() {
     return (
@@ -15,8 +16,9 @@ export default function JournalPage() {
             </div>
             <MotivationalMessage />
             <main className="flex-1 p-4 sm:p-6 md:p-8">
-                <div className="mx-auto max-w-7xl">
+                <div className="mx-auto max-w-7xl space-y-8">
                     <JournalModule />
+                    <JournalCalendar />
                 </div>
             </main>
         </>
