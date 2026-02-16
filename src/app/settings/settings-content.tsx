@@ -1,7 +1,7 @@
 
 'use client';
 
-import { User, Palette, ListChecks, Clock } from 'lucide-react';
+import { User, Palette, ListChecks, Clock, Database } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { TrackerSettings } from '@/components/settings/tracker-settings';
 import { PlaceholderSettings } from '@/components/settings/placeholder-settings';
 import { TimeToolsModule } from '@/components/dashboard/time-tools-module';
+import { DataSettings } from '@/components/settings/data-settings';
 
 export function SettingsContent() {
     const searchParams = useSearchParams();
@@ -22,6 +23,9 @@ export function SettingsContent() {
                 </TabsTrigger>
                 <TabsTrigger value="appearance" className="justify-start gap-2">
                 <Palette className="h-4 w-4"/> Appearance
+                </TabsTrigger>
+                <TabsTrigger value="data" className="justify-start gap-2">
+                <Database className="h-4 w-4"/> Data & Backup
                 </TabsTrigger>
                 <TabsTrigger value="time" className="justify-start gap-2">
                 <Clock className="h-4 w-4"/> Clock Tools
@@ -37,6 +41,9 @@ export function SettingsContent() {
                 </TabsContent>
                 <TabsContent value="appearance">
                 <AppearanceSettings />
+                </TabsContent>
+                <TabsContent value="data">
+                <DataSettings />
                 </TabsContent>
                 <TabsContent value="time">
                     <TimeToolsModule />

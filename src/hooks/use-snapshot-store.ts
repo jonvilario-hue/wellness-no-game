@@ -4,6 +4,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+// Keys that are part of the portable "User Data"
 export const ALL_STORAGE_KEYS = [
   'blueprint-store-local-v1',
   'calendar-plans-storage-v3',
@@ -116,7 +117,7 @@ export const useSnapshotStore = create<SnapshotState>()(
       }
     }),
     {
-      name: 'data-snapshot-storage-v1',
+      name: 'data-snapshot-storage-v1', // This store key is NOT in ALL_STORAGE_KEYS to prevent self-recursion and ensure persistence during imports
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
