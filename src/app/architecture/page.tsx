@@ -19,7 +19,8 @@ import {
   Layers, 
   BrainCircuit,
   Star,
-  ArrowLeft
+  ArrowLeft,
+  Info
 } from 'lucide-react';
 import BlueprintProject from './components/BlueprintProject';
 import GanttTimeline from './components/GanttTimeline';
@@ -37,6 +38,7 @@ import TemplatesLibrary from './components/TemplatesLibrary';
 import PlaybookView from './components/PlaybookView';
 import ScenarioSimulator from './components/ScenarioSimulator';
 import AdviceMatcher from './components/AdviceMatcher';
+import ArchitectureHelp from './components/ArchitectureHelp';
 
 export default function ArchitecturePage() {
   const { projects, addProject, updateProject, deleteProject, addMilestone, toggleTask, updateMilestoneStatus, addTask, updateTask, deleteTask, updateMilestoneDetails, deleteMilestone } = useBlueprintStore();
@@ -49,6 +51,7 @@ export default function ArchitecturePage() {
   const [isOpen, setIsOpen] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   useEffect(() => {
     const savedState = localStorage.getItem('architecture-collapsible-state');
@@ -230,7 +233,12 @@ export default function ArchitecturePage() {
                             <div className="p-3 bg-primary/10 rounded-full mb-3">
                                 <Target className="h-10 w-10 text-primary"/>
                             </div>
-                            <h1 className="text-4xl font-bold font-headline tracking-tight">My Architecture</h1>
+                            <div className="flex items-center justify-center gap-3">
+                              <h1 className="text-4xl font-bold font-headline tracking-tight">My Architecture</h1>
+                              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setIsHelpOpen(true)}>
+                                <Info className="w-5 h-5 text-muted-foreground" />
+                              </Button>
+                            </div>
                             <p className="text-lg text-muted-foreground max-w-2xl">Design your future with precision. Map identity-driven goals to actionable steps.</p>
                         </div>
                     </CollapsibleContent>
@@ -283,6 +291,7 @@ export default function ArchitecturePage() {
         </Tabs>
 
         <TemplatesLibrary open={isTemplatesOpen} onOpenChange={setIsTemplatesOpen} />
+        <ArchitectureHelp open={isHelpOpen} onOpenChange={setIsHelpOpen} />
     </div>
   );
 }
