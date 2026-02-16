@@ -18,3 +18,13 @@ export type ExecutionGuideResponse = {
   completedAt: string;
   linkedBlueprintId?: string;
 };
+
+export type CustomStrategy = {
+  id: string;
+  name: string;
+  description: string;
+  steps: string[];
+  useFor: string;
+  isCustom: boolean;
+  createdAt: string;
+};

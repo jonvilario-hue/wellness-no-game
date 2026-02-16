@@ -3,16 +3,27 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { type GoalStrategy } from "@/data/goal-strategies";
-import { ListChecks, Check, Link as LinkIcon, Clock, PenLine, FileQuestion, Pilcrow, Users, Brain, Repeat, HelpCircle, Shuffle, GitBranch, BoxSelect, Palette, Image as ImageIcon, Eye, ShieldAlert, CheckSquare, Target, PieChart, Sparkles, Lightbulb, Trophy, CalendarCheck, Gamepad, Zap, BatteryCharging, Flag, Star } from "lucide-react";
+import { ListChecks, Check, Link as LinkIcon, Clock, PenLine, FileQuestion, Pilcrow, Users, Brain, Repeat, HelpCircle, Shuffle, GitBranch, BoxSelect, Palette, Image as ImageIcon, Eye, ShieldAlert, CheckSquare, Target, PieChart, Sparkles, Lightbulb, Trophy, CalendarCheck, Gamepad, Zap, BatteryCharging, Flag, Star, Trash2 } from "lucide-react";
 import { usePlaybookStore } from '@/hooks/use-playbook-store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { AssistantTooltip } from "@/components/assistant-tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type StrategyGuideProps = {
-  strategy: GoalStrategy;
+  strategy: GoalStrategy & { isCustom?: boolean };
 };
 
 const iconMap: Record<string, React.ElementType> = {
@@ -66,11 +77,11 @@ const strategyTooltips: Record<string, string> = {
 };
 
 export function StrategyGuide({ strategy }: StrategyGuideProps) {
-    const { toggleFavorite, entries } = usePlaybookStore();
+    const { toggleFavorite, entries, deleteCustomStrategy } = usePlaybookStore();
     const { settings } = useDashboardSettings();
     const entry = entries[strategy.id];
     const isFavorite = entry?.isFavorite || false;
-    const Icon = strategy.icon;
+    const Icon = strategy.icon || Lightbulb;
 
     const renderStepWithIcon = (step: string) => {
         const [keyword, ...rest] = step.split(':');
@@ -96,41 +107,68 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
 
 
   return (
-    <AssistantTooltip text={strategyTooltips[strategy.id]} side="bottom">
-      <Card className="flex flex-col h-full hover:shadow-md transition-shadow relative group">
-          <AssistantTooltip text="Add this strategy to your Personal Playbook for quick access and tracking.">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-2 right-2 z-10" 
-              onClick={() => toggleFavorite(strategy.id, strategy.name)}
-            >
-              <Star className={cn("w-4 h-4 transition-all", isFavorite ? "fill-primary text-primary" : "text-muted-foreground opacity-0 group-hover:opacity-100")} />
-            </Button>
-          </AssistantTooltip>
+    <AssistantTooltip text={strategyTooltips[strategy.id] || "A custom strategy you designed to support your unique workflow."} side="bottom">
+      <Card className="flex flex-col h-full hover:shadow-md transition-shadow relative group border-primary/5">
+          <div className="absolute top-2 right-2 z-10 flex gap-1">
+            <AssistantTooltip text="Add this strategy to your Personal Playbook for quick access and tracking.">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={() => toggleFavorite(strategy.id, strategy.name)}
+              >
+                <Star className={cn("w-4 h-4 transition-all", isFavorite ? "fill-primary text-primary" : "text-muted-foreground opacity-0 group-hover:opacity-100")} />
+              </Button>
+            </AssistantTooltip>
+
+            {strategy.isCustom && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-all">
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Custom Strategy?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently remove "{strategy.name}" from your library and playbook. This cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => deleteCustomStrategy(strategy.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
 
           <CardHeader>
               <div className="flex items-center gap-3 mb-2">
                   <div className="p-2 bg-primary/10 rounded-lg">
                       <Icon className="w-6 h-6 text-primary"/>
                   </div>
-                  <CardTitle>{strategy.name}</CardTitle>
+                  <div>
+                    <CardTitle className="text-lg">{strategy.name}</CardTitle>
+                    {strategy.isCustom && <Badge variant="outline" className="text-[8px] h-4 uppercase tracking-tighter bg-primary/5 text-primary border-primary/20">Custom</Badge>}
+                  </div>
               </div>
-              <CardDescription>{strategy.description}</CardDescription>
+              <CardDescription className="text-xs line-clamp-3">{strategy.description}</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow space-y-4">
               <div className="space-y-4">
-                  <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-3">The Protocol:</h4>
-                  <ul className="space-y-4 text-sm">
+                  <h4 className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground mb-3">The Protocol:</h4>
+                  <ul className="space-y-4 text-xs">
                       {strategy.steps.map((step, index) => (
                         <div key={index}>{renderStepWithIcon(step)}</div>
                       ))}
                   </ul>
               </div>
 
-               <div className="pt-4 border-t">
-                  <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-1">Ideal Context:</h4>
-                  <p className="text-sm italic">{strategy.useFor}</p>
+               <div className="pt-4 border-t border-primary/5">
+                  <h4 className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Ideal Context:</h4>
+                  <p className="text-xs italic text-muted-foreground">{strategy.useFor || "No specific context provided."}</p>
               </div>
           </CardContent>
           {entry?.status && (

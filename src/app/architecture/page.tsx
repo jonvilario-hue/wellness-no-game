@@ -11,7 +11,6 @@ import {
   ChevronUp, 
   ChevronDown, 
   Book, 
-  Sparkles, 
   Filter, 
   X, 
   LayoutDashboard, 
@@ -20,9 +19,11 @@ import {
   Star,
   ArrowLeft,
   Info,
-  Rocket,
+  Clock,
   ChevronRight,
-  Flame
+  Flame,
+  PlusCircle,
+  Sparkles
 } from 'lucide-react';
 import BlueprintProject from './components/BlueprintProject';
 import GanttTimeline from './components/GanttTimeline';
@@ -41,9 +42,12 @@ import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { StrategyGuide } from '@/app/blueprints/components/StrategyGuide';
+import { usePlaybookStore } from '@/hooks/use-playbook-store';
+import CreateStrategyDialog from './components/CreateStrategyDialog';
 
 export default function ArchitecturePage() {
   const { projects, updateProject, deleteProject } = useBlueprintStore();
+  const { customStrategies } = usePlaybookStore();
   
   const [activeTab, setActiveTab] = useState<'active' | 'Completed' | 'Archived'>('active');
   const [viewMode, setViewMode] = useState<'dashboard' | 'list' | 'timeline'>('dashboard');
@@ -248,11 +252,44 @@ export default function ArchitecturePage() {
                   </div>
                   
                   <TabsContent value="library" className="space-y-12">
-                    <ScenarioSimulator />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
-                        {goalStrategies.map(strategy => (
-                            <StrategyGuide key={strategy.id} strategy={strategy} />
-                        ))}
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      <div className="flex-1">
+                        <ScenarioSimulator />
+                      </div>
+                      <div className="flex flex-col items-center gap-2 p-6 bg-primary/5 rounded-2xl border border-dashed border-primary/20 w-full md:w-80">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Missing a technique?</p>
+                        <CreateStrategyDialog>
+                          <Button variant="outline" className="w-full gap-2 border-primary/30 hover:bg-primary/10 hover:text-primary">
+                            <PlusCircle className="w-4 h-4" /> Create Strategy
+                          </Button>
+                        </CreateStrategyDialog>
+                      </div>
+                    </div>
+
+                    <div className="space-y-12">
+                      {customStrategies.length > 0 && (
+                        <div className="space-y-6">
+                          <h3 className="text-xl font-bold flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-primary" /> My Custom Protocols
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {customStrategies.map(strategy => (
+                              <StrategyGuide key={strategy.id} strategy={strategy as any} />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-6">
+                        <h3 className="text-xl font-bold flex items-center gap-2">
+                          <Book className="w-5 h-5 text-primary" /> System Frameworks
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
+                            {goalStrategies.map(strategy => (
+                                <StrategyGuide key={strategy.id} strategy={strategy} />
+                            ))}
+                        </div>
+                      </div>
                     </div>
                   </TabsContent>
                   
