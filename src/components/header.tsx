@@ -31,18 +31,6 @@ export function Header() {
                   </TooltipContent>
                 </Tooltip>
                 <DopamineMenu />
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Button asChild variant="ghost" size="icon">
-                      <Link href="/sleep">
-                        <Moon className="h-5 w-5" />
-                      </Link>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Sleep Pro</p>
-                  </TooltipContent>
-                </Tooltip>
                 
                 <div className="w-[1px] h-4 bg-border mx-1" />
 
@@ -71,6 +59,18 @@ export function Header() {
         
         <TooltipProvider>
             <div className="flex-1 flex justify-end items-center gap-1">
+              <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button asChild variant="ghost" size="icon">
+                      <Link href="/sleep">
+                        <Moon className="h-5 w-5" />
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Sleep Pro</p>
+                  </TooltipContent>
+                </Tooltip>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <Button asChild variant="ghost" size="icon">
