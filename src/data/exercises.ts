@@ -45,12 +45,12 @@ export const movementExercises: Exercise[] = [
     intention: 'Wake up your body and sharpen your mind with a balanced sequence.',
     setup: ['Find a quiet space with enough room to stretch.', 'Wear comfortable clothing.'],
     steps: [
-      '1. Start in Mouse Pose (knees wide, big toes touching, forehead on floor).',
-      '2. Move to all fours for Cat-Cow (arching and rounding the back with breath).',
-      '3. Tuck toes and lift hips high for Downward Facing Dog.',
-      '4. Step forward slowly into a Forward Fold, letting the head hang.',
-      '5. Rise up slowly, reaching arms overhead into Mountain Pose.',
-      '6. Bring hands to heart center and breathe deeply.'
+      'Start in Mouse Pose (knees wide, big toes touching, forehead on floor).',
+      'Move to all fours for Cat-Cow (arching and rounding the back with breath).',
+      'Tuck toes and lift hips high for Downward Facing Dog.',
+      'Step forward slowly into a Forward Fold, letting the head hang.',
+      'Rise up slowly, reaching arms overhead into Mountain Pose.',
+      'Bring hands to heart center and breathe deeply.'
     ],
     modifications: [
       'Make it easier: Keep knees bent significantly in Downward Dog and Forward Fold.',
@@ -70,12 +70,12 @@ export const movementExercises: Exercise[] = [
     intention: 'Release physical tension and quiet the mind before rest.',
     setup: ['Dim the lights.', 'Use a mat or a soft carpet.'],
     steps: [
-      '1. Sit cross-legged and roll your neck slowly in both directions.',
-      '2. Take a gentle seated spinal twist to each side, holding for 5 breaths.',
-      '3. Move to Butterfly pose, soles of feet together, knees dropping open.',
-      '4. Lie on your back and hug knees into your chest, rocking side to side.',
-      '5. Happy Baby pose: hold the outsides of your feet, pulling knees toward armpits.',
-      '6. Final resting pose (Savasana): Lie flat, eyes closed, for 2 minutes.'
+      'Sit cross-legged and roll your neck slowly in both directions.',
+      'Take a gentle seated spinal twist to each side, holding for 5 breaths.',
+      'Move to Butterfly pose, soles of feet together, knees dropping open.',
+      'Lie on your back and hug knees into your chest, rocking side to side.',
+      'Happy Baby pose: hold the outsides of your feet, pulling knees toward armpits.',
+      'Final resting pose (Savasana): Lie flat, eyes closed, for 2 minutes.'
     ],
     modifications: [
       'Make it easier: Support your knees with pillows or blocks in Butterfly pose.',
@@ -95,11 +95,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Improve balance and internal calm with slow, circular movements.',
     setup: ['Stand with feet shoulder-width apart.', 'Relax your shoulders and sink your weight slightly.'],
     steps: [
-      '1. Opening Stance: Inhale and slowly lift arms to shoulder height, then exhale and push down.',
-      '2. Cloud Hands: Move hands in slow, horizontal circles in front of your body while shifting weight.',
-      '3. Parting the Wild Horse\'s Mane: Step forward gently while moving one hand up and one down.',
-      '4. Brush Knee: Step forward, one hand "brushes" the knee while the other pushes forward.',
-      '5. Closing: Return to center, feet together, and breathe slowly to finish.'
+      'Opening Stance: Inhale and slowly lift arms to shoulder height, then exhale and push down.',
+      'Cloud Hands: Move hands in slow, horizontal circles in front of your body while shifting weight.',
+      'Parting the Wild Horse\'s Mane: Step forward gently while moving one hand up and one down.',
+      'Brush Knee: Step forward, one hand "brushes" the knee while the other pushes forward.',
+      'Closing: Return to center, feet together, and breathe slowly to finish.'
     ],
     modifications: [
       'Make it easier: Perform the arm movements while seated in a sturdy chair.',
@@ -119,11 +119,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Enhance coordination and physical stability through controlled weight shifting.',
     setup: ['Clear a space where you can take 2-3 steps in any direction.', 'Stand tall but relaxed.'],
     steps: [
-      '1. Rooting: Shift weight entirely to one leg, then the other, feeling the connection to the ground.',
-      '2. Single Whip: Extend one arm out while the other forms a "hook" hand.',
-      '3. Wave Hands like Clouds: Slow, continuous circles while stepping sideways.',
-      '4. Golden Rooster Stands on One Leg: Lift one knee and opposite arm slowly, maintaining balance.',
-      '5. Centering: Stand with feet together, hands on the lower abdomen, breathing naturally.'
+      'Rooting: Shift weight entirely to one leg, then the other, feeling the connection to the ground.',
+      'Single Whip: Extend one arm out while the other forms a "hook" hand.',
+      'Wave Hands like Clouds: Slow, continuous circles while stepping sideways.',
+      'Golden Rooster Stands on One Leg: Lift one knee and opposite arm slowly, maintaining balance.',
+      'Centering: Stand with feet together, hands on the lower abdomen, breathing naturally.'
     ],
     modifications: [
       'Make it easier: Keep the lifted foot closer to the ground during the balance phase.',
@@ -145,12 +145,12 @@ export const movementExercises: Exercise[] = [
     intention: 'Build heat and full-body mobility to start the day.',
     setup: ['Stand at the front of your mat/space.', 'Inhale deeply.'],
     steps: [
-      '1. Mountain Pose: Stand tall, arms at sides.',
-      '2. Upward Salute: Inhale, reach arms high.',
-      '3. Forward Fold: Exhale, fold forward toward your toes.',
-      '4. Plank to Cobra: Step back, lower down, then lift chest forward.',
-      '5. Downward Dog: Lift hips back and up.',
-      '6. Return: Step forward to fold, then rise back to Mountain Pose.'
+      'Mountain Pose: Stand tall, arms at sides.',
+      'Upward Salute: Inhale, reach arms high.',
+      'Forward Fold: Exhale, fold forward toward your toes.',
+      'Plank to Cobra: Step back, lower down, then lift chest forward.',
+      'Downward Dog: Lift hips back and up.',
+      'Return: Step forward to fold, then rise back to Mountain Pose.'
     ],
     modifications: [
       'Make it easier: Place knees on the ground for the "Cobra" transition.',
@@ -170,11 +170,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Prepare the body and mind for deep, restorative sleep.',
     setup: ['Wear comfortable pajamas.', 'Do this practice on your bed or a soft rug.'],
     steps: [
-      '1. Seated Side Stretch: Sit comfortably and reach one arm over your head, switch sides.',
-      '2. Reclined Twist: Lie on your back, drop knees to the left, then the right.',
-      '3. Legs Up the Wall (or resting on bed headboard): Hold for 2 minutes.',
-      '4. Supine Butterfly: Lie back with soles of feet together, knees falling open.',
-      '5. Conscious Relaxation: Close eyes and focus on the weight of your limbs.'
+      'Seated Side Stretch: Sit comfortably and reach one arm over your head, switch sides.',
+      'Reclined Twist: Lie on your back, drop knees to the left, then the right.',
+      'Legs Up the Wall (or resting on bed headboard): Hold for 2 minutes.',
+      'Supine Butterfly: Lie back with soles of feet together, knees falling open.',
+      'Conscious Relaxation: Close eyes and focus on the weight of your limbs.'
     ],
     modifications: [
       'Make it easier: Use a pillow behind your back for the butterfly pose.',
@@ -194,11 +194,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Awaken the senses and circulate internal energy.',
     setup: ['Stand outside if possible, or near an open window.', 'Take three deep breaths.'],
     steps: [
-      '1. Gathering Breath: Scoop arms up from the sides, then press down the center.',
-      '2. Pushing the Wave: Step forward and push hands forward in a wave-like motion.',
-      '3. Spinning the Wheel: Large vertical circles with both arms to wake up the core.',
-      '4. Expanding Chest: Open arms wide to inhale, bring them together to exhale.',
-      '5. Final Balance: Stand tall and still for 30 seconds.'
+      'Gathering Breath: Scoop arms up from the sides, then press down the center.',
+      'Pushing the Wave: Step forward and push hands forward in a wave-like motion.',
+      'Spinning the Wheel: Large vertical circles with both arms to wake up the core.',
+      'Expanding Chest: Open arms wide to inhale, bring them together to exhale.',
+      'Final Balance: Stand tall and still for 30 seconds.'
     ],
     modifications: [
       'Make it easier: Reduce the range of motion in the arm circles.',
@@ -218,11 +218,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Gently lower the body\'s arousal level before bedtime.',
     setup: ['Stand in a dimly lit room.', 'Soften your gaze.'],
     steps: [
-      '1. Sinking Qi: Very slow lifting and lowering of the arms.',
-      '2. Carrying the Moon: Rotate torso slowly while holding an "imaginary ball".',
-      '3. Stroking the Peacock\'s Tail: Gentle sweeping motions with the palms.',
-      '4. Repulsing the Monkey (Slow): Very slow backward steps with rhythmic arm pulls.',
-      '5. Stillness: Stand with hands over the heart for 1 minute.'
+      'Sinking Qi: Very slow lifting and lowering of the arms.',
+      'Carrying the Moon: Rotate torso slowly while holding an "imaginary ball".',
+      'Stroking the Peacock\'s Tail: Gentle sweeping motions with the palms.',
+      'Repulsing the Monkey (Slow): Very slow backward steps with rhythmic arm pulls.',
+      'Stillness: Stand with hands over the heart for 1 minute.'
     ],
     modifications: [
       'Make it easier: Do the upper body movements while sitting.',
@@ -244,11 +244,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Relieve tension in the hamstrings, calves, and back.',
     setup: ['Start on hands and knees.', 'Hands should be shoulder-width apart.'],
     steps: [
-      '1. Spread fingers wide and press palms into the floor.',
-      '2. Tuck your toes and lift your knees off the ground.',
-      '3. Send your hips back and up toward the ceiling.',
-      '4. Pedal your feet (bend one knee, then the other) to stretch the calves.',
-      '5. Hold the static pose, reaching heels toward the floor.'
+      'Spread fingers wide and press palms into the floor.',
+      'Tuck your toes and lift your knees off the ground.',
+      'Send your hips back and up toward the ceiling.',
+      'Pedal your feet (bend one knee, then the other) to stretch the calves.',
+      'Hold the static pose, reaching heels toward the floor.'
     ],
     modifications: [
       'Make it easier: Keep a deep bend in the knees if your hamstrings are tight.',
@@ -268,11 +268,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Gently release the lower back and promote a sense of calm.',
     setup: ['Kneel on the floor.', 'Big toes touching, knees wide apart.'],
     steps: [
-      '1. Sit back on your heels.',
-      '2. Fold forward, resting your torso between your thighs.',
-      '3. Rest your forehead on the mat or a pillow.',
-      '4. Extend your arms forward or rest them back by your feet.',
-      '5. Breathe deeply into your back ribs for the duration.'
+      'Sit back on your heels.',
+      'Fold forward, resting your torso between your thighs.',
+      'Rest your forehead on the mat or a pillow.',
+      'Extend your arms forward or rest them back by your feet.',
+      'Breathe deeply into your back ribs for the duration.'
     ],
     modifications: [
       'Make it easier: Place a pillow between your heels and sit-bones for comfort.',
@@ -292,10 +292,10 @@ export const movementExercises: Exercise[] = [
     intention: 'Improve spinal flexibility and coordinate breath with movement.',
     setup: ['Start on hands and knees (tabletop position).', 'Wrists under shoulders, knees under hips.'],
     steps: [
-      '1. Cow: Inhale, drop your belly, and look up toward the ceiling.',
-      '2. Cat: Exhale, round your spine, and tuck your chin toward your chest.',
-      '3. Continue flowing between the two, following your breath rhythm.',
-      '4. Move through the entire length of your spine from tailbone to neck.'
+      'Cow: Inhale, drop your belly, and look up toward the ceiling.',
+      'Cat: Exhale, round your spine, and tuck your chin toward your chest.',
+      'Continue flowing between the two, following your breath rhythm.',
+      'Move through the entire length of your spine from tailbone to neck.'
     ],
     modifications: [
       'Make it easier: Reduce the depth of the arch if you have back sensitivity.',
@@ -317,11 +317,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Strengthen the stabilizing muscles of the feet and legs.',
     setup: ['Stand tall with feet together.', 'Clear a space near a wall or chair for support.'],
     steps: [
-      '1. Shift your weight into your left foot.',
-      '2. Place the sole of your right foot on your left ankle (like a kickstand).',
-      '3. If steady, move the foot to your calf or inner thigh (never the knee).',
-      '4. Bring hands to heart center and hold for 45 seconds.',
-      '5. Switch legs and repeat.'
+      'Shift your weight into your left foot.',
+      'Place the sole of your right foot on your left ankle (like a kickstand).',
+      'If steady, move the foot to your calf or inner thigh (never the knee).',
+      'Bring hands to heart center and hold for 45 seconds.',
+      'Switch legs and repeat.'
     ],
     modifications: [
       'Make it easier: Keep one hand on a wall or chair for balance.',
@@ -341,11 +341,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Strengthen the back, glutes, and core while testing stability.',
     setup: ['Stand with feet hip-width apart.', 'Arms out to the sides for balance.'],
     steps: [
-      '1. Shift weight to one leg, keeping the knee slightly soft.',
-      '2. Hinge forward at the hips, lifting the other leg behind you.',
-      '3. Keep your torso and back leg parallel to the floor.',
-      '4. Engage your core to keep your hips level.',
-      '5. Hold for 30 seconds, then switch legs.'
+      'Shift weight to one leg, keeping the knee slightly soft.',
+      'Hinge forward at the hips, lifting the other leg behind you.',
+      'Keep your torso and back leg parallel to the floor.',
+      'Engage your core to keep your hips level.',
+      'Hold for 30 seconds, then switch legs.'
     ],
     modifications: [
       'Make it easier: Hold onto the back of a chair for support.',
@@ -365,12 +365,12 @@ export const movementExercises: Exercise[] = [
     intention: 'Develop eccentric strength in the hamstrings and stability in the hip.',
     setup: ['Stand tall.', 'Have a wall nearby if you feel unsteady.'],
     steps: [
-      '1. Lift one foot slightly off the floor.',
-      '2. Hinge at the hip to lower your torso toward the ground.',
-      '3. Reach your hands toward your standing foot.',
-      '4. Go only as low as you can while keeping a flat back.',
-      '5. Hold the lowest point for 5 seconds, then return to standing.',
-      '6. Do 5 reps on each side.'
+      'Lift one foot slightly off the floor.',
+      'Hinge at the hip to lower your torso toward the ground.',
+      'Reach your hands toward your standing foot.',
+      'Go only as low as you can while keeping a flat back.',
+      'Hold the lowest point for 5 seconds, then return to standing.',
+      'Do 5 reps on each side.'
     ],
     modifications: [
       'Make it easier: Keep the back toe lightly touching the floor for balance.',
@@ -390,11 +390,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Build immense strength and focus through a full-body balance hold.',
     setup: ['Start in a standing lunge position.', 'Take a deep breath.'],
     steps: [
-      '1. Lean forward over your front leg.',
-      '2. Launch off the back foot, lifting it into the air.',
-      '3. Straighten both legs as you form a "T" shape with your body.',
-      '4. Reach arms forward or alongside your body.',
-      '5. Hold for 30 seconds on each side.'
+      'Lean forward over your front leg.',
+      'Launch off the back foot, lifting it into the air.',
+      'Straighten both legs as you form a "T" shape with your body.',
+      'Reach arms forward or alongside your body.',
+      'Hold for 30 seconds on each side.'
     ],
     modifications: [
       'Make it easier: Use a wall or the back of a couch to rest your hands.',
@@ -416,11 +416,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Elevate heart rate and sharpen reaction time.',
     setup: ['Stand with feet staggered (boxing stance).', 'Keep hands up by your jaw.'],
     steps: [
-      '1. Throw 2 quick jabs (lead hand).',
-      '2. Throw 1 powerful cross (rear hand).',
-      '3. "Slip" or dodge to the left and right.',
-      '4. Add a lead hook.',
-      '5. Keep your feet light and constantly moving.'
+      'Throw 2 quick jabs (lead hand).',
+      'Throw 1 powerful cross (rear hand).',
+      '"Slip" or dodge to the left and right.',
+      'Add a lead hook.',
+      'Keep your feet light and constantly moving.'
     ],
     modifications: [
       'Make it easier: Move slower and keep both feet planted on the floor.',
@@ -440,11 +440,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Build lower body power while challenging dynamic balance.',
     setup: ['Stand with feet hip-width apart.', 'Engage your core.'],
     steps: [
-      '1. Lift your right knee toward your chest.',
-      '2. Snap your foot forward, pushing with the ball of the foot.',
-      '3. Retract the foot and return to standing.',
-      '4. Repeat on the left side.',
-      '5. Establish a fast but controlled alternating rhythm.'
+      'Lift your right knee toward your chest.',
+      'Snap your foot forward, pushing with the ball of the foot.',
+      'Retract the foot and return to standing.',
+      'Repeat on the left side.',
+      'Establish a fast but controlled alternating rhythm.'
     ],
     modifications: [
       'Make it easier: Kick lower (toward shins) and move slower.',
@@ -464,10 +464,10 @@ export const movementExercises: Exercise[] = [
     intention: 'Improve upper body endurance and striking speed.',
     setup: ['Boxing stance.', 'Set your focus on an imaginary target.'],
     steps: [
-      '1. Throw 10 rapid jab-cross combinations.',
-      '2. Rest for 5 seconds.',
-      '3. Repeat for 2 minutes.',
-      '4. Focus on full extension of the arms and rotating the hips.'
+      'Throw 10 rapid jab-cross combinations.',
+      'Rest for 5 seconds.',
+      'Repeat for 2 minutes.',
+      'Focus on full extension of the arms and rotating the hips.'
     ],
     modifications: [
       'Make it easier: Sit in a chair and throw rhythmic punches.',
@@ -487,11 +487,11 @@ export const movementExercises: Exercise[] = [
     intention: 'Increase hip range of motion and striking power.',
     setup: ['Clear space around you.', 'Hold onto a wall if needed for balance.'],
     steps: [
-      '1. Pivot on your lead foot.',
-      '2. Swing your rear leg in an arc toward the target.',
-      '3. Strike with the shin or top of the foot.',
-      '4. Return to your starting stance.',
-      '5. Do 10 on each side, then alternate.'
+      'Pivot on your lead foot.',
+      'Swing your rear leg in an arc toward the target.',
+      'Strike with the shin or top of the foot.',
+      'Return to your starting stance.',
+      'Do 10 on each side, then alternate.'
     ],
     modifications: [
       'Make it easier: Slow down the motion and keep the kick low.',

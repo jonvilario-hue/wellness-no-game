@@ -1,3 +1,4 @@
+
 'use client';
 
 import { 
@@ -42,10 +43,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Increase vocal resonance and prevent vocal fatigue during long speaking sessions.',
     setup: ['Sit tall or stand.', 'Place one hand on your belly and one on your chest.'],
     steps: [
-      '1. Inhale deeply through your nose, ensuring the hand on your belly moves out while your chest stays still.',
-      '2. Exhale slowly on a "hiss" sound (ssssssss), keeping the release steady.',
-      '3. Inhale again, and this time exhale while humming a comfortable note.',
-      '4. Feel the vibration in your belly and chest, not just your throat.'
+      'Inhale deeply through your nose, ensuring the hand on your belly moves out while your chest stays still.',
+      'Exhale slowly on a "hiss" sound (ssssssss), keeping the release steady.',
+      'Inhale again, and this time exhale while humming a comfortable note.',
+      'Feel the vibration in your belly and chest, not just your throat.'
     ],
     modifications: [
       'Make it easier: Lie on your back to feel the natural movement of the diaphragm.',
@@ -65,10 +66,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Reduce vocal fry and strain by speaking in your natural resonant pitch.',
     setup: ['Relax your shoulders and jaw.'],
     steps: [
-      '1. Say "Mmm-hmmm" as if you are agreeing with someone enthusiastically.',
-      '2. Notice the pitch of the "hmmm" — this is usually your natural resonant pitch.',
-      '3. Count from 1 to 5, starting each number at that "hmmm" pitch.',
-      '4. Try to maintain that resonance throughout the count.'
+      'Say "Mmm-hmmm" as if you are agreeing with someone enthusiastically.',
+      'Notice the pitch of the "hmmm" — this is usually your natural resonant pitch.',
+      'Count from 1 to 5, starting each number at that "hmmm" pitch.',
+      'Try to maintain that resonance throughout the count.'
     ],
     modifications: [
       'Make it easier: Record yourself to hear the difference between pitches.',
@@ -88,10 +89,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Improve the clarity of your consonants to ensure you are understood the first time.',
     setup: ['Take a sip of water.', 'Warm up your jaw with a gentle massage.'],
     steps: [
-      '1. Repeat "The tip of the tongue, the teeth, and the lips" 5 times, exaggerating each sound.',
-      '2. Practice the "Red Leather, Yellow Leather" tongue twister, increasing speed.',
-      '3. Say "Unique New York" 10 times rapidly without merging the words.',
-      '4. Focus on the hard "k" and "t" sounds at the ends of words.'
+      'Repeat "The tip of the tongue, the teeth, and the lips" 5 times, exaggerating each sound.',
+      'Practice the "Red Leather, Yellow Leather" tongue twister, increasing speed.',
+      'Say "Unique New York" 10 times rapidly without merging the words.',
+      'Focus on the hard "k" and "t" sounds at the ends of words.'
     ],
     modifications: [
       'Make it easier: Say each twister very slowly, focusing purely on perfect sound.',
@@ -111,10 +112,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Project more energy and authority by maintaining vocal support through the end of phrases.',
     setup: ['Stand tall.'],
     steps: [
-      '1. Read a sentence out loud.',
-      '2. Notice if your voice "crackles" or drops into a low rattle at the end.',
-      '3. Re-read the sentence, focusing on pushing slightly more air through the final word.',
-      '4. Practice "landing" the end of each sentence on a clear note.'
+      'Read a sentence out loud.',
+      'Notice if your voice "crackles" or drops into a low rattle at the end.',
+      'Re-read the sentence, focusing on pushing slightly more air through the final word.',
+      'Practice "landing" the end of each sentence on a clear note.'
     ],
     modifications: [
       'Make it easier: Focus on short 3-word sentences.',
@@ -134,10 +135,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Avoid making statements sound like questions, which can undermine perceived competence.',
     setup: ['Prepare a list of 5 factual statements.'],
     steps: [
-      '1. Say each statement out loud.',
-      '2. Pay attention to the very last syllable of the last word.',
-      '3. Consciously drop the pitch of that syllable down.',
-      '4. Practice "period" inflection: a slight downward move at the end.'
+      'Say each statement out loud.',
+      'Pay attention to the very last syllable of the last word.',
+      'Consciously drop the pitch of that syllable down.',
+      'Practice "period" inflection: a slight downward move at the end.'
     ],
     modifications: [
       'Make it easier: Record and playback to identify upspeak.',
@@ -157,10 +158,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Give your audience time to process information and increase your perceived gravitas.',
     setup: ['Choose a short paragraph to read.'],
     steps: [
-      '1. Read the paragraph, but count to two silently at every comma.',
-      '2. Count to three silently at every period.',
-      '3. Use the silence to take a relaxed breath.',
-      '4. Notice how the silence replaces "um" or "uh" while you think.'
+      'Read the paragraph, but count to two silently at every comma.',
+      'Count to three silently at every period.',
+      'Use the silence to take a relaxed breath.',
+      'Notice how the silence replaces "um" or "uh" while you think.'
     ],
     modifications: [
       'Make it easier: Just pause at periods.',
@@ -180,10 +181,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Prevent a monotonous delivery by varying speed to match the importance of your points.',
     setup: ['Have a story or explanation ready.'],
     steps: [
-      '1. Speak faster during less important details to build momentum.',
-      '2. Slow down significantly for your main points.',
-      '3. Practice articulating every syllable when you slow down.',
-      '4. Record yourself and check if the speed changes feel natural.'
+      'Speak faster during less important details to build momentum.',
+      'Slow down significantly for your main points.',
+      'Practice articulating every syllable when you slow down.',
+      'Record yourself and check if the speed changes feel natural.'
     ],
     modifications: [
       'Make it easier: Practice reading a children\'s book with exaggerated pace changes.',
@@ -205,10 +206,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Demonstrate active engagement and prevent misunderstandings in complex conversations.',
     setup: ['Can be done with a partner or using a podcast/video.'],
     steps: [
-      '1. Listen to a 30-second segment of speech.',
-      '2. Begin your response with "What I\'m hearing is..." or "So, in other words..."',
-      '3. Rephrase the main point using your own words, without adding your opinion.',
-      '4. Ask: "Is that a fair summary?"'
+      'Listen to a 30-second segment of speech.',
+      'Begin your response with "What I\'m hearing is..." or "So, in other words..."',
+      'Rephrase the main point using your own words, without adding your opinion.',
+      'Ask: "Is that a fair summary?"'
     ],
     modifications: [
       'In public: Use this during your next low-stakes meeting.',
@@ -228,10 +229,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Create a supportive environment that encourages the other person to share more deeply.',
     setup: ['Identify a conversation you will have today.'],
     steps: [
-      '1. Identify 3-4 "minimal encouragers" (e.g., "I see", "Uh-huh", "Go on", "Right").',
-      '2. Practice varying the tone of these cues to show genuine interest.',
-      '3. In your next conversation, use one every 20-30 seconds during long stretches of listening.',
-      '4. Notice how it affects the speaker\'s flow.'
+      'Identify 3-4 "minimal encouragers" (e.g., "I see", "Uh-huh", "Go on", "Right").',
+      'Practice varying the tone of these cues to show genuine interest.',
+      'In your next conversation, use one every 20-30 seconds during long stretches of listening.',
+      'Notice how it affects the speaker\'s flow.'
     ],
     modifications: [
       'Make it easier: Just focus on "Uh-huh" and a head nod.',
@@ -251,10 +252,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build rapport and trust by showing the other person you understand how they feel.',
     setup: ['Recall a recent interaction where someone was venting.'],
     steps: [
-      '1. Identify the core emotion (e.g., frustration, excitement, worry).',
-      '2. Respond with: "It sounds like you\'re feeling [emotion] about [situation]."',
-      '3. Avoid saying "I understand." Instead, reflect the feeling back.',
-      '4. Wait for them to confirm or correct your reflection.'
+      'Identify the core emotion (e.g., frustration, excitement, worry).',
+      'Respond with: "It sounds like you\'re feeling [emotion] about [situation]."',
+      'Avoid saying "I understand." Instead, reflect the feeling back.',
+      'Wait for them to confirm or correct your reflection.'
     ],
     modifications: [
       'Make it easier: Just focus on identifying the emotion in your head first.',
@@ -274,10 +275,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Reduce ambiguity and uncover the root of a statement.',
     setup: ['Identify an upcoming meeting.'],
     steps: [
-      '1. Use "Can you tell me more about [part of their statement]?"',
-      '2. Use "When you say [word], what exactly do you mean by that?"',
-      '3. Avoid "Why" questions, which can sound accusatory.',
-      '4. Focus on "What" and "How" to encourage explanation.'
+      'Use "Can you tell me more about [part of their statement]?"',
+      'Use "When you say [word], what exactly do you mean by that?"',
+      'Avoid "Why" questions, which can sound accusatory.',
+      'Focus on "What" and "How" to encourage explanation.'
     ],
     modifications: [
       'Make it easier: Just ask "Tell me more" once per conversation.',
@@ -297,10 +298,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Ensure agreement on takeaways and next steps before a conversation ends.',
     setup: ['Use after a long work call or discussion.'],
     steps: [
-      '1. Wait until the end of a section or the full meeting.',
-      '2. State: "Before we move on, let me summarize our main points..."',
-      '3. List 2-3 key takeaways and any assigned actions.',
-      '4. End with: "Did I miss anything important?"'
+      'Wait until the end of a section or the full meeting.',
+      'State: "Before we move on, let me summarize our main points..."',
+      'List 2-3 key takeaways and any assigned actions.',
+      'End with: "Did I miss anything important?"'
     ],
     modifications: [
       'Make it easier: Write down the summary points while listening.',
@@ -320,10 +321,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Prevent accidental interruptions and ensure the other person has finished their thought.',
     setup: ['Set a mental reminder before your next meeting.'],
     steps: [
-      '1. When the other person stops speaking, count "one-one-thousand, two-one-thousand" in your head.',
-      '2. Breathe during this pause.',
-      '3. If they continue speaking during your count, they weren\'t done—just listening!',
-      '4. If they stay silent, now it\'s your turn.'
+      'When the other person stops speaking, count "one-one-thousand, two-one-thousand" in your head.',
+      'Breathe during this pause.',
+      'If they continue speaking during your count, they weren\'t done—just listening!',
+      'If they stay silent, now it\'s your turn.'
     ],
     modifications: [
       'Make it easier: Start with just a 1-second pause.',
@@ -343,10 +344,10 @@ export const communicationPractices: Exercise[] = [
     intention: 'Show engagement while ensuring you don\'t miss critical details.',
     setup: ['Have a notebook or app ready during a meeting.'],
     steps: [
-      '1. Maintain eye contact for the first 10-15 seconds of a point.',
-      '2. Look down to jot a quick keyword or short phrase.',
-      '3. Immediately look back up to re-establish connection.',
-      '4. Say: "I\'m just jotting this down, it\'s a great point" to signal why you\'re looking away.'
+      'Maintain eye contact for the first 10-15 seconds of a point.',
+      'Look down to jot a quick keyword or short phrase.',
+      'Immediately look back up to re-establish connection.',
+      'Say: "I\'m just jotting this down, it\'s a great point" to signal why you\'re looking away.'
     ],
     modifications: [
       'Make it easier: Just take notes during pauses.',
@@ -368,11 +369,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Project approachability and confidence through accessible body language.',
     setup: ['Stand or sit in a comfortable space.'],
     steps: [
-      '1. Stand or sit with feet shoulder-width apart.',
-      '2. Uncross arms and legs completely.',
-      '3. Roll shoulders back and down to open chest.',
-      '4. Keep hands visible and relaxed at sides or on lap.',
-      '5. Scan body for tension and consciously release it.'
+      'Stand or sit with feet shoulder-width apart.',
+      'Uncross arms and legs completely.',
+      'Roll shoulders back and down to open chest.',
+      'Keep hands visible and relaxed at sides or on lap.',
+      'Scan body for tension and consciously release it.'
     ],
     modifications: [
       'Make it easier: Just focus on uncrossing arms for 30 seconds.',
@@ -392,11 +393,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build subconscious rapport by subtly matching another person\'s body language.',
     setup: ['Use this during an active interaction or observation.'],
     steps: [
-      '1. Observe the other person\'s posture and gestures.',
-      '2. Wait 2-3 seconds, then subtly match their position (crossed legs, lean direction, hand placement).',
-      '3. Keep it natural - match 1-2 elements, not everything.',
-      '4. Notice if the conversation feels more connected.',
-      '5. Practice with different people to build the skill.'
+      'Observe the other person\'s posture and gestures.',
+      'Wait 2-3 seconds, then subtly match their position (crossed legs, lean direction, hand placement).',
+      'Keep it natural - match 1-2 elements, not everything.',
+      'Notice if the conversation feels more connected.',
+      'Practice with different people to build the skill.'
     ],
     modifications: [
       'Make it easier: Just mirror posture (sitting/standing position).',
@@ -416,11 +417,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Optimize eye contact for engagement without discomfort.',
     setup: ['Observe your eye contact during your next conversation.'],
     steps: [
-      '1. When listening: maintain eye contact 60-70% of the time, looking away briefly to process.',
-      '2. When speaking: maintain eye contact 30-40% of the time, looking away to gather thoughts.',
-      '3. Practice the 3-second rule: hold eye contact for 3 seconds before looking away.',
-      '4. Look at the bridge of the nose if direct eye contact feels intense.',
-      '5. Notice when the other person looks away and give them space.'
+      'When listening: maintain eye contact 60-70% of the time, looking away briefly to process.',
+      'When speaking: maintain eye contact 30-40% of the time, looking away to gather thoughts.',
+      'Practice the 3-second rule: hold eye contact for 3 seconds before looking away.',
+      'Look at the bridge of the nose if direct eye contact feels intense.',
+      'Notice when the other person looks away and give them space.'
     ],
     modifications: [
       'Make it easier: Start with 50/50 for both.',
@@ -440,11 +441,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Enhance comprehension and memory through intentional movement.',
     setup: ['Prepare a short 30-second explanation of a topic.'],
     steps: [
-      '1. Keep hands visible above waist level.',
-      '2. Use size gestures for comparisons ("this big" vs "this small").',
-      '3. Use directional gestures for sequences ("first... then... finally").',
-      '4. Use containment gestures for concepts ("imagine holding this idea").',
-      '5. Avoid repetitive filler gestures (constant pointing, hand-wringing).'
+      'Keep hands visible above waist level.',
+      'Use size gestures for comparisons ("this big" vs "this small").',
+      'Use directional gestures for sequences ("first... then... finally").',
+      'Use containment gestures for concepts ("imagine holding this idea").',
+      'Avoid repetitive filler gestures (constant pointing, hand-wringing).'
     ],
     modifications: [
       'Make it easier: Just keep hands visible and still.',
@@ -464,11 +465,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build trust by matching your expressions to your message.',
     setup: ['Practice in front of a mirror or during a call.'],
     steps: [
-      '1. Notice what emotion your words convey.',
-      '2. Check if your face reflects that emotion.',
-      '3. Practice common mismatches: smiling while delivering bad news, blank face while expressing excitement.',
-      '4. If discussing something serious, let your face show appropriate concern.',
-      '5. If sharing good news, let yourself smile fully.'
+      'Notice what emotion your words convey.',
+      'Check if your face reflects that emotion.',
+      'Practice common mismatches: smiling while delivering bad news, blank face while expressing excitement.',
+      'If discussing something serious, let your face show appropriate concern.',
+      'If sharing good news, let yourself smile fully.'
     ],
     modifications: [
       'Make it easier: Just avoid smiling during serious topics.',
@@ -488,11 +489,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Respect spatial boundaries to create comfort and connection.',
     setup: ['Observe your distance from others today.'],
     steps: [
-      '1. Default to 1.5-4 feet in Western professional contexts.',
-      '2. Notice if the other person steps back (you\'re too close) or leans in (they\'re comfortable).',
-      '3. Match their spatial preference - if they step back, stay where you are.',
-      '4. Research appropriate distances for other cultures beforehand.',
-      '5. Adjust for context: closer for friends, farther for strangers.'
+      'Default to 1.5-4 feet in Western professional contexts.',
+      'Notice if the other person steps back (you\'re too close) or leans in (they\'re comfortable).',
+      'Match their spatial preference - if they step back, stay where you are.',
+      'Research appropriate distances for other cultures beforehand.',
+      'Adjust for context: closer for friends, farther for strangers.'
     ],
     modifications: [
       'Make it easier: Just maintain arm\'s length distance.',
@@ -514,11 +515,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Navigate conversations smoothly without awkward interruptions or silences.',
     setup: ['Identify an upcoming conversation.'],
     steps: [
-      '1. When finishing your turn: drop pitch at end of sentence, make eye contact, use a slight nod.',
-      '2. When wanting to speak: lean forward slightly, make eye contact, take a breath.',
-      '3. Watch for others\' signals before jumping in.',
-      '4. If you accidentally overlap, say "Sorry, go ahead" and yield.',
-      '5. Practice in low-stakes conversations first.'
+      'When finishing your turn: drop pitch at end of sentence, make eye contact, use a slight nod.',
+      'When wanting to speak: lean forward slightly, make eye contact, take a breath.',
+      'Watch for others\' signals before jumping in.',
+      'If you accidentally overlap, say "Sorry, go ahead" and yield.',
+      'Practice in low-stakes conversations first.'
     ],
     modifications: [
       'Make it easier: Just focus on pitch drop when done speaking.',
@@ -538,11 +539,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Change subjects smoothly without jarring transitions.',
     setup: ['Think of two unrelated topics you like.'],
     steps: [
-      '1. Find a small connection between current topic and new topic.',
-      '2. Use bridging phrases: "Speaking of X...", "That reminds me...", "On a related note...".',
-      '3. Acknowledge the shift: "Changing gears for a second...".',
-      '4. If no connection exists, use: "Completely different topic, but...".',
-      '5. Avoid abrupt topic drops mid-conversation.'
+      'Find a small connection between current topic and new topic.',
+      'Use bridging phrases: "Speaking of X...", "That reminds me...", "On a related note...".',
+      'Acknowledge the shift: "Changing gears for a second...".',
+      'If no connection exists, use: "Completely different topic, but...".',
+      'Avoid abrupt topic drops mid-conversation.'
     ],
     modifications: [
       'Make it easier: Use any bridging phrase consistently.',
@@ -562,11 +563,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Show active processing without interrupting the speaker.',
     setup: ['Use this during your next 1-on-1.'],
     steps: [
-      '1. Use verbal nods: "Mm-hmm", "Right", "I see", "Gotcha".',
-      '2. Time them during natural pauses, not over the speaker\'s words.',
-      '3. Vary your responses - don\'t repeat the same one.',
-      '4. Match intensity to content (thoughtful "hmm" for serious topics).',
-      '5. Pair with nonverbal nods or facial expressions.'
+      'Use verbal nods: "Mm-hmm", "Right", "I see", "Gotcha".',
+      'Time them during natural pauses, not over the speaker\'s words.',
+      'Vary your responses - don\'t repeat the same one.',
+      'Match intensity to content (thoughtful "hmm" for serious topics).',
+      'Pair with nonverbal nods or facial expressions.'
     ],
     modifications: [
       'Make it easier: Just nod physically without verbal responses.',
@@ -586,11 +587,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Fix miscommunication immediately before it compounds.',
     setup: ['Prepare a phrase for when you sense confusion.'],
     steps: [
-      '1. Notice confusion cues (furrowed brow, "Huh?", silence).',
-      '2. Stop and acknowledge: "Let me try that again..." or "I don\'t think I said that clearly...".',
-      '3. Rephrase using different words, simpler structure, or an example.',
-      '4. Check for understanding: "Does that make more sense?".',
-      '5. Don\'t keep going if confusion persists.'
+      'Notice confusion cues (furrowed brow, "Huh?", silence).',
+      'Stop and acknowledge: "Let me try that again..." or "I don\'t think I said that clearly...".',
+      'Rephrase using different words, simpler structure, or an example.',
+      'Check for understanding: "Does that make more sense?".',
+      'Don\'t keep going if confusion persists.'
     ],
     modifications: [
       'Make it easier: Just say "Sorry, what I meant was..." and restate.',
@@ -610,11 +611,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Understand conversational expectations to avoid social friction.',
     setup: ['List 3 common social expectations.'],
     steps: [
-      '1. Learn common pairs: Question→Answer, Greeting→Greeting, Thank you→You\'re welcome.',
-      '2. Notice when someone offers the first part and respond with the expected second part.',
-      '3. If you can\'t provide the expected response, acknowledge it: "I don\'t know, but...".',
-      '4. Don\'t leave pairs unresolved - it creates conversational debt.',
-      '5. Practice in everyday interactions.'
+      'Learn common pairs: Question→Answer, Greeting→Greeting, Thank you→You\'re welcome.',
+      'Notice when someone offers the first part and respond with the expected second part.',
+      'If you can\'t provide the expected response, acknowledge it: "I don\'t know, but...".',
+      'Don\'t leave pairs unresolved - it creates conversational debt.',
+      'Practice in everyday interactions.'
     ],
     modifications: [
       'Make it easier: Focus on greetings and thanks.',
@@ -634,11 +635,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'End conversations gracefully without abruptness or awkward lingering.',
     setup: ['Prepare an exit line.'],
     steps: [
-      '1. Signal you\'re wrapping up: "Well...", "Anyway...", "I should let you go...".',
-      '2. Summarize or reference a future action: "I\'ll send you that link".',
-      '3. Use physical cues: stand up, step back, gather belongings.',
-      '4. If they keep talking, repeat the pre-closing after they finish.',
-      '5. End with a clear closer: "Great talking with you!".'
+      'Signal you\'re wrapping up: "Well...", "Anyway...", "I should let you go...".',
+      'Summarize or reference a future action: "I\'ll send you that link".',
+      'Use physical cues: stand up, step back, gather belongings.',
+      'If they keep talking, repeat the pre-closing after they finish.',
+      'End with a clear closer: "Great talking with you!".'
     ],
     modifications: [
       'Make it easier: Just say "I need to run" directly.',
@@ -660,11 +661,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Increase compliance by giving first (Cialdini\'s research).',
     setup: ['Identify something small you can offer (info, compliment, favor).'],
     steps: [
-      '1. Give it genuinely without attaching strings.',
-      '2. Wait - don\'t immediately ask for something back.',
-      '3. When you do ask, frame it clearly and simply.',
-      '4. Notice how giving first changes the dynamic.',
-      '5. Maintain the relationship even if they say no.'
+      'Give it genuinely without attaching strings.',
+      'Wait - don\'t immediately ask for something back.',
+      'When you do ask, frame it clearly and simply.',
+      'Notice how giving first changes the dynamic.',
+      'Maintain the relationship even if they say no.'
     ],
     modifications: [
       'Make it easier: Compliment someone before asking for help.',
@@ -684,11 +685,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Leverage conformity to make your suggestion more appealing.',
     setup: ['Identify a relevant reference group relevant to your listener.'],
     steps: [
-      '1. Identify relevant group ("people like you", "teams in your industry").',
-      '2. State what they\'re doing: "Most of our clients start with...".',
-      '3. Make it specific with numbers: "73% of users chose...".',
-      '4. Avoid many claims like "Everyone does this".',
-      '5. Use truthfully - false social proof destroys trust.'
+      'Identify relevant group ("people like you", "teams in your industry").',
+      'State what they\'re doing: "Most of our clients start with...".',
+      'Make it specific with numbers: "73% of users chose...".',
+      'Avoid many claims like "Everyone does this".',
+      'Use truthfully - false social proof destroys trust.'
     ],
     modifications: [
       'Make it easier: Just mention one other person who did it.',
@@ -708,11 +709,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build commitment by starting with a small request first.',
     setup: ['Identify your ultimate ask and a smaller related one.'],
     steps: [
-      '1. Design a much smaller related ask (low stakes).',
-      '2. Make the small ask first and get agreement.',
-      '3. Wait hours or days - don\'t immediately escalate.',
-      '4. Make the larger request, now framed as consistent with earlier "yes".',
-      '5. Be prepared for a no, and remain polite.'
+      'Design a much smaller related ask (low stakes).',
+      'Make the small ask first and get agreement.',
+      'Wait hours or days - don\'t immediately escalate.',
+      'Make the larger request, now framed as consistent with earlier "yes".',
+      'Be prepared for a no, and remain polite.'
     ],
     modifications: [
       'Make it easier: Just ask for the small thing and stop if they agree.',
@@ -732,11 +733,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Shape decisions by emphasizing gains or losses (Kahneman & Tversky).',
     setup: ['Take a message you need to deliver.'],
     steps: [
-      '1. Frame A (Positive): emphasize what they\'ll gain/keep ("Save $200").',
-      '2. Frame B (Negative): emphasize what they\'ll lose/avoid ("Lose $200").',
-      '3. Choose based on context: positive for risk-averse, negative for urgency.',
-      '4. Test both in low-stakes situations.',
-      '5. Notice which one triggers more action.'
+      'Frame A (Positive): emphasize what they\'ll gain/keep ("Save $200").',
+      'Frame B (Negative): emphasize what they\'ll lose/avoid ("Lose $200").',
+      'Choose based on context: positive for risk-averse, negative for urgency.',
+      'Test both in low-stakes situations.',
+      'Notice which one triggers more action.'
     ],
     modifications: [
       'Make it easier: Just pick one frame and stick with it.',
@@ -756,11 +757,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Set the reference point in negotiations to influence outcomes.',
     setup: ['Identify a number you need to negotiate.'],
     steps: [
-      '1. Go first with a number if you have info advantage.',
-      '2. Start higher (selling) or lower (buying) than your target.',
-      '3. Use precise numbers ($47,300 instead of $47,000).',
-      '4. If they anchor first and it\'s unreasonable, reset the baseline.',
-      '5. Provide rationale for your anchor.'
+      'Go first with a number if you have info advantage.',
+      'Start higher (selling) or lower (buying) than your target.',
+      'Use precise numbers ($47,300 instead of $47,000).',
+      'If they anchor first and it\'s unreasonable, reset the baseline.',
+      'Provide rationale for your anchor.'
     ],
     modifications: [
       'Make it easier: Just state your number first.',
@@ -780,11 +781,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Increase perceived value by highlighting limited availability.',
     setup: ['Identify a genuinely limited offer.'],
     steps: [
-      '1. Identify genuine scarcity (limited time, quantity).',
-      '2. State it clearly: "Only 3 spots left".',
-      '3. Explain WHY it\'s scarce (builds credibility).',
-      '4. Avoid false scarcity - it destroys trust.',
-      '5. Let them decide without pressure.'
+      'Identify genuine scarcity (limited time, quantity).',
+      'State it clearly: "Only 3 spots left".',
+      'Explain WHY it\'s scarce (builds credibility).',
+      'Avoid false scarcity - it destroys trust.',
+      'Let them decide without pressure.'
     ],
     modifications: [
       'Make it easier: Just mention a deadline.',
@@ -804,11 +805,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Strengthen your position by acknowledging objections first.',
     setup: ['List 2 likely objections to your idea.'],
     steps: [
-      '1. Bring up the strongest objection yourself: "You might be thinking...".',
-      '2. Address it directly with evidence or mitigation.',
-      '3. Don\'t over-defend - brief acknowledgment is enough.',
-      '4. Return to your main point after inoculating.',
-      '5. Use a calm, non-defensive tone.'
+      'Bring up the strongest objection yourself: "You might be thinking...".',
+      'Address it directly with evidence or mitigation.',
+      'Don\'t over-defend - brief acknowledgment is enough.',
+      'Return to your main point after inoculating.',
+      'Use a calm, non-defensive tone.'
     ],
     modifications: [
       'Make it easier: Address one obvious objection.',
@@ -830,11 +831,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Replace vague abstractions with specific, tangible words.',
     setup: ['Identify 3 abstract words in your draft.'],
     steps: [
-      '1. Identify abstract words: "improve", "synergy", "optimize".',
-      '2. Ask: what does this actually look like? What would someone see?',
-      '3. Replace with concrete specifics: "reduce response time to 1 day".',
-      '4. Use names, numbers, actions.',
-      '5. Test with "Can a 10-year-old visualize this?".'
+      'Identify abstract words: "improve", "synergy", "optimize".',
+      'Ask: what does this actually look like? What would someone see?',
+      'Replace with concrete specifics: "reduce response time to 1 day".',
+      'Use names, numbers, actions.',
+      'Test with "Can a 10-year-old visualize this?".'
     ],
     modifications: [
       'Make it easier: Focus on nouns only.',
@@ -854,11 +855,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Increase clarity and accountability by naming who does what.',
     setup: ['Find 2 passive sentences in your email history.'],
     steps: [
-      '1. Find passive constructions: "mistakes were made".',
-      '2. Ask: who is doing this action?.',
-      '3. Rewrite with actor first: "We made mistakes".',
-      '4. Keep passive only when the actor is unknown.',
-      '5. Practice on old emails or documents.'
+      'Find passive constructions: "mistakes were made".',
+      'Ask: who is doing this action?.',
+      'Rewrite with actor first: "We made mistakes".',
+      'Keep passive only when the actor is unknown.',
+      'Practice on old emails or documents.'
     ],
     modifications: [
       'Make it easier: Convert one sentence per paragraph.',
@@ -878,11 +879,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Reduce cognitive load by breaking complex sentences into simple ones.',
     setup: ['Find a long sentence with multiple commas.'],
     steps: [
-      '1. Identify how many distinct ideas are packed in.',
-      '2. Split into separate sentences - one idea each.',
-      '3. Reorder if needed for logical flow.',
-      '4. Read aloud to test clarity.',
-      '5. Use simpler connecting words (but, so).'
+      'Identify how many distinct ideas are packed in.',
+      'Split into separate sentences - one idea each.',
+      'Reorder if needed for logical flow.',
+      'Read aloud to test clarity.',
+      'Use simpler connecting words (but, so).'
     ],
     modifications: [
       'Make it easier: Just split sentences with "and".',
@@ -902,11 +903,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Guide audience attention with verbal roadmaps.',
     setup: ['Prepare a 3-point outline.'],
     steps: [
-      '1. Use openers: "First", "To begin", "Let me start with".',
-      '2. Use connectors: "However", "As a result", "Similarly".',
-      '3. Use closers: "In conclusion", "To sum up".',
-      '4. Preview structure upfront: "I\'ll cover three things...".',
-      '5. Reference back: "As I mentioned earlier".'
+      'Use openers: "First", "To begin", "Let me start with".',
+      'Use connectors: "However", "As a result", "Similarly".',
+      'Use closers: "In conclusion", "To sum up".',
+      'Preview structure upfront: "I\'ll cover three things...".',
+      'Reference back: "As I mentioned earlier".'
     ],
     modifications: [
       'Make it easier: Just use "First, second, third".',
@@ -926,11 +927,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Ensure accessibility by removing insider language.',
     setup: ['List 5 specialized terms in your field.'],
     steps: [
-      '1. For each, ask: would someone outside my field know this?.',
-      '2. Replace with plain language or define it.',
-      '3. Test on someone unfamiliar with the topic.',
-      '4. Keep only jargon that saves significant time.',
-      '5. Be ruthless with acronyms.'
+      'For each, ask: would someone outside my field know this?.',
+      'Replace with plain language or define it.',
+      'Test on someone unfamiliar with the topic.',
+      'Keep only jargon that saves significant time.',
+      'Be ruthless with acronyms.'
     ],
     modifications: [
       'Make it easier: Remove obvious acronyms.',
@@ -950,11 +951,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Explain unfamiliar concepts by comparing to familiar ones.',
     setup: ['Choose a difficult concept you need to explain.'],
     steps: [
-      '1. Identify the hard-to-grasp concept.',
-      '2. Find something your audience knows well that shares a feature.',
-      '3. State explicitly: "X is like Y because...".',
-      '4. Extend only where it fits.',
-      '5. Test on someone to see if it clarifies.'
+      'Identify the hard-to-grasp concept.',
+      'Find something your audience knows well that shares a feature.',
+      'State explicitly: "X is like Y because...".',
+      'Extend only where it fits.',
+      'Test on someone to see if it clarifies.'
     ],
     modifications: [
       'Make it easier: Use simple physical analogies.',
@@ -963,7 +964,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Concept explained? Done.'
   },
   {
-    id: 'clarity_alliteration',
+    id: 'alliteration_chains',
     name: "Alliteration Chains",
     description: "Train your brain to find and deploy alliterative patterns.",
     duration: 360,
@@ -974,12 +975,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Train your brain to find and deploy alliterative patterns that make your language more memorable and rhythmic.",
     setup: ["Pick a random letter (e.g., 'S'). Set a timer for 2 minutes."],
     steps: [
-      "1. Pick a random letter (e.g., 'S'). Set a timer for 2 minutes.",
-      "2. Write or speak a full sentence where every major word starts with that letter. Example: 'Silent shadows slithered slowly, seeking shelter.'",
-      "3. Pick a new letter and create a sentence about a specific topic (e.g., letter 'P,' topic 'work'). Example: 'Persistent professionals push past problems patiently.'",
-      "4. Do this for 5 different letters. Focus on making the sentences actually mean something, not just sound pretty.",
-      "5. Read your sentences out loud. Notice how alliteration creates rhythm and emphasis.",
-      "6. In your next piece of writing or speech, try to naturally incorporate one alliterative phrase where it adds impact."
+      "Pick a random letter (e.g., 'S'). Set a timer for 2 minutes.",
+      "Write or speak a full sentence where every major word starts with that letter. Example: 'Silent shadows slithered slowly, seeking shelter.'",
+      "Pick a new letter and create a sentence about a specific topic (e.g., letter 'P,' topic 'work'). Example: 'Persistent professionals push past problems patiently.'",
+      "Do this for 5 different letters. Focus on making the sentences actually mean something, not just sound pretty.",
+      "Read your sentences out loud. Notice how alliteration creates rhythm and emphasis.",
+      "In your next piece of writing or speech, try to naturally incorporate one alliterative phrase where it adds impact."
     ],
     modifications: [
       "Make it easier: Start with just 3-4 alliterative words per sentence instead of every word.",
@@ -988,7 +989,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Alliterative rhythm mastered."
   },
   {
-    id: 'clarity_syllable',
+    id: 'syllable_pacing',
     name: "Syllable Pacing (Rhythm Control)",
     description: "Develop awareness of syllabic rhythm.",
     duration: 420,
@@ -999,12 +1000,13 @@ export const communicationPractices: Exercise[] = [
     intention: "Develop awareness of syllabic rhythm so you can control the pace and flow of your speech or writing.",
     setup: ["Write or say a simple sentence: 'I walked to the store.' (6 syllables)"],
     steps: [
-      "1. Write or say a simple sentence: 'I walked to the store.' (6 syllables)",
-      "2. Rewrite it with exactly 10 syllables: 'I walked slowly down the street to the corner store.'",
-      "3. Rewrite it with exactly 4 syllables: 'I went to shop.'",
-      "4. Notice how syllable count changes the feeling: short = punchy, urgent; long = flowing, descriptive.",
-      "5. Take a paragraph you've written. Count the syllables in each sentence. Are they all similar length? Mix them up: short, long, medium, short.",
-      "6. Read it out loud. Does the varied rhythm keep it more interesting?"
+      "Every sentence has a rhythm based on syllable count and stress patterns.",
+      "Write or say a simple sentence: 'I walked to the store.' (6 syllables)",
+      "Rewrite it with exactly 10 syllables: 'I walked slowly down the street to the corner store.'",
+      "Rewrite it with exactly 4 syllables: 'I went to shop.'",
+      "Notice how syllable count changes the feeling: short = punchy, urgent; long = flowing, descriptive.",
+      "Take a paragraph you've written. Count the syllables in each sentence. Are they all similar length? Mix them up: short, long, medium, short.",
+      "Read it out loud. Does the varied rhythm keep it more interesting?"
     ],
     modifications: [
       "Make it easier: Use an online syllable counter tool to help you as you practice adjusting sentence lengths.",
@@ -1013,7 +1015,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Rhythmic flow established."
   },
   {
-    id: 'clarity_rhyme',
+    id: 'rhyme_scheme',
     name: "Rhyme Scheme Construction",
     description: "Build your ability to find and use rhyme deliberately.",
     duration: 480,
@@ -1024,11 +1026,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Build your ability to find and use rhyme deliberately, not just in poetry but in memorable phrases and speeches.",
     setup: ["Pick a simple word: 'light.'"],
     steps: [
-      "1. Pick a simple word: 'light.' List 10 words that rhyme with it (fight, night, sight, bright, flight, etc.).",
-      "2. Create a 4-line AABB rhyme scheme: Lines 1 and 2 rhyme, lines 3 and 4 rhyme.",
-      "3. Try a different scheme (ABAB): Lines 1 and 3 rhyme, lines 2 and 4 rhyme.",
-      "4. Don't worry about perfection — focus on finding rhymes quickly.",
-      "5. Challenge: Take a key point from a presentation or argument and express it as a memorable rhyming couplet."
+      "Rhyme makes language sticky. Your brain loves patterns.",
+      "Pick a simple word: 'light.' List 10 words that rhyme with it (fight, night, sight, bright, flight, etc.).",
+      "Create a 4-line AABB rhyme scheme: Lines 1 and 2 rhyme, lines 3 and 4 rhyme.",
+      "Try a different scheme (ABAB): Lines 1 and 3 rhyme, lines 2 and 4 rhyme.",
+      "Don't worry about perfection — focus on finding rhymes quickly.",
+      "Challenge: Take a key point from a presentation or argument and express it as a memorable rhyming couplet."
     ],
     modifications: [
       "Make it easier: Use a rhyming dictionary or online tool to help find rhymes as you practice.",
@@ -1037,7 +1040,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Rhyme patterns ready."
   },
   {
-    id: 'clarity_metaphor',
+    id: 'metaphor_mining',
     name: "Metaphor Mining",
     description: "Create vivid, original metaphors for abstract ideas.",
     duration: 420,
@@ -1048,11 +1051,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Strengthen your ability to create vivid, original metaphors that make abstract ideas concrete and memorable.",
     setup: ["Pick an abstract concept: 'stress,' 'growth,' 'communication,' 'change.'"],
     steps: [
-      "1. Pick an abstract concept: 'stress,' 'growth,' 'communication,' 'change.'",
-      "2. Ask: What does this feel like? Look like? Sound like? Smell like?",
-      "3. Create 5 different metaphors for your concept.",
-      "4. Eliminate clichés. Which metaphors feel fresh? Which have you heard before?",
-      "5. Practice using one original metaphor in conversation or writing today."
+      "Metaphors help your audience visualize what you mean. Bad metaphors are cliché; good ones are surprising but accurate.",
+      "Pick an abstract concept: 'stress,' 'growth,' 'communication,' 'change.'",
+      "Ask: What does this feel like? Look like? Sound like? Smell like?",
+      "Create 5 different metaphors for your concept.",
+      "Eliminate clichés. Which metaphors feel fresh? Which have you heard before?",
+      "Practice using one original metaphor in conversation or writing today."
     ],
     modifications: [
       "Make it easier: Start by listing 10 concrete objects, then match each one to an abstract concept (e.g., 'river = time').",
@@ -1061,7 +1065,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Imagery refined."
   },
   {
-    id: 'clarity_vocabulary_constraint',
+    id: 'vocabulary_constraint',
     name: "Vocabulary Constraint Writing",
     description: "Expand your vocabulary through intentional word restrictions.",
     duration: 480,
@@ -1072,11 +1076,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Expand your vocabulary by forcing yourself to express ideas without relying on common, overused words.",
     setup: ["List banned words: good, bad, very, really, thing, stuff, nice, get, make, do, have, like, just."],
     steps: [
-      "1. Write a paragraph (5-7 sentences) about your day, a recent experience, or an opinion you hold.",
-      "2. Rewrite that paragraph without using any of these banned words: good, bad, very, really, thing, stuff, nice, get, make, do, have, like (as filler), just.",
-      "3. You'll be forced to find more specific, precise language. 'It was a very good meal' becomes 'The meal was exceptional.'",
-      "4. Read both versions out loud. The second should feel sharper and more vivid.",
-      "5. Try this constraint in your next email, text, or piece of writing."
+      "Overused words make your language generic: 'good,' 'bad,' 'nice,' 'very,' 'thing,' 'get,' 'do.'",
+      "Write a paragraph (5-7 sentences) about your day, a recent experience, or an opinion you hold.",
+      "Rewrite that paragraph without using any of these banned words: good, bad, very, really, thing, stuff, nice, get, make, do, have, like (as filler), just.",
+      "You'll be forced to find more specific, precise language. 'It was a very good meal' becomes 'The meal was exceptional.'",
+      "Read both versions out loud. The second should feel sharper and more vivid.",
+      "Try this constraint in your next email, text, or piece of writing."
     ],
     modifications: [
       "Make it easier: Start by banning just 3-5 of the most common words, then expand the list as you improve.",
@@ -1085,7 +1090,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Vocabulary expanded."
   },
   {
-    id: 'clarity_sentence_shape',
+    id: 'sentence_shape',
     name: "Sentence Shape Variation",
     description: "Break monotonous rhythm by varying sentence length.",
     duration: 420,
@@ -1096,11 +1101,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Break monotonous rhythm by intentionally varying sentence length and structure for dynamic delivery.",
     setup: ["Write or find a paragraph you've written recently."],
     steps: [
-      "1. Write or find a paragraph you've written recently. Count the words in each sentence.",
-      "2. If they're all 12-18 words, you have monotone rhythm.",
-      "3. Rewrite using this pattern: Long (20+ words). Short (3-7 words). Medium (10-15 words). Short. Long. Medium.",
-      "4. Read both versions out loud. The varied version should feel more dynamic and engaging.",
-      "5. Apply this to your next email or speech draft."
+      "Monotone rhythm happens when all your sentences are the same length and structure.",
+      "Write or find a paragraph you've written recently. Count the words in each sentence.",
+      "If they're all 12-18 words, you have monotone rhythm.",
+      "Rewrite using this pattern: Long (20+ words). Short (3-7 words). Medium (10-15 words). Short. Long. Medium.",
+      "Read both versions out loud. The varied version should feel more dynamic and engaging.",
+      "Apply this to your next email or speech draft."
     ],
     modifications: [
       "Make it easier: Mark your sentences as S, M, or L and aim for variation without rewriting yet.",
@@ -1109,8 +1115,8 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Sentence rhythm varied."
   },
   {
-    id: 'clarity_sound_symbolism',
-    name: "Sound Symbolism",
+    id: 'sound_symbolism',
+    name: "Sound Symbolism (Onomatopoeia & Phonesthemes)",
     description: "Use words that sound like what they mean.",
     duration: 360,
     estimatedMinutes: 6,
@@ -1120,11 +1126,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Use words that sound like what they mean to create more visceral, sensory language.",
     setup: ["Write a short description (3-4 sentences) of a scene."],
     steps: [
-      "1. Write a short description (3-4 sentences) of a scene: a busy street, quiet forest, tense conversation, or celebration.",
-      "2. First pass: write it plainly. 'The street was loud. Cars went by. People talked.'",
-      "3. Second pass: rewrite using sound-symbolic words. 'The street roared with traffic. Cars whooshed past. Voices buzzed and chattered.'",
-      "4. Read both out loud. The second should feel more immersive.",
-      "5. Challenge: Describe an emotion using only sound-symbolic and sensory words."
+      "Some words sound like their meaning: 'crash,' 'whisper,' 'slither,' 'boom,' 'hiss,' 'glow.'",
+      "Write a short description (3-4 sentences) of a scene: a busy street, quiet forest, tense conversation, or celebration.",
+      "First pass: write it plainly. 'The street was loud. Cars went by. People talked.'",
+      "Second pass: rewrite using sound-symbolic words. 'The street roared with traffic. Cars whooshed past. Voices buzzed and chattered.'",
+      "Read both out loud. The second should feel more immersive.",
+      "Challenge: Describe an emotion using only sound-symbolic and sensory words."
     ],
     modifications: [
       "Make it easier: Make a list of 20 onomatopoeia words first, then use them in your descriptions.",
@@ -1133,7 +1140,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Sensory language applied."
   },
   {
-    id: 'clarity_word_association',
+    id: 'word_association',
     name: "Word Association Speed Drill",
     description: "Increase mental flexibility in finding related words.",
     duration: 300,
@@ -1144,11 +1151,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Increase your mental flexibility and speed in finding related words, synonyms, and verbal connections.",
     setup: ["Set a timer for 60 seconds. Pick a starting word: 'fire.'"],
     steps: [
-      "1. Set a timer for 60 seconds. Pick a starting word: 'fire.'",
-      "2. Say or write as many related words as you can: burn, heat, flame, smoke, ash, ember, spark, blaze, inferno, warmth, light...",
-      "3. Don't filter or judge — just let your brain free-associate.",
-      "4. Count how many you got. Try again with a new word. Beat your count.",
-      "5. Do this daily with random words. Your retrieval speed will increase, making you more articulate in real-time."
+      "Your brain can get faster at pulling vocabulary if you train it like a muscle.",
+      "Set a timer for 60 seconds. Pick a starting word: 'fire.'",
+      "Say or write as many related words as you can: burn, heat, flame, smoke, ash, ember, spark, blaze, inferno, warmth, light...",
+      "Don't filter or judge — just let your brain free-associate.",
+      "Count how many you got. Try again with a new word. Beat your count.",
+      "Do this daily with random words. Your retrieval speed will increase, making you more articulate in real-time."
     ],
     modifications: [
       "Make it easier: Give yourself 90 seconds instead of 60, or allow pauses between words.",
@@ -1157,8 +1165,8 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Mental speed increased."
   },
   {
-    id: 'clarity_synonym_replacement',
-    name: "Synonym Replacement",
+    id: 'synonym_replacement',
+    name: "Synonym Replacement (Precision Practice)",
     description: "Choose the most precise word instead of the first one.",
     duration: 480,
     estimatedMinutes: 8,
@@ -1168,12 +1176,13 @@ export const communicationPractices: Exercise[] = [
     intention: "Train yourself to choose the most precise word instead of settling for the first one that comes to mind.",
     setup: ["Write a paragraph about anything: a belief, an experience, a process."],
     steps: [
-      "1. Write a paragraph about anything: a belief, an experience, a process.",
-      "2. Circle every verb and adjective.",
-      "3. For each circled word, generate 3 synonyms. Example: 'walked' → 'strolled,' 'marched,' 'wandered.'",
-      "4. Ask: which synonym most accurately captures what I mean? Replace the original if a better word exists.",
-      "5. 'I walked to the meeting' → 'I rushed to the meeting' (if late) or 'I wandered to the meeting' (if relaxed).",
-      "6. Precision makes your language powerful. Practice this weekly."
+      "Lazy vocabulary happens when you use the first word your brain offers, even if it's not quite right.",
+      "Write a paragraph about anything: a belief, an experience, a process.",
+      "Circle every verb and adjective.",
+      "For each circled word, generate 3 synonyms. Example: 'walked' → 'strolled,' 'marched,' 'wandered.'",
+      "Ask: which synonym most accurately captures what I mean? Replace the original if a better word exists.",
+      "'I walked to the meeting' → 'I rushed to the meeting' (if late) or 'I wandered to the meeting' (if relaxed).",
+      "Precision makes your language powerful. Practice this weekly."
     ],
     modifications: [
       "Make it easier: Use a thesaurus to help generate synonym options, then choose the best fit.",
@@ -1182,8 +1191,8 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Precision practiced."
   },
   {
-    id: 'clarity_cadence_mimicry',
-    name: "Cadence Mimicry",
+    id: 'cadence_mimicry',
+    name: "Cadence Mimicry (Learn from the Masters)",
     description: "Study and imitate the verbal rhythms of masters.",
     duration: 540,
     estimatedMinutes: 9,
@@ -1193,12 +1202,13 @@ export const communicationPractices: Exercise[] = [
     intention: "Study and imitate the verbal rhythms of great speakers and writers to internalize effective cadence patterns.",
     setup: ["Find a short passage (1-2 minutes) from a speaker or writer you admire."],
     steps: [
-      "1. Find a short passage (1-2 minutes) from a speaker or writer you admire.",
-      "2. Listen or read it multiple times. Pay attention to sentence length, pauses, repetition, emphasis.",
-      "3. Write out a few sentences exactly as they structured them. Notice the pattern.",
-      "4. Take something you're working on and rewrite 2-3 sentences mimicking their cadence.",
-      "5. Example (mimicking MLK's repetition): 'We must speak with clarity. We must speak with courage. We must speak with conviction.'",
-      "6. Read your version out loud. Does it carry the same weight?"
+      "Cadence is the musicality of speech — the rise and fall, speed and pause.",
+      "Find a short passage (1-2 minutes) from a speaker or writer you admire.",
+      "Listen or read it multiple times. Pay attention to sentence length, pauses, repetition, emphasis.",
+      "Write out a few sentences exactly as they structured them. Notice the pattern.",
+      "Take something you're working on and rewrite 2-3 sentences mimicking their cadence.",
+      "Example (mimicking MLK's repetition): 'We must speak with clarity. We must speak with courage. We must speak with conviction.'",
+      "Read your version out loud. Does it carry the same weight?"
     ],
     modifications: [
       "Make it easier: Start by just reading the passage out loud multiple times to feel the rhythm before mimicking it.",
@@ -1207,8 +1217,8 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Cadence internalised."
   },
   {
-    id: 'clarity_specificity',
-    name: "Concrete vs Abstract",
+    id: 'concrete_specificity',
+    name: "Concrete vs Abstract (Specificity Training)",
     description: "Replace vague language with specific, concrete details.",
     duration: 420,
     estimatedMinutes: 7,
@@ -1218,12 +1228,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Replace vague, abstract language with concrete, specific details that create vivid mental images.",
     setup: ["Write 5 abstract sentences: 'It was a good day.' 'She was upset.' 'The place was nice.' 'He worked hard.' 'The food was amazing.'"],
     steps: [
-      "1. Abstract: 'The meeting was bad.' Concrete: 'The meeting ran 45 minutes over, three people interrupted constantly, and no decisions were made.'",
-      "2. Write 5 abstract sentences: 'It was a good day.' 'She was upset.' 'The place was nice.' 'He worked hard.' 'The food was amazing.'",
-      "3. Rewrite each one with concrete, specific details. Replace vague adjectives with sensory details, numbers, actions.",
-      "4. 'She was upset' → 'She slammed her laptop shut and left without saying goodbye.'",
-      "5. Read both versions. The concrete version creates a movie in your mind.",
-      "6. In your next writing or conversation, catch yourself using abstract language and immediately add concrete detail."
+      "Abstract: 'The meeting was bad.' Concrete: 'The meeting ran 45 minutes over, three people interrupted constantly, and no decisions were made.'",
+      "Write 5 abstract sentences: 'It was a good day.' 'She was upset.' 'The place was nice.' 'He worked hard.' 'The food was amazing.'",
+      "Rewrite each one with concrete, specific details. Replace vague adjectives with sensory details, numbers, actions.",
+      "'She was upset' → 'She slammed her laptop shut and left without saying goodbye.'",
+      "Read both versions. The concrete version creates a movie in your mind.",
+      "In your next writing or conversation, catch yourself using abstract language and immediately add concrete detail."
     ],
     modifications: [
       "Make it easier: Practice with written examples first before trying to speak more concretely in real-time.",
@@ -1232,8 +1242,8 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Language sharpened."
   },
   {
-    id: 'clarity_parallel_structure',
-    name: "Parallel Structure",
+    id: 'parallel_structure',
+    name: "Parallel Structure (Rhetorical Repetition)",
     description: "Use parallel patterns for rhythm and emphasis.",
     duration: 420,
     estimatedMinutes: 7,
@@ -1243,12 +1253,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Use parallel sentence structures to create rhythm, emphasis, and memorability in your speech or writing.",
     setup: ["Pick a point you want to make strongly. Write it as three parallel sentences."],
     steps: [
-      "1. Parallel structure = repeating the same grammatical pattern for emphasis. 'I came. I saw. I conquered.'",
-      "2. Pick a point you want to make strongly. Write it as three parallel sentences.",
-      "3. Example: 'We need leaders who listen. We need leaders who act. We need leaders who care.'",
-      "4. Try different patterns: 'If we [action], then we [result].' or 'This is not about [X]. This is about [Y].'",
-      "5. Practice creating parallel structures for 3 different points or arguments.",
-      "6. Use this technique in your next presentation, email, or important conversation."
+      "Parallel structure = repeating the same grammatical pattern for emphasis. 'I came. I saw. I conquered.'",
+      "Pick a point you want to make strongly. Write it as three parallel sentences.",
+      "Example: 'We need leaders who listen. We need leaders who act. We need leaders who care.'",
+      "Try different patterns: 'If we [action], then we [result].' or 'This is not about [X]. This is about [Y].'",
+      "Practice creating parallel structures for 3 different points or arguments.",
+      "Use this technique in your next presentation, email, or important conversation."
     ],
     modifications: [
       "Make it easier: Start by filling in pre-made templates before creating your own parallel structures.",
@@ -1257,8 +1267,8 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Structure reinforced."
   },
   {
-    id: 'clarity_qualifiers',
-    name: "Eliminate Qualifiers",
+    id: 'eliminate_qualifiers',
+    name: "Eliminate Qualifiers (Confident Language)",
     description: "Remove hedging words that weaken your message.",
     duration: 360,
     estimatedMinutes: 6,
@@ -1268,13 +1278,13 @@ export const communicationPractices: Exercise[] = [
     intention: "Remove hedging words that weaken your message and make you sound uncertain.",
     setup: ["Write or record yourself speaking about an opinion or idea you hold."],
     steps: [
-      "1. Qualifiers dilute your language: 'kind of,' 'sort of,' 'maybe,' 'I think,' 'possibly,' 'probably,' 'just,' 'actually.'",
-      "2. Write or record yourself speaking about an opinion or idea you hold.",
-      "3. Highlight every qualifier. 'I kind of think that maybe we should probably consider...'",
-      "4. Rewrite with all qualifiers removed: 'We should consider...'",
-      "5. Notice how much stronger and clearer it sounds.",
-      "6. Exception: Sometimes uncertainty is honest. But most qualifiers are just fear of commitment.",
-      "7. For one week, catch yourself using qualifiers in conversation and rephrase without them."
+      "Qualifiers dilute your language: 'kind of,' 'sort of,' 'maybe,' 'I think,' 'possibly,' 'probably,' 'just,' 'actually.'",
+      "Write or record yourself speaking about an opinion or idea you hold.",
+      "Highlight every qualifier. 'I kind of think that maybe we should probably consider...'",
+      "Rewrite with all qualifiers removed: 'We should consider...'",
+      "Notice how much stronger and clearer it sounds.",
+      "Exception: Sometimes uncertainty is honest. But most qualifiers are just fear of commitment.",
+      "For one week, catch yourself using qualifiers in conversation and rephrase without them."
     ],
     modifications: [
       "Make it easier: Start by removing qualifiers only in writing, where you have time to edit.",
@@ -1283,7 +1293,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Hedging eliminated."
   },
   {
-    id: 'clarity_active_voice_craft',
+    id: 'active_voice_craft',
     name: "Active Voice Conversion (Energy & Agency)",
     description: "Transform passive constructions into active voice.",
     duration: 360,
@@ -1294,12 +1304,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Transform passive constructions into active voice to make your language more direct, energetic, and clear.",
     setup: ["Find or write 5 passive voice sentences."],
     steps: [
-      "1. Passive voice obscures the actor and drains energy: 'Mistakes were made' (by whom?).",
-      "2. Active voice is direct: 'We made mistakes.'",
-      "3. Find or write 5 passive voice sentences: 'The report was completed by the team.' 'The decision was made.' 'The issue is being addressed.'",
-      "4. Convert each to active: 'The team completed the report.' 'We made the decision.' 'We are addressing the issue.'",
-      "5. Read both versions out loud. Active voice feels more alive and accountable.",
-      "6. In your next piece of writing, scan for 'was,' 'were,' 'is being,' 'has been' and convert to active."
+      "Passive voice obscures the actor and drains energy: 'Mistakes were made' (by whom?).",
+      "Active voice is direct: 'We made mistakes.'",
+      "Find or write 5 passive voice sentences: 'The report was completed by the team.' 'The decision was made.' 'The issue is being addressed.'",
+      "Convert each to active: 'The team completed the report.' 'We made the decision.' 'We are addressing the issue.'",
+      "Read both versions out loud. Active voice feels more alive and accountable.",
+      "In your next piece of writing, scan for 'was,' 'were,' 'is being,' 'has been' and convert to active."
     ],
     modifications: [
       "Make it easier: Use a grammar tool to identify passive voice in your writing first.",
@@ -1308,8 +1318,8 @@ export const communicationPractices: Exercise[] = [
     completionCue: "Energy restored."
   },
   {
-    id: 'clarity_contrast_pairing',
-    name: "Contrast Pairing",
+    id: 'contrast_pairing',
+    name: "Contrast Pairing (The Power of Juxtaposition)",
     description: "Use contrasting ideas side-by-side for impact.",
     duration: 420,
     estimatedMinutes: 7,
@@ -1319,13 +1329,13 @@ export const communicationPractices: Exercise[] = [
     intention: "Use contrasting ideas side-by-side to create memorable, impactful language.",
     setup: ["Pick an idea you want to communicate. Create 3 contrast pairs."],
     steps: [
-      "1. Contrast makes ideas stick: 'Ask not what your country can do for you — ask what you can do for your country.'",
-      "2. The pattern: [Not this] but [that]. [This], not [that]. [This] versus [that].",
-      "3. Pick an idea you want to communicate. Create 3 contrast pairs.",
-      "4. Example: 'We don't need more meetings. We need more action.' or 'Success isn't about working harder. It's about working smarter.'",
-      "5. Practice saying each one out loud with emphasis on the contrasting elements.",
-      "6. Contrast clarifies your position by showing what you reject and what you embrace.",
-      "7. Use one contrast pair in your next pitch, presentation, or argument."
+      "Contrast makes ideas stick: 'Ask not what your country can do for you — ask what you can do for your country.'",
+      "The pattern: [Not this] but [that]. [This], not [that]. [This] versus [that].",
+      "Pick an idea you want to communicate. Create 3 contrast pairs.",
+      "Example: 'We don't need more meetings. We need more action.' or 'Success isn't about working harder. It's about working smarter.'",
+      "Practice saying each one out loud with emphasis on the contrasting elements.",
+      "Contrast clarifies your position by showing what you reject and what you embrace.",
+      "Use one contrast pair in your next pitch, presentation, or argument."
     ],
     modifications: [
       "Make it easier: Start by converting existing statements into contrast pairs using the templates above.",
@@ -1347,11 +1357,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Make your points more engaging and memorable by using a narrative structure.',
     setup: ['Choose a point you want to make.'],
     steps: [
-      '1. Setup: State the initial situation or context.',
-      '2. Conflict: Introduce the challenge or turning point.',
-      '3. Resolution: State the outcome or lesson learned.',
-      '4. Keep it under 60 seconds.',
-      '5. Connect the resolution back to your main point.'
+      'Setup: State the initial situation or context.',
+      'Conflict: Introduce the challenge or turning point.',
+      'Resolution: State the outcome or lesson learned.',
+      'Keep it under 60 seconds.',
+      'Connect the resolution back to your main point.'
     ],
     modifications: [
       'Make it easier: Just use "Before, Then, After" structure.',
@@ -1371,12 +1381,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Learn to grab attention in your first sentence so listeners lean in instead of tuning out.",
     setup: ["Pick a short personal story or anecdote (30 seconds max)."],
     steps: [
-      "1. Pick a short personal story or anecdote (30 seconds max).",
-      "2. Identify the most surprising, emotional, or curiosity-provoking moment in that story.",
-      "3. Write an opening sentence that drops the listener directly into that moment (e.g., \"I was standing on stage and completely forgot my name.\").",
-      "4. Deliver the hook out loud, then pause for 2 full seconds before continuing.",
-      "5. Tell the rest of the story, noticing how the hook reframes everything that follows.",
-      "6. Try 2 more variations of the hook for the same story — one question-based, one sensory."
+      "Pick a short personal story or anecdote (30 seconds max).",
+      "Identify the most surprising, emotional, or curiosity-provoking moment in that story.",
+      "Write an opening sentence that drops the listener directly into that moment (e.g., \"I was standing on stage and completely forgot my name.\").",
+      "Deliver the hook out loud, then pause for 2 full seconds before continuing.",
+      "Tell the rest of the story, noticing how the hook reframes everything that follows.",
+      "Try 2 more variations of the hook for the same story — one question-based, one sensory."
     ],
     modifications: [
       "Make it easier: Use a well-known story or movie plot instead of a personal one.",
@@ -1396,12 +1406,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Use the power of contrast to make your point land with emotional impact.",
     setup: ["Choose a message or lesson you want to communicate."],
     steps: [
-      "1. Choose a message or lesson you want to communicate.",
-      "2. Describe the 'before' state — the problem, the struggle, or the old way of thinking. Use vivid, specific language.",
-      "3. Pause. Let the 'before' sit with the listener for a beat.",
-      "4. Now deliver the 'after' — the shift, the realization, the new state. Make your voice, pace, or energy shift noticeably to mark the contrast.",
-      "5. Repeat the exercise, exaggerating the contrast between before and after even more.",
-      "6. Reflect: where in the flip did you feel the most tension release?"
+      "Choose a message or lesson you want to communicate.",
+      "Describe the 'before' state — the problem, the struggle, or the old way of thinking. Use vivid, specific language.",
+      "Pause. Let the 'before' sit with the listener for a beat.",
+      "Now deliver the 'after' — the shift, the realization, the new state. Make your voice, pace, or energy shift noticeably to mark the contrast.",
+      "Repeat the exercise, exaggerating the contrast between before and after even more.",
+      "Reflect: where in the flip did you feel the most tension release?"
     ],
     modifications: [
       "Make it easier: Write out both the before and after statements first, then read them aloud.",
@@ -1421,12 +1431,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Use strategic silence within a story to build tension, emphasize key moments, and hold attention.",
     setup: ["Take a 1-minute story you can already tell comfortably."],
     steps: [
-      "1. Take a 1-minute story you can already tell comfortably.",
-      "2. Identify three key moments: the setup, the turning point, and the payoff.",
-      "3. Tell the story and insert a deliberate 2–3 second pause right before each key moment.",
-      "4. Notice how the pause changes the weight of what comes after it.",
-      "5. Now try a longer pause (4–5 seconds) before the single most important line. Resist the urge to fill the silence.",
-      "6. Record yourself or tell it to someone — ask which pause felt most powerful."
+      "Take a 1-minute story you can already tell comfortably.",
+      "Identify three key moments: the setup, the turning point, and the payoff.",
+      "Tell the story and insert a deliberate 2–3 second pause right before each key moment.",
+      "Notice how the pause changes the weight of what comes after it.",
+      "Now try a longer pause (4–5 seconds) before the single most important line. Resist the urge to fill the silence.",
+      "Record yourself or tell it to someone — ask which pause felt most powerful."
     ],
     modifications: [
       "Make it easier: Start with just one pause before the ending/payoff line only.",
@@ -1446,12 +1456,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Vary your pitch, pace, and volume within a story to keep listeners emotionally engaged.",
     setup: ["Pick a short story or anecdote (under 2 minutes)."],
     steps: [
-      "1. Pick a short story or anecdote (under 2 minutes).",
-      "2. Tell it once at your normal speaking style. Notice where your voice stays flat.",
-      "3. Now retell it with these rules: slow down and get quieter during emotional or serious moments; speed up and raise energy during exciting or fast-paced moments; drop your pitch when delivering a key insight or punchline.",
-      "4. Exaggerate the dynamics to 150% of what feels natural. It will feel like too much — that is the point.",
-      "5. Dial it back to about 120% of natural. This is your new baseline.",
-      "6. Practice once more and notice how the dynamics guide the listener's emotions."
+      "Pick a short story or anecdote (under 2 minutes).",
+      "Tell it once at your normal speaking style. Notice where your voice stays flat.",
+      "Now retell it with these rules: slow down and get quieter during emotional or serious moments; speed up and raise energy during exciting or fast-paced moments; drop your pitch when delivering a key insight or punchline.",
+      "Exaggerate the dynamics to 150% of what feels natural. It will feel like too much — that is the point.",
+      "Dial it back to about 120% of natural. This is your new baseline.",
+      "Practice once more and notice how the dynamics guide the listener's emotions."
     ],
     modifications: [
       "Make it easier: Focus on varying just one element (pace OR volume OR pitch) rather than all three.",
@@ -1471,17 +1481,17 @@ export const communicationPractices: Exercise[] = [
     intention: "Use a simple fill-in-the-blank framework to quickly structure any story with a clear arc.",
     setup: ["Complete these prompts in order, speaking out loud:"],
     steps: [
-      "1. Complete these prompts in order, speaking out loud:",
-      "   - \"Once upon a time...\" (set the scene/character)",
-      "   - \"Every day...\" (establish the routine/normal)",
-      "   - \"But one day...\" (introduce the disruption)",
-      "   - \"Because of that...\" (first consequence)",
-      "   - \"Because of that...\" (escalation)",
-      "   - \"Until finally...\" (climax/resolution)",
-      "   - \"And ever since then...\" (the new normal/lesson)",
-      "2. Keep each section to 1–2 sentences maximum.",
-      "3. Now retell the whole thing as a fluid story without the prompts.",
-      "4. Reflect: did the structure make the story feel more complete?"
+      "Complete these prompts in order, speaking out loud:",
+      "Once upon a time... (set the scene/character)",
+      "Every day... (establish the routine/normal)",
+      "But one day... (introduce the disruption)",
+      "Because of that... (first consequence)",
+      "Because of that... (escalation)",
+      "Until finally... (climax/resolution)",
+      "And ever since then... (the new normal/lesson)",
+      "Keep each section to 1–2 sentences maximum.",
+      "Now retell the whole thing as a fluid story without the prompts.",
+      "Reflect: did the structure make the story feel more complete?"
     ],
     modifications: [
       "Make it easier: Write out each section first before speaking.",
@@ -1501,12 +1511,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Learn to open multiple story threads and close them in reverse order, creating satisfying narrative depth.",
     setup: ["Think of two short, related stories that connect to a theme."],
     steps: [
-      "1. Think of two short, related stories or examples that connect to a single theme or point.",
-      "2. Begin telling Story A, but stop at a cliffhanger or moment of tension.",
-      "3. Transition into Story B with a bridging phrase (e.g., \"That reminds me of...\" or \"Meanwhile...\").",
-      "4. Complete Story B fully, landing on its insight or conclusion.",
-      "5. Return to Story A and complete it. The listener now hears Story A's ending with Story B's lesson still fresh in their mind.",
-      "6. Reflect: did the nesting make the overall message stronger? Where was the transition smoothest?"
+      "Think of two short, related stories or examples that connect to a single theme or point.",
+      "Begin telling Story A, but stop at a cliffhanger or moment of tension.",
+      "Transition into Story B with a bridging phrase (e.g., \"That reminds me of...\" or \"Meanwhile...\").",
+      "Complete Story B fully, landing on its insight or conclusion.",
+      "Return to Story A and complete it. The listener now hears Story A's ending with Story B's lesson still fresh in their mind.",
+      "Reflect: did the nesting make the overall message stronger? Where was the transition smoothest?"
     ],
     modifications: [
       "Make it easier: Write out both stories and the transition phrases before speaking.",
@@ -1526,12 +1536,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Transport your listener into the moment by engaging specific senses instead of summarizing what happened.",
     setup: ["Think of a moment from your life that was emotionally vivid."],
     steps: [
-      "1. Think of a moment from your life that was emotionally vivid.",
-      "2. Describe it using only sensory details. No opinions, no labels, no emotions by name. Just what you saw, heard, felt physically, smelled, or tasted.",
-      "3. Speak for 30–45 seconds of pure sensory description.",
-      "4. Now add one sentence at the end that names the emotion or insight.",
-      "5. Notice how the sensory setup made that final line hit differently than if you had just said the emotion up front.",
-      "6. Try again with a different moment, aiming to include at least 3 different senses."
+      "Think of a moment from your life that was emotionally vivid.",
+      "Describe it using only sensory details. No opinions, no labels, no emotions by name. Just what you saw, heard, felt physically, smelled, or tasted.",
+      "Speak for 30–45 seconds of pure sensory description.",
+      "Now add one sentence at the end that names the emotion or insight.",
+      "Notice how the sensory setup made that final line hit differently than if you had just said the emotion up front.",
+      "Try again with a different moment, aiming to include at least 3 different senses."
     ],
     modifications: [
       "Make it easier: Focus on just two senses (sight + sound) to start.",
@@ -1551,12 +1561,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Plant a detail early in your story and bring it back at the end for a satisfying payoff that makes your message memorable.",
     setup: ["Choose a story or talking point you use often."],
     steps: [
-      "1. Choose a story or talking point you use often.",
-      "2. Identify a small, specific detail near the beginning (an image, a phrase, an object, a number).",
-      "3. Tell the story, making sure to mention that detail clearly but without emphasizing it.",
-      "4. At the end of the story, bring that detail back — reframe it, give it new meaning, or repeat it with a twist.",
-      "5. Notice the effect. Callbacks create a sense of completeness and make audiences feel rewarded for paying attention.",
-      "6. Practice with a different detail to see which callback lands strongest."
+      "Choose a story or talking point you use often.",
+      "Identify a small, specific detail near the beginning (an image, a phrase, an object, a number).",
+      "Tell the story, making sure to mention that detail clearly but without emphasizing it.",
+      "At the end of the story, bring that detail back — reframe it, give it new meaning, or repeat it with a twist.",
+      "Notice the effect. Callbacks create a sense of completeness and make audiences feel rewarded for paying attention.",
+      "Practice with a different detail to see which callback lands strongest."
     ],
     modifications: [
       "Make it easier: Write the beginning and ending first, then fill in the middle.",
@@ -1576,12 +1586,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Practice raising the stakes progressively within a story so listeners feel increasing investment and urgency.",
     setup: ["Think of a scenario that could escalate."],
     steps: [
-      "1. Start with a low-stakes scenario (e.g., \"I was running late for a meeting.\").",
-      "2. Add a complication that raises the stakes one level (e.g., \"...and it was the meeting where I was presenting to the CEO.\").",
-      "3. Add another complication that raises them again (e.g., \"...and my laptop died in the elevator.\").",
-      "4. Deliver each escalation with slightly more urgency in your voice. Let the stakes build in your delivery, not just your words.",
-      "5. Land on a resolution that addresses the highest stake, not the lowest.",
-      "6. Retell the full story smoothly from start to finish."
+      "Start with a low-stakes scenario (e.g., \"I was running late for a meeting.\").",
+      "Add a complication that raises the stakes one level (e.g., \"...and it was the meeting where I was presenting to the CEO.\").",
+      "Add another complication that raises them again (e.g., \"...and my laptop died in the elevator.\").",
+      "Deliver each escalation with slightly more urgency in your voice. Let the stakes build in your delivery, not just your words.",
+      "Land on a resolution that addresses the highest stake, not the lowest.",
+      "Retell the full story smoothly from start to finish."
     ],
     modifications: [
       "Make it easier: Write out three levels of stakes before speaking.",
@@ -1601,12 +1611,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Distill a story to its emotional core in a single sentence, then expand from there. Clarity before complexity.",
     setup: ["Think of a meaningful experience."],
     steps: [
-      "1. Think of a meaningful experience or a point you want to make.",
-      "2. Capture it in one sentence. Not a summary — a sentence that makes someone feel something (e.g., \"I spent 10 years building something that took 10 seconds to lose.\").",
-      "3. Say it out loud. Does it land? Does it make someone want to ask 'what happened?'",
-      "4. If not, rewrite. Strip out abstractions. Make it concrete and specific.",
-      "5. Once the single sentence works, use it as your hook and tell the full story behind it in under 90 seconds.",
-      "6. The one-sentence version is your anchor — every detail in the longer version should serve it."
+      "Think of a meaningful experience or a point you want to make.",
+      "Capture it in one sentence. Not a summary — a sentence that makes someone feel something (e.g., \"I spent 10 years building something that took 10 seconds to lose.\").",
+      "Say it out loud. Does it land? Does it make someone want to ask 'what happened?'",
+      "If not, rewrite. Strip out abstractions. Make it concrete and specific.",
+      "Once the single sentence works, use it as your hook and tell the full story behind it in under 90 seconds.",
+      "The one-sentence version is your anchor — every detail in the longer version should serve it."
     ],
     modifications: [
       "Make it easier: Look up famous one-sentence story examples for inspiration before writing your own.",
@@ -1626,12 +1636,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Retell the same event from a different person's point of view to build empathy and discover new angles in your stories.",
     setup: ["Pick a story involving at least two people."],
     steps: [
-      "1. Pick a story you already know well — ideally one involving at least two people.",
-      "2. Tell it from your own perspective in about 60 seconds.",
-      "3. Now retell the same event from the other person's perspective. What did they see? What were they feeling? What did they not know that you knew?",
-      "4. Notice what details change, what new emotions emerge, and what becomes more interesting.",
-      "5. Try telling a version that weaves both perspectives together, switching between them.",
-      "6. Reflect: which version is most compelling for your intended audience?"
+      "Pick a story you already know well — ideally one involving at least two people.",
+      "Tell it from your own perspective in about 60 seconds.",
+      "Now retell the same event from the other person's perspective. What did they see? What were they feeling? What did they not know that you knew?",
+      "Notice what details change, what new emotions emerge, and what becomes more interesting.",
+      "Try telling a version that weaves both perspectives together, switching between them.",
+      "Reflect: which version is most compelling for your intended audience?"
     ],
     modifications: [
       "Make it easier: Start with a simple, low-emotion event like a misunderstanding at a coffee shop.",
@@ -1651,11 +1661,11 @@ export const communicationPractices: Exercise[] = [
     intention: "Structure examples, beats, or story points in groups of three for rhythm, memorability, and comedic or dramatic effect.",
     setup: ["Choose a lesson or point to teach."],
     steps: [
-      "1. Choose a point you want to make or a lesson you want to teach.",
-      "2. Come up with three examples, anecdotes, or beats that illustrate it — each escalating in intensity or importance.",
-      "3. Deliver them in sequence: the first sets the pattern, the second confirms the pattern, the third either breaks the pattern (for humor/surprise) or elevates it (for drama/impact).",
-      "4. Pay attention to the rhythm of your delivery. The third beat should have a noticeably different energy — either a pause before it, a shift in tone, or a change in pace.",
-      "5. Try a version where the third element is the twist/punchline, and another where it is the emotional peak."
+      "Choose a point you want to make or a lesson you want to teach.",
+      "Come up with three examples, anecdotes, or beats that illustrate it — each escalating in intensity or importance.",
+      "Deliver them in sequence: the first sets the pattern, the second confirms the pattern, the third either breaks the pattern (for humor/surprise) or elevates it (for drama/impact).",
+      "Pay attention to the rhythm of your delivery. The third beat should have a noticeably different energy — either a pause before it, a shift in tone, or a change in pace.",
+      "Try a version where the third element is the twist/punchline, and another where it is the emotional peak."
     ],
     modifications: [
       "Make it easier: Use a classic joke structure (setup, setup, punchline) as your template.",
@@ -1677,11 +1687,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Reduce emotional intensity by naming what you\'re feeling.',
     setup: ['Pause during a stressful moment.'],
     steps: [
-      '1. Pause and notice the physical sensation.',
-      '2. Name the emotion specifically - not just "bad".',
-      '3. Say it or write it: "I\'m feeling [emotion]".',
-      '4. Notice if intensity decreases.',
-      '5. Use an emotion wheel if needed.'
+      'Pause and notice the physical sensation.',
+      'Name the emotion specifically - not just "bad".',
+      'Say it or write it: "I\'m feeling [emotion]".',
+      'Notice if intensity decreases.',
+      'Use an emotion wheel if needed.'
     ],
     modifications: [
       'Make it easier: Use mad/sad/glad/scared.',
@@ -1701,11 +1711,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Express feelings without blaming to reduce defensiveness.',
     setup: ['Identify a minor annoyance.'],
     steps: [
-      '1. Structure: "I feel [emotion] when [behavior] because [impact]".',
-      '2. Example: "I feel frustrated when meetings start late...".',
-      '3. Avoid "you" statements.',
-      '4. Be specific about behavior, not character.',
-      '5. Practice on minor things first.'
+      'Structure: "I feel [emotion] when [behavior] because [impact]".',
+      'Example: "I feel frustrated when meetings start late...".',
+      'Avoid "you" statements.',
+      'Be specific about behavior, not character.',
+      'Practice on minor things first.'
     ],
     modifications: [
       'Make it easier: Just use "I feel [emotion]" without the full structure.',
@@ -1725,11 +1735,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build trust by acknowledging emotion before problem-solving.',
     setup: ['Next time someone vents to you.'],
     steps: [
-      '1. Listen for the emotion.',
-      '2. Name it: "That sounds really frustrating".',
-      '3. Resist the urge to immediately fix.',
-      '4. Wait for them to feel heard.',
-      '5. If you must advise, ask first.'
+      'Listen for the emotion.',
+      'Name it: "That sounds really frustrating".',
+      'Resist the urge to immediately fix.',
+      'Wait for them to feel heard.',
+      'If you must advise, ask first.'
     ],
     modifications: [
       'Make it easier: Just say "That makes sense".',
@@ -1749,11 +1759,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
     setup: ['Recall a disagreement.'],
     steps: [
-      '1. State their position in your own words.',
-      '2. Ask: what would have to be true for this to make sense?.',
-      '3. Identify their underlying needs/fears.',
-      '4. Share understanding: "From your perspective...".',
-      '5. Notice how this changes your emotional response.'
+      'State their position in your own words.',
+      'Ask: what would have to be true for this to make sense?.',
+      'Identify their underlying needs/fears.',
+      'Share understanding: "From your perspective...".',
+      'Notice how this changes your emotional response.'
     ],
     modifications: [
       'Make it easier: List 3 reasons why they might hold that view.',
@@ -1773,11 +1783,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build connection by sharing strategically.',
     setup: ['In a casual networking setting.'],
     steps: [
-      '1. Ask: is this relevant to what they shared?.',
-      '2. Keep it brief - match their disclosure.',
-      '3. Focus on the feeling/lesson.',
-      '4. Watch their response.',
-      '5. Avoid one-upping or trauma-dumping.'
+      'Ask: is this relevant to what they shared?.',
+      'Keep it brief - match their disclosure.',
+      'Focus on the feeling/lesson.',
+      'Watch their response.',
+      'Avoid one-upping or trauma-dumping.'
     ],
     modifications: [
       'Make it easier: Share only positive experiences.',
@@ -1797,12 +1807,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Defuse tension by acknowledging the other person's point before adding yours—removing the need for them to defend.",
     setup: ["Recall a recent disagreement.", "Take a slow breath."],
     steps: [
-      "1. Think of a recent disagreement or criticism someone directed at you.",
-      "2. Notice your instinct—was it to defend, correct, or explain yourself?",
-      "3. Now reframe using \"Yes, and\": Acknowledge their point first (\"Yes, I can see how that came across...\") then add your perspective (\"...and what I was trying to do was...\").",
-      "4. Practice this out loud with three different scenarios: a work criticism, a personal misunderstanding, and a small conflict.",
-      "5. The key is removing your ego—you're not agreeing they're right, you're validating that you heard them.",
-      "6. Reflect: which scenario felt hardest to say \"yes\" to? That's where your ego is strongest."
+      "Think of a recent disagreement or criticism someone directed at you.",
+      "Notice your instinct—was it to defend, correct, or explain yourself?",
+      "Now reframe using \"Yes, and\": Acknowledge their point first (\"Yes, I can see how that came across...\") then add your perspective (\"...and what I was trying to do was...\").",
+      "Practice this out loud with three different scenarios: a work criticism, a personal misunderstanding, and a small conflict.",
+      "The key is removing your ego—you're not agreeing they're right, you're validating that you heard them.",
+      "Reflect: which scenario felt hardest to say \"yes\" to? That's where your ego is strongest."
     ],
     modifications: [
       "Make it easier: Write out both your defensive response and your \"yes, and\" response to see the difference visually.",
@@ -1822,12 +1832,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Focus on the issue, not the individual, so the conversation stays productive instead of personal.",
     setup: ["Identify a conflict where you felt attacked.", "Prepare to reframe."],
     steps: [
-      "1. Recall a conflict where you felt attacked or blamed by someone.",
-      "2. Identify what the actual problem was versus how the person delivered the message.",
-      "3. Practice restating the conflict in neutral, non-personal language: Replace \"You always...\" with \"The issue is...\" or \"What happened was...\"",
-      "4. Say your reframed version out loud. Does it remove the emotional charge?",
-      "5. Now imagine delivering this reframe to the other person. Keep your tone calm and matter-of-fact.",
-      "6. Practice this reframing with two more conflicts—one from work, one from personal life."
+      "Recall a conflict where you felt attacked or blamed by someone.",
+      "Identify what the actual problem was versus how the person delivered the message.",
+      "Practice restating the conflict in neutral, non-personal language: Replace \"You always...\" with \"The issue is...\" or \"What happened was...\"",
+      "Say your reframed version out loud. Does it remove the emotional charge?",
+      "Now imagine delivering this reframe to the other person. Keep your tone calm and matter-of-fact.",
+      "Practice this reframing with two more conflicts—one from work, one from personal life."
     ],
     modifications: [
       "Make it easier: Start with hypothetical conflicts instead of real ones to practice the language pattern.",
@@ -1847,12 +1857,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Use strategic silence to prevent reactive responses and create space for thoughtful conflict resolution.",
     setup: ["Find a quiet moment or use a practice partner."],
     steps: [
-      "1. Think of a time you responded too quickly in a conflict and regretted it.",
-      "2. Set a mental rule: When someone says something that triggers you, count to three before responding.",
-      "3. Practice this physically: Have a partner say something mildly provocative (e.g., \"You're always late\"), and you pause for a full 3 seconds before replying.",
-      "4. During those 3 seconds, take one deep breath and ask yourself: \"What do they actually need to hear right now?\"",
-      "5. Respond from that calmer place. Notice how the quality of your response changes.",
-      "6. Repeat with progressively more emotionally charged statements."
+      "Think of a time you responded too quickly in a conflict and regretted it.",
+      "Set a mental rule: When someone says something that triggers you, count to three before responding.",
+      "Practice this physically: Have a partner say something mildly provocative (e.g., \"You're always late\"), and you pause for a full 3 seconds before replying.",
+      "During those 3 seconds, take one deep breath and ask yourself: \"What do they actually need to hear right now?\"",
+      "Respond from that calmer place. Notice how the quality of your response changes.",
+      "Repeat with progressively more emotionally charged statements."
     ],
     modifications: [
       "Make it easier: Practice the pause alone first by imagining triggering statements and counting before your mental response.",
@@ -1872,12 +1882,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Express your perspective without blame, making it easier for the other person to hear you.",
     setup: ["Think of a recurring frustration.", "Have a notepad ready."],
     steps: [
-      "1. Pick a conflict where you felt hurt or frustrated by someone's behavior.",
-      "2. Notice how you naturally want to frame it: \"You did X\" or \"You made me feel Y.\"",
-      "3. Rewrite using the I-Statement formula: \"When [situation], I felt [emotion] because [need/impact].\"",
-      "4. Example: Instead of \"You never listen to me,\" say \"When I was talking earlier and the conversation shifted, I felt unheard because I really wanted your input on that.\"",
-      "5. Practice saying three I-Statements out loud for three different conflicts.",
-      "6. Notice how this removes accusation and invites collaboration instead of defense."
+      "Pick a conflict where you felt hurt or frustrated by someone's behavior.",
+      "Notice how you naturally want to frame it: \"You did X\" or \"You made me feel Y.\"",
+      "Rewrite using the I-Statement formula: \"When [situation], I felt [emotion] because [need/impact].\"",
+      "Example: Instead of \"You never listen to me,\" say \"When I was talking earlier and the conversation shifted, I felt unheard because I really wanted your input on that.\"",
+      "Practice saying three I-Statements out loud for three different conflicts.",
+      "Notice how this removes accusation and invites collaboration instead of defense."
     ],
     modifications: [
       "Make it easier: Use a fill-in-the-blank template to structure your I-Statements before saying them aloud.",
@@ -1897,12 +1907,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Ask open questions to understand the other person's perspective before defending or reacting.",
     setup: ["Identify a common misunderstanding."],
     steps: [
-      "1. Think of a recent conflict where you assumed you knew what the other person meant or wanted.",
-      "2. Identify the assumption you made. Was it accurate? Did it escalate the conflict?",
-      "3. Now practice asking clarifying questions instead: \"Help me understand—what did you mean by that?\" or \"What would a good solution look like for you?\"",
-      "4. The goal is curiosity, not interrogation. Your tone should be genuinely open.",
-      "5. Role-play with a partner: they state a vague complaint (\"You don't respect my time\"), and you ask 2-3 clarifying questions before responding.",
-      "6. Reflect: did asking questions change what you thought the conflict was about?"
+      "Think of a recent conflict where you assumed you knew what the other person meant or wanted.",
+      "Identify the assumption you made. Was it accurate? Did it escalate the conflict?",
+      "Now practice asking clarifying questions instead: \"Help me understand—what did you mean by that?\" or \"What would a good solution look like for you?\"",
+      "The goal is curiosity, not interrogation. Your tone should be genuinely open.",
+      "Role-play with a partner: they state a vague complaint (\"You don't respect my time\"), and you ask 2-3 clarifying questions before responding.",
+      "Reflect: did asking questions change what you thought the conflict was about?"
     ],
     modifications: [
       "Make it easier: Write out clarifying questions for past conflicts to build your question bank.",
@@ -1922,12 +1932,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Acknowledge the emotional reality beneath the conflict to create connection and reduce defensiveness.",
     setup: ["Center yourself.", "Identify a felt emotion."],
     steps: [
-      "1. Recall a conflict that felt emotionally intense but was supposedly about something \"small.\"",
-      "2. Ask yourself: what emotion was I actually feeling? (e.g., disrespected, unseen, anxious, dismissed)",
-      "3. Now guess: what emotion might the other person have been feeling?",
-      "4. Practice saying both out loud: \"I was feeling [your emotion], and I think you were feeling [their emotion].\"",
-      "5. Role-play with a partner: one person shares a conflict, the other tries to name both emotions accurately before offering any solution.",
-      "6. Naming emotions disarms conflict faster than logic. Test this in your next disagreement."
+      "Recall a conflict that felt emotionally intense but was supposedly about something \"small.\"",
+      "Ask yourself: what emotion was I actually feeling? (e.g., disrespected, unseen, anxious, dismissed)",
+      "Now guess: what emotion might the other person have been feeling?",
+      "Practice saying both out loud: \"I was feeling [your emotion], and I think you were feeling [their emotion].\"",
+      "Role-play with a partner: one person shares a conflict, the other tries to name both emotions accurately before offering any solution.",
+      "Naming emotions disarms conflict faster than logic. Test this in your next disagreement."
     ],
     modifications: [
       "Make it easier: Use an emotion wheel or list to help you identify emotions beyond \"angry\" or \"upset.\"",
@@ -1947,12 +1957,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Frame what you need as a request instead of a demand to invite collaboration, not resistance.",
     setup: ["Identify a need.", "Practice a soft opening."],
     steps: [
-      "1. Think of something you want someone to do differently (e.g., reply faster, listen more, follow through).",
-      "2. Notice how you'd naturally say it. Does it sound like a demand? (\"You need to...\" / \"You should...\")",
-      "3. Reframe as a request using this structure: \"Would you be willing to [specific behavior]? It would help me because [reason].\"",
-      "4. Example: Instead of \"You need to text me back faster,\" try \"Would you be willing to send a quick reply when you see my message, even if it's just to say you'll respond later? It helps me feel less anxious.\"",
-      "5. Practice making three requests out loud for three different needs.",
-      "6. Notice how requests create space for negotiation; demands create resistance."
+      "Think of something you want someone to do differently (e.g., reply faster, listen more, follow through).",
+      "Notice how you'd naturally say it. Does it sound like a demand? (\"You need to...\" / \"You should...\")",
+      "Reframe as a request using this structure: \"Would you be willing to [specific behavior]? It would help me because [reason].\"",
+      "Example: Instead of \"You need to text me back faster,\" try \"Would you be willing to send a quick reply when you see my message, even if it's just to say you'll respond later? It helps me feel less anxious.\"",
+      "Practice making three requests out loud for three different needs.",
+      "Notice how requests create space for negotiation; demands create resistance."
     ],
     modifications: [
       "Make it easier: Write out the request first, then practice saying it in a calm, non-urgent tone.",
@@ -1972,12 +1982,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Deliver a clean, complete apology that repairs trust instead of defending yourself.",
     setup: ["Own your actions.", "Remove the caveats."],
     steps: [
-      "1. Think of a time you hurt someone or made a mistake in a relationship.",
-      "2. Notice your instinct—did you want to explain, justify, or add \"but I didn't mean to\" or \"but you also...\"?",
-      "3. Practice a three-part apology: (1) \"I'm sorry for [specific behavior].\" (2) \"I understand that it [impact on them].\" (3) \"Going forward, I'll [corrective action].\"",
-      "4. Example: \"I'm sorry for interrupting you during the meeting. I understand that it made you feel disrespected. Going forward, I'll wait until you're done before I jump in.\"",
-      "5. Say it out loud. Did you add a \"but\"? If so, remove it and try again.",
-      "6. A real apology has no defense in it. It just acknowledges harm and commits to change."
+      "Think of a time you hurt someone or made a mistake in a relationship.",
+      "Notice your instinct—did you want to explain, justify, or add \"but I didn't mean to\" or \"but you also...\"?",
+      "Practice a three-part apology: (1) \"I'm sorry for [specific behavior].\" (2) \"I understand that it [impact on them].\" (3) \"Going forward, I'll [corrective action].\"",
+      "Example: \"I'm sorry for interrupting you during the meeting. I understand that it made you feel disrespected. Going forward, I'll wait until you're done before I jump in.\"",
+      "Say it out loud. Did you add a \"but\"? If so, remove it and try again.",
+      "A real apology has no defense in it. It just acknowledges harm and commits to change."
     ],
     modifications: [
       "Make it easier: Write out the three parts separately, then practice combining them smoothly.",
@@ -1997,12 +2007,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Shift from opposing positions to shared interests so both people feel they can win.",
     setup: ["Map the conflict.", "Dig beneath the surface."],
     steps: [
-      "1. Think of a conflict where you and someone else wanted different things (e.g., you wanted quiet, they wanted to play music).",
-      "2. Identify your positions (what each person said they wanted).",
-      "3. Now dig deeper: what need was each position trying to meet? (e.g., your need: focus; their need: energy/mood boost)",
-      "4. Ask: is there a solution that meets both needs? (e.g., they use headphones, or you work in a different room, or they play music at certain times)",
-      "5. Practice this with three past conflicts: position → underlying need → creative solution.",
-      "6. Shared needs create collaboration; opposing positions create war."
+      "Think of a conflict where you and someone else wanted different things (e.g., you wanted quiet, they wanted to play music).",
+      "Identify your positions (what each person said they wanted).",
+      "Now dig deeper: what need was each position trying to meet? (e.g., your need: focus; their need: energy/mood boost)",
+      "Ask: is there a solution that meets both needs? (e.g., they use headphones, or you work in a different room, or they play music at certain times)",
+      "Practice this with three past conflicts: position → underlying need → creative solution.",
+      "Shared needs create collaboration; opposing positions create war."
     ],
     modifications: [
       "Make it easier: Use a worksheet to map positions vs. needs visually before brainstorming solutions.",
@@ -2022,12 +2032,12 @@ export const communicationPractices: Exercise[] = [
     intention: "Re-establish connection after a heated conflict by taking responsibility for your part, regardless of who was 'right.'",
     setup: ["Identify an escalated conflict.", "Prepare a bridge."],
     steps: [
-      "1. Think of a conflict that escalated and left both people feeling bad.",
-      "2. Identify one thing you did that didn't help (raised your voice, shut down, brought up old issues, etc.).",
-      "3. Reach out within 24 hours with a repair statement: \"Hey, I didn't handle that well. I [specific behavior] and I'm sorry. Can we talk?\"",
-      "4. The goal isn't to rehash the argument—it's to re-open the relationship.",
-      "5. Practice saying a repair statement out loud for three past conflicts.",
-      "6. Repair isn't about who was right. It is about choosing connection over being right."
+      "Think of a conflict that escalated and left both people feeling bad.",
+      "Identify one thing you did that didn't help (raised your voice, shut down, brought up old issues, etc.).",
+      "Reach out within 24 hours with a repair statement: \"Hey, I didn't handle that well. I [specific behavior] and I'm sorry. Can we talk?\"",
+      "The goal isn't to rehash the argument—it's to re-open the relationship.",
+      "Practice saying a repair statement out loud for three past conflicts.",
+      "Repair isn't about who was right. It is about choosing connection over being right."
     ],
     modifications: [
       "Make it easier: Send the repair message via text first if face-to-face feels too vulnerable.",
@@ -2049,12 +2059,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build your ability to speak concisely and compellingly under time pressure without rambling.',
     setup: ['Choose a simple topic.', 'Set a timer.'],
     steps: [
-      '1. Pick a simple topic: a memorable meal, a recent challenge, or something that made you laugh.',
-      '2. Set a timer for 60 seconds and speak continuously about that topic out loud.',
-      '3. Your goal: beginning, middle, end. Don\'t just list facts—tell it like a story with a point.',
-      '4. Record yourself if possible. Listen back: Did you use filler words? Did you finish on time? Was there a clear point?',
-      '5. Repeat with a new topic. This time, focus on eliminating "um," "like," "you know."',
-      '6. Do this three times total with three different topics. Notice how you get sharper each round.'
+      'Pick a simple topic: a memorable meal, a recent challenge, or something that made you laugh.',
+      'Set a timer for 60 seconds and speak continuously about that topic out loud.',
+      'Your goal: beginning, middle, end. Don\'t just list facts—tell it like a story with a point.',
+      'Record yourself if possible. Listen back: Did you use filler words? Did you finish on time? Was there a clear point?',
+      'Repeat with a new topic. This time, focus on eliminating "um," "like," "you know."',
+      'Do this three times total with three different topics. Notice how you get sharper each round.'
     ],
     modifications: [
       'Make it easier: Write out bullet points for beginning, middle, and end before speaking.',
@@ -2074,12 +2084,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Use your body to shift your nervous system from anxiety to confidence before you speak.',
     setup: ['Find a private space.'],
     steps: [
-      '1. Before your next presentation, meeting, or even a phone call, find a private space.',
-      '2. Stand in a "power pose" for 2 minutes: feet wide, hands on hips or raised in a V, chin up, chest open.',
-      '3. Breathe deeply and slowly. Imagine yourself speaking with authority and ease.',
-      '4. Notice the shift in your body: do you feel more grounded? More energy? Less collapsed?',
-      '5. Immediately after, practice your opening line out loud in that same physical state.',
-      '6. Use this ritual before every speaking opportunity for one week. Track how your confidence changes.'
+      'Before your next presentation, meeting, or even a phone call, find a private space.',
+      'Stand in a "power pose" for 2 minutes: feet wide, hands on hips or raised in a V, chin up, chest open.',
+      'Breathe deeply and slowly. Imagine yourself speaking with authority and ease.',
+      'Notice the shift in your body: do you feel more grounded? More energy? Less collapsed?',
+      'Immediately after, practice your opening line out loud in that same physical state.',
+      'Use this ritual before every speaking opportunity for one week. Track how your confidence changes.'
     ],
     modifications: [
       'Make it easier: Start with just 1 minute of power posing and do it alone at home before practicing out loud.',
@@ -2099,12 +2109,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Train your voice to use pitch, pace, and volume intentionally to keep your audience engaged.',
     setup: ['Prepare a simple sentence.', 'Choose a book paragraph.'],
     steps: [
-      '1. Choose a simple sentence: "I didn\'t say she took the money."',
-      '2. Say it out loud 7 times, each time emphasizing a different word: "I didn\'t..." "I DIDN\'T..." "I didn\'t SAY..." etc.',
-      '3. Notice how the meaning shifts with emphasis. This is vocal variety in action.',
-      '4. Now pick a paragraph from a book or article. Read it out loud three times: (1) monotone, (2) exaggerated, (3) natural middle.',
-      '5. Record all three and listen. Which one kept your attention best?',
-      '6. Practice this daily with different content for one week.'
+      'Choose a simple sentence: "I didn\'t say she took the money."',
+      'Say it out loud 7 times, each time emphasizing a different word: "I didn\'t..." "I DIDN\'T..." "I didn\'t SAY..." etc.',
+      'Notice how the meaning shifts with emphasis. This is vocal variety in action.',
+      'Now pick a paragraph from a book or article. Read it out loud three times: (1) monotone, (2) exaggerated, (3) natural middle.',
+      'Record all three and listen. Which one kept your attention best?',
+      'Practice this daily with different content for one week.'
     ],
     modifications: [
       'Make it easier: Start with just one sentence and practice emphasizing different words.',
@@ -2124,12 +2134,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build authentic connection with your audience by distributing eye contact deliberately instead of scanning or staring.',
     setup: ['Pick 3-5 objects or people as anchors.'],
     steps: [
-      '1. When you speak to a group, pick 3-5 "anchor points"—specific individuals spread across the room.',
-      '2. As you speak, hold eye contact with one anchor point for 3-5 seconds (one complete thought), then move to the next.',
-      '3. Practice this alone: set up 3-5 objects around a room (chairs, pillows, etc.) as your anchors.',
-      '4. Deliver a 2-minute talk to the objects, holding "eye contact" with each for 3-5 seconds at a time.',
-      '5. This trains you to avoid: staring at one person too long, scanning too fast, or looking at the floor/ceiling.',
-      '6. Next time you speak to a real group, use this anchor point method. Notice how it calms your nerves and makes others feel included.'
+      'When you speak to a group, pick 3-5 "anchor points"—specific individuals spread across the room.',
+      'As you speak, hold eye contact with one anchor point for 3-5 seconds (one complete thought), then move to the next.',
+      'Practice this alone: set up 3-5 objects around a room (chairs, pillows, etc.) as your anchors.',
+      'Deliver a 2-minute talk to the objects, holding "eye contact" with each for 3-5 seconds at a time.',
+      'This trains you to avoid: staring at one person too long, scanning too fast, or looking at the floor/ceiling.',
+      'Next time you speak to a real group, use this anchor point method. Notice how it calms your nerves and makes others feel included.'
     ],
     modifications: [
       'Make it easier: Practice with just one or two anchor points.',
@@ -2149,12 +2159,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Use strategic pauses to emphasize key points, reduce filler words, and project confidence.',
     setup: ['Choose a short speech or pitch (1-2 minutes).'],
     steps: [
-      '1. Identify 3 places where a pause would add impact.',
-      '2. Deliver the speech out loud and insert a full 3-second pause at each marked spot.',
-      '3. The pause comes after a key point or before an important statement. Let the silence land.',
-      '4. Record yourself. Listen back—the pauses probably sound powerful.',
-      '5. Every time you feel "um" or "like" rising, replace it with a 1-2 second pause instead.',
-      '6. Practice this in everyday conversation.'
+      'Identify 3 places where a pause would add impact.',
+      'Deliver the speech out loud and insert a full 3-second pause at each marked spot.',
+      'The pause comes after a key point or before an important statement. Let the silence land.',
+      'Record yourself. Listen back—the pauses probably sound powerful.',
+      'Every time you feel "um" or "like" rising, replace it with a 1-2 second pause instead.',
+      'Practice this in everyday conversation.'
     ],
     modifications: [
       'Make it easier: Start by adding pauses only in scripted, practiced talks.',
@@ -2174,13 +2184,13 @@ export const communicationPractices: Exercise[] = [
     intention: 'Project your voice and energy so the entire room feels included, not just the people in front of you.',
     setup: ['Stand in a large room or open space.'],
     steps: [
-      '1. Stand in one corner of a room.',
-      '2. Imagine someone standing 20-30 feet away who needs to hear you clearly.',
-      '3. Speak a full sentence at your normal volume.',
-      '4. Now speak from your diaphragm: stand tall, breathe deep, and project from your core.',
-      '5. Say the same sentence again with full projection. It should feel louder but not strained.',
-      '6. Practice delivering a 1-minute talk at this projection level.',
-      '7. Aim your energy toward the back, and the front will feel included too.'
+      'Stand in one corner of a room.',
+      'Imagine someone standing 20-30 feet away who needs to hear you clearly.',
+      'Speak a full sentence at your normal volume.',
+      'Now speak from your diaphragm: stand tall, breathe deep, and project from your core.',
+      'Say the same sentence again with full projection. It should feel louder but not strained.',
+      'Practice delivering a 1-minute talk at this projection level.',
+      'Aim your energy toward the back, and the front will feel included too.'
     ],
     modifications: [
       'Make it easier: Practice by reading out loud to an empty room.',
@@ -2200,12 +2210,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build confidence responding to questions, even when you don\'t know the answer or face silence.',
     setup: ['Record 5-10 potential questions.'],
     steps: [
-      '1. Record 5-10 potential questions someone might ask after your talk.',
-      '2. Set a timer for 30 seconds per question. Answer each one out loud, concisely and confidently.',
-      '3. Now add 2-3 curveball questions—ones you don\'t know the answer to.',
-      '4. Practice responding honestly: "That\'s a great question—I don\'t have that data in front of me, but I\'d be happy to follow up."',
-      '5. Practice "I\'m not sure, but here\'s what I do know..."',
-      '6. Confidence is staying composed when you don\'t have all the answers.'
+      'Record 5-10 potential questions someone might ask after your talk.',
+      'Set a timer for 30 seconds per question. Answer each one out loud, concisely and confidently.',
+      'Now add 2-3 curveball questions—ones you don\'t know the answer to.',
+      'Practice responding honestly: "That\'s a great question—I don\'t have that data in front of me, but I\'d be happy to follow up."',
+      'Practice "I\'m not sure, but here\'s what I do know..."',
+      'Confidence is staying composed when you don\'t have all the answers.'
     ],
     modifications: [
       'Make it easier: Write out your answers to expected questions first.',
@@ -2225,12 +2235,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Hook your audience immediately so they lean in instead of tuning out.',
     setup: ['Identify an upcoming talk topic.'],
     steps: [
-      '1. Avoid weak openings: "Um, hi everyone, thanks for having me...".',
-      '2. Choose a strong opening: bold statement, question, story, or striking stat.',
-      '3. Script your opening 10 seconds. Memorize it.',
-      '4. Deliver it with conviction out loud.',
-      '5. Practice it 5 times until it feels natural, not robotic.',
-      '6. Strong openings buy you patience from the audience.'
+      'Avoid weak openings: "Um, hi everyone, thanks for having me...".',
+      'Choose a strong opening: bold statement, question, story, or striking stat.',
+      'Script your opening 10 seconds. Memorize it.',
+      'Deliver it with conviction out loud.',
+      'Practice it 5 times until it feels natural, not robotic.',
+      'Strong openings buy you patience from the audience.'
     ],
     modifications: [
       'Make it easier: Write out 3 different opening options and test each one.',
@@ -2250,12 +2260,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Speak like you\'re talking to a friend, not performing a script, so your audience trusts and connects with you.',
     setup: ['Prepare a paragraph from a formal script.'],
     steps: [
-      '1. Read the formal paragraph out loud exactly as written.',
-      '2. Now rewrite it as if you\'re explaining it to a friend over coffee.',
-      '3. Use contractions, simpler words, shorter sentences.',
-      '4. Read both versions out loud. Which one sounds more like you?',
-      '5. Practice your next talk in conversational language.',
-      '6. Imagine you\'re speaking to one person, not a crowd.'
+      'Read the formal paragraph out loud exactly as written.',
+      'Now rewrite it as if you\'re explaining it to a friend over coffee.',
+      'Use contractions, simpler words, shorter sentences.',
+      'Read both versions out loud. Which one sounds more like you?',
+      'Practice your next talk in conversational language.',
+      'Imagine you\'re speaking to one person, not a crowd.'
     ],
     modifications: [
       'Make it easier: Start by converting just your opening and closing.',
@@ -2275,13 +2285,13 @@ export const communicationPractices: Exercise[] = [
     intention: 'See and hear yourself as your audience does so you can identify and fix distracting habits.',
     setup: ['Set up your phone to record video.'],
     steps: [
-      '1. Deliver a 2-3 minute talk on any topic and record it.',
-      '2. Watch the full recording without judgment—just observe.',
-      '3. Look for: filler words, fidgeting, lack of eye contact, low energy.',
-      '4. Pick ONE thing to improve.',
-      '5. Re-record the same talk focusing only on fixing that one habit.',
-      '6. Compare the two recordings. Did you improve?',
-      '7. Repeat this weekly with different talks.'
+      'Deliver a 2-3 minute talk on any topic and record it.',
+      'Watch the full recording without judgment—just observe.',
+      'Look for: filler words, fidgeting, lack of eye contact, low energy.',
+      'Pick ONE thing to improve.',
+      'Re-record the same talk focusing only on fixing that one habit.',
+      'Compare the two recordings. Did you improve?',
+      'Repeat this weekly with different talks.'
     ],
     modifications: [
       'Make it easier: Start with audio-only recordings if video feels too vulnerable.',
@@ -2301,12 +2311,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Use hand gestures intentionally to reinforce your message instead of distracting from it.',
     setup: ['Stand in front of a mirror.'],
     steps: [
-      '1. Watch your hands while speaking for 1 minute.',
-      '2. Practice three core gestures: Open hands (inclusivity), Pointing/Chopping (emphasis), Counting (structure).',
-      '3. Deliver your talk again using these gestures deliberately at key moments.',
-      '4. Your hands should match your words (e.g. "three reasons" = three fingers).',
-      '5. Eliminate nervous gestures like pockets or wringing hands.',
-      '6. Aim for natural but purposeful movement.'
+      'Watch your hands while speaking for 1 minute.',
+      'Practice three core gestures: Open hands (inclusivity), Pointing/Chopping (emphasis), Counting (structure).',
+      'Deliver your talk again using these gestures deliberately at key moments.',
+      'Your hands should match your words (e.g. "three reasons" = three fingers).',
+      'Eliminate nervous gestures like pockets or wringing hands.',
+      'Aim for natural but purposeful movement.'
     ],
     modifications: [
       'Make it easier: Practice gestures alone with a mirror before trying in front of people.',
@@ -2326,12 +2336,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Channel nervous energy into focused energy using a repeatable pre-speech routine.',
     setup: ['Identify a repeatable 5-minute window.'],
     steps: [
-      '1. 2 minutes: Power pose + deep breathing.',
-      '2. 1 minute: Vocal warm-up (hum, tongue twisters).',
-      '3. 1 minute: Visualization (see yourself succeeding).',
-      '4. 1 minute: Shake out your body, release tension.',
-      '5. Practice this ritual before low-stakes speaking like meetings.',
-      '6. Use the same ritual every time to signal to your body you\'re ready.'
+      '2 minutes: Power pose + deep breathing.',
+      '1 minute: Vocal warm-up (hum, tongue twisters).',
+      '1 minute: Visualization (see yourself succeeding).',
+      '1 minute: Shake out your body, release tension.',
+      'Practice this ritual before low-stakes speaking like meetings.',
+      'Use the same ritual every time to signal to your body you\'re ready.'
     ],
     modifications: [
       'Make it easier: Start with just one element (breathing or power posing).',
@@ -2351,12 +2361,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Develop the ability to hold a room with just your voice and presence—no crutches.',
     setup: ['Pick a topic you know well.', 'Set an 8-minute timer.'],
     steps: [
-      '1. Speak for 3 minutes with no slides, no notes, no aids—just talking.',
-      '2. Focus on: intro, 3 points, conclusion.',
-      '3. Use vocal variety and intentional pauses.',
-      '4. Record yourself. Did you keep the "imaginary audience" engaged?',
-      '5. Repeat weekly with different topics.',
-      '6. Build your confidence that YOU are the presentation.'
+      'Speak for 3 minutes with no slides, no notes, no aids—just talking.',
+      'Focus on: intro, 3 points, conclusion.',
+      'Use vocal variety and intentional pauses.',
+      'Record yourself. Did you keep the "imaginary audience" engaged?',
+      'Repeat weekly with different topics.',
+      'Build your confidence that YOU are the presentation.'
     ],
     modifications: [
       'Make it easier: Use 3 bullet points on a notecard as a backup.',
@@ -2376,12 +2386,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Leave your audience with a clear takeaway and emotional resonance, not a weak trailing-off.',
     setup: ['Review your next talk closing.'],
     steps: [
-      '1. Identify your current closing. Is it a weak "Any questions?".',
-      '2. Script your closing 15 seconds: call to action, opening callback, or powerful quote.',
-      '3. Practice three variations: (1) Call to action, (2) Inspirational close, (3) Story callback.',
-      '4. Deliver each one out loud. Which feels most authentic?',
-      '5. Memorize your final line. Deliver it with conviction, then STOP.',
-      '6. No rambling after the final line.'
+      'Identify your current closing. Is it a weak "Any questions?".',
+      'Script your closing 15 seconds: call to action, opening callback, or powerful quote.',
+      'Practice three variations: (1) Call to action, (2) Inspirational close, (3) Story callback.',
+      'Deliver each one out loud. Which feels most authentic?',
+      'Memorize your final line. Deliver it with conviction, then STOP.',
+      'No rambling after the final line.'
     ],
     modifications: [
       'Make it easier: Write out your full closing word-for-word and memorize it.',
@@ -2401,12 +2411,12 @@ export const communicationPractices: Exercise[] = [
     intention: 'Build your ability to speak coherently on any topic with zero preparation.',
     setup: ['Get a random word generator.'],
     steps: [
-      '1. Get a random word or topic.',
-      '2. Take exactly 5 seconds to think.',
-      '3. Speak for 60 seconds using this structure: Point → Example → Point.',
-      '4. Don\'t aim for perfection—aim for coherence.',
-      '5. Do this daily with different random topics.',
-      '6. Your brain will get faster at organizing thoughts on the fly.'
+      'Get a random word or topic.',
+      'Take exactly 5 seconds to think.',
+      'Speak for 60 seconds using this structure: Point → Example → Point.',
+      'Don\'t aim for perfection—aim for coherence.',
+      'Do this daily with different random topics.',
+      'Your brain will get faster at organizing thoughts on the fly.'
     ],
     modifications: [
       'Make it easier: Extend your prep time to 15-30 seconds.',
@@ -2428,11 +2438,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Reduce ambiguity and defensiveness when delivering feedback to colleagues or team members.',
     setup: ['Think of a specific instance where someone\'s behavior needs correction.'],
     steps: [
-      '1. Situation: Describe the exact time and place.',
-      '2. Behavior: Describe the specific observable action (no judgments).',
-      '3. Impact: Describe the effect it had on you or the project.',
-      '4. Pause and allow the other person to respond.',
-      '5. Collaboratively discuss a better approach for next time.'
+      'Situation: Describe the exact time and place.',
+      'Behavior: Describe the specific observable action (no judgments).',
+      'Impact: Describe the effect it had on you or the project.',
+      'Pause and allow the other person to respond.',
+      'Collaboratively discuss a better approach for next time.'
     ],
     modifications: [
       'Make it easier: Practice writing it out before speaking.',
@@ -2452,11 +2462,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Navigate the "Radical Candor" quadrant to build high-trust working relationships.',
     setup: ['Prepare for a 1-on-1 or performance review.'],
     steps: [
-      '1. Care Personally: Show genuine interest in the person\'s growth and well-being.',
-      '2. Challenge Directly: Be clear and un-sugarcoated about what needs to improve.',
-      '3. Avoid Ruinous Empathy: Don\'t withhold truth to protect feelings.',
-      '4. Avoid Obnoxious Aggression: Don\'t challenge without caring.',
-      '5. Ask: "Is this message clear, and do you know I have your back?"'
+      'Care Personally: Show genuine interest in the person\'s growth and well-being.',
+      'Challenge Directly: Be clear and un-sugarcoated about what needs to improve.',
+      'Avoid Ruinous Empathy: Don\'t withhold truth to protect feelings.',
+      'Avoid Obnoxious Aggression: Don\'t challenge without caring.',
+      'Ask: "Is this message clear, and do you know I have your back?"'
     ],
     modifications: [
       'Make it easier: Start by finding one thing you genuinely appreciate about the person.',
@@ -2476,11 +2486,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Ensure every meeting has a clear purpose and measurable outcome.',
     setup: ['Open a meeting invite or calendar event.'],
     steps: [
-      '1. State the Objective: "By the end of this meeting, we will have decided X."',
-      '2. List 3 key discussion points in logical order.',
-      '3. Define the desired outcome for each point (e.g., "Inform", "Discuss", "Decide").',
-      '4. Assign a time limit to each section.',
-      '5. Circulate the agenda at least 2 hours before the start.'
+      'Objective: "By the end of this meeting, we will have decided X."',
+      'List 3 key discussion points in logical order.',
+      'Define the desired outcome for each point (e.g., "Inform", "Discuss", "Decide").',
+      'Assign a time limit to each section.',
+      'Circulate the agenda at least 2 hours before the start.'
     ],
     modifications: [
       'Make it easier: Use a simple "Objective + 3 Bullets" template.',
@@ -2500,11 +2510,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Project professionalism and engagement during remote meetings.',
     setup: ['Open your webcam or a video preview app.'],
     steps: [
-      '1. Check your lighting: Primary light should be in front of you, not behind.',
-      '2. Position the camera at eye level (use a stand or books).',
-      '3. Frame yourself: Head and shoulders visible, with a small gap above your head.',
-      '4. Clean your background: Remove clutter that might distract listeners.',
-      '5. Look directly into the lens, not the screen, when speaking.'
+      'Check your lighting: Primary light should be in front of you, not behind.',
+      'Position the camera at eye level (use a stand or books).',
+      'Frame yourself: Head and shoulders visible, with a small gap above your head.',
+      'Clean your background: Remove clutter that might distract listeners.',
+      'Look directly into the lens, not the screen, when speaking.'
     ],
     modifications: [
       'Make it easier: Just fix one element (lighting or height).',
@@ -2524,11 +2534,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Write subject lines that tell the recipient exactly what is needed without opening the email.',
     setup: ['Open your drafts folder.'],
     steps: [
-      '1. Identify the core ask: [Action Needed], [Decision], [Info Only].',
-      '2. Put the action in brackets at the start.',
-      '3. Follow with a specific, noun-heavy summary (e.g., "Project X Q3 Budget").',
-      '4. Include the deadline if applicable.',
-      '5. Review: Can they triage this from a smartphone notification?'
+      'Identify the core ask: [Action Needed], [Decision], [Info Only].',
+      'Put the action in brackets at the start.',
+      'Follow with a specific, noun-heavy summary (e.g., "Project X Q3 Budget").',
+      'Include the deadline if applicable.',
+      'Review: Can they triage this from a smartphone notification?'
     ],
     modifications: [
       'Make it easier: Just practice the [Action] bracket for 3 emails.',
@@ -2548,11 +2558,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Eliminate "Digital Split-Focus" to build trust and comprehension in remote settings.',
     setup: ['Join a low-stakes video meeting.'],
     steps: [
-      '1. Close all tabs and apps not required for the meeting.',
-      '2. Put your phone in another room or face-down.',
-      '3. Resize the video window to be directly under the camera lens.',
-      '4. Practice "Active Looking": nod and use facial expressions as if in person.',
-      '5. Notice when your eyes drift to a second monitor and correct it immediately.'
+      'Close all tabs and apps not required for the meeting.',
+      'Put your phone in another room or face-down.',
+      'Resize the video window to be directly under the camera lens.',
+      'Practice "Active Looking": nod and use facial expressions as if in person.',
+      'Notice when your eyes drift to a second monitor and correct it immediately.'
     ],
     modifications: [
       'Make it easier: Do this for just the first 5 minutes of a meeting.',
@@ -2572,11 +2582,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Consolidate multiple short messages into one clear "pulse" of information.',
     setup: ['Before hitting "Enter" on a Slack/Teams message.'],
     steps: [
-      '1. Draft your message. If it\'s "Hey", "How\'s it going?", "Got a sec?"—STOP.',
-      '2. Combine the greeting, the context, and the ask into one paragraph.',
-      '3. Use bullet points for multiple items.',
-      '4. Use bold text for the specific action needed.',
-      '5. Hit enter only when the full "thought" is ready.'
+      'Draft your message. If it\'s "Hey", "How\'s it going?", "Got a sec?"—STOP.',
+      'Combine the greeting, the context, and the ask into one paragraph.',
+      'Use bullet points for multiple items.',
+      'Use bold text for the specific action needed.',
+      'Hit enter only when the full "thought" is ready.'
     ],
     modifications: [
       'Make it easier: Practice this with one teammate you know well.',
@@ -2596,11 +2606,11 @@ export const communicationPractices: Exercise[] = [
     intention: 'Prevent "Negative Bias" in text-based communication by adding intentional warmth.',
     setup: ['Review a "cold" or purely factual email draft.'],
     steps: [
-      '1. Read the text as if you were in a bad mood. Does it sound rude or abrupt?.',
-      '2. Add a specific positive opener: "Hope you had a great weekend!".',
-      '3. Calibrate punctuation: Replace one period with an exclamation point if appropriate.',
-      '4. Use an emoji to clarify intent (e.g., a smiley after a correction).',
-      '5. Ensure the "closing" is warm: "Thanks for your help with this".'
+      'Read the text as if you were in a bad mood. Does it sound rude or abrupt?.',
+      'Add a specific positive opener: "Hope you had a great weekend!".',
+      'Calibrate punctuation: Replace one period with an exclamation point if appropriate.',
+      'Use an emoji to clarify intent (e.g., a smiley after a correction).',
+      'Ensure the "closing" is warm: "Thanks for your help with this".'
     ],
     modifications: [
       'Make it easier: Just add a greeting and a sign-off.',
