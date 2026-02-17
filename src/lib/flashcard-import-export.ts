@@ -174,6 +174,7 @@ export async function exportDecks(
       // APKG requires SQL.js and complex schema building.
       // For now, we export a ZIP of the JSON data as a high-fidelity placeholder
       // until the full WASM-based Anki generator is implemented.
+      // NOTE: Anki fully supports JPG and PNG formats for images.
       const zip = new JSZip();
       zip.file("collection.json", JSON.stringify({ decks, cards }));
       const content = await zip.generateAsync({ type: "blob" });

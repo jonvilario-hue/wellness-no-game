@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, FileDown, Layers, Loader2 } from 'lucide-react';
+import { Download, FileDown, Layers, Loader2, ImageIcon } from 'lucide-react';
 import { exportDecks, type ExportFormat } from '@/lib/flashcard-import-export';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -62,13 +62,13 @@ export function ExportDialog({ open, onOpenChange, deckId }: ExportDialogProps) 
 
         <div className="space-y-6 py-4">
           <div className="space-y-2">
-            <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Export Format</Label>
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Export Format</Label>
             <Select value={format} onValueChange={(v: ExportFormat) => setFormat(v)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="json">JSON (Full Fidelity)</SelectItem>
+                <SelectItem value="json">JSON (Full Fidelity - Includes Images)</SelectItem>
                 <SelectItem value="csv">CSV (Excel Compatible)</SelectItem>
                 <SelectItem value="markdown">Markdown (.md)</SelectItem>
                 <SelectItem value="text">Plain Text (.txt)</SelectItem>
@@ -78,7 +78,7 @@ export function ExportDialog({ open, onOpenChange, deckId }: ExportDialogProps) 
           </div>
 
           <div className="space-y-3">
-            <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Options</Label>
+            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Options</Label>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Checkbox id="scheduling" checked={includeScheduling} onCheckedChange={(v) => setIncludeScheduling(!!v)} />
@@ -89,6 +89,13 @@ export function ExportDialog({ open, onOpenChange, deckId }: ExportDialogProps) 
                 <Label htmlFor="settings" className="text-sm">Include deck algorithm settings</Label>
               </div>
             </div>
+          </div>
+
+          <div className="p-3 bg-primary/5 rounded-lg border border-primary/10 flex items-start gap-3">
+            <ImageIcon className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <p className="text-[10px] text-muted-foreground leading-relaxed">
+              Note: Image data is exported as Base64 strings within the JSON format, ensuring compatibility with modern Spaced Repetition tools.
+            </p>
           </div>
         </div>
 
