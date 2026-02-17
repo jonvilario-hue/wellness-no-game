@@ -192,8 +192,6 @@ export default function DeckSettingsPage() {
     
     setValue('activePreset', type, { shouldDirty: true });
     setTimeout(() => { isInternalUpdate.current = false; }, 0);
-    
-    toast({ title: `Applied ${type.charAt(0).toUpperCase() + type.slice(1)} Preset`, variant: 'success' });
   };
 
   // Watch all values to detect manual changes
@@ -265,7 +263,7 @@ export default function DeckSettingsPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-20">
+    <div className="max-w-4xl mx-auto space-y-8 pb-24">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
           <Button asChild variant="ghost" className="mb-2 p-0 hover:bg-transparent text-muted-foreground hover:text-primary">
@@ -614,10 +612,23 @@ export default function DeckSettingsPage() {
 
         </Accordion>
         
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-md border-t z-50 flex justify-center">
-          <Button type="submit" size="lg" disabled={!isDirty} className="bg-primary text-primary-foreground min-w-[300px] h-14 text-lg font-black shadow-2xl shadow-primary/40 hover:scale-105 transition-transform">
-            <Save className="mr-2 h-6 w-6"/> LOCK IN CONFIGURATION
-          </Button>
+        {/* COMPACT FLOATING SAVE ACTION */}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-background/40 backdrop-blur-sm border border-primary/10 rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hidden sm:block">
+              {isDirty ? 'Unsaved Changes' : 'Configuration Synced'}
+            </p>
+            <div className="w-px h-4 bg-primary/10 hidden sm:block" />
+            <Button 
+              type="submit" 
+              size="sm" 
+              disabled={!isDirty} 
+              className="rounded-full h-8 px-6 font-bold bg-primary text-primary-foreground shadow-sm transition-all hover:scale-105 active:scale-95"
+            >
+              <Save className="mr-2 h-3.5 w-3.5"/> 
+              Lock In
+            </Button>
+          </div>
         </div>
       </form>
     </div>
