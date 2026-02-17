@@ -1,17 +1,15 @@
-
 "use client"
 
 import { movementExercises, type ExerciseCategory } from "@/data/exercises"
 import CategoryOverview from "./CategoryOverview"
 import { movementCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
-import { ChevronDown, HeartPulse, Zap } from "lucide-react"
+import { ChevronDown, HeartPulse, Zap, Play } from "lucide-react"
 import { MovementDashboard } from "./MovementDashboard"
 import { useWellnessData } from "@/hooks/use-wellness-data"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
-import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { kits } from "@/data/wellness-kits"
 import { Badge } from "@/components/ui/badge"
 
@@ -139,8 +137,6 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
                 </details>
             )
         })}
-
-        <WellnessActivityCalendar categoryFilter="Movement" />
     </div>
   )
 }
