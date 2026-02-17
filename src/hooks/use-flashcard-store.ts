@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -59,6 +58,7 @@ type FlashcardStore = {
   updateDeck: (deckId: string, updates: Partial<Deck>) => void;
   deleteDeck: (deckId: string) => void;
   addCard: (card: { front: string; back: string; deckId: string; type: CardType; tags?: string[] }) => void;
+  addCards: (cards: { front: string; back: string; deckId: string; type: CardType; tags?: string[] }[]) => void;
   updateCard: (updatedCard: Card) => void;
   deleteCard: (cardId: string) => void;
 };
@@ -113,6 +113,25 @@ export const useFlashcardStore = create<FlashcardStore>()(
             }],
           };
         }),
+      addCards: (newCards) =>
+        set((state) => {
+          const createdCards = newCards.map(card => {
+            const deck = state.decks.find(d => d.id === card.deckId);
+            const ease = deck?.settings.startingEase || 2.5;
+            return {
+              id: crypto.randomUUID(),
+              ...card,
+              interval: 0,
+              easeFactor: ease,
+              repetitions: 0,
+              lapses: 0,
+              dueDate: new Date().toISOString(),
+            };
+          });
+          return {
+            cards: [...state.cards, ...createdCards],
+          };
+        }),
       updateCard: (updatedCard) =>
         set((state) => ({
           cards: state.cards.map((c) => (c.id === updatedCard.id ? updatedCard : c)),
@@ -123,10 +142,9 @@ export const useFlashcardStore = create<FlashcardStore>()(
         })),
     }),
     {
-      name: 'flashcard-storage-v4', // Updated version for new schema
+      name: 'flashcard-storage-v4',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
-        // Migration: Ensure all decks have full settings
         if (state?.decks) {
           state.decks = state.decks.map(deck => ({
             ...deck,

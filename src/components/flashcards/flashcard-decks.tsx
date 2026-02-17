@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { PlusCircle, Layers, Play, Upload, Download, Settings, CalendarDays } from 'lucide-react';
 import { DeckDialog } from '@/components/flashcards/deck-dialog';
+import { ImportDialog } from '@/components/flashcards/import-dialog';
+import { ExportDialog } from '@/components/flashcards/export-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AddToCalendarDialog } from '../study/add-to-calendar-dialog';
@@ -15,6 +17,9 @@ import { AssistantTooltip } from '../assistant-tooltip';
 export function FlashcardDecks() {
   const { decks, cards } = useFlashcardStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  
   const { toast } = useToast();
   
   const getDeckStats = (deckId: string) => {
@@ -39,6 +44,12 @@ export function FlashcardDecks() {
                 <CardDescription>Organize your cards into decks for focused study sessions.</CardDescription>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                    <Button onClick={() => setIsImportOpen(true)} variant="outline" size="sm" className="font-bold border-primary/20">
+                        <Upload className="mr-2 h-4 w-4" /> Import
+                    </Button>
+                    <Button onClick={() => setIsExportOpen(true)} variant="outline" size="sm" className="font-bold border-primary/20">
+                        <Download className="mr-2 h-4 w-4" /> Export All
+                    </Button>
                     <Button onClick={() => setIsDialogOpen(true)} variant="secondary" size="sm" className="font-bold">
                         <PlusCircle className="mr-2 h-4 w-4" /> Create Deck
                     </Button>
@@ -102,6 +113,14 @@ export function FlashcardDecks() {
             open={isDialogOpen}
             onOpenChange={setIsDialogOpen}
             deckToEdit={null}
+        />
+        <ImportDialog 
+          open={isImportOpen}
+          onOpenChange={setIsImportOpen}
+        />
+        <ExportDialog 
+          open={isExportOpen}
+          onOpenChange={setIsExportOpen}
         />
     </Card>
   );

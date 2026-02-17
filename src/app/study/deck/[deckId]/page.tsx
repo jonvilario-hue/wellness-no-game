@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -7,9 +6,11 @@ import Link from 'next/link';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { ArrowLeft, PlusCircle, Edit, Trash2, Play, Settings, Tag } from 'lucide-react';
+import { ArrowLeft, PlusCircle, Edit, Trash2, Play, Settings, Tag, Download, Upload, MoreHorizontal } from 'lucide-react';
 import { CardDialog } from '@/components/flashcards/card-dialog';
 import { DeckDialog } from '@/components/flashcards/deck-dialog';
+import { ExportDialog } from '@/components/flashcards/export-dialog';
+import { ImportDialog } from '@/components/flashcards/import-dialog';
 import type { Card as CardType } from '@/types/flashcards';
 import {
   AlertDialog,
@@ -22,6 +23,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 
 export default function DeckPage() {
@@ -36,6 +44,8 @@ export default function DeckPage() {
   const [isCardDialogOpen, setIsCardDialogOpen] = useState(false);
   const [cardToEdit, setCardToEdit] = useState<CardType | null>(null);
   const [isDeckDialogOpen, setIsDeckDialogOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   
   const handleOpenCardDialog = (card: CardType | null) => {
     setCardToEdit(card);
@@ -65,11 +75,35 @@ export default function DeckPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-        <div>
+        <div className="flex-grow">
           <Button asChild variant="ghost" className="mb-2 p-0 hover:bg-transparent text-muted-foreground hover:text-primary">
             <Link href="/study"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Hub</Link>
           </Button>
-          <h1 className="text-4xl font-bold font-headline tracking-tight">{deck.name}</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-4xl font-bold font-headline tracking-tight">{deck.name}</h1>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full"><MoreHorizontal className="w-5 h-5" /></Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem onClick={() => setIsDeckDialogOpen(true)}>
+                  <Edit className="mr-2 h-4 w-4" /> Edit Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsExportOpen(true)}>
+                  <Download className="mr-2 h-4 w-4" /> Export This Deck
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsImportOpen(true)}>
+                  <Upload className="mr-2 h-4 w-4" /> Import Cards Into Here
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href={`/study/deck/${deckId}/settings`}>
+                    <Settings className="mr-2 h-4 w-4" /> Algorithm Settings
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <p className="text-muted-foreground mt-1">{deck.description || "No description provided."}</p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
@@ -177,6 +211,17 @@ export default function DeckPage() {
         open={isDeckDialogOpen}
         onOpenChange={setIsDeckDialogOpen}
         deckToEdit={isDeckDialogOpen ? deck : null}
+      />
+
+      <ExportDialog 
+        open={isExportOpen}
+        onOpenChange={setIsExportOpen}
+        deckId={deckId}
+      />
+
+      <ImportDialog 
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
       />
     </div>
   );
