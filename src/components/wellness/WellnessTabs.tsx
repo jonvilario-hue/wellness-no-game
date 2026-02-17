@@ -61,7 +61,7 @@ function WellnessTabsContent({ filterTags = [] }: WellnessTabsProps) {
             <AssistantTooltip text="Evidence-based dialogue and interpersonal practices.">
               <TabsTrigger value="communication" className="gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
                 <MessageSquare className="w-4 h-4 hidden sm:inline"/>
-                Comm
+                Communication
               </TabsTrigger>
             </AssistantTooltip>
             
