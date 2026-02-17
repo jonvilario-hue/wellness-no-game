@@ -89,7 +89,7 @@ export function ThemeProvider({
         '--accent': theme.colorScheme.tertiary,
         '--accent-foreground': theme.colorScheme.textPrimary,
         '--destructive': theme.colorScheme.destructive,
-        '--destructive-foreground': theme.colorScheme.accentForeground,
+        '--destructive-foreground': '0 0% 100%', // Always high-contrast white for red backgrounds
         '--border': theme.colorScheme.textPrimary + ' / 0.1',
         '--input': theme.colorScheme.textPrimary + ' / 0.1',
         '--ring': theme.colorScheme.accent,
