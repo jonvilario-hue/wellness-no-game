@@ -6,7 +6,7 @@ import {
   ListChecks, Map, Trash2, Gift, Repeat, RefreshCcw, 
   Layers, Link as LinkIcon, ShieldCheck, X, Users, Lightbulb,
   Briefcase, MonitorSmartphone, Shield, Bell, CheckCircle2, 
-  LayoutGrid, Pointer, TrendingUp, DoorOpen
+  LayoutGrid, Pointer, TrendingUp, DoorOpen, HeartPulse
 } from 'lucide-react';
 import type { Exercise } from './exercises';
 
@@ -689,7 +689,7 @@ export const communicationPractices: Exercise[] = [
     ],
     modifications: [
       'Easier: Just mention one other person who did it.',
-      'Harder: Layer experts + peers + statistics.'
+      'Harder: Layer multiple forms of social proof (experts + peers + statistics).'
     ],
     completionCue: 'Framing tested? Done.'
   },
@@ -729,8 +729,8 @@ export const communicationPractices: Exercise[] = [
     intention: 'Shape decisions by emphasizing gains or losses (Kahneman & Tversky).',
     setup: ['Take a message you need to deliver.'],
     steps: [
-      '1. Frame A (Positive): emphasize what they\'ll gain ("Save $200").',
-      '2. Frame B (Negative): emphasize what they\'ll lose ("Lose $200").',
+      '1. Frame A (Positive): emphasize what they\'ll gain/keep ("Save $200").',
+      '2. Frame B (Negative): emphasize what they\'ll lose/avoid ("Lose $200").',
       '3. Choose based on context: positive for risk-averse, negative for urgency.',
       '4. Test both in low-stakes situations.',
       '5. Notice which one triggers more action.'
@@ -1171,7 +1171,8 @@ export const communicationPractices: Exercise[] = [
       '2. Sit arm\'s length from camera.',
       '3. Check framing: head and shoulders visible, space above head.',
       '4. Lighting: face the light source, avoid backlighting.',
-      '5. Background: clean, non-distracting, or use a subtle blur.'
+      '5. Background: clean, non-distracting, or use a subtle blur.',
+      '6. Test before important calls.'
     ],
     modifications: [
       'Easier: Just raise your laptop to eye level.',
@@ -1272,8 +1273,8 @@ export const communicationPractices: Exercise[] = [
       '5. Collaborate on solution: "How could we handle that differently next time?"'
     ],
     modifications: [
-      'Easier: Use just Behavior + Impact if Situation is obvious.',
-      'Harder: Layer in positive SBI before corrective SBI.'
+      'Make it easier: Use just Behavior + Impact if Situation is obvious.',
+      'Make it harder: Layer in positive SBI before corrective SBI.'
     ],
     completionCue: 'Feedback structured. Ready to deliver.'
   },
@@ -1296,8 +1297,8 @@ export const communicationPractices: Exercise[] = [
       '5. Follow up: check in on progress and offer support.'
     ],
     modifications: [
-      'Easier: Start with "praise specifically, criticize specifically" formula.',
-      'Harder: Give radical candor upward to your manager.'
+      'Make it easier: Start with "praise specifically, criticize specifically" formula.',
+      'Make it harder: Give radical candor upward to your manager.'
     ],
     completionCue: 'Conversation plan set. Candor enabled.'
   },
@@ -1320,8 +1321,8 @@ export const communicationPractices: Exercise[] = [
       '5. Listen to their needs and feelings in return.'
     ],
     modifications: [
-      'Easier: Use just Observation + Request.',
-      'Harder: Use full NVC in heated conflicts.'
+      'Make it easier: Use just Observation + Request.',
+      'Make it harder: Use full NVC in heated conflicts.'
     ],
     completionCue: 'Request framed with empathy. Done.'
   },
@@ -1344,8 +1345,8 @@ export const communicationPractices: Exercise[] = [
       '5. Pool all viewpoints before deciding.'
     ],
     modifications: [
-      'Easier: Just pause and establish mutual purpose when tension rises.',
-      'Harder: Facilitate crucial conversations for groups.'
+      'Make it easier: Just pause and establish mutual purpose when tension rises.',
+      'Make it harder: Facilitate crucial conversations for groups.'
     ],
     completionCue: 'Safety established. Conversation can proceed.'
   },
@@ -1368,8 +1369,8 @@ export const communicationPractices: Exercise[] = [
       '5. Get trusted feedback from a mentor.'
     ],
     modifications: [
-      'Easier: Focus on just one element (communication).',
-      'Harder: Adapt presence across different cultures.'
+      'Make it easier: Focus on just one element (communication).',
+      'Make it harder: Adapt presence across different cultures.'
     ],
     completionCue: 'Presence audited. Ready to lead.'
   },
@@ -1392,8 +1393,8 @@ export const communicationPractices: Exercise[] = [
       '5. Update proactively on high-visibility projects.'
     ],
     modifications: [
-      'Easier: Just send weekly status updates.',
-      'Harder: Anticipate their concerns and address them first.'
+      'Make it easier: Just send weekly status updates.',
+      'Make it harder: Anticipate their concerns and address them first.'
     ],
     completionCue: 'Manager aligned. Path cleared.'
   },
@@ -1416,8 +1417,8 @@ export const communicationPractices: Exercise[] = [
       '5. Revisit and adjust as needed.'
     ],
     modifications: [
-      'Easier: Set just one boundary and hold it.',
-      'Harder: Navigate boundary-setting with difficult cultures.'
+      'Make it easier: Set just one boundary and hold it.',
+      'Make it harder: Navigate boundary-setting with difficult cultures.'
     ],
     completionCue: 'Boundaries communicated. Space protected.'
   },
