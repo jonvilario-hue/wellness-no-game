@@ -109,12 +109,15 @@ export type WellnessState = {
   updateNetWorth: (assets: Record<string, number>, liabilities: Record<string, number>) => void;
   
   addMealLog: (log: Omit<MealLog, 'id'>) => void;
+  deleteMealLog: (id: string) => void;
   copyDayLog: (fromDate: string, toDate: string) => void;
   addWater: (date: string, amount: number) => void;
   addWeight: (date: string, weight: number) => void;
 
   addMovementLog: (log: Omit<MovementLog, 'id'>) => void;
+  deleteMovementLog: (id: string) => void;
   addStillnessLog: (log: Omit<StillnessLog, 'id'>) => void;
+  deleteStillnessLog: (id: string) => void;
   
   addRoutine: (routine: Omit<CustomRoutine, 'id' | 'createdAt'>) => void;
   deleteRoutine: (id: string) => void;
@@ -164,6 +167,9 @@ export const useWellnessData = create<WellnessState>()(
       addMealLog: (log) => set((state) => ({
         mealLogs: [{ ...log, id: crypto.randomUUID() }, ...state.mealLogs]
       })),
+      deleteMealLog: (id) => set((state) => ({
+        mealLogs: state.mealLogs.filter(l => l.id !== id)
+      })),
       copyDayLog: (fromDate, toDate) => set((state) => {
         const fromLogs = state.mealLogs.filter(l => l.date === fromDate);
         const newLogs = fromLogs.map(l => ({ ...l, id: crypto.randomUUID(), date: toDate }));
@@ -195,8 +201,14 @@ export const useWellnessData = create<WellnessState>()(
           movementProgress: newProgress
         };
       }),
+      deleteMovementLog: (id) => set((state) => ({
+        movementLogs: state.movementLogs.filter(l => l.id !== id)
+      })),
       addStillnessLog: (log) => set((state) => ({
         stillnessLogs: [{ ...log, id: crypto.randomUUID() }, ...state.stillnessLogs]
+      })),
+      deleteStillnessLog: (id) => set((state) => ({
+        stillnessLogs: state.stillnessLogs.filter(l => l.id !== id)
       })),
 
       addRoutine: (routine) => set((state) => ({

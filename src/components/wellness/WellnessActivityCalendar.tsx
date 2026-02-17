@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -8,10 +7,11 @@ import { format, isSameDay } from "date-fns";
 import { useWellnessData } from "@/hooks/use-wellness-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, HeartPulse, Waves, History, Utensils, Wallet } from "lucide-react";
+import { Plus, HeartPulse, Waves, History, Utensils, Wallet, Trash2 } from "lucide-react";
 import { WellnessLogDialog } from "./WellnessLogDialog";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from '@/hooks/use-toast';
 
 interface WellnessActivityCalendarProps {
   categoryFilter?: 'Movement' | 'Stillness' | 'Nutrition' | 'Finance';
@@ -20,9 +20,13 @@ interface WellnessActivityCalendarProps {
 export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCalendarProps) {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [mounted, setMounted] = useState(false);
-  const { movementLogs, stillnessLogs, mealLogs, transactions } = useWellnessData();
+  const { 
+    movementLogs, stillnessLogs, mealLogs, transactions,
+    deleteMovementLog, deleteStillnessLog, deleteMealLog, deleteTransaction
+  } = useWellnessData();
   const [isLogOpen, setIsLogOpen] = useState(false);
   const [logType, setLogType] = useState<'movement' | 'stillness' | 'nutrition' | 'finance'>('movement');
+  const { toast } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -57,6 +61,24 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
   const handleAddLog = (type: typeof logType) => {
     setLogType(type);
     setIsLogOpen(true);
+  };
+
+  const handleDelete = (log: any) => {
+    switch (log.type) {
+      case 'Movement':
+        deleteMovementLog(log.id);
+        break;
+      case 'Stillness':
+        deleteStillnessLog(log.id);
+        break;
+      case 'Nutrition':
+        deleteMealLog(log.id);
+        break;
+      case 'Finance':
+        deleteTransaction(log.id);
+        break;
+    }
+    toast({ title: "Log Deleted", variant: 'default' });
   };
 
   const activityDates = useMemo(() => {
@@ -128,7 +150,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
                 </div>
               ) : (
                 dayLogs.map((log, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-muted/30 transition-all group">
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-muted/30 transition-all group relative">
                     <div className="flex items-center gap-4">
                       <div className={cn(
                         "p-2.5 rounded-full transition-colors", 
@@ -151,6 +173,14 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
                         </p>
                       </div>
                     </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-all"
+                      onClick={() => handleDelete(log)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 ))
               )}
