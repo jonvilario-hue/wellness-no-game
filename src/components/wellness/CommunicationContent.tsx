@@ -15,7 +15,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import type { Exercise } from "@/data/exercises"
+import { CommunicationDashboard } from "./CommunicationDashboard"
 
 const categories: CommunicationCategory[] = [
   'Vocal Mechanics', 'Active Listening', 'Nonverbal', 'Conversation Structure', 
@@ -102,6 +104,8 @@ export default function CommunicationContent() {
 
     return (
      <div className="space-y-8">
+        <CommunicationDashboard />
+        
         <div className="flex justify-between items-center px-1">
           <h2 className="text-2xl font-black uppercase tracking-tighter">Communication Library</h2>
           <Button onClick={() => { setTargetCategory('Vocal Mechanics'); setIsFormOpen(true); }} className="font-bold gap-2">

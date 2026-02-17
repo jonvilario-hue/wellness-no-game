@@ -19,6 +19,7 @@ import { format } from 'date-fns';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
 import { wellnessPlans } from '@/data/wellness-plans';
+import { WellnessBalance } from '@/components/wellness/WellnessBalance';
 import Link from 'next/link';
 
 export default function ExercisesPage() {
@@ -120,12 +121,35 @@ export default function ExercisesPage() {
                 <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
                   <div className="flex justify-between items-start">
                       <div className="flex-grow">
-                        <CollapsibleContent>
+                        <CollapsibleContent className="space-y-8">
                             <div className="flex flex-col items-center text-center pb-4">
                                 <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
                                 <h1 className="text-4xl font-bold font-headline tracking-tight">Health Check</h1>
                                 <p className="text-lg text-muted-foreground">Actionable wellness for body and brain. Log your daily reps.</p>
                             </div>
+
+                            {/* PLANS SECTION (Now inside collapsible) */}
+                            <div className="space-y-3">
+                              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Journey Plans</h3>
+                              <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+                                {wellnessPlans.map((plan) => (
+                                  <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[280px]">
+                                    <Card className="hover:border-primary/50 transition-all h-full group">
+                                      <CardHeader className="p-4">
+                                        <CardTitle className="text-base">{plan.title}</CardTitle>
+                                        <CardDescription className="text-[10px] uppercase font-black">{plan.steps.length} DAYS</CardDescription>
+                                      </CardHeader>
+                                      <CardContent className="p-4 pt-0">
+                                        <p className="text-xs text-muted-foreground line-clamp-2">{plan.description}</p>
+                                      </CardContent>
+                                    </Card>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* GLOBAL BALANCE (Now inside collapsible and global) */}
+                            <WellnessBalance />
                         </CollapsibleContent>
                       </div>
                     <CollapsibleTrigger asChild>
@@ -136,26 +160,6 @@ export default function ExercisesPage() {
                     </CollapsibleTrigger>
                   </div>
                 </Collapsible>
-
-                {/* PLANS SECTION */}
-                <div className="space-y-3">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Journey Plans</h3>
-                  <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4">
-                    {wellnessPlans.map((plan) => (
-                      <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[280px]">
-                        <Card className="hover:border-primary/50 transition-all h-full group">
-                          <CardHeader className="p-4">
-                            <CardTitle className="text-base">{plan.title}</CardTitle>
-                            <CardDescription className="text-[10px] uppercase font-black">{plan.steps.length} DAYS</CardDescription>
-                          </CardHeader>
-                          <CardContent className="p-4 pt-0">
-                            <p className="text-xs text-muted-foreground line-clamp-2">{plan.description}</p>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
 
                 <div className="flex flex-col items-center gap-4">
                     <div className={cn(
