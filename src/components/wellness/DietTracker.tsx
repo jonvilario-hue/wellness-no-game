@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -19,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
+import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 
 export function DietTracker() {
     const { 
@@ -76,7 +78,7 @@ export function DietTracker() {
         addMealLog({
             date: dateStr,
             mealType: 'Snacks',
-            calories: 150, // Minimal token calories
+            calories: 150, 
             protein: 0,
             carbs: 0,
             fat: 0,
@@ -99,8 +101,6 @@ export function DietTracker() {
 
     const handleWaterIconClick = (index: number) => {
         const targetLevel = index + 1;
-        // If clicking the current highest active icon, uncheck it (decrement by 1)
-        // Otherwise, set the level to the clicked icon's position
         const newLevel = currentWaterCount === targetLevel ? index : targetLevel;
         addWater(dateStr, newLevel - currentWaterCount);
     };
@@ -200,6 +200,8 @@ export function DietTracker() {
                 </Card>
             </div>
 
+            <WellnessActivityCalendar categoryFilter="Nutrition" />
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                     {showAdd && (
@@ -224,53 +226,10 @@ export function DietTracker() {
                                         <Input type="number" value={mealForm.calories || ''} onChange={e => setMealForm({ ...mealForm, calories: parseInt(e.target.value) || 0 })} />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Protein (g)</Label>
-                                        <Input type="number" value={mealForm.protein || ''} onChange={e => setMealForm({ ...mealForm, protein: parseInt(e.target.value) || 0 })} />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Carbs (g)</Label>
-                                        <Input type="number" value={mealForm.carbs || ''} onChange={e => setMealForm({ ...mealForm, carbs: parseInt(e.target.value) || 0 })} />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Fat (g)</Label>
-                                        <Input type="number" value={mealForm.fat || ''} onChange={e => setMealForm({ ...mealForm, fat: parseInt(e.target.value) || 0 })} />
-                                    </div>
-                                </div>
                                 <Button className="w-full font-bold h-12" onClick={handleLogMeal}>Save Meal Entry</Button>
                             </CardContent>
                         </Card>
                     )}
-
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                                <History className="w-4 h-4 text-muted-foreground" />
-                                Logs for {mounted ? format(selectedDate, 'PPP') : '...'}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            {mealLogs.filter(l => l.date === dateStr).length === 0 ? (
-                                <div className="p-10 text-center opacity-50 italic text-sm">No meals logged for this date.</div>
-                            ) : (
-                                mealLogs.filter(l => l.date === dateStr).map(log => (
-                                    <div key={log.id} className="flex items-center justify-between p-4 border-b last:border-0 hover:bg-muted/20 transition-colors">
-                                        <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-muted rounded-lg"><Coffee className="w-4 h-4 text-muted-foreground" /></div>
-                                            <div>
-                                                <p className="text-sm font-bold">{log.mealType}</p>
-                                                <p className="text-[10px] text-muted-foreground uppercase">{log.protein}g P • {log.carbs}g C • {log.fat}g F</p>
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-black">{log.calories} kcal</p>
-                                        </div>
-                                    </div>
-                                ))
-                            )}
-                        </CardContent>
-                    </Card>
                 </div>
 
                 <div className="space-y-6">

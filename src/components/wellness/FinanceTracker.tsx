@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
+import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 
 const defaultCategories = [
     { id: 'groceries', name: 'Groceries', icon: ShoppingCart },
@@ -54,7 +55,6 @@ export function FinanceTracker() {
         setMounted(true);
     }, []);
 
-    // Form State
     const [amount, setAmount] = useState('');
     const [type, setType] = useState<'income' | 'expense'>('expense');
     const [category, setCategory] = useState('misc');
@@ -149,7 +149,7 @@ export function FinanceTracker() {
                         <PopoverTrigger asChild>
                             <Button variant="outline" className="h-9 px-4 font-bold border-primary/20 hover:bg-primary/5 transition-colors">
                                 <CalendarIcon className="w-4 h-4 mr-2 text-primary" />
-                                {mounted ? format(selectedDate, 'MMM d, yyyy') : 'Loading date...'}
+                                {mounted ? format(selectedDate, 'MMMM d, yyyy') : 'Loading date...'}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
@@ -179,6 +179,8 @@ export function FinanceTracker() {
                 <Card className="bg-primary/5 border-primary/20"><CardContent className="p-4 h-full flex flex-col justify-center"><p className="text-[10px] font-bold uppercase opacity-60">Runway</p><p className="text-2xl font-black">{stats.runway} Mo</p></CardContent></Card>
             </div>
 
+            <WellnessActivityCalendar categoryFilter="Finance" />
+
             <SynergyPanel />
 
             <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
@@ -197,31 +199,10 @@ export function FinanceTracker() {
                                     <div className="space-y-1.5"><Label className="text-[10px] font-bold uppercase">Amount</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} /></div>
                                     <div className="space-y-1.5"><Label className="text-[10px] font-bold uppercase">Merchant</Label><Input value={merchant} onChange={e => setMerchant(e.target.value)} /></div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Category</Label>
-                                        <Select value={category} onValueChange={setCategory}>
-                                            <SelectTrigger><SelectValue /></SelectTrigger>
-                                            <SelectContent>{defaultCategories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-bold uppercase">Type</Label>
-                                        <Select value={type} onValueChange={(v: any) => setType(v)}>
-                                            <SelectTrigger><SelectValue /></SelectTrigger>
-                                            <SelectContent><SelectItem value="income">Income</SelectItem><SelectItem value="expense">Expense</SelectItem></SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
                                 <Button className="w-full font-bold" onClick={handleAdd}>Save Transaction</Button>
                             </CardContent>
                         </Card>
                     )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card><CardHeader><CardTitle className="text-base flex items-center gap-2"><Target className="w-4 h-4 text-primary" /> Savings Goal</CardTitle></CardHeader><CardContent className="space-y-2"><div className="flex justify-between text-xs font-bold"><span>Emergency Fund</span><span>$4,200 / $10,000</span></div><Progress value={42} className="h-2" /></CardContent></Card>
-                        <Card className="bg-primary/5 border-primary/10"><CardHeader><CardTitle className="text-base flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> Insight</CardTitle></CardHeader><CardContent className="p-3 bg-background rounded-lg border text-xs italic">"Reducing dining out by $50/week adds 2 months to your total runway."</CardContent></Card>
-                    </div>
                 </TabsContent>
 
                 <TabsContent value="history" className="space-y-4">

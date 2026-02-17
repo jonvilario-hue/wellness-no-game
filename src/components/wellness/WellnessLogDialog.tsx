@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWellnessData } from "@/hooks/use-wellness-data";
 import { movementExercises, mindfulnessPractices } from "@/data/exercises";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar as CalendarIcon, SlidersHorizontal, Clock, Target } from "lucide-react";
+import { Calendar as CalendarIcon, SlidersHorizontal, Clock, Target, Utensils, Wallet } from "lucide-react";
 import { format } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 interface WellnessLogDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  initialType?: 'movement' | 'stillness';
+  initialType?: 'movement' | 'stillness' | 'nutrition' | 'finance';
   initialDate?: Date;
 }
 
@@ -30,7 +30,7 @@ export function WellnessLogDialog({
   initialType = 'movement', 
   initialDate 
 }: WellnessLogDialogProps) {
-  const [type, setType] = useState<'movement' | 'stillness'>(initialType);
+  const [type, setType] = useState<'movement' | 'stillness' | 'nutrition' | 'finance'>(initialType);
   const [date, setDate] = useState<Date | undefined>(initialDate);
   const [selectedId, setSelectedId] = useState("");
   const [duration, setDuration] = useState("10");
@@ -38,7 +38,16 @@ export function WellnessLogDialog({
   const [preStress, setPreStress] = useState("5");
   const [postCalm, setPostCalm] = useState("7");
   
-  const { addMovementLog, addStillnessLog } = useWellnessData();
+  // Finance fields
+  const [amount, setAmount] = useState("");
+  const [merchant, setMerchant] = useState("");
+  const [finCategory, setFinCategory] = useState("misc");
+
+  // Nutrition fields
+  const [mealType, setMealType] = useState("Breakfast");
+  const [calories, setCalories] = useState("");
+
+  const { addMovementLog, addStillnessLog, addMealLog, addTransaction } = useWellnessData();
   const { toast } = useToast();
   
   const lastOpenRef = useRef(false);
@@ -53,15 +62,14 @@ export function WellnessLogDialog({
   }, [isOpen, initialType, initialDate]);
 
   const handleLog = () => {
-    if (!selectedId || !date) return;
-
-    const list = type === 'movement' ? movementExercises : mindfulnessPractices;
-    const item = list.find(i => i.id === selectedId);
-    if (!item) return;
+    if (!date) return;
 
     const timestamp = date.toISOString();
+    const dateStr = format(date, 'yyyy-MM-dd');
 
     if (type === 'movement') {
+      const item = movementExercises.find(i => i.id === selectedId);
+      if (!item) return;
       addMovementLog({
         exerciseId: item.id,
         exerciseName: item.name,
@@ -69,7 +77,9 @@ export function WellnessLogDialog({
         timestamp,
         difficulty
       });
-    } else {
+    } else if (type === 'stillness') {
+      const item = mindfulnessPractices.find(i => i.id === selectedId);
+      if (!item) return;
       addStillnessLog({
         techniqueId: item.id,
         techniqueName: item.name,
@@ -78,11 +88,28 @@ export function WellnessLogDialog({
         preStress: parseInt(preStress),
         postCalm: parseInt(postCalm)
       });
+    } else if (type === 'nutrition') {
+      addMealLog({
+        date: dateStr,
+        mealType: mealType as any,
+        calories: parseInt(calories) || 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0
+      });
+    } else if (type === 'finance') {
+      addTransaction({
+        amount: parseFloat(amount) || 0,
+        merchant: merchant || "Manual Entry",
+        category: finCategory,
+        date: dateStr,
+        type: 'expense'
+      });
     }
 
     toast({ 
       title: "Log Recorded!", 
-      description: `${item.name} logged for ${format(date, 'MMM d')}.`,
+      description: `Activity logged for ${format(date, 'MMM d')}.`,
       variant: 'success' 
     });
     onOpenChange(false);
@@ -94,15 +121,17 @@ export function WellnessLogDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Target className="w-5 h-5 text-primary" />
-            Log Wellness Activity
+            Universal Wellness Log
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           <Tabs value={type} onValueChange={(v: any) => setType(v)} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="movement">Movement</TabsTrigger>
-              <TabsTrigger value="stillness">Stillness</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="movement" className="text-[10px] uppercase">Move</TabsTrigger>
+              <TabsTrigger value="stillness" className="text-[10px] uppercase">Still</TabsTrigger>
+              <TabsTrigger value="nutrition" className="text-[10px] uppercase">Food</TabsTrigger>
+              <TabsTrigger value="finance" className="text-[10px] uppercase">Cash</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -130,74 +159,89 @@ export function WellnessLogDialog({
               </Popover>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Practice</Label>
-              <Select value={selectedId} onValueChange={setSelectedId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose one..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {(type === 'movement' ? movementExercises : mindfulnessPractices).map(item => (
-                    <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex justify-between">
-                <span>Duration</span>
-                <span>{duration} min</span>
-              </Label>
-              <div className="grid grid-cols-4 gap-2">
-                {['5', '10', '15', '20', '30', '45', '60'].map(m => (
-                  <Button 
-                    key={m} 
-                    variant={duration === m ? 'default' : 'outline'} 
-                    size="sm" 
-                    onClick={() => setDuration(m)}
-                    className="h-8 text-xs"
-                  >
-                    {m}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="p-4 bg-muted/30 rounded-xl space-y-4">
-              <h4 className="text-[10px] font-bold uppercase text-primary flex items-center gap-2">
-                <SlidersHorizontal className="w-3 h-3" /> Post-Session Metrics
-              </h4>
-              {type === 'movement' ? (
-                <div className="space-y-3">
-                  <Label className="text-[10px] font-bold uppercase">Difficulty (1-5)</Label>
-                  <div className="flex gap-2">
-                    {[1,2,3,4,5].map(n => (
-                      <Button key={n} variant={difficulty === n ? 'default' : 'outline'} size="sm" className="h-8 w-8 p-0" onClick={() => setDifficulty(n)}>
-                        {n}
-                      </Button>
-                    ))}
-                  </div>
+            {type === 'movement' && (
+              <>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Practice</Label>
+                  <Select value={selectedId} onValueChange={setSelectedId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose one..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {movementExercises.map(item => (
+                        <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Pre-Stress (1-10)</Label>
-                    <Input type="number" value={preStress} onChange={e => setPreStress(e.target.value)} className="h-8" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Post-Calm (1-10)</Label>
-                    <Input type="number" value={postCalm} onChange={e => setPostCalm(e.target.value)} className="h-8" />
-                  </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex justify-between">
+                    <span>Duration (Min)</span>
+                    <span>{duration} min</span>
+                  </Label>
+                  <Input type="number" value={duration} onChange={e => setDuration(e.target.value)} />
                 </div>
-              )}
-            </div>
+              </>
+            )}
+
+            {type === 'stillness' && (
+              <>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Technique</Label>
+                  <Select value={selectedId} onValueChange={setSelectedId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose one..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mindfulnessPractices.map(item => (
+                        <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Duration (Min)</Label>
+                  <Input type="number" value={duration} onChange={e => setDuration(e.target.value)} />
+                </div>
+              </>
+            )}
+
+            {type === 'nutrition' && (
+              <>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Meal Type</Label>
+                  <Select value={mealType} onValueChange={setMealType}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Calories</Label>
+                  <Input type="number" value={calories} onChange={e => setCalories(e.target.value)} placeholder="e.g. 500" />
+                </div>
+              </>
+            )}
+
+            {type === 'finance' && (
+              <>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Merchant / Item</Label>
+                  <Input value={merchant} onChange={e => setMerchant(e.target.value)} placeholder="e.g. Grocery Store" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Amount ($)</Label>
+                  <Input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" />
+                </div>
+              </>
+            )}
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button disabled={!selectedId || !date} onClick={handleLog} className="min-w-[120px]">
+          <Button onClick={handleLog} className="min-w-[120px]">
             Save Activity
           </Button>
         </DialogFooter>

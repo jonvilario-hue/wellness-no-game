@@ -11,6 +11,7 @@ import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
+import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 
 const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
 
@@ -64,6 +65,8 @@ export default function StillnessContent() {
     return (
      <div className="space-y-8">
         <StillnessDashboard />
+
+        <WellnessActivityCalendar categoryFilter="Stillness" />
 
         {categories.map(category => {
             const practices = mindfulnessPractices.filter(p => p.category === category);

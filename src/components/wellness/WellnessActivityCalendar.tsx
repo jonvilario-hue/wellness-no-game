@@ -1,44 +1,72 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, isSameDay } from "date-fns";
 import { useWellnessData } from "@/hooks/use-wellness-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, HeartPulse, Waves, History } from "lucide-react";
+import { Plus, HeartPulse, Waves, History, Utensils, Wallet } from "lucide-react";
 import { WellnessLogDialog } from "./WellnessLogDialog";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export function WellnessActivityCalendar() {
+interface WellnessActivityCalendarProps {
+  categoryFilter?: 'Movement' | 'Stillness' | 'Nutrition' | 'Finance';
+}
+
+export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCalendarProps) {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [mounted, setMounted] = useState(false);
-  const { movementLogs, stillnessLogs } = useWellnessData();
+  const { movementLogs, stillnessLogs, mealLogs, transactions } = useWellnessData();
   const [isLogOpen, setIsLogOpen] = useState(false);
-  const [logType, setLogType] = useState<'movement' | 'stillness'>('movement');
+  const [logType, setLogType] = useState<'movement' | 'stillness' | 'nutrition' | 'finance'>('movement');
 
   useEffect(() => {
     setMounted(true);
     setDate(new Date());
   }, []);
 
-  const dayLogs = date ? [
-    ...movementLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Movement' })),
-    ...stillnessLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Stillness' }))
-  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) : [];
+  const dayLogs = useMemo(() => {
+    if (!date) return [];
+    
+    const logs = [];
+    
+    if (!categoryFilter || categoryFilter === 'Movement') {
+      logs.push(...movementLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Movement' })));
+    }
+    if (!categoryFilter || categoryFilter === 'Stillness') {
+      logs.push(...stillnessLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Stillness' })));
+    }
+    if (!categoryFilter || categoryFilter === 'Nutrition') {
+      logs.push(...mealLogs.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Nutrition', label: l.mealType, detail: `${l.calories} kcal` })));
+    }
+    if (!categoryFilter || categoryFilter === 'Finance') {
+      logs.push(...transactions.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Finance', label: l.merchant, detail: `$${l.amount}` })));
+    }
 
-  const handleAddLog = (type: 'movement' | 'stillness') => {
+    return logs.sort((a, b) => {
+      const timeA = 'timestamp' in a ? new Date(a.timestamp).getTime() : 0;
+      const timeB = 'timestamp' in b ? new Date(b.timestamp).getTime() : 0;
+      return timeB - timeA;
+    });
+  }, [date, movementLogs, stillnessLogs, mealLogs, transactions, categoryFilter]);
+
+  const handleAddLog = (type: typeof logType) => {
     setLogType(type);
     setIsLogOpen(true);
   };
 
-  const activityDates = [
-    ...movementLogs.map(l => new Date(l.timestamp)),
-    ...stillnessLogs.map(l => new Date(l.timestamp))
-  ];
+  const activityDates = useMemo(() => {
+    const dates = [];
+    if (!categoryFilter || categoryFilter === 'Movement') dates.push(...movementLogs.map(l => new Date(l.timestamp)));
+    if (!categoryFilter || categoryFilter === 'Stillness') dates.push(...stillnessLogs.map(l => new Date(l.timestamp)));
+    if (!categoryFilter || categoryFilter === 'Nutrition') dates.push(...mealLogs.map(l => new Date(l.date + 'T12:00:00')));
+    if (!categoryFilter || categoryFilter === 'Finance') dates.push(...transactions.map(l => new Date(l.date + 'T12:00:00')));
+    return dates;
+  }, [movementLogs, stillnessLogs, mealLogs, transactions, categoryFilter]);
 
   const modifiers = {
     hasLog: (d: Date) => activityDates.some(ad => isSameDay(ad, d))
@@ -52,14 +80,9 @@ export function WellnessActivityCalendar() {
     }
   };
 
-  if (!mounted) {
-    return (
-      <Card className="border-primary/10 shadow-sm">
-        <CardHeader className="h-[100px] bg-muted/10 animate-pulse" />
-        <CardContent className="h-[400px] bg-muted/5 animate-pulse" />
-      </Card>
-    );
-  }
+  if (!mounted) return null;
+
+  const defaultType = categoryFilter?.toLowerCase() as any || 'movement';
 
   return (
     <Card className="border-primary/10 shadow-sm">
@@ -68,18 +91,13 @@ export function WellnessActivityCalendar() {
           <div>
             <CardTitle className="text-xl flex items-center gap-2">
               <History className="w-5 h-5 text-primary" />
-              Activity Calendar
+              {categoryFilter ? `${categoryFilter} History` : 'Wellness Calendar'}
             </CardTitle>
-            <CardDescription>View your history and log past sessions.</CardDescription>
+            <CardDescription>View your synchronized activity history.</CardDescription>
           </div>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => handleAddLog('movement')}>
-              <Plus className="w-3.5 h-3.5" /> Movement
-            </Button>
-            <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => handleAddLog('stillness')}>
-              <Plus className="w-3.5 h-3.5" /> Stillness
-            </Button>
-          </div>
+          <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => handleAddLog(defaultType)}>
+            <Plus className="w-3.5 h-3.5" /> Log {categoryFilter || 'Activity'}
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -106,10 +124,7 @@ export function WellnessActivityCalendar() {
             <div className="space-y-3">
               {dayLogs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed rounded-xl bg-muted/50">
-                  <p className="text-xs text-muted-foreground italic">No activities logged for this day.</p>
-                  <Button variant="link" size="sm" className="mt-2 text-primary text-xs" onClick={() => handleAddLog('movement')}>
-                    Add one now
-                  </Button>
+                  <p className="text-xs text-muted-foreground italic">No {categoryFilter?.toLowerCase() || 'activities'} logged for this day.</p>
                 </div>
               ) : (
                 dayLogs.map((log, i) => (
@@ -117,14 +132,22 @@ export function WellnessActivityCalendar() {
                     <div className="flex items-center gap-4">
                       <div className={cn(
                         "p-2.5 rounded-full transition-colors", 
-                        log.type === 'Movement' ? 'bg-primary/10 text-primary' : 'bg-blue-400/10 text-blue-500'
+                        log.type === 'Movement' ? 'bg-primary/10 text-primary' : 
+                        log.type === 'Stillness' ? 'bg-blue-400/10 text-blue-500' :
+                        log.type === 'Nutrition' ? 'bg-orange-400/10 text-orange-500' :
+                        'bg-green-400/10 text-green-600'
                       )}>
-                        {log.type === 'Movement' ? <HeartPulse className="w-4 h-4" /> : <Waves className="w-4 h-4" />}
+                        {log.type === 'Movement' ? <HeartPulse className="w-4" /> : 
+                         log.type === 'Stillness' ? <Waves className="w-4" /> : 
+                         log.type === 'Nutrition' ? <Utensils className="w-4" /> :
+                         <Wallet className="w-4" />}
                       </div>
                       <div>
-                        <p className="text-sm font-bold leading-none">{('exerciseName' in log) ? (log as any).exerciseName : (log as any).techniqueName}</p>
+                        <p className="text-sm font-bold leading-none">
+                          {(log as any).exerciseName || (log as any).techniqueName || (log as any).label}
+                        </p>
                         <p className="text-[10px] text-muted-foreground uppercase font-black mt-1.5 tracking-tighter">
-                          {log.duration} MIN • {log.type}
+                          {(log as any).duration ? `${(log as any).duration} MIN • ` : ''}{(log as any).detail ? `${(log as any).detail} • ` : ''}{log.type}
                         </p>
                       </div>
                     </div>

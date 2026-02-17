@@ -5,12 +5,13 @@ import { movementExercises, type ExerciseCategory } from "@/data/exercises"
 import CategoryOverview from "./CategoryOverview"
 import { movementCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
-import { ChevronDown, CheckCircle2, HeartPulse, Zap } from "lucide-react"
+import { ChevronDown, HeartPulse, Zap } from "lucide-react"
 import { MovementDashboard } from "./MovementDashboard"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
+import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 
 const categories: ExerciseCategory[] = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
@@ -66,6 +67,8 @@ export default function MovementContent() {
     <div className="space-y-8">
         <MovementDashboard />
         
+        <WellnessActivityCalendar categoryFilter="Movement" />
+
         {categories.map(category => {
             const exercises = movementExercises.filter(e => e.category === category);
             const details = movementCategoryDetails[category];

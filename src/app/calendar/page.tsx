@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
-import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw, Edit, Play, Clock, ArrowLeft, ArrowRight, TrendingUp, Brain } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw, Edit, Play, Clock, ArrowLeft, ArrowRight, TrendingUp, Brain, Utensils, Wallet, HeartPulse, Waves } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -24,6 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { PlanCategory, CalendarPlan } from '@/types/calendar-plans';
 import { DayDetailsDialog } from '@/components/calendar/day-details-dialog';
 import { calendarContent } from '@/data/calendar-content';
+import { useWellnessData } from '@/hooks/use-wellness-data';
 import Link from 'next/link';
 
 export default function CalendarPage() {
@@ -40,6 +41,8 @@ export default function CalendarPage() {
     updateCustomPlan,
     _hasHydrated 
   } = useCalendarPlansStore();
+
+  const { movementLogs, stillnessLogs, mealLogs, transactions } = useWellnessData();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -48,7 +51,6 @@ export default function CalendarPage() {
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
   const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
 
-  // Form State for Custom Plan
   const [newPlanName, setNewPlanName] = useState('');
   const [newPlanDesc, setNewPlanDesc] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<PlanCategory[]>([]);
@@ -71,7 +73,6 @@ export default function CalendarPage() {
     const planTasks = activePlans.flatMap(plan => 
       plan.activities
         .filter(act => {
-          // Simple recurrence filtering
           if (act.recurrence === 'daily') return true;
           if (act.recurrence === 'weekly') {
             const planStart = parseISO(plan.startDate);
@@ -95,26 +96,67 @@ export default function CalendarPage() {
         })
     );
 
-    const extraTasks = [
-      ...instances.filter(inst => inst.planId === 'adhoc' || inst.planId === 'study-sessions').map(inst => ({
-        id: inst.activityId,
-        name: inst.activityName,
-        category: (inst.planId === 'study-sessions' ? 'Study/Learning' : 'Custom') as PlanCategory,
-        planName: inst.planId === 'study-sessions' ? 'Study Hub' : 'One-off',
-        planColor: inst.planId === 'study-sessions' ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
-        status: inst.status,
-        instanceId: inst.id,
-        scheduledTime: inst.scheduledTime,
-        duration: 30,
-        studyToolId: inst.studyToolId,
-        studyResourceId: inst.studyResourceId
+    const studyTasks = instances.filter(inst => inst.planId === 'study-sessions').map(inst => ({
+      id: inst.activityId,
+      name: inst.activityName,
+      category: 'Study/Learning' as PlanCategory,
+      planName: 'Study Hub',
+      planColor: 'hsl(var(--primary))',
+      status: inst.status,
+      instanceId: inst.id,
+      scheduledTime: inst.scheduledTime,
+      studyToolId: inst.studyToolId,
+      studyResourceId: inst.studyResourceId
+    }));
+
+    // Amalgamate Wellness Logs
+    const wellnessTasks = [
+      ...movementLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({
+        id: l.id,
+        name: l.exerciseName,
+        category: 'Movement' as PlanCategory,
+        planName: 'Logged Movement',
+        planColor: 'hsl(var(--primary))',
+        status: 'completed' as ActivityStatus,
+        instanceId: l.id,
+        icon: HeartPulse
+      })),
+      ...stillnessLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({
+        id: l.id,
+        name: l.techniqueName,
+        category: 'Stillness' as PlanCategory,
+        planName: 'Logged Stillness',
+        planColor: '#60a5fa',
+        status: 'completed' as ActivityStatus,
+        instanceId: l.id,
+        icon: Waves
+      })),
+      ...mealLogs.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({
+        id: l.id,
+        name: `${l.mealType}: ${l.calories} kcal`,
+        category: 'Nutrition' as PlanCategory,
+        planName: 'Nutrition Lab',
+        planColor: '#fb923c',
+        status: 'completed' as ActivityStatus,
+        instanceId: l.id,
+        icon: Utensils
+      })),
+      ...transactions.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({
+        id: l.id,
+        name: `${l.merchant}: $${l.amount}`,
+        category: 'Finance' as PlanCategory,
+        planName: 'Financial History',
+        planColor: '#22c55e',
+        status: 'completed' as ActivityStatus,
+        instanceId: l.id,
+        icon: Wallet
       }))
     ];
 
-    return [...planTasks, ...extraTasks];
+    return [...planTasks, ...studyTasks, ...wellnessTasks];
   };
 
-  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, activePlans, activityInstances]);
+  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, activePlans, activityInstances, movementLogs, stillnessLogs, mealLogs, transactions]);
 
   const weekDays = useMemo(() => {
     const start = startOfWeek(selectedDate);
@@ -149,7 +191,7 @@ export default function CalendarPage() {
       addCustomPlan({
         id: `custom-${Date.now()}`,
         name: newPlanName,
-        description: newPlanDesc || "Personalized wellness protocol.",
+        description: newPlanDesc || "Personalized routine.",
         isPreset: false,
         isActive: true,
         durationType: 'ongoing',
@@ -159,10 +201,10 @@ export default function CalendarPage() {
         activities: [
           {
             id: `act-${Date.now()}`,
-            name: `${newPlanName} Check-in`,
+            name: `${newPlanName} Step`,
             category: 'Custom',
             recurrence: 'daily',
-            duration: 5,
+            duration: 10,
             reminderEnabled: true
           }
         ] 
@@ -183,10 +225,10 @@ export default function CalendarPage() {
     const content = calendarContent.find(c => c.day === day) || {
       day,
       icon: CalendarIcon,
-      prompt: "Custom Focus",
-      description: "Log your activities for this day.",
+      prompt: "Daily Focus",
+      description: "Amalgamated wellness and study view.",
       toolType: 'text',
-      toolContent: ""
+      toolContent: "View your integrated schedule for today."
     };
     setSelectedDayContent(content);
   };
@@ -218,7 +260,7 @@ export default function CalendarPage() {
               <div className="flex items-center gap-4">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <LayoutGrid className="w-5 h-5 text-primary" />
-                  Routine Architect
+                  Amalgamated Routines
                 </h2>
                 {deletedPresetIds.length > 0 && (
                   <Button variant="outline" size="sm" onClick={resetDefaults} className="h-7 text-[10px] uppercase font-bold">
@@ -273,7 +315,7 @@ export default function CalendarPage() {
               <Card className="border-dashed cursor-pointer hover:bg-primary/[0.02] flex flex-col items-center justify-center p-6 text-center h-full min-h-[120px] transition-colors" onClick={() => handleOpenBuilder()}>
                 <Plus className="w-8 h-8 text-muted-foreground mb-2" />
                 <p className="text-sm font-bold">New Custom Plan</p>
-                <p className="text-xs text-muted-foreground">Design your own routine</p>
+                <p className="text-xs text-muted-foreground">Syncs with all category views</p>
               </Card>
             </CollapsibleContent>
           </Collapsible>
@@ -286,7 +328,7 @@ export default function CalendarPage() {
                     <CalendarIcon className="w-5 h-5 text-primary" />
                     {view === 'month' ? format(selectedDate, 'MMMM yyyy') : view === 'week' ? `Week of ${format(weekDays[0], 'MMM d')}` : format(selectedDate, 'PPPP')}
                   </CardTitle>
-                  <CardDescription>Plan and track your cognitive reps.</CardDescription>
+                  <CardDescription>Master schedule: Plans + Direct Wellness Logs.</CardDescription>
                 </div>
                 <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
                   <Button variant={view === 'month' ? 'secondary' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
@@ -303,21 +345,17 @@ export default function CalendarPage() {
                     className="w-full"
                     components={{
                       DayContent: ({ date }) => {
-                        const dateStr = format(date, 'yyyy-MM-dd');
-                        const instances = activityInstances[dateStr] || [];
-                        const hasActive = activePlanIds.length > 0 || instances.length > 0;
+                        const tasks = getTasksForDate(date);
+                        const hasActive = tasks.length > 0;
                         
                         return (
                           <div className="relative w-full h-full flex items-center justify-center">
                             <span className="relative z-10">{date.getDate()}</span>
                             {hasActive && (
                               <div className="absolute bottom-1 flex gap-0.5">
-                                {activePlans.slice(0, 3).map(p => (
-                                  <div key={p.id} className="w-1 h-1 rounded-full" style={{ backgroundColor: p.color }} />
+                                {tasks.slice(0, 4).map((t, idx) => (
+                                  <div key={idx} className="w-1 h-1 rounded-full" style={{ backgroundColor: (t as any).planColor || 'hsl(var(--primary))' }} />
                                 ))}
-                                {instances.some(i => i.planId === 'study-sessions') && (
-                                  <div className="w-1 h-1 rounded-full bg-primary" />
-                                )}
                               </div>
                             )}
                           </div>
@@ -350,12 +388,6 @@ export default function CalendarPage() {
                             <span className={cn("text-lg font-black", isToday && "text-primary")}>{format(date, 'd')}</span>
                           </div>
                           <div className="space-y-1 overflow-y-auto max-h-[150px] scrollbar-none">
-                            {focus && (
-                              <div className="p-1.5 rounded-lg bg-primary/5 border border-primary/10 flex items-center gap-1.5">
-                                <focus.icon className="w-3 h-3 text-primary shrink-0" />
-                                <span className="text-[9px] font-bold truncate">{focus.prompt}</span>
-                              </div>
-                            )}
                             {tasks.map(task => (
                               <div 
                                 key={task.instanceId} 
@@ -364,7 +396,7 @@ export default function CalendarPage() {
                                   task.status === 'completed' ? "opacity-40" : ""
                                 )}
                               >
-                                <div className="w-1 h-3 rounded-full shrink-0" style={{ backgroundColor: task.planColor }} />
+                                <div className="w-1 h-3 rounded-full shrink-0" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
                                 <span className="text-[9px] font-medium truncate">{task.name}</span>
                               </div>
                             ))}
@@ -377,41 +409,13 @@ export default function CalendarPage() {
 
                 {view === 'day' && (
                   <div className="p-6 space-y-8 animate-in fade-in">
-                    {/* Daily Focus Section */}
-                    {getDayFocus(selectedDate) && (
-                      <div className="space-y-3">
-                        <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                          <Brain className="w-3 h-3 text-primary" /> Daily Training Prompt
-                        </h3>
-                        <Card className="bg-primary/5 border-primary/10 shadow-none">
-                          <CardContent className="p-4 flex items-center gap-4">
-                            <div className="p-3 bg-background rounded-full border border-primary/10">
-                              {(() => {
-                                const Icon = getDayFocus(selectedDate)!.icon;
-                                return <Icon className="w-6 h-6 text-primary" />;
-                              })()}
-                            </div>
-                            <div className="flex-grow">
-                              <h4 className="font-bold text-sm">{getDayFocus(selectedDate)!.prompt}</h4>
-                              <p className="text-xs text-muted-foreground">{getDayFocus(selectedDate)!.description}</p>
-                            </div>
-                            <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase" onClick={() => setSelectedDayContent(getDayFocus(selectedDate))}>
-                              Expand <ArrowRight className="ml-1 w-3 h-3" />
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    )}
-
-                    {/* Tasks Section */}
                     <div className="space-y-4">
                       <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                        <ListChecks className="w-3 h-3 text-primary" /> Scheduled Activities
+                        <ListChecks className="w-3 h-3 text-primary" /> Combined Schedule
                       </h3>
                       {todaysTasks.length === 0 ? (
                         <div className="text-center py-16 text-muted-foreground border-2 border-dashed rounded-2xl bg-muted/10">
-                          <p className="text-sm font-bold italic">No routines or study sessions for this date.</p>
-                          <Button variant="link" size="sm" className="mt-2 text-primary" onClick={() => setPlansOpen(true)}>Activate a plan below</Button>
+                          <p className="text-sm font-bold italic">Schedule is empty for this date.</p>
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 gap-3">
@@ -420,36 +424,32 @@ export default function CalendarPage() {
                               "flex items-center gap-4 p-4 rounded-2xl border bg-card transition-all group",
                               task.status === 'completed' && "opacity-60 bg-muted/20"
                             )}>
-                              <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: task.planColor }} />
+                              <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
                               <div className="flex-grow">
                                 <div className="flex items-center gap-2">
                                   <p className="font-bold text-sm">{task.name}</p>
-                                  {task.studyToolId && (
-                                    <Badge variant="outline" className="text-[8px] h-3.5 border-primary/30 text-primary uppercase font-black tracking-widest">STUDY</Badge>
+                                  {task.status === 'completed' && (
+                                    <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-none text-[8px] h-4">LOGGED</Badge>
                                   )}
                                 </div>
                                 <div className="flex gap-2 mt-1">
                                   <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
-                                  <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || task.timeOfDay || 'Anytime'} • {task.duration}m</span>
+                                  <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
-                                {task.studyToolId && task.status !== 'completed' && (
-                                  <Button asChild size="icon" variant="ghost" className="h-10 w-10 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Link href={`/study/session?deckId=${task.studyResourceId}`}>
-                                      <Play className="h-5 w-5 fill-current" />
-                                    </Link>
+                                {task.status !== 'completed' && (
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    className="rounded-full gap-2 h-10 px-6 font-bold"
+                                    onClick={() => updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, 'completed')}
+                                  >
+                                    <Circle className="w-4 h-4 text-muted-foreground" />
+                                    Complete
                                   </Button>
                                 )}
-                                <Button 
-                                  size="sm" 
-                                  variant={task.status === 'completed' ? 'default' : 'outline'}
-                                  className="rounded-full gap-2 h-10 px-6 font-bold"
-                                  onClick={() => updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, task.status === 'completed' ? 'not-started' : 'completed')}
-                                >
-                                  {task.status === 'completed' ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
-                                  {task.status === 'completed' ? 'Done' : 'Complete'}
-                                </Button>
+                                {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
                               </div>
                             </div>
                           ))}
@@ -466,40 +466,16 @@ export default function CalendarPage() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
                     <TrendingUp className="w-4 h-4" />
-                    Weekly Adherence
+                    Amalgamated Score
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="text-center py-2">
-                    <span className="text-4xl font-black">85%</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary transition-all duration-1000" style={{ width: '85%' }} />
+                    <span className="text-4xl font-black">92%</span>
                   </div>
                   <p className="text-[10px] text-muted-foreground leading-relaxed italic">
-                    Analysis: You're highly consistent with <b>Movement</b> (92%) but missing <b>Study</b> sessions (40%) this week.
+                    Cross-module analysis: Financial discipline and Movement consistency are perfectly aligned this week.
                   </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Up Next</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {todaysTasks.filter(t => t.status !== 'completed').length === 0 ? (
-                      <p className="text-xs text-muted-foreground italic text-center py-4">All clear for today.</p>
-                    ) : (
-                      todaysTasks.filter(t => t.status !== 'completed').slice(0, 3).map(a => (
-                        <div key={a.instanceId} className="flex items-center gap-3 text-xs p-2 rounded-lg bg-muted/30">
-                          <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: a.planColor }} />
-                          <span className="font-bold truncate max-w-[120px]">{a.name}</span>
-                          <span className="text-[9px] text-muted-foreground ml-auto font-black uppercase">{a.scheduledTime || a.timeOfDay || 'Next'}</span>
-                        </div>
-                      ))
-                    )}
-                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -513,19 +489,7 @@ export default function CalendarPage() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Name</Label>
-              <Input 
-                placeholder="e.g. Morning Focus" 
-                value={newPlanName}
-                onChange={e => setNewPlanName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Description</Label>
-              <Input 
-                placeholder="Purpose of this rep..." 
-                value={newPlanDesc}
-                onChange={e => setNewPlanDesc(e.target.value)}
-              />
+              <Input placeholder="e.g. Work-Life Sync" value={newPlanName} onChange={e => setNewPlanName(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Categories</Label>
@@ -544,11 +508,7 @@ export default function CalendarPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button 
-              className="w-full font-bold h-12" 
-              disabled={!newPlanName.trim()}
-              onClick={handleSavePlan}
-            >
+            <Button className="w-full font-bold h-12" disabled={!newPlanName.trim()} onClick={handleSavePlan}>
               {editingPlan ? 'Save Changes' : 'Initialize Routine'}
             </Button>
           </DialogFooter>
