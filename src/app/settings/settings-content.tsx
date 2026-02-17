@@ -1,7 +1,7 @@
 
 'use client';
 
-import { User, Palette, ListChecks, Clock, Database, Moon } from 'lucide-react';
+import { User, Palette, ListChecks, Clock, Database, Moon, Sparkles } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AppearanceSettings } from '@/components/settings/appearance-settings';
@@ -11,6 +11,7 @@ import { PlaceholderSettings } from '@/components/settings/placeholder-settings'
 import { TimeToolsModule } from '@/components/dashboard/time-tools-module';
 import { DataSettings } from '@/components/settings/data-settings';
 import { SleepSettings } from '@/components/sleep/sleep-settings';
+import { RecommendationSettings } from '@/components/settings/recommendation-settings';
 
 export function SettingsContent() {
     const searchParams = useSearchParams();
@@ -21,6 +22,9 @@ export function SettingsContent() {
             <TabsList className="flex flex-col h-auto justify-start items-stretch p-2 space-y-1 bg-muted/50 rounded-lg w-full">
                 <TabsTrigger value="trackers" className="justify-start gap-2">
                 <ListChecks className="h-4 w-4"/> Trackers
+                </TabsTrigger>
+                <TabsTrigger value="intelligence" className="justify-start gap-2">
+                <Sparkles className="h-4 w-4"/> Smart Engine
                 </TabsTrigger>
                 <TabsTrigger value="appearance" className="justify-start gap-2">
                 <Palette className="h-4 w-4"/> Appearance
@@ -42,6 +46,9 @@ export function SettingsContent() {
             <div className="col-span-1 md:col-span-3">
                 <TabsContent value="trackers">
                 <TrackerSettings />
+                </TabsContent>
+                <TabsContent value="intelligence">
+                <RecommendationSettings />
                 </TabsContent>
                 <TabsContent value="appearance">
                 <AppearanceSettings />
