@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -6,6 +7,7 @@ import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { useScholarStore } from '@/hooks/use-scholar-store';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
+import { useStudyDashboardStore } from '@/hooks/use-study-dashboard-store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Brain, Layers, HelpCircle, PenTool, TrendingUp, Sparkles, 
   BookOpen, GraduationCap, ChevronRight, Zap, Inbox, BarChart3,
-  ChevronUp, ChevronDown, Target, ShieldAlert, History, CalendarDays
+  ChevronUp, ChevronDown, Target, ShieldAlert, History, CalendarDays, LayoutDashboard
 } from 'lucide-react';
 import Link from 'next/link';
 import { VisualPairingTool } from '@/components/study/visual-pairing-tool';
@@ -33,14 +35,15 @@ import {
   TimeManagementGuide 
 } from '@/components/study/guides';
 import { SelfQuizCreator, DistractionLog } from '@/components/study/tools';
-import { StudyScheduleView } from '@/components/study/study-schedule-view';
+import { StudyDashboardView } from '@/components/study/study-dashboard-view';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 
 export default function ScholarHub() {
   const { sessions, visualPairs } = useScholarStore();
   const { cards } = useFlashcardStore();
+  const { getStreak } = useStudyDashboardStore();
   const [isOpen, setIsOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState('decks');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   useEffect(() => {
     const savedState = localStorage.getItem('scholar-hub-collapsible-state');
@@ -85,13 +88,12 @@ export default function ScholarHub() {
   ];
 
   const aggregateStats = useMemo(() => {
-    const month = new Date().getMonth();
-    const sessionsThisMonth = sessions.filter(s => new Date(s.timestamp).getMonth() === month).length;
+    const streak = getStreak();
     const avgFocus = sessions.length > 0 
       ? (sessions.reduce((acc, s) => acc + s.focus, 0) / sessions.length).toFixed(1)
       : '0';
-    return { sessionsThisMonth, avgFocus };
-  }, [sessions]);
+    return { currentStreak: streak.current, avgFocus };
+  }, [sessions, getStreak]);
 
   return (
     <>
@@ -129,12 +131,12 @@ export default function ScholarHub() {
             </Collapsible>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <AssistantTooltip text="The number of deep learning sessions you've completed this month. Consistency is the primary driver of neuroplasticity.">
+              <AssistantTooltip text="Consistency is the primary driver of neuroplasticity. Keep your streak alive!">
                 <Card className="bg-primary/5 border-primary/10">
                   <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                     <Zap className="w-5 h-5 text-primary mb-1" />
-                    <p className="text-2xl font-black">{aggregateStats.sessionsThisMonth}</p>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sessions This Month</p>
+                    <p className="text-2xl font-black">{aggregateStats.currentStreak}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Study Streak</p>
                   </CardContent>
                 </Card>
               </AssistantTooltip>
@@ -162,14 +164,14 @@ export default function ScholarHub() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex justify-center mb-8">
               <TabsList className="grid w-full max-w-2xl grid-cols-4 bg-muted/50 p-1">
+                <AssistantTooltip text="Your unified study overview. Activity history, workload forecasts, and daily priorities.">
+                  <TabsTrigger value="dashboard" className="gap-2 w-full">
+                    <LayoutDashboard className="h-4 w-4" /> Dashboard
+                  </TabsTrigger>
+                </AssistantTooltip>
                 <AssistantTooltip text="Your Spaced Repetition System (SRS). Organizes knowledge into card decks that are scheduled for review precisely when you're about to forget them.">
                   <TabsTrigger value="decks" className="gap-2 w-full">
                     <Layers className="h-4 w-4" /> Decks
-                  </TabsTrigger>
-                </AssistantTooltip>
-                <AssistantTooltip text="A unified view of your upcoming study sessions. Tasks appear here when you schedule them from specific tools or decks.">
-                  <TabsTrigger value="schedule" className="gap-2 w-full">
-                    <CalendarDays className="h-4 w-4" /> Schedule
                   </TabsTrigger>
                 </AssistantTooltip>
                 <AssistantTooltip text="Interactive tools designed to facilitate deep encoding of new information through dual coding, self-testing, and visualization.">
@@ -185,12 +187,12 @@ export default function ScholarHub() {
               </TabsList>
             </div>
 
-            <TabsContent value="decks" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <FlashcardDecks />
+            <TabsContent value="dashboard" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <StudyDashboardView />
             </TabsContent>
 
-            <TabsContent value="schedule" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <StudyScheduleView />
+            <TabsContent value="decks" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <FlashcardDecks />
             </TabsContent>
 
             <TabsContent value="tools" className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
