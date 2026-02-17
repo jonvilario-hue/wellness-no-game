@@ -1,4 +1,3 @@
-
 'use client';
 
 import { 
@@ -12,7 +11,7 @@ import {
   LayoutGrid, Pointer, TrendingUp, DoorOpen, HeartPulse, Zap,
   History, Video as VideoIcon, Mic, ThumbsUp, Camera,
   Smartphone, Hash, TextCursorInput, PersonStanding,
-  PenTool, Music
+  PenTool, Music, Ear
 } from 'lucide-react';
 import type { Exercise } from './exercises';
 
@@ -1330,7 +1329,7 @@ export const communicationPractices: Exercise[] = [
     ],
     modifications: [
       "Make it easier: Start by converting existing statements into contrast pairs using the templates above.",
-      "Make it harder: Build a full 3-minute talk where every major point is delivered as a contrasting pair."
+      "Make it harder: Build a full 3-minute talk where every major point is delivered as a contrasting pair.",
     ],
     completionCue: "Juxtaposition applied."
   },
