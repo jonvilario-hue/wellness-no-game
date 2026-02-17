@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -15,6 +14,8 @@ import { Separator } from '@/components/ui/separator';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { Progress } from '@/components/ui/progress';
 import { Play, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function PlanDetailPage() {
