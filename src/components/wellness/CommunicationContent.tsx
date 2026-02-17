@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo, useState } from "react"
@@ -5,7 +6,7 @@ import { communicationPractices, type CommunicationCategory } from "@/data/commu
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
 import CategoryOverview from "./CategoryOverview"
 import { communicationCategoryDetails } from "@/data/wellness-categories"
-import { ChevronDown, MessageSquare, PlusCircle, Save, X, Plus } from "lucide-react"
+import { ChevronDown, MessageSquare, PlusCircle, Save, X, Plus, Zap } from "lucide-react"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -18,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import type { Exercise } from "@/data/exercises"
 import { CommunicationDashboard } from "./CommunicationDashboard"
+import { cn } from "@/lib/utils"
 
 const categories: CommunicationCategory[] = [
   'Vocal Mechanics', 'Active Listening', 'Nonverbal', 'Conversation Structure', 
@@ -27,7 +29,7 @@ const categories: CommunicationCategory[] = [
 
 export default function CommunicationContent() {
     const { 
-      customPractices, addCustomPractice, updateCustomPractice, deleteCustomPractice,
+      lowEnergyMode, customPractices, addCustomPractice, updateCustomPractice, deleteCustomPractice,
       collapsedCategories, toggleCategoryCollapse 
     } = useWellnessData();
     const { toast } = useToast();
@@ -44,6 +46,18 @@ export default function CommunicationContent() {
       ...communicationPractices,
       ...customPractices.filter(p => !['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body', 'Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(p.category))
     ], [customPractices]);
+
+    const filteredPractices = useMemo(() => {
+      let list = allPractices;
+      if (lowEnergyMode) {
+        list = list.filter(p => p.tags.includes('quick') || p.estimatedMinutes <= 2);
+      }
+      return list;
+    }, [allPractices, lowEnergyMode]);
+
+    const mvdSuggestion = useMemo(() => {
+      return filteredPractices.find(p => p.id === 'listen_encouragers') || filteredPractices[0];
+    }, [filteredPractices]);
 
     const resetForm = () => {
       setTitle("");
@@ -105,6 +119,35 @@ export default function CommunicationContent() {
     return (
      <div className="space-y-8">
         <CommunicationDashboard />
+
+        {lowEnergyMode && (
+          <Card className="bg-purple-500/5 border-purple-500/20 border-dashed animate-in fade-in slide-in-from-top-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-black uppercase tracking-widest text-purple-600 flex items-center gap-2">
+                <Zap className="w-3 h-3 fill-current" /> Minimum Viable Day active
+              </CardTitle>
+              <CardDescription>Small interpersonal check-ins to stay socially Sharp.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {mvdSuggestion && (
+                <div className="flex items-center justify-between p-4 bg-background rounded-xl border border-purple-500/10 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-500/10 rounded-lg">
+                      <mvdSuggestion.icon className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold">{mvdSuggestion.name}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase">{mvdSuggestion.estimatedMinutes} MIN • {mvdSuggestion.category}</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="secondary" className="font-bold" asChild>
+                    <a href={`#practice-${mvdSuggestion.id}`}>Save Streak</a>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
         
         <div className="flex justify-between items-center px-1">
           <h2 className="text-2xl font-black uppercase tracking-tighter">Communication Library</h2>
@@ -122,12 +165,19 @@ export default function CommunicationContent() {
           });
         }}>
           {categories.map(category => {
-            const practices = allPractices.filter(p => p.category === category);
+            const practices = filteredPractices.filter(p => p.category === category);
             const details = communicationCategoryDetails[category];
             if (!details) return null;
 
             return (
-              <AccordionItem key={category} value={category} className="border-b border-primary/5">
+              <AccordionItem 
+                key={category} 
+                value={category} 
+                className={cn(
+                  "border-b border-primary/5 transition-opacity",
+                  practices.length === 0 && "opacity-40"
+                )}
+              >
                 <AccordionTrigger className="hover:no-underline px-1">
                   <div className="flex items-center gap-4 text-left">
                     <div className="p-2 bg-primary/10 rounded-lg">
@@ -151,23 +201,32 @@ export default function CommunicationContent() {
                       tagline={details.tagline}
                     />
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {practices.map((practice) => (
-                      <PracticeInstructionCard 
-                        key={practice.id} 
-                        exercise={practice} 
-                        onEdit={practice.id.startsWith('custom') ? () => handleEdit(practice) : undefined}
-                        onDelete={practice.id.startsWith('custom') ? () => deleteCustomPractice(practice.id) : undefined}
-                      />
-                    ))}
-                    <Card 
-                      className="border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors h-full min-h-[200px]"
-                      onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
-                    >
-                      <Plus className="w-8 h-8 text-muted-foreground mb-2" />
-                      <p className="text-sm font-bold">Add to {category}</p>
-                    </Card>
-                  </div>
+                  {practices.length === 0 ? (
+                    <div className="p-8 text-center border-2 border-dashed rounded-xl opacity-50">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">No quick practices in this category</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {practices.map((practice) => (
+                        <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-32">
+                          <PracticeInstructionCard 
+                            exercise={practice} 
+                            onEdit={practice.id.startsWith('custom') ? () => handleEdit(practice) : undefined}
+                            onDelete={practice.id.startsWith('custom') ? () => deleteCustomPractice(practice.id) : undefined}
+                          />
+                        </div>
+                      ))}
+                      {!lowEnergyMode && (
+                        <Card 
+                          className="border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors h-full min-h-[200px]"
+                          onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
+                        >
+                          <Plus className="w-8 h-8 text-muted-foreground mb-2" />
+                          <p className="text-sm font-bold">Add to {category}</p>
+                        </Card>
+                      )}
+                    </div>
+                  )}
                 </AccordionContent>
               </AccordionItem>
             );

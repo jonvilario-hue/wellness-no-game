@@ -1,10 +1,11 @@
+
 "use client"
 
 import { useState, useMemo } from "react"
 import { movementExercises, type ExerciseCategory, type Exercise } from "@/data/exercises"
 import { movementCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
-import { ChevronDown, HeartPulse, Zap, Play, PlusCircle, Save, X, Plus } from "lucide-react"
+import { ChevronDown, HeartPulse, Zap, Play, PlusCircle, Save, X, Plus, AlertCircle } from "lucide-react"
 import { MovementDashboard } from "./MovementDashboard"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -42,10 +43,17 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
     ...customPractices.filter(p => ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(p.category))
   ], [customPractices]);
 
-  const filteredExercises = useMemo(() => 
-    allPractices.filter(e => filterTags.length === 0 || filterTags.every(t => e.tags.includes(t))),
-    [allPractices, filterTags]
-  );
+  const filteredExercises = useMemo(() => {
+    let list = allPractices.filter(e => filterTags.length === 0 || filterTags.every(t => e.tags.includes(t)));
+    if (lowEnergyMode) {
+      list = list.filter(e => e.tags.includes('low-energy') || e.tags.includes('quick'));
+    }
+    return list;
+  }, [allPractices, filterTags, lowEnergyMode]);
+
+  const mvdSuggestion = useMemo(() => {
+    return filteredExercises.find(e => e.tags.includes('low-energy')) || filteredExercises[0];
+  }, [filteredExercises]);
 
   const resetForm = () => {
     setTitle("");
@@ -108,6 +116,35 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
     <div className="space-y-8">
         <MovementDashboard />
         
+        {lowEnergyMode && (
+          <Card className="bg-amber-500/5 border-amber-500/20 border-dashed animate-in fade-in slide-in-from-top-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
+                <Zap className="w-3 h-3 fill-current" /> Minimum Viable Day active
+              </CardTitle>
+              <CardDescription>Maintaining consistency with zero-friction movement.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {mvdSuggestion && (
+                <div className="flex items-center justify-between p-4 bg-background rounded-xl border border-amber-500/10 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-500/10 rounded-lg">
+                      <mvdSuggestion.icon className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold">{mvdSuggestion.name}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase">{mvdSuggestion.estimatedMinutes} MIN • {mvdSuggestion.category}</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="secondary" className="font-bold" asChild>
+                    <a href={`#practice-${mvdSuggestion.id}`}>Save Streak</a>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         <div className="flex justify-between items-center px-1">
           <h2 className="text-2xl font-black uppercase tracking-tighter">Movement Library</h2>
           <Button onClick={() => { setTargetCategory('Mind-Body'); setIsFormOpen(true); }} className="font-bold gap-2">
@@ -128,8 +165,17 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
             const details = movementCategoryDetails[category];
             if (!details) return null;
 
+            if (exercises.length === 0 && !lowEnergyMode) return null;
+
             return (
-              <AccordionItem key={category} value={category} className="border-b border-primary/5">
+              <AccordionItem 
+                key={category} 
+                value={category} 
+                className={cn(
+                  "border-b border-primary/5 transition-opacity",
+                  exercises.length === 0 && "opacity-40"
+                )}
+              >
                 <AccordionTrigger className="hover:no-underline px-1">
                   <div className="flex items-center gap-4 text-left">
                     <div className="p-2 bg-primary/10 rounded-lg">
@@ -153,23 +199,32 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
                       tagline={details.tagline}
                     />
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {exercises.map(exercise => (
-                      <PracticeInstructionCard 
-                        key={exercise.id} 
-                        exercise={exercise} 
-                        onEdit={exercise.id.startsWith('custom') ? () => handleEdit(exercise) : undefined}
-                        onDelete={exercise.id.startsWith('custom') ? () => deleteCustomPractice(exercise.id) : undefined}
-                      />
-                    ))}
-                    <Card 
-                      className="border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors h-full min-h-[200px]"
-                      onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
-                    >
-                      <Plus className="w-8 h-8 text-muted-foreground mb-2" />
-                      <p className="text-sm font-bold">Add to {category}</p>
-                    </Card>
-                  </div>
+                  {exercises.length === 0 ? (
+                    <div className="p-8 text-center border-2 border-dashed rounded-xl opacity-50">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">No low-energy practices in this category</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {exercises.map(exercise => (
+                        <div key={exercise.id} id={`practice-${exercise.id}`} className="scroll-mt-32">
+                          <PracticeInstructionCard 
+                            exercise={exercise} 
+                            onEdit={exercise.id.startsWith('custom') ? () => handleEdit(exercise) : undefined}
+                            onDelete={exercise.id.startsWith('custom') ? () => deleteCustomPractice(exercise.id) : undefined}
+                          />
+                        </div>
+                      ))}
+                      {!lowEnergyMode && (
+                        <Card 
+                          className="border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors h-full min-h-[200px]"
+                          onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
+                        >
+                          <Plus className="w-8 h-8 text-muted-foreground mb-2" />
+                          <p className="text-sm font-bold">Add to {category}</p>
+                        </Card>
+                      )}
+                    </div>
+                  )}
                 </AccordionContent>
               </AccordionItem>
             );
