@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { subDays, isSameDay, format, startOfDay, differenceInDays } from 'date-fns';
+import type { Exercise } from '@/data/exercises';
 
 export type Transaction = {
   id: string;
@@ -109,6 +110,10 @@ export type WellnessState = {
   // Routines (Stacks)
   routines: CustomRoutine[];
 
+  // Custom Content
+  customPractices: Exercise[];
+  collapsedCategories: Record<string, boolean>;
+
   // Plans & Progress
   planProgress: Record<string, Record<number, boolean>>;
   completions: Record<string, boolean>;
@@ -139,6 +144,11 @@ export type WellnessState = {
   addRoutine: (routine: Omit<CustomRoutine, 'id' | 'createdAt'>) => void;
   deleteRoutine: (id: string) => void;
 
+  addCustomPractice: (practice: Exercise) => void;
+  updateCustomPractice: (id: string, updates: Partial<Exercise>) => void;
+  deleteCustomPractice: (id: string) => void;
+  toggleCategoryCollapse: (category: string) => void;
+
   togglePlanDay: (planId: string, dayNumber: number) => void;
   logCompletion: () => void;
 };
@@ -167,6 +177,9 @@ export const useWellnessData = create<WellnessState>()(
       communicationLogs: [],
       movementProgress: {},
       routines: [],
+
+      customPractices: [],
+      collapsedCategories: {},
 
       planProgress: {},
       completions: {},
@@ -255,12 +268,28 @@ export const useWellnessData = create<WellnessState>()(
       deleteCommunicationLog: (id) => set((state) => ({
         communicationLogs: state.communicationLogs.filter(l => l.id !== id)
       })),
-
+      
       addRoutine: (routine) => set((state) => ({
         routines: [{ ...routine, id: crypto.randomUUID(), createdAt: new Date().toISOString() }, ...state.routines]
       })),
       deleteRoutine: (id) => set((state) => ({
         routines: state.routines.filter(r => r.id !== id)
+      })),
+
+      addCustomPractice: (practice) => set((state) => ({
+        customPractices: [...state.customPractices, practice]
+      })),
+      updateCustomPractice: (id, updates) => set((state) => ({
+        customPractices: state.customPractices.map(p => p.id === id ? { ...p, ...updates } : p)
+      })),
+      deleteCustomPractice: (id) => set((state) => ({
+        customPractices: state.customPractices.filter(p => p.id !== id)
+      })),
+      toggleCategoryCollapse: (category) => set((state) => ({
+        collapsedCategories: {
+          ...state.collapsedCategories,
+          [category]: !state.collapsedCategories[category]
+        }
       })),
 
       togglePlanDay: (planId, dayNumber) => {
@@ -287,8 +316,13 @@ export const useWellnessData = create<WellnessState>()(
       }
     }),
     {
-      name: 'wellness-data-storage-v2',
+      name: 'wellness-data-storage-v3',
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.setFeaturePhase(3); // Track versioning for hydration
+        }
+      }
     }
   )
 );

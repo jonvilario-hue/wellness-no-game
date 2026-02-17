@@ -5,7 +5,9 @@ import {
   Mail, Video, ClipboardList, Heart, HeartHandshake, Compass, 
   Share2, Smile, Scale, Anchor, Clock, Pencil, Activity, 
   ListChecks, Map, Trash2, Gift, Repeat, RefreshCcw, 
-  Layers, Link as LinkIcon, ShieldCheck, X, Users, Lightbulb
+  Layers, Link as LinkIcon, ShieldCheck, X, Users, Lightbulb,
+  Briefcase, MonitorSmartphone, Shield, Bell, CheckCircle2, 
+  LayoutGrid, Pointer
 } from 'lucide-react';
 import type { Exercise } from './exercises';
 
@@ -21,7 +23,8 @@ export type CommunicationCategory =
   | 'Storytelling' 
   | 'Public Speaking' 
   | 'Professional' 
-  | 'Digital';
+  | 'Digital'
+  | 'Custom';
 
 export const communicationPractices: Exercise[] = [
   // --- Vocal Mechanics ---
@@ -216,785 +219,296 @@ export const communicationPractices: Exercise[] = [
     ],
     completionCue: 'Calibration complete. Gaze balanced.'
   },
-  {
-    id: 'nonverbal_hand_gestures',
-    name: 'Purposeful Hand Gestures',
-    description: 'Enhance comprehension and memory through intentional movement.',
-    duration: 120,
-    estimatedMinutes: 2,
-    icon: Activity,
-    category: 'Nonverbal',
-    tags: ["nonverbal", "public-speaking", "clarity"],
-    intention: 'Enhance comprehension and memory through intentional movement.',
-    setup: ['Stand up or sit without a desk in front of you.'],
-    steps: [
-      '1. Keep hands visible above waist level.',
-      '2. Use size gestures for comparisons ("this big" vs "this small").',
-      '3. Use directional gestures for sequences ("first... then... finally").',
-      '4. Use containment gestures for concepts ("imagine holding this idea").',
-      '5. Avoid repetitive filler gestures (constant pointing, hand-wringing).'
-    ],
-    modifications: [
-      'Easier: Just keep hands visible and still.',
-      'Harder: Match gestures to specific words for maximum impact.'
-    ],
-    completionCue: 'Hands feeling expressive? Great.'
-  },
-  {
-    id: 'nonverbal_facial_congruence',
-    name: 'Facial Expression Congruence',
-    description: 'Build trust by matching your expressions to your message.',
-    duration: 120,
-    estimatedMinutes: 2,
-    icon: Smile,
-    category: 'Nonverbal',
-    tags: ["nonverbal", "emotional-intelligence", "trust"],
-    intention: 'Build trust by matching your expressions to your message.',
-    setup: ['Look in a mirror or record a video.'],
-    steps: [
-      '1. Notice what emotion your words convey.',
-      '2. Check if your face reflects that emotion (mirror check or self-awareness).',
-      '3. Practice common mismatches: smiling while delivering bad news, blank face while expressing excitement.',
-      '4. If discussing something serious, let your face show appropriate concern.',
-      '5. If sharing good news, let yourself smile fully.'
-    ],
-    modifications: [
-      'Easier: Just avoid smiling during serious topics.',
-      'Harder: Practice micro-expressions that match nuanced emotions.'
-    ],
-    completionCue: 'Expression aligned. Done.'
-  },
-  {
-    id: 'nonverbal_proxemics',
-    name: 'Proxemics Awareness (Personal Space)',
-    description: 'Respect spatial boundaries to create comfort and connection.',
-    duration: 90,
-    estimatedMinutes: 1.5,
-    icon: Users,
-    category: 'Nonverbal',
-    tags: ["nonverbal", "boundaries", "cultural-awareness"],
-    intention: 'Respect spatial boundaries to create comfort and connection.',
-    setup: ['Observe distances in social settings.'],
-    steps: [
-      '1. Default to 1.5-4 feet in Western professional contexts.',
-      '2. Notice if the other person steps back (you\'re too close) or leans in (they\'re comfortable).',
-      '3. Match their spatial preference - if they step back, stay where you are.',
-      '4. In other cultures, research appropriate distances beforehand.',
-      '5. Adjust for context: closer for friends, farther for strangers.'
-    ],
-    modifications: [
-      'Easier: Just maintain arm\'s length distance.',
-      'Harder: Calibrate in real-time based on micro-cues (body tension, eye shifts).'
-    ],
-    completionCue: 'Space calibrated. Safe.'
-  },
 
-  // --- Conversation Structure ---
+  // --- Digital ---
   {
-    id: 'convo_turn_taking',
-    name: 'Turn-Taking Signals Practice',
-    description: 'Navigate conversations smoothly without awkward interruptions or silences.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: MessageSquare,
-    category: 'Conversation Structure',
-    tags: ["conversation", "flow", "listening"],
-    intention: 'Navigate conversations smoothly without awkward interruptions or silences.',
-    setup: ['Use this during a live group or 1-on-1 interaction.'],
-    steps: [
-      '1. When finishing your turn: drop pitch at end of sentence, make eye contact, use a completion gesture (open palm, slight nod).',
-      '2. When wanting to speak: lean forward slightly, make eye contact, take a breath (signals you\'re ready).',
-      '3. Watch for others\' signals before jumping in.',
-      '4. If you accidentally overlap, say "Sorry, go ahead" and yield.',
-      '5. Practice in low-stakes conversations first.'
-    ],
-    modifications: [
-      'Easier: Just focus on pitch drop when done speaking.',
-      'Harder: Read multiple signals simultaneously in group conversations.'
-    ],
-    completionCue: 'Turn-taking mastered. Fluid.'
-  },
-  {
-    id: 'convo_bridging',
-    name: 'Topic Bridging Exercise',
-    description: 'Change subjects smoothly without jarring transitions.',
+    id: 'digital_email_clarity',
+    name: 'Email Subject Line Clarity',
+    description: 'Increase response rates through specific subject lines.',
     duration: 120,
     estimatedMinutes: 2,
-    icon: LinkIcon,
-    category: 'Conversation Structure',
-    tags: ["conversation", "flow", "small-talk"],
-    intention: 'Change subjects smoothly without jarring transitions.',
-    setup: ['Choose two unrelated topics.'],
+    icon: Mail,
+    category: 'Digital',
+    tags: ['digital', 'professional', 'email', 'clarity'],
+    intention: 'Increase response rates and inbox prioritization through specific subject lines.',
+    setup: ['Open your email client and draft a new message.'],
     steps: [
-      '1. Find a small connection between current topic and new topic.',
-      '2. Use bridging phrases: "Speaking of X...", "That reminds me...", "On a related note...".',
-      '3. Acknowledge the shift: "Changing gears for a second...".',
-      '4. If no connection exists, use: "Completely different topic, but...".',
-      '5. Avoid abrupt topic drops mid-conversation.'
+      '1. State the action needed: "Action Required:", "FYI:", "Question:", "Decision Needed:".',
+      '2. Include the topic: "Action Required: Budget Approval by Friday".',
+      '3. Add relevant identifiers: project name, date, or meeting reference.',
+      '4. Keep under 60 characters for mobile visibility.',
+      '5. Update subject line if thread topic changes mid-conversation.'
     ],
     modifications: [
-      'Easier: Use any bridging phrase consistently.',
-      'Harder: Find thematic connections even between unrelated topics.'
+      'Easier: Just make subjects descriptive rather than vague.',
+      'Harder: Use subject line tags consistently across your team ([URGENT], [LOW]).'
     ],
-    completionCue: 'Bridge built. Transition smooth.'
+    completionCue: 'Subject line locked and clear. Send away.'
   },
   {
-    id: 'convo_backchannel',
-    name: 'Backchannel Response Drill',
-    description: 'Show active processing without interrupting the speaker.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: MessageSquare,
-    category: 'Conversation Structure',
-    tags: ["conversation", "listening", "engagement"],
-    intention: 'Show active processing without interrupting the speaker.',
-    setup: ['Listen to a podcast or partner.'],
-    steps: [
-      '1. Use verbal nods: "Mm-hmm", "Right", "I see", "Gotcha".',
-      '2. Time them during natural pauses, not over the speaker\'s words.',
-      '3. Vary your responses - don\'t repeat the same one.',
-      '4. Match intensity to content (thoughtful "hmm" for serious topics, enthusiastic "oh wow!" for exciting news).',
-      '5. Pair with nonverbal nods or facial expressions.'
-    ],
-    modifications: [
-      'Easier: Just nod physically without verbal responses.',
-      'Harder: Use backchannels that advance the conversation ("And then what?" "That must have been...").'
-    ],
-    completionCue: 'Backchannels active. Engaged.'
-  },
-  {
-    id: 'convo_repair',
-    name: 'Repair Strategy Practice',
-    description: 'Fix miscommunication immediately before it compounds.',
-    duration: 90,
-    estimatedMinutes: 1.5,
-    icon: RefreshCcw,
-    category: 'Conversation Structure',
-    tags: ["conversation", "clarity", "repair"],
-    intention: 'Fix miscommunication immediately before it compounds.',
-    setup: ['Recall a recent misunderstanding.'],
-    steps: [
-      '1. Notice confusion cues (furrowed brow, "Huh?", silence).',
-      '2. Stop and acknowledge: "Let me try that again..." or "I don\'t think I said that clearly...".',
-      '3. Rephrase using different words, simpler structure, or an example.',
-      '4. Check for understanding: "Does that make more sense?".',
-      '5. Don\'t keep going if confusion persists - repair it in the moment.'
-    ],
-    modifications: [
-      'Easier: Just say "Sorry, what I meant was..." and restate.',
-      'Harder: Diagnose WHY they\'re confused and target that specifically.'
-    ],
-    completionCue: 'Repair strategy ready. Clear.'
-  },
-  {
-    id: 'convo_adjacency_pairs',
-    name: 'Adjacency Pairs Awareness',
-    description: 'Understand conversational expectations to avoid social friction.',
-    duration: 120,
-    estimatedMinutes: 2,
-    icon: Layers,
-    category: 'Conversation Structure',
-    tags: ["conversation", "social-skills", "pragmatics"],
-    intention: 'Understand conversational expectations to avoid social friction.',
-    setup: ['Think of common greetings and questions.'],
-    steps: [
-      '1. Learn common pairs: Question→Answer, Greeting→Greeting, Thank you→You\'re welcome, Apology→Acceptance, Compliment→Acknowledgment.',
-      '2. Notice when someone offers the first part and respond with the expected second part.',
-      '3. If you can\'t provide the expected response (e.g., can\'t answer a question), acknowledge it: "I don\'t know, but...".',
-      '4. Don\'t leave pairs unresolved - it creates conversational debt.',
-      '5. Practice in everyday interactions.'
-    ],
-    modifications: [
-      'Easier: Focus on greetings and thanks.',
-      'Harder: Handle complex pairs like criticism→defense/acceptance.'
-    ],
-    completionCue: 'Pairs matched. Friction reduced.'
-  },
-  {
-    id: 'convo_pre_closing',
-    name: 'Pre-Closing Signals',
-    description: 'End conversations gracefully without abruptness or awkward lingering.',
-    duration: 90,
-    estimatedMinutes: 1.5,
-    icon: X,
-    category: 'Conversation Structure',
-    tags: ["conversation", "boundaries", "social-skills"],
-    intention: 'End conversations gracefully without abruptness or awkward lingering.',
-    setup: ['Practice during your next conversation wrap-up.'],
-    steps: [
-      '1. Signal you\'re wrapping up: "Well...", "Anyway...", "I should let you go...".',
-      '2. Summarize or reference a future action: "This was helpful, I\'ll send you that link".',
-      '3. Use physical cues: stand up, step back, gather belongings.',
-      '4. If the other person keeps talking, repeat the pre-closing after they finish.',
-      '5. End with a clear closer: "Great talking with you!" + goodbye gesture.'
-    ],
-    modifications: [
-      'Easier: Just say "I need to run" directly.',
-      'Harder: Layer multiple signals for smoother exit.'
-    ],
-    completionCue: 'Exit strategy locked. Done.'
-  },
-
-  // --- Persuasion ---
-  {
-    id: 'persuasion_reciprocity',
-    name: 'Reciprocity Principle Exercise',
-    description: 'Increase compliance by giving first.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: Gift,
-    category: 'Persuasion',
-    tags: ["persuasion", "influence", "professional"],
-    intention: 'Increase compliance by giving first (Cialdini\'s research).',
-    setup: ['Identify a request you need to make this week.'],
-    steps: [
-      '1. Identify something small you can offer before asking (information, compliment, favor, introduction).',
-      '2. Give it genuinely without attaching strings.',
-      '3. Wait - don\'t immediately ask for something back.',
-      '4. When you do ask, frame it clearly and simply.',
-      '5. Notice how giving first changes the dynamic.'
-    ],
-    modifications: [
-      'Easier: Compliment someone before asking for help.',
-      'Harder: Build reciprocity over weeks with multiple small gives.'
-    ],
-    completionCue: 'Reciprocity cycle started. Done.'
-  },
-  {
-    id: 'persuasion_social_proof',
-    name: 'Social Proof Framing',
-    description: 'Leverage conformity to make your suggestion more appealing.',
-    duration: 120,
-    estimatedMinutes: 2,
-    icon: Users,
-    category: 'Persuasion',
-    tags: ["persuasion", "influence", "professional"],
-    intention: 'Leverage conformity to make your suggestion more appealing.',
-    setup: ['Draft a proposal or suggestion.'],
-    steps: [
-      '1. Identify relevant reference group ("people like you", "teams in your industry", "customers with similar needs").',
-      '2. State what they\'re doing: "Most of our clients start with...", "Engineers typically prefer...".',
-      '3. Make it specific with numbers if possible: "73% of users chose...".',
-      '4. Avoid vague claims: "Everyone does this" feels manipulative.',
-      '5. Use truthfully - false social proof damages trust.'
-    ],
-    modifications: [
-      'Easier: Just mention one other person who did it.',
-      'Harder: Layer multiple forms of social proof (experts + peers + statistics).'
-    ],
-    completionCue: 'Social proof integrated. Persuasive.'
-  },
-  {
-    id: 'persuasion_foot_door',
-    name: 'Foot-in-the-Door Technique',
-    description: 'Build commitment by starting with a small request first.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: Activity,
-    category: 'Persuasion',
-    tags: ["persuasion", "influence", "negotiation"],
-    intention: 'Build commitment by starting with a small request first.',
-    setup: ['Define your large ultimate request.'],
-    steps: [
-      '1. Identify your ultimate ask.',
-      '2. Design a much smaller related ask (takes <5 min, low stakes).',
-      '3. Make the small ask first and get agreement.',
-      '4. Wait hours or days - don\'t immediately escalate.',
-      '5. Make the larger request, now framed as consistent with their earlier "yes".'
-    ],
-    modifications: [
-      'Easier: Just ask for the small thing and stop if they agree.',
-      'Harder: Chain multiple escalating asks over weeks.'
-    ],
-    completionCue: 'Commitment path established. Ready.'
-  },
-  {
-    id: 'persuasion_framing',
-    name: 'Positive vs Negative Framing',
-    description: 'Shape decisions by emphasizing gains or losses.',
-    duration: 120,
-    estimatedMinutes: 2,
-    icon: Scale,
-    category: 'Persuasion',
-    tags: ["persuasion", "influence", "framing"],
-    intention: 'Shape decisions by emphasizing gains or losses (Kahneman & Tversky).',
-    setup: ['Take one proposal and write it two ways.'],
-    steps: [
-      '1. Identify the core message.',
-      '2. Frame A (Positive): emphasize what they\'ll gain/keep ("Save $200", "90% success rate").',
-      '3. Frame B (Negative): emphasize what they\'ll lose/avoid ("Lose $200", "10% failure rate").',
-      '4. Choose based on context: positive frames for risk-averse audiences, negative frames when highlighting urgency/threat.',
-      '5. Test both in low-stakes situations.'
-    ],
-    modifications: [
-      'Easier: Just pick one frame and stick with it.',
-      'Harder: Switch frames mid-conversation based on audience response.'
-    ],
-    completionCue: 'Frames mastered. Choice influenced.'
-  },
-  {
-    id: 'persuasion_anchoring',
-    name: 'Anchoring Practice',
-    description: 'Set the reference point in negotiations to influence outcomes.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: Anchor,
-    category: 'Persuasion',
-    tags: ["persuasion", "negotiation", "professional"],
-    intention: 'Set the reference point in negotiations to influence outcomes.',
-    setup: ['Prepare for a salary or price negotiation.'],
-    steps: [
-      '1. Go first with a number if you have information advantage.',
-      '2. Start higher (if selling) or lower (if buying) than your target - but not absurdly so.',
-      '3. Use precise numbers ($47,300 instead of $47,000) for stronger anchoring effect.',
-      '4. If they anchor first and it\'s unreasonable, reset: "Let\'s start from a different baseline...".',
-      '5. Provide rationale for your anchor to make it credible.'
-    ],
-    modifications: [
-      'Easier: Just state your number first.',
-      'Harder: Layer multiple anchors (salary + benefits + equity).'
-    ],
-    completionCue: 'Anchor dropped. Negotiating.'
-  },
-  {
-    id: 'persuasion_scarcity',
-    name: 'Scarcity Framing Exercise',
-    description: 'Increase perceived value by highlighting limited availability.',
-    duration: 90,
-    estimatedMinutes: 1.5,
-    icon: Clock,
-    category: 'Persuasion',
-    tags: ["persuasion", "influence", "sales"],
-    intention: 'Increase perceived value by highlighting limited availability.',
-    setup: ['Identify a limited offer.'],
-    steps: [
-      '1. Identify genuine scarcity (limited time, quantity, or access).',
-      '2. State it clearly: "Only 3 spots left", "This offer closes Friday", "We can only take 2 more clients this quarter".',
-      '3. Explain WHY it\'s scarce (builds credibility).',
-      '4. Avoid false scarcity - it destroys trust.',
-      '5. Let them decide without pressure after you\'ve informed them.'
-    ],
-    modifications: [
-      'Easier: Just mention a deadline.',
-      'Harder: Combine scarcity with social proof ("others are deciding quickly").'
-    ],
-    completionCue: 'Scarcity highlighted. Value boosted.'
-  },
-  {
-    id: 'persuasion_inoculation',
-    name: 'Inoculation (Pre-Address Counterarguments)',
-    description: 'Strengthen your position by acknowledging objections first.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: ShieldCheck,
-    category: 'Persuasion',
-    tags: ["persuasion", "argumentation", "professional"],
-    intention: 'Strengthen your position by acknowledging objections first.',
-    setup: ['List potential objections to your idea.'],
-    steps: [
-      '1. List likely counterarguments to your proposal.',
-      '2. Bring up the strongest one yourself: "You might be thinking...", "One concern could be...".',
-      '3. Address it directly with evidence or mitigation.',
-      '4. Don\'t over-defend - brief acknowledgment is often enough.',
-      '5. Return to your main point after inoculating.'
-    ],
-    modifications: [
-      'Easier: Address one obvious objection.',
-      'Harder: Inoculate against 2-3 counterarguments without sounding defensive.'
-    ],
-    completionCue: 'Argument inoculated. Robust.'
-  },
-
-  // --- Clarity ---
-  {
-    id: 'clarity_concrete',
-    name: 'Concrete Language Swap',
-    description: 'Replace vague abstractions with specific, tangible words.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: Pencil,
-    category: 'Clarity',
-    tags: ["clarity", "writing", "professional"],
-    intention: 'Replace vague abstractions with specific, tangible words.',
-    setup: ['Open a recent email or draft.'],
-    steps: [
-      '1. Identify abstract words in your draft/thought: "improve", "synergy", "leverage", "optimize".',
-      '2. Ask: what does this actually look like? What would someone see/hear/do?.',
-      '3. Replace with concrete specifics: "improve" → "reduce response time from 3 days to 1 day".',
-      '4. Use names, numbers, actions: "the team" → "Sarah, Marcus, and Lee".',
-      '5. Test by asking "Can a 10-year-old visualize this?"'
-    ],
-    modifications: [
-      'Easier: Focus on nouns only.',
-      'Harder: Make verbs concrete too ("utilize" → "use", "facilitate" → "run").'
-    ],
-    completionCue: 'Language concrete. Visualized.'
-  },
-  {
-    id: 'clarity_active_voice',
-    name: 'Active Voice Conversion',
-    description: 'Increase clarity by naming who does what.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: Activity,
-    category: 'Clarity',
-    tags: ["clarity", "writing", "professional"],
-    intention: 'Increase clarity and accountability by naming who does what.',
-    setup: ['Find passive sentences in your writing.'],
-    steps: [
-      '1. Find passive constructions: "mistakes were made", "it was decided", "the report will be completed".',
-      '2. Ask: who is doing this action?.',
-      '3. Rewrite with actor first: "We made mistakes", "The board decided", "Jordan will complete the report by Friday".',
-      '4. Keep passive voice only when the actor is unknown or irrelevant.',
-      '5. Practice on old emails or documents.'
-    ],
-    modifications: [
-      'Easier: Convert one sentence per paragraph.',
-      'Harder: Eliminate all passive voice in a full document.'
-    ],
-    completionCue: 'Voice active. Clear.'
-  },
-  {
-    id: 'clarity_one_idea',
-    name: 'One Idea Per Sentence Drill',
-    description: 'Break complex sentences into simple ones.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: ListChecks,
-    category: 'Clarity',
-    tags: ["clarity", "writing", "simplicity"],
-    intention: 'Reduce cognitive load by breaking complex sentences into simple ones.',
-    setup: ['Pick a dense paragraph.'],
-    steps: [
-      '1. Find sentences with "and", "but", "however", "while", multiple commas.',
-      '2. Identify how many distinct ideas are packed in.',
-      '3. Split into separate sentences - one idea each.',
-      '4. Reorder if needed for logical flow.',
-      '5. Read aloud to test clarity.'
-    ],
-    modifications: [
-      'Easier: Just split sentences with "and".',
-      'Harder: Apply to an entire document/speech.'
-    ],
-    completionCue: 'One sentence, one idea. Simple.'
-  },
-  {
-    id: 'clarity_signposting',
-    name: 'Signposting Practice',
-    description: 'Guide audience attention with verbal roadmaps.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: Map,
-    category: 'Clarity',
-    tags: ["clarity", "public-speaking", "structure"],
-    intention: 'Guide audience attention with verbal roadmaps.',
-    setup: ['Prepare a short intro for a talk.'],
-    steps: [
-      '1. Use openers: "First", "To begin", "Let me start with".',
-      '2. Use connectors: "However", "As a result", "On the other hand", "Similarly".',
-      '3. Use closers: "In conclusion", "To sum up", "The key takeaway".',
-      '4. Preview structure upfront: "I\'ll cover three things: X, Y, and Z".',
-      '5. Reference back: "As I mentioned earlier"'
-    ],
-    modifications: [
-      'Easier: Just use "First, second, third".',
-      'Harder: Layer multiple signpost types in one talk.'
-    ],
-    completionCue: 'Roadmap laid. Attention guided.'
-  },
-  {
-    id: 'clarity_jargon',
-    name: 'Jargon Elimination Exercise',
-    description: 'Ensure accessibility by removing insider language.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: Trash2,
-    category: 'Clarity',
-    tags: ["clarity", "accessibility", "writing"],
-    intention: 'Ensure accessibility by removing insider language.',
-    setup: ['Scan a technical document.'],
-    steps: [
-      '1. List specialized terms in your content.',
-      '2. For each, ask: would someone outside my field know this?.',
-      '3. If no: replace with plain language or define it the first time.',
-      '4. Test on someone unfamiliar with the topic.',
-      '5. Keep only jargon that saves significant time and is well-known to your audience.'
-    ],
-    modifications: [
-      'Easier: Remove obvious acronyms.',
-      'Harder: Eliminate ALL jargon, even semi-common terms.'
-    ],
-    completionCue: 'Jargon purged. Accessible.'
-  },
-  {
-    id: 'clarity_analogy',
-    name: 'Analogy Building',
-    description: 'Explain unfamiliar concepts by comparing them to familiar ones.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: Lightbulb,
-    category: 'Clarity',
-    tags: ["clarity", "teaching", "creativity"],
-    intention: 'Explain unfamiliar concepts by comparing to familiar ones.',
-    setup: ['Pick a hard-to-explain topic.'],
-    steps: [
-      '1. Identify the hard-to-grasp concept.',
-      '2. Find something your audience knows well that shares a key feature.',
-      '3. State the comparison explicitly: "X is like Y because...".',
-      '4. Extend the analogy only where it fits - note where it breaks down if relevant.',
-      '5. Test on someone to see if it clarifies or confuses.'
-    ],
-    modifications: [
-      'Easier: Use simple physical analogies ("like a bridge connecting two islands").',
-      'Harder: Build multi-step analogies for complex processes.'
-    ],
-    completionCue: 'Analogy built. Concept clear.'
-  },
-
-  // --- Emotional Intelligence ---
-  {
-    id: 'ei_labeling',
-    name: 'Emotion Labeling Exercise',
-    description: 'Reduce emotional intensity by naming what you\'re feeling.',
-    duration: 90,
-    estimatedMinutes: 1.5,
-    icon: Smile,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "self-awareness", "regulation"],
-    intention: 'Reduce emotional intensity by naming what you\'re feeling.',
-    setup: ['Pause during a moment of stress.'],
-    steps: [
-      '1. Pause and notice the physical sensation (tight chest, clenched jaw, butterflies).',
-      '2. Name the emotion specifically - not just "bad" but "disappointed", "anxious", "frustrated", "ashamed".',
-      '3. Say it aloud or write it: "I\'m feeling [emotion]".',
-      '4. Notice if the intensity decreases after labeling.',
-      '5. Use an emotion wheel if you struggle to find precise words.'
-    ],
-    modifications: [
-      'Easier: Use broad categories (mad/sad/glad/scared).',
-      'Harder: Identify layered emotions ("I\'m angry, but underneath I\'m hurt")'
-    ],
-    completionCue: 'Feeling labeled. Intensity down.'
-  },
-  {
-    id: 'ei_i_statement',
-    name: '"I" Statement Practice',
-    description: 'Express feelings without blaming to reduce defensiveness.',
-    duration: 120,
-    estimatedMinutes: 2,
-    icon: User,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "conflict", "assertiveness"],
-    intention: 'Express feelings without blaming to reduce defensiveness.',
-    setup: ['Think of a minor annoyance.'],
-    steps: [
-      '1. Structure: "I feel [emotion] when [specific behavior] because [impact on me]".',
-      '2. Example: "I feel frustrated when meetings start late because I have to reschedule my afternoon".',
-      '3. Avoid "you" statements: "You always make me feel..." → "I feel...".',
-      '4. Be specific about the behavior, not character: "when you interrupt" not "when you\'re rude".',
-      '5. Practice on minor annoyances first.'
-    ],
-    modifications: [
-      'Easier: Just use "I feel [emotion]" without the full structure.',
-      'Harder: Use in real-time conflict, not just after reflecting.'
-    ],
-    completionCue: 'Statement drafted. Ready to speak.'
-  },
-  {
-    id: 'ei_validation',
-    name: 'Validation Before Advice',
-    description: 'Build trust by acknowledging emotion before problem-solving.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: HeartHandshake,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "listening", "empathy"],
-    intention: 'Build trust by acknowledging emotion before problem-solving.',
-    setup: ['Listen to a friend or coworker vent.'],
-    steps: [
-      '1. Listen for the emotion in what they\'re saying.',
-      '2. Name it: "That sounds really frustrating" or "I can see why you\'d feel hurt".',
-      '3. Resist the urge to immediately fix/advise/minimize.',
-      '4. Wait for them to feel heard - they\'ll often ask for advice if they want it.',
-      '5. If you must advise, ask first: "Do you want suggestions, or do you just need to vent?"'
-    ],
-    modifications: [
-      'Easier: Just say "That makes sense" before anything else.',
-      'Harder: Validate even when you disagree with their perspective.'
-    ],
-    completionCue: 'Validation delivered. Trust built.'
-  },
-  {
-    id: 'ei_perspective',
-    name: 'Perspective-Taking Drill',
-    description: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: Compass,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "empathy", "conflict"],
-    intention: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
-    setup: ['Recall a disagreement.'],
-    steps: [
-      '1. State their position in your own words as if you believed it.',
-      '2. Ask yourself: what would have to be true for this to make sense?.',
-      '3. Identify their underlying needs/fears/values driving their stance.',
-      '4. Share your understanding: "From your perspective...", "If I were in your shoes...".',
-      '5. Notice how this changes your emotional response to them.'
-    ],
-    modifications: [
-      'Easier: Just list 3 reasons why a reasonable person might hold their view.',
-      'Harder: Steelman their argument (make it stronger than they did).'
-    ],
-    completionCue: 'Perspective shifted. Conflict cooled.'
-  },
-  {
-    id: 'ei_disclosure',
-    name: 'Appropriate Self-Disclosure',
-    description: 'Build connection by sharing strategically, not oversharing.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: Share2,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "connection", "boundaries"],
-    intention: 'Build connection by sharing strategically, not oversharing.',
-    setup: ['Prepare a small personal story.'],
-    steps: [
-      '1. Ask: is this relevant to what THEY shared?.',
-      '2. Keep it brief - match or be shorter than their disclosure.',
-      '3. Focus on the feeling/lesson, not just the story details.',
-      '4. Watch their response - if they seem uncomfortable, dial back.',
-      '5. Avoid one-upping: "That\'s nothing, I..." or trauma-dumping on new acquaintances.'
-    ],
-    modifications: [
-      'Easier: Share only positive/resolved experiences.',
-      'Harder: Share current struggles in professional contexts appropriately.'
-    ],
-    completionCue: 'Disclosure complete. Connection built.'
-  },
-
-  // --- Conflict Resolution ---
-  {
-    id: 'conflict_deescalation',
-    name: 'De-Escalation Technique',
-    description: 'Use your voice and body to lower the tension in a heated moment.',
+    id: 'digital_response_norms',
+    name: 'Response Time Norms',
+    description: 'Set appropriate expectations and reduce communication anxiety.',
     duration: 180,
     estimatedMinutes: 3,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ['conflict', 'de-escalation', 'emotional-intelligence'],
-    intention: 'Maintain control of the environment by regulating your own nervous system response.',
-    setup: ['Recall a recent moment of tension.'],
+    icon: Clock,
+    category: 'Digital',
+    tags: ['digital', 'professional', 'boundaries', 'email'],
+    intention: 'Set appropriate expectations and reduce communication anxiety.',
+    setup: ['Review your active messaging threads.'],
     steps: [
-      '1. Lower your volume by 10-20% below the other person\'s level.',
-      '2. Consciously slow your speaking rate.',
-      '3. Soften your facial muscles and relax your jaw.',
-      '4. Keep your hands visible and open.',
-      '5. Practice saying: "I want to make sure I understand your perspective correctly."'
+      '1. Learn standard norms: email = 24-48 hours, Slack/Teams = 1-4 hours, urgent = phone call.',
+      '2. Set your own boundaries in email signature or auto-responder.',
+      '3. Use status indicators in chat apps when unavailable (DND, Away, In a Meeting).',
+      '4. If you can\'t respond fully, send a quick acknowledgment: "Got this, will respond by Tuesday".',
+      '5. Respect others\' response windows - don\'t expect instant replies.'
     ],
     modifications: [
-      'Solo: Practice the physical "shift" in front of a mirror.',
-      'Make it harder: Practice this while listening to loud or aggressive music to simulate pressure.'
+      'Easier: Just respond within 24 hours to everything.',
+      'Harder: Differentiate response times by message urgency and communicate this.'
     ],
-    completionCue: 'Pulse steady? Voice calm? You are ready.'
+    completionCue: 'Expectations set. Pressure released.'
   },
   {
-    id: 'conflict_i_statements',
-    name: '"I" Statement Practice',
-    description: 'Express your needs without triggering defensiveness in others.',
+    id: 'digital_tone_indicators',
+    name: 'Tone Indicators in Text',
+    description: 'Prevent misinterpretation in asynchronous communication.',
     duration: 120,
     estimatedMinutes: 2,
-    icon: User,
-    category: 'Conflict Resolution',
-    tags: ['conflict', 'emotional-intelligence', 'vulnerability'],
-    intention: 'Take ownership of your feelings to foster collaboration rather than blame.',
-    setup: ['Identify a small frustration you currently have.'],
+    icon: MessageSquare,
+    category: 'Digital',
+    tags: ['digital', 'emotional-intelligence', 'warmth', 'email'],
+    intention: 'Prevent misinterpretation in asynchronous communication.',
+    setup: ['Draft a quick Slack or Teams message.'],
     steps: [
-      '1. Identify the feeling: "I feel [emotion]..."',
-      '2. Identify the specific behavior: "...when [fact-based observation]..."',
-      '3. Identify the impact: "...because [the effect on you]..."',
-      '4. State the need: "I would appreciate it if [request]."',
-      '5. Combine: "I feel frustrated when meetings start late because it affects my afternoon schedule. I’d appreciate it if we could start on time."'
+      '1. Recognize that text defaults to neutral/negative tone without cues.',
+      '2. Add warmth with: exclamation points (sparingly), friendly emoji (😊, 👍).',
+      '3. Soften requests: "Would you mind..." instead of "Do this".',
+      '4. Use positive framing: "Great question!" not just answering bluntly.',
+      '5. Re-read and ask: could this sound colder than I intend?'
     ],
     modifications: [
-      'Make it easier: Write it down first to ensure no "You" language sneaks in.',
-      'Make it harder: Deliver the statement out loud with a neutral tone.'
+      'Easier: Add one exclamation point to friendly messages.',
+      'Harder: Calibrate tone indicators by relationship (formal vs peer).'
     ],
-    completionCue: 'Statement formulated and clear. Well done.'
+    completionCue: 'Message calibrated for warmth. Sent.'
   },
-
-  // --- Public Speaking ---
   {
-    id: 'speaking_extemporaneous',
-    name: 'Extemporaneous Delivery',
-    description: 'Speak from an outline to maintain eye contact and natural flow.',
+    id: 'digital_video_framing',
+    name: 'Video Call Framing Setup',
+    description: 'Maximize presence and professionalism in remote communication.',
     duration: 300,
     estimatedMinutes: 5,
-    icon: Presentation,
-    category: 'Public Speaking',
-    tags: ['public-speaking', 'confidence', 'clarity'],
-    intention: 'Avoid the "robotic" feel of reading a script while remaining structured.',
-    setup: ['Choose a topic you know well.', 'Grab a small note card.'],
+    icon: Video,
+    category: 'Digital',
+    tags: ['digital', 'professional', 'video', 'presence'],
+    intention: 'Maximize presence and professionalism in remote communication.',
+    setup: ['Open your webcam or photo booth app.'],
     steps: [
-      '1. Write 3-5 bullet points (keywords only) on your card.',
-      '2. Stand up and set a timer for 2 minutes.',
-      '3. Deliver a talk using ONLY the keywords as anchors.',
-      '4. Allow yourself to use different words each time you practice a point.',
-      '5. Maintain "audience" eye contact (3-5 seconds per imaginary person).'
+      '1. Position camera at eye level (use a stand or books).',
+      '2. Sit arm\'s length from camera.',
+      '3. Check framing: head and shoulders visible, space above head.',
+      '4. Lighting: face the light source, avoid backlighting.',
+      '5. Background: clean, non-distracting, or use a subtle blur.'
     ],
     modifications: [
-      'Make it easier: Use a fuller outline for the first attempt.',
-      'Make it harder: Use only ONE word per bullet point.'
+      'Easier: Just raise your laptop to eye level.',
+      'Harder: Invest in a ring light and external webcam setup.'
     ],
-    completionCue: 'When you can speak fluently without reading, you are ready.'
+    completionCue: 'Framing optimized. You look like a pro.'
   },
   {
-    id: 'speaking_power_pose',
-    name: 'Pre-Speaking Power Pose',
-    description: 'Use body language to chemically reduce stress before a talk.',
-    duration: 120,
-    estimatedMinutes: 2,
-    icon: Target,
-    category: 'Public Speaking',
-    tags: ['public-speaking', 'confidence', 'quick'],
-    intention: 'Lower cortisol and increase testosterone to feel more dominant and less threatened.',
-    setup: ['Find a private space (restroom, hallway, etc.).'],
+    id: 'digital_sync_vs_async',
+    name: 'Async vs Sync Decision',
+    description: 'Choose the right communication medium for the message.',
+    duration: 60,
+    estimatedMinutes: 1,
+    icon: ArrowLeftRight,
+    category: 'Digital',
+    tags: ['digital', 'professional', 'efficiency', 'boundaries'],
+    intention: 'Choose the right communication medium based on complexity and urgency.',
+    setup: ['Identify an upcoming communication task.'],
     steps: [
-      '1. Stand with feet wide and hands on hips (Wonder Woman/Superman).',
-      '2. Alternatively, reach arms high in a "V" shape.',
-      '3. Take slow, deep breaths.',
-      '4. Hold for 2 full minutes.',
-      '5. Notice the shift in your felt sense of confidence.'
+      '1. Use async (email, Slack) for: updates, non-urgent questions, reference info.',
+      '2. Use sync (call, video) for: complex explanations, brainstorming, conflict resolution.',
+      '3. When in doubt, ask: "Does this need immediate back-and-forth?".',
+      '4. Default to async to respect others\' time and focus.',
+      '5. If a thread goes 3+ times, suggest moving to a call.'
     ],
     modifications: [
-      'Solo: Do this in front of a mirror.',
-      'Make it easier: 1 minute is often enough if you are in a rush.'
+      'Easier: Just use email for everything non-urgent.',
+      'Harder: Layer communication (async context → sync decision → async follow-up).'
     ],
-    completionCue: 'Feeling larger and more present? Go get them.'
+    completionCue: 'Medium chosen. Decision made.'
   },
 
-  // --- Storytelling ---
+  // --- Professional ---
   {
-    id: 'story_three_act',
-    name: 'Three-Act Micro-Story',
-    description: 'Structure any anecdote for maximum impact in under 60 seconds.',
-    duration: 180,
-    estimatedMinutes: 3,
-    icon: BookOpen,
-    category: 'Storytelling',
-    tags: ['storytelling', 'small-talk', 'professional'],
-    intention: 'Deliver information in a narrative format that is 22x more likely to be remembered than facts.',
-    setup: ['Think of a recent accomplishment or interesting event.'],
+    id: 'prof_sbi_feedback',
+    name: 'SBI Feedback (Situation-Behavior-Impact)',
+    description: 'Deliver clear, actionable feedback without triggering defensiveness.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: ClipboardList,
+    category: 'Professional',
+    tags: ['professional', 'feedback', 'leadership', 'clarity'],
+    intention: 'Deliver clear, actionable feedback without triggering defensiveness.',
+    setup: ['Recall a recent observation you need to share.'],
     steps: [
-      '1. The Setup: Describe the baseline (Where? Who? What was normal?).',
-      '2. The Conflict: The "But" moment (What went wrong? What changed?).',
-      '3. The Resolution: The "Therefore" (How was it solved? What was the lesson?).',
-      '4. Practice telling the story in exactly three sentences.'
+      '1. Situation: "In yesterday\'s client meeting..." (specific time/place).',
+      '2. Behavior: "...when you interrupted Sarah twice..." (observable action).',
+      '3. Impact: "...the client seemed confused, and Sarah stopped contributing.".',
+      '4. Pause and let them respond - don\'t pile on.',
+      '5. Collaborate on solution: "How could we handle that differently next time?"'
     ],
     modifications: [
-      'Make it easier: Use the "Once upon a time... Every day... Until one day..." prompt.',
-      'Make it harder: Add one sensory detail (smell, sound, texture) to the setup.'
+      'Easier: Use just Behavior + Impact if Situation is obvious.',
+      'Harder: Layer in positive SBI before corrective SBI.'
     ],
-    completionCue: 'Story arc clear? Narrative locked.'
+    completionCue: 'Feedback structured. Ready to deliver.'
+  },
+  {
+    id: 'prof_radical_candor',
+    name: 'Radical Candor Practice',
+    description: 'Balance caring personally with challenging directly.',
+    duration: 600,
+    estimatedMinutes: 10,
+    icon: Heart,
+    category: 'Professional',
+    tags: ['professional', 'feedback', 'leadership', 'honesty'],
+    intention: 'Balance caring personally with challenging directly.',
+    setup: ['Identify a peer or direct report who needs feedback.'],
+    steps: [
+      '1. Build relationship first - show you genuinely care.',
+      '2. Challenge directly: give specific, honest feedback about behavior/work.',
+      '3. Avoid ruinous empathy or obnoxious aggression.',
+      '4. Make it a dialogue: "Tell me if I\'m off base here...".',
+      '5. Follow up: check in on progress and offer support.'
+    ],
+    modifications: [
+      'Easier: Start with "praise specifically, criticize specifically" formula.',
+      'Harder: Give radical candor upward to your manager.'
+    ],
+    completionCue: 'Conversation plan set. Candor enabled.'
+  },
+  {
+    id: 'prof_nvc_framework',
+    name: 'Nonviolent Communication (NVC)',
+    description: 'Express needs and make requests without blame or judgment.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: HeartHandshake,
+    category: 'Professional',
+    tags: ['professional', 'conflict', 'emotional-intelligence', 'nvc'],
+    intention: 'Express needs and make requests without blame or judgment.',
+    setup: ['Identify a request you need to make.'],
+    steps: [
+      '1. Observation: State facts without evaluation.',
+      '2. Feeling: Name your emotion - "I felt stressed".',
+      '3. Need: Identify underlying need - "...because I need reliability".',
+      '4. Request: Make a specific, actionable request.',
+      '5. Listen to their needs and feelings in return.'
+    ],
+    modifications: [
+      'Easier: Use just Observation + Request.',
+      'Harder: Use full NVC in heated conflicts.'
+    ],
+    completionCue: 'Request framed with empathy. Done.'
+  },
+  {
+    id: 'prof_crucial_convo',
+    name: 'Crucial Conversations Technique',
+    description: 'Create a "pool of shared meaning" during high-stakes dialogue.',
+    duration: 1200,
+    estimatedMinutes: 20,
+    icon: MessageSquare,
+    category: 'Professional',
+    tags: ['professional', 'conflict', 'leadership', 'high-stakes'],
+    intention: 'Create a "pool of shared meaning" during high-stakes dialogue.',
+    setup: ['Identify a high-stakes conversation coming up.'],
+    steps: [
+      '1. Notice when conversation becomes crucial (high stakes, strong emotions).',
+      '2. Make it safe: establish mutual purpose and mutual respect.',
+      '3. Share your story, not your conclusion: "I\'m worried that...".',
+      '4. Encourage others to share: "Help me understand your thinking...".',
+      '5. Pool all viewpoints before deciding.'
+    ],
+    modifications: [
+      'Easier: Just pause and establish mutual purpose when tension rises.',
+      'Harder: Facilitate crucial conversations for groups.'
+    ],
+    completionCue: 'Safety established. Conversation can proceed.'
+  },
+  {
+    id: 'prof_exec_presence',
+    name: 'Executive Presence Check',
+    description: 'Cultivate gravitas, communication, and appearance.',
+    duration: 600,
+    estimatedMinutes: 10,
+    icon: User,
+    category: 'Professional',
+    tags: ['professional', 'leadership', 'presence', 'confidence'],
+    intention: 'Cultivate gravitas, communication, and appearance.',
+    setup: ['Before a meeting or presentation.'],
+    steps: [
+      '1. Gravitas: Maintain composure during challenges, own mistakes.',
+      '2. Communication: Use pauses for emphasis, eliminate filler words.',
+      '3. Appearance: Dress appropriately for your context.',
+      '4. Self-assess: record yourself and watch for these elements.',
+      '5. Get trusted feedback from a mentor.'
+    ],
+    modifications: [
+      'Easier: Focus on just one element (communication).',
+      'Harder: Adapt presence across different cultures.'
+    ],
+    completionCue: 'Presence audited. Ready to lead.'
+  },
+  {
+    id: 'prof_upward_mgmt',
+    name: 'Upward Management',
+    description: 'Communicate effectively with managers and executives.',
+    duration: 600,
+    estimatedMinutes: 10,
+    icon: TrendingUp,
+    category: 'Professional',
+    tags: ['professional', 'leadership', 'strategic', 'influence'],
+    intention: 'Communicate effectively with managers and executives.',
+    setup: ['Prepare for a 1-on-1 with a lead.'],
+    steps: [
+      '1. Learn their preferences: email vs chat, morning vs afternoon.',
+      '2. Lead with the bottom line: "Here\'s my recommendation...".',
+      '3. Bring solutions, not just problems.',
+      '4. Respect their time: consolidate questions, prepare agenda.',
+      '5. Update proactively on high-visibility projects.'
+    ],
+    modifications: [
+      'Easier: Just send weekly status updates.',
+      'Harder: Anticipate their concerns and address them first.'
+    ],
+    completionCue: 'Manager aligned. Path cleared.'
+  },
+  {
+    id: 'prof_boundary_setting',
+    name: 'Boundary Setting at Work',
+    description: 'Protect your time and energy while maintaining professionalism.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Shield,
+    category: 'Professional',
+    tags: ['professional', 'boundaries', 'wellness', 'assertiveness'],
+    intention: 'Protect your time and energy while maintaining professionalism.',
+    setup: ['Identify your non-negotiables.'],
+    steps: [
+      '1. Identify your limits (e.g., no emails after 7pm).',
+      '2. Communicate boundaries clearly and early.',
+      '3. Offer alternatives when saying no.',
+      '4. Be consistent - boundaries only work if enforced.',
+      '5. Revisit and adjust as needed.'
+    ],
+    modifications: [
+      'Easier: Set just one boundary and hold it.',
+      'Harder: Navigate boundary-setting with difficult cultures.'
+    ],
+    completionCue: 'Boundaries communicated. Space protected.'
   }
 ];

@@ -1,19 +1,23 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { communicationPractices, type CommunicationCategory } from "@/data/communication-practices";
 import { communicationCategoryDetails } from "@/data/wellness-categories";
 import { communicationKits } from "@/data/communication-kits";
 import { communicationPlans } from "@/data/communication-plans";
 import { PracticeInstructionCard } from "./PracticeInstructionCard";
-import CategoryOverview from "./CategoryOverview";
-import { ChevronDown, MessageSquare, Zap, Play, ArrowRight } from "lucide-react";
-import { useWellnessData, calculateStreak } from "@/hooks/use-wellness-data";
+import { ChevronDown, MessageSquare, Zap, Play, PlusCircle, Trash2, Edit, Lightbulb, Save, X, Plus } from "lucide-react";
+import { useWellnessData } from "@/hooks/use-wellness-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
+import type { Exercise } from "@/data/exercises";
 
 const QUICK_PICKS = [
   { label: "Big Presentation", tags: ["public-speaking", "vocal", "confidence"] },
@@ -32,15 +36,39 @@ const categories: CommunicationCategory[] = [
   'Storytelling', 'Public Speaking', 'Professional', 'Digital'
 ];
 
+const AVAILABLE_TAGS = [
+  "desk", "neck", "hips", "low-back", "low-energy", "morning", "sleep", "quick", "anxiety",
+  "public-speaking", "vocal", "confidence", "conflict", "de-escalation", "emotional-intelligence",
+  "persuasion", "professional", "listening", "small-talk", "storytelling", "vulnerability",
+  "custom", "user-created"
+];
+
 export default function CommunicationContent() {
-  const { lowEnergyMode, planProgress } = useWellnessData();
+  const { 
+    lowEnergyMode, planProgress, customPractices, addCustomPractice, 
+    updateCustomPractice, deleteCustomPractice, collapsedCategories, toggleCategoryCollapse 
+  } = useWellnessData();
+  
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingPractice, setEditingPractice] = useState<Exercise | null>(null);
+
+  // Form State
+  const [title, setTitle] = useState("");
+  const [intention, setIntention] = useState("");
+  const [steps, setSteps] = useState<string[]>(["", "", ""]);
+  const [modEasier, setModEasier] = useState("");
+  const [modHarder, setModHarder] = useState("");
+  const [estTime, setEstTime] = useState("5");
+  const [formTags, setFormTags] = useState<string[]>(["custom", "user-created"]);
+
+  const allPractices = useMemo(() => [...communicationPractices, ...customPractices], [customPractices]);
 
   const filteredPractices = useMemo(() => {
-    return communicationPractices.filter(p => 
+    return allPractices.filter(p => 
       selectedTags.length === 0 || selectedTags.some(t => p.tags.includes(t))
     );
-  }, [selectedTags]);
+  }, [allPractices, selectedTags]);
 
   const filteredKits = useMemo(() => {
     return communicationKits.filter(k => 
@@ -48,16 +76,7 @@ export default function CommunicationContent() {
     );
   }, [selectedTags]);
 
-  const activePlan = useMemo(() => {
-    return communicationPlans.find(plan => {
-      const progress = planProgress[plan.id];
-      if (!progress) return false;
-      const completedCount = Object.values(progress).filter(Boolean).length;
-      return completedCount > 0 && completedCount < plan.steps.length;
-    });
-  }, [planProgress]);
-
-  const toggleTag = (tags: string[]) => {
+  const handleToggleTag = (tags: string[]) => {
     setSelectedTags(prev => {
       const allTags = new Set(prev);
       const isPresent = tags.every(t => allTags.has(t));
@@ -68,6 +87,61 @@ export default function CommunicationContent() {
       }
       return Array.from(allTags);
     });
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setIntention("");
+    setSteps(["", "", ""]);
+    setModEasier("");
+    setModHarder("");
+    setEstTime("5");
+    setFormTags(["custom", "user-created"]);
+    setEditingPractice(null);
+  };
+
+  const handleSaveCustom = () => {
+    if (!title || !intention) return;
+    
+    const practiceData: Exercise = {
+      id: editingPractice?.id || `custom-${Date.now()}`,
+      name: title,
+      description: intention,
+      duration: parseInt(estTime) * 60,
+      estimatedMinutes: parseInt(estTime),
+      icon: MessageSquare,
+      category: 'Custom',
+      tags: formTags,
+      intention,
+      setup: ["Find a quiet space.", "Prepare your mindset."],
+      steps: steps.filter(s => s.trim() !== ""),
+      modifications: [
+        `Easier: ${modEasier || "Reduce intensity or duration."}`,
+        `Harder: ${modHarder || "Practice in a high-stakes setting."}`
+      ],
+      completionCue: "Reflection complete."
+    };
+
+    if (editingPractice) {
+      updateCustomPractice(editingPractice.id, practiceData);
+    } else {
+      addCustomPractice(practiceData);
+    }
+    
+    setIsFormOpen(false);
+    resetForm();
+  };
+
+  const handleEdit = (p: Exercise) => {
+    setEditingPractice(p);
+    setTitle(p.name);
+    setIntention(p.intention);
+    setSteps(p.steps);
+    setModEasier(p.modifications[0]?.replace("Easier: ", "") || "");
+    setModHarder(p.modifications[1]?.replace("Harder: ", "") || "");
+    setEstTime(p.estimatedMinutes.toString());
+    setFormTags(p.tags);
+    setIsFormOpen(true);
   };
 
   return (
@@ -103,7 +177,7 @@ export default function CommunicationContent() {
                 variant={isActive ? "default" : "outline"}
                 size="sm"
                 className={cn("rounded-full font-bold transition-all", isActive && "shadow-md")}
-                onClick={() => toggleTag(pick.tags)}
+                onClick={() => handleToggleTag(pick.tags)}
               >
                 {pick.label}
               </Button>
@@ -112,7 +186,7 @@ export default function CommunicationContent() {
         </div>
       </div>
 
-      {/* FILTERED VIEW (KITS + CARDS) */}
+      {/* FILTERED VIEW */}
       {(selectedTags.length > 0) && (
         <div className="space-y-4 animate-in fade-in">
           <div className="flex justify-between items-center px-1">
@@ -140,13 +214,18 @@ export default function CommunicationContent() {
               </Card>
             ))}
             {filteredPractices.map(practice => (
-              <PracticeInstructionCard key={practice.id} exercise={practice} />
+              <PracticeInstructionCard 
+                key={practice.id} 
+                exercise={practice} 
+                onEdit={practice.category === 'Custom' ? () => handleEdit(practice) : undefined}
+                onDelete={practice.category === 'Custom' ? () => deleteCustomPractice(practice.id) : undefined}
+              />
             ))}
           </div>
         </div>
       )}
 
-      {/* LAYER 2: STACKS (Only if no tags selected) */}
+      {/* LAYER 2: STACKS */}
       {selectedTags.length === 0 && (
         <div className="space-y-4">
           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Situational Stacks</h3>
@@ -169,38 +248,178 @@ export default function CommunicationContent() {
         </div>
       )}
 
-      {/* LAYER 3: FULL LIBRARY (Only if no tags selected) */}
+      {/* LAYER 3: FULL LIBRARY */}
       {selectedTags.length === 0 && (
         <div className="space-y-12 pt-10">
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-4">
             <h2 className="text-2xl font-black uppercase tracking-tighter">Communication Library</h2>
-            <p className="text-sm text-muted-foreground">The complete taxonomy of evidence-based dialogue techniques.</p>
+            
+            {/* Create Your Own Card */}
+            <Dialog open={isFormOpen} onOpenChange={(o) => { setIsFormOpen(o); if(!o) resetForm(); }}>
+              <DialogTrigger asChild>
+                <Card className="max-w-md mx-auto border-dashed border-primary/30 hover:border-primary/60 cursor-pointer bg-primary/5 group transition-all">
+                  <CardHeader className="p-6">
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                        <Plus className="w-6 h-6" />
+                      </div>
+                      <div className="text-left">
+                        <CardTitle className="text-lg">Create Your Own Practice</CardTitle>
+                        <CardDescription className="text-xs">Design a custom exercise tailored to your goals.</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
+                <DialogHeader className="p-6 bg-primary/5 border-b shrink-0">
+                  <DialogTitle className="text-xl font-black uppercase tracking-tight">
+                    {editingPractice ? "Edit Practice" : "New Custom Practice"}
+                  </DialogTitle>
+                  <DialogDescription>Define your behavioral protocol for communication mastery.</DialogDescription>
+                </DialogHeader>
+                <ScrollArea className="flex-1">
+                  <div className="p-6 space-y-6">
+                    <div className="space-y-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Practice Identity</Label>
+                        <Input placeholder="e.g. 3-Second Wait" value={title} onChange={e => setTitle(e.target.value)} className="font-bold" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Intention / Goal</Label>
+                        <Input placeholder="What skill are you building?" value={intention} onChange={e => setIntention(e.target.value)} />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-bold uppercase text-muted-foreground">The Protocol (Steps)</Label>
+                      {steps.map((step, i) => (
+                        <div key={i} className="flex gap-2">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                          <Input 
+                            placeholder={`Step ${i + 1}...`} 
+                            value={step} 
+                            onChange={e => {
+                              const newSteps = [...steps];
+                              newSteps[i] = e.target.value;
+                              setSteps(newSteps);
+                            }}
+                          />
+                          {steps.length > 3 && (
+                            <Button variant="ghost" size="icon" onClick={() => setSteps(steps.filter((_, idx) => idx !== i))}>
+                              <Trash2 className="w-4 h-4 text-muted-foreground" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                      {steps.length < 8 && (
+                        <Button variant="outline" size="sm" className="w-full border-dashed" onClick={() => setSteps([...steps, ""])}>
+                          <Plus className="w-3 h-3 mr-2" /> Add Step
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Make it Easier</Label>
+                        <Input placeholder="Low stakes version..." value={modEasier} onChange={e => setModEasier(e.target.value)} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Make it Harder</Label>
+                        <Input placeholder="Challenge version..." value={modHarder} onChange={e => setModHarder(e.target.value)} />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Estimated Time (Min)</Label>
+                        <Input type="number" value={estTime} onChange={e => setEstTime(e.target.value)} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Tags</Label>
+                        <div className="flex flex-wrap gap-1">
+                          {formTags.map(tag => (
+                            <Badge key={tag} className="text-[8px]">{tag}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 flex gap-3">
+                      <Lightbulb className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                      <p className="text-xs leading-relaxed text-muted-foreground italic">
+                        "Keep steps observable and behavioral. Instead of 'be more confident,' try 'lower voice pitch by one note' or 'maintain eye contact for 3 seconds.'"
+                      </p>
+                    </div>
+                  </div>
+                </ScrollArea>
+                <DialogFooter className="p-4 bg-muted/5 border-t">
+                  <Button variant="ghost" onClick={() => setIsFormOpen(false)}>Cancel</Button>
+                  <Button onClick={handleSaveCustom} className="font-bold">
+                    <Save className="w-4 h-4 mr-2" /> Save Protocol
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
           
-          <div className="space-y-16">
-            {categories.map(category => {
+          <div className="space-y-4">
+            {/* Custom Category */}
+            {customPractices.length > 0 && (
+              <details open={!collapsedCategories['Custom']} onToggle={() => toggleCategoryCollapse('Custom')} className="group">
+                <summary className="list-none cursor-pointer flex justify-between items-center bg-card p-4 rounded-xl border border-primary/10 mb-2 hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <LayoutGrid className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-bold uppercase tracking-tight">Custom Protocols ({customPractices.length})</h3>
+                  </div>
+                  <ChevronDown className="w-5 h-5 shrink-0 transition-transform duration-200 group-open:rotate-180" />
+                </summary>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-8">
+                  {customPractices.map(p => (
+                    <PracticeInstructionCard 
+                      key={p.id} 
+                      exercise={p} 
+                      onEdit={() => handleEdit(p)}
+                      onDelete={() => deleteCustomPractice(p.id)}
+                    />
+                  ))}
+                </div>
+              </details>
+            )}
+
+            {categories.map((category, idx) => {
               const practices = communicationPractices.filter(p => p.category === category);
               const details = communicationCategoryDetails[category];
               if (!details) return null;
               const Icon = details.icon;
+              
+              // Default first 3 to expanded
+              const isCollapsed = collapsedCategories[category] ?? (idx > 2);
 
               return (
-                <div key={category} className="space-y-6">
-                  <div className="flex items-center gap-4 border-b pb-4">
-                    <div className="p-3 bg-primary/10 rounded-2xl">
-                      <Icon className="w-6 h-6 text-primary" />
+                <details key={category} open={!isCollapsed} onToggle={() => toggleCategoryCollapse(category)} className="group">
+                  <summary className="list-none cursor-pointer flex justify-between items-center bg-card p-4 rounded-xl border border-primary/5 mb-2 hover:bg-muted/30 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold uppercase tracking-tight">
+                          {category} ({practices.length})
+                        </h3>
+                        <p className="text-[10px] text-muted-foreground italic line-clamp-1">"{details.tagline}"</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold uppercase tracking-tight">{category}</h3>
-                      <p className="text-sm text-muted-foreground italic">"{details.tagline}"</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <ChevronDown className="w-5 h-5 shrink-0 transition-transform duration-200 group-open:rotate-180" />
+                  </summary>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-8">
                     {practices.map(p => (
                       <PracticeInstructionCard key={p.id} exercise={p} />
                     ))}
                   </div>
-                </div>
+                </details>
               );
             })}
           </div>

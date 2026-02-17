@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Check, Goal, ClipboardCheck, SlidersHorizontal, Star, Activity, History } from 'lucide-react';
+import { Play, Pause, Check, Goal, ClipboardCheck, SlidersHorizontal, Star, Activity, History, Edit, Trash2 } from 'lucide-react';
 import type { Exercise } from '@/data/exercises';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
@@ -21,7 +21,13 @@ const formatTime = (totalSeconds: number): string => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
-export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) => {
+interface PracticeInstructionCardProps {
+  exercise: Exercise;
+  onEdit?: () => void;
+  onDelete?: () => void;
+}
+
+export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: PracticeInstructionCardProps) => {
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(exercise.duration);
   const [isComplete, setIsComplete] = useState(false);
@@ -111,23 +117,35 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
   }, [isActive, timeLeft, exercise.duration, isComplete]);
 
   return (
-    <Card className="flex flex-col hover:shadow-lg transition-shadow duration-300 h-full">
+    <Card className="flex flex-col hover:shadow-lg transition-shadow duration-300 h-full group">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg">
                   <ExerciseIcon className="w-6 h-6 text-primary" />
               </div>
-              <CardTitle>{exercise.name}</CardTitle>
+              <CardTitle className="line-clamp-1">{exercise.name}</CardTitle>
           </div>
-          {isMovement && (
-            <div className="flex items-center gap-2">
-              <Label htmlFor="track-toggle" className="text-[10px] font-bold uppercase opacity-60">Track Progression</Label>
-              <Switch id="track-toggle" checked={trackNumbers} onCheckedChange={setTrackNumbers} />
-            </div>
-          )}
+          <div className="flex items-center gap-1">
+            {onEdit && (
+              <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={onEdit}>
+                <Edit className="w-3.5 h-3.5" />
+              </Button>
+            )}
+            {onDelete && (
+              <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive" onClick={onDelete}>
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
+            )}
+            {isMovement && (
+              <div className="flex items-center gap-2 ml-2">
+                <Label htmlFor="track-toggle" className="text-[10px] font-bold uppercase opacity-60">Track</Label>
+                <Switch id="track-toggle" checked={trackNumbers} onCheckedChange={setTrackNumbers} />
+              </div>
+            )}
+          </div>
         </div>
-        <CardDescription className="flex-grow pt-2">{exercise.description}</CardDescription>
+        <CardDescription className="flex-grow pt-2 line-clamp-2">{exercise.description}</CardDescription>
       </CardHeader>
       
       <CardContent className="flex-grow space-y-4">
@@ -240,8 +258,8 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
           ) : (
             <div className="space-y-4">
               <ol className="list-decimal list-inside space-y-2 text-sm">
-                  {exercise.steps.map((step, index) => (
-                      <li key={index}>{step}</li>
+                  {exercise.steps.map((step, i) => (
+                      <li key={i}>{step}</li>
                   ))}
               </ol>
 
@@ -276,7 +294,7 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
                     <Check className="w-4 h-4" /> Practice Logged
                   </motion.div>
               ) : (
-                  <div className="italic text-muted-foreground">{exercise.completionCue}</div>
+                  <div className="italic text-muted-foreground text-xs">{exercise.completionCue}</div>
               )}
             </AnimatePresence>
           </div>
