@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -229,7 +230,6 @@ export default function ExercisesPage() {
             <WellnessTabs />
 
             <div className="space-y-8 pt-8 border-t border-primary/5">
-              <WellnessActivityCalendar />
               <WellnessHeatmap activityData={activityData} />
             </div>
         </div>
