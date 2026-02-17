@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -77,6 +76,6 @@ export const exportOmniData = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `omni-tool-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `polymath-lab-backup-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
 };

@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -15,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Omni Tool',
+  title: 'Polymath Lab',
   description: 'AI-powered training to develop the mind of a polymath across 8 core domains.',
 };
 
