@@ -11,10 +11,13 @@ import type {
   BlueprintTemplate, 
   ReflectionEntry, 
   TemplateVariationSettings,
-  Blocker
+  Blocker,
+  ImplementationIntention,
+  PreMortem,
+  AccountabilityPartner
 } from '@/types/blueprint';
 import { systemTemplates } from '@/data/system-templates';
-import { format, startOfDay, isSameDay, differenceInDays } from 'date-fns';
+import { format, startOfDay, isSameDay, subDays, isBefore } from 'date-fns';
 
 type BlueprintState = {
   projects: Blueprint[];
@@ -35,9 +38,14 @@ type BlueprintState = {
   toggleTask: (projectId: string, milestoneId: string, taskId: string) => void;
   addReflection: (projectId: string, milestoneId: string, reflection: { content: string; milestoneStatus: Milestone['status'] }) => void;
   
+  addImplementationIntention: (projectId: string, intention: Omit<ImplementationIntention, 'id'>) => void;
+  updatePreMortem: (projectId: string, premortem: PreMortem) => void;
+  setAccountabilityPartner: (projectId: string, partner: AccountabilityPartner) => void;
+
   // Internal logic
   calculateMomentum: (blueprint: Blueprint) => number;
   updateStreaks: (blueprint: Blueprint) => void;
+  checkTwoDayRule: (blueprint: Blueprint) => { taskId: string; title: string } | null;
 };
 
 export const useBlueprintStore = create<BlueprintState>()(
@@ -50,27 +58,31 @@ export const useBlueprintStore = create<BlueprintState>()(
         const id = crypto.randomUUID();
         const now = new Date().toISOString();
         
-        // Initialize metrics
         const metricValues: Record<string, number> = {};
         template.customMetrics.forEach(m => {
           metricValues[m.id] = m.startingValue;
         });
 
-        // Adapt milestones based on variation
         let milestones = template.milestones.map(m => ({
           ...m,
           status: m.dependsOn.length === 0 ? 'Not Started' : 'Locked' as Milestone['status'],
-          tasks: m.tasks.map(t => ({ ...t, completed: false }))
+          tasks: m.tasks.map(t => ({ ...t, completed: false })),
+          smallWinsBreakdown: [
+            { percent: 10, description: "First small win" },
+            { percent: 25, description: "Quarter way there" },
+            { percent: 50, description: "Halfway point" },
+            { percent: 75, description: "Final push" }
+          ]
         }));
 
-        // Intensity: Professional adds review tasks
         if (settings.intensity === 'professional') {
           milestones.forEach(m => {
             m.tasks.push({
               id: `review-${m.id}`,
               title: "Weekly Contingency Review",
               description: "Audit risks and blockers for this phase.",
-              completed: false
+              completed: false,
+              energyType: 'analytical'
             });
           });
         }
@@ -82,6 +94,7 @@ export const useBlueprintStore = create<BlueprintState>()(
           description: template.description,
           tags: [template.category.toUpperCase()],
           identityGoal: template.defaultIdentityStatement,
+          identityStatement: `I am becoming a person who ${template.title.toLowerCase()}`,
           activatedAt: now,
           status: 'active',
           selectedVariation: settings,
@@ -99,7 +112,10 @@ export const useBlueprintStore = create<BlueprintState>()(
           milestoneReflections: {},
           blockers: [],
           weeklySnapshots: [],
-          milestones: milestones as Milestone[]
+          milestones: milestones as Milestone[],
+          implementationIntentions: [],
+          premortem: { potentialFailures: [], preventionStrategies: [] },
+          accountabilityPartner: { name: '', email: '', notifyFrequency: 'never' }
         };
 
         set(state => {
@@ -186,7 +202,6 @@ export const useBlueprintStore = create<BlueprintState>()(
               createdAt: new Date().toISOString()
             };
             
-            // Unlock dependents
             bp.milestones.forEach(m => {
               if (m.status === 'Locked' && m.dependsOn?.includes(milestoneId)) {
                 const allDepsMet = m.dependsOn.every(depId => 
@@ -215,7 +230,31 @@ export const useBlueprintStore = create<BlueprintState>()(
           
           if (!milestone.reflections) milestone.reflections = [];
           milestone.reflections.push(newEntry);
-          milestone.reflection = reflection.content; // Current draft
+          milestone.reflection = reflection.content;
+        });
+      },
+
+      addImplementationIntention: (projectId, intention) => {
+        set(state => {
+          const bp = state.projects.find(p => p.id === projectId);
+          if (bp) {
+            if (!bp.implementationIntentions) bp.implementationIntentions = [];
+            bp.implementationIntentions.push({ ...intention, id: crypto.randomUUID() });
+          }
+        });
+      },
+
+      updatePreMortem: (projectId, premortem) => {
+        set(state => {
+          const bp = state.projects.find(p => p.id === projectId);
+          if (bp) bp.premortem = premortem;
+        });
+      },
+
+      setAccountabilityPartner: (projectId, partner) => {
+        set(state => {
+          const bp = state.projects.find(p => p.id === projectId);
+          if (bp) bp.accountabilityPartner = partner;
         });
       },
 
@@ -229,7 +268,7 @@ export const useBlueprintStore = create<BlueprintState>()(
               id: crypto.randomUUID(),
               title: source.title,
               description: source.description || '',
-              category: 'creative', // default
+              category: 'creative',
               defaultIdentityStatement: source.identityGoal || '',
               icon: '📋',
               baseTimeline: 12,
@@ -288,6 +327,14 @@ export const useBlueprintStore = create<BlueprintState>()(
         }
       },
 
+      checkTwoDayRule: (bp) => {
+        // Find tasks that were due/skipped yesterday and are also skipped today
+        const yesterday = subDays(startOfDay(new Date()), 1);
+        // This requires historical task state which isn't fully in current schema,
+        // but we can approximate by checking recently created but incomplete tasks.
+        return null; // Placeholder for future iteration
+      },
+
       updateProject: (id, updates) => {
         set(state => {
           const project = state.projects.find(p => p.id === id);
@@ -302,7 +349,7 @@ export const useBlueprintStore = create<BlueprintState>()(
       }
     })),
     {
-      name: 'blueprint-store-local-v1',
+      name: 'blueprint-store-local-vachievement-v1',
       storage: createJSONStorage(() => localStorage),
     }
   )

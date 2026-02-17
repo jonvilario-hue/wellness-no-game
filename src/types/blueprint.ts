@@ -11,6 +11,7 @@ export type Task = {
   linkedHabitId?: string | null;
   linkedMetricId?: string | null;
   difficultyRating?: number; // 1-5
+  energyType?: 'creative' | 'analytical' | 'social' | 'mechanical';
 };
 
 export type ReflectionEntry = {
@@ -22,6 +23,18 @@ export type ReflectionEntry = {
   difficultyRating?: number;
   satisfactionRating?: number;
   lessonLearned?: string;
+};
+
+export type ImplementationIntention = {
+  id: string;
+  trigger: string;
+  action: string;
+};
+
+export type SmallWinCheckpoint = {
+  percent: number;
+  description: string;
+  achieved?: boolean;
 };
 
 export type Milestone = {
@@ -39,6 +52,8 @@ export type Milestone = {
   startDate?: string;
   reflection?: string;
   reflections?: ReflectionEntry[];
+  celebrationRitual?: string;
+  smallWinsBreakdown?: SmallWinCheckpoint[];
 };
 
 export type CustomMetric = {
@@ -58,6 +73,10 @@ export type RecurringHabit = {
   linkedMilestoneId: string | null;
   activeFrom: string | null;
   activeUntil: string | null;
+  minimumViableVersion?: string;
+  habitStack?: string; // "After I [routine], I will [this habit]"
+  temptationBundle?: string; // "Pair with [activity]"
+  energyType?: 'creative' | 'analytical' | 'social' | 'mechanical';
 };
 
 export type CelebrationTrigger = {
@@ -139,6 +158,17 @@ export type Blocker = {
   aiSuggestion?: string | null;
 };
 
+export type PreMortem = {
+  potentialFailures: string[];
+  preventionStrategies: string[];
+};
+
+export type AccountabilityPartner = {
+  name: string;
+  email: string;
+  notifyFrequency: 'weekly' | 'never';
+};
+
 export type Blueprint = {
   id: string;
   templateId?: string;
@@ -146,6 +176,7 @@ export type Blueprint = {
   description?: string;
   tags: string[];
   identityGoal?: string;
+  identityStatement?: string; // New field
   milestones: Milestone[];
   status: 'active' | 'paused' | 'completed' | 'abandoned' | 'Archived';
   activatedAt: string;
@@ -153,6 +184,11 @@ export type Blueprint = {
   versionNumber?: number;
   lessonsFromV1?: string;
   
+  // Advanced Achievement Fields
+  premortem?: PreMortem;
+  accountabilityPartner?: AccountabilityPartner;
+  implementationIntentions?: ImplementationIntention[];
+
   // Tracking
   metricValues: Record<string, number>;
   metricLog: { metricId: string; value: number; delta: number; loggedAt: string }[];
