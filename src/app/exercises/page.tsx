@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -80,7 +81,7 @@ export default function ExercisesPage() {
         <PageNav />
       </div>
       <MotivationalMessage />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24 overflow-x-hidden">
         <div className="mx-auto max-w-7xl space-y-8">
             
             {/* STREAK WIDGET */}
@@ -118,47 +119,57 @@ export default function ExercisesPage() {
             )}
 
             <div className="flex flex-col gap-4">
-                <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
-                  <div className="flex justify-between items-start">
-                      <div className="flex-grow">
-                        <CollapsibleContent className="space-y-8">
-                            <div className="flex flex-col items-center text-center pb-4">
-                                <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
-                                <h1 className="text-4xl font-bold font-headline tracking-tight">Health Check</h1>
-                                <p className="text-lg text-muted-foreground">Actionable wellness for body and brain. Log your daily reps.</p>
-                            </div>
-
-                            {/* PLANS SECTION (Now inside collapsible) */}
-                            <div className="space-y-3">
-                              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Journey Plans</h3>
-                              <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4">
-                                {wellnessPlans.map((plan) => (
-                                  <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[280px]">
-                                    <Card className="hover:border-primary/50 transition-all h-full group">
-                                      <CardHeader className="p-4">
-                                        <CardTitle className="text-base">{plan.title}</CardTitle>
-                                        <CardDescription className="text-[10px] uppercase font-black">{plan.steps.length} DAYS</CardDescription>
-                                      </CardHeader>
-                                      <CardContent className="p-4 pt-0">
-                                        <p className="text-xs text-muted-foreground line-clamp-2">{plan.description}</p>
-                                      </CardContent>
-                                    </Card>
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
-
-                            {/* GLOBAL BALANCE (Now inside collapsible and global) */}
-                            <WellnessBalance />
-                        </CollapsibleContent>
-                      </div>
+                <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full relative">
+                  <div className="absolute top-0 right-0 z-10">
                     <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="h-10 w-10">
                             {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
                             <span className="sr-only">Toggle</span>
                         </Button>
                     </CollapsibleTrigger>
                   </div>
+
+                  <CollapsibleContent className="space-y-8">
+                      <div className="flex flex-col items-center text-center pb-4 px-10">
+                          <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
+                          <h1 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">Health Check</h1>
+                          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">Actionable wellness for body and brain. Log your daily reps.</p>
+                      </div>
+
+                      {/* PLANS SECTION */}
+                      <div className="space-y-3 overflow-hidden">
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Journey Plans</h3>
+                        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
+                          {wellnessPlans.map((plan) => (
+                            <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[260px] sm:min-w-[280px]">
+                              <Card className="hover:border-primary/50 transition-all h-full group">
+                                <CardHeader className="p-4">
+                                  <CardTitle className="text-base">{plan.title}</CardTitle>
+                                  <CardDescription className="text-[10px] uppercase font-black">{plan.steps.length} DAYS</CardDescription>
+                                </CardHeader>
+                                <CardContent className="p-4 pt-0">
+                                  <p className="text-xs text-muted-foreground line-clamp-2">{plan.description}</p>
+                                </CardContent>
+                              </Card>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* GLOBAL BALANCE */}
+                      <WellnessBalance />
+                  </CollapsibleContent>
+
+                  {!isOpen && (
+                    <div className="flex flex-col items-center text-center">
+                      <h1 className="text-xl font-bold font-headline tracking-tight">Health Check</h1>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-auto py-1 px-4 text-[10px] uppercase font-black text-muted-foreground hover:text-primary gap-1">
+                          <ChevronDown className="h-3 w-3" /> Expand Insights
+                        </Button>
+                      </CollapsibleTrigger>
+                    </div>
+                  )}
                 </Collapsible>
 
                 <div className="flex flex-col items-center gap-4">
