@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -84,19 +83,6 @@ export default function ExercisesPage() {
       <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24 overflow-x-hidden">
         <div className="mx-auto max-w-7xl space-y-8">
             
-            {/* STREAK WIDGET */}
-            <div className="flex justify-center">
-              <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm">
-                  <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2">
-                      <Flame className="w-5 h-5 text-orange-500" />
-                      <span className="text-xl font-black">{streak}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
-                  </div>
-                  </div>
-              </Card>
-            </div>
-
             {/* ACTIVE PLAN BANNER */}
             {activePlan && (
               <Link href={`/exercises/plans/${activePlan.id}`}>
@@ -130,10 +116,21 @@ export default function ExercisesPage() {
                   </div>
 
                   <CollapsibleContent className="space-y-8">
-                      <div className="flex flex-col items-center text-center pb-4 px-10">
-                          <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
-                          <h1 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">Health Check</h1>
-                          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">Actionable wellness for body and brain. Log your daily reps.</p>
+                      <div className="flex flex-col items-center text-center pb-4 px-10 space-y-4">
+                          <div>
+                            <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
+                            <h1 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">Health Check</h1>
+                            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">Actionable wellness for body and brain. Log your daily reps.</p>
+                          </div>
+
+                          {/* WELLNESS STREAK */}
+                          <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
+                              <div className="flex items-center gap-2">
+                                  <Flame className="w-5 h-5 text-orange-500" />
+                                  <span className="text-xl font-black">{streak}</span>
+                                  <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
+                              </div>
+                          </Card>
                       </div>
 
                       {/* PLANS SECTION */}
