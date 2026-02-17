@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useStudyDashboardStore } from '@/hooks/use-study-dashboard-store';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -28,16 +28,27 @@ export function StudyDashboardView() {
   const [isTaskOpen, setIsTaskOpen] = useState(false);
   const [isDeadlineOpen, setIsDeadlineOpen] = useState(false);
   const [view, setView] = useState<'today' | 'activity' | 'forecast'>('today');
+  
+  // Stabilization for hydration
+  const [greeting, setGreeting] = useState('Welcome');
+  const [todayDate, setTodayDate] = useState('');
+  const [streak, setStreak] = useState({ current: 0, longest: 0 });
+  const [isMounted, setIsMounted] = useState(false);
 
-  const streak = getStreak();
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  useEffect(() => {
+    setIsMounted(true);
+    const hour = new Date().getHours();
+    setGreeting(hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening');
+    setTodayDate(format(new Date(), 'EEEE, MMMM do'));
+    setStreak(getStreak());
+  }, [getStreak]);
 
   const upcomingDeadline = useMemo(() => {
+    if (!isMounted) return null;
     return [...deadlines]
       .filter(d => !isToday(parseISO(d.date)) && new Date(d.date) > new Date())
       .sort((a, b) => a.date.localeCompare(b.date))[0];
-  }, [deadlines]);
+  }, [deadlines, isMounted]);
 
   return (
     <div className="space-y-8 pb-20">
@@ -51,7 +62,7 @@ export function StudyDashboardView() {
             </Badge>
           </h2>
           <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest mt-1">
-            {format(new Date(), 'EEEE, MMMM do')}
+            {todayDate || '...'}
           </p>
         </div>
         <div className="flex gap-2">

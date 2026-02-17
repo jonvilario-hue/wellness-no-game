@@ -44,8 +44,10 @@ export default function ScholarHub() {
   const { getStreak } = useStudyDashboardStore();
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const savedState = localStorage.getItem('scholar-hub-collapsible-state');
     if (savedState !== null) {
       setIsOpen(JSON.parse(savedState));
@@ -88,12 +90,13 @@ export default function ScholarHub() {
   ];
 
   const aggregateStats = useMemo(() => {
+    if (!isMounted) return { currentStreak: 0, avgFocus: '0' };
     const streak = getStreak();
     const avgFocus = sessions.length > 0 
       ? (sessions.reduce((acc, s) => acc + s.focus, 0) / sessions.length).toFixed(1)
       : '0';
     return { currentStreak: streak.current, avgFocus };
-  }, [sessions, getStreak]);
+  }, [sessions, getStreak, isMounted]);
 
   return (
     <>

@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { useStudyDashboardStore } from '@/hooks/use-study-dashboard-store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -15,17 +16,21 @@ import { AssistantTooltip } from '@/components/assistant-tooltip';
 export function TodayPlan() {
   const { decks, cards } = useFlashcardStore();
   const { tasks, toggleTask } = useStudyDashboardStore();
+  const [isMounted, setIsMounted] = useState(false);
 
-  const today = format(new Date(), 'yyyy-MM-dd');
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const today = useMemo(() => isMounted ? format(new Date(), 'yyyy-MM-dd') : '', [isMounted]);
 
   const deckRows = useMemo(() => {
+    if (!isMounted) return [];
     return decks.map(deck => {
       const deckCards = cards.filter(c => c.deckId === deck.id);
       const dueCount = deckCards.filter(c => new Date(c.dueDate) <= new Date()).length;
       const newCount = deckCards.filter(c => c.repetitions === 0).slice(0, deck.settings.newCardsPerDay).length;
       
-      // Calculate progress for today
-      // In MVP, we can look at the card's lastReviewDate
       const completedToday = deckCards.filter(c => c.lastReviewDate && isToday(parseISO(c.lastReviewDate))).length;
       const totalGoal = dueCount + completedToday;
       const progress = totalGoal > 0 ? (completedToday / totalGoal) * 100 : 100;
@@ -41,11 +46,12 @@ export function TodayPlan() {
         estimatedMinutes: Math.ceil((dueCount * 8) / 60)
       };
     }).filter(d => d.dueCount > 0 || d.completedToday > 0);
-  }, [decks, cards]);
+  }, [decks, cards, isMounted]);
 
   const dailyTasks = useMemo(() => {
+    if (!isMounted) return [];
     return tasks.filter(t => t.date === today);
-  }, [tasks, today]);
+  }, [tasks, today, isMounted]);
 
   const totalMinutes = useMemo(() => {
     const deckMins = deckRows.reduce((acc, d) => acc + d.estimatedMinutes, 0);
@@ -54,6 +60,10 @@ export function TodayPlan() {
   }, [deckRows, dailyTasks]);
 
   const allDone = deckRows.every(d => d.dueCount === 0) && dailyTasks.every(t => t.completed);
+
+  if (!isMounted) {
+    return <div className="space-y-4 h-48 animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
