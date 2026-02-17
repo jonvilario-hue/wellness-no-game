@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -239,8 +240,8 @@ export default function DeckSettingsPage() {
     };
 
     updateDeck(deckId, { settings: finalSettings as any });
+    reset(data);
     toast({ title: 'Algorithm settings saved!', variant: 'success' });
-    router.push(`/study/deck/${deckId}`);
   };
 
   const resetToPreset = () => {
