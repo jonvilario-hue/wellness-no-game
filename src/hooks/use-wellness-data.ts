@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -67,6 +66,13 @@ export type MovementProgress = {
   lastUpdated: string;
 };
 
+export type CustomRoutine = {
+  id: string;
+  name: string;
+  exerciseIds: string[];
+  createdAt: string;
+};
+
 export type WellnessState = {
   // Global
   lowEnergyMode: boolean;
@@ -88,6 +94,9 @@ export type WellnessState = {
   movementLogs: MovementLog[];
   stillnessLogs: StillnessLog[];
   movementProgress: Record<string, MovementProgress>;
+  
+  // Routines
+  routines: CustomRoutine[];
 
   // Actions
   setLowEnergyMode: (enabled: boolean) => void;
@@ -106,6 +115,9 @@ export type WellnessState = {
 
   addMovementLog: (log: Omit<MovementLog, 'id'>) => void;
   addStillnessLog: (log: Omit<StillnessLog, 'id'>) => void;
+  
+  addRoutine: (routine: Omit<CustomRoutine, 'id' | 'createdAt'>) => void;
+  deleteRoutine: (id: string) => void;
 };
 
 export const useWellnessData = create<WellnessState>()(
@@ -130,6 +142,7 @@ export const useWellnessData = create<WellnessState>()(
       movementLogs: [],
       stillnessLogs: [],
       movementProgress: {},
+      routines: [],
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
       setFeaturePhase: (featurePhase) => set({ featurePhase }),
@@ -184,6 +197,13 @@ export const useWellnessData = create<WellnessState>()(
       }),
       addStillnessLog: (log) => set((state) => ({
         stillnessLogs: [{ ...log, id: crypto.randomUUID() }, ...state.stillnessLogs]
+      })),
+
+      addRoutine: (routine) => set((state) => ({
+        routines: [{ ...routine, id: crypto.randomUUID(), createdAt: new Date().toISOString() }, ...state.routines]
+      })),
+      deleteRoutine: (id) => set((state) => ({
+        routines: state.routines.filter(r => r.id !== id)
       })),
     }),
     {

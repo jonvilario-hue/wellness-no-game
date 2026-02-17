@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -10,22 +9,26 @@ import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
 import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, InfoIcon, Lightbulb } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, InfoIcon, Lightbulb, Play, Trash2, Rocket } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { QuickLogBar } from '@/components/wellness/QuickLogBar';
 import { WellnessRecommendations } from '@/components/wellness/WellnessRecommendations';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { WellnessActivityCalendar } from '@/components/wellness/WellnessActivityCalendar';
+import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
 
 export default function ExercisesPage() {
   const [isOpen, setIsOpen] = useState(true);
-  const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs } = useWellnessData();
+  const [activeRoutineIds, setActiveRoutineIds] = useState<string[] | null>(null);
+  const [activeRoutineName, setActiveRoutineName] = useState<string>("");
+  
+  const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs, routines, deleteRoutine } = useWellnessData();
   const { settings } = useDashboardSettings();
 
   useEffect(() => {
@@ -75,6 +78,21 @@ export default function ExercisesPage() {
     });
     return Object.entries(counts).map(([date, count]) => ({ date, count }));
   }, [movementLogs, stillnessLogs]);
+
+  const handleStartRoutine = (ids: string[], name: string = "Custom Routine") => {
+    setActiveRoutineIds(ids);
+    setActiveRoutineName(name);
+  };
+
+  if (activeRoutineIds) {
+    return (
+      <RoutinePlayer 
+        exerciseIds={activeRoutineIds} 
+        routineName={activeRoutineName}
+        onClose={() => setActiveRoutineIds(null)} 
+      />
+    );
+  }
 
   return (
     <>
@@ -176,7 +194,38 @@ export default function ExercisesPage() {
                         </div>
                     )}
 
-                    {!lowEnergyMode && <RoutineBuilderModal />}
+                    {!lowEnergyMode && (
+                      <div className="flex flex-col items-center gap-6 w-full max-w-4xl">
+                        <RoutineBuilderModal onStartRoutine={handleStartRoutine} />
+                        
+                        {routines.length > 0 && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+                            {routines.map(routine => (
+                              <Card key={routine.id} className="group hover:border-primary/50 transition-all border-primary/10">
+                                <CardHeader className="p-4 pb-2">
+                                  <CardTitle className="text-sm font-bold flex justify-between items-start">
+                                    {routine.name}
+                                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => deleteRoutine(routine.id)}>
+                                      <Trash2 className="w-3 h-3 text-destructive" />
+                                    </Button>
+                                  </CardTitle>
+                                  <CardDescription className="text-[10px] font-bold uppercase">{routine.exerciseIds.length} Steps</CardDescription>
+                                </CardHeader>
+                                <CardFooter className="p-4 pt-2">
+                                  <Button 
+                                    className="w-full h-8 text-xs font-bold gap-2" 
+                                    variant="secondary"
+                                    onClick={() => handleStartRoutine(routine.exerciseIds, routine.name)}
+                                  >
+                                    <Play className="w-3 h-3 fill-current" /> Start
+                                  </Button>
+                                </CardFooter>
+                              </Card>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                 </div>
             </div>
             
