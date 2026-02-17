@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +30,13 @@ interface VaultCalendarProps {
 }
 
 export function VaultCalendar({ items, onEdit, onDelete, onToggleBookmark }: VaultCalendarProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setSelectedDate(new Date());
+  }, []);
 
   // Dates that have entries
   const entryDates = useMemo(() => {
@@ -56,6 +63,8 @@ export function VaultCalendar({ items, onEdit, onDelete, onToggleBookmark }: Vau
       color: 'hsl(var(--primary))',
     },
   };
+
+  if (!mounted) return null;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">

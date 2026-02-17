@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, isSameDay } from "date-fns";
@@ -14,10 +14,16 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function WellnessActivityCalendar() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [mounted, setMounted] = useState(false);
   const { movementLogs, stillnessLogs } = useWellnessData();
   const [isLogOpen, setIsLogOpen] = useState(false);
   const [logType, setLogType] = useState<'movement' | 'stillness'>('movement');
+
+  useEffect(() => {
+    setMounted(true);
+    setDate(new Date());
+  }, []);
 
   const dayLogs = date ? [
     ...movementLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Movement' })),
@@ -45,6 +51,15 @@ export function WellnessActivityCalendar() {
       color: 'hsl(var(--primary))'
     }
   };
+
+  if (!mounted) {
+    return (
+      <Card className="border-primary/10 shadow-sm">
+        <CardHeader className="h-[100px] bg-muted/10 animate-pulse" />
+        <CardContent className="h-[400px] bg-muted/5 animate-pulse" />
+      </Card>
+    );
+  }
 
   return (
     <Card className="border-primary/10 shadow-sm">
@@ -107,7 +122,7 @@ export function WellnessActivityCalendar() {
                         {log.type === 'Movement' ? <HeartPulse className="w-4 h-4" /> : <Waves className="w-4 h-4" />}
                       </div>
                       <div>
-                        <p className="text-sm font-bold leading-none">{('exerciseName' in log) ? log.exerciseName : log.techniqueName}</p>
+                        <p className="text-sm font-bold leading-none">{('exerciseName' in log) ? (log as any).exerciseName : (log as any).techniqueName}</p>
                         <p className="text-[10px] text-muted-foreground uppercase font-black mt-1.5 tracking-tighter">
                           {log.duration} MIN • {log.type}
                         </p>

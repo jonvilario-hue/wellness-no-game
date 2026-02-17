@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,13 @@ import { journalConfig } from '@/lib/journal-config';
 
 export function JournalCalendar() {
   const { entries, setSelectedEntry, hasHydrated } = useHydratedJournalStore();
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setSelectedDate(new Date());
+  }, []);
 
   const entryDates = useMemo(() => {
     return entries.map(entry => new Date(entry.displayDate || entry.date + 'T12:00:00'));
@@ -40,7 +46,7 @@ export function JournalCalendar() {
     },
   };
 
-  if (!hasHydrated) return null;
+  if (!hasHydrated || !mounted) return null;
 
   return (
     <Card className="border-primary/10 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
