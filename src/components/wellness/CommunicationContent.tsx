@@ -24,6 +24,9 @@ import {
 import { 
   Accordion, AccordionContent, AccordionItem, AccordionTrigger 
 } from "@/components/ui/accordion";
+import { 
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+} from "@/components/ui/select";
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
 import type { Exercise } from "@/data/exercises";
@@ -44,13 +47,6 @@ const categories: CommunicationCategory[] = [
   'Vocal Mechanics', 'Active Listening', 'Nonverbal', 'Conversation Structure', 
   'Persuasion', 'Clarity', 'Emotional Intelligence', 'Conflict Resolution', 
   'Storytelling', 'Public Speaking', 'Professional', 'Digital'
-];
-
-const AVAILABLE_TAGS = [
-  "desk", "neck", "hips", "low-back", "low-energy", "morning", "sleep", "quick", "anxiety",
-  "public-speaking", "vocal", "confidence", "conflict", "de-escalation", "emotional-intelligence",
-  "persuasion", "professional", "listening", "small-talk", "storytelling", "vulnerability",
-  "custom", "user-created"
 ];
 
 export default function CommunicationContent() {
