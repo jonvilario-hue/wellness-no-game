@@ -33,13 +33,11 @@ const categories: CommunicationCategory[] = [
   'Nonverbal', 
   'Conversation Structure', 
   'Persuasion', 
-  'Clarity', 
-  'Emotional Intelligence', 
+  'clarity_language_craft', 
   'Storytelling', 
-  'Conflict Resolution', 
+  'difficult_conversations', 
   'Public Speaking', 
-  'Professional', 
-  'Digital'
+  'professional_communication'
 ];
 
 export default function CommunicationContent() {
@@ -200,7 +198,7 @@ export default function CommunicationContent() {
                     </div>
                     <div>
                       <h3 className="text-sm font-bold uppercase tracking-tight">
-                        {category} ({practices.length})
+                        {details.title} ({practices.length})
                       </h3>
                       <p className="text-[10px] text-muted-foreground italic line-clamp-1">"{details.tagline}"</p>
                     </div>
@@ -237,7 +235,7 @@ export default function CommunicationContent() {
                           onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
                         >
                           <Plus className="w-8 h-8 text-muted-foreground mb-2" />
-                          <p className="text-sm font-bold">Add to {category}</p>
+                          <p className="text-sm font-bold">Add to {details.title}</p>
                         </Card>
                       )}
                     </div>
@@ -252,7 +250,7 @@ export default function CommunicationContent() {
           <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
             <DialogHeader className="p-6 bg-primary/5 border-b shrink-0">
               <DialogTitle className="text-xl font-black uppercase tracking-tight">
-                {editingPractice ? "Edit Practice" : `Add Practice to ${targetCategory}`}
+                {editingPractice ? "Edit Practice" : `Add Practice to ${communicationCategoryDetails[targetCategory]?.title || targetCategory}`}
               </DialogTitle>
             </DialogHeader>
             <ScrollArea className="flex-1">

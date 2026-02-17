@@ -11,7 +11,8 @@ import {
   Briefcase, MonitorSmartphone, Shield, Bell, CheckCircle2, 
   LayoutGrid, Pointer, TrendingUp, DoorOpen, HeartPulse, Zap,
   History, Video as VideoIcon, Mic, ThumbsUp, Camera,
-  Smartphone, Hash, TextCursorInput, PersonStanding
+  Smartphone, Hash, TextCursorInput, PersonStanding,
+  PenTool, Music
 } from 'lucide-react';
 import type { Exercise } from './exercises';
 
@@ -21,17 +22,15 @@ export type CommunicationCategory =
   | 'Nonverbal' 
   | 'Conversation Structure' 
   | 'Persuasion' 
-  | 'Clarity' 
-  | 'Emotional Intelligence' 
+  | 'clarity_language_craft' 
   | 'Storytelling' 
-  | 'Conflict Resolution' 
+  | 'difficult_conversations' 
   | 'Public Speaking' 
-  | 'Professional' 
-  | 'Digital'
+  | 'professional_communication' 
   | 'Custom';
 
 export const communicationPractices: Exercise[] = [
-  // --- Vocal Mechanics ---
+  // --- Vocal Mechanics (7) ---
   {
     id: 'vocal_diaphragmatic',
     name: 'Diaphragmatic Breathing for Voice',
@@ -194,7 +193,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Delivery dynamic and varied? Done.'
   },
 
-  // --- Active Listening ---
+  // --- Active Listening (7) ---
   {
     id: 'listen_paraphrasing',
     name: 'Paraphrasing Practice',
@@ -357,7 +356,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Connection maintained and info recorded? Done.'
   },
 
-  // --- Nonverbal ---
+  // --- Nonverbal (6) ---
   {
     id: 'nonverbal_open_posture',
     name: 'Open Body Posture Check',
@@ -503,7 +502,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Spatial awareness checked. Done.'
   },
 
-  // --- Conversation Structure ---
+  // --- Conversation Structure (6) ---
   {
     id: 'convo_turn_taking',
     name: 'Turn-Taking Signals Practice',
@@ -649,7 +648,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Graceful exit achieved. Done.'
   },
 
-  // --- Persuasion ---
+  // --- Persuasion (7) ---
   {
     id: 'persuasion_reciprocity',
     name: 'Reciprocity Principle Exercise',
@@ -819,7 +818,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Objections neutralized? Done.'
   },
 
-  // --- Clarity ---
+  // --- Clarity & Language Craft (21) ---
   {
     id: 'clarity_concrete',
     name: 'Concrete Language Swap',
@@ -827,7 +826,7 @@ export const communicationPractices: Exercise[] = [
     duration: 240,
     estimatedMinutes: 4,
     icon: Target,
-    category: 'Clarity',
+    category: 'clarity_language_craft',
     tags: ["clarity", "writing", "professional"],
     intention: 'Replace vague abstractions with specific, tangible words.',
     setup: ['Identify 3 abstract words in your draft.'],
@@ -851,7 +850,7 @@ export const communicationPractices: Exercise[] = [
     duration: 240,
     estimatedMinutes: 4,
     icon: User,
-    category: 'Clarity',
+    category: 'clarity_language_craft',
     tags: ["clarity", "writing", "professional"],
     intention: 'Increase clarity and accountability by naming who does what.',
     setup: ['Find 2 passive sentences in your email history.'],
@@ -875,7 +874,7 @@ export const communicationPractices: Exercise[] = [
     duration: 240,
     estimatedMinutes: 4,
     icon: Sparkles,
-    category: 'Clarity',
+    category: 'clarity_language_craft',
     tags: ["clarity", "writing", "simplicity"],
     intention: 'Reduce cognitive load by breaking complex sentences into simple ones.',
     setup: ['Find a long sentence with multiple commas.'],
@@ -899,7 +898,7 @@ export const communicationPractices: Exercise[] = [
     duration: 150,
     estimatedMinutes: 2.5,
     icon: Map,
-    category: 'Clarity',
+    category: 'clarity_language_craft',
     tags: ["clarity", "public-speaking", "structure"],
     intention: 'Guide audience attention with verbal roadmaps.',
     setup: ['Prepare a 3-point outline.'],
@@ -923,7 +922,7 @@ export const communicationPractices: Exercise[] = [
     duration: 240,
     estimatedMinutes: 4,
     icon: Trash2,
-    category: 'Clarity',
+    category: 'clarity_language_craft',
     tags: ["clarity", "accessibility", "writing"],
     intention: 'Ensure accessibility by removing insider language.',
     setup: ['List 5 specialized terms in your field.'],
@@ -947,7 +946,7 @@ export const communicationPractices: Exercise[] = [
     duration: 150,
     estimatedMinutes: 2.5,
     icon: Lightbulb,
-    category: 'Clarity',
+    category: 'clarity_language_craft',
     tags: ["clarity", "teaching", "creativity"],
     intention: 'Explain unfamiliar concepts by comparing to familiar ones.',
     setup: ['Choose a difficult concept you need to explain.'],
@@ -964,130 +963,379 @@ export const communicationPractices: Exercise[] = [
     ],
     completionCue: 'Concept explained? Done.'
   },
-
-  // --- Emotional Intelligence ---
   {
-    id: 'ei_labeling',
-    name: 'Emotion Labeling Exercise',
-    description: 'Reduce emotional intensity by naming what you\'re feeling.',
-    duration: 90,
-    estimatedMinutes: 1.5,
-    icon: Brain,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "self-awareness", "regulation"],
-    intention: 'Reduce emotional intensity by naming what you\'re feeling.',
-    setup: ['Pause during a stressful moment.'],
-    steps: [
-      '1. Pause and notice the physical sensation.',
-      '2. Name the emotion specifically - not just "bad".',
-      '3. Say it or write it: "I\'m feeling [emotion]".',
-      '4. Notice if intensity decreases.',
-      '5. Use an emotion wheel if needed.'
-    ],
-    modifications: [
-      'Make it easier: Use mad/sad/glad/scared.',
-      'Make it harder: Identify layered emotions.'
-    ],
-    completionCue: 'Intensity reduced? Done.'
-  },
-  {
-    id: 'ei_i_statements',
-    name: '"I" Statement Practice',
-    description: 'Express feelings without blaming to reduce defensiveness.',
-    duration: 120,
-    estimatedMinutes: 2,
+    id: 'clarity_alliteration',
+    name: "Alliteration Chains",
+    description: "Train your brain to find and deploy alliterative patterns.",
+    duration: 360,
+    estimatedMinutes: 6,
     icon: MessageSquare,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "conflict", "assertiveness"],
-    intention: 'Express feelings without blaming to reduce defensiveness.',
-    setup: ['Identify a minor annoyance.'],
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "alliteration", "rhythm", "memorability", "wordplay"],
+    intention: "Train your brain to find and deploy alliterative patterns that make your language more memorable and rhythmic.",
+    setup: ["Pick a random letter (e.g., 'S'). Set a timer for 2 minutes."],
     steps: [
-      '1. Structure: "I feel [emotion] when [behavior] because [impact]".',
-      '2. Example: "I feel frustrated when meetings start late...".',
-      '3. Avoid "you" statements.',
-      '4. Be specific about behavior, not character.',
-      '5. Practice on minor things first.'
+      "1. Pick a random letter (e.g., 'S'). Set a timer for 2 minutes.",
+      "2. Write or speak a full sentence where every major word starts with that letter. Example: 'Silent shadows slithered slowly, seeking shelter.'",
+      "3. Pick a new letter and create a sentence about a specific topic (e.g., letter 'P,' topic 'work'). Example: 'Persistent professionals push past problems patiently.'",
+      "4. Do this for 5 different letters. Focus on making the sentences actually mean something, not just sound pretty.",
+      "5. Read your sentences out loud. Notice how alliteration creates rhythm and emphasis.",
+      "6. In your next piece of writing or speech, try to naturally incorporate one alliterative phrase where it adds impact."
     ],
     modifications: [
-      'Make it easier: Just use "I feel [emotion]" without the full structure.',
-      'Make it harder: Use in real-time conflict.'
+      "Make it easier: Start with just 3-4 alliterative words per sentence instead of every word.",
+      "Make it harder: Create a full paragraph (4-5 sentences) where the majority of words share the same starting sound."
     ],
-    completionCue: 'Statement structured? Done.'
+    completionCue: "Alliterative rhythm mastered."
   },
   {
-    id: 'ei_validation',
-    name: 'Validation Before Advice',
-    description: 'Build trust by acknowledging emotion before problem-solving.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: HeartHandshake,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "listening", "empathy"],
-    intention: 'Build trust by acknowledging emotion before problem-solving.',
-    setup: ['Next time someone vents to you.'],
+    id: 'clarity_syllable',
+    name: "Syllable Pacing (Rhythm Control)",
+    description: "Develop awareness of syllabic rhythm.",
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: Clock,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "rhythm", "pacing", "syllables", "flow"],
+    intention: "Develop awareness of syllabic rhythm so you can control the pace and flow of your speech or writing.",
+    setup: ["Write or say a simple sentence: 'I walked to the store.' (6 syllables)"],
     steps: [
-      '1. Listen for the emotion.',
-      '2. Name it: "That sounds really frustrating".',
-      '3. Resist the urge to immediately fix.',
-      '4. Wait for them to feel heard.',
-      '5. If you must advise, ask first.'
+      "1. Write or say a simple sentence: 'I walked to the store.' (6 syllables)",
+      "2. Rewrite it with exactly 10 syllables: 'I walked slowly down the street to the corner store.'",
+      "3. Rewrite it with exactly 4 syllables: 'I went to shop.'",
+      "4. Notice how syllable count changes the feeling: short = punchy, urgent; long = flowing, descriptive.",
+      "5. Take a paragraph you've written. Count the syllables in each sentence. Are they all similar length? Mix them up: short, long, medium, short.",
+      "6. Read it out loud. Does the varied rhythm keep it more interesting?"
     ],
     modifications: [
-      'Make it easier: Just say "That makes sense".',
-      'Make it harder: Validate even when you disagree.'
+      "Make it easier: Use an online syllable counter tool to help you as you practice adjusting sentence lengths.",
+      "Make it harder: Write a full paragraph where you intentionally alternate between sentences of 5, 15, 5, 15 syllables to create dramatic rhythm."
     ],
-    completionCue: 'Trust built? Done.'
+    completionCue: "Rhythmic flow established."
   },
   {
-    id: 'ei_perspective',
-    name: 'Perspective-Taking Drill',
-    description: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: Users,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "empathy", "conflict"],
-    intention: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
-    setup: ['Recall a disagreement.'],
+    id: 'clarity_rhyme',
+    name: "Rhyme Scheme Construction",
+    description: "Build your ability to find and use rhyme deliberately.",
+    duration: 480,
+    estimatedMinutes: 8,
+    icon: Sparkles,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "rhyme", "memorability", "creativity", "wordplay"],
+    intention: "Build your ability to find and use rhyme deliberately, not just in poetry but in memorable phrases and speeches.",
+    setup: ["Pick a simple word: 'light.'"],
     steps: [
-      '1. State their position in your own words.',
-      '2. Ask: what would have to be true for this to make sense?.',
-      '3. Identify their underlying needs/fears.',
-      '4. Share understanding: "From your perspective...".',
-      '5. Notice how this changes your emotional response.'
+      "1. Pick a simple word: 'light.' List 10 words that rhyme with it (fight, night, sight, bright, flight, etc.).",
+      "2. Create a 4-line AABB rhyme scheme: Lines 1 and 2 rhyme, lines 3 and 4 rhyme.",
+      "3. Try a different scheme (ABAB): Lines 1 and 3 rhyme, lines 2 and 4 rhyme.",
+      "4. Don't worry about perfection — focus on finding rhymes quickly.",
+      "5. Challenge: Take a key point from a presentation or argument and express it as a memorable rhyming couplet."
     ],
     modifications: [
-      'Make it easier: List 3 reasons why they might hold that view.',
-      'Make it harder: Steelman their argument.'
+      "Make it easier: Use a rhyming dictionary or online tool to help find rhymes as you practice.",
+      "Make it harder: Write an 8-line poem with an ABCB DEFE rhyme scheme on a topic you're currently working on."
     ],
-    completionCue: 'Empathy felt? Done.'
+    completionCue: "Rhyme patterns ready."
   },
   {
-    id: 'ei_self_disclosure',
-    name: 'Appropriate Self-Disclosure',
-    description: 'Build connection by sharing strategically.',
-    duration: 150,
-    estimatedMinutes: 2.5,
-    icon: Heart,
-    category: 'Emotional Intelligence',
-    tags: ["emotional-intelligence", "connection", "boundaries"],
-    intention: 'Build connection by sharing strategically.',
-    setup: ['In a casual networking setting.'],
+    id: 'clarity_metaphor',
+    name: "Metaphor Mining",
+    description: "Create vivid, original metaphors for abstract ideas.",
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: Eye,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "metaphor", "imagery", "creativity", "clarity"],
+    intention: "Strengthen your ability to create vivid, original metaphors that make abstract ideas concrete and memorable.",
+    setup: ["Pick an abstract concept: 'stress,' 'growth,' 'communication,' 'change.'"],
     steps: [
-      '1. Ask: is this relevant to what they shared?.',
-      '2. Keep it brief - match their disclosure.',
-      '3. Focus on the feeling/lesson.',
-      '4. Watch their response.',
-      '5. Avoid one-upping or trauma-dumping.'
+      "1. Pick an abstract concept: 'stress,' 'growth,' 'communication,' 'change.'",
+      "2. Ask: What does this feel like? Look like? Sound like? Smell like?",
+      "3. Create 5 different metaphors for your concept.",
+      "4. Eliminate clichés. Which metaphors feel fresh? Which have you heard before?",
+      "5. Practice using one original metaphor in conversation or writing today."
     ],
     modifications: [
-      'Make it easier: Share only positive experiences.',
-      'Make it harder: Share current struggles appropriately.'
+      "Make it easier: Start by listing 10 concrete objects, then match each one to an abstract concept (e.g., 'river = time').",
+      "Make it harder: Take a complex idea from your work and create an extended metaphor (2-3 sentences) that explains it to someone unfamiliar."
     ],
-    completionCue: 'Connection made? Done.'
+    completionCue: "Imagery refined."
+  },
+  {
+    id: 'clarity_vocabulary_constraint',
+    name: "Vocabulary Constraint Writing",
+    description: "Expand your vocabulary through intentional word restrictions.",
+    duration: 480,
+    estimatedMinutes: 8,
+    icon: Pencil,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "vocabulary", "precision", "writing", "constraint"],
+    intention: "Expand your vocabulary by forcing yourself to express ideas without relying on common, overused words.",
+    setup: ["List banned words: good, bad, very, really, thing, stuff, nice, get, make, do, have, like, just."],
+    steps: [
+      "1. Write a paragraph (5-7 sentences) about your day, a recent experience, or an opinion you hold.",
+      "2. Rewrite that paragraph without using any of these banned words: good, bad, very, really, thing, stuff, nice, get, make, do, have, like (as filler), just.",
+      "3. You'll be forced to find more specific, precise language. 'It was a very good meal' becomes 'The meal was exceptional.'",
+      "4. Read both versions out loud. The second should feel sharper and more vivid.",
+      "5. Try this constraint in your next email, text, or piece of writing."
+    ],
+    modifications: [
+      "Make it easier: Start by banning just 3-5 of the most common words, then expand the list as you improve.",
+      "Make it harder: Write for 5 minutes on any topic without using the 100 most common words in English."
+    ],
+    completionCue: "Vocabulary expanded."
+  },
+  {
+    id: 'clarity_sentence_shape',
+    name: "Sentence Shape Variation",
+    description: "Break monotonous rhythm by varying sentence length.",
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: Activity,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "sentence-structure", "rhythm", "variety", "engagement"],
+    intention: "Break monotonous rhythm by intentionally varying sentence length and structure for dynamic delivery.",
+    setup: ["Write or find a paragraph you've written recently."],
+    steps: [
+      "1. Write or find a paragraph you've written recently. Count the words in each sentence.",
+      "2. If they're all 12-18 words, you have monotone rhythm.",
+      "3. Rewrite using this pattern: Long (20+ words). Short (3-7 words). Medium (10-15 words). Short. Long. Medium.",
+      "4. Read both versions out loud. The varied version should feel more dynamic and engaging.",
+      "5. Apply this to your next email or speech draft."
+    ],
+    modifications: [
+      "Make it easier: Mark your sentences as S, M, or L and aim for variation without rewriting yet.",
+      "Make it harder: Write a full page where no two consecutive sentences are the same length category."
+    ],
+    completionCue: "Sentence rhythm varied."
+  },
+  {
+    id: 'clarity_sound_symbolism',
+    name: "Sound Symbolism",
+    description: "Use words that sound like what they mean.",
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: Ear,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "sound", "imagery", "sensory", "onomatopoeia"],
+    intention: "Use words that sound like what they mean to create more visceral, sensory language.",
+    setup: ["Write a short description (3-4 sentences) of a scene."],
+    steps: [
+      "1. Write a short description (3-4 sentences) of a scene: a busy street, quiet forest, tense conversation, or celebration.",
+      "2. First pass: write it plainly. 'The street was loud. Cars went by. People talked.'",
+      "3. Second pass: rewrite using sound-symbolic words. 'The street roared with traffic. Cars whooshed past. Voices buzzed and chattered.'",
+      "4. Read both out loud. The second should feel more immersive.",
+      "5. Challenge: Describe an emotion using only sound-symbolic and sensory words."
+    ],
+    modifications: [
+      "Make it easier: Make a list of 20 onomatopoeia words first, then use them in your descriptions.",
+      "Make it harder: Write a full paragraph describing a complex experience using as many sound-symbolic words as possible without overloading it."
+    ],
+    completionCue: "Sensory language applied."
+  },
+  {
+    id: 'clarity_word_association',
+    name: "Word Association Speed Drill",
+    description: "Increase mental flexibility in finding related words.",
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Zap,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "vocabulary", "speed", "association", "fluency"],
+    intention: "Increase your mental flexibility and speed in finding related words, synonyms, and verbal connections.",
+    setup: ["Set a timer for 60 seconds. Pick a starting word: 'fire.'"],
+    steps: [
+      "1. Set a timer for 60 seconds. Pick a starting word: 'fire.'",
+      "2. Say or write as many related words as you can: burn, heat, flame, smoke, ash, ember, spark, blaze, inferno, warmth, light...",
+      "3. Don't filter or judge — just let your brain free-associate.",
+      "4. Count how many you got. Try again with a new word. Beat your count.",
+      "5. Do this daily with random words. Your retrieval speed will increase, making you more articulate in real-time."
+    ],
+    modifications: [
+      "Make it easier: Give yourself 90 seconds instead of 60, or allow pauses between words.",
+      "Make it harder: Do the drill out loud without writing, and each new word must start with the last letter of the previous word."
+    ],
+    completionCue: "Mental speed increased."
+  },
+  {
+    id: 'clarity_synonym_replacement',
+    name: "Synonym Replacement",
+    description: "Choose the most precise word instead of the first one.",
+    duration: 480,
+    estimatedMinutes: 8,
+    icon: ArrowLeftRight,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "vocabulary", "precision", "synonyms", "clarity"],
+    intention: "Train yourself to choose the most precise word instead of settling for the first one that comes to mind.",
+    setup: ["Write a paragraph about anything: a belief, an experience, a process."],
+    steps: [
+      "1. Write a paragraph about anything: a belief, an experience, a process.",
+      "2. Circle every verb and adjective.",
+      "3. For each circled word, generate 3 synonyms. Example: 'walked' → 'strolled,' 'marched,' 'wandered.'",
+      "4. Ask: which synonym most accurately captures what I mean? Replace the original if a better word exists.",
+      "5. 'I walked to the meeting' → 'I rushed to the meeting' (if late) or 'I wandered to the meeting' (if relaxed).",
+      "6. Precision makes your language powerful. Practice this weekly."
+    ],
+    modifications: [
+      "Make it easier: Use a thesaurus to help generate synonym options, then choose the best fit.",
+      "Make it harder: Do this in real-time while speaking — catch yourself mid-sentence and replace a generic word with a precise one."
+    ],
+    completionCue: "Precision practiced."
+  },
+  {
+    id: 'clarity_cadence_mimicry',
+    name: "Cadence Mimicry",
+    description: "Study and imitate the verbal rhythms of masters.",
+    duration: 540,
+    estimatedMinutes: 9,
+    icon: Mic2,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "cadence", "rhythm", "imitation", "mastery"],
+    intention: "Study and imitate the verbal rhythms of great speakers and writers to internalize effective cadence patterns.",
+    setup: ["Find a short passage (1-2 minutes) from a speaker or writer you admire."],
+    steps: [
+      "1. Find a short passage (1-2 minutes) from a speaker or writer you admire.",
+      "2. Listen or read it multiple times. Pay attention to sentence length, pauses, repetition, emphasis.",
+      "3. Write out a few sentences exactly as they structured them. Notice the pattern.",
+      "4. Take something you're working on and rewrite 2-3 sentences mimicking their cadence.",
+      "5. Example (mimicking MLK's repetition): 'We must speak with clarity. We must speak with courage. We must speak with conviction.'",
+      "6. Read your version out loud. Does it carry the same weight?"
+    ],
+    modifications: [
+      "Make it easier: Start by just reading the passage out loud multiple times to feel the rhythm before mimicking it.",
+      "Make it harder: Rewrite an entire opening paragraph of a speech or article in the cadence style of your chosen speaker."
+    ],
+    completionCue: "Cadence internalised."
+  },
+  {
+    id: 'clarity_specificity',
+    name: "Concrete vs Abstract",
+    description: "Replace vague language with specific, concrete details.",
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: Target,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "specificity", "clarity", "imagery", "precision"],
+    intention: "Replace vague, abstract language with concrete, specific details that create vivid mental images.",
+    setup: ["Write 5 abstract sentences: 'It was a good day.' 'She was upset.' 'The place was nice.' 'He worked hard.' 'The food was amazing.'"],
+    steps: [
+      "1. Abstract: 'The meeting was bad.' Concrete: 'The meeting ran 45 minutes over, three people interrupted constantly, and no decisions were made.'",
+      "2. Write 5 abstract sentences: 'It was a good day.' 'She was upset.' 'The place was nice.' 'He worked hard.' 'The food was amazing.'",
+      "3. Rewrite each one with concrete, specific details. Replace vague adjectives with sensory details, numbers, actions.",
+      "4. 'She was upset' → 'She slammed her laptop shut and left without saying goodbye.'",
+      "5. Read both versions. The concrete version creates a movie in your mind.",
+      "6. In your next writing or conversation, catch yourself using abstract language and immediately add concrete detail."
+    ],
+    modifications: [
+      "Make it easier: Practice with written examples first before trying to speak more concretely in real-time.",
+      "Make it harder: Go one full day where every time someone asks 'How was X?' you respond only with concrete details."
+    ],
+    completionCue: "Language sharpened."
+  },
+  {
+    id: 'clarity_parallel_structure',
+    name: "Parallel Structure",
+    description: "Use parallel patterns for rhythm and emphasis.",
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: LayoutGrid,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "rhetoric", "repetition", "emphasis", "memorability"],
+    intention: "Use parallel sentence structures to create rhythm, emphasis, and memorability in your speech or writing.",
+    setup: ["Pick a point you want to make strongly. Write it as three parallel sentences."],
+    steps: [
+      "1. Parallel structure = repeating the same grammatical pattern for emphasis. 'I came. I saw. I conquered.'",
+      "2. Pick a point you want to make strongly. Write it as three parallel sentences.",
+      "3. Example: 'We need leaders who listen. We need leaders who act. We need leaders who care.'",
+      "4. Try different patterns: 'If we [action], then we [result].' or 'This is not about [X]. This is about [Y].'",
+      "5. Practice creating parallel structures for 3 different points or arguments.",
+      "6. Use this technique in your next presentation, email, or important conversation."
+    ],
+    modifications: [
+      "Make it easier: Start by filling in pre-made templates before creating your own parallel structures.",
+      "Make it harder: Write or deliver a full 2-minute speech where every major point uses parallel structure."
+    ],
+    completionCue: "Structure reinforced."
+  },
+  {
+    id: 'clarity_qualifiers',
+    name: "Eliminate Qualifiers",
+    description: "Remove hedging words that weaken your message.",
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: ShieldCheck,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "confidence", "clarity", "precision", "qualifiers"],
+    intention: "Remove hedging words that weaken your message and make you sound uncertain.",
+    setup: ["Write or record yourself speaking about an opinion or idea you hold."],
+    steps: [
+      "1. Qualifiers dilute your language: 'kind of,' 'sort of,' 'maybe,' 'I think,' 'possibly,' 'probably,' 'just,' 'actually.'",
+      "2. Write or record yourself speaking about an opinion or idea you hold.",
+      "3. Highlight every qualifier. 'I kind of think that maybe we should probably consider...'",
+      "4. Rewrite with all qualifiers removed: 'We should consider...'",
+      "5. Notice how much stronger and clearer it sounds.",
+      "6. Exception: Sometimes uncertainty is honest. But most qualifiers are just fear of commitment.",
+      "7. For one week, catch yourself using qualifiers in conversation and rephrase without them."
+    ],
+    modifications: [
+      "Make it easier: Start by removing qualifiers only in writing, where you have time to edit.",
+      "Make it harder: Record a 5-minute talk and remove every qualifier in your transcription — then deliver the stronger version."
+    ],
+    completionCue: "Hedging eliminated."
+  },
+  {
+    id: 'clarity_active_voice_craft',
+    name: "Active Voice Conversion (Energy & Agency)",
+    description: "Transform passive constructions into active voice.",
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: User,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "active-voice", "clarity", "energy", "accountability"],
+    intention: "Transform passive constructions into active voice to make your language more direct, energetic, and clear.",
+    setup: ["Find or write 5 passive voice sentences."],
+    steps: [
+      "1. Passive voice obscures the actor and drains energy: 'Mistakes were made' (by whom?).",
+      "2. Active voice is direct: 'We made mistakes.'",
+      "3. Find or write 5 passive voice sentences: 'The report was completed by the team.' 'The decision was made.' 'The issue is being addressed.'",
+      "4. Convert each to active: 'The team completed the report.' 'We made the decision.' 'We are addressing the issue.'",
+      "5. Read both versions out loud. Active voice feels more alive and accountable.",
+      "6. In your next piece of writing, scan for 'was,' 'were,' 'is being,' 'has been' and convert to active."
+    ],
+    modifications: [
+      "Make it easier: Use a grammar tool to identify passive voice in your writing first.",
+      "Make it harder: Go one week writing and speaking exclusively in active voice."
+    ],
+    completionCue: "Energy restored."
+  },
+  {
+    id: 'clarity_contrast_pairing',
+    name: "Contrast Pairing",
+    description: "Use contrasting ideas side-by-side for impact.",
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: ArrowLeftRight,
+    category: 'clarity_language_craft',
+    tags: ["verbal-craft", "contrast", "rhetoric", "juxtaposition", "emphasis"],
+    intention: "Use contrasting ideas side-by-side to create memorable, impactful language.",
+    setup: ["Pick an idea you want to communicate. Create 3 contrast pairs."],
+    steps: [
+      "1. Contrast makes ideas stick: 'Ask not what your country can do for you — ask what you can do for your country.'",
+      "2. The pattern: [Not this] but [that]. [This], not [that]. [This] versus [that].",
+      "3. Pick an idea you want to communicate. Create 3 contrast pairs.",
+      "4. Example: 'We don't need more meetings. We need more action.' or 'Success isn't about working harder. It's about working smarter.'",
+      "5. Practice saying each one out loud with emphasis on the contrasting elements.",
+      "6. Contrast clarifies your position by showing what you reject and what you embrace.",
+      "7. Use one contrast pair in your next pitch, presentation, or argument."
+    ],
+    modifications: [
+      "Make it easier: Start by converting existing statements into contrast pairs using the templates above.",
+      "Make it harder: Build a full 3-minute talk where every major point is delivered as a contrasting pair."
+    ],
+    completionCue: "Juxtaposition applied."
   },
 
-  // --- Storytelling ---
+  // --- Storytelling (13) ---
   {
     id: 'story_3act',
     name: 'Three-Act Micro-Story',
@@ -1121,21 +1369,21 @@ export const communicationPractices: Exercise[] = [
     icon: Zap,
     category: 'Storytelling',
     tags: ["storytelling", "hook", "attention", "opening", "confidence"],
-    intention: 'Learn to grab attention in your first sentence so listeners lean in instead of tuning out.',
-    setup: ['Pick a short personal story or anecdote (30 seconds max).'],
+    intention: "Learn to grab attention in your first sentence so listeners lean in instead of tuning out.",
+    setup: ["Pick a short personal story or anecdote (30 seconds max)."],
     steps: [
-      '1. Pick a short personal story or anecdote (30 seconds max).',
-      '2. Identify the most surprising, emotional, or curiosity-provoking moment in that story.',
-      '3. Write an opening sentence that drops the listener directly into that moment (e.g., "I was standing on stage and completely forgot my name.").',
-      '4. Deliver the hook out loud, then pause for 2 full seconds before continuing.',
-      '5. Tell the rest of the story, noticing how the hook reframes everything that follows.',
-      '6. Try 2 more variations of the hook for the same story — one question-based, one sensory.'
+      "1. Pick a short personal story or anecdote (30 seconds max).",
+      "2. Identify the most surprising, emotional, or curiosity-provoking moment in that story.",
+      "3. Write an opening sentence that drops the listener directly into that moment (e.g., \"I was standing on stage and completely forgot my name.\").",
+      "4. Deliver the hook out loud, then pause for 2 full seconds before continuing.",
+      "5. Tell the rest of the story, noticing how the hook reframes everything that follows.",
+      "6. Try 2 more variations of the hook for the same story — one question-based, one sensory."
     ],
     modifications: [
-      'Make it easier: Use a well-known story or movie plot instead of a personal one.',
-      'Make it harder: Deliver the hook cold to someone and ask them what they expected the story to be about. Adjust based on their response.'
+      "Make it easier: Use a well-known story or movie plot instead of a personal one.",
+      "Make it harder: Deliver the hook cold to someone and ask them what they expected the story to be about. Adjust based on their response."
     ],
-    completionCue: 'Opening sharp and compelling? Done.'
+    completionCue: "Opening sharp and compelling? Done."
   },
   {
     id: 'story_contrast_flip',
@@ -1146,21 +1394,21 @@ export const communicationPractices: Exercise[] = [
     icon: ArrowLeftRight,
     category: 'Storytelling',
     tags: ["storytelling", "contrast", "emotional-impact", "delivery", "structure"],
-    intention: 'Use the power of contrast to make your point land with emotional impact.',
-    setup: ['Choose a message or lesson you want to communicate.'],
+    intention: "Use the power of contrast to make your point land with emotional impact.",
+    setup: ["Choose a message or lesson you want to communicate."],
     steps: [
-      '1. Choose a message or lesson you want to communicate.',
-      '2. Describe the \'before\' state — the problem, the struggle, or the old way of thinking. Use vivid, specific language.',
-      '3. Pause. Let the \'before\' sit with the listener for a beat.',
-      '4. Now deliver the \'after\' — the shift, the realization, the new state. Make your voice, pace, or energy shift noticeably to mark the contrast.',
-      '5. Repeat the exercise, exaggerating the contrast between before and after even more.',
-      '6. Reflect: where in the flip did you feel the most tension release?'
+      "1. Choose a message or lesson you want to communicate.",
+      "2. Describe the 'before' state — the problem, the struggle, or the old way of thinking. Use vivid, specific language.",
+      "3. Pause. Let the 'before' sit with the listener for a beat.",
+      "4. Now deliver the 'after' — the shift, the realization, the new state. Make your voice, pace, or energy shift noticeably to mark the contrast.",
+      "5. Repeat the exercise, exaggerating the contrast between before and after even more.",
+      "6. Reflect: where in the flip did you feel the most tension release?"
     ],
     modifications: [
-      'Make it easier: Write out both the before and after statements first, then read them aloud.',
-      'Make it harder: Improvise the contrast live on a random topic given by a partner.'
+      "Make it easier: Write out both the before and after statements first, then read them aloud.",
+      "Make it harder: Improvise the contrast live on a random topic given by a partner."
     ],
-    completionCue: 'Contrast delivered clearly? Done.'
+    completionCue: "Contrast delivered clearly? Done."
   },
   {
     id: 'story_pause',
@@ -1171,21 +1419,21 @@ export const communicationPractices: Exercise[] = [
     icon: Clock,
     category: 'Storytelling',
     tags: ["storytelling", "pause", "tension", "vocal-delivery", "presence"],
-    intention: 'Use strategic silence within a story to build tension, emphasize key moments, and hold attention.',
-    setup: ['Take a 1-minute story you can already tell comfortably.'],
+    intention: "Use strategic silence within a story to build tension, emphasize key moments, and hold attention.",
+    setup: ["Take a 1-minute story you can already tell comfortably."],
     steps: [
-      '1. Take a 1-minute story you can already tell comfortably.',
-      '2. Identify three key moments: the setup, the turning point, and the payoff.',
-      '3. Tell the story and insert a deliberate 2–3 second pause right before each key moment.',
-      '4. Notice how the pause changes the weight of what comes after it.',
-      '5. Now try a longer pause (4–5 seconds) before the single most important line. Resist the urge to fill the silence.',
-      '6. Record yourself or tell it to someone — ask which pause felt most powerful.'
+      "1. Take a 1-minute story you can already tell comfortably.",
+      "2. Identify three key moments: the setup, the turning point, and the payoff.",
+      "3. Tell the story and insert a deliberate 2–3 second pause right before each key moment.",
+      "4. Notice how the pause changes the weight of what comes after it.",
+      "5. Now try a longer pause (4–5 seconds) before the single most important line. Resist the urge to fill the silence.",
+      "6. Record yourself or tell it to someone — ask which pause felt most powerful."
     ],
     modifications: [
-      'Make it easier: Start with just one pause before the ending/payoff line only.',
-      'Make it harder: Tell a story where you use at least five intentional pauses of varying lengths, using silence as a rhythm tool throughout.'
+      "Make it easier: Start with just one pause before the ending/payoff line only.",
+      "Make it harder: Tell a story where you use at least five intentional pauses of varying lengths, using silence as a rhythm tool throughout."
     ],
-    completionCue: 'Silence used for emphasis? Done.'
+    completionCue: "Silence used for emphasis? Done."
   },
   {
     id: 'story_dynamics',
@@ -1196,21 +1444,21 @@ export const communicationPractices: Exercise[] = [
     icon: Activity,
     category: 'Storytelling',
     tags: ["storytelling", "vocal-variety", "delivery", "pitch", "pace", "engagement"],
-    intention: 'Vary your pitch, pace, and volume within a story to keep listeners emotionally engaged.',
-    setup: ['Pick a short story or anecdote (under 2 minutes).'],
+    intention: "Vary your pitch, pace, and volume within a story to keep listeners emotionally engaged.",
+    setup: ["Pick a short story or anecdote (under 2 minutes)."],
     steps: [
-      '1. Pick a short story or anecdote (under 2 minutes).',
-      '2. Tell it once at your normal speaking style. Notice where your voice stays flat.',
-      '3. Now retell it with these rules: slow down and get quieter during emotional or serious moments; speed up and raise energy during exciting or fast-paced moments; drop your pitch when delivering a key insight or punchline.',
-      '4. Exaggerate the dynamics to 150% of what feels natural. It will feel like too much — that is the point.',
-      '5. Dial it back to about 120% of natural. This is your new baseline.',
-      '6. Practice once more and notice how the dynamics guide the listener\'s emotions.'
+      "1. Pick a short story or anecdote (under 2 minutes).",
+      "2. Tell it once at your normal speaking style. Notice where your voice stays flat.",
+      "3. Now retell it with these rules: slow down and get quieter during emotional or serious moments; speed up and raise energy during exciting or fast-paced moments; drop your pitch when delivering a key insight or punchline.",
+      "4. Exaggerate the dynamics to 150% of what feels natural. It will feel like too much — that is the point.",
+      "5. Dial it back to about 120% of natural. This is your new baseline.",
+      "6. Practice once more and notice how the dynamics guide the listener's emotions."
     ],
     modifications: [
-      'Make it easier: Focus on varying just one element (pace OR volume OR pitch) rather than all three.',
-      'Make it harder: Record yourself telling the story and listen back, identifying at least 2 moments where you could push the dynamics further. Re-record.'
+      "Make it easier: Focus on varying just one element (pace OR volume OR pitch) rather than all three.",
+      "Make it harder: Record yourself telling the story and listen back, identifying at least 2 moments where you could push the dynamics further. Re-record."
     ],
-    completionCue: 'Vocal range expanded? Done.'
+    completionCue: "Vocal range expanded? Done."
   },
   {
     id: 'story_spine',
@@ -1221,26 +1469,26 @@ export const communicationPractices: Exercise[] = [
     icon: ListChecks,
     category: 'Storytelling',
     tags: ["storytelling", "structure", "framework", "clarity", "quick"],
-    intention: 'Use a simple fill-in-the-blank framework to quickly structure any story with a clear arc.',
-    setup: ['Set aside a few minutes to speak aloud.'],
+    intention: "Use a simple fill-in-the-blank framework to quickly structure any story with a clear arc.",
+    setup: ["Complete these prompts in order, speaking out loud:"],
     steps: [
-      '1. Complete these prompts in order, speaking out loud:',
-      '   - "Once upon a time..." (set the scene/character)',
-      '   - "Every day..." (establish the routine/normal)',
-      '   - "But one day..." (introduce the disruption)',
-      '   - "Because of that..." (first consequence)',
-      '   - "Because of that..." (escalation)',
-      '   - "Until finally..." (climax/resolution)',
-      '   - "And ever since then..." (the new normal/lesson)',
-      '2. Keep each section to 1–2 sentences maximum.',
-      '3. Now retell the whole thing as a fluid story without the prompts.',
-      '4. Reflect: did the structure make the story feel more complete?'
+      "1. Complete these prompts in order, speaking out loud:",
+      "   - \"Once upon a time...\" (set the scene/character)",
+      "   - \"Every day...\" (establish the routine/normal)",
+      "   - \"But one day...\" (introduce the disruption)",
+      "   - \"Because of that...\" (first consequence)",
+      "   - \"Because of that...\" (escalation)",
+      "   - \"Until finally...\" (climax/resolution)",
+      "   - \"And ever since then...\" (the new normal/lesson)",
+      "2. Keep each section to 1–2 sentences maximum.",
+      "3. Now retell the whole thing as a fluid story without the prompts.",
+      "4. Reflect: did the structure make the story feel more complete?"
     ],
     modifications: [
-      'Make it easier: Write out each section first before speaking.',
-      'Harder: A partner gives you a random topic and you complete the story spine improvisationally in under 90 seconds.'
+      "Make it easier: Write out each section first before speaking.",
+      "Make it harder: A partner gives you a random topic and you complete the story spine improvisationally in under 90 seconds."
     ],
-    completionCue: 'Story arc established? Done.'
+    completionCue: "Story arc established? Done."
   },
   {
     id: 'story_nested_loop',
@@ -1251,21 +1499,21 @@ export const communicationPractices: Exercise[] = [
     icon: Repeat,
     category: 'Storytelling',
     tags: ["storytelling", "structure", "advanced", "nested-loop", "depth"],
-    intention: 'Learn to open multiple story threads and close them in reverse order, creating satisfying narrative depth.',
-    setup: ['Think of two short, related stories that connect to a theme.'],
+    intention: "Learn to open multiple story threads and close them in reverse order, creating satisfying narrative depth.",
+    setup: ["Think of two short, related stories that connect to a theme."],
     steps: [
-      '1. Think of two short, related stories or examples that connect to a single theme or point.',
-      '2. Begin telling Story A, but stop at a cliffhanger or moment of tension.',
-      '3. Transition into Story B with a bridging phrase (e.g., "That reminds me of..." or "Meanwhile...").',
-      '4. Complete Story B fully, landing on its insight or conclusion.',
-      '5. Return to Story A and complete it. The listener now hears Story A\'s ending with Story B\'s lesson still fresh in their mind.',
-      '6. Reflect: did the nesting make the overall message stronger? Where was the transition smoothest?'
+      "1. Think of two short, related stories or examples that connect to a single theme or point.",
+      "2. Begin telling Story A, but stop at a cliffhanger or moment of tension.",
+      "3. Transition into Story B with a bridging phrase (e.g., \"That reminds me of...\" or \"Meanwhile...\").",
+      "4. Complete Story B fully, landing on its insight or conclusion.",
+      "5. Return to Story A and complete it. The listener now hears Story A's ending with Story B's lesson still fresh in their mind.",
+      "6. Reflect: did the nesting make the overall message stronger? Where was the transition smoothest?"
     ],
     modifications: [
-      'Make it easier: Write out both stories and the transition phrases before speaking.',
-      'Make it harder: Use three nested stories (A → B → C → close C → close B → close A). Keep total time under 3 minutes.'
+      "Make it easier: Write out both stories and the transition phrases before speaking.",
+      "Make it harder: Use three nested stories (A → B → C → close C → close B → close A). Keep total time under 3 minutes."
     ],
-    completionCue: 'Narrative loops closed? Done.'
+    completionCue: "Narrative loops closed? Done."
   },
   {
     id: 'story_sensory',
@@ -1276,21 +1524,21 @@ export const communicationPractices: Exercise[] = [
     icon: Eye,
     category: 'Storytelling',
     tags: ["storytelling", "sensory", "vivid", "show-dont-tell", "immersion"],
-    intention: 'Transport your listener into the moment by engaging specific senses instead of summarizing what happened.',
-    setup: ['Think of a moment from your life that was emotionally vivid.'],
+    intention: "Transport your listener into the moment by engaging specific senses instead of summarizing what happened.",
+    setup: ["Think of a moment from your life that was emotionally vivid."],
     steps: [
-      '1. Think of a moment from your life that was emotionally vivid.',
-      '2. Describe it using only sensory details. No opinions, no labels, no emotions by name. Just what you saw, heard, felt physically, smelled, or tasted.',
-      '3. Speak for 30–45 seconds of pure sensory description.',
-      '4. Now add one sentence at the end that names the emotion or insight.',
-      '5. Notice how the sensory setup made that final line hit differently than if you had just said the emotion up front.',
-      '6. Try again with a different moment, aiming to include at least 3 different senses.'
+      "1. Think of a moment from your life that was emotionally vivid.",
+      "2. Describe it using only sensory details. No opinions, no labels, no emotions by name. Just what you saw, heard, felt physically, smelled, or tasted.",
+      "3. Speak for 30–45 seconds of pure sensory description.",
+      "4. Now add one sentence at the end that names the emotion or insight.",
+      "5. Notice how the sensory setup made that final line hit differently than if you had just said the emotion up front.",
+      "6. Try again with a different moment, aiming to include at least 3 different senses."
     ],
     modifications: [
-      'Make it easier: Focus on just two senses (sight + sound) to start.',
-      'Make it harder: Describe the scene without ever naming the emotion — let the listener infer it entirely from the sensory details. Ask them what they felt.'
+      "Make it easier: Focus on just two senses (sight + sound) to start.",
+      "Make it harder: Describe the scene without ever naming the emotion — let the listener infer it entirely from the sensory details. Ask them what they felt."
     ],
-    completionCue: 'Scene vividly rendered? Done.'
+    completionCue: "Scene vividly rendered? Done."
   },
   {
     id: 'story_callback',
@@ -1301,21 +1549,21 @@ export const communicationPractices: Exercise[] = [
     icon: History,
     category: 'Storytelling',
     tags: ["storytelling", "callback", "payoff", "memorability", "structure"],
-    intention: 'Plant a detail early in your story and bring it back at the end for a satisfying payoff that makes your message memorable.',
-    setup: ['Choose a story or talking point you use often.'],
+    intention: "Plant a detail early in your story and bring it back at the end for a satisfying payoff that makes your message memorable.",
+    setup: ["Choose a story or talking point you use often."],
     steps: [
-      '1. Choose a story or talking point you use often.',
-      '2. Identify a small, specific detail near the beginning (an image, a phrase, an object, a number).',
-      '3. Tell the story, making sure to mention that detail clearly but without emphasizing it.',
-      '4. At the end of the story, bring that detail back — reframe it, give it new meaning, or repeat it with a twist.',
-      '5. Notice the effect. Callbacks create a sense of completeness and make audiences feel rewarded for paying attention.',
-      '6. Practice with a different detail to see which callback lands strongest.'
+      "1. Choose a story or talking point you use often.",
+      "2. Identify a small, specific detail near the beginning (an image, a phrase, an object, a number).",
+      "3. Tell the story, making sure to mention that detail clearly but without emphasizing it.",
+      "4. At the end of the story, bring that detail back — reframe it, give it new meaning, or repeat it with a twist.",
+      "5. Notice the effect. Callbacks create a sense of completeness and make audiences feel rewarded for paying attention.",
+      "6. Practice with a different detail to see which callback lands strongest."
     ],
     modifications: [
-      'Make it easier: Write the beginning and ending first, then fill in the middle.',
-      'Make it harder: In a group conversation or presentation, plant a callback in your opening and land it in your closing without scripting the middle.'
+      "Make it easier: Write the beginning and ending first, then fill in the middle.",
+      "Make it harder: In a group conversation or presentation, plant a callback in your opening and land it in your closing without scripting the middle."
     ],
-    completionCue: 'Narrative payoff achieved? Done.'
+    completionCue: "Narrative payoff achieved? Done."
   },
   {
     id: 'story_stakes',
@@ -1326,21 +1574,21 @@ export const communicationPractices: Exercise[] = [
     icon: TrendingUp,
     category: 'Storytelling',
     tags: ["storytelling", "stakes", "tension", "escalation", "engagement"],
-    intention: 'Practice raising the stakes progressively within a story so listeners feel increasing investment and urgency.',
-    setup: ['Think of a scenario that could escalate.'],
+    intention: "Practice raising the stakes progressively within a story so listeners feel increasing investment and urgency.",
+    setup: ["Think of a scenario that could escalate."],
     steps: [
-      '1. Start with a low-stakes scenario (e.g., "I was running late for a meeting.").',
-      '2. Add a complication that raises the stakes one level (e.g., "...and it was the meeting where I was presenting to the CEO.").',
-      '3. Add another complication that raises them again (e.g., "...and my laptop died in the elevator.").',
-      '4. Deliver each escalation with slightly more urgency in your voice. Let the stakes build in your delivery, not just your words.',
-      '5. Land on a resolution that addresses the highest stake, not the lowest.',
-      '6. Retell the full story smoothly from start to finish.'
+      "1. Start with a low-stakes scenario (e.g., \"I was running late for a meeting.\").",
+      "2. Add a complication that raises the stakes one level (e.g., \"...and it was the meeting where I was presenting to the CEO.\").",
+      "3. Add another complication that raises them again (e.g., \"...and my laptop died in the elevator.\").",
+      "4. Deliver each escalation with slightly more urgency in your voice. Let the stakes build in your delivery, not just your words.",
+      "5. Land on a resolution that addresses the highest stake, not the lowest.",
+      "6. Retell the full story smoothly from start to finish."
     ],
     modifications: [
-      'Make it easier: Write out three levels of stakes before speaking.',
-      'Make it harder: Start with a mundane scenario a partner gives you and improvise three escalations on the spot, keeping them believable.'
+      "Make it easier: Write out three levels of stakes before speaking.",
+      "Make it harder: Start with a mundane scenario a partner gives you and improvise three escalations on the spot, keeping them believable."
     ],
-    completionCue: 'Tension effectively built? Done.'
+    completionCue: "Tension effectively built? Done."
   },
   {
     id: 'story_one_sentence',
@@ -1351,21 +1599,21 @@ export const communicationPractices: Exercise[] = [
     icon: Target,
     category: 'Storytelling',
     tags: ["storytelling", "clarity", "concise", "hook", "focus", "quick"],
-    intention: 'Distill a story to its emotional core in a single sentence, then expand from there. Clarity before complexity.',
-    setup: ['Think of a meaningful experience.'],
+    intention: "Distill a story to its emotional core in a single sentence, then expand from there. Clarity before complexity.",
+    setup: ["Think of a meaningful experience."],
     steps: [
-      '1. Think of a meaningful experience or a point you want to make.',
-      '2. Capture it in one sentence. Not a summary — a sentence that makes someone feel something (e.g., "I spent 10 years building something that took 10 seconds to lose.").',
-      '3. Say it out loud. Does it land? Does it make someone want to ask \'what happened?\'',
-      '4. If not, rewrite. Strip out abstractions. Make it concrete and specific.',
-      '5. Once the single sentence works, use it as your hook and tell the full story behind it in under 90 seconds.',
-      '6. The one-sentence version is your anchor — every detail in the longer version should serve it.'
+      "1. Think of a meaningful experience or a point you want to make.",
+      "2. Capture it in one sentence. Not a summary — a sentence that makes someone feel something (e.g., \"I spent 10 years building something that took 10 seconds to lose.\").",
+      "3. Say it out loud. Does it land? Does it make someone want to ask 'what happened?'",
+      "4. If not, rewrite. Strip out abstractions. Make it concrete and specific.",
+      "5. Once the single sentence works, use it as your hook and tell the full story behind it in under 90 seconds.",
+      "6. The one-sentence version is your anchor — every detail in the longer version should serve it."
     ],
     modifications: [
-      'Make it easier: Look up famous one-sentence story examples for inspiration before writing your own.',
-      'Make it harder: Write five one-sentence stories for five different experiences in under 3 minutes, then pick the strongest and expand it live.'
+      "Make it easier: Look up famous one-sentence story examples for inspiration before writing your own.",
+      "Make it harder: Write five one-sentence stories for five different experiences in under 3 minutes, then pick the strongest and expand it live."
     ],
-    completionCue: 'Emotional core captured? Done.'
+    completionCue: "Emotional core captured? Done."
   },
   {
     id: 'story_perspective_shift',
@@ -1376,21 +1624,21 @@ export const communicationPractices: Exercise[] = [
     icon: Users,
     category: 'Storytelling',
     tags: ["storytelling", "perspective", "empathy", "active-listening", "depth"],
-    intention: 'Retell the same event from a different person\'s point of view to build empathy and discover new angles in your stories.',
-    setup: ['Pick a story involving at least two people.'],
+    intention: "Retell the same event from a different person's point of view to build empathy and discover new angles in your stories.",
+    setup: ["Pick a story involving at least two people."],
     steps: [
-      '1. Pick a story you already know well — ideally one involving at least two people.',
-      '2. Tell it from your own perspective in about 60 seconds.',
-      '3. Now retell the same event from the other person\'s perspective. What did they see? What were they feeling? What did they not know that you knew?',
-      '4. Notice what details change, what new emotions emerge, and what becomes more interesting.',
-      '5. Try telling a version that weaves both perspectives together, switching between them.',
-      '6. Reflect: which version is most compelling for your intended audience?'
+      "1. Pick a story you already know well — ideally one involving at least two people.",
+      "2. Tell it from your own perspective in about 60 seconds.",
+      "3. Now retell the same event from the other person's perspective. What did they see? What were they feeling? What did they not know that you knew?",
+      "4. Notice what details change, what new emotions emerge, and what becomes more interesting.",
+      "5. Try telling a version that weaves both perspectives together, switching between them.",
+      "6. Reflect: which version is most compelling for your intended audience?"
     ],
     modifications: [
-      'Make it easier: Start with a simple, low-emotion event like a misunderstanding at a coffee shop.',
-      'Make it harder: Retell from the perspective of someone you disagreed with, presenting their view as the sympathetic one.'
+      "Make it easier: Start with a simple, low-emotion event like a misunderstanding at a coffee shop.",
+      "Make it harder: Retell from the perspective of someone you disagreed with, presenting their view as the sympathetic one."
     ],
-    completionCue: 'POV successfully shifted? Done.'
+    completionCue: "POV successfully shifted? Done."
   },
   {
     id: 'story_rule_of_three',
@@ -1401,23 +1649,143 @@ export const communicationPractices: Exercise[] = [
     icon: LayoutGrid,
     category: 'Storytelling',
     tags: ["storytelling", "rule-of-three", "structure", "rhythm", "memorability"],
-    intention: 'Structure examples, beats, or story points in groups of three for rhythm, memorability, and comedic or dramatic effect.',
-    setup: ['Choose a lesson or point to teach.'],
+    intention: "Structure examples, beats, or story points in groups of three for rhythm, memorability, and comedic or dramatic effect.",
+    setup: ["Choose a lesson or point to teach."],
     steps: [
-      '1. Choose a point you want to make or a lesson you want to teach.',
-      '2. Come up with three examples, anecdotes, or beats that illustrate it — each escalating in intensity or importance.',
-      '3. Deliver them in sequence: the first sets the pattern, the second confirms the pattern, the third either breaks the pattern (for humor/surprise) or elevates it (for drama/impact).',
-      '4. Pay attention to the rhythm of your delivery. The third beat should have a noticeably different energy — either a pause before it, a shift in tone, or a change in pace.',
-      '5. Try a version where the third element is the twist/punchline, and another where it is the emotional peak.'
+      "1. Choose a point you want to make or a lesson you want to teach.",
+      "2. Come up with three examples, anecdotes, or beats that illustrate it — each escalating in intensity or importance.",
+      "3. Deliver them in sequence: the first sets the pattern, the second confirms the pattern, the third either breaks the pattern (for humor/surprise) or elevates it (for drama/impact).",
+      "4. Pay attention to the rhythm of your delivery. The third beat should have a noticeably different energy — either a pause before it, a shift in tone, or a change in pace.",
+      "5. Try a version where the third element is the twist/punchline, and another where it is the emotional peak."
     ],
     modifications: [
-      'Make it easier: Use a classic joke structure (setup, setup, punchline) as your template.',
-      'Harder: Use the rule of three within an impromptu 2-minute talk on a topic a partner gives you.'
+      "Make it easier: Use a classic joke structure (setup, setup, punchline) as your template.",
+      "Harder: Use the rule of three within an impromptu 2-minute talk on a topic a partner gives you."
     ],
-    completionCue: 'Rhythm and structure applied? Done.'
+    completionCue: "Rhythm and structure applied? Done."
   },
 
-  // --- Conflict Resolution ---
+  // --- Difficult Conversations (15) ---
+  {
+    id: 'ei_labeling',
+    name: 'Emotion Labeling Exercise',
+    description: 'Reduce emotional intensity by naming what you\'re feeling.',
+    duration: 90,
+    estimatedMinutes: 1.5,
+    icon: Brain,
+    category: 'difficult_conversations',
+    tags: ["emotional-intelligence", "self-awareness", "regulation"],
+    intention: 'Reduce emotional intensity by naming what you\'re feeling.',
+    setup: ['Pause during a stressful moment.'],
+    steps: [
+      '1. Pause and notice the physical sensation.',
+      '2. Name the emotion specifically - not just "bad".',
+      '3. Say it or write it: "I\'m feeling [emotion]".',
+      '4. Notice if intensity decreases.',
+      '5. Use an emotion wheel if needed.'
+    ],
+    modifications: [
+      'Make it easier: Use mad/sad/glad/scared.',
+      'Make it harder: Identify layered emotions.'
+    ],
+    completionCue: 'Intensity reduced? Done.'
+  },
+  {
+    id: 'ei_i_statements',
+    name: '"I" Statement Practice',
+    description: 'Express feelings without blaming to reduce defensiveness.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: MessageSquare,
+    category: 'difficult_conversations',
+    tags: ["emotional-intelligence", "conflict", "assertiveness"],
+    intention: 'Express feelings without blaming to reduce defensiveness.',
+    setup: ['Identify a minor annoyance.'],
+    steps: [
+      '1. Structure: "I feel [emotion] when [behavior] because [impact]".',
+      '2. Example: "I feel frustrated when meetings start late...".',
+      '3. Avoid "you" statements.',
+      '4. Be specific about behavior, not character.',
+      '5. Practice on minor things first.'
+    ],
+    modifications: [
+      'Make it easier: Just use "I feel [emotion]" without the full structure.',
+      'Make it harder: Use in real-time conflict.'
+    ],
+    completionCue: 'Statement structured? Done.'
+  },
+  {
+    id: 'ei_validation',
+    name: 'Validation Before Advice',
+    description: 'Build trust by acknowledging emotion before problem-solving.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: HeartHandshake,
+    category: 'difficult_conversations',
+    tags: ["emotional-intelligence", "listening", "empathy"],
+    intention: 'Build trust by acknowledging emotion before problem-solving.',
+    setup: ['Next time someone vents to you.'],
+    steps: [
+      '1. Listen for the emotion.',
+      '2. Name it: "That sounds really frustrating".',
+      '3. Resist the urge to immediately fix.',
+      '4. Wait for them to feel heard.',
+      '5. If you must advise, ask first.'
+    ],
+    modifications: [
+      'Make it easier: Just say "That makes sense".',
+      'Make it harder: Validate even when you disagree.'
+    ],
+    completionCue: 'Trust built? Done.'
+  },
+  {
+    id: 'ei_perspective',
+    name: 'Perspective-Taking Drill',
+    description: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: Users,
+    category: 'difficult_conversations',
+    tags: ["emotional-intelligence", "empathy", "conflict"],
+    intention: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
+    setup: ['Recall a disagreement.'],
+    steps: [
+      '1. State their position in your own words.',
+      '2. Ask: what would have to be true for this to make sense?.',
+      '3. Identify their underlying needs/fears.',
+      '4. Share understanding: "From your perspective...".',
+      '5. Notice how this changes your emotional response.'
+    ],
+    modifications: [
+      'Make it easier: List 3 reasons why they might hold that view.',
+      'Make it harder: Steelman their argument.'
+    ],
+    completionCue: 'Empathy felt? Done.'
+  },
+  {
+    id: 'ei_self_disclosure',
+    name: 'Appropriate Self-Disclosure',
+    description: 'Build connection by sharing strategically.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: Heart,
+    category: 'difficult_conversations',
+    tags: ["emotional-intelligence", "connection", "boundaries"],
+    intention: 'Build connection by sharing strategically.',
+    setup: ['In a casual networking setting.'],
+    steps: [
+      '1. Ask: is this relevant to what they shared?.',
+      '2. Keep it brief - match their disclosure.',
+      '3. Focus on the feeling/lesson.',
+      '4. Watch their response.',
+      '5. Avoid one-upping or trauma-dumping.'
+    ],
+    modifications: [
+      'Make it easier: Share only positive experiences.',
+      'Make it harder: Share current struggles appropriately.'
+    ],
+    completionCue: 'Connection made? Done.'
+  },
   {
     id: 'conflict_yes_and',
     name: 'Yes, And (De-escalation)',
@@ -1425,23 +1793,23 @@ export const communicationPractices: Exercise[] = [
     duration: 300,
     estimatedMinutes: 5,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "de-escalation", "ego-management", "active-listening", "empathy"],
-    intention: 'Defuse tension by acknowledging the other person\'s point before adding yours—removing the need for them to defend.',
-    setup: ['Recall a recent disagreement.', 'Take a slow breath.'],
+    intention: "Defuse tension by acknowledging the other person's point before adding yours—removing the need for them to defend.",
+    setup: ["Recall a recent disagreement.", "Take a slow breath."],
     steps: [
-      '1. Think of a recent disagreement or criticism someone directed at you.',
-      '2. Notice your instinct—was it to defend, correct, or explain yourself?',
-      '3. Now reframe using "Yes, and": Acknowledge their point first ("Yes, I can see how that came across...") then add your perspective ("...and what I was trying to do was...").',
-      '4. Practice this out loud with three different scenarios: a work criticism, a personal misunderstanding, and a small conflict.',
-      '5. The key is removing your ego—you\'re not agreeing they\'re right, you\'re validating that you heard them.',
-      '6. Reflect: which scenario felt hardest to say "yes" to? That\'s where your ego is strongest.'
+      "1. Think of a recent disagreement or criticism someone directed at you.",
+      "2. Notice your instinct—was it to defend, correct, or explain yourself?",
+      "3. Now reframe using \"Yes, and\": Acknowledge their point first (\"Yes, I can see how that came across...\") then add your perspective (\"...and what I was trying to do was...\").",
+      "4. Practice this out loud with three different scenarios: a work criticism, a personal misunderstanding, and a small conflict.",
+      "5. The key is removing your ego—you're not agreeing they're right, you're validating that you heard them.",
+      "6. Reflect: which scenario felt hardest to say \"yes\" to? That's where your ego is strongest."
     ],
     modifications: [
-      'Make it easier: Write out both your defensive response and your "yes, and" response to see the difference visually.',
-      'Make it harder: Use this technique live the next time someone criticizes you, without preparation. Notice how it changes their energy.'
+      "Make it easier: Write out both your defensive response and your \"yes, and\" response to see the difference visually.",
+      "Make it harder: Use this technique live the next time someone criticizes you, without preparation. Notice how it changes their energy."
     ],
-    completionCue: 'Ego managed? Tension defused.'
+    completionCue: "Ego managed? Tension defused."
   },
   {
     id: 'conflict_separate_person',
@@ -1450,23 +1818,23 @@ export const communicationPractices: Exercise[] = [
     duration: 360,
     estimatedMinutes: 6,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "reframing", "professionalism", "clarity", "boundaries"],
-    intention: 'Focus on the issue, not the individual, so the conversation stays productive instead of personal.',
-    setup: ['Identify a conflict where you felt attacked.', 'Prepare to reframe.'],
+    intention: "Focus on the issue, not the individual, so the conversation stays productive instead of personal.",
+    setup: ["Identify a conflict where you felt attacked.", "Prepare to reframe."],
     steps: [
-      '1. Recall a conflict where you felt attacked or blamed by someone.',
-      '2. Identify what the actual problem was versus how the person delivered the message.',
-      '3. Practice restating the conflict in neutral, non-personal language: Replace "You always..." with "The issue is..." or "What happened was..."',
-      '4. Say your reframed version out loud. Does it remove the emotional charge?',
-      '5. Now imagine delivering this reframe to the other person. Keep your tone calm and matter-of-fact.',
-      '6. Practice this reframing with two more conflicts—one from work, one from personal life.'
+      "1. Recall a conflict where you felt attacked or blamed by someone.",
+      "2. Identify what the actual problem was versus how the person delivered the message.",
+      "3. Practice restating the conflict in neutral, non-personal language: Replace \"You always...\" with \"The issue is...\" or \"What happened was...\"",
+      "4. Say your reframed version out loud. Does it remove the emotional charge?",
+      "5. Now imagine delivering this reframe to the other person. Keep your tone calm and matter-of-fact.",
+      "6. Practice this reframing with two more conflicts—one from work, one from personal life."
     ],
     modifications: [
-      'Make it easier: Start with hypothetical conflicts instead of real ones to practice the language pattern.',
-      'Make it harder: Next time you\'re in a heated conversation, pause and reframe in the moment: "I don\'t think this is about me or you—I think the issue is..." '
+      "Make it easier: Start with hypothetical conflicts instead of real ones to practice the language pattern.",
+      "Make it harder: Next time you're in a heated conversation, pause and reframe in the moment: \"I don't think this is about me or you—I think the issue is...\" "
     ],
-    completionCue: 'Issue isolated? Problem solving enabled.'
+    completionCue: "Issue isolated? Problem solving enabled."
   },
   {
     id: 'conflict_pause',
@@ -1475,23 +1843,23 @@ export const communicationPractices: Exercise[] = [
     duration: 300,
     estimatedMinutes: 5,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "pause", "self-regulation", "impulse-control", "calm"],
-    intention: 'Use strategic silence to prevent reactive responses and create space for thoughtful conflict resolution.',
-    setup: ['Find a quiet moment or use a practice partner.'],
+    intention: "Use strategic silence to prevent reactive responses and create space for thoughtful conflict resolution.",
+    setup: ["Find a quiet moment or use a practice partner."],
     steps: [
-      '1. Think of a time you responded too quickly in a conflict and regretted it.',
-      '2. Set a mental rule: When someone says something that triggers you, count to three before responding.',
-      '3. Practice this physically: Have a partner say something mildly provocative (e.g., "You\'re always late"), and you pause for a full 3 seconds before replying.',
-      '4. During those 3 seconds, take one deep breath and ask yourself: "What do they actually need to hear right now?"',
-      '5. Respond from that calmer place. Notice how the quality of your response changes.',
-      '6. Repeat with progressively more emotionally charged statements.'
+      "1. Think of a time you responded too quickly in a conflict and regretted it.",
+      "2. Set a mental rule: When someone says something that triggers you, count to three before responding.",
+      "3. Practice this physically: Have a partner say something mildly provocative (e.g., \"You're always late\"), and you pause for a full 3 seconds before replying.",
+      "4. During those 3 seconds, take one deep breath and ask yourself: \"What do they actually need to hear right now?\"",
+      "5. Respond from that calmer place. Notice how the quality of your response changes.",
+      "6. Repeat with progressively more emotionally charged statements."
     ],
     modifications: [
-      'Make it easier: Practice the pause alone first by imagining triggering statements and counting before your mental response.',
-      'Harder: Extend the pause to 5-7 seconds in live conflicts. Use the phrase "Let me think about that for a second" to make the silence feel intentional.'
+      "Make it easier: Practice the pause alone first by imagining triggering statements and counting before your mental response.",
+      "Harder: Extend the pause to 5-7 seconds in live conflicts. Use the phrase \"Let me think about that for a second\" to make the silence feel intentional."
     ],
-    completionCue: 'Impulse controlled? Response measured.'
+    completionCue: "Impulse controlled? Response measured."
   },
   {
     id: 'conflict_i_statements',
@@ -1500,23 +1868,23 @@ export const communicationPractices: Exercise[] = [
     duration: 360,
     estimatedMinutes: 6,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "non-violent-communication", "clarity", "vulnerability", "boundaries"],
-    intention: 'Express your perspective without blame, making it easier for the other person to hear you.',
-    setup: ['Think of a recurring frustration.', 'Have a notepad ready.'],
+    intention: "Express your perspective without blame, making it easier for the other person to hear you.",
+    setup: ["Think of a recurring frustration.", "Have a notepad ready."],
     steps: [
-      '1. Pick a conflict where you felt hurt or frustrated by someone\'s behavior.',
-      '2. Notice how you naturally want to frame it: "You did X" or "You made me feel Y."',
-      '3. Rewrite using the I-Statement formula: "When [situation], I felt [emotion] because [need/impact]."',
-      '4. Example: Instead of "You never listen to me," say "When I was talking earlier and the conversation shifted, I felt unheard because I really wanted your input on that."',
-      '5. Practice saying three I-Statements out loud for three different conflicts.',
-      '6. Notice how this removes accusation and invites collaboration instead of defense.'
+      "1. Pick a conflict where you felt hurt or frustrated by someone's behavior.",
+      "2. Notice how you naturally want to frame it: \"You did X\" or \"You made me feel Y.\"",
+      "3. Rewrite using the I-Statement formula: \"When [situation], I felt [emotion] because [need/impact].\"",
+      "4. Example: Instead of \"You never listen to me,\" say \"When I was talking earlier and the conversation shifted, I felt unheard because I really wanted your input on that.\"",
+      "5. Practice saying three I-Statements out loud for three different conflicts.",
+      "6. Notice how this removes accusation and invites collaboration instead of defense."
     ],
     modifications: [
-      'Make it easier: Use a fill-in-the-blank template to structure your I-Statements before saying them aloud.',
-      'Harder: Deliver an I-Statement in real time during your next conflict, even when you\'re emotionally activated.'
+      "Make it easier: Use a fill-in-the-blank template to structure your I-Statements before saying them aloud.",
+      "Harder: Deliver an I-Statement in real time during your next conflict, even when you're emotionally activated."
     ],
-    completionCue: 'Blame removed? Dialogue opened.'
+    completionCue: "Blame removed? Dialogue opened."
   },
   {
     id: 'conflict_clarifying_questions',
@@ -1525,23 +1893,23 @@ export const communicationPractices: Exercise[] = [
     duration: 360,
     estimatedMinutes: 6,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "active-listening", "curiosity", "assumptions", "clarity"],
-    intention: 'Ask open questions to understand the other person\'s perspective before defending or reacting.',
-    setup: ['Identify a common misunderstanding.'],
+    intention: "Ask open questions to understand the other person's perspective before defending or reacting.",
+    setup: ["Identify a common misunderstanding."],
     steps: [
-      '1. Think of a recent conflict where you assumed you knew what the other person meant or wanted.',
-      '2. Identify the assumption you made. Was it accurate? Did it escalate the conflict?',
-      '3. Now practice asking clarifying questions instead: "Help me understand—what did you mean by that?" or "What would a good solution look like for you?"',
-      '4. The goal is curiosity, not interrogation. Your tone should be genuinely open.',
-      '5. Role-play with a partner: they state a vague complaint ("You don\'t respect my time"), and you ask 2-3 clarifying questions before responding.',
-      '6. Reflect: did asking questions change what you thought the conflict was about?'
+      "1. Think of a recent conflict where you assumed you knew what the other person meant or wanted.",
+      "2. Identify the assumption you made. Was it accurate? Did it escalate the conflict?",
+      "3. Now practice asking clarifying questions instead: \"Help me understand—what did you mean by that?\" or \"What would a good solution look like for you?\"",
+      "4. The goal is curiosity, not interrogation. Your tone should be genuinely open.",
+      "5. Role-play with a partner: they state a vague complaint (\"You don't respect my time\"), and you ask 2-3 clarifying questions before responding.",
+      "6. Reflect: did asking questions change what you thought the conflict was about?"
     ],
     modifications: [
-      'Make it easier: Write out clarifying questions for past conflicts to build your question bank.',
-      'Harder: In your next real conflict, commit to asking at least two questions before making any statement or defense.'
+      "Make it easier: Write out clarifying questions for past conflicts to build your question bank.",
+      "Harder: In your next real conflict, commit to asking at least two questions before making any statement or defense."
     ],
-    completionCue: 'Assumptions cleared? Clarity achieved.'
+    completionCue: "Assumptions cleared? Clarity achieved."
   },
   {
     id: 'conflict_name_emotion',
@@ -1550,23 +1918,23 @@ export const communicationPractices: Exercise[] = [
     duration: 360,
     estimatedMinutes: 6,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "emotional-intelligence", "empathy", "vulnerability", "regulation"],
-    intention: 'Acknowledge the emotional reality beneath the conflict to create connection and reduce defensiveness.',
-    setup: ['Center yourself.', 'Identify a felt emotion.'],
+    intention: "Acknowledge the emotional reality beneath the conflict to create connection and reduce defensiveness.",
+    setup: ["Center yourself.", "Identify a felt emotion."],
     steps: [
-      '1. Recall a conflict that felt emotionally intense but was supposedly about something "small."',
-      '2. Ask yourself: what emotion was I actually feeling? (e.g., disrespected, unseen, anxious, dismissed)',
-      '3. Now guess: what emotion might the other person have been feeling?',
-      '4. Practice saying both out loud: "I was feeling [your emotion], and I think you were feeling [their emotion]."',
-      '5. Role-play with a partner: one person shares a conflict, the other tries to name both emotions accurately before offering any solution.',
-      '6. Naming emotions disarms conflict faster than logic. Test this in your next disagreement.'
+      "1. Recall a conflict that felt emotionally intense but was supposedly about something \"small.\"",
+      "2. Ask yourself: what emotion was I actually feeling? (e.g., disrespected, unseen, anxious, dismissed)",
+      "3. Now guess: what emotion might the other person have been feeling?",
+      "4. Practice saying both out loud: \"I was feeling [your emotion], and I think you were feeling [their emotion].\"",
+      "5. Role-play with a partner: one person shares a conflict, the other tries to name both emotions accurately before offering any solution.",
+      "6. Naming emotions disarms conflict faster than logic. Test this in your next disagreement."
     ],
     modifications: [
-      'Make it easier: Use an emotion wheel or list to help you identify emotions beyond "angry" or "upset."',
-      'Harder: In a live conflict, name your emotion out loud to the other person first: "I\'m feeling really defensive right now." Watch how it shifts the dynamic.'
+      "Make it easier: Use an emotion wheel or list to help you identify emotions beyond \"angry\" or \"upset.\"",
+      "Harder: In a live conflict, name your emotion out loud to the other person first: \"I'm feeling really defensive right now.\" Watch how it shifts the dynamic."
     ],
-    completionCue: 'Emotion named? Dynamic shifted.'
+    completionCue: "Emotion named? Dynamic shifted."
   },
   {
     id: 'conflict_request_not_demand',
@@ -1575,23 +1943,23 @@ export const communicationPractices: Exercise[] = [
     duration: 300,
     estimatedMinutes: 5,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "boundaries", "assertiveness", "collaboration", "clarity"],
-    intention: 'Frame what you need as a request instead of a demand to invite collaboration, not resistance.',
-    setup: ['Identify a need.', 'Practice a soft opening.'],
+    intention: "Frame what you need as a request instead of a demand to invite collaboration, not resistance.",
+    setup: ["Identify a need.", "Practice a soft opening."],
     steps: [
-      '1. Think of something you want someone to do differently (e.g., reply faster, listen more, follow through).',
-      '2. Notice how you\'d naturally say it. Does it sound like a demand? ("You need to..." / "You should...")',
-      '3. Reframe as a request using this structure: "Would you be willing to [specific behavior]? It would help me because [reason]."',
-      '4. Example: Instead of "You need to text me back faster," try "Would you be willing to send a quick reply when you see my message, even if it\'s just to say you\'ll respond later? It helps me feel less anxious."',
-      '5. Practice making three requests out loud for three different needs.',
-      '6. Notice how requests create space for negotiation; demands create resistance.'
+      "1. Think of something you want someone to do differently (e.g., reply faster, listen more, follow through).",
+      "2. Notice how you'd naturally say it. Does it sound like a demand? (\"You need to...\" / \"You should...\")",
+      "3. Reframe as a request using this structure: \"Would you be willing to [specific behavior]? It would help me because [reason].\"",
+      "4. Example: Instead of \"You need to text me back faster,\" try \"Would you be willing to send a quick reply when you see my message, even if it's just to say you'll respond later? It helps me feel less anxious.\"",
+      "5. Practice making three requests out loud for three different needs.",
+      "6. Notice how requests create space for negotiation; demands create resistance."
     ],
     modifications: [
-      'Make it easier: Write out the request first, then practice saying it in a calm, non-urgent tone.',
-      'Harder: Make a request in real time during a conflict without pre-scripting it, and stay open to hearing "no."'
+      "Make it easier: Write out the request first, then practice saying it in a calm, non-urgent tone.",
+      "Harder: Make a request in real time during a conflict without pre-scripting it, and stay open to hearing \"no.\""
     ],
-    completionCue: 'Request delivered? Door open for negotiation.'
+    completionCue: "Request delivered? Door open for negotiation."
   },
   {
     id: 'conflict_apologize_no_but',
@@ -1600,23 +1968,23 @@ export const communicationPractices: Exercise[] = [
     duration: 300,
     estimatedMinutes: 5,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "accountability", "apology", "repair", "trust"],
-    intention: 'Deliver a clean, complete apology that repairs trust instead of defending yourself.',
-    setup: ['Own your actions.', 'Remove the caveats.'],
+    intention: "Deliver a clean, complete apology that repairs trust instead of defending yourself.",
+    setup: ["Own your actions.", "Remove the caveats."],
     steps: [
-      '1. Think of a time you hurt someone or made a mistake in a relationship.',
-      '2. Notice your instinct—did you want to explain, justify, or add "but I didn\'t mean to" or "but you also..."?',
-      '3. Practice a three-part apology: (1) "I\'m sorry for [specific behavior]." (2) "I understand that it [impact on them]." (3) "Going forward, I\'ll [corrective action]."',
-      '4. Example: "I\'m sorry for interrupting you during the meeting. I understand that it made you feel disrespected. Going forward, I\'ll wait until you\'re done before I jump in."',
-      '5. Say it out loud. Did you add a "but"? If so, remove it and try again.',
-      '6. A real apology has no defense in it. It just acknowledges harm and commits to change.'
+      "1. Think of a time you hurt someone or made a mistake in a relationship.",
+      "2. Notice your instinct—did you want to explain, justify, or add \"but I didn't mean to\" or \"but you also...\"?",
+      "3. Practice a three-part apology: (1) \"I'm sorry for [specific behavior].\" (2) \"I understand that it [impact on them].\" (3) \"Going forward, I'll [corrective action].\"",
+      "4. Example: \"I'm sorry for interrupting you during the meeting. I understand that it made you feel disrespected. Going forward, I'll wait until you're done before I jump in.\"",
+      "5. Say it out loud. Did you add a \"but\"? If so, remove it and try again.",
+      "6. A real apology has no defense in it. It just acknowledges harm and commits to change."
     ],
     modifications: [
-      'Make it easier: Write out the three parts separately, then practice combining them smoothly.',
-      'Harder: Deliver this apology to someone you\'ve actually hurt, in person or via message, within the next 48 hours.'
+      "Make it easier: Write out the three parts separately, then practice combining them smoothly.",
+      "Harder: Deliver this apology to someone you've actually hurt, in person or via message, within the next 48 hours."
     ],
-    completionCue: 'Apology cleaned? Trust repair begun.'
+    completionCue: "Apology cleaned? Trust repair begun."
   },
   {
     id: 'conflict_shared_need',
@@ -1625,23 +1993,23 @@ export const communicationPractices: Exercise[] = [
     duration: 420,
     estimatedMinutes: 7,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "negotiation", "collaboration", "win-win", "empathy"],
-    intention: 'Shift from opposing positions to shared interests so both people feel they can win.',
-    setup: ['Map the conflict.', 'Dig beneath the surface.'],
+    intention: "Shift from opposing positions to shared interests so both people feel they can win.",
+    setup: ["Map the conflict.", "Dig beneath the surface."],
     steps: [
-      '1. Think of a conflict where you and someone else wanted different things (e.g., you wanted quiet, they wanted to play music).',
-      '2. Identify your positions (what each person said they wanted).',
-      '3. Now dig deeper: what need was each position trying to meet? (e.g., your need: focus; their need: energy/mood boost)',
-      '4. Ask: is there a solution that meets both needs? (e.g., they use headphones, or you work in a different room, or they play music at certain times)',
-      '5. Practice this with three past conflicts: position → underlying need → creative solution.',
-      '6. Shared needs create collaboration; opposing positions create war.'
+      "1. Think of a conflict where you and someone else wanted different things (e.g., you wanted quiet, they wanted to play music).",
+      "2. Identify your positions (what each person said they wanted).",
+      "3. Now dig deeper: what need was each position trying to meet? (e.g., your need: focus; their need: energy/mood boost)",
+      "4. Ask: is there a solution that meets both needs? (e.g., they use headphones, or you work in a different room, or they play music at certain times)",
+      "5. Practice this with three past conflicts: position → underlying need → creative solution.",
+      "6. Shared needs create collaboration; opposing positions create war."
     ],
     modifications: [
-      'Make it easier: Use a worksheet to map positions vs. needs visually before brainstorming solutions.',
-      'Harder: In your next conflict, ask the other person directly: "What do you actually need here?" and share your need too before proposing solutions.'
+      "Make it easier: Use a worksheet to map positions vs. needs visually before brainstorming solutions.",
+      "Harder: In your next conflict, ask the other person directly: \"What do you actually need here?\" and share your need too before proposing solutions."
     ],
-    completionCue: 'Common ground found? Win-win possible.'
+    completionCue: "Common ground found? Win-win possible."
   },
   {
     id: 'conflict_repair_after',
@@ -1650,26 +2018,26 @@ export const communicationPractices: Exercise[] = [
     duration: 240,
     estimatedMinutes: 4,
     icon: ShieldAlert,
-    category: 'Conflict Resolution',
+    category: 'difficult_conversations',
     tags: ["conflict-resolution", "repair", "accountability", "connection", "humility"],
-    intention: 'Re-establish connection after a heated conflict by taking responsibility for your part, regardless of who was \'right.\'',
-    setup: ['Identify an escalated conflict.', 'Prepare a bridge.'],
+    intention: "Re-establish connection after a heated conflict by taking responsibility for your part, regardless of who was 'right.'",
+    setup: ["Identify an escalated conflict.", "Prepare a bridge."],
     steps: [
-      '1. Think of a conflict that escalated and left both people feeling bad.',
-      '2. Identify one thing you did that didn\'t help (raised your voice, shut down, brought up old issues, etc.).',
-      '3. Reach out within 24 hours with a repair statement: "Hey, I didn\'t handle that well. I [specific behavior] and I\'m sorry. Can we talk?"',
-      '4. The goal isn\'t to rehash the argument—it\'s to re-open the relationship.',
-      '5. Practice saying a repair statement out loud for three past conflicts.',
-      '6. Repair isn\'t about who was right. It is about choosing connection over being right.'
+      "1. Think of a conflict that escalated and left both people feeling bad.",
+      "2. Identify one thing you did that didn't help (raised your voice, shut down, brought up old issues, etc.).",
+      "3. Reach out within 24 hours with a repair statement: \"Hey, I didn't handle that well. I [specific behavior] and I'm sorry. Can we talk?\"",
+      "4. The goal isn't to rehash the argument—it's to re-open the relationship.",
+      "5. Practice saying a repair statement out loud for three past conflicts.",
+      "6. Repair isn't about who was right. It is about choosing connection over being right."
     ],
     modifications: [
-      'Make it easier: Send the repair message via text first if face-to-face feels too vulnerable.',
-      'Harder: Make the repair in person immediately after a conflict, before your pride hardens.'
+      "Make it easier: Send the repair message via text first if face-to-face feels too vulnerable.",
+      "Harder: Make the repair in person immediately after a conflict, before your pride hardens."
     ],
-    completionCue: 'Bridge built? Connection re-established.'
+    completionCue: "Bridge built? Connection re-established."
   },
 
-  // --- Public Speaking ---
+  // --- Public Speaking (15) ---
   {
     id: 'speaking_60s_story',
     name: 'The 60-Second Story',
@@ -2048,7 +2416,7 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Thinking on your feet? Well done.'
   },
 
-  // --- Professional ---
+  // --- Professional Communication (8) ---
   {
     id: 'prof_sbi',
     name: 'SBI Feedback Framework',
@@ -2056,7 +2424,7 @@ export const communicationPractices: Exercise[] = [
     duration: 240,
     estimatedMinutes: 4,
     icon: Briefcase,
-    category: 'Professional',
+    category: 'professional_communication',
     tags: ['professional', 'leadership', 'clarity'],
     intention: 'Reduce ambiguity and defensiveness when delivering feedback to colleagues or team members.',
     setup: ['Think of a specific instance where someone\'s behavior needs correction.'],
@@ -2080,7 +2448,7 @@ export const communicationPractices: Exercise[] = [
     duration: 300,
     estimatedMinutes: 5,
     icon: HeartHandshake,
-    category: 'Professional',
+    category: 'professional_communication',
     tags: ['professional', 'leadership', 'emotional-intelligence'],
     intention: 'Navigate the "Radical Candor" quadrant to build high-trust working relationships.',
     setup: ['Prepare for a 1-on-1 or performance review.'],
@@ -2104,7 +2472,7 @@ export const communicationPractices: Exercise[] = [
     duration: 180,
     estimatedMinutes: 3,
     icon: LayoutGrid,
-    category: 'Professional',
+    category: 'professional_communication',
     tags: ['professional', 'productivity', 'structure'],
     intention: 'Ensure every meeting has a clear purpose and measurable outcome.',
     setup: ['Open a meeting invite or calendar event.'],
@@ -2121,8 +2489,6 @@ export const communicationPractices: Exercise[] = [
     ],
     completionCue: 'Meeting structure locked? Done.'
   },
-
-  // --- Digital ---
   {
     id: 'digital_framing',
     name: 'Video Call Framing & Lighting',
@@ -2130,7 +2496,7 @@ export const communicationPractices: Exercise[] = [
     duration: 120,
     estimatedMinutes: 2,
     icon: MonitorSmartphone,
-    category: 'Digital',
+    category: 'professional_communication',
     tags: ['digital', 'professional', 'nonverbal'],
     intention: 'Project professionalism and engagement during remote meetings.',
     setup: ['Open your webcam or a video preview app.'],
@@ -2154,7 +2520,7 @@ export const communicationPractices: Exercise[] = [
     duration: 180,
     estimatedMinutes: 3,
     icon: Mail,
-    category: 'Digital',
+    category: 'professional_communication',
     tags: ['digital', 'professional', 'conciseness'],
     intention: 'Write subject lines that tell the recipient exactly what is needed without opening the email.',
     setup: ['Open your drafts folder.'],
@@ -2178,7 +2544,7 @@ export const communicationPractices: Exercise[] = [
     duration: 300,
     estimatedMinutes: 5,
     icon: VideoIcon,
-    category: 'Digital',
+    category: 'professional_communication',
     tags: ['digital', 'focus', 'professional'],
     intention: 'Eliminate "Digital Split-Focus" to build trust and comprehension in remote settings.',
     setup: ['Join a low-stakes video meeting.'],
@@ -2202,7 +2568,7 @@ export const communicationPractices: Exercise[] = [
     duration: 120,
     estimatedMinutes: 2,
     icon: Hash,
-    category: 'Digital',
+    category: 'professional_communication',
     tags: ['digital', 'professional', 'conciseness'],
     intention: 'Consolidate multiple short messages into one clear "pulse" of information.',
     setup: ['Before hitting "Enter" on a Slack/Teams message.'],
@@ -2226,7 +2592,7 @@ export const communicationPractices: Exercise[] = [
     duration: 180,
     estimatedMinutes: 3,
     icon: TextCursorInput,
-    category: 'Digital',
+    category: 'professional_communication',
     tags: ['digital', 'emotional-intelligence', 'clarity'],
     intention: 'Prevent "Negative Bias" in text-based communication by adding intentional warmth.',
     setup: ['Review a "cold" or purely factual email draft.'],

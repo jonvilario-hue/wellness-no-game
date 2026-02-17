@@ -1,10 +1,12 @@
+
 import { 
     Dumbbell, StretchHorizontal, Zap, Sunrise, Wind, 
     Brain, Shield, HeartHandshake, type LucideIcon,
     Wallet, Utensils, TrendingUp, Apple, Waves,
     Mic2, MessageSquare, User, Eye, ArrowLeftRight, 
     Target, Sparkles, ShieldAlert, BookOpen, Presentation, 
-    Mail, Video, ClipboardList, Heart
+    Mail, Video, ClipboardList, Heart, Briefcase, MonitorSmartphone,
+    PenTool
 } from "lucide-react";
 import type { ExerciseCategory, MindfulnessCategory } from "./exercises";
 import type { CommunicationCategory } from "./communication-practices";
@@ -137,29 +139,21 @@ export const communicationCategoryDetails: Record<CommunicationCategory, Wellnes
         includes: ['Reciprocity', 'Anchoring'],
         tagline: 'Influence with integrity.'
     },
-    'Clarity': {
-        title: 'Clarity',
-        icon: Brain,
+    'clarity_language_craft': {
+        title: 'CLARITY & LANGUAGE CRAFT',
+        icon: PenTool,
         purpose: 'Eliminate ambiguity and ensure your message land effectively.',
-        useWhen: ['Explaining complex topics', 'Giving instructions'],
-        includes: ['Active Voice', 'Analogy Building'],
-        tagline: 'Simple is powerful.'
+        useWhen: ['Explaining complex topics', 'Creative writing', 'Speech preparation', 'Dynamic speaking'],
+        includes: ['Active Voice', 'Analogy Building', 'Alliteration', 'Cadence Mimicry'],
+        tagline: 'Choose precise words. Master rhythm and flow.'
     },
-    'Emotional Intelligence': {
-        title: 'Emotional Intelligence',
-        icon: Heart,
-        purpose: 'Build rapport by accurately perceiving and responding to emotions.',
-        useWhen: ['Coaching', 'Difficult team dynamics'],
-        includes: ['Emotion Labeling', 'Validation'],
-        tagline: 'Connect through empathy.'
-    },
-    'Conflict Resolution': {
-        title: 'Conflict Resolution',
-        icon: ShieldAlert,
+    'difficult_conversations': {
+        title: 'DIFFICULT CONVERSATIONS',
+        icon: HeartHandshake,
         purpose: 'Navigate disagreements without damaging relationships.',
-        useWhen: ['High-tension moments', 'Performance reviews'],
-        includes: ['De-Escalation', 'Collaborative Language'],
-        tagline: 'Turn friction into growth.'
+        useWhen: ['Coaching', 'Difficult team dynamics', 'High-tension moments', 'Performance reviews'],
+        includes: ['Emotion Labeling', 'De-Escalation', 'Collaborative Language'],
+        tagline: 'Navigate tension with empathy and composure.'
     },
     'Storytelling': {
         title: 'Storytelling',
@@ -177,21 +171,13 @@ export const communicationCategoryDetails: Record<CommunicationCategory, Wellnes
         includes: ['Extemporaneous Delivery', 'Power Posing'],
         tagline: 'Own the room.'
     },
-    'Professional': {
-        title: 'Professional',
-        icon: ClipboardList,
-        purpose: 'Apply industry-standard communication frameworks.',
-        useWhen: ['Office environment', 'Leadership roles'],
-        includes: ['SBI Feedback', 'Radical Candor'],
-        tagline: 'Communication at work.'
-    },
-    'Digital': {
-        title: 'Digital',
-        icon: Video,
-        purpose: 'Optimize communication across screen-based mediums.',
-        useWhen: ['Video calls', 'Email', 'Slack'],
-        includes: ['Subject Line Clarity', 'Video Framing'],
-        tagline: 'Be present, even when remote.'
+    'professional_communication': {
+        title: 'PROFESSIONAL COMMUNICATION',
+        icon: Briefcase,
+        purpose: 'Communicate with impact at work — in person and remote.',
+        useWhen: ['Office environment', 'Leadership roles', 'Video calls', 'Email', 'Slack'],
+        includes: ['SBI Feedback', 'Radical Candor', 'Subject Line Clarity', 'Video Framing'],
+        tagline: 'Communicate with impact at work — in person and remote.'
     },
     'Custom': {
         title: 'Custom',
