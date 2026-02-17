@@ -10,7 +10,8 @@ import {
   Layers, Link as LinkIcon, ShieldCheck, X, Users, Lightbulb,
   Briefcase, MonitorSmartphone, Shield, Bell, CheckCircle2, 
   LayoutGrid, Pointer, TrendingUp, DoorOpen, HeartPulse, Zap,
-  History, Video as VideoIcon, Mic, ThumbsUp, Camera
+  History, Video as VideoIcon, Mic, ThumbsUp, Camera,
+  Smartphone, Hash, TextCursorInput, PersonStanding
 } from 'lucide-react';
 import type { Exercise } from './exercises';
 
@@ -22,8 +23,8 @@ export type CommunicationCategory =
   | 'Persuasion' 
   | 'Clarity' 
   | 'Emotional Intelligence' 
-  | 'Conflict Resolution' 
   | 'Storytelling' 
+  | 'Conflict Resolution' 
   | 'Public Speaking' 
   | 'Professional' 
   | 'Digital'
@@ -1086,662 +1087,6 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Connection made? Done.'
   },
 
-  // --- Conflict Resolution ---
-  {
-    id: 'conflict_yes_and',
-    name: 'Yes, And (De-escalation)',
-    description: 'Defuse tension by acknowledging the other person\'s point before adding yours.',
-    duration: 300,
-    estimatedMinutes: 5,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "de-escalation", "ego-management", "active-listening", "empathy"],
-    intention: 'Defuse tension by acknowledging the other person\'s point before adding yours—removing the need for them to defend.',
-    setup: ['Recall a recent disagreement.', 'Take a slow breath.'],
-    steps: [
-      '1. Think of a recent disagreement or criticism someone directed at you.',
-      '2. Notice your instinct—was it to defend, correct, or explain yourself?',
-      '3. Now reframe using "Yes, and": Acknowledge their point first ("Yes, I can see how that came across...") then add your perspective ("...and what I was trying to do was...").',
-      '4. Practice this out loud with three different scenarios: a work criticism, a personal misunderstanding, and a small conflict.',
-      '5. The key is removing your ego—you\'re not agreeing they\'re right, you\'re validating that you heard them.',
-      '6. Reflect: which scenario felt hardest to say "yes" to? That\'s where your ego is strongest.'
-    ],
-    modifications: [
-      'Make it easier: Write out both your defensive response and your "yes, and" response to see the difference visually.',
-      'Make it harder: Use this technique live the next time someone criticizes you, without preparation. Notice how it changes their energy.'
-    ],
-    completionCue: 'Ego managed? Tension defused.'
-  },
-  {
-    id: 'conflict_separate_person',
-    name: 'Separate Person from Problem',
-    description: 'Focus on the issue, not the individual, so the conversation stays productive.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "reframing", "professionalism", "clarity", "boundaries"],
-    intention: 'Focus on the issue, not the individual, so the conversation stays productive instead of personal.',
-    setup: ['Identify a conflict where you felt attacked.', 'Prepare to reframe.'],
-    steps: [
-      '1. Recall a conflict where you felt attacked or blamed by someone.',
-      '2. Identify what the actual problem was versus how the person delivered the message.',
-      '3. Practice restating the conflict in neutral, non-personal language: Replace "You always..." with "The issue is..." or "What happened was..."',
-      '4. Say your reframed version out loud. Does it remove the emotional charge?',
-      '5. Now imagine delivering this reframe to the other person. Keep your tone calm and matter-of-fact.',
-      '6. Practice this reframing with two more conflicts—one from work, one from personal life.'
-    ],
-    modifications: [
-      'Make it easier: Start with hypothetical conflicts instead of real ones to practice the language pattern.',
-      'Make it harder: Next time you\'re in a heated conversation, pause and reframe in the moment: "I don\'t think this is about me or you—I think the issue is..." '
-    ],
-    completionCue: 'Issue isolated? Problem solving enabled.'
-  },
-  {
-    id: 'conflict_pause',
-    name: 'The Pause Before Response',
-    description: 'Use strategic silence to prevent reactive responses.',
-    duration: 300,
-    estimatedMinutes: 5,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "pause", "self-regulation", "impulse-control", "calm"],
-    intention: 'Use strategic silence to prevent reactive responses and create space for thoughtful conflict resolution.',
-    setup: ['Find a quiet moment or use a practice partner.'],
-    steps: [
-      '1. Think of a time you responded too quickly in a conflict and regretted it.',
-      '2. Set a mental rule: When someone says something that triggers you, count to three before responding.',
-      '3. Practice this physically: Have a partner say something mildly provocative (e.g., "You\'re always late"), and you pause for a full 3 seconds before replying.',
-      '4. During those 3 seconds, take one deep breath and ask yourself: "What do they actually need to hear right now?"',
-      '5. Respond from that calmer place. Notice how the quality of your response changes.',
-      '6. Repeat with progressively more emotionally charged statements.'
-    ],
-    modifications: [
-      'Make it easier: Practice the pause alone first by imagining triggering statements and counting before your mental response.',
-      'Harder: Extend the pause to 5-7 seconds in live conflicts. Use the phrase "Let me think about that for a second" to make the silence feel intentional.'
-    ],
-    completionCue: 'Impulse controlled? Response measured.'
-  },
-  {
-    id: 'conflict_i_statements',
-    name: 'I-Statements (Non-Defensive Communication)',
-    description: 'Express your perspective without blame, making it easier for the other person to hear you.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "non-violent-communication", "clarity", "vulnerability", "boundaries"],
-    intention: 'Express your perspective without blame, making it easier for the other person to hear you.',
-    setup: ['Think of a recurring frustration.', 'Have a notepad ready.'],
-    steps: [
-      '1. Pick a conflict where you felt hurt or frustrated by someone\'s behavior.',
-      '2. Notice how you naturally want to frame it: "You did X" or "You made me feel Y."',
-      '3. Rewrite using the I-Statement formula: "When [situation], I felt [emotion] because [need/impact]."',
-      '4. Example: Instead of "You never listen to me," say "When I was talking earlier and the conversation shifted, I felt unheard because I really wanted your input on that."',
-      '5. Practice saying three I-Statements out loud for three different conflicts.',
-      '6. Notice how this removes accusation and invites collaboration instead of defense.'
-    ],
-    modifications: [
-      'Make it easier: Use a fill-in-the-blank template to structure your I-Statements before saying them aloud.',
-      'Harder: Deliver an I-Statement in real time during your next conflict, even when you\'re emotionally activated.'
-    ],
-    completionCue: 'Blame removed? Dialogue opened.'
-  },
-  {
-    id: 'conflict_clarifying_questions',
-    name: 'Clarifying Questions (Stop Assumptions)',
-    description: 'Ask open questions to understand the other person\'s perspective before reacting.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "active-listening", "curiosity", "assumptions", "clarity"],
-    intention: 'Ask open questions to understand the other person\'s perspective before defending or reacting.',
-    setup: ['Identify a common misunderstanding.'],
-    steps: [
-      '1. Think of a recent conflict where you assumed you knew what the other person meant or wanted.',
-      '2. Identify the assumption you made. Was it accurate? Did it escalate the conflict?',
-      '3. Now practice asking clarifying questions instead: "Help me understand—what did you mean by that?" or "What would a good solution look like for you?"',
-      '4. The goal is curiosity, not interrogation. Your tone should be genuinely open.',
-      '5. Role-play with a partner: they state a vague complaint ("You don\'t respect my time"), and you ask 2-3 clarifying questions before responding.',
-      '6. Reflect: did asking questions change what you thought the conflict was about?'
-    ],
-    modifications: [
-      'Make it easier: Write out clarifying questions for past conflicts to build your question bank.',
-      'Harder: In your next real conflict, commit to asking at least two questions before making any statement or defense.'
-    ],
-    completionCue: 'Assumptions cleared? Clarity achieved.'
-  },
-  {
-    id: 'conflict_name_emotion',
-    name: 'Name the Emotion (Yours and Theirs)',
-    description: 'Acknowledge the emotional reality beneath the conflict to reduce defensiveness.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "emotional-intelligence", "empathy", "vulnerability", "regulation"],
-    intention: 'Acknowledge the emotional reality beneath the conflict to create connection and reduce defensiveness.',
-    setup: ['Center yourself.', 'Identify a felt emotion.'],
-    steps: [
-      '1. Recall a conflict that felt emotionally intense but was supposedly about something "small."',
-      '2. Ask yourself: what emotion was I actually feeling? (e.g., disrespected, unseen, anxious, dismissed)',
-      '3. Now guess: what emotion might the other person have been feeling?',
-      '4. Practice saying both out loud: "I was feeling [your emotion], and I think you were feeling [their emotion]."',
-      '5. Role-play with a partner: one person shares a conflict, the other tries to name both emotions accurately before offering any solution.',
-      '6. Naming emotions disarms conflict faster than logic. Test this in your next disagreement.'
-    ],
-    modifications: [
-      'Make it easier: Use an emotion wheel or list to help you identify emotions beyond "angry" or "upset."',
-      'Harder: In a live conflict, name your emotion out loud to the other person first: "I\'m feeling really defensive right now." Watch how it shifts the dynamic.'
-    ],
-    completionCue: 'Emotion named? Dynamic shifted.'
-  },
-  {
-    id: 'conflict_request_not_demand',
-    name: 'Request, Not Demand',
-    description: 'Frame what you need as a request instead of a demand to invite collaboration.',
-    duration: 300,
-    estimatedMinutes: 5,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "boundaries", "assertiveness", "collaboration", "clarity"],
-    intention: 'Frame what you need as a request instead of a demand to invite collaboration, not resistance.',
-    setup: ['Identify a need.', 'Practice a soft opening.'],
-    steps: [
-      '1. Think of something you want someone to do differently (e.g., reply faster, listen more, follow through).',
-      '2. Notice how you\'d naturally say it. Does it sound like a demand? ("You need to..." / "You should...")',
-      '3. Reframe as a request using this structure: "Would you be willing to [specific behavior]? It would help me because [reason]."',
-      '4. Example: Instead of "You need to text me back faster," try "Would you be willing to send a quick reply when you see my message, even if it\'s just to say you\'ll respond later? It helps me feel less anxious."',
-      '5. Practice making three requests out loud for three different needs.',
-      '6. Notice how requests create space for negotiation; demands create resistance.'
-    ],
-    modifications: [
-      'Make it easier: Write out the request first, then practice saying it in a calm, non-urgent tone.',
-      'Harder: Make a request in real time during a conflict without pre-scripting it, and stay open to hearing "no."'
-    ],
-    completionCue: 'Request delivered? Door open for negotiation.'
-  },
-  {
-    id: 'conflict_apologize_no_but',
-    name: 'Apologize Without "But"',
-    description: 'Deliver a clean, complete apology that repairs trust.',
-    duration: 300,
-    estimatedMinutes: 5,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "accountability", "apology", "repair", "trust"],
-    intention: 'Deliver a clean, complete apology that repairs trust instead of defending yourself.',
-    setup: ['Own your actions.', 'Remove the caveats.'],
-    steps: [
-      '1. Think of a time you hurt someone or made a mistake in a relationship.',
-      '2. Notice your instinct—did you want to explain, justify, or add "but I didn\'t mean to" or "but you also..."?',
-      '3. Practice a three-part apology: (1) "I\'m sorry for [specific behavior]." (2) "I understand that it [impact on them]." (3) "Going forward, I\'ll [corrective action]."',
-      '4. Example: "I\'m sorry for interrupting you during the meeting. I understand that it made you feel disrespected. Going forward, I\'ll wait until you\'re done before I jump in."',
-      '5. Say it out loud. Did you add a "but"? If so, remove it and try again.',
-      '6. A real apology has no defense in it. It just acknowledges harm and commits to change.'
-    ],
-    modifications: [
-      'Make it easier: Write out the three parts separately, then practice combining them smoothly.',
-      'Harder: Deliver this apology to someone you\'ve actually hurt, in person or via message, within the next 48 hours.'
-    ],
-    completionCue: 'Apology cleaned? Trust repair begun.'
-  },
-  {
-    id: 'conflict_shared_need',
-    name: 'Find the Shared Need',
-    description: 'Shift from opposing positions to shared interests.',
-    duration: 420,
-    estimatedMinutes: 7,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "negotiation", "collaboration", "win-win", "empathy"],
-    intention: 'Shift from opposing positions to shared interests so both people feel they can win.',
-    setup: ['Map the conflict.', 'Dig beneath the surface.'],
-    steps: [
-      '1. Think of a conflict where you and someone else wanted different things (e.g., you wanted quiet, they wanted to play music).',
-      '2. Identify your positions (what each person said they wanted).',
-      '3. Now dig deeper: what need was each position trying to meet? (e.g., your need: focus; their need: energy/mood boost)',
-      '4. Ask: is there a solution that meets both needs? (e.g., they use headphones, or you work in a different room, or they play music at certain times)',
-      '5. Practice this with three past conflicts: position → underlying need → creative solution.',
-      '6. Shared needs create collaboration; opposing positions create war.'
-    ],
-    modifications: [
-      'Make it easier: Use a worksheet to map positions vs. needs visually before brainstorming solutions.',
-      'Harder: In your next conflict, ask the other person directly: "What do you actually need here?" and share your need too before proposing solutions.'
-    ],
-    completionCue: 'Common ground found? Win-win possible.'
-  },
-  {
-    id: 'conflict_repair',
-    name: 'Repair After the Storm',
-    description: 'Re-establish connection after a heated conflict by taking responsibility.',
-    duration: 240,
-    estimatedMinutes: 4,
-    icon: ShieldAlert,
-    category: 'Conflict Resolution',
-    tags: ["conflict-resolution", "repair", "accountability", "connection", "humility"],
-    intention: 'Re-establish connection after a heated conflict by taking responsibility for your part, regardless of who was \'right.\'',
-    setup: ['Identify an escalated conflict.', 'Prepare a bridge.'],
-    steps: [
-      '1. Think of a conflict that escalated and left both people feeling bad.',
-      '2. Identify one thing you did that didn\'t help (raised your voice, shut down, brought up old issues, etc.).',
-      '3. Reach out within 24 hours with a repair statement: "Hey, I didn\'t handle that well. I [specific behavior] and I\'m sorry. Can we talk?"',
-      '4. The goal isn\'t to rehash the argument—it\'s to re-open the relationship.',
-      '5. Practice saying a repair statement out loud for three past conflicts.',
-      '6. Repair isn\'t about who was right. It is about choosing connection over being right.'
-    ],
-    modifications: [
-      'Make it easier: Send the repair message via text first if face-to-face feels too vulnerable.',
-      'Harder: Make the repair in person immediately after a conflict, before your pride hardens.'
-    ],
-    completionCue: 'Bridge built? Connection re-established.'
-  },
-
-  // --- Public Speaking ---
-  {
-    id: 'speaking_60s_story',
-    name: 'The 60-Second Story',
-    description: 'Build your ability to speak concisely and compellingly under time pressure.',
-    duration: 480,
-    estimatedMinutes: 8,
-    icon: BookOpen,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "conciseness", "storytelling", "confidence", "clarity"],
-    intention: 'Build your ability to speak concisely and compellingly under time pressure without rambling.',
-    setup: ['Choose a simple topic.', 'Set a timer.'],
-    steps: [
-      '1. Pick a simple topic: a memorable meal, a recent challenge, or something that made you laugh.',
-      '2. Set a timer for 60 seconds and speak continuously about that topic out loud.',
-      '3. Your goal: beginning, middle, end. Don\'t just list facts—tell it like a story with a point.',
-      '4. Record yourself if possible. Listen back: Did you use filler words? Did you finish on time? Was there a clear point?',
-      '5. Repeat with a new topic. This time, focus on eliminating "um," "like," "you know."',
-      '6. Do this three times total with three different topics. Notice how you get sharper each round.'
-    ],
-    modifications: [
-      'Make it easier: Write out bullet points for beginning, middle, and end before speaking.',
-      'Make it harder: Reduce the time to 30 seconds and keep the same story structure. Every word must count.'
-    ],
-    completionCue: 'Three stories complete? Well done.'
-  },
-  {
-    id: 'speaking_power_pose_ritual',
-    name: 'Power Posing Before Speaking',
-    description: 'Shift your nervous system from anxiety to confidence before you speak.',
-    duration: 180,
-    estimatedMinutes: 3,
-    icon: User,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "body-language", "confidence", "anxiety-management", "ritual"],
-    intention: 'Use your body to shift your nervous system from anxiety to confidence before you speak.',
-    setup: ['Find a private space.'],
-    steps: [
-      '1. Before your next presentation, meeting, or even a phone call, find a private space.',
-      '2. Stand in a "power pose" for 2 minutes: feet wide, hands on hips or raised in a V, chin up, chest open.',
-      '3. Breathe deeply and slowly. Imagine yourself speaking with authority and ease.',
-      '4. Notice the shift in your body: do you feel more grounded? More energy? Less collapsed?',
-      '5. Immediately after, practice your opening line out loud in that same physical state.',
-      '6. Use this ritual before every speaking opportunity for one week. Track how your confidence changes.'
-    ],
-    modifications: [
-      'Make it easier: Start with just 1 minute of power posing and do it alone at home before practicing out loud.',
-      'Make it harder: Do your power pose, then immediately walk into a live speaking situation without any additional prep.'
-    ],
-    completionCue: 'Posture set and opening line practiced? Ready.'
-  },
-  {
-    id: 'speaking_vocal_variety',
-    name: 'Vocal Variety Drills',
-    description: 'Use pitch, pace, and volume intentionally to keep your audience engaged.',
-    duration: 420,
-    estimatedMinutes: 7,
-    icon: Mic2,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "vocal-delivery", "engagement", "expression", "practice"],
-    intention: 'Train your voice to use pitch, pace, and volume intentionally to keep your audience engaged.',
-    setup: ['Prepare a simple sentence.', 'Choose a book paragraph.'],
-    steps: [
-      '1. Choose a simple sentence: "I didn\'t say she took the money."',
-      '2. Say it out loud 7 times, each time emphasizing a different word: "I didn\'t..." "I DIDN\'T..." "I didn\'t SAY..." etc.',
-      '3. Notice how the meaning shifts with emphasis. This is vocal variety in action.',
-      '4. Now pick a paragraph from a book or article. Read it out loud three times: (1) monotone, (2) exaggerated, (3) natural middle.',
-      '5. Record all three and listen. Which one kept your attention best?',
-      '6. Practice this daily with different content for one week.'
-    ],
-    modifications: [
-      'Make it easier: Start with just one sentence and practice emphasizing different words.',
-      'Make it harder: Take a boring, technical paragraph and make it engaging using only vocal variety.'
-    ],
-    completionCue: 'Three versions heard? Excellent practice.'
-  },
-  {
-    id: 'speaking_eye_contact',
-    name: 'Eye Contact Anchor Points',
-    description: 'Build authentic connection by distributing eye contact deliberately.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: Eye,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "eye-contact", "connection", "presence", "confidence"],
-    intention: 'Build authentic connection with your audience by distributing eye contact deliberately instead of scanning or staring.',
-    setup: ['Pick 3-5 objects or people as anchors.'],
-    steps: [
-      '1. When you speak to a group, pick 3-5 "anchor points"—specific individuals spread across the room.',
-      '2. As you speak, hold eye contact with one anchor point for 3-5 seconds (one complete thought), then move to the next.',
-      '3. Practice this alone: set up 3-5 objects around a room (chairs, pillows, etc.) as your anchors.',
-      '4. Deliver a 2-minute talk to the objects, holding "eye contact" with each for 3-5 seconds at a time.',
-      '5. This trains you to avoid: staring at one person too long, scanning too fast, or looking at the floor/ceiling.',
-      '6. Next time you speak to a real group, use this anchor point method. Notice how it calms your nerves and makes others feel included.'
-    ],
-    modifications: [
-      'Make it easier: Practice with just one or two anchor points.',
-      'Make it harder: In a live presentation, make one anchor point someone who looks skeptical or distracted.'
-    ],
-    completionCue: 'Anchors held? Well connected.'
-  },
-  {
-    id: 'speaking_pause_drill',
-    name: 'The Pause (Stop Filling Silence)',
-    description: 'Use strategic pauses to project confidence and land key points.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: Clock,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "pauses", "confidence", "filler-words", "emphasis"],
-    intention: 'Use strategic pauses to emphasize key points, reduce filler words, and project confidence.',
-    setup: ['Choose a short speech or pitch (1-2 minutes).'],
-    steps: [
-      '1. Identify 3 places where a pause would add impact.',
-      '2. Deliver the speech out loud and insert a full 3-second pause at each marked spot.',
-      '3. The pause comes after a key point or before an important statement. Let the silence land.',
-      '4. Record yourself. Listen back—the pauses probably sound powerful.',
-      '5. Every time you feel "um" or "like" rising, replace it with a 1-2 second pause instead.',
-      '6. Practice this in everyday conversation.'
-    ],
-    modifications: [
-      'Make it easier: Start by adding pauses only in scripted, practiced talks.',
-      'Make it harder: In your next live presentation, insert an intentional 5-second pause after your most important point.'
-    ],
-    completionCue: 'Pauses held without discomfort? Done.'
-  },
-  {
-    id: 'speaking_back_row',
-    name: 'Speak to the Back Row',
-    description: 'Project your voice so the entire room feels included.',
-    duration: 300,
-    estimatedMinutes: 5,
-    icon: Users,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "projection", "voice", "energy", "presence"],
-    intention: 'Project your voice and energy so the entire room feels included, not just the people in front of you.',
-    setup: ['Stand in a large room or open space.'],
-    steps: [
-      '1. Stand in one corner of a room.',
-      '2. Imagine someone standing 20-30 feet away who needs to hear you clearly.',
-      '3. Speak a full sentence at your normal volume.',
-      '4. Now speak from your diaphragm: stand tall, breathe deep, and project from your core.',
-      '5. Say the same sentence again with full projection. It should feel louder but not strained.',
-      '6. Practice delivering a 1-minute talk at this projection level.',
-      '7. Aim your energy toward the back, and the front will feel included too.'
-    ],
-    modifications: [
-      'Make it easier: Practice by reading out loud to an empty room.',
-      'Make it harder: Practice outside in an open area where your voice can dissipate.'
-    ],
-    completionCue: 'Voice filling the space? Excellent.'
-  },
-  {
-    id: 'speaking_qa_practice',
-    name: 'Handling the Blank Stare (Q&A Practice)',
-    description: 'Build confidence responding to questions under pressure.',
-    duration: 480,
-    estimatedMinutes: 8,
-    icon: MessageSquare,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "q-and-a", "confidence", "improvisation", "composure"],
-    intention: 'Build confidence responding to questions, even when you don\'t know the answer or face silence.',
-    setup: ['Record 5-10 potential questions.'],
-    steps: [
-      '1. Record 5-10 potential questions someone might ask after your talk.',
-      '2. Set a timer for 30 seconds per question. Answer each one out loud, concisely and confidently.',
-      '3. Now add 2-3 curveball questions—ones you don\'t know the answer to.',
-      '4. Practice responding honestly: "That\'s a great question—I don\'t have that data in front of me, but I\'d be happy to follow up."',
-      '5. Practice "I\'m not sure, but here\'s what I do know..."',
-      '6. Confidence is staying composed when you don\'t have all the answers.'
-    ],
-    modifications: [
-      'Make it easier: Write out your answers to expected questions first.',
-      'Make it harder: Have a friend ask you questions live without preparation.'
-    ],
-    completionCue: 'Answered all curveballs? Done.'
-  },
-  {
-    id: 'speaking_open_strong',
-    name: 'Open Strong (Your First 10 Seconds)',
-    description: 'Hook your audience immediately to ensure engagement.',
-    duration: 420,
-    estimatedMinutes: 7,
-    icon: Sparkles,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "openings", "hooks", "engagement", "confidence"],
-    intention: 'Hook your audience immediately so they lean in instead of tuning out.',
-    setup: ['Identify an upcoming talk topic.'],
-    steps: [
-      '1. Avoid weak openings: "Um, hi everyone, thanks for having me...".',
-      '2. Choose a strong opening: bold statement, question, story, or striking stat.',
-      '3. Script your opening 10 seconds. Memorize it.',
-      '4. Deliver it with conviction out loud.',
-      '5. Practice it 5 times until it feels natural, not robotic.',
-      '6. Strong openings buy you patience from the audience.'
-    ],
-    modifications: [
-      'Make it easier: Write out 3 different opening options and test each one.',
-      'Make it harder: Improvise a strong opening on the spot for 3 random topics.'
-    ],
-    completionCue: 'Opening lines memorized? Done.'
-  },
-  {
-    id: 'speaking_conversational',
-    name: 'The Conversational Tone',
-    description: 'Speak like you\'re talking to a friend to build trust.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: Smile,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "tone", "authenticity", "connection", "relatability"],
-    intention: 'Speak like you\'re talking to a friend, not performing a script, so your audience trusts and connects with you.',
-    setup: ['Prepare a paragraph from a formal script.'],
-    steps: [
-      '1. Read the formal paragraph out loud exactly as written.',
-      '2. Now rewrite it as if you\'re explaining it to a friend over coffee.',
-      '3. Use contractions, simpler words, shorter sentences.',
-      '4. Read both versions out loud. Which one sounds more like you?',
-      '5. Practice your next talk in conversational language.',
-      '6. Imagine you\'re speaking to one person, not a crowd.'
-    ],
-    modifications: [
-      'Make it easier: Start by converting just your opening and closing.',
-      'Make it harder: Give your entire next presentation without any script—just bullet points.'
-    ],
-    completionCue: 'Which version felt most authentic? Done.'
-  },
-  {
-    id: 'speaking_mirror_drill',
-    name: 'Record and Review (The Mirror Drill)',
-    description: 'Identify and fix distracting habits by reviewing your delivery.',
-    duration: 600,
-    estimatedMinutes: 10,
-    icon: Camera,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "self-awareness", "feedback", "improvement", "practice"],
-    intention: 'See and hear yourself as your audience does so you can identify and fix distracting habits.',
-    setup: ['Set up your phone to record video.'],
-    steps: [
-      '1. Deliver a 2-3 minute talk on any topic and record it.',
-      '2. Watch the full recording without judgment—just observe.',
-      '3. Look for: filler words, fidgeting, lack of eye contact, low energy.',
-      '4. Pick ONE thing to improve.',
-      '5. Re-record the same talk focusing only on fixing that one habit.',
-      '6. Compare the two recordings. Did you improve?',
-      '7. Repeat this weekly with different talks.'
-    ],
-    modifications: [
-      'Make it easier: Start with audio-only recordings if video feels too vulnerable.',
-      'Make it harder: Post your recording to a small group of trusted friends and ask for feedback.'
-    ],
-    completionCue: 'One habit targeted? Great progress.'
-  },
-  {
-    id: 'speaking_gestures_purpose',
-    name: 'Gestures with Purpose',
-    description: 'Use hand movements intentionally to reinforce your message.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: Activity,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "body-language", "gestures", "confidence", "presence"],
-    intention: 'Use hand gestures intentionally to reinforce your message instead of distracting from it.',
-    setup: ['Stand in front of a mirror.'],
-    steps: [
-      '1. Watch your hands while speaking for 1 minute.',
-      '2. Practice three core gestures: Open hands (inclusivity), Pointing/Chopping (emphasis), Counting (structure).',
-      '3. Deliver your talk again using these gestures deliberately at key moments.',
-      '4. Your hands should match your words (e.g. "three reasons" = three fingers).',
-      '5. Eliminate nervous gestures like pockets or wringing hands.',
-      '6. Aim for natural but purposeful movement.'
-    ],
-    modifications: [
-      'Make it easier: Practice gestures alone with a mirror before trying in front of people.',
-      'Make it harder: Watch a great speaker and mimic their gesture patterns in your practice.'
-    ],
-    completionCue: 'Hand-word coordination improved? Done.'
-  },
-  {
-    id: 'speaking_nerves_ritual',
-    name: 'Manage the Nerves (Pre-Speech Ritual)',
-    description: 'Channel anxiety into focused energy with a repeatable routine.',
-    duration: 360,
-    estimatedMinutes: 6,
-    icon: ShieldCheck,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "anxiety-management", "ritual", "preparation", "confidence"],
-    intention: 'Channel nervous energy into focused energy using a repeatable pre-speech routine.',
-    setup: ['Identify a repeatable 5-minute window.'],
-    steps: [
-      '1. 2 minutes: Power pose + deep breathing.',
-      '2. 1 minute: Vocal warm-up (hum, tongue twisters).',
-      '3. 1 minute: Visualization (see yourself succeeding).',
-      '4. 1 minute: Shake out your body, release tension.',
-      '5. Practice this ritual before low-stakes speaking like meetings.',
-      '6. Use the same ritual every time to signal to your body you\'re ready.'
-    ],
-    modifications: [
-      'Make it easier: Start with just one element (breathing or power posing).',
-      'Make it harder: Use your ritual, then immediately walk into the room with no extra prep.'
-    ],
-    completionCue: 'Ritual locked in? Ready to speak.'
-  },
-  {
-    id: 'speaking_no_slides',
-    name: 'Speak Without Slides',
-    description: 'Hold a room with just your voice and presence.',
-    duration: 480,
-    estimatedMinutes: 8,
-    icon: PersonStanding,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "confidence", "presence", "improvisation", "clarity"],
-    intention: 'Develop the ability to hold a room with just your voice and presence—no crutches.',
-    setup: ['Pick a topic you know well.', 'Set an 8-minute timer.'],
-    steps: [
-      '1. Speak for 3 minutes with no slides, no notes, no aids—just talking.',
-      '2. Focus on: intro, 3 points, conclusion.',
-      '3. Use vocal variety and intentional pauses.',
-      '4. Record yourself. Did you keep the "imaginary audience" engaged?',
-      '5. Repeat weekly with different topics.',
-      '6. Build your confidence that YOU are the presentation.'
-    ],
-    modifications: [
-      'Make it easier: Use 3 bullet points on a notecard as a backup.',
-      'Make it harder: Deliver a full 5-10 minute talk to live friends with no visual aids.'
-    ],
-    completionCue: 'Held the floor solo? Excellent.'
-  },
-  {
-    id: 'speaking_impact_closing',
-    name: 'The Closing (End with Impact)',
-    description: 'Leave your audience with a clear takeaway and resonance.',
-    duration: 420,
-    estimatedMinutes: 7,
-    icon: ThumbsUp,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "closings", "impact", "memorability", "confidence"],
-    intention: 'Leave your audience with a clear takeaway and emotional resonance, not a weak trailing-off.',
-    setup: ['Review your next talk closing.'],
-    steps: [
-      '1. Identify your current closing. Is it a weak "Any questions?".',
-      '2. Script your closing 15 seconds: call to action, opening callback, or powerful quote.',
-      '3. Practice three variations: (1) Call to action, (2) Inspirational close, (3) Story callback.',
-      '4. Deliver each one out loud. Which feels most authentic?',
-      '5. Memorize your final line. Deliver it with conviction, then STOP.',
-      '6. No rambling after the final line.'
-    ],
-    modifications: [
-      'Make it easier: Write out your full closing word-for-word and memorize it.',
-      'Make it harder: Practice ending and then staying silent for 3 seconds before taking questions.'
-    ],
-    completionCue: 'Final line delivered with impact? Done.'
-  },
-  {
-    id: 'speaking_impromptu_60s',
-    name: 'Impromptu Speaking Challenge',
-    description: 'Organize thoughts on the fly for spontaneous speaking.',
-    duration: 300,
-    estimatedMinutes: 5,
-    icon: Zap,
-    category: 'Public Speaking',
-    tags: ["public-speaking", "improvisation", "thinking-on-feet", "confidence", "structure"],
-    intention: 'Build your ability to speak coherently on any topic with zero preparation.',
-    setup: ['Get a random word generator.'],
-    steps: [
-      '1. Get a random word or topic.',
-      '2. Take exactly 5 seconds to think.',
-      '3. Speak for 60 seconds using this structure: Point → Example → Point.',
-      '4. Don\'t aim for perfection—aim for coherence.',
-      '5. Do this daily with different random topics.',
-      '6. Your brain will get faster at organizing thoughts on the fly.'
-    ],
-    modifications: [
-      'Make it easier: Extend your prep time to 15-30 seconds.',
-      'Make it harder: Speak for 90-120 seconds with only 5 seconds of prep.'
-    ],
-    completionCue: 'Thinking on your feet? Well done.'
-  },
-
-  {
-    id: 'speaking_extemporaneous',
-    name: 'Extemporaneous Delivery',
-    description: 'Speak from notes, not a script, for a more natural feel.',
-    duration: 300,
-    estimatedMinutes: 5,
-    icon: Presentation,
-    category: 'Public Speaking',
-    tags: ['public-speaking', 'confidence'],
-    intention: 'Develop a natural, engaging delivery by relying on key points rather than a rigid script.',
-    setup: ['Prepare a 3-point outline on a topic you know well.'],
-    steps: [
-      '1. Review your outline for 1 minute.',
-      '2. Speak for 2 minutes using ONLY your outline as a guide.',
-      '3. Focus on eye contact and natural gestures.',
-      '4. If you lose your place, pause, breathe, and check your notes.',
-      '5. Record yourself and listen for "um" and "uh" counts.'
-    ],
-    modifications: [
-      'Make it easier: Use a highly detailed outline with sub-points.',
-      'Make it harder: Use only 3 single words as your entire outline.'
-    ],
-    completionCue: 'Delivery felt conversational? Done.'
-  },
-
   // --- Storytelling ---
   {
     id: 'story_3act',
@@ -2072,6 +1417,637 @@ export const communicationPractices: Exercise[] = [
     completionCue: 'Rhythm and structure applied? Done.'
   },
 
+  // --- Conflict Resolution ---
+  {
+    id: 'conflict_yes_and',
+    name: 'Yes, And (De-escalation)',
+    description: 'Defuse tension by acknowledging the other person\'s point before adding yours.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "de-escalation", "ego-management", "active-listening", "empathy"],
+    intention: 'Defuse tension by acknowledging the other person\'s point before adding yours—removing the need for them to defend.',
+    setup: ['Recall a recent disagreement.', 'Take a slow breath.'],
+    steps: [
+      '1. Think of a recent disagreement or criticism someone directed at you.',
+      '2. Notice your instinct—was it to defend, correct, or explain yourself?',
+      '3. Now reframe using "Yes, and": Acknowledge their point first ("Yes, I can see how that came across...") then add your perspective ("...and what I was trying to do was...").',
+      '4. Practice this out loud with three different scenarios: a work criticism, a personal misunderstanding, and a small conflict.',
+      '5. The key is removing your ego—you\'re not agreeing they\'re right, you\'re validating that you heard them.',
+      '6. Reflect: which scenario felt hardest to say "yes" to? That\'s where your ego is strongest.'
+    ],
+    modifications: [
+      'Make it easier: Write out both your defensive response and your "yes, and" response to see the difference visually.',
+      'Make it harder: Use this technique live the next time someone criticizes you, without preparation. Notice how it changes their energy.'
+    ],
+    completionCue: 'Ego managed? Tension defused.'
+  },
+  {
+    id: 'conflict_separate_person',
+    name: 'Separate Person from Problem',
+    description: 'Focus on the issue, not the individual, so the conversation stays productive.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "reframing", "professionalism", "clarity", "boundaries"],
+    intention: 'Focus on the issue, not the individual, so the conversation stays productive instead of personal.',
+    setup: ['Identify a conflict where you felt attacked.', 'Prepare to reframe.'],
+    steps: [
+      '1. Recall a conflict where you felt attacked or blamed by someone.',
+      '2. Identify what the actual problem was versus how the person delivered the message.',
+      '3. Practice restating the conflict in neutral, non-personal language: Replace "You always..." with "The issue is..." or "What happened was..."',
+      '4. Say your reframed version out loud. Does it remove the emotional charge?',
+      '5. Now imagine delivering this reframe to the other person. Keep your tone calm and matter-of-fact.',
+      '6. Practice this reframing with two more conflicts—one from work, one from personal life.'
+    ],
+    modifications: [
+      'Make it easier: Start with hypothetical conflicts instead of real ones to practice the language pattern.',
+      'Make it harder: Next time you\'re in a heated conversation, pause and reframe in the moment: "I don\'t think this is about me or you—I think the issue is..." '
+    ],
+    completionCue: 'Issue isolated? Problem solving enabled.'
+  },
+  {
+    id: 'conflict_pause',
+    name: 'The Pause Before Response',
+    description: 'Use strategic silence to prevent reactive responses.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "pause", "self-regulation", "impulse-control", "calm"],
+    intention: 'Use strategic silence to prevent reactive responses and create space for thoughtful conflict resolution.',
+    setup: ['Find a quiet moment or use a practice partner.'],
+    steps: [
+      '1. Think of a time you responded too quickly in a conflict and regretted it.',
+      '2. Set a mental rule: When someone says something that triggers you, count to three before responding.',
+      '3. Practice this physically: Have a partner say something mildly provocative (e.g., "You\'re always late"), and you pause for a full 3 seconds before replying.',
+      '4. During those 3 seconds, take one deep breath and ask yourself: "What do they actually need to hear right now?"',
+      '5. Respond from that calmer place. Notice how the quality of your response changes.',
+      '6. Repeat with progressively more emotionally charged statements.'
+    ],
+    modifications: [
+      'Make it easier: Practice the pause alone first by imagining triggering statements and counting before your mental response.',
+      'Harder: Extend the pause to 5-7 seconds in live conflicts. Use the phrase "Let me think about that for a second" to make the silence feel intentional.'
+    ],
+    completionCue: 'Impulse controlled? Response measured.'
+  },
+  {
+    id: 'conflict_i_statements',
+    name: 'I-Statements (Non-Defensive Communication)',
+    description: 'Express your perspective without blame, making it easier for the other person to hear you.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "non-violent-communication", "clarity", "vulnerability", "boundaries"],
+    intention: 'Express your perspective without blame, making it easier for the other person to hear you.',
+    setup: ['Think of a recurring frustration.', 'Have a notepad ready.'],
+    steps: [
+      '1. Pick a conflict where you felt hurt or frustrated by someone\'s behavior.',
+      '2. Notice how you naturally want to frame it: "You did X" or "You made me feel Y."',
+      '3. Rewrite using the I-Statement formula: "When [situation], I felt [emotion] because [need/impact]."',
+      '4. Example: Instead of "You never listen to me," say "When I was talking earlier and the conversation shifted, I felt unheard because I really wanted your input on that."',
+      '5. Practice saying three I-Statements out loud for three different conflicts.',
+      '6. Notice how this removes accusation and invites collaboration instead of defense.'
+    ],
+    modifications: [
+      'Make it easier: Use a fill-in-the-blank template to structure your I-Statements before saying them aloud.',
+      'Harder: Deliver an I-Statement in real time during your next conflict, even when you\'re emotionally activated.'
+    ],
+    completionCue: 'Blame removed? Dialogue opened.'
+  },
+  {
+    id: 'conflict_clarifying_questions',
+    name: 'Clarifying Questions (Stop Assumptions)',
+    description: 'Ask open questions to understand the other person\'s perspective before reacting.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "active-listening", "curiosity", "assumptions", "clarity"],
+    intention: 'Ask open questions to understand the other person\'s perspective before defending or reacting.',
+    setup: ['Identify a common misunderstanding.'],
+    steps: [
+      '1. Think of a recent conflict where you assumed you knew what the other person meant or wanted.',
+      '2. Identify the assumption you made. Was it accurate? Did it escalate the conflict?',
+      '3. Now practice asking clarifying questions instead: "Help me understand—what did you mean by that?" or "What would a good solution look like for you?"',
+      '4. The goal is curiosity, not interrogation. Your tone should be genuinely open.',
+      '5. Role-play with a partner: they state a vague complaint ("You don\'t respect my time"), and you ask 2-3 clarifying questions before responding.',
+      '6. Reflect: did asking questions change what you thought the conflict was about?'
+    ],
+    modifications: [
+      'Make it easier: Write out clarifying questions for past conflicts to build your question bank.',
+      'Harder: In your next real conflict, commit to asking at least two questions before making any statement or defense.'
+    ],
+    completionCue: 'Assumptions cleared? Clarity achieved.'
+  },
+  {
+    id: 'conflict_name_emotion',
+    name: 'Name the Emotion (Yours and Theirs)',
+    description: 'Acknowledge the emotional reality beneath the conflict to reduce defensiveness.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "emotional-intelligence", "empathy", "vulnerability", "regulation"],
+    intention: 'Acknowledge the emotional reality beneath the conflict to create connection and reduce defensiveness.',
+    setup: ['Center yourself.', 'Identify a felt emotion.'],
+    steps: [
+      '1. Recall a conflict that felt emotionally intense but was supposedly about something "small."',
+      '2. Ask yourself: what emotion was I actually feeling? (e.g., disrespected, unseen, anxious, dismissed)',
+      '3. Now guess: what emotion might the other person have been feeling?',
+      '4. Practice saying both out loud: "I was feeling [your emotion], and I think you were feeling [their emotion]."',
+      '5. Role-play with a partner: one person shares a conflict, the other tries to name both emotions accurately before offering any solution.',
+      '6. Naming emotions disarms conflict faster than logic. Test this in your next disagreement.'
+    ],
+    modifications: [
+      'Make it easier: Use an emotion wheel or list to help you identify emotions beyond "angry" or "upset."',
+      'Harder: In a live conflict, name your emotion out loud to the other person first: "I\'m feeling really defensive right now." Watch how it shifts the dynamic.'
+    ],
+    completionCue: 'Emotion named? Dynamic shifted.'
+  },
+  {
+    id: 'conflict_request_not_demand',
+    name: 'Request, Not Demand',
+    description: 'Frame what you need as a request instead of a demand to invite collaboration.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "boundaries", "assertiveness", "collaboration", "clarity"],
+    intention: 'Frame what you need as a request instead of a demand to invite collaboration, not resistance.',
+    setup: ['Identify a need.', 'Practice a soft opening.'],
+    steps: [
+      '1. Think of something you want someone to do differently (e.g., reply faster, listen more, follow through).',
+      '2. Notice how you\'d naturally say it. Does it sound like a demand? ("You need to..." / "You should...")',
+      '3. Reframe as a request using this structure: "Would you be willing to [specific behavior]? It would help me because [reason]."',
+      '4. Example: Instead of "You need to text me back faster," try "Would you be willing to send a quick reply when you see my message, even if it\'s just to say you\'ll respond later? It helps me feel less anxious."',
+      '5. Practice making three requests out loud for three different needs.',
+      '6. Notice how requests create space for negotiation; demands create resistance.'
+    ],
+    modifications: [
+      'Make it easier: Write out the request first, then practice saying it in a calm, non-urgent tone.',
+      'Harder: Make a request in real time during a conflict without pre-scripting it, and stay open to hearing "no."'
+    ],
+    completionCue: 'Request delivered? Door open for negotiation.'
+  },
+  {
+    id: 'conflict_apologize_no_but',
+    name: 'Apologize Without "But"',
+    description: 'Deliver a clean, complete apology that repairs trust.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "accountability", "apology", "repair", "trust"],
+    intention: 'Deliver a clean, complete apology that repairs trust instead of defending yourself.',
+    setup: ['Own your actions.', 'Remove the caveats.'],
+    steps: [
+      '1. Think of a time you hurt someone or made a mistake in a relationship.',
+      '2. Notice your instinct—did you want to explain, justify, or add "but I didn\'t mean to" or "but you also..."?',
+      '3. Practice a three-part apology: (1) "I\'m sorry for [specific behavior]." (2) "I understand that it [impact on them]." (3) "Going forward, I\'ll [corrective action]."',
+      '4. Example: "I\'m sorry for interrupting you during the meeting. I understand that it made you feel disrespected. Going forward, I\'ll wait until you\'re done before I jump in."',
+      '5. Say it out loud. Did you add a "but"? If so, remove it and try again.',
+      '6. A real apology has no defense in it. It just acknowledges harm and commits to change.'
+    ],
+    modifications: [
+      'Make it easier: Write out the three parts separately, then practice combining them smoothly.',
+      'Harder: Deliver this apology to someone you\'ve actually hurt, in person or via message, within the next 48 hours.'
+    ],
+    completionCue: 'Apology cleaned? Trust repair begun.'
+  },
+  {
+    id: 'conflict_shared_need',
+    name: 'Find the Shared Need',
+    description: 'Shift from opposing positions to shared interests.',
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "negotiation", "collaboration", "win-win", "empathy"],
+    intention: 'Shift from opposing positions to shared interests so both people feel they can win.',
+    setup: ['Map the conflict.', 'Dig beneath the surface.'],
+    steps: [
+      '1. Think of a conflict where you and someone else wanted different things (e.g., you wanted quiet, they wanted to play music).',
+      '2. Identify your positions (what each person said they wanted).',
+      '3. Now dig deeper: what need was each position trying to meet? (e.g., your need: focus; their need: energy/mood boost)',
+      '4. Ask: is there a solution that meets both needs? (e.g., they use headphones, or you work in a different room, or they play music at certain times)',
+      '5. Practice this with three past conflicts: position → underlying need → creative solution.',
+      '6. Shared needs create collaboration; opposing positions create war.'
+    ],
+    modifications: [
+      'Make it easier: Use a worksheet to map positions vs. needs visually before brainstorming solutions.',
+      'Harder: In your next conflict, ask the other person directly: "What do you actually need here?" and share your need too before proposing solutions.'
+    ],
+    completionCue: 'Common ground found? Win-win possible.'
+  },
+  {
+    id: 'conflict_repair_after',
+    name: 'Repair After the Storm',
+    description: 'Re-establish connection after a heated conflict by taking responsibility.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: ShieldAlert,
+    category: 'Conflict Resolution',
+    tags: ["conflict-resolution", "repair", "accountability", "connection", "humility"],
+    intention: 'Re-establish connection after a heated conflict by taking responsibility for your part, regardless of who was \'right.\'',
+    setup: ['Identify an escalated conflict.', 'Prepare a bridge.'],
+    steps: [
+      '1. Think of a conflict that escalated and left both people feeling bad.',
+      '2. Identify one thing you did that didn\'t help (raised your voice, shut down, brought up old issues, etc.).',
+      '3. Reach out within 24 hours with a repair statement: "Hey, I didn\'t handle that well. I [specific behavior] and I\'m sorry. Can we talk?"',
+      '4. The goal isn\'t to rehash the argument—it\'s to re-open the relationship.',
+      '5. Practice saying a repair statement out loud for three past conflicts.',
+      '6. Repair isn\'t about who was right. It is about choosing connection over being right.'
+    ],
+    modifications: [
+      'Make it easier: Send the repair message via text first if face-to-face feels too vulnerable.',
+      'Harder: Make the repair in person immediately after a conflict, before your pride hardens.'
+    ],
+    completionCue: 'Bridge built? Connection re-established.'
+  },
+
+  // --- Public Speaking ---
+  {
+    id: 'speaking_60s_story',
+    name: 'The 60-Second Story',
+    description: 'Build your ability to speak concisely and compellingly under time pressure.',
+    duration: 480,
+    estimatedMinutes: 8,
+    icon: BookOpen,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "conciseness", "storytelling", "confidence", "clarity"],
+    intention: 'Build your ability to speak concisely and compellingly under time pressure without rambling.',
+    setup: ['Choose a simple topic.', 'Set a timer.'],
+    steps: [
+      '1. Pick a simple topic: a memorable meal, a recent challenge, or something that made you laugh.',
+      '2. Set a timer for 60 seconds and speak continuously about that topic out loud.',
+      '3. Your goal: beginning, middle, end. Don\'t just list facts—tell it like a story with a point.',
+      '4. Record yourself if possible. Listen back: Did you use filler words? Did you finish on time? Was there a clear point?',
+      '5. Repeat with a new topic. This time, focus on eliminating "um," "like," "you know."',
+      '6. Do this three times total with three different topics. Notice how you get sharper each round.'
+    ],
+    modifications: [
+      'Make it easier: Write out bullet points for beginning, middle, and end before speaking.',
+      'Harder: Reduce the time to 30 seconds and keep the same story structure. Every word must count.'
+    ],
+    completionCue: 'Three stories complete? Well done.'
+  },
+  {
+    id: 'speaking_power_pose_ritual',
+    name: 'Power Posing Before Speaking',
+    description: 'Shift your nervous system from anxiety to confidence before you speak.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: PersonStanding,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "body-language", "confidence", "anxiety-management", "ritual"],
+    intention: 'Use your body to shift your nervous system from anxiety to confidence before you speak.',
+    setup: ['Find a private space.'],
+    steps: [
+      '1. Before your next presentation, meeting, or even a phone call, find a private space.',
+      '2. Stand in a "power pose" for 2 minutes: feet wide, hands on hips or raised in a V, chin up, chest open.',
+      '3. Breathe deeply and slowly. Imagine yourself speaking with authority and ease.',
+      '4. Notice the shift in your body: do you feel more grounded? More energy? Less collapsed?',
+      '5. Immediately after, practice your opening line out loud in that same physical state.',
+      '6. Use this ritual before every speaking opportunity for one week. Track how your confidence changes.'
+    ],
+    modifications: [
+      'Make it easier: Start with just 1 minute of power posing and do it alone at home before practicing out loud.',
+      'Harder: Do your power pose, then immediately walk into a live speaking situation without any additional prep.'
+    ],
+    completionCue: 'Posture set and opening line practiced? Ready.'
+  },
+  {
+    id: 'speaking_vocal_variety',
+    name: 'Vocal Variety Drills',
+    description: 'Use pitch, pace, and volume intentionally to keep your audience engaged.',
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: Mic2,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "vocal-delivery", "engagement", "expression", "practice"],
+    intention: 'Train your voice to use pitch, pace, and volume intentionally to keep your audience engaged.',
+    setup: ['Prepare a simple sentence.', 'Choose a book paragraph.'],
+    steps: [
+      '1. Choose a simple sentence: "I didn\'t say she took the money."',
+      '2. Say it out loud 7 times, each time emphasizing a different word: "I didn\'t..." "I DIDN\'T..." "I didn\'t SAY..." etc.',
+      '3. Notice how the meaning shifts with emphasis. This is vocal variety in action.',
+      '4. Now pick a paragraph from a book or article. Read it out loud three times: (1) monotone, (2) exaggerated, (3) natural middle.',
+      '5. Record all three and listen. Which one kept your attention best?',
+      '6. Practice this daily with different content for one week.'
+    ],
+    modifications: [
+      'Make it easier: Start with just one sentence and practice emphasizing different words.',
+      'Harder: Take a boring, technical paragraph and make it engaging using only vocal variety.'
+    ],
+    completionCue: 'Three versions heard? Excellent practice.'
+  },
+  {
+    id: 'speaking_eye_contact',
+    name: 'Eye Contact Anchor Points',
+    description: 'Build authentic connection by distributing eye contact deliberately.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: Eye,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "eye-contact", "connection", "presence", "confidence"],
+    intention: 'Build authentic connection with your audience by distributing eye contact deliberately instead of scanning or staring.',
+    setup: ['Pick 3-5 objects or people as anchors.'],
+    steps: [
+      '1. When you speak to a group, pick 3-5 "anchor points"—specific individuals spread across the room.',
+      '2. As you speak, hold eye contact with one anchor point for 3-5 seconds (one complete thought), then move to the next.',
+      '3. Practice this alone: set up 3-5 objects around a room (chairs, pillows, etc.) as your anchors.',
+      '4. Deliver a 2-minute talk to the objects, holding "eye contact" with each for 3-5 seconds at a time.',
+      '5. This trains you to avoid: staring at one person too long, scanning too fast, or looking at the floor/ceiling.',
+      '6. Next time you speak to a real group, use this anchor point method. Notice how it calms your nerves and makes others feel included.'
+    ],
+    modifications: [
+      'Make it easier: Practice with just one or two anchor points.',
+      'Harder: In a live presentation, make one anchor point someone who looks skeptical or distracted.'
+    ],
+    completionCue: 'Anchors held? Well connected.'
+  },
+  {
+    id: 'speaking_pause_drill',
+    name: 'The Pause (Stop Filling Silence)',
+    description: 'Use strategic pauses to project confidence and land key points.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: Clock,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "pauses", "confidence", "filler-words", "emphasis"],
+    intention: 'Use strategic pauses to emphasize key points, reduce filler words, and project confidence.',
+    setup: ['Choose a short speech or pitch (1-2 minutes).'],
+    steps: [
+      '1. Identify 3 places where a pause would add impact.',
+      '2. Deliver the speech out loud and insert a full 3-second pause at each marked spot.',
+      '3. The pause comes after a key point or before an important statement. Let the silence land.',
+      '4. Record yourself. Listen back—the pauses probably sound powerful.',
+      '5. Every time you feel "um" or "like" rising, replace it with a 1-2 second pause instead.',
+      '6. Practice this in everyday conversation.'
+    ],
+    modifications: [
+      'Make it easier: Start by adding pauses only in scripted, practiced talks.',
+      'Harder: In your next live presentation, insert an intentional 5-second pause after your most important point.'
+    ],
+    completionCue: 'Pauses held without discomfort? Done.'
+  },
+  {
+    id: 'speaking_back_row',
+    name: 'Speak to the Back Row',
+    description: 'Project your voice so the entire room feels included.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Users,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "projection", "voice", "energy", "presence"],
+    intention: 'Project your voice and energy so the entire room feels included, not just the people in front of you.',
+    setup: ['Stand in a large room or open space.'],
+    steps: [
+      '1. Stand in one corner of a room.',
+      '2. Imagine someone standing 20-30 feet away who needs to hear you clearly.',
+      '3. Speak a full sentence at your normal volume.',
+      '4. Now speak from your diaphragm: stand tall, breathe deep, and project from your core.',
+      '5. Say the same sentence again with full projection. It should feel louder but not strained.',
+      '6. Practice delivering a 1-minute talk at this projection level.',
+      '7. Aim your energy toward the back, and the front will feel included too.'
+    ],
+    modifications: [
+      'Make it easier: Practice by reading out loud to an empty room.',
+      'Harder: Practice outside in an open area where your voice can dissipate.'
+    ],
+    completionCue: 'Voice filling the space? Excellent.'
+  },
+  {
+    id: 'speaking_qa_practice',
+    name: 'Handling the Blank Stare (Q&A Practice)',
+    description: 'Build confidence responding to questions under pressure.',
+    duration: 480,
+    estimatedMinutes: 8,
+    icon: MessageSquare,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "q-and-a", "confidence", "improvisation", "composure"],
+    intention: 'Build confidence responding to questions, even when you don\'t know the answer or face silence.',
+    setup: ['Record 5-10 potential questions.'],
+    steps: [
+      '1. Record 5-10 potential questions someone might ask after your talk.',
+      '2. Set a timer for 30 seconds per question. Answer each one out loud, concisely and confidently.',
+      '3. Now add 2-3 curveball questions—ones you don\'t know the answer to.',
+      '4. Practice responding honestly: "That\'s a great question—I don\'t have that data in front of me, but I\'d be happy to follow up."',
+      '5. Practice "I\'m not sure, but here\'s what I do know..."',
+      '6. Confidence is staying composed when you don\'t have all the answers.'
+    ],
+    modifications: [
+      'Make it easier: Write out your answers to expected questions first.',
+      'Harder: Have a friend ask you questions live without preparation.'
+    ],
+    completionCue: 'Answered all curveballs? Done.'
+  },
+  {
+    id: 'speaking_open_strong',
+    name: 'Open Strong (Your First 10 Seconds)',
+    description: 'Hook your audience immediately to ensure engagement.',
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: Sparkles,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "openings", "hooks", "engagement", "confidence"],
+    intention: 'Hook your audience immediately so they lean in instead of tuning out.',
+    setup: ['Identify an upcoming talk topic.'],
+    steps: [
+      '1. Avoid weak openings: "Um, hi everyone, thanks for having me...".',
+      '2. Choose a strong opening: bold statement, question, story, or striking stat.',
+      '3. Script your opening 10 seconds. Memorize it.',
+      '4. Deliver it with conviction out loud.',
+      '5. Practice it 5 times until it feels natural, not robotic.',
+      '6. Strong openings buy you patience from the audience.'
+    ],
+    modifications: [
+      'Make it easier: Write out 3 different opening options and test each one.',
+      'Harder: Improvise a strong opening on the spot for 3 random topics.'
+    ],
+    completionCue: 'Opening lines memorized? Done.'
+  },
+  {
+    id: 'speaking_conversational',
+    name: 'The Conversational Tone',
+    description: 'Speak like you\'re talking to a friend to build trust.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: Smile,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "tone", "authenticity", "connection", "relatability"],
+    intention: 'Speak like you\'re talking to a friend, not performing a script, so your audience trusts and connects with you.',
+    setup: ['Prepare a paragraph from a formal script.'],
+    steps: [
+      '1. Read the formal paragraph out loud exactly as written.',
+      '2. Now rewrite it as if you\'re explaining it to a friend over coffee.',
+      '3. Use contractions, simpler words, shorter sentences.',
+      '4. Read both versions out loud. Which one sounds more like you?',
+      '5. Practice your next talk in conversational language.',
+      '6. Imagine you\'re speaking to one person, not a crowd.'
+    ],
+    modifications: [
+      'Make it easier: Start by converting just your opening and closing.',
+      'Harder: Give your entire next presentation without any script—just bullet points.'
+    ],
+    completionCue: 'Which version felt most authentic? Done.'
+  },
+  {
+    id: 'speaking_mirror_drill',
+    name: 'Record and Review (The Mirror Drill)',
+    description: 'Identify and fix distracting habits by reviewing your delivery.',
+    duration: 600,
+    estimatedMinutes: 10,
+    icon: Camera,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "self-awareness", "feedback", "improvement", "practice"],
+    intention: 'See and hear yourself as your audience does so you can identify and fix distracting habits.',
+    setup: ['Set up your phone to record video.'],
+    steps: [
+      '1. Deliver a 2-3 minute talk on any topic and record it.',
+      '2. Watch the full recording without judgment—just observe.',
+      '3. Look for: filler words, fidgeting, lack of eye contact, low energy.',
+      '4. Pick ONE thing to improve.',
+      '5. Re-record the same talk focusing only on fixing that one habit.',
+      '6. Compare the two recordings. Did you improve?',
+      '7. Repeat this weekly with different talks.'
+    ],
+    modifications: [
+      'Make it easier: Start with audio-only recordings if video feels too vulnerable.',
+      'Harder: Post your recording to a small group of trusted friends and ask for feedback.'
+    ],
+    completionCue: 'One habit targeted? Great progress.'
+  },
+  {
+    id: 'speaking_gestures_purpose',
+    name: 'Gestures with Purpose',
+    description: 'Use hand movements intentionally to reinforce your message.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: Activity,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "body-language", "gestures", "confidence", "presence"],
+    intention: 'Use hand gestures intentionally to reinforce your message instead of distracting from it.',
+    setup: ['Stand in front of a mirror.'],
+    steps: [
+      '1. Watch your hands while speaking for 1 minute.',
+      '2. Practice three core gestures: Open hands (inclusivity), Pointing/Chopping (emphasis), Counting (structure).',
+      '3. Deliver your talk again using these gestures deliberately at key moments.',
+      '4. Your hands should match your words (e.g. "three reasons" = three fingers).',
+      '5. Eliminate nervous gestures like pockets or wringing hands.',
+      '6. Aim for natural but purposeful movement.'
+    ],
+    modifications: [
+      'Make it easier: Practice gestures alone with a mirror before trying in front of people.',
+      'Harder: Watch a great speaker and mimic their gesture patterns in your practice.'
+    ],
+    completionCue: 'Hand-word coordination improved? Done.'
+  },
+  {
+    id: 'speaking_nerves_ritual',
+    name: 'Manage the Nerves (Pre-Speech Ritual)',
+    description: 'Channel anxiety into focused energy with a repeatable routine.',
+    duration: 360,
+    estimatedMinutes: 6,
+    icon: ShieldCheck,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "anxiety-management", "ritual", "preparation", "confidence"],
+    intention: 'Channel nervous energy into focused energy using a repeatable pre-speech routine.',
+    setup: ['Identify a repeatable 5-minute window.'],
+    steps: [
+      '1. 2 minutes: Power pose + deep breathing.',
+      '2. 1 minute: Vocal warm-up (hum, tongue twisters).',
+      '3. 1 minute: Visualization (see yourself succeeding).',
+      '4. 1 minute: Shake out your body, release tension.',
+      '5. Practice this ritual before low-stakes speaking like meetings.',
+      '6. Use the same ritual every time to signal to your body you\'re ready.'
+    ],
+    modifications: [
+      'Make it easier: Start with just one element (breathing or power posing).',
+      'Harder: Use your ritual, then immediately walk into the room with no extra prep.'
+    ],
+    completionCue: 'Ritual locked in? Ready to speak.'
+  },
+  {
+    id: 'speaking_no_slides',
+    name: 'Speak Without Slides',
+    description: 'Hold a room with just your voice and presence.',
+    duration: 480,
+    estimatedMinutes: 8,
+    icon: PersonStanding,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "confidence", "presence", "improvisation", "clarity"],
+    intention: 'Develop the ability to hold a room with just your voice and presence—no crutches.',
+    setup: ['Pick a topic you know well.', 'Set an 8-minute timer.'],
+    steps: [
+      '1. Speak for 3 minutes with no slides, no notes, no aids—just talking.',
+      '2. Focus on: intro, 3 points, conclusion.',
+      '3. Use vocal variety and intentional pauses.',
+      '4. Record yourself. Did you keep the "imaginary audience" engaged?',
+      '5. Repeat weekly with different topics.',
+      '6. Build your confidence that YOU are the presentation.'
+    ],
+    modifications: [
+      'Make it easier: Use 3 bullet points on a notecard as a backup.',
+      'Harder: Deliver a full 5-10 minute talk to live friends with no visual aids.'
+    ],
+    completionCue: 'Held the floor solo? Excellent.'
+  },
+  {
+    id: 'speaking_impact_closing',
+    name: 'The Closing (End with Impact)',
+    description: 'Leave your audience with a clear takeaway and resonance.',
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: ThumbsUp,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "closings", "impact", "memorability", "confidence"],
+    intention: 'Leave your audience with a clear takeaway and emotional resonance, not a weak trailing-off.',
+    setup: ['Review your next talk closing.'],
+    steps: [
+      '1. Identify your current closing. Is it a weak "Any questions?".',
+      '2. Script your closing 15 seconds: call to action, opening callback, or powerful quote.',
+      '3. Practice three variations: (1) Call to action, (2) Inspirational close, (3) Story callback.',
+      '4. Deliver each one out loud. Which feels most authentic?',
+      '5. Memorize your final line. Deliver it with conviction, then STOP.',
+      '6. No rambling after the final line.'
+    ],
+    modifications: [
+      'Make it easier: Write out your full closing word-for-word and memorize it.',
+      'Harder: Practice ending and then staying silent for 3 seconds before taking questions.'
+    ],
+    completionCue: 'Final line delivered with impact? Done.'
+  },
+  {
+    id: 'speaking_impromptu_60s',
+    name: 'Impromptu Speaking Challenge',
+    description: 'Organize thoughts on the fly for spontaneous speaking.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Zap,
+    category: 'Public Speaking',
+    tags: ["public-speaking", "improvisation", "thinking-on-feet", "confidence", "structure"],
+    intention: 'Build your ability to speak coherently on any topic with zero preparation.',
+    setup: ['Get a random word generator.'],
+    steps: [
+      '1. Get a random word or topic.',
+      '2. Take exactly 5 seconds to think.',
+      '3. Speak for 60 seconds using this structure: Point → Example → Point.',
+      '4. Don\'t aim for perfection—aim for coherence.',
+      '5. Do this daily with different random topics.',
+      '6. Your brain will get faster at organizing thoughts on the fly.'
+    ],
+    modifications: [
+      'Make it easier: Extend your prep time to 15-30 seconds.',
+      'Harder: Speak for 90-120 seconds with only 5 seconds of prep.'
+    ],
+    completionCue: 'Thinking on your feet? Well done.'
+  },
+
   // --- Professional ---
   {
     id: 'prof_sbi',
@@ -2096,6 +2072,54 @@ export const communicationPractices: Exercise[] = [
       'Make it harder: Use it to deliver positive feedback too, which reinforces the framework.'
     ],
     completionCue: 'Feedback delivered clearly? Done.'
+  },
+  {
+    id: 'prof_radical_candor',
+    name: 'Radical Candor Check-in',
+    description: 'Build trust by pairing personal care with direct challenge.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: HeartHandshake,
+    category: 'Professional',
+    tags: ['professional', 'leadership', 'emotional-intelligence'],
+    intention: 'Navigate the "Radical Candor" quadrant to build high-trust working relationships.',
+    setup: ['Prepare for a 1-on-1 or performance review.'],
+    steps: [
+      '1. Care Personally: Show genuine interest in the person\'s growth and well-being.',
+      '2. Challenge Directly: Be clear and un-sugarcoated about what needs to improve.',
+      '3. Avoid Ruinous Empathy: Don\'t withhold truth to protect feelings.',
+      '4. Avoid Obnoxious Aggression: Don\'t challenge without caring.',
+      '5. Ask: "Is this message clear, and do you know I have your back?"'
+    ],
+    modifications: [
+      'Make it easier: Start by finding one thing you genuinely appreciate about the person.',
+      'Harder: Use this to deliver a very difficult "challenge" while maintaining warmth.'
+    ],
+    completionCue: 'Relationship anchored in candor? Done.'
+  },
+  {
+    id: 'prof_meeting_agendas',
+    name: 'Meeting Agenda Architecture',
+    description: 'Design meetings for maximum cognitive efficiency.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: LayoutGrid,
+    category: 'Professional',
+    tags: ['professional', 'productivity', 'structure'],
+    intention: 'Ensure every meeting has a clear purpose and measurable outcome.',
+    setup: ['Open a meeting invite or calendar event.'],
+    steps: [
+      '1. State the Objective: "By the end of this meeting, we will have decided X."',
+      '2. List 3 key discussion points in logical order.',
+      '3. Define the desired outcome for each point (e.g., "Inform", "Discuss", "Decide").',
+      '4. Assign a time limit to each section.',
+      '5. Circulate the agenda at least 2 hours before the start.'
+    ],
+    modifications: [
+      'Make it easier: Use a simple "Objective + 3 Bullets" template.',
+      'Harder: Apply this to a complex, multi-stakeholder workshop.'
+    ],
+    completionCue: 'Meeting structure locked? Done.'
   },
 
   // --- Digital ---
@@ -2122,5 +2146,101 @@ export const communicationPractices: Exercise[] = [
       'Make it harder: Practice maintaining "lens eye contact" for a full 1-minute intro.'
     ],
     completionCue: 'Visual presence optimized? Ready for the call.'
+  },
+  {
+    id: 'digital_subject_line',
+    name: 'Subject Line Clarity Drill',
+    description: 'Increase email open rates and response speed.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Mail,
+    category: 'Digital',
+    tags: ['digital', 'professional', 'conciseness'],
+    intention: 'Write subject lines that tell the recipient exactly what is needed without opening the email.',
+    setup: ['Open your drafts folder.'],
+    steps: [
+      '1. Identify the core ask: [Action Needed], [Decision], [Info Only].',
+      '2. Put the action in brackets at the start.',
+      '3. Follow with a specific, noun-heavy summary (e.g., "Project X Q3 Budget").',
+      '4. Include the deadline if applicable.',
+      '5. Review: Can they triage this from a smartphone notification?'
+    ],
+    modifications: [
+      'Make it easier: Just practice the [Action] bracket for 3 emails.',
+      'Harder: Rewrite a 3-sentence subject line into a 5-word one without losing info.'
+    ],
+    completionCue: 'Subject lines sharp? Done.'
+  },
+  {
+    id: 'digital_video_focus',
+    name: 'The "One Screen" Rule',
+    description: 'Maximize presence during high-stakes video calls.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: VideoIcon,
+    category: 'Digital',
+    tags: ['digital', 'focus', 'professional'],
+    intention: 'Eliminate "Digital Split-Focus" to build trust and comprehension in remote settings.',
+    setup: ['Join a low-stakes video meeting.'],
+    steps: [
+      '1. Close all tabs and apps not required for the meeting.',
+      '2. Put your phone in another room or face-down.',
+      '3. Resize the video window to be directly under the camera lens.',
+      '4. Practice "Active Looking": nod and use facial expressions as if in person.',
+      '5. Notice when your eyes drift to a second monitor and correct it immediately.'
+    ],
+    modifications: [
+      'Make it easier: Do this for just the first 5 minutes of a meeting.',
+      'Harder: Do this for a full 60-minute session without checking a single notification.'
+    ],
+    completionCue: 'Focus maintained? Great connection.'
+  },
+  {
+    id: 'digital_slack_conciseness',
+    name: 'Single-Pulse IM Rule',
+    description: 'Reduce notification fatigue for your team.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Hash,
+    category: 'Digital',
+    tags: ['digital', 'professional', 'conciseness'],
+    intention: 'Consolidate multiple short messages into one clear "pulse" of information.',
+    setup: ['Before hitting "Enter" on a Slack/Teams message.'],
+    steps: [
+      '1. Draft your message. If it\'s "Hey", "How\'s it going?", "Got a sec?"—STOP.',
+      '2. Combine the greeting, the context, and the ask into one paragraph.',
+      '3. Use bullet points for multiple items.',
+      '4. Use bold text for the specific action needed.',
+      '5. Hit enter only when the full "thought" is ready.'
+    ],
+    modifications: [
+      'Make it easier: Practice this with one teammate you know well.',
+      'Harder: Apply this to a busy public channel where clarity is critical.'
+    ],
+    completionCue: 'Noise reduced? Done.'
+  },
+  {
+    id: 'digital_tone_check',
+    name: 'Digital Tone Calibration',
+    description: 'Replace lost nonverbal cues with intentional text choices.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: TextCursorInput,
+    category: 'Digital',
+    tags: ['digital', 'emotional-intelligence', 'clarity'],
+    intention: 'Prevent "Negative Bias" in text-based communication by adding intentional warmth.',
+    setup: ['Review a "cold" or purely factual email draft.'],
+    steps: [
+      '1. Read the text as if you were in a bad mood. Does it sound rude or abrupt?.',
+      '2. Add a specific positive opener: "Hope you had a great weekend!".',
+      '3. Calibrate punctuation: Replace one period with an exclamation point if appropriate.',
+      '4. Use an emoji to clarify intent (e.g., a smiley after a correction).',
+      '5. Ensure the "closing" is warm: "Thanks for your help with this".'
+    ],
+    modifications: [
+      'Make it easier: Just add a greeting and a sign-off.',
+      'Harder: Rewrite a short, blunt correction to be "Warm but Direct".'
+    ],
+    completionCue: 'Tone calibrated? Ready to send.'
   }
 ];
