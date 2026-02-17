@@ -6,7 +6,10 @@ import { communicationCategoryDetails } from "@/data/wellness-categories";
 import { communicationKits } from "@/data/communication-kits";
 import { communicationPlans } from "@/data/communication-plans";
 import { PracticeInstructionCard } from "./PracticeInstructionCard";
-import { ChevronDown, MessageSquare, Zap, Play, PlusCircle, Trash2, Edit, Lightbulb, Save, X, Plus } from "lucide-react";
+import { 
+  ChevronDown, MessageSquare, Zap, Play, PlusCircle, 
+  Trash2, Edit, Lightbulb, Save, X, Plus, LayoutGrid, BookOpen 
+} from "lucide-react";
 import { useWellnessData } from "@/hooks/use-wellness-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +17,13 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { 
+  Dialog, DialogContent, DialogDescription, DialogFooter, 
+  DialogHeader, DialogTitle, DialogTrigger 
+} from "@/components/ui/dialog";
+import { 
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger 
+} from "@/components/ui/accordion";
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
 import type { Exercise } from "@/data/exercises";
@@ -45,7 +54,7 @@ const AVAILABLE_TAGS = [
 
 export default function CommunicationContent() {
   const { 
-    lowEnergyMode, planProgress, customPractices, addCustomPractice, 
+    lowEnergyMode, customPractices, addCustomPractice, 
     updateCustomPractice, deleteCustomPractice, collapsedCategories, toggleCategoryCollapse 
   } = useWellnessData();
   
@@ -143,6 +152,17 @@ export default function CommunicationContent() {
     setFormTags(p.tags);
     setIsFormOpen(true);
   };
+
+  // Derive expanded accordion items from collapsedCategories
+  // First 3 categories expanded by default
+  const openCategories = useMemo(() => {
+    const list = [...categories, 'Custom'];
+    return list.filter((cat, idx) => {
+      const isCollapsed = collapsedCategories[cat];
+      if (isCollapsed === undefined) return idx < 3; // Default first 3 to open
+      return !isCollapsed;
+    });
+  }, [collapsedCategories]);
 
   return (
     <div className="space-y-10">
@@ -250,26 +270,18 @@ export default function CommunicationContent() {
 
       {/* LAYER 3: FULL LIBRARY */}
       {selectedTags.length === 0 && (
-        <div className="space-y-12 pt-10">
-          <div className="text-center space-y-4">
-            <h2 className="text-2xl font-black uppercase tracking-tighter">Communication Library</h2>
+        <div className="space-y-8 pt-10">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-4 px-1">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-black uppercase tracking-tighter">Communication Library</h2>
+              <p className="text-xs text-muted-foreground">Master the soft skills of high-performance cognition.</p>
+            </div>
             
-            {/* Create Your Own Card */}
             <Dialog open={isFormOpen} onOpenChange={(o) => { setIsFormOpen(o); if(!o) resetForm(); }}>
               <DialogTrigger asChild>
-                <Card className="max-w-md mx-auto border-dashed border-primary/30 hover:border-primary/60 cursor-pointer bg-primary/5 group transition-all">
-                  <CardHeader className="p-6">
-                    <div className="flex items-center justify-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                        <Plus className="w-6 h-6" />
-                      </div>
-                      <div className="text-left">
-                        <CardTitle className="text-lg">Create Your Own Practice</CardTitle>
-                        <CardDescription className="text-xs">Design a custom exercise tailored to your goals.</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                </Card>
+                <Button className="font-bold gap-2">
+                  <PlusCircle className="w-4 h-4" /> Create Your Own
+                </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
                 <DialogHeader className="p-6 bg-primary/5 border-b shrink-0">
@@ -282,7 +294,7 @@ export default function CommunicationContent() {
                   <div className="p-6 space-y-6">
                     <div className="space-y-4">
                       <div className="space-y-1.5">
-                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Practice Identity</Label>
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Practice Title</Label>
                         <Input placeholder="e.g. 3-Second Wait" value={title} onChange={e => setTitle(e.target.value)} className="font-bold" />
                       </div>
                       <div className="space-y-1.5">
@@ -292,7 +304,7 @@ export default function CommunicationContent() {
                     </div>
 
                     <div className="space-y-3">
-                      <Label className="text-[10px] font-bold uppercase text-muted-foreground">The Protocol (Steps)</Label>
+                      <Label className="text-[10px] font-bold uppercase text-muted-foreground">The Protocol (3-8 Steps)</Label>
                       {steps.map((step, i) => (
                         <div key={i} className="flex gap-2">
                           <span className="flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold">{i + 1}</span>
@@ -307,7 +319,7 @@ export default function CommunicationContent() {
                           />
                           {steps.length > 3 && (
                             <Button variant="ghost" size="icon" onClick={() => setSteps(steps.filter((_, idx) => idx !== i))}>
-                              <Trash2 className="w-4 h-4 text-muted-foreground" />
+                              <X className="w-4 h-4 text-muted-foreground" />
                             </Button>
                           )}
                         </div>
@@ -338,8 +350,15 @@ export default function CommunicationContent() {
                       <div className="space-y-1.5">
                         <Label className="text-[10px] font-bold uppercase text-muted-foreground">Tags</Label>
                         <div className="flex flex-wrap gap-1">
-                          {formTags.map(tag => (
-                            <Badge key={tag} className="text-[8px]">{tag}</Badge>
+                          {AVAILABLE_TAGS.slice(0, 8).map(tag => (
+                            <Badge 
+                              key={tag} 
+                              variant={formTags.includes(tag) ? 'default' : 'outline'}
+                              className="text-[8px] cursor-pointer"
+                              onClick={() => setFormTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
+                            >
+                              {tag}
+                            </Badge>
                           ))}
                         </div>
                       </div>
@@ -347,9 +366,12 @@ export default function CommunicationContent() {
 
                     <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 flex gap-3">
                       <Lightbulb className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                      <p className="text-xs leading-relaxed text-muted-foreground italic">
-                        "Keep steps observable and behavioral. Instead of 'be more confident,' try 'lower voice pitch by one note' or 'maintain eye contact for 3 seconds.'"
-                      </p>
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold uppercase text-primary">Pro Tip</p>
+                        <p className="text-xs leading-relaxed text-muted-foreground italic">
+                          "Keep steps observable and behavioral. Instead of 'be more confident,' try 'lower voice pitch by one note' or 'maintain eye contact for 3 seconds.'"
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </ScrollArea>
@@ -363,66 +385,80 @@ export default function CommunicationContent() {
             </Dialog>
           </div>
           
-          <div className="space-y-4">
+          <Accordion type="multiple" value={openCategories} onValueChange={(vals) => {
+            const list = [...categories, 'Custom'];
+            list.forEach(cat => {
+              const isNowOpen = vals.includes(cat);
+              const wasOpen = !collapsedCategories[cat];
+              // Default logic for missing states (first 3 open)
+              const effectivelyWasOpen = wasOpen || (collapsedCategories[cat] === undefined && list.indexOf(cat) < 3);
+              
+              if (isNowOpen !== effectivelyWasOpen) {
+                toggleCategoryCollapse(cat);
+              }
+            });
+          }}>
             {/* Custom Category */}
             {customPractices.length > 0 && (
-              <details open={!collapsedCategories['Custom']} onToggle={() => toggleCategoryCollapse('Custom')} className="group">
-                <summary className="list-none cursor-pointer flex justify-between items-center bg-card p-4 rounded-xl border border-primary/10 mb-2 hover:bg-muted/30 transition-colors">
-                  <div className="flex items-center gap-4">
+              <AccordionItem value="Custom" className="border-b border-primary/10">
+                <AccordionTrigger className="hover:no-underline px-1">
+                  <div className="flex items-center gap-4 text-left">
                     <div className="p-2 bg-primary/10 rounded-lg">
-                      <LayoutGrid className="w-6 h-6 text-primary" />
+                      <LayoutGrid className="w-5 h-5 text-primary" />
                     </div>
-                    <h3 className="text-lg font-bold uppercase tracking-tight">Custom Protocols ({customPractices.length})</h3>
+                    <div>
+                      <h3 className="text-sm font-bold uppercase tracking-tight">Custom Protocols ({customPractices.length})</h3>
+                      <p className="text-[10px] text-muted-foreground italic">Your specialized routines.</p>
+                    </div>
                   </div>
-                  <ChevronDown className="w-5 h-5 shrink-0 transition-transform duration-200 group-open:rotate-180" />
-                </summary>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-8">
-                  {customPractices.map(p => (
-                    <PracticeInstructionCard 
-                      key={p.id} 
-                      exercise={p} 
-                      onEdit={() => handleEdit(p)}
-                      onDelete={() => deleteCustomPractice(p.id)}
-                    />
-                  ))}
-                </div>
-              </details>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
+                    {customPractices.map(p => (
+                      <PracticeInstructionCard 
+                        key={p.id} 
+                        exercise={p} 
+                        onEdit={() => handleEdit(p)}
+                        onDelete={() => deleteCustomPractice(p.id)}
+                      />
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
             )}
 
-            {categories.map((category, idx) => {
+            {categories.map((category) => {
               const practices = communicationPractices.filter(p => p.category === category);
               const details = communicationCategoryDetails[category];
               if (!details) return null;
               const Icon = details.icon;
-              
-              // Default first 3 to expanded
-              const isCollapsed = collapsedCategories[category] ?? (idx > 2);
 
               return (
-                <details key={category} open={!isCollapsed} onToggle={() => toggleCategoryCollapse(category)} className="group">
-                  <summary className="list-none cursor-pointer flex justify-between items-center bg-card p-4 rounded-xl border border-primary/5 mb-2 hover:bg-muted/30 transition-colors">
-                    <div className="flex items-center gap-4">
+                <AccordionItem key={category} value={category} className="border-b border-primary/5">
+                  <AccordionTrigger className="hover:no-underline px-1">
+                    <div className="flex items-center gap-4 text-left">
                       <div className="p-2 bg-primary/10 rounded-lg">
-                        <Icon className="w-6 h-6 text-primary" />
+                        <Icon className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold uppercase tracking-tight">
+                        <h3 className="text-sm font-bold uppercase tracking-tight">
                           {category} ({practices.length})
                         </h3>
                         <p className="text-[10px] text-muted-foreground italic line-clamp-1">"{details.tagline}"</p>
                       </div>
                     </div>
-                    <ChevronDown className="w-5 h-5 shrink-0 transition-transform duration-200 group-open:rotate-180" />
-                  </summary>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-8">
-                    {practices.map(p => (
-                      <PracticeInstructionCard key={p.id} exercise={p} />
-                    ))}
-                  </div>
-                </details>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
+                      {practices.map(p => (
+                        <PracticeInstructionCard key={p.id} exercise={p} />
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
               );
             })}
-          </div>
+          </Accordion>
         </div>
       )}
     </div>
