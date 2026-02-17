@@ -615,7 +615,7 @@ export default function DeckSettingsPage() {
         
         {/* COMPACT FLOATING SAVE ACTION */}
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-background/40 backdrop-blur-sm border border-primary/10 rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
+          <div className="bg-background/10 backdrop-blur-sm border border-primary/10 rounded-full px-4 py-2 shadow-lg flex items-center gap-3">
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hidden sm:block">
               {isDirty ? 'Unsaved Changes' : 'Configuration Synced'}
             </p>
