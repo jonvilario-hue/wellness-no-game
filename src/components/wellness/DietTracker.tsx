@@ -102,7 +102,7 @@ export function DietTracker() {
                                 toast({ title: "Streak Preserved", variant: 'success' });
                             }}
                         >
-                            Quick Log (100 kcal)
+                            Select to Quick Log (100 kcal)
                         </Button>
                     </div>
                 </Card>
@@ -169,8 +169,8 @@ export function DietTracker() {
                         />
                     </div>
                     <div className="flex items-end">
-                        <Button className="w-full font-bold h-10 gap-2" onClick={handleLogMeal}>
-                            <Save className="w-4 h-4" /> Save Meal
+                        <Button className="w-full font-bold h-10 gap-2 shadow-sm" onClick={handleLogMeal}>
+                            <Save className="w-4 h-4" /> Select to Save
                         </Button>
                     </div>
                 </CardContent>

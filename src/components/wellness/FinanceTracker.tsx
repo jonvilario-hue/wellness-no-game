@@ -172,8 +172,8 @@ export function FinanceTracker() {
                         </Select>
                     </div>
                     <div className="flex items-end">
-                        <Button className="w-full font-bold h-10 gap-2" onClick={handleAdd}>
-                            <Save className="w-4 h-4" /> Save Entry
+                        <Button className="w-full font-bold h-10 gap-2 shadow-sm" onClick={handleAdd}>
+                            <Save className="w-4 h-4" /> Select to Save
                         </Button>
                     </div>
                 </CardContent>

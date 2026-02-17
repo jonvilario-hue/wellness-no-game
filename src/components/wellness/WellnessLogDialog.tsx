@@ -117,7 +117,7 @@ export function WellnessLogDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="sm:max-w-[450px] bg-background/10 backdrop-blur-md border-primary/10">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Target className="w-5 h-5 text-primary" />
@@ -127,7 +127,7 @@ export function WellnessLogDialog({
 
         <div className="space-y-6 py-4">
           <Tabs value={type} onValueChange={(v: any) => setType(v)} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-4 bg-muted/20">
               <TabsTrigger value="movement" className="text-[10px] uppercase">Move</TabsTrigger>
               <TabsTrigger value="stillness" className="text-[10px] uppercase">Still</TabsTrigger>
               <TabsTrigger value="nutrition" className="text-[10px] uppercase">Food</TabsTrigger>
@@ -142,7 +142,7 @@ export function WellnessLogDialog({
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
+                    className={cn("w-full justify-start text-left font-normal border-primary/10 bg-background/5", !date && "text-muted-foreground")}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
@@ -164,7 +164,7 @@ export function WellnessLogDialog({
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Practice</Label>
                   <Select value={selectedId} onValueChange={setSelectedId}>
-                    <SelectTrigger>
+                    <SelectTrigger className="border-primary/10 bg-background/5">
                       <SelectValue placeholder="Choose one..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -179,7 +179,7 @@ export function WellnessLogDialog({
                     <span>Duration (Min)</span>
                     <span>{duration} min</span>
                   </Label>
-                  <Input type="number" value={duration} onChange={e => setDuration(e.target.value)} />
+                  <Input type="number" value={duration} onChange={e => setDuration(e.target.value)} className="border-primary/10 bg-background/5" />
                 </div>
               </>
             )}
@@ -189,7 +189,7 @@ export function WellnessLogDialog({
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Select Technique</Label>
                   <Select value={selectedId} onValueChange={setSelectedId}>
-                    <SelectTrigger>
+                    <SelectTrigger className="border-primary/10 bg-background/5">
                       <SelectValue placeholder="Choose one..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -201,7 +201,7 @@ export function WellnessLogDialog({
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Duration (Min)</Label>
-                  <Input type="number" value={duration} onChange={e => setDuration(e.target.value)} />
+                  <Input type="number" value={duration} onChange={e => setDuration(e.target.value)} className="border-primary/10 bg-background/5" />
                 </div>
               </>
             )}
@@ -211,7 +211,7 @@ export function WellnessLogDialog({
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Meal Type</Label>
                   <Select value={mealType} onValueChange={setMealType}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="border-primary/10 bg-background/5"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
                     </SelectContent>
@@ -219,7 +219,7 @@ export function WellnessLogDialog({
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Calories</Label>
-                  <Input type="number" value={calories} onChange={e => setCalories(e.target.value)} placeholder="e.g. 500" />
+                  <Input type="number" value={calories} onChange={e => setCalories(e.target.value)} placeholder="e.g. 500" className="border-primary/10 bg-background/5" />
                 </div>
               </>
             )}
@@ -228,11 +228,11 @@ export function WellnessLogDialog({
               <>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Merchant / Item</Label>
-                  <Input value={merchant} onChange={e => setMerchant(e.target.value)} placeholder="e.g. Grocery Store" />
+                  <Input value={merchant} onChange={e => setMerchant(e.target.value)} placeholder="e.g. Grocery Store" className="border-primary/10 bg-background/5" />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Amount ($)</Label>
-                  <Input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" />
+                  <Input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" className="border-primary/10 bg-background/5" />
                 </div>
               </>
             )}
@@ -240,9 +240,9 @@ export function WellnessLogDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleLog} className="min-w-[120px]">
-            Save Activity
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button onClick={handleLog} className="min-w-[120px] bg-primary text-primary-foreground font-bold">
+            Select to Save
           </Button>
         </DialogFooter>
       </DialogContent>
