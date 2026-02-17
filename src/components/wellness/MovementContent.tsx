@@ -1,3 +1,4 @@
+
 "use client"
 
 import { movementExercises, type ExerciseCategory } from "@/data/exercises"
@@ -13,7 +14,7 @@ import { useToast } from "@/hooks/use-toast"
 import { kits } from "@/data/wellness-kits"
 import { Badge } from "@/components/ui/badge"
 
-const categories: ExerciseCategory[] = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
+const categories: ExerciseCategory[] = ['Mind-Body', 'Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
 export default function MovementContent({ filterTags = [] }: { filterTags?: string[] }) {
   const { lowEnergyMode, addMovementLog } = useWellnessData();
@@ -114,20 +115,19 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
 
             return (
                 <details key={category} open className="group">
-                    <summary className="list-none cursor-pointer flex justify-between items-start">
-                        <div className="flex-grow">
-                            <CategoryOverview
-                                title={details.title}
-                                icon={<CategoryIcon className="w-6 h-6 text-primary" />}
-                                purpose={details.purpose}
-                                useWhen={details.useWhen}
-                                includes={details.includes}
-                                tagline={details.tagline}
-                            />
+                    <summary className="list-none cursor-pointer flex justify-between items-center bg-card p-4 rounded-xl border border-primary/5 mb-2 hover:bg-muted/30 transition-colors">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 bg-primary/10 rounded-lg">
+                                <CategoryIcon className="w-6 h-6 text-primary" />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-bold">{details.title}</h2>
+                                <p className="text-xs text-muted-foreground">{details.tagline}</p>
+                            </div>
                         </div>
-                        <ChevronDown className="w-5 h-5 m-6 shrink-0 transition-transform duration-200 group-open:rotate-180" />
+                        <ChevronDown className="w-5 h-5 shrink-0 transition-transform duration-200 group-open:rotate-180" />
                     </summary>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 mb-8">
                         {exercises.map((exercise) => (
                             <div key={exercise.id} id={`practice-${exercise.id}`} className="scroll-mt-20">
                                 <PracticeInstructionCard exercise={exercise} />

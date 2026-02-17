@@ -2,7 +2,7 @@
 import { 
     Dumbbell, StretchHorizontal, Zap, Sunrise, Wind, 
     Brain, Shield, HeartHandshake, type LucideIcon,
-    Wallet, Utensils, TrendingUp, Apple
+    Wallet, Utensils, TrendingUp, Apple, Waves
 } from "lucide-react";
 import type { ExerciseCategory, MindfulnessCategory } from "./exercises";
 
@@ -16,6 +16,14 @@ export type WellnessCategoryDetails = {
 };
 
 export const movementCategoryDetails: Record<ExerciseCategory, WellnessCategoryDetails> = {
+    'Mind-Body': {
+        title: 'Mind-Body',
+        icon: Waves,
+        purpose: 'Integrate movement with breath and mindfulness to improve flow, balance, and centeredness.',
+        useWhen: ['Seeking mental clarity', 'Daily maintenance', 'Active recovery'],
+        includes: ['Yoga Flows', 'Tai Chi Forms'],
+        tagline: 'Flow with intention.'
+    },
     'Stretching': {
         title: 'Stretching',
         icon: StretchHorizontal,
