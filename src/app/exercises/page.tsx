@@ -16,7 +16,6 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { QuickLogBar } from '@/components/wellness/QuickLogBar';
-import { WellnessRecommendations } from '@/components/wellness/WellnessRecommendations';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
@@ -143,8 +142,6 @@ export default function ExercisesPage() {
                 </PopoverContent>
               </Popover>
             </div>
-
-            {!lowEnergyMode && <WellnessRecommendations />}
 
             <div className="flex flex-col gap-4">
                 <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
