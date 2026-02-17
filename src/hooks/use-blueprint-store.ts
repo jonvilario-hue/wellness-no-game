@@ -14,7 +14,8 @@ import type {
   Blocker,
   ImplementationIntention,
   PreMortem,
-  AccountabilityPartner
+  AccountabilityPartner,
+  WeeklySnapshot
 } from '@/types/blueprint';
 import { systemTemplates } from '@/data/system-templates';
 import { format, startOfDay, isSameDay, subDays, isBefore } from 'date-fns';
@@ -41,11 +42,11 @@ type BlueprintState = {
   addImplementationIntention: (projectId: string, intention: Omit<ImplementationIntention, 'id'>) => void;
   updatePreMortem: (projectId: string, premortem: PreMortem) => void;
   setAccountabilityPartner: (projectId: string, partner: AccountabilityPartner) => void;
+  createWeeklySnapshot: (projectId: string) => void;
 
   // Internal logic
   calculateMomentum: (blueprint: Blueprint) => number;
   updateStreaks: (blueprint: Blueprint) => void;
-  checkTwoDayRule: (blueprint: Blueprint) => { taskId: string; title: string } | null;
 };
 
 export const useBlueprintStore = create<BlueprintState>()(
@@ -68,10 +69,10 @@ export const useBlueprintStore = create<BlueprintState>()(
           status: m.dependsOn.length === 0 ? 'Not Started' : 'Locked' as Milestone['status'],
           tasks: m.tasks.map(t => ({ ...t, completed: false })),
           smallWinsBreakdown: [
-            { percent: 10, description: "First small win" },
-            { percent: 25, description: "Quarter way there" },
-            { percent: 50, description: "Halfway point" },
-            { percent: 75, description: "Final push" }
+            { percent: 10, description: "Initial setup & core concept validated." },
+            { percent: 25, description: "Momentum established. First quarter complete." },
+            { percent: 50, description: "The heavy lift. Halfway through the architecture." },
+            { percent: 75, description: "Final stretch. Polish and refine." }
           ]
         }));
 
@@ -96,7 +97,7 @@ export const useBlueprintStore = create<BlueprintState>()(
           identityGoal: template.defaultIdentityStatement,
           identityStatement: `I am becoming a person who ${template.title.toLowerCase()}`,
           activatedAt: now,
-          status: 'active',
+          status: 'Active',
           selectedVariation: settings,
           metricValues,
           metricLog: [],
@@ -258,6 +259,26 @@ export const useBlueprintStore = create<BlueprintState>()(
         });
       },
 
+      createWeeklySnapshot: (projectId) => {
+        set(state => {
+          const bp = state.projects.find(p => p.id === projectId);
+          if (!bp) return;
+          
+          const tasks = bp.milestones.flatMap(m => m.tasks);
+          const snapshot: WeeklySnapshot = {
+            weekOf: format(new Date(), 'yyyy-MM-dd'),
+            tasksCompleted: tasks.filter(t => t.completed).length,
+            tasksTotal: tasks.length,
+            momentumScore: bp.momentumScore,
+            habitCompletionRate: 0, // Simplified for MVP
+            autoSummary: `Weekly momentum reached ${bp.momentumScore}%`
+          };
+          
+          if (!bp.weeklySnapshots) bp.weeklySnapshots = [];
+          bp.weeklySnapshots.push(snapshot);
+        });
+      },
+
       cloneBlueprint: (id, options) => {
         set(state => {
           const source = state.projects.find(p => p.id === id);
@@ -293,7 +314,7 @@ export const useBlueprintStore = create<BlueprintState>()(
               ...source,
               id: crypto.randomUUID(),
               activatedAt: new Date().toISOString(),
-              status: 'active',
+              status: 'Active',
               milestones: source.milestones.map(m => ({ ...m, status: 'Not Started', reflections: [], reflection: '', tasks: m.tasks.map(t => ({ ...t, completed: false })) })),
               momentumScore: 0,
               streaks: { currentStreak: 0, longestStreak: 0, lastActivityDate: null, weeklyTarget: 5, thisWeekCount: 0 },
@@ -327,14 +348,6 @@ export const useBlueprintStore = create<BlueprintState>()(
         }
       },
 
-      checkTwoDayRule: (bp) => {
-        // Find tasks that were due/skipped yesterday and are also skipped today
-        const yesterday = subDays(startOfDay(new Date()), 1);
-        // This requires historical task state which isn't fully in current schema,
-        // but we can approximate by checking recently created but incomplete tasks.
-        return null; // Placeholder for future iteration
-      },
-
       updateProject: (id, updates) => {
         set(state => {
           const project = state.projects.find(p => p.id === id);
@@ -349,7 +362,7 @@ export const useBlueprintStore = create<BlueprintState>()(
       }
     })),
     {
-      name: 'blueprint-store-local-vachievement-v1',
+      name: 'blueprint-store-local-vachievement-v2',
       storage: createJSONStorage(() => localStorage),
     }
   )

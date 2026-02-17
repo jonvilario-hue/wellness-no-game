@@ -20,18 +20,17 @@ export function generateSmartRecommendations(input: EngineInput): Recommendation
 
   // --- 1. STREAK SAVERS (Priority: High) ---
   if (preferences.enabledCategories.includes('streak_saver')) {
-    // Check if any habit completed yesterday hasn't been done today
     const yesterday = format(subDays(now, 1), 'yyyy-MM-dd');
     const yesterdayHabits = habits[yesterday] || [];
     const todayHabits = habits[today] || [];
     
     const missing = yesterdayHabits.filter(id => !todayHabits.includes(id));
-    if (missing.length > 0 && now.getHours() >= 18) { // Only nudge in evening
+    if (missing.length > 0 && now.getHours() >= 18) {
       recs.push({
         id: `streak_saver_${today}`,
         type: 'streak_saver',
         title: 'Protect Your Streak!',
-        description: `You're one step away from maintaining your ${yesterdayHabits.length} habits. A quick 5-minute session keeps the chain alive.`,
+        description: `You're one step away from maintaining your ${yesterdayHabits.length} habits. Don't break the 2-day rule—a quick check-in counts.`,
         actionLabel: 'OPEN HABITS',
         actionLink: '/habits',
         priority: 85
@@ -58,12 +57,25 @@ export function generateSmartRecommendations(input: EngineInput): Recommendation
     }
   }
 
-  // --- 3. MILESTONE NUDGES (Priority: Medium) ---
+  // --- 3. MILESTONE NUDGES & WEEKLY REVIEW (Priority: Medium) ---
   if (preferences.enabledCategories.includes('milestone_nudge')) {
+    const day = now.getDay(); // 0 is Sunday, 1 is Monday
+    if (day === 0 || day === 1) {
+      recs.push({
+        id: `weekly_review_${today}`,
+        type: 'planning',
+        title: 'Weekly Review Ritual',
+        description: "Sunday/Monday is the optimal time to audit your trajectory and set new priorities. Take 5 minutes to reflect.",
+        actionLabel: 'START REVIEW',
+        actionLink: '/architecture',
+        priority: 95
+      });
+    }
+
     const stalledBlueprint = blueprints.find(bp => {
       const lastActivity = bp.streaks.lastActivityDate;
       if (!lastActivity) return true;
-      return isBefore(parseISO(lastActivity), subDays(now, 7)) && bp.status === 'active';
+      return isBefore(parseISO(lastActivity), subDays(now, 7)) && bp.status === 'Active';
     });
 
     if (stalledBlueprint) {
@@ -84,7 +96,7 @@ export function generateSmartRecommendations(input: EngineInput): Recommendation
   if (preferences.enabledCategories.includes('celebration')) {
     const recentlyCompleted = blueprints.filter(bp => 
       bp.status === 'completed' && 
-      isBefore(subDays(now, 2), parseISO(bp.activatedAt)) // Simplification for MVP
+      isBefore(subDays(now, 2), parseISO(bp.activatedAt))
     );
 
     if (recentlyCompleted.length > 0) {

@@ -20,9 +20,11 @@ import {
   ArrowRight,
   Users,
   BrainCircuit,
-  History
+  History,
+  TrendingUp,
+  Sparkles
 } from 'lucide-react';
-import type { Blueprint, Task, Milestone } from '@/types/blueprint';
+import type { Blueprint, Task, Milestone, ImplementationIntention } from '@/types/blueprint';
 import { cn } from '@/lib/utils';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { useState, useMemo } from 'react';
@@ -53,8 +55,10 @@ const MomentumGauge = ({ score }: { score: number }) => {
 };
 
 export default function BlueprintDashboard({ project }: { project: Blueprint }) {
-  const { logMetric, logBlocker, resolveBlocker, toggleTask, updateProject } = useBlueprintStore();
+  const { logMetric, logBlocker, resolveBlocker, toggleTask, updateProject, addImplementationIntention, createWeeklySnapshot } = useBlueprintStore();
   const [metricModal, setMetricModal] = useState<{ open: boolean; metricId: string | null }>({ open: false, metricId: null });
+  const [iiModal, setIiModal] = useState(false);
+  const [newIi, setNewIi] = useState({ trigger: '', action: '' });
   const [metricValue, setMetricValue] = useState("");
   const [isReviewOpen, setIsReviewOpen] = useState(false);
 
@@ -69,11 +73,18 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
     }
   };
 
+  const handleAddII = () => {
+    if (newIi.trigger && newIi.action) {
+      addImplementationIntention(project.id, newIi);
+      setIiModal(false);
+      setNewIi({ trigger: '', action: '' });
+    }
+  };
+
   const progressDelta = useMemo(() => {
+    if (!project.weeklySnapshots || project.weeklySnapshots.length === 0) return null;
     const lastSnapshot = project.weeklySnapshots[project.weeklySnapshots.length - 1];
-    if (!lastSnapshot) return null;
-    const delta = project.momentumScore - lastSnapshot.momentumScore;
-    return delta;
+    return project.momentumScore - lastSnapshot.momentumScore;
   }, [project]);
 
   return (
@@ -83,20 +94,20 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <CardContent className="p-6 relative z-10">
           <div className="flex items-center gap-3 mb-2">
-            <Badge variant="outline" className="text-[10px] font-black uppercase text-primary-foreground border-white/20">The Identity</Badge>
+            <Badge variant="outline" className="text-[10px] font-black uppercase text-primary-foreground border-white/20">The North Star Identity</Badge>
           </div>
           <h2 className="text-2xl font-black tracking-tight italic">
             "{project.identityStatement || `I am becoming a person who ${project.title.toLowerCase()}`}"
           </h2>
-          <p className="text-sm opacity-80 mt-2 font-medium">Identity-based goals have 65% higher success rates than outcome-only goals.</p>
+          <p className="text-sm opacity-80 mt-2 font-medium">Research shows identity-based goals have up to 65% higher success rates than outcome-only goals.</p>
         </CardContent>
       </Card>
 
       {isReviewDay && (
         <Card className="bg-amber-500/5 border-amber-500/20 border-dashed">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-bold flex items-center gap-2">
-              <History className="w-4 h-4 text-amber-600" />
+            <CardTitle className="text-sm font-bold flex items-center gap-2 text-amber-700">
+              <History className="w-4 h-4" />
               Weekly Review Ritual Active
             </CardTitle>
             <CardDescription>Sunday/Monday is the optimal time to audit your trajectory and set new priorities.</CardDescription>
@@ -123,6 +134,7 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
               </div>
               {progressDelta !== null && (
                 <div className={cn("text-[10px] font-black uppercase tracking-widest", progressDelta >= 0 ? "text-green-600" : "text-amber-600")}>
+                  <TrendingUp className={cn("inline w-3 h-3 mr-1", progressDelta < 0 && "rotate-180")} />
                   {progressDelta >= 0 ? '+' : ''}{progressDelta}% momentum vs last week
                 </div>
               )}
@@ -144,7 +156,7 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
                 </p>
               </Card>
             ))}
-            <Button variant="ghost" className="w-full h-8 text-[10px] font-bold uppercase text-muted-foreground border border-dashed" onClick={() => {}}>
+            <Button variant="ghost" className="w-full h-8 text-[10px] font-bold uppercase text-muted-foreground border border-dashed" onClick={() => setIiModal(true)}>
               <PlusCircle className="w-3 h-3 mr-1.5" /> Add If-Then Rule
             </Button>
           </div>
@@ -199,7 +211,7 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
                         return (
                           <AssistantTooltip key={idx} text={win.description}>
                             <div className="space-y-1.5">
-                              <div className={cn("h-1 rounded-full transition-all", isHit ? "bg-primary" : "bg-muted")} />
+                              <div className={cn("h-1 rounded-full transition-all", isHit ? "bg-primary shadow-[0_0_8px_rgba(45,212,191,0.4)]" : "bg-muted")} />
                               <div className={cn("text-[8px] font-black uppercase text-center", isHit ? "text-primary" : "text-muted-foreground")}>
                                 {win.percent}% {isHit && "🎉"}
                               </div>
@@ -278,6 +290,40 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
         </DialogContent>
       </Dialog>
 
+      {/* If-Then Dialog */}
+      <Dialog open={iiModal} onOpenChange={setIiModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" />
+              Build If-Then Protocol
+            </DialogTitle>
+            <CardDescription>Implementation intentions double the chance of success by pre-solving obstacles.</CardDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-bold uppercase">If (Trigger/Situation)...</Label>
+              <Input 
+                placeholder="e.g. If I skip my workout due to work..." 
+                value={newIi.trigger} 
+                onChange={e => setNewIi({ ...newIi, trigger: e.target.value })} 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-bold uppercase">Then I will (Recovery Action)...</Label>
+              <Input 
+                placeholder="e.g. Then I will do 15 mins of yoga before bed." 
+                value={newIi.action} 
+                onChange={e => setNewIi({ ...newIi, action: e.target.value })} 
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAddII} disabled={!newIi.trigger || !newIi.action}>Lock In Protocol</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Weekly Review Dialog */}
       <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
         <DialogContent className="max-w-2xl">
@@ -300,7 +346,10 @@ export default function BlueprintDashboard({ project }: { project: Blueprint }) 
             </div>
           </div>
           <DialogFooter>
-            <Button className="w-full h-12 text-sm font-bold" onClick={() => setIsReviewOpen(false)}>Finish Review & Sync Blueprint</Button>
+            <Button className="w-full h-12 text-sm font-bold" onClick={() => {
+              createWeeklySnapshot(project.id);
+              setIsReviewOpen(false);
+            }}>Finish Review & Sync Blueprint</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

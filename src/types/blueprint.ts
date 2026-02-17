@@ -12,6 +12,7 @@ export type Task = {
   linkedMetricId?: string | null;
   difficultyRating?: number; // 1-5
   energyType?: 'creative' | 'analytical' | 'social' | 'mechanical';
+  recurring?: 'None' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly'; // Added for habit integration
 };
 
 export type ReflectionEntry = {
@@ -29,6 +30,7 @@ export type ImplementationIntention = {
   id: string;
   trigger: string;
   action: string;
+  contextTags?: string[];
 };
 
 export type SmallWinCheckpoint = {
@@ -176,9 +178,9 @@ export type Blueprint = {
   description?: string;
   tags: string[];
   identityGoal?: string;
-  identityStatement?: string; // New field
+  identityStatement?: string; 
   milestones: Milestone[];
-  status: 'active' | 'paused' | 'completed' | 'abandoned' | 'Archived';
+  status: 'active' | 'paused' | 'completed' | 'abandoned' | 'Archived' | 'Active';
   activatedAt: string;
   selectedVariation: TemplateVariationSettings;
   versionNumber?: number;
