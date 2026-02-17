@@ -4,7 +4,7 @@ import {
     Wallet, Utensils, TrendingUp, Apple, Waves,
     Mic2, MessageSquare, User, Eye, ArrowLeftRight, 
     Target, Sparkles, ShieldAlert, BookOpen, Presentation, 
-    Mail, Video
+    Mail, Video, ClipboardList, Heart
 } from "lucide-react";
 import type { ExerciseCategory, MindfulnessCategory } from "./exercises";
 import type { CommunicationCategory } from "./communication-practices";
