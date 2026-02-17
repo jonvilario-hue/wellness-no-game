@@ -52,6 +52,7 @@ interface ScholarState {
   
   addWhyChain: (chain: Omit<WhyChain, 'id' | 'date'>) => void;
   addVisualPair: (pair: Omit<VisualPair, 'id' | 'date'>) => void;
+  deleteVisualPair: (id: string) => void;
   addSession: (session: Omit<StudySession, 'id' | 'timestamp'>) => void;
   addExplanation: (explanation: Omit<SelfExplanation, 'id' | 'date'>) => void;
   addExample: (example: Omit<ConcreteExample, 'id' | 'date'>) => void;
@@ -71,6 +72,9 @@ export const useScholarStore = create<ScholarState>()(
       })),
       addVisualPair: (pair) => set((s) => ({
         visualPairs: [{ ...pair, id: crypto.randomUUID(), date: new Date().toISOString() }, ...s.visualPairs]
+      })),
+      deleteVisualPair: (id) => set((s) => ({
+        visualPairs: s.visualPairs.filter(p => p.id !== id)
       })),
       addSession: (session) => set((s) => ({
         sessions: [{ ...session, id: crypto.randomUUID(), timestamp: new Date().toISOString() }, ...s.sessions]

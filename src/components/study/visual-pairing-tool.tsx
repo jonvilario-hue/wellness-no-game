@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -12,6 +11,17 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { AddToCalendarDialog } from './add-to-calendar-dialog';
 import { useTheme } from '@/hooks/use-theme';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export function VisualPairingTool() {
   const [concept, setConcept] = useState('');
@@ -22,7 +32,7 @@ export function VisualPairingTool() {
   const [color, setColor] = useState(themeAccent);
   const [isDrawing, setIsDrawing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { addVisualPair, visualPairs } = useScholarStore();
+  const { addVisualPair, deleteVisualPair, visualPairs } = useScholarStore();
   const { toast } = useToast();
 
   // Reset color when theme changes
@@ -170,12 +180,43 @@ export function VisualPairingTool() {
             </div>
           ) : (
             visualPairs.map((pair) => (
-              <Card key={pair.id} className="overflow-hidden group hover:shadow-md transition-shadow border-primary/5">
+              <Card key={pair.id} className="overflow-hidden group hover:shadow-md transition-shadow border-primary/5 relative">
                 <div className="aspect-video relative overflow-hidden bg-white border-b border-primary/5">
                   <img src={pair.image} alt={pair.concept} className="w-full h-full object-contain p-4" />
                 </div>
                 <CardHeader className="p-4">
-                  <CardTitle className="text-sm line-clamp-1 leading-tight">{pair.concept}</CardTitle>
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-sm line-clamp-1 leading-tight flex-grow pr-8">{pair.concept}</CardTitle>
+                    <div className="absolute top-[calc(56.25%+1rem)] right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Visual Pair?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will permanently remove this dual-coded concept from your vault.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => {
+                                deleteVisualPair(pair.id);
+                                toast({ title: "Visual pair deleted" });
+                              }}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
                   <CardDescription className="text-[10px] font-bold uppercase mt-1">
                     {new Date(pair.date).toLocaleDateString()}
                   </CardDescription>
