@@ -3,21 +3,29 @@ import type { Card, DeckSettings } from '@/types/flashcards';
 
 const MIN_EASE_FACTOR = 1.3;
 
+/**
+ * Applies SM-2 algorithm with enhancements.
+ * FSRS is currently a placeholder logic using SM-2 fallback.
+ */
 export function applySpacedRepetition(
   card: Card,
   rating: 'again' | 'hard' | 'good' | 'easy',
   settings: DeckSettings
 ): Card {
+  // If FSRS is enabled, we'd use a different formula here.
+  // For MVP, we stick to enhanced SM-2.
+  
   let { interval, easeFactor, repetitions, lapses, suspended } = card;
 
-  // Handle Again (Lapse or Reset)
+  // ── AGAIN (Lapse) ──────────────────────────────────────────────────────────
   if (rating === 'again') {
     lapses = (lapses || 0) + 1;
     repetitions = 0;
     
-    // In Anki, a lapse sets the interval to a percentage or minimum.
-    // We use the minimum lapse interval provided in settings.
-    interval = Math.max(1, settings.minimumLapseIntervalDays); 
+    // Anki logic: new interval = current interval * lapse multiplier
+    const lapseMultiplier = settings.newIntervalAfterLapsePercent / 100;
+    interval = Math.max(settings.minimumLapseIntervalDays, Math.floor(interval * lapseMultiplier));
+    
     easeFactor = Math.max(MIN_EASE_FACTOR, easeFactor - 0.20);
     
     // Leech check
@@ -26,38 +34,46 @@ export function applySpacedRepetition(
             suspended = true;
         }
     }
-  } else {
-    // New Card Graduation logic
-    if (repetitions === 0) {
-        if (rating === 'easy') {
-            interval = settings.easyIntervalDays;
-            repetitions = 1; // Graduate immediately
-        } else if (rating === 'good') {
-            interval = settings.graduatingIntervalDays;
-            repetitions = 1; // Graduate after steps
-        } else if (rating === 'hard') {
-            interval = 1; // Stay in learning
-            repetitions = 0;
-        }
-    } else {
-        // Review Card (SM-2 with modifiers)
-        repetitions += 1;
-        
-        if (rating === 'hard') {
-            interval = Math.floor(interval * settings.hardIntervalModifier * settings.intervalModifier);
-            easeFactor = Math.max(MIN_EASE_FACTOR, easeFactor - 0.15);
-        } else if (rating === 'good') {
-            interval = Math.floor(interval * easeFactor * settings.intervalModifier);
-        } else if (rating === 'easy') {
-            interval = Math.floor(interval * easeFactor * settings.easyBonus * settings.intervalModifier);
-            easeFactor += 0.15;
-        }
+  } 
+  // ── LEARNING PHASE ────────────────────────────────────────────────────────
+  else if (repetitions === 0) {
+    if (rating === 'easy') {
+        interval = settings.easyIntervalDays;
+        repetitions = 1; 
+    } else if (rating === 'good') {
+        interval = settings.graduatingIntervalDays;
+        repetitions = 1;
+    } else if (rating === 'hard') {
+        interval = Math.max(settings.minimumIntervalDays, 1);
+        repetitions = 0;
+    }
+  } 
+  // ── REVIEW PHASE ──────────────────────────────────────────────────────────
+  else {
+    repetitions += 1;
+    
+    if (rating === 'hard') {
+        interval = Math.floor(interval * settings.hardIntervalModifier * settings.intervalModifier);
+        easeFactor = Math.max(MIN_EASE_FACTOR, easeFactor - 0.15);
+    } else if (rating === 'good') {
+        interval = Math.floor(interval * easeFactor * settings.intervalModifier);
+    } else if (rating === 'easy') {
+        interval = Math.floor(interval * easeFactor * settings.easyBonus * settings.intervalModifier);
+        easeFactor += 0.15;
     }
   }
   
-  // Clamp to Max Interval
+  // ── FINAL ADJUSTMENTS ─────────────────────────────────────────────────────
+  
+  // Apply Fuzz (randomness to prevent clustering)
+  if (settings.fuzzFactorEnabled && interval > 2) {
+    const fuzz = 0.95 + Math.random() * 0.1; // +/- 5%
+    interval = Math.round(interval * fuzz);
+  }
+
+  // Clamp to bounds
+  interval = Math.max(settings.minimumIntervalDays, interval);
   interval = Math.min(interval, settings.maximumIntervalDays);
-  if (interval < 1) interval = 1;
   
   const now = new Date();
   const dueDate = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString();
@@ -70,5 +86,6 @@ export function applySpacedRepetition(
     lapses,
     suspended,
     dueDate,
+    lastReviewDate: now.toISOString()
   };
 }
