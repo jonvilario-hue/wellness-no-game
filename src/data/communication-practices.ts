@@ -1,4 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
 import { 
   Wind, Mic2, MessageSquare, User, Eye, ArrowLeftRight, 
   Target, Sparkles, Brain, ShieldAlert, BookOpen, Presentation, 
@@ -7,7 +6,7 @@ import {
   ListChecks, Map, Trash2, Gift, Repeat, RefreshCcw, 
   Layers, Link as LinkIcon, ShieldCheck, X, Users, Lightbulb,
   Briefcase, MonitorSmartphone, Shield, Bell, CheckCircle2, 
-  LayoutGrid, Pointer
+  LayoutGrid, Pointer, TrendingUp, DoorOpen
 } from 'lucide-react';
 import type { Exercise } from './exercises';
 
@@ -60,7 +59,7 @@ export const communicationPractices: Exercise[] = [
     icon: Mic2,
     category: 'Vocal Mechanics',
     tags: ['vocal', 'clarity'],
-    intention: 'Reduce vocal fry and strain by speaking in your natural resonant frequency.',
+    intention: 'Reduce vocal fry and strain by speaking in your natural resonant pitch.',
     setup: ['Relax your shoulders and jaw.'],
     steps: [
       '1. Say "Mmm-hmmm" as if you are agreeing with someone enthusiastically.',
@@ -96,6 +95,98 @@ export const communicationPractices: Exercise[] = [
       'Make it harder: Hold a clean pen or cork between your teeth while reciting the twisters.'
     ],
     completionCue: 'If your mouth feels "tired" but your speech sounds crisp, excellent.'
+  },
+  {
+    id: 'vocal_fry',
+    name: 'Vocal Fry Awareness',
+    description: 'Eliminate the low, rattling sound at the end of sentences.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Activity,
+    category: 'Vocal Mechanics',
+    tags: ['vocal', 'clarity'],
+    intention: 'Project more energy and authority by maintaining vocal support through the end of phrases.',
+    setup: ['Stand tall.'],
+    steps: [
+      '1. Read a sentence out loud.',
+      '2. Notice if your voice "crackles" or drops into a low rattle at the end.',
+      '3. Re-read the sentence, focusing on pushing slightly more air through the final word.',
+      '4. Practice "landing" the end of each sentence on a clear note.'
+    ],
+    modifications: [
+      'Make it easier: Focus on short 3-word sentences.',
+      'Make it harder: Read a full page of text while monitoring for fry.'
+    ],
+    completionCue: 'End of sentence feeling strong and clear? Done.'
+  },
+  {
+    id: 'vocal_upspeak',
+    name: 'Upspeak Reduction',
+    description: 'Maintain a downward inflection to sound more certain.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: ArrowLeftRight,
+    category: 'Vocal Mechanics',
+    tags: ['vocal', 'confidence'],
+    intention: 'Avoid making statements sound like questions, which can undermine perceived competence.',
+    setup: ['Prepare a list of 5 factual statements.'],
+    steps: [
+      '1. Say each statement out loud.',
+      '2. Pay attention to the very last syllable of the last word.',
+      '3. Consciously drop the pitch of that syllable down.',
+      '4. Practice "period" inflection: a slight downward move at the end.'
+    ],
+    modifications: [
+      'Make it easier: Record and playback to identify upspeak.',
+      'Make it harder: Practice this while explaining a complex idea.'
+    ],
+    completionCue: 'Statements sounding like declarative periods? Done.'
+  },
+  {
+    id: 'vocal_pauses',
+    name: 'Strategic Pause Practice',
+    description: 'Use silence to emphasize points and eliminate filler words.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Clock,
+    category: 'Vocal Mechanics',
+    tags: ['vocal', 'public-speaking', 'clarity'],
+    intention: 'Give your audience time to process information and increase your perceived gravitas.',
+    setup: ['Choose a short paragraph to read.'],
+    steps: [
+      '1. Read the paragraph, but count to two silently at every comma.',
+      '2. Count to three silently at every period.',
+      '3. Use the silence to take a relaxed breath.',
+      '4. Notice how the silence replaces "um" or "uh" while you think.'
+    ],
+    modifications: [
+      'Make it easier: Just pause at periods.',
+      'Make it harder: Pause for emphasis in the middle of a sentence after a key word.'
+    ],
+    completionCue: 'Comfortable with silence? Great.'
+  },
+  {
+    id: 'vocal_rate',
+    name: 'Rate Variation Exercise',
+    description: 'Control your speaking speed to keep listeners engaged.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Activity,
+    category: 'Vocal Mechanics',
+    tags: ['vocal', 'storytelling', 'presentations'],
+    intention: 'Prevent a monotonous delivery by varying speed to match the importance of your points.',
+    setup: ['Have a story or explanation ready.'],
+    steps: [
+      '1. Speak faster during less important details to build momentum.',
+      '2. Slow down significantly for your main points.',
+      '3. Practice articulating every syllable when you slow down.',
+      '4. Record yourself and check if the speed changes feel natural.'
+    ],
+    modifications: [
+      'Make it easier: Practice reading a children\'s book with exaggerated pace changes.',
+      'Make it harder: Change pace 3 times during a single 1-minute explanation.'
+    ],
+    completionCue: 'Delivery dynamic and varied? Done.'
   },
 
   // --- Active Listening ---
@@ -144,6 +235,121 @@ export const communicationPractices: Exercise[] = [
       'Make it harder: Use purely non-verbal encouragers (eyebrow raises, leans) for one minute.'
     ],
     completionCue: 'Natural engagement established. Done.'
+  },
+  {
+    id: 'listen_reflective',
+    name: 'Reflective Listening Exercise',
+    description: 'Identify the underlying emotion behind someone\'s words.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: HeartPulse,
+    category: 'Active Listening',
+    tags: ['listening', 'emotional-intelligence', 'empathy'],
+    intention: 'Build rapport and trust by showing the other person you understand how they feel.',
+    setup: ['Recall a recent interaction where someone was venting.'],
+    steps: [
+      '1. Identify the core emotion (e.g., frustration, excitement, worry).',
+      '2. Respond with: "It sounds like you\'re feeling [emotion] about [situation]."',
+      '3. Avoid saying "I understand." Instead, reflect the feeling back.',
+      '4. Wait for them to confirm or correct your reflection.'
+    ],
+    modifications: [
+      'Make it easier: Just focus on identifying the emotion in your head first.',
+      'Make it harder: Reflect the feeling even if the other person is using "you" statements to blame.'
+    ],
+    completionCue: 'Feeling heard validated? Done.'
+  },
+  {
+    id: 'listen_clarifying',
+    name: 'Clarifying Questions Practice',
+    description: 'Dig deeper into what someone means without assuming.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: ShieldCheck,
+    category: 'Active Listening',
+    tags: ['listening', 'clarity', 'professional'],
+    intention: 'Reduce ambiguity and uncover the root of a statement.',
+    setup: ['Identify an upcoming meeting.'],
+    steps: [
+      '1. Use "Can you tell me more about [part of their statement]?"',
+      '2. Use "When you say [word], what exactly do you mean by that?"',
+      '3. Avoid "Why" questions, which can sound accusatory.',
+      '4. Focus on "What" and "How" to encourage explanation.'
+    ],
+    modifications: [
+      'Make it easier: Just ask "Tell me more" once per conversation.',
+      'Make it harder: Use this to uncover hidden requirements in a project.'
+    ],
+    completionCue: 'Information gap narrowed? Great.'
+  },
+  {
+    id: 'listen_summarizing',
+    name: 'Summarizing Exercise',
+    description: 'Condense a long conversation into its most important points.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: ListChecks,
+    category: 'Active Listening',
+    tags: ['listening', 'professional', 'clarity'],
+    intention: 'Ensure agreement on takeaways and next steps before a conversation ends.',
+    setup: ['Use after a long work call or discussion.'],
+    steps: [
+      '1. Wait until the end of a section or the full meeting.',
+      '2. State: "Before we move on, let me summarize our main points..."',
+      '3. List 2-3 key takeaways and any assigned actions.',
+      '4. End with: "Did I miss anything important?"'
+    ],
+    modifications: [
+      'Make it easier: Write down the summary points while listening.',
+      'Make it harder: Summarize a chaotic or emotional group discussion.'
+    ],
+    completionCue: 'Everyone aligned? Perfect.'
+  },
+  {
+    id: 'listen_wait',
+    name: 'Interruption Awareness (2-3 Second Wait)',
+    description: 'Build the habit of pausing before you respond.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Clock,
+    category: 'Active Listening',
+    tags: ['listening', 'emotional-intelligence', 'respect'],
+    intention: 'Prevent accidental interruptions and ensure the other person has finished their thought.',
+    setup: ['Set a mental reminder before your next meeting.'],
+    steps: [
+      '1. When the other person stops speaking, count "one-one-thousand, two-one-thousand" in your head.',
+      '2. Breathe during this pause.',
+      '3. If they continue speaking during your count, they weren\'t done—just listening!',
+      '4. If they stay silent, now it\'s your turn.'
+    ],
+    modifications: [
+      'Make it easier: Start with just a 1-second pause.',
+      'Make it harder: Use the pause to specifically consider their last point before replying.'
+    ],
+    completionCue: 'Avoiding interruptions successfully? Done.'
+  },
+  {
+    id: 'listen_notes',
+    name: 'Note-Taking with Eye Contact',
+    description: 'Balance recording info with maintaining connection.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Pencil,
+    category: 'Active Listening',
+    tags: ['listening', 'professional', 'engagement'],
+    intention: 'Show engagement while ensuring you don\'t miss critical details.',
+    setup: ['Have a notebook or app ready during a meeting.'],
+    steps: [
+      '1. Maintain eye contact for the first 10-15 seconds of a point.',
+      '2. Look down to jot a quick keyword or short phrase.',
+      '3. Immediately look back up to re-establish connection.',
+      '4. Say: "I\'m just jotting this down, it\'s a great point" to signal why you\'re looking away.'
+    ],
+    modifications: [
+      'Make it easier: Just take notes during pauses.',
+      'Make it harder: Practice blind-noting (writing keywords while keeping eye contact).'
+    ],
+    completionCue: 'Connection maintained and info recorded? Done.'
   },
 
   // --- Nonverbal ---
@@ -219,8 +425,664 @@ export const communicationPractices: Exercise[] = [
     ],
     completionCue: 'Calibration complete. Gaze balanced.'
   },
+  {
+    id: 'nonverbal_gestures',
+    name: 'Purposeful Hand Gestures',
+    description: 'Enhance comprehension and memory through intentional movement.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Activity,
+    category: 'Nonverbal',
+    tags: ["nonverbal", "public-speaking", "clarity"],
+    intention: 'Enhance comprehension and memory through intentional movement.',
+    setup: ['Prepare a short 30-second explanation of a topic.'],
+    steps: [
+      '1. Keep hands visible above waist level.',
+      '2. Use size gestures for comparisons ("this big" vs "this small").',
+      '3. Use directional gestures for sequences ("first... then... finally").',
+      '4. Use containment gestures for concepts ("imagine holding this idea").',
+      '5. Avoid repetitive filler gestures (constant pointing, hand-wringing).'
+    ],
+    modifications: [
+      'Easier: Just focus on keeping hands visible and still.',
+      'Harder: Match gestures to specific words for maximum impact.'
+    ],
+    completionCue: 'Gestures feeling intentional? Done.'
+  },
+  {
+    id: 'nonverbal_congruence',
+    name: 'Facial Expression Congruence',
+    description: 'Build trust by matching your expressions to your message.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Smile,
+    category: 'Nonverbal',
+    tags: ["nonverbal", "emotional-intelligence", "trust"],
+    intention: 'Build trust by matching your expressions to your message.',
+    setup: ['Practice in front of a mirror or during a call.'],
+    steps: [
+      '1. Notice what emotion your words convey.',
+      '2. Check if your face reflects that emotion.',
+      '3. Practice common mismatches: smiling while delivering bad news, blank face while expressing excitement.',
+      '4. If discussing something serious, let your face show appropriate concern.',
+      '5. If sharing good news, let yourself smile fully.'
+    ],
+    modifications: [
+      'Easier: Just avoid smiling during serious topics.',
+      'Harder: Practice micro-expressions that match nuanced emotions.'
+    ],
+    completionCue: 'Expressions matching message? Great.'
+  },
+  {
+    id: 'nonverbal_proxemics',
+    name: 'Proxemics Awareness',
+    description: 'Respect spatial boundaries to create comfort and connection.',
+    duration: 90,
+    estimatedMinutes: 1.5,
+    icon: Users,
+    category: 'Nonverbal',
+    tags: ["nonverbal", "boundaries", "cultural-awareness"],
+    intention: 'Respect spatial boundaries to create comfort and connection.',
+    setup: ['Observe your distance from others today.'],
+    steps: [
+      '1. Default to 1.5-4 feet in Western professional contexts.',
+      '2. Notice if the other person steps back (you\'re too close) or leans in (they\'re comfortable).',
+      '3. Match their spatial preference - if they step back, stay where you are.',
+      '4. Research appropriate distances for other cultures beforehand.',
+      '5. Adjust for context: closer for friends, farther for strangers.'
+    ],
+    modifications: [
+      'Easier: Just maintain arm\'s length distance.',
+      'Harder: Calibrate in real-time based on micro-cues (body tension).'
+    ],
+    completionCue: 'Spatial awareness checked. Done.'
+  },
 
-  // --- Digital ---
+  // --- Conversation Structure ---
+  {
+    id: 'convo_turn_taking',
+    name: 'Turn-Taking Signals Practice',
+    description: 'Navigate conversations smoothly without awkward interruptions or silences.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: MessageSquare,
+    category: 'Conversation Structure',
+    tags: ["conversation", "flow", "listening"],
+    intention: 'Navigate conversations smoothly without awkward interruptions or silences.',
+    setup: ['Identify an upcoming conversation.'],
+    steps: [
+      '1. When finishing your turn: drop pitch at end of sentence, make eye contact, use a slight nod.',
+      '2. When wanting to speak: lean forward slightly, make eye contact, take a breath.',
+      '3. Watch for others\' signals before jumping in.',
+      '4. If you accidentally overlap, say "Sorry, go ahead" and yield.',
+      '5. Practice in low-stakes conversations first.'
+    ],
+    modifications: [
+      'Easier: Just focus on pitch drop when done speaking.',
+      'Harder: Read multiple signals simultaneously in group conversations.'
+    ],
+    completionCue: 'Turns feeling more fluid? Done.'
+  },
+  {
+    id: 'convo_topic_bridging',
+    name: 'Topic Bridging Exercise',
+    description: 'Change subjects smoothly without jarring transitions.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: LinkIcon,
+    category: 'Conversation Structure',
+    tags: ["conversation", "flow", "small-talk"],
+    intention: 'Change subjects smoothly without jarring transitions.',
+    setup: ['Think of two unrelated topics you like.'],
+    steps: [
+      '1. Find a small connection between current topic and new topic.',
+      '2. Use bridging phrases: "Speaking of X...", "That reminds me...", "On a related note...".',
+      '3. Acknowledge the shift: "Changing gears for a second...".',
+      '4. If no connection exists, use: "Completely different topic, but...".',
+      '5. Avoid abrupt topic drops mid-conversation.'
+    ],
+    modifications: [
+      'Easier: Use any bridging phrase consistently.',
+      'Harder: Find thematic connections even between unrelated topics.'
+    ],
+    completionCue: 'Transition smooth? Done.'
+  },
+  {
+    id: 'convo_backchannel',
+    name: 'Backchannel Response Drill',
+    description: 'Show active processing without interrupting the speaker.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: Repeat,
+    category: 'Conversation Structure',
+    tags: ["conversation", "listening", "engagement"],
+    intention: 'Show active processing without interrupting the speaker.',
+    setup: ['Use this during your next 1-on-1.'],
+    steps: [
+      '1. Use verbal nods: "Mm-hmm", "Right", "I see", "Gotcha".',
+      '2. Time them during natural pauses, not over the speaker\'s words.',
+      '3. Vary your responses - don\'t repeat the same one.',
+      '4. Match intensity to content (thoughtful "hmm" for serious topics).',
+      '5. Pair with nonverbal nods or facial expressions.'
+    ],
+    modifications: [
+      'Easier: Just nod physically without verbal responses.',
+      'Harder: Use backchannels that advance the conversation ("And then what?").'
+    ],
+    completionCue: 'Actively engaged? Done.'
+  },
+  {
+    id: 'convo_repair',
+    name: 'Repair Strategy Practice',
+    description: 'Fix miscommunication immediately before it compounds.',
+    duration: 90,
+    estimatedMinutes: 1.5,
+    icon: RefreshCcw,
+    category: 'Conversation Structure',
+    tags: ["conversation", "clarity", "repair"],
+    intention: 'Fix miscommunication immediately before it compounds.',
+    setup: ['Prepare a phrase for when you sense confusion.'],
+    steps: [
+      '1. Notice confusion cues (furrowed brow, "Huh?", silence).',
+      '2. Stop and acknowledge: "Let me try that again..." or "I don\'t think I said that clearly...".',
+      '3. Rephrase using different words, simpler structure, or an example.',
+      '4. Check for understanding: "Does that make more sense?".',
+      '5. Don\'t keep going if confusion persists.'
+    ],
+    modifications: [
+      'Easier: Just say "Sorry, what I meant was..." and restate.',
+      'Harder: Diagnose WHY they\'re confused and target that specifically.'
+    ],
+    completionCue: 'Misunderstanding cleared? Done.'
+  },
+  {
+    id: 'convo_adjacency',
+    name: 'Adjacency Pairs Awareness',
+    description: 'Understand conversational expectations to avoid social friction.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Layers,
+    category: 'Conversation Structure',
+    tags: ["conversation", "social-skills", "pragmatics"],
+    intention: 'Understand conversational expectations to avoid social friction.',
+    setup: ['List 3 common social expectations.'],
+    steps: [
+      '1. Learn common pairs: Question→Answer, Greeting→Greeting, Thank you→You\'re welcome.',
+      '2. Notice when someone offers the first part and respond with the expected second part.',
+      '3. If you can\'t provide the expected response, acknowledge it: "I don\'t know, but...".',
+      '4. Don\'t leave pairs unresolved - it creates conversational debt.',
+      '5. Practice in everyday interactions.'
+    ],
+    modifications: [
+      'Easier: Focus on greetings and thanks.',
+      'Harder: Handle complex pairs like criticism→defense/acceptance.'
+    ],
+    completionCue: 'Social pairs closed? Done.'
+  },
+  {
+    id: 'convo_pre_closing',
+    name: 'Pre-Closing Signals',
+    description: 'End conversations gracefully without abruptness or awkward lingering.',
+    duration: 90,
+    estimatedMinutes: 1.5,
+    icon: X,
+    category: 'Conversation Structure',
+    tags: ["conversation", "boundaries", "social-skills"],
+    intention: 'End conversations gracefully without abruptness or awkward lingering.',
+    setup: ['Prepare an exit line.'],
+    steps: [
+      '1. Signal you\'re wrapping up: "Well...", "Anyway...", "I should let you go...".',
+      '2. Summarize or reference a future action: "I\'ll send you that link".',
+      '3. Use physical cues: stand up, step back, gather belongings.',
+      '4. If they keep talking, repeat the pre-closing after they finish.',
+      '5. End with a clear closer: "Great talking with you!".'
+    ],
+    modifications: [
+      'Easier: Just say "I need to run" directly.',
+      'Harder: Layer multiple signals for smoother exit.'
+    ],
+    completionCue: 'Graceful exit achieved. Done.'
+  },
+
+  // --- Persuasion ---
+  {
+    id: 'persuasion_reciprocity',
+    name: 'Reciprocity Principle Exercise',
+    description: 'Increase compliance by giving first.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: Gift,
+    category: 'Persuasion',
+    tags: ["persuasion", "influence", "professional"],
+    intention: 'Increase compliance by giving first (Cialdini\'s research).',
+    setup: ['Identify something small you can offer (info, compliment, favor).'],
+    steps: [
+      '1. Give it genuinely without attaching strings.',
+      '2. Wait - don\'t immediately ask for something back.',
+      '3. When you do ask, frame it clearly and simply.',
+      '4. Notice how giving first changes the dynamic.',
+      '5. Maintain the relationship even if they say no.'
+    ],
+    modifications: [
+      'Easier: Compliment someone before asking for help.',
+      'Harder: Build reciprocity over weeks with multiple small gives.'
+    ],
+    completionCue: 'Principle applied? Done.'
+  },
+  {
+    id: 'persuasion_social_proof',
+    name: 'Social Proof Framing',
+    description: 'Leverage conformity to make your suggestion more appealing.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Users,
+    category: 'Persuasion',
+    tags: ["persuasion", "influence", "professional"],
+    intention: 'Leverage conformity to make your suggestion more appealing.',
+    setup: ['Identify a reference group relevant to your listener.'],
+    steps: [
+      '1. Identify relevant group ("people like you", "teams in your industry").',
+      '2. State what they\'re doing: "Most of our clients start with...".',
+      '3. Make it specific with numbers: "73% of users chose...".',
+      '4. Avoid vague claims like "Everyone does this".',
+      '5. Use truthfully - false social proof destroys trust.'
+    ],
+    modifications: [
+      'Easier: Just mention one other person who did it.',
+      'Harder: Layer experts + peers + statistics.'
+    ],
+    completionCue: 'Framing tested? Done.'
+  },
+  {
+    id: 'persuasion_fitd',
+    name: 'Foot-in-the-Door Technique',
+    description: 'Build commitment by starting with a small request first.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: DoorOpen,
+    category: 'Persuasion',
+    tags: ["persuasion", "influence", "negotiation"],
+    intention: 'Build commitment by starting with a small request first.',
+    setup: ['Identify your ultimate ask and a smaller related one.'],
+    steps: [
+      '1. Design a much smaller related ask (low stakes).',
+      '2. Make the small ask first and get agreement.',
+      '3. Wait hours or days - don\'t immediately escalate.',
+      '4. Make the larger request, now framed as consistent with earlier "yes".',
+      '5. Be prepared for a no, and remain polite.'
+    ],
+    modifications: [
+      'Easier: Just ask for the small thing and stop if they agree.',
+      'Harder: Chain multiple escalating asks over weeks.'
+    ],
+    completionCue: 'Commitment ladder started? Done.'
+  },
+  {
+    id: 'persuasion_framing',
+    name: 'Positive vs Negative Framing',
+    description: 'Shape decisions by emphasizing gains or losses.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Target,
+    category: 'Persuasion',
+    tags: ["persuasion", "influence", "framing"],
+    intention: 'Shape decisions by emphasizing gains or losses (Kahneman & Tversky).',
+    setup: ['Take a message you need to deliver.'],
+    steps: [
+      '1. Frame A (Positive): emphasize what they\'ll gain ("Save $200").',
+      '2. Frame B (Negative): emphasize what they\'ll lose ("Lose $200").',
+      '3. Choose based on context: positive for risk-averse, negative for urgency.',
+      '4. Test both in low-stakes situations.',
+      '5. Notice which one triggers more action.'
+    ],
+    modifications: [
+      'Easier: Just pick one frame and stick with it.',
+      'Harder: Switch frames mid-conversation based on response.'
+    ],
+    completionCue: 'Message framed? Done.'
+  },
+  {
+    id: 'persuasion_anchoring',
+    name: 'Anchoring Practice',
+    description: 'Set the reference point in negotiations to influence outcomes.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: Anchor,
+    category: 'Persuasion',
+    tags: ["persuasion", "negotiation", "professional"],
+    intention: 'Set the reference point in negotiations to influence outcomes.',
+    setup: ['Identify a number you need to negotiate.'],
+    steps: [
+      '1. Go first with a number if you have info advantage.',
+      '2. Start higher (selling) or lower (buying) than your target.',
+      '3. Use precise numbers ($47,300 instead of $47,000).',
+      '4. If they anchor first and it\'s unreasonable, reset the baseline.',
+      '5. Provide rationale for your anchor.'
+    ],
+    modifications: [
+      'Easier: Just state your number first.',
+      'Harder: Layer multiple anchors (salary + benefits).'
+    ],
+    completionCue: 'Reference point set? Done.'
+  },
+  {
+    id: 'persuasion_scarcity',
+    name: 'Scarcity Framing Exercise',
+    description: 'Increase perceived value by highlighting limited availability.',
+    duration: 90,
+    estimatedMinutes: 1.5,
+    icon: Zap,
+    category: 'Persuasion',
+    tags: ["persuasion", "influence", "sales"],
+    intention: 'Increase perceived value by highlighting limited availability.',
+    setup: ['Identify a genuinely limited offer.'],
+    steps: [
+      '1. Identify genuine scarcity (limited time, quantity).',
+      '2. State it clearly: "Only 3 spots left".',
+      '3. Explain WHY it\'s scarce (builds credibility).',
+      '4. Avoid false scarcity - it destroys trust.',
+      '5. Let them decide without pressure.'
+    ],
+    modifications: [
+      'Easier: Just mention a deadline.',
+      'Harder: Combine scarcity with social proof.'
+    ],
+    completionCue: 'Scarcity communicated? Done.'
+  },
+  {
+    id: 'persuasion_inoculation',
+    name: 'Inoculation (Pre-Address Counterarguments)',
+    description: 'Strengthen your position by acknowledging objections first.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: ShieldCheck,
+    category: 'Persuasion',
+    tags: ["persuasion", "argumentation", "professional"],
+    intention: 'Strengthen your position by acknowledging objections first.',
+    setup: ['List 2 likely objections to your idea.'],
+    steps: [
+      '1. Bring up the strongest objection yourself: "You might be thinking...".',
+      '2. Address it directly with evidence or mitigation.',
+      '3. Don\'t over-defend - brief acknowledgment is enough.',
+      '4. Return to your main point after inoculating.',
+      '5. Use a calm, non-defensive tone.'
+    ],
+    modifications: [
+      'Easier: Address one obvious objection.',
+      'Harder: Inoculate against 2-3 counterarguments.'
+    ],
+    completionCue: 'Objections neutralized? Done.'
+  },
+
+  // --- Clarity ---
+  {
+    id: 'clarity_concrete',
+    name: 'Concrete Language Swap',
+    description: 'Replace vague abstractions with specific, tangible words.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: Target,
+    category: 'Clarity',
+    tags: ["clarity", "writing", "professional"],
+    intention: 'Replace vague abstractions with specific, tangible words.',
+    setup: ['Identify 3 abstract words in your draft.'],
+    steps: [
+      '1. Identify abstract words: "improve", "synergy", "optimize".',
+      '2. Ask: what does this actually look like? What would someone see?',
+      '3. Replace with concrete specifics: "reduce response time to 1 day".',
+      '4. Use names, numbers, actions.',
+      '5. Test with "Can a 10-year-old visualize this?".'
+    ],
+    modifications: [
+      'Easier: Focus on nouns only.',
+      'Harder: Make verbs concrete too ("utilize" → "use").'
+    ],
+    completionCue: 'Message tangible? Done.'
+  },
+  {
+    id: 'clarity_active_voice',
+    name: 'Active Voice Conversion',
+    description: 'Increase clarity and accountability by naming who does what.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: User,
+    category: 'Clarity',
+    tags: ["clarity", "writing", "professional"],
+    intention: 'Increase clarity and accountability by naming who does what.',
+    setup: ['Find 2 passive sentences in your email history.'],
+    steps: [
+      '1. Find passive constructions: "mistakes were made".',
+      '2. Ask: who is doing this action?.',
+      '3. Rewrite with actor first: "We made mistakes".',
+      '4. Keep passive only when the actor is unknown.',
+      '5. Practice on old emails or documents.'
+    ],
+    modifications: [
+      'Easier: Convert one sentence per paragraph.',
+      'Harder: Eliminate all passive voice in a full document.'
+    ],
+    completionCue: 'Responsibility clear? Done.'
+  },
+  {
+    id: 'clarity_simple_sentences',
+    name: 'One Idea Per Sentence Drill',
+    description: 'Reduce cognitive load by breaking complex sentences into simple ones.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: Sparkles,
+    category: 'Clarity',
+    tags: ["clarity", "writing", "simplicity"],
+    intention: 'Reduce cognitive load by breaking complex sentences into simple ones.',
+    setup: ['Find a long sentence with multiple commas.'],
+    steps: [
+      '1. Identify how many distinct ideas are packed in.',
+      '2. Split into separate sentences - one idea each.',
+      '3. Reorder if needed for logical flow.',
+      '4. Read aloud to test clarity.',
+      '5. Use simpler connecting words (but, so).'
+    ],
+    modifications: [
+      'Easier: Just split sentences with "and".',
+      'Harder: Apply to an entire document/speech.'
+    ],
+    completionCue: 'Reading easy? Done.'
+  },
+  {
+    id: 'clarity_signposting',
+    name: 'Signposting Practice',
+    description: 'Guide audience attention with verbal roadmaps.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: Map,
+    category: 'Clarity',
+    tags: ["clarity", "public-speaking", "structure"],
+    intention: 'Guide audience attention with verbal roadmaps.',
+    setup: ['Prepare a 3-point outline.'],
+    steps: [
+      '1. Use openers: "First", "To begin", "Let me start with".',
+      '2. Use connectors: "However", "As a result", "Similarly".',
+      '3. Use closers: "In conclusion", "To sum up".',
+      '4. Preview structure upfront: "I\'ll cover three things...".',
+      '5. Reference back: "As I mentioned earlier".'
+    ],
+    modifications: [
+      'Easier: Just use "First, second, third".',
+      'Harder: Layer multiple signpost types in one talk.'
+    ],
+    completionCue: 'Roadmap clear? Done.'
+  },
+  {
+    id: 'clarity_jargon',
+    name: 'Jargon Elimination Exercise',
+    description: 'Ensure accessibility by removing insider language.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: Trash2,
+    category: 'Clarity',
+    tags: ["clarity", "accessibility", "writing"],
+    intention: 'Ensure accessibility by removing insider language.',
+    setup: ['List 5 specialized terms in your field.'],
+    steps: [
+      '1. For each, ask: would someone outside my field know this?.',
+      '2. Replace with plain language or define it.',
+      '3. Test on someone unfamiliar with the topic.',
+      '4. Keep only jargon that saves significant time.',
+      '5. Be ruthless with acronyms.'
+    ],
+    modifications: [
+      'Easier: Remove obvious acronyms.',
+      'Harder: Eliminate ALL jargon, even semi-common terms.'
+    ],
+    completionCue: 'Language inclusive? Done.'
+  },
+  {
+    id: 'clarity_analogy',
+    name: 'Analogy Building',
+    description: 'Explain unfamiliar concepts by comparing to familiar ones.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: Lightbulb,
+    category: 'Clarity',
+    tags: ["clarity", "teaching", "creativity"],
+    intention: 'Explain unfamiliar concepts by comparing to familiar ones.',
+    setup: ['Choose a difficult concept you need to explain.'],
+    steps: [
+      '1. Identify the hard-to-grasp concept.',
+      '2. Find something your audience knows well that shares a feature.',
+      '3. State explicitly: "X is like Y because...".',
+      '4. Extend only where it fits.',
+      '5. Test on someone to see if it clarifies.'
+    ],
+    modifications: [
+      'Easier: Use simple physical analogies.',
+      'Harder: Build multi-step analogies.'
+    ],
+    completionCue: 'Concept explained? Done.'
+  },
+
+  // --- Emotional Intelligence ---
+  {
+    id: 'ei_labeling',
+    name: 'Emotion Labeling Exercise',
+    description: 'Reduce emotional intensity by naming what you\'re feeling.',
+    duration: 90,
+    estimatedMinutes: 1.5,
+    icon: Brain,
+    category: 'Emotional Intelligence',
+    tags: ["emotional-intelligence", "self-awareness", "regulation"],
+    intention: 'Reduce emotional intensity by naming what you\'re feeling.',
+    setup: ['Pause during a stressful moment.'],
+    steps: [
+      '1. Pause and notice the physical sensation.',
+      '2. Name the emotion specifically - not just "bad".',
+      '3. Say it or write it: "I\'m feeling [emotion]".',
+      '4. Notice if intensity decreases.',
+      '5. Use an emotion wheel if needed.'
+    ],
+    modifications: [
+      'Easier: Use mad/sad/glad/scared.',
+      'Harder: Identify layered emotions.'
+    ],
+    completionCue: 'Intensity reduced? Done.'
+  },
+  {
+    id: 'ei_i_statements',
+    name: '"I" Statement Practice',
+    description: 'Express feelings without blaming to reduce defensiveness.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: MessageSquare,
+    category: 'Emotional Intelligence',
+    tags: ["emotional-intelligence", "conflict", "assertiveness"],
+    intention: 'Express feelings without blaming to reduce defensiveness.',
+    setup: ['Identify a minor annoyance.'],
+    steps: [
+      '1. Structure: "I feel [emotion] when [behavior] because [impact]".',
+      '2. Example: "I feel frustrated when meetings start late...".',
+      '3. Avoid "you" statements.',
+      '4. Be specific about behavior, not character.',
+      '5. Practice on minor things first.'
+    ],
+    modifications: [
+      'Easier: Just use "I feel [emotion]" without the full structure.',
+      'Harder: Use in real-time conflict.'
+    ],
+    completionCue: 'Statement structured? Done.'
+  },
+  {
+    id: 'ei_validation',
+    name: 'Validation Before Advice',
+    description: 'Build trust by acknowledging emotion before problem-solving.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: HeartHandshake,
+    category: 'Emotional Intelligence',
+    tags: ["emotional-intelligence", "listening", "empathy"],
+    intention: 'Build trust by acknowledging emotion before problem-solving.',
+    setup: ['Next time someone vents to you.'],
+    steps: [
+      '1. Listen for the emotion.',
+      '2. Name it: "That sounds really frustrating".',
+      '3. Resist the urge to immediately fix.',
+      '4. Wait for them to feel heard.',
+      '5. If you must advise, ask first.'
+    ],
+    modifications: [
+      'Easier: Just say "That makes sense".',
+      'Harder: Validate even when you disagree.'
+    ],
+    completionCue: 'Trust built? Done.'
+  },
+  {
+    id: 'ei_perspective',
+    name: 'Perspective-Taking Drill',
+    description: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: Users,
+    category: 'Emotional Intelligence',
+    tags: ["emotional-intelligence", "empathy", "conflict"],
+    intention: 'Reduce conflict by genuinely seeing the other person\'s viewpoint.',
+    setup: ['Recall a disagreement.'],
+    steps: [
+      '1. State their position in your own words.',
+      '2. Ask: what would have to be true for this to make sense?.',
+      '3. Identify their underlying needs/fears.',
+      '4. Share understanding: "From your perspective...".',
+      '5. Notice how this changes your emotional response.'
+    ],
+    modifications: [
+      'Easier: List 3 reasons why they might hold that view.',
+      'Harder: Steelman their argument.'
+    ],
+    completionCue: 'Empathy felt? Done.'
+  },
+  {
+    id: 'ei_self_disclosure',
+    name: 'Appropriate Self-Disclosure',
+    description: 'Build connection by sharing strategically.',
+    duration: 150,
+    estimatedMinutes: 2.5,
+    icon: Heart,
+    category: 'Emotional Intelligence',
+    tags: ["emotional-intelligence", "connection", "boundaries"],
+    intention: 'Build connection by sharing strategically.',
+    setup: ['In a casual networking setting.'],
+    steps: [
+      '1. Ask: is this relevant to what they shared?.',
+      '2. Keep it brief - match their disclosure.',
+      '3. Focus on the feeling/lesson.',
+      '4. Watch their response.',
+      '5. Avoid one-upping or trauma-dumping.'
+    ],
+    modifications: [
+      'Easier: Share only positive experiences.',
+      'Harder: Share current struggles appropriately.'
+    ],
+    completionCue: 'Connection made? Done.'
+  },
+
+  // --- Digital Communication ---
   {
     id: 'digital_email_clarity',
     name: 'Email Subject Line Clarity',
@@ -341,6 +1203,54 @@ export const communicationPractices: Exercise[] = [
     ],
     completionCue: 'Medium chosen. Decision made.'
   },
+  {
+    id: 'digital_chat_etiquette',
+    name: 'Meeting Chat Etiquette',
+    description: 'Use chat features productively without disrupting meeting flow.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: MessageSquare,
+    category: 'Digital',
+    tags: ['digital', 'professional', 'meetings', 'etiquette'],
+    intention: 'Use chat features productively without disrupting the meeting flow.',
+    setup: ['Identify an upcoming virtual meeting.'],
+    steps: [
+      '1. Use chat for: non-urgent questions, links, supporting points (+1).',
+      '2. Avoid: side conversations, distracting jokes, redundant questions.',
+      '3. For urgent questions, use the "raise hand" feature or polite verbal interruption.',
+      '4. If presenting, assign someone to monitor chat.',
+      '5. Review chat after the meeting for action items.'
+    ],
+    modifications: [
+      'Easier: Just stay quiet in chat unless sharing a resource.',
+      'Harder: Actively moderate chat as a facilitator.'
+    ],
+    completionCue: 'Chat norms applied. Flow maintained.'
+  },
+  {
+    id: 'digital_screen_share',
+    name: 'Screen Share Best Practices',
+    description: 'Deliver clear, professional virtual presentations.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: MonitorSmartphone,
+    category: 'Digital',
+    tags: ['digital', 'professional', 'presentations', 'video'],
+    intention: 'Deliver clear, professional presentations in virtual settings.',
+    setup: ['Open a test video meeting.'],
+    steps: [
+      '1. Close unnecessary tabs and apps (especially Slack/Email).',
+      '2. Share a specific window rather than your entire screen.',
+      '3. Zoom into content (125-150%) for better visibility.',
+      '4. Narrate your actions: "I\'m opening the budget tab now...".',
+      '5. Periodically check if everyone can see the content.'
+    ],
+    modifications: [
+      'Easier: Just close email before sharing anything.',
+      'Harder: Use annotation tools (pointer/highlighter) to guide attention.'
+    ],
+    completionCue: 'Sharing handled like a pro. Done.'
+  },
 
   // --- Professional ---
   {
@@ -454,7 +1364,7 @@ export const communicationPractices: Exercise[] = [
       '1. Gravitas: Maintain composure during challenges, own mistakes.',
       '2. Communication: Use pauses for emphasis, eliminate filler words.',
       '3. Appearance: Dress appropriately for your context.',
-      '4. Self-assess: record yourself and watch for these elements.',
+      '4. Self-assess: record yourself in a meeting or presentation and watch for these elements.',
       '5. Get trusted feedback from a mentor.'
     ],
     modifications: [
@@ -510,5 +1420,31 @@ export const communicationPractices: Exercise[] = [
       'Harder: Navigate boundary-setting with difficult cultures.'
     ],
     completionCue: 'Boundaries communicated. Space protected.'
+  },
+
+  // --- Storytelling ---
+  {
+    id: 'story_3act',
+    name: 'Three-Act Micro-Story',
+    description: 'Structure a point using a simple narrative arc.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: BookOpen,
+    category: 'Storytelling',
+    tags: ['storytelling', 'clarity'],
+    intention: 'Make your points more engaging and memorable by using a narrative structure.',
+    setup: ['Choose a point you want to make.'],
+    steps: [
+      '1. Setup: State the initial situation or context.',
+      '2. Conflict: Introduce the challenge or turning point.',
+      '3. Resolution: State the outcome or lesson learned.',
+      '4. Keep it under 60 seconds.',
+      '5. Connect the resolution back to your main point.'
+    ],
+    modifications: [
+      'Easier: Just use "Before, Then, After" structure.',
+      'Harder: Include a sensory detail in the setup.'
+    ],
+    completionCue: 'Story arc complete? Done.'
   }
 ];
