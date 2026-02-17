@@ -43,37 +43,37 @@ function WellnessTabsContent({ filterTags = [] }: WellnessTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <div className="flex justify-start sm:justify-center mb-6 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-        <TabsList className="inline-flex flex-nowrap w-auto sm:grid sm:grid-cols-5 sm:w-full sm:max-w-3xl h-auto p-1 bg-muted/50 min-w-max sm:min-w-0">
-            <AssistantTooltip text="Physical activity to restore ease, build strength, or boost energy.">
-              <TabsTrigger value="movement" className="gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
+        <TabsList className="flex flex-nowrap w-full sm:grid sm:grid-cols-5 sm:w-full sm:max-w-3xl h-auto p-1 bg-muted/50 min-w-max sm:min-w-0">
+            <AssistantTooltip text="Physical activity to restore ease, build strength, or boost energy." className="flex-1" display="block">
+              <TabsTrigger value="movement" className="w-full gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
                 <HeartPulse className="w-4 h-4 hidden sm:inline"/>
                 Movement
               </TabsTrigger>
             </AssistantTooltip>
             
-            <AssistantTooltip text="Mindfulness and breathwork to regulate your nervous system.">
-              <TabsTrigger value="stillness" className="gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
+            <AssistantTooltip text="Mindfulness and breathwork to regulate your nervous system." className="flex-1" display="block">
+              <TabsTrigger value="stillness" className="w-full gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
                 <Waves className="w-4 h-4 hidden sm:inline"/>
                 Stillness
               </TabsTrigger>
             </AssistantTooltip>
 
-            <AssistantTooltip text="Evidence-based dialogue and interpersonal practices.">
-              <TabsTrigger value="communication" className="gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
+            <AssistantTooltip text="Evidence-based dialogue and interpersonal practices." className="flex-1" display="block">
+              <TabsTrigger value="communication" className="w-full gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
                 <MessageSquare className="w-4 h-4 hidden sm:inline"/>
                 Communication
               </TabsTrigger>
             </AssistantTooltip>
             
-            <AssistantTooltip text="Resource management to reduce survival stress.">
-              <TabsTrigger value="finance" className="gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
+            <AssistantTooltip text="Resource management to reduce survival stress." className="flex-1" display="block">
+              <TabsTrigger value="finance" className="w-full gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
                 <Wallet className="w-4 h-4 hidden sm:inline"/>
                 Finance
               </TabsTrigger>
             </AssistantTooltip>
             
-            <AssistantTooltip text="Optimizing your intake for brain health.">
-              <TabsTrigger value="diet" className="gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
+            <AssistantTooltip text="Optimizing your intake for brain health." className="flex-1" display="block">
+              <TabsTrigger value="diet" className="w-full gap-2 py-2 text-xs sm:text-sm whitespace-nowrap px-4 sm:px-2">
                 <Utensils className="w-4 h-4 hidden sm:inline"/>
                 Nutrition
               </TabsTrigger>
