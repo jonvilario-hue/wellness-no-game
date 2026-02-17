@@ -45,7 +45,7 @@ export const movementExercises: Exercise[] = [
     intention: 'Wake up your body and sharpen your mind with a balanced sequence.',
     setup: ['Find a quiet space with enough room to stretch.', 'Wear comfortable clothing.'],
     steps: [
-      '1. Start in Child\'s Pose (knees wide, big toes touching, forehead on floor).',
+      '1. Start in Mouse Pose (knees wide, big toes touching, forehead on floor).',
       '2. Move to all fours for Cat-Cow (arching and rounding the back with breath).',
       '3. Tuck toes and lift hips high for Downward Facing Dog.',
       '4. Step forward slowly into a Forward Fold, letting the head hang.',
@@ -54,7 +54,7 @@ export const movementExercises: Exercise[] = [
     ],
     modifications: [
       'Make it easier: Keep knees bent significantly in Downward Dog and Forward Fold.',
-      'Make it harder: Hold each pose for 10 deep breaths instead of moving through.'
+      'Make it harder: Hold each pose for 10 deep breaths instead of moving through'
     ],
     completionCue: 'Feel your body awake and mind centered? You are ready.'
   },
@@ -132,7 +132,7 @@ export const movementExercises: Exercise[] = [
     completionCue: 'Once you feel steady and synchronized, you have finished.'
   },
 
-  // --- Wakeup & Wind-Down (New Yoga/Tai Chi) ---
+  // --- Wakeup & Wind-Down ---
   {
     id: 'yoga_sun_salutation',
     name: 'Morning Sun Salutation',
@@ -231,7 +231,7 @@ export const movementExercises: Exercise[] = [
     completionCue: 'Feel your pulse slowing? You are ready for rest.'
   },
 
-  // --- Stretching (Yoga Poses) ---
+  // --- Stretching ---
   {
     id: 'yoga_down_dog',
     name: 'Classic Downward Dog',
@@ -257,8 +257,8 @@ export const movementExercises: Exercise[] = [
     completionCue: 'When your spine feels long and legs feel stretched, you are done.'
   },
   {
-    id: 'yoga_childs_pose',
-    name: 'Deep Child\'s Pose',
+    id: 'yoga_mouse_pose',
+    name: 'Deep Mouse Pose',
     description: 'A grounding pose to release the lower back and shoulders.',
     duration: 120,
     estimatedMinutes: 2,
@@ -500,7 +500,7 @@ export const movementExercises: Exercise[] = [
     completionCue: 'Hips feeling mobile and heart pumping? Excellent work.'
   },
 
-  // --- Original Content Continued ---
+  // --- Original Content ---
   {
     id: 'stretch_neck',
     name: 'Neck & Shoulder Release',
