@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -94,6 +93,16 @@ export function DietTracker() {
     const handleCopyYesterday = () => {
         const yesterday = format(subDays(selectedDate, 1), 'yyyy-MM-dd');
         copyDayLog(yesterday, dateStr);
+    };
+
+    const currentWaterCount = waterLogs[dateStr] || 0;
+
+    const handleWaterIconClick = (index: number) => {
+        const targetLevel = index + 1;
+        // If clicking the current highest active icon, uncheck it (decrement by 1)
+        // Otherwise, set the level to the clicked icon's position
+        const newLevel = currentWaterCount === targetLevel ? index : targetLevel;
+        addWater(dateStr, newLevel - currentWaterCount);
     };
 
     if (lowEnergyMode) {
@@ -281,15 +290,15 @@ export function DietTracker() {
                                         size="icon" 
                                         className={cn(
                                             "w-8 h-8 rounded-full border border-blue-500/20 transition-all", 
-                                            i < (waterLogs[dateStr] || 0) ? "bg-blue-500 text-white" : "text-blue-500/40 hover:bg-blue-500/10"
+                                            i < currentWaterCount ? "bg-blue-500 text-white" : "text-blue-500/40 hover:bg-blue-500/10"
                                         )}
-                                        onClick={() => addWater(dateStr, 1)}
+                                        onClick={() => handleWaterIconClick(i)}
                                     >
                                         <Droplets className="w-4 h-4" />
                                     </Button>
                                 ))}
                             </div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Daily Target Met: {Math.min(100, ((waterLogs[dateStr] || 0) / 8) * 100).toFixed(0)}%</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Daily Target Met: {Math.min(100, (currentWaterCount / 8) * 100).toFixed(0)}%</p>
                         </CardContent>
                     </Card>
                 </div>
