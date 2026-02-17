@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -7,7 +6,7 @@ import { useStudyDashboardStore } from '@/hooks/use-study-dashboard-store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Circle, Clock, Layers, Play, BookOpen, Sparkles, RefreshCw } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, Layers, Play, BookOpen, Sparkles, RefreshCw, BarChart3, ArrowRight } from 'lucide-react';
 import { format, parseISO, isToday } from 'date-fns';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
