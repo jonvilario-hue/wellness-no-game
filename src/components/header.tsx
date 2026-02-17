@@ -26,7 +26,7 @@ export function Header() {
         <div className="flex-1" />
         <div className="flex items-center gap-2">
              <FlaskConical className="h-7 w-7 text-primary" />
-             <h1 className="text-xl font-bold text-foreground tracking-tight">Polymath Lab</h1>
+             <h1 className="text-xl font-bold text-foreground tracking-tight">Omni Tool</h1>
         </div>
         <div className="flex-1" />
       </div>
@@ -74,7 +74,7 @@ export function Header() {
 
         <div className="flex items-center gap-2">
              <FlaskConical className="h-7 w-7 text-primary" />
-             <h1 className="text-xl font-bold text-foreground tracking-tight">Polymath Lab</h1>
+             <h1 className="text-xl font-bold text-foreground tracking-tight">Omni Tool</h1>
         </div>
         
         <TooltipProvider>

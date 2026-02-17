@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -39,13 +40,16 @@ export function WellnessLogDialog({
   
   const { addMovementLog, addStillnessLog } = useWellnessData();
   const { toast } = useToast();
+  
+  const lastOpenRef = useRef(false);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !lastOpenRef.current) {
       setType(initialType);
       setDate(initialDate || new Date());
       setSelectedId("");
     }
+    lastOpenRef.current = isOpen;
   }, [isOpen, initialType, initialDate]);
 
   const handleLog = () => {
