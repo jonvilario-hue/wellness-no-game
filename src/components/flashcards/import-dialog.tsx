@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef } from 'react';
@@ -44,46 +45,55 @@ export function ImportDialog({ open, onOpenChange }: { open: boolean; onOpenChan
     let processed = 0;
     const totalCards = preview.decks.reduce((sum, d) => sum + d.cards.length, 0);
 
-    for (const importDeck of preview.decks) {
-      // 1. Find or create deck
-      let deckId = existingDecks.find(d => d.name.toLowerCase() === importDeck.name.toLowerCase())?.id;
-      if (!deckId) {
-        const id = crypto.randomUUID();
-        // Since useFlashcardStore is using persist, we use its actions
-        // To avoid internal state issues during loops, we assume sequential execution
-        // Or in a real app, use a dedicated batch action
-        addDeck({ name: importDeck.name, description: importDeck.description });
-        // Refresh deckId from updated store would be better, for MVP we re-query
-        const updatedDecks = useFlashcardStore.getState().decks;
-        deckId = updatedDecks.find(d => d.name === importDeck.name)?.id || 'default';
-      }
-
-      // 2. Import cards
-      for (const importCard of importDeck.cards) {
-        const existing = existingCards.find(c => c.front === importCard.front && c.deckId === deckId);
-        
-        if (existing && overwrite) {
-          updateCard({ ...existing, ...importCard });
-        } else if (!existing) {
-          addCard({
-            front: importCard.front || '',
-            back: importCard.back || '',
-            deckId: deckId,
-            type: (importCard.type as any) || 'basic',
-            tags: importCard.tags
-          });
+    try {
+      for (const importDeck of preview.decks) {
+        // 1. Find or create deck
+        let deckId = existingDecks.find(d => d.name.toLowerCase() === importDeck.name.toLowerCase())?.id;
+        if (!deckId) {
+          addDeck({ name: importDeck.name, description: importDeck.description });
+          const updatedDecks = useFlashcardStore.getState().decks;
+          deckId = updatedDecks.find(d => d.name === importDeck.name)?.id || 'default';
         }
-        
-        processed++;
-        setProgress((processed / totalCards) * 100);
-        // Add artificial delay for UI if very fast
-        if (totalCards > 100) await new Promise(r => setTimeout(r, 0));
-      }
-    }
 
-    toast({ title: "Import Successful", description: `Processed ${totalCards} cards across ${preview.decks.length} decks.`, variant: "success" });
-    onOpenChange(false);
-    reset();
+        // 2. Import cards
+        for (const importCard of importDeck.cards) {
+          const existing = existingCards.find(c => c.front === importCard.front && c.deckId === deckId);
+          
+          if (existing && overwrite) {
+            updateCard({ ...existing, ...importCard });
+          } else if (!existing) {
+            addCard({
+              front: importCard.front || '',
+              back: importCard.back || '',
+              deckId: deckId,
+              type: (importCard.type as any) || 'basic',
+              tags: importCard.tags
+            });
+          }
+          
+          processed++;
+          setProgress((processed / totalCards) * 100);
+          // Yield to main thread for UI updates
+          if (processed % 10 === 0) await new Promise(r => setTimeout(r, 0));
+        }
+      }
+
+      toast({ title: "Import Successful", description: `Processed ${totalCards} cards.`, variant: "success" });
+      onOpenChange(false);
+      reset();
+    } catch (err: any) {
+      console.error("Import error:", err);
+      if (err.name === 'QuotaExceededError') {
+        toast({ 
+          title: "Storage Full", 
+          description: "Your browser storage is full. Go to Settings > Data and clear 'Rolling Snapshots' to make room.", 
+          variant: "destructive" 
+        });
+      } else {
+        toast({ title: "Import Interrupted", description: "An error occurred during import.", variant: "destructive" });
+      }
+      setStep('preview');
+    }
   };
 
   const reset = () => {

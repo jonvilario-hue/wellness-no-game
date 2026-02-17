@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -76,7 +77,8 @@ export function VisualPairingTool() {
     }
     const canvas = canvasRef.current;
     if (canvas) {
-      const image = canvas.toDataURL('image/png');
+      // Switched from PNG to JPEG with compression to significantly reduce LocalStorage usage
+      const image = canvas.toDataURL('image/jpeg', 0.6);
       addVisualPair({ concept, image });
       toast({ title: "Visual-Verbal pair saved to vault!", variant: "success" });
       setConcept('');
@@ -181,19 +183,21 @@ export function VisualPairingTool() {
                         {new Date(pair.date).toLocaleDateString()}
                       </CardDescription>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0 transition-opacity"
-                      onClick={() => {
-                        deleteVisualPair(pair.id);
-                        toast({ title: "Visual pair removed" });
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
                   </div>
                 </CardHeader>
+                <CardFooter className="p-4 pt-0">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full h-8 text-destructive hover:bg-destructive/5 font-bold uppercase text-[10px] tracking-widest"
+                    onClick={() => {
+                      deleteVisualPair(pair.id);
+                      toast({ title: "Visual pair removed" });
+                    }}
+                  >
+                    <Trash2 className="w-3 h-3 mr-2" /> Delete Card
+                  </Button>
+                </CardFooter>
               </Card>
             ))
           )}

@@ -5,13 +5,14 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 // Keys that are part of the portable "User Data"
+// Cleaned up to only include current active versions to save space
 export const ALL_STORAGE_KEYS = [
-  'blueprint-store-local-v1',
+  'blueprint-store-local-vachievement-v2', // v2 is current
   'calendar-plans-storage-v3',
-  'flashcard-storage-v3',
-  'srs-master-storage-v1',
+  'flashcard-storage-v4', // v4 is current for Study Hub
+  'srs-master-storage-v1', // SRS Master page
   'journal-storage-v2',
-  'wellness-data-storage-v2',
+  'wellness-data-storage-v3', // v3 is current
   'alarm-storage',
   'dashboard-settings-storage-v6',
   'motivation-storage',
@@ -46,6 +47,7 @@ interface SnapshotState {
   createSnapshot: (label?: string) => void;
   restoreSnapshot: (id: string) => void;
   deleteSnapshot: (id: string) => void;
+  clearAllSnapshots: () => void;
   checkAutoSnapshot: () => void;
 }
 
@@ -53,7 +55,7 @@ export const useSnapshotStore = create<SnapshotState>()(
   persist(
     (set, get) => ({
       snapshots: [],
-      maxSnapshots: 10,
+      maxSnapshots: 3, // Reduced from 10 to 3 to prevent LocalStorage Quota errors
       lastAutoSnapshotDate: null,
       isLoaded: false,
 
@@ -79,7 +81,13 @@ export const useSnapshotStore = create<SnapshotState>()(
         // Rolling deletion logic
         const updatedSnapshots = [newSnapshot, ...snapshots].slice(0, maxSnapshots);
         
-        set({ snapshots: updatedSnapshots });
+        try {
+          set({ snapshots: updatedSnapshots });
+        } catch (e) {
+          // If we still hit quota, try keeping only 1 snapshot
+          console.warn("Snapshot failed due to quota, attempting to keep only most recent.");
+          set({ snapshots: [newSnapshot] });
+        }
       },
 
       restoreSnapshot: (id) => {
@@ -102,6 +110,10 @@ export const useSnapshotStore = create<SnapshotState>()(
         }));
       },
 
+      clearAllSnapshots: () => {
+        set({ snapshots: [] });
+      },
+
       checkAutoSnapshot: () => {
         const { lastAutoSnapshotDate, createSnapshot } = get();
         const now = new Date();
@@ -117,7 +129,7 @@ export const useSnapshotStore = create<SnapshotState>()(
       }
     }),
     {
-      name: 'data-snapshot-storage-v1', // This store key is NOT in ALL_STORAGE_KEYS to prevent self-recursion and ensure persistence during imports
+      name: 'data-snapshot-storage-v1', 
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);

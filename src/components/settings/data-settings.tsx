@@ -17,7 +17,8 @@ import {
   Clock, 
   PlusCircle, 
   Undo2, 
-  Trash2 
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { 
@@ -42,7 +43,8 @@ export function DataSettings() {
       setMaxSnapshots, 
       createSnapshot, 
       restoreSnapshot, 
-      deleteSnapshot 
+      deleteSnapshot,
+      clearAllSnapshots
     } = useSnapshotStore();
 
     useEffect(() => {
@@ -58,7 +60,7 @@ export function DataSettings() {
         } else {
             setStorageUsage('Not supported by browser');
         }
-    }, []);
+    }, [snapshots]);
 
     const handleExport = () => {
         const data: Record<string, string | null> = {};
@@ -121,13 +123,13 @@ export function DataSettings() {
                       <History className="w-5 h-5 text-primary" />
                       Rolling Snapshots
                     </CardTitle>
-                    <CardDescription>Automated local backups. The system keeps a weekly cycle of your data.</CardDescription>
+                    <CardDescription>Automated local backups. Keeping too many snapshots can fill up your browser's storage.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="flex items-center justify-between p-4 bg-primary/5 rounded-xl border border-primary/10">
                       <div className="space-y-1">
                         <Label className="text-sm font-bold">Snapshot Limit</Label>
-                        <p className="text-xs text-muted-foreground">Number of historical versions to keep before deleting the oldest.</p>
+                        <p className="text-xs text-muted-foreground">Recommended: 3 or fewer.</p>
                       </div>
                       <div className="flex items-center gap-3 w-32">
                         <Input 
@@ -142,9 +144,30 @@ export function DataSettings() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-center px-1">
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Historical Timestamps</h4>
-                        <Button variant="ghost" size="sm" onClick={() => createSnapshot()} className="h-7 text-[10px] font-bold uppercase tracking-tight">
-                          <PlusCircle className="w-3 h-3 mr-1.5" /> Manual Snapshot
-                        </Button>
+                        <div className="flex gap-2">
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-7 text-[10px] font-bold uppercase text-destructive hover:bg-destructive/10">
+                                <AlertTriangle className="w-3 h-3 mr-1.5" /> Purge All
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete all snapshots?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will free up storage space but you will lose the ability to undo recent imports or restores. This does NOT delete your active data.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={clearAllSnapshots} className="bg-destructive text-destructive-foreground">Delete Snapshots</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          <Button variant="ghost" size="sm" onClick={() => createSnapshot()} className="h-7 text-[10px] font-bold uppercase tracking-tight">
+                            <PlusCircle className="w-3 h-3 mr-1.5" /> Manual Snapshot
+                          </Button>
+                        </div>
                       </div>
                       
                       <div className="space-y-2">
