@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -245,9 +244,15 @@ export default function ArchitecturePage() {
                 <Tabs defaultValue="library">
                   <div className="flex justify-center mb-8">
                       <TabsList className="grid w-full grid-cols-3 max-w-lg h-auto p-1 bg-muted/50">
-                        <TabsTrigger value="library" className="gap-2"><Book className="w-4 h-4" /> Strategy Library</TabsTrigger>
-                        <TabsTrigger value="playbook" className="gap-2 w-full"><Star className="w-4 h-4" /> My Playbook</TabsTrigger>
-                        <TabsTrigger value="advisor" className="gap-2 w-full"><BrainCircuit className="w-4 h-4" /> Advisor</TabsTrigger>
+                        <AssistantTooltip text="Browse our collection of evidence-based psychological frameworks. These protocols help you structure your intentions and handle cognitive friction.">
+                          <TabsTrigger value="library" className="gap-2"><Book className="w-4 h-4" /> Strategy Library</TabsTrigger>
+                        </AssistantTooltip>
+                        <AssistantTooltip text="A focused view of your favorited strategies. Storing strategies here makes them easily accessible for your active blueprints.">
+                          <TabsTrigger value="playbook" className="gap-2 w-full"><Star className="w-4 h-4" /> My Playbook</TabsTrigger>
+                        </AssistantTooltip>
+                        <AssistantTooltip text="Our procedural coaching engine. It analyzes your project state (deadlines, momentum, energy types) to suggest the perfect framework for your current needs.">
+                          <TabsTrigger value="advisor" className="gap-2 w-full"><BrainCircuit className="w-4 h-4" /> Advisor</TabsTrigger>
+                        </AssistantTooltip>
                       </TabsList>
                   </div>
                   
