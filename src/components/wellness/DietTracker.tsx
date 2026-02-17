@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +28,12 @@ export function DietTracker() {
     
     const [showAdd, setShowAdd] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
     
     const [mealForm, setMealForm] = useState<Omit<MealLog, 'id' | 'date'>>({
@@ -96,7 +101,7 @@ export function DietTracker() {
                         <PopoverTrigger asChild>
                             <Button variant="outline" className="h-9 px-4 font-bold border-primary/20 hover:bg-primary/5 transition-colors">
                                 <CalendarIcon className="w-4 h-4 mr-2 text-primary" />
-                                {format(selectedDate, 'MMMM d, yyyy')}
+                                {mounted ? format(selectedDate, 'MMMM d, yyyy') : 'Loading date...'}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
@@ -148,7 +153,7 @@ export function DietTracker() {
                     <CardContent className="space-y-3">
                         <div className="p-3 bg-background rounded-lg border text-xs flex gap-3">
                             <Zap className="w-4 h-4 text-primary shrink-0" />
-                            <p>Daily protein target for cognitive stability: <span className="font-bold">120g</span>. Logged for {format(selectedDate, 'MMM d')}: <span className="font-bold text-primary">{rollingStats.todayProtein}g</span>.</p>
+                            <p>Daily protein target for cognitive stability: <span className="font-bold">120g</span>. Logged for {mounted ? format(selectedDate, 'MMM d') : '...'}: <span className="font-bold text-primary">{rollingStats.todayProtein}g</span>.</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -159,7 +164,7 @@ export function DietTracker() {
                     {showAdd && (
                         <Card className="border-primary/20 animate-in zoom-in-95 duration-200">
                             <CardHeader className="flex flex-row items-center justify-between">
-                                <CardTitle className="text-base">Quick Meal Log ({format(selectedDate, 'MMM d')})</CardTitle>
+                                <CardTitle className="text-base">Quick Meal Log ({mounted ? format(selectedDate, 'MMM d') : '...'})</CardTitle>
                                 <Button variant="ghost" size="icon" onClick={() => setShowAdd(false)}><X className="w-4 h-4" /></Button>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -201,7 +206,7 @@ export function DietTracker() {
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-bold flex items-center gap-2">
                                 <History className="w-4 h-4 text-muted-foreground" />
-                                Logs for {format(selectedDate, 'PPP')}
+                                Logs for {mounted ? format(selectedDate, 'PPP') : '...'}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">

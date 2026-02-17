@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +45,11 @@ export function FinanceTracker() {
     const [showAdd, setShowAdd] = useState(false);
     const [activeView, setActiveView] = useState('overview');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Form State
     const [amount, setAmount] = useState('');
@@ -107,7 +111,7 @@ export function FinanceTracker() {
                         <PopoverTrigger asChild>
                             <Button variant="outline" className="h-9 px-4 font-bold border-primary/20 hover:bg-primary/5 transition-colors">
                                 <CalendarIcon className="w-4 h-4 mr-2 text-primary" />
-                                {format(selectedDate, 'MMM d, yyyy')}
+                                {mounted ? format(selectedDate, 'MMM d, yyyy') : 'Loading date...'}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
@@ -139,7 +143,7 @@ export function FinanceTracker() {
 
             <SynergyPanel />
 
-            <Tabs defaultValue="overview" onValueChange={setActiveView} className="w-full">
+            <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
                 <TabsList className="h-8 bg-muted/50 p-1 mb-4">
                     <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
                     <TabsTrigger value="history" className="text-xs">History</TabsTrigger>
@@ -149,7 +153,7 @@ export function FinanceTracker() {
                 <TabsContent value="overview" className="space-y-6">
                     {showAdd && (
                         <Card className="border-primary/20 animate-in slide-in-from-top-2 duration-300">
-                            <CardHeader><CardTitle className="text-base">Quick Entry ({format(selectedDate, 'MMM d')})</CardTitle></CardHeader>
+                            <CardHeader><CardTitle className="text-base">Quick Entry ({mounted ? format(selectedDate, 'MMM d') : '...'})</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5"><Label className="text-[10px] font-bold uppercase">Amount</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} /></div>
