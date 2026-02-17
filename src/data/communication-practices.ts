@@ -8,7 +8,8 @@ import {
   ListChecks, Map, Trash2, Gift, Repeat, RefreshCcw, 
   Layers, Link as LinkIcon, ShieldCheck, X, Users, Lightbulb,
   Briefcase, MonitorSmartphone, Shield, Bell, CheckCircle2, 
-  LayoutGrid, Pointer, TrendingUp, DoorOpen, HeartPulse, Zap
+  LayoutGrid, Pointer, TrendingUp, DoorOpen, HeartPulse, Zap,
+  History
 } from 'lucide-react';
 import type { Exercise } from './exercises';
 
@@ -681,7 +682,7 @@ export const communicationPractices: Exercise[] = [
     category: 'Persuasion',
     tags: ["persuasion", "influence", "professional"],
     intention: 'Leverage conformity to make your suggestion more appealing.',
-    setup: ['Identify a reference group relevant to your listener.'],
+    setup: ['Identify a relevant reference group relevant to your listener.'],
     steps: [
       '1. Identify relevant group ("people like you", "teams in your industry").',
       '2. State what they\'re doing: "Most of our clients start with...".',
@@ -972,7 +973,7 @@ export const communicationPractices: Exercise[] = [
     icon: Brain,
     category: 'Emotional Intelligence',
     tags: ["emotional-intelligence", "self-awareness", "regulation"],
-    intention: 'Reduce emotional intelligence by naming what you\'re feeling.',
+    intention: 'Reduce emotional intensity by naming what you\'re feeling.',
     setup: ['Pause during a stressful moment.'],
     steps: [
       '1. Pause and notice the physical sensation.',
@@ -1392,5 +1393,309 @@ export const communicationPractices: Exercise[] = [
       'Harder: Include a sensory detail in the setup.'
     ],
     completionCue: 'Story arc complete? Done.'
+  },
+  {
+    id: 'story_hook',
+    name: 'The Hook Opening',
+    description: 'Grab attention in your first sentence.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Zap,
+    category: 'Storytelling',
+    tags: ["storytelling", "hook", "attention", "opening", "confidence"],
+    intention: 'Learn to grab attention in your first sentence so listeners lean in instead of tuning out.',
+    setup: ['Pick a short personal story or anecdote (30 seconds max).'],
+    steps: [
+      '1. Pick a short personal story or anecdote (30 seconds max).',
+      '2. Identify the most surprising, emotional, or curiosity-provoking moment in that story.',
+      '3. Write an opening sentence that drops the listener directly into that moment (e.g., "I was standing on stage and completely forgot my name.").',
+      '4. Deliver the hook out loud, then pause for 2 full seconds before continuing.',
+      '5. Tell the rest of the story, noticing how the hook reframes everything that follows.',
+      '6. Try 2 more variations of the hook for the same story — one question-based, one sensory.'
+    ],
+    modifications: [
+      'Easier: Use a well-known story or movie plot instead of a personal one.',
+      'Harder: Deliver the hook cold to someone and ask them what they expected the story to be about. Adjust based on their response.'
+    ],
+    completionCue: 'Opening sharp and compelling? Done.'
+  },
+  {
+    id: 'story_contrast_flip',
+    name: 'Contrast & Flip',
+    description: 'Use the power of contrast for emotional impact.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: ArrowLeftRight,
+    category: 'Storytelling',
+    tags: ["storytelling", "contrast", "emotional-impact", "delivery", "structure"],
+    intention: 'Use the power of contrast to make your point land with emotional impact.',
+    setup: ['Choose a message or lesson you want to communicate.'],
+    steps: [
+      '1. Choose a message or lesson you want to communicate.',
+      '2. Describe the \'before\' state — the problem, the struggle, or the old way of thinking. Use vivid, specific language.',
+      '3. Pause. Let the \'before\' sit with the listener for a beat.',
+      '4. Now deliver the \'after\' — the shift, the realization, the new state. Make your voice, pace, or energy shift noticeably to mark the contrast.',
+      '5. Repeat the exercise, exaggerating the contrast between before and after even more.',
+      '6. Reflect: where in the flip did you feel the most tension release?'
+    ],
+    modifications: [
+      'Easier: Write out both the before and after statements first, then read them aloud.',
+      'Harder: Improvise the contrast live on a random topic given by a partner.'
+    ],
+    completionCue: 'Contrast delivered clearly? Done.'
+  },
+  {
+    id: 'story_pause',
+    name: 'The Pause for Power',
+    description: 'Use strategic silence to build tension.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Clock,
+    category: 'Storytelling',
+    tags: ["storytelling", "pause", "tension", "vocal-delivery", "presence"],
+    intention: 'Use strategic silence within a story to build tension, emphasize key moments, and hold attention.',
+    setup: ['Take a 1-minute story you can already tell comfortably.'],
+    steps: [
+      '1. Take a 1-minute story you can already tell comfortably.',
+      '2. Identify three key moments: the setup, the turning point, and the payoff.',
+      '3. Tell the story and insert a deliberate 2–3 second pause right before each key moment.',
+      '4. Notice how the pause changes the weight of what comes after it.',
+      '5. Now try a longer pause (4–5 seconds) before the single most important line. Resist the urge to fill the silence.',
+      '6. Record yourself or tell it to someone — ask which pause felt most powerful.'
+    ],
+    modifications: [
+      'Easier: Start with just one pause before the ending/payoff line only.',
+      'Harder: Tell a story where you use at least five intentional pauses of varying lengths, using silence as a rhythm tool throughout.'
+    ],
+    completionCue: 'Silence used for emphasis? Done.'
+  },
+  {
+    id: 'story_dynamics',
+    name: 'Vocal Dynamics in Story',
+    description: 'Vary pitch, pace, and volume for engagement.',
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: Activity,
+    category: 'Storytelling',
+    tags: ["storytelling", "vocal-variety", "delivery", "pitch", "pace", "engagement"],
+    intention: 'Vary your pitch, pace, and volume within a story to keep listeners emotionally engaged.',
+    setup: ['Pick a short story or anecdote (under 2 minutes).'],
+    steps: [
+      '1. Pick a short story or anecdote (under 2 minutes).',
+      '2. Tell it once at your normal speaking style. Notice where your voice stays flat.',
+      '3. Now retell it with these rules: slow down and get quieter during emotional or serious moments; speed up and raise energy during exciting or fast-paced moments; drop your pitch when delivering a key insight or punchline.',
+      '4. Exaggerate the dynamics to 150% of what feels natural. It will feel like too much — that is the point.',
+      '5. Dial it back to about 120% of natural. This is your new baseline.',
+      '6. Practice once more and notice how the dynamics guide the listener\'s emotions.'
+    ],
+    modifications: [
+      'Easier: Focus on varying just one element (pace OR volume OR pitch) rather than all three.',
+      'Harder: Record yourself telling the story and listen back, identifying at least 2 moments where you could push the dynamics further. Re-record.'
+    ],
+    completionCue: 'Vocal range expanded? Done.'
+  },
+  {
+    id: 'story_spine',
+    name: 'Story Spine',
+    description: 'Quickly structure any story with a clear arc.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: ListChecks,
+    category: 'Storytelling',
+    tags: ["storytelling", "structure", "framework", "clarity", "quick"],
+    intention: 'Use a simple fill-in-the-blank framework to quickly structure any story with a clear arc.',
+    setup: ['Set aside a few minutes to speak aloud.'],
+    steps: [
+      '1. Complete these prompts in order, speaking out loud:',
+      '   - "Once upon a time..." (set the scene/character)',
+      '   - "Every day..." (establish the routine/normal)',
+      '   - "But one day..." (introduce the disruption)',
+      '   - "Because of that..." (first consequence)',
+      '   - "Because of that..." (escalation)',
+      '   - "Until finally..." (climax/resolution)',
+      '   - "And ever since then..." (the new normal/lesson)',
+      '2. Keep each section to 1–2 sentences maximum.',
+      '3. Now retell the whole thing as a fluid story without the prompts.',
+      '4. Reflect: did the structure make the story feel more complete?'
+    ],
+    modifications: [
+      'Easier: Write out each section first before speaking.',
+      'Harder: A partner gives you a random topic and you complete the story spine improvisationally in under 90 seconds.'
+    ],
+    completionCue: 'Story arc established? Done.'
+  },
+  {
+    id: 'story_nested_loop',
+    name: 'The Nested Loop',
+    description: 'Story within a story for narrative depth.',
+    duration: 480,
+    estimatedMinutes: 8,
+    icon: Repeat,
+    category: 'Storytelling',
+    tags: ["storytelling", "structure", "advanced", "nested-loop", "depth"],
+    intention: 'Learn to open multiple story threads and close them in reverse order, creating satisfying narrative depth.',
+    setup: ['Think of two short, related stories that connect to a theme.'],
+    steps: [
+      '1. Think of two short, related stories or examples that connect to a single theme or point.',
+      '2. Begin telling Story A, but stop at a cliffhanger or moment of tension.',
+      '3. Transition into Story B with a bridging phrase (e.g., "That reminds me of..." or "Meanwhile...").',
+      '4. Complete Story B fully, landing on its insight or conclusion.',
+      '5. Return to Story A and complete it. The listener now hears Story A\'s ending with Story B\'s lesson still fresh in their mind.',
+      '6. Reflect: did the nesting make the overall message stronger? Where was the transition smoothest?'
+    ],
+    modifications: [
+      'Easier: Write out both stories and the transition phrases before speaking.',
+      'Harder: Use three nested stories (A → B → C → close C → close B → close A). Keep total time under 3 minutes.'
+    ],
+    completionCue: 'Narrative loops closed? Done.'
+  },
+  {
+    id: 'story_sensory',
+    name: 'Sensory Scene Setting',
+    description: 'Engage senses instead of summarizing.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Eye,
+    category: 'Storytelling',
+    tags: ["storytelling", "sensory", "vivid", "show-dont-tell", "immersion"],
+    intention: 'Transport your listener into the moment by engaging specific senses instead of summarizing what happened.',
+    setup: ['Think of a moment from your life that was emotionally vivid.'],
+    steps: [
+      '1. Think of a moment from your life that was emotionally vivid.',
+      '2. Describe it using only sensory details. No opinions, no labels, no emotions by name. Just what you saw, heard, felt physically, smelled, or tasted.',
+      '3. Speak for 30–45 seconds of pure sensory description.',
+      '4. Now add one sentence at the end that names the emotion or insight.',
+      '5. Notice how the sensory setup made that final line hit differently than if you had just said the emotion up front.',
+      '6. Try again with a different moment, aiming to include at least 3 different senses.'
+    ],
+    modifications: [
+      'Easier: Focus on just two senses (sight + sound) to start.',
+      'Harder: Describe the scene without ever naming the emotion — let the listener infer it entirely from the sensory details. Ask them what they felt.'
+    ],
+    completionCue: 'Scene vividly rendered? Done.'
+  },
+  {
+    id: 'story_callback',
+    name: 'The Callback',
+    description: 'Plant a detail early and bring it back.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: History,
+    category: 'Storytelling',
+    tags: ["storytelling", "callback", "payoff", "memorability", "structure"],
+    intention: 'Plant a detail early in your story and bring it back at the end for a satisfying payoff that makes your message memorable.',
+    setup: ['Choose a story or talking point you use often.'],
+    steps: [
+      '1. Choose a story or talking point you use often.',
+      '2. Identify a small, specific detail near the beginning (an image, a phrase, an object, a number).',
+      '3. Tell the story, making sure to mention that detail clearly but without emphasizing it.',
+      '4. At the end of the story, bring that detail back — reframe it, give it new meaning, or repeat it with a twist.',
+      '5. Notice the effect. Callbacks create a sense of completeness and make audiences feel rewarded for paying attention.',
+      '6. Practice with a different detail to see which callback lands strongest.'
+    ],
+    modifications: [
+      'Easier: Write the beginning and ending first, then fill in the middle.',
+      'Harder: In a group conversation or presentation, plant a callback in your opening and land it in your closing without scripting the middle.'
+    ],
+    completionCue: 'Narrative payoff achieved? Done.'
+  },
+  {
+    id: 'story_stakes',
+    name: 'Stakes Escalation',
+    description: 'Raise the stakes progressively.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: TrendingUp,
+    category: 'Storytelling',
+    tags: ["storytelling", "stakes", "tension", "escalation", "engagement"],
+    intention: 'Practice raising the stakes progressively within a story so listeners feel increasing investment and urgency.',
+    setup: ['Think of a scenario that could escalate.'],
+    steps: [
+      '1. Start with a low-stakes scenario (e.g., "I was running late for a meeting.").',
+      '2. Add a complication that raises the stakes one level (e.g., "...and it was the meeting where I was presenting to the CEO.").',
+      '3. Add another complication that raises them again (e.g., "...and my laptop died in the elevator.").',
+      '4. Deliver each escalation with slightly more urgency in your voice. Let the stakes build in your delivery, not just your words.',
+      '5. Land on a resolution that addresses the highest stake, not the lowest.',
+      '6. Retell the full story smoothly from start to finish.'
+    ],
+    modifications: [
+      'Easier: Write out three levels of stakes before speaking.',
+      'Harder: Start with a mundane scenario a partner gives you and improvise three escalations on the spot, keeping them believable.'
+    ],
+    completionCue: 'Tension effectively built? Done.'
+  },
+  {
+    id: 'story_one_sentence',
+    name: 'One-Sentence Story',
+    description: 'Distill a story to its emotional core.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: Target,
+    category: 'Storytelling',
+    tags: ["storytelling", "clarity", "concise", "hook", "focus", "quick"],
+    intention: 'Distill a story to its emotional core in a single sentence, then expand from there. Clarity before complexity.',
+    setup: ['Think of a meaningful experience.'],
+    steps: [
+      '1. Think of a meaningful experience or a point you want to make.',
+      '2. Capture it in one sentence. Not a summary — a sentence that makes someone feel something (e.g., "I spent 10 years building something that took 10 seconds to lose.").',
+      '3. Say it out loud. Does it land? Does it make someone want to ask \'what happened?\'',
+      '4. If not, rewrite. Strip out abstractions. Make it concrete and specific.',
+      '5. Once the single sentence works, use it as your hook and tell the full story behind it in under 90 seconds.',
+      '6. The one-sentence version is your anchor — every detail in the longer version should serve it.'
+    ],
+    modifications: [
+      'Easier: Look up famous one-sentence story examples for inspiration before writing your own.',
+      'Harder: Write five one-sentence stories for five different experiences in under 3 minutes, then pick the strongest and expand it live.'
+    ],
+    completionCue: 'Emotional core captured? Done.'
+  },
+  {
+    id: 'story_perspective_shift',
+    name: 'Perspective Shift',
+    description: 'Retell the same event from a different POV.',
+    duration: 420,
+    estimatedMinutes: 7,
+    icon: Users,
+    category: 'Storytelling',
+    tags: ["storytelling", "perspective", "empathy", "active-listening", "depth"],
+    intention: 'Retell the same event from a different person\'s point of view to build empathy and discover new angles in your stories.',
+    setup: ['Pick a story involving at least two people.'],
+    steps: [
+      '1. Pick a story you already know well — ideally one involving at least two people.',
+      '2. Tell it from your own perspective in about 60 seconds.',
+      '3. Now retell the same event from the other person\'s perspective. What did they see? What were they feeling? What did they not know that you knew?',
+      '4. Notice what details change, what new emotions emerge, and what becomes more interesting.',
+      '5. Try telling a version that weaves both perspectives together, switching between them.',
+      '6. Reflect: which version is most compelling for your intended audience?'
+    ],
+    modifications: [
+      'Easier: Start with a simple, low-emotion event like a misunderstanding at a coffee shop.',
+      'Harder: Retell from the perspective of someone you disagreed with, presenting their view as the sympathetic one.'
+    ],
+    completionCue: 'POV successfully shifted? Done.'
+  },
+  {
+    id: 'story_rule_of_three',
+    name: 'The Rule of Three',
+    description: 'Structure points in groups of three for rhythm.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: LayoutGrid,
+    category: 'Storytelling',
+    tags: ["storytelling", "rule-of-three", "structure", "rhythm", "memorability"],
+    intention: 'Structure examples, beats, or story points in groups of three for rhythm, memorability, and comedic or dramatic effect.',
+    setup: ['Choose a lesson or point to teach.'],
+    steps: [
+      '1. Choose a point you want to make or a lesson you want to teach.',
+      '2. Come up with three examples, anecdotes, or beats that illustrate it — each escalating in intensity or importance.',
+      '3. Deliver them in sequence: the first sets the pattern, the second confirms the pattern, the third either breaks the pattern (for humor/surprise) or elevates it (for drama/impact).',
+      '4. Pay attention to the rhythm of your delivery. The third beat should have a noticeably different energy — either a pause before it, a shift in tone, or a change in pace.',
+      '5. Try a version where the third element is the twist/punchline, and another where it is the emotional peak.'
+    ],
+    modifications: [
+      'Easier: Use a classic joke structure (setup, setup, punchline) as your template.',
+      'Harder: Use the rule of three within an impromptu 2-minute talk on a topic a partner gives you.'
+    ],
+    completionCue: 'Rhythm and structure applied? Done.'
   }
 ];
