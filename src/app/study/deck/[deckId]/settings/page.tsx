@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useFlashcardStore, DEFAULT_DECK_SETTINGS } from '@/hooks/use-flashcard-store';
@@ -13,12 +12,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { ArrowLeft, Save, RotateCcw, Info, SlidersHorizontal, AlertCircle, Eye, Zap, Layers, History, Clock, Target, Calendar } from 'lucide-react';
+import { ArrowLeft, Save, RotateCcw, Info, SlidersHorizontal, AlertCircle, Eye, Zap, Layers, History, Clock, Target, Calendar, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import type { PresetType } from '@/types/flashcards';
 
 const parseSteps = (val: string): number[] => {
   return val.split(/\s+/).map(s => {
@@ -40,7 +43,50 @@ const formatSteps = (steps: number[]): string => {
   }).join(' ');
 };
 
+const PROFILES: Record<Exclude<PresetType, 'custom'>, any> = {
+  casual: {
+    newCardsPerDay: 10,
+    learningSteps: [1, 10, 1440],
+    graduatingIntervalDays: 2,
+    startingEase: 2.5,
+    maximumIntervalDays: 90,
+    leechThreshold: 12,
+  },
+  exam: {
+    newCardsPerDay: 40,
+    learningSteps: [1, 10],
+    graduatingIntervalDays: 1,
+    maximumIntervalDays: 30,
+    maxReviewsPerDay: 300,
+  },
+  language: {
+    newCardsPerDay: 20,
+    learningSteps: [10, 1440, 4320],
+    easyIntervalDays: 7,
+    startingEase: 2.4,
+    autoplayAudio: true,
+    buryNewSiblings: true,
+    buryReviewSiblings: true,
+  },
+  medical: {
+    newCardsPerDay: 25,
+    learningSteps: [15, 1440, 4320, 10080],
+    graduatingIntervalDays: 7,
+    startingEase: 2.2,
+    maximumIntervalDays: 365,
+    leechThreshold: 4,
+  },
+  quick: {
+    newCardsPerDay: 5,
+    learningSteps: [1440],
+    graduatingIntervalDays: 4,
+    intervalModifier: 1.3,
+    maxReviewsPerDay: 50,
+  }
+};
+
 const deckSettingsSchema = z.object({
+  activePreset: z.enum(['casual', 'exam', 'language', 'medical', 'quick', 'custom']),
   // New Cards
   newCardsPerDay: z.coerce.number().int().min(0),
   learningSteps: z.string(),
@@ -95,7 +141,7 @@ export default function DeckSettingsPage() {
   const { decks, updateDeck } = useFlashcardStore();
   const deck = decks.find(d => d.id === deckId);
 
-  const { control, handleSubmit, reset, watch, formState: { errors, isDirty } } = useForm<DeckSettingsFormValues>({
+  const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty } } = useForm<DeckSettingsFormValues>({
     resolver: zodResolver(deckSettingsSchema),
     defaultValues: {
       ...DEFAULT_DECK_SETTINGS,
@@ -109,9 +155,12 @@ export default function DeckSettingsPage() {
   });
 
   const algorithm = watch('algorithm');
+  const activePreset = watch('activePreset');
+  const isInternalUpdate = useRef(false);
 
   useEffect(() => {
     if (deck?.settings) {
+      isInternalUpdate.current = true;
       reset({
         ...deck.settings,
         learningSteps: formatSteps(deck.settings.learningSteps || [1, 10]),
@@ -121,8 +170,64 @@ export default function DeckSettingsPage() {
         intervalModifier: (deck.settings.intervalModifier || 1.0) * 100,
         hardIntervalModifier: (deck.settings.hardIntervalModifier || 1.2) * 100,
       });
+      setTimeout(() => { isInternalUpdate.current = false; }, 0);
     }
   }, [deck, reset]);
+
+  // Handle preset selection
+  const applyPreset = (type: PresetType) => {
+    if (type === 'custom') return;
+    
+    isInternalUpdate.current = true;
+    const profile = PROFILES[type];
+    
+    Object.entries(profile).forEach(([key, val]) => {
+      let finalVal = val;
+      if (key === 'learningSteps') finalVal = formatSteps(val as number[]);
+      if (['startingEase', 'easyBonus', 'intervalModifier', 'hardIntervalModifier'].includes(key)) {
+        finalVal = (val as number) * 100;
+      }
+      setValue(key as any, finalVal, { shouldDirty: true });
+    });
+    
+    setValue('activePreset', type, { shouldDirty: true });
+    setTimeout(() => { isInternalUpdate.current = false; }, 0);
+    
+    toast({ title: `Applied ${type.charAt(0).toUpperCase() + type.slice(1)} Preset`, variant: 'success' });
+  };
+
+  // Watch all values to detect manual changes
+  const formValues = watch();
+  useEffect(() => {
+    if (isInternalUpdate.current) return;
+    
+    const currentPreset = formValues.activePreset;
+    if (currentPreset === 'custom') return;
+
+    // Check if current form state matches the selected preset
+    const profile = PROFILES[currentPreset as keyof typeof PROFILES];
+    if (!profile) return;
+
+    let hasChanged = false;
+    for (const [key, val] of Object.entries(profile)) {
+      let formVal = (formValues as any)[key];
+      let compareVal = val;
+      
+      if (key === 'learningSteps') compareVal = formatSteps(val as number[]);
+      if (['startingEase', 'easyBonus', 'intervalModifier', 'hardIntervalModifier'].includes(key)) {
+        compareVal = (val as number) * 100;
+      }
+
+      if (formVal !== compareVal) {
+        hasChanged = true;
+        break;
+      }
+    }
+
+    if (hasChanged) {
+      setValue('activePreset', 'custom');
+    }
+  }, [formValues, setValue]);
 
   const onSubmit = (data: DeckSettingsFormValues) => {
     const finalSettings = {
@@ -140,19 +245,24 @@ export default function DeckSettingsPage() {
     router.push(`/study/deck/${deckId}`);
   };
 
-  const resetSection = (fields: (keyof DeckSettingsFormValues)[]) => {
-    const defaults: any = {};
-    fields.forEach(f => {
-      let val = (DEFAULT_DECK_SETTINGS as any)[f];
-      if (f === 'learningSteps' || f === 'relearningSteps') val = formatSteps(val);
-      if (['startingEase', 'easyBonus', 'intervalModifier', 'hardIntervalModifier'].includes(f as string)) val *= 100;
-      defaults[f] = val;
-    });
-    reset({ ...watch(), ...defaults });
-    toast({ title: "Section reset to defaults" });
+  const resetToPreset = () => {
+    if (deck?.settings?.activePreset && deck.settings.activePreset !== 'custom') {
+      applyPreset(deck.settings.activePreset);
+    } else {
+      applyPreset('casual');
+    }
   };
 
   if (!deck) return <div className="p-8 text-center">Deck not found</div>;
+
+  const presetLabels: Record<PresetType, { label: string; desc: string }> = {
+    casual: { label: 'Casual Learning', desc: 'New info, low pressure. 10 cards/day, forgiving' },
+    exam: { label: 'Exam Prep', desc: 'High volume, strict retention. 40 cards/day' },
+    language: { label: 'Language Learning', desc: 'Frequent exposure, pronunciation focus' },
+    medical: { label: 'Medical/Professional', desc: 'Long-term retention, high stakes material' },
+    quick: { label: 'Quick Review', desc: 'Maintenance mode. 5 cards/day, longer intervals' },
+    custom: { label: 'Custom', desc: 'Manually configure settings below' },
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-20">
@@ -161,13 +271,52 @@ export default function DeckSettingsPage() {
           <Button asChild variant="ghost" className="mb-2 p-0 hover:bg-transparent text-muted-foreground hover:text-primary">
             <Link href={`/study/deck/${deckId}`}><ArrowLeft className="mr-2 h-4 w-4" /> Back to Deck</Link>
           </Button>
-          <h1 className="text-4xl font-bold font-headline tracking-tight text-foreground">Algorithm Mastery</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-4xl font-bold font-headline tracking-tight text-foreground">Algorithm Mastery</h1>
+            {activePreset !== 'custom' && (
+              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 gap-1.5 uppercase text-[10px] font-black h-6">
+                <Sparkles className="w-3 h-3" /> {activePreset} profile
+              </Badge>
+            )}
+          </div>
           <p className="text-muted-foreground mt-1">Fine-tune the Spaced Repetition logic for <span className="text-primary font-bold">{deck.name}</span>.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => reset({ ...DEFAULT_DECK_SETTINGS, learningSteps: '1m 10m', relearningSteps: '10m', startingEase: 250, easyBonus: 130, intervalModifier: 100, hardIntervalModifier: 120 } as any)} className="text-muted-foreground hover:text-foreground">
-            <RotateCcw className="w-3.5 h-3.5 mr-2" /> Global Reset
+        <Button variant="outline" size="sm" onClick={resetToPreset} className="text-muted-foreground hover:text-foreground">
+            <RotateCcw className="w-3.5 h-3.5 mr-2" /> Reset to Profile
         </Button>
       </div>
+
+      <Card className="border-primary/20 bg-primary/5">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-sm font-bold flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" /> Quick Presets
+          </CardTitle>
+          <CardDescription>Select a learning profile to automatically configure the settings below.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup 
+            value={activePreset} 
+            onValueChange={(v) => applyPreset(v as PresetType)}
+            className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          >
+            {(Object.keys(presetLabels) as PresetType[]).map((type) => (
+              <Label 
+                key={type} 
+                className={cn(
+                  "flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all hover:bg-background/50",
+                  activePreset === type ? "border-primary bg-background shadow-sm" : "border-transparent bg-muted/30"
+                )}
+              >
+                <RadioGroupItem value={type} id={`preset-${type}`} className="mt-1" />
+                <div className="space-y-1">
+                  <span className="font-bold block">{presetLabels[type].label}</span>
+                  <span className="text-[10px] text-muted-foreground leading-tight block">{presetLabels[type].desc}</span>
+                </div>
+              </Label>
+            ))}
+          </RadioGroup>
+        </CardContent>
+      </Card>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Accordion type="multiple" defaultValue={['new', 'reviews', 'lapses', 'display', 'burying', 'advanced']} className="space-y-4">
@@ -225,11 +374,6 @@ export default function DeckSettingsPage() {
                       </div>
                     </div>
                 </div>
-                <div className="flex justify-end pt-4 border-t border-primary/5">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => resetSection(['newCardsPerDay', 'learningSteps', 'graduatingIntervalDays', 'easyIntervalDays', 'insertionOrder'])} className="text-[10px] font-bold uppercase opacity-50 hover:opacity-100">
-                    Reset Section
-                  </Button>
-                </div>
             </AccordionContent>
           </AccordionItem>
 
@@ -277,11 +421,6 @@ export default function DeckSettingsPage() {
                         <Controller name="fuzzFactorEnabled" control={control} render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />} />
                     </div>
                 </div>
-                <div className="flex justify-end pt-4 border-t border-primary/5">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => resetSection(['startingEase', 'easyBonus', 'intervalModifier', 'hardIntervalModifier', 'maximumIntervalDays', 'minimumIntervalDays', 'fuzzFactorEnabled'])} className="text-[10px] font-bold uppercase opacity-50 hover:opacity-100">
-                    Reset Section
-                  </Button>
-                </div>
             </AccordionContent>
           </AccordionItem>
 
@@ -320,11 +459,6 @@ export default function DeckSettingsPage() {
                             </Select>
                         )} />
                     </div>
-                </div>
-                <div className="flex justify-end pt-4 border-t border-primary/5">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => resetSection(['relearningSteps', 'newIntervalAfterLapsePercent', 'leechThreshold', 'leechAction'])} className="text-[10px] font-bold uppercase opacity-50 hover:opacity-100">
-                    Reset Section
-                  </Button>
                 </div>
             </AccordionContent>
           </AccordionItem>

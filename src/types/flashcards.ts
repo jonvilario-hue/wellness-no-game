@@ -1,4 +1,3 @@
-
 export type CardType = 'basic' | 'cloze' | 'basic-reversed' | 'image-occlusion' | 'type-in';
 
 export type Card = {
@@ -20,7 +19,11 @@ export type Card = {
   noteId?: string; // For sibling burying
 };
 
+export type PresetType = 'casual' | 'exam' | 'language' | 'medical' | 'quick' | 'custom';
+
 export interface DeckSettings {
+  activePreset: PresetType;
+
   // ── New Cards ──────────────────────────────────
   newCardsPerDay: number;            // default: 20
   learningSteps: number[];           // default: [1, 10] (minutes)

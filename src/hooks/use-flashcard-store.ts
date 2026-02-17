@@ -5,6 +5,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Card, Deck, CardType, DeckSettings } from '@/types/flashcards';
 
 export const DEFAULT_DECK_SETTINGS: DeckSettings = {
+  activePreset: 'casual',
   // New Cards
   newCardsPerDay: 20,
   learningSteps: [1, 10],
