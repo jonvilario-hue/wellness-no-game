@@ -8,7 +8,6 @@ import { usePlaybookStore } from '@/hooks/use-playbook-store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { AssistantTooltip } from "@/components/assistant-tooltip";
 import {
   AlertDialog,
@@ -64,21 +63,20 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 const strategyTooltips: Record<string, string> = {
-  backcasting: "Start from your desired future and work backward to today. Instead of asking 'what should I do next?', ask 'what must have already happened for me to reach my goal?' — then build those steps into milestones.",
-  woop: "Wish, Outcome, Obstacle, Plan. A research-backed method that pairs positive visualization with realistic obstacle planning. Proven to outperform pure positive thinking.",
-  smart: "Specific, Measurable, Achievable, Relevant, Time-bound. The classic framework for turning vague intentions into concrete targets. Best used for defining individual milestones within a larger blueprint.",
-  identity: "Instead of focusing on what you want to achieve, focus on who you want to become. Every action is a vote for the type of person you're building. This strategy aligns with the 'BECOMING' identity statement in your blueprints.",
-  okrs: "Set a qualitative Objective (the 'what' and 'why'), then define 2-5 measurable Key Results that prove you've achieved it. Used by high-performing teams and individuals to maintain focus and alignment.",
-  review_loop: "A recurring check-in ritual: review what you accomplished, what learned, and what you'll prioritize next week. Keeps blueprints from drifting and builds self-awareness over time.",
-  milestone_mapping: "Break an overwhelming goal into a visual sequence of milestones with clear dependencies. Helps you see the full path, identify what's blocking progress, and celebrate incremental wins.",
-  pre_mortem: "Before you start, imagine your goal has failed. Ask: 'What went wrong?' List every plausible reason, then build preventive actions into your plan. Turns anxiety into preparation.",
-  energy_mapping: "Track when during the day and week your energy and focus peak. Schedule your hardest blueprint tasks during high-energy windows and routine tasks during low-energy periods.",
-  gamified: "Apply game mechanics to your goals: points for completed tasks, streaks for consistency, levels for milestones reached. Adds a layer of immediate reward to long-term pursuits.",
+  backcasting: "Start from your desired future and work backward to today. Build milestones based on what must have already happened for success.",
+  woop: "Wish, Outcome, Obstacle, Plan. A research-backed method that pairs positive visualization with realistic obstacle planning.",
+  smart: "Specific, Measurable, Achievable, Relevant, Time-bound. Best used for defining individual milestones within a larger blueprint.",
+  identity: "Focus on who you want to become rather than just what you want to achieve. Every action is a vote for your new identity.",
+  okrs: "Set an ambitious Objective and 2-5 measurable Key Results. Used by high-performance teams to maintain focus.",
+  review_loop: "A weekly ritual to review accomplishments, lessons, and set next week's top priorities.",
+  milestone_mapping: "Break overwhelming goals into a visual sequence of checkpoints with clear dependencies.",
+  pre_mortem: "Imagine your goal has failed. Identify why, and build preventive actions into your plan today.",
+  energy_mapping: "Track when your energy peaks. Schedule hardest tasks during high-energy windows and routine tasks during low energy.",
+  gamified: "Apply game mechanics: points, levels, and streaks to maintain dopamine during long-term pursuits.",
 };
 
 export function StrategyGuide({ strategy }: StrategyGuideProps) {
     const { toggleFavorite, entries, deleteCustomStrategy } = usePlaybookStore();
-    const { settings } = useDashboardSettings();
     const entry = entries[strategy.id];
     const isFavorite = entry?.isFavorite || false;
     const Icon = strategy.icon || Lightbulb;
@@ -105,12 +103,11 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
         return <li dangerouslySetInnerHTML={{ __html: step }}></li>;
     }
 
-
   return (
-    <AssistantTooltip text={strategyTooltips[strategy.id] || "A custom strategy you designed to support your unique workflow."} side="bottom">
-      <Card className="flex flex-col h-full hover:shadow-md transition-shadow relative group border-primary/5">
+    <AssistantTooltip text={strategyTooltips[strategy.id] || "A personalized strategy designed to support your unique architectural workflow."} side="bottom">
+      <Card className="flex flex-col h-full hover:shadow-md transition-shadow relative group border-primary/5 overflow-hidden">
           <div className="absolute top-2 right-2 z-10 flex gap-1">
-            <AssistantTooltip text="Add this strategy to your Personal Playbook for quick access and tracking.">
+            <AssistantTooltip text="Toggle bookmark for your Personal Playbook.">
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -132,33 +129,33 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Custom Strategy?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will permanently remove "{strategy.name}" from your library and playbook. This cannot be undone.
+                      This will permanently remove "{strategy.name}" from your library and playbook.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => deleteCustomStrategy(strategy.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                    <AlertDialogAction onClick={() => deleteCustomStrategy(strategy.id)} className="bg-destructive hover:bg-destructive/90 text-white border-none">Delete</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
             )}
           </div>
 
-          <CardHeader>
+          <CardHeader className="pb-3">
               <div className="flex items-center gap-3 mb-2">
                   <div className="p-2 bg-primary/10 rounded-lg">
                       <Icon className="w-6 h-6 text-primary"/>
                   </div>
-                  <div>
-                    <CardTitle className="text-lg">{strategy.name}</CardTitle>
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-lg truncate">{strategy.name}</CardTitle>
                     {strategy.isCustom && <Badge variant="outline" className="text-[8px] h-4 uppercase tracking-tighter bg-primary/5 text-primary border-primary/20">Custom</Badge>}
                   </div>
               </div>
-              <CardDescription className="text-xs line-clamp-3">{strategy.description}</CardDescription>
+              <CardDescription className="text-xs line-clamp-3 leading-relaxed">{strategy.description}</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow space-y-4">
               <div className="space-y-4">
-                  <h4 className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground mb-3">The Protocol:</h4>
+                  <h4 className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-3">Protocol Sequence</h4>
                   <ul className="space-y-4 text-xs">
                       {strategy.steps.map((step, index) => (
                         <div key={index}>{renderStepWithIcon(step)}</div>
@@ -167,8 +164,8 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
               </div>
 
                <div className="pt-4 border-t border-primary/5">
-                  <h4 className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Ideal Context:</h4>
-                  <p className="text-xs italic text-muted-foreground">{strategy.useFor || "No specific context provided."}</p>
+                  <h4 className="font-black text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">Optimal Context</h4>
+                  <p className="text-xs italic text-muted-foreground leading-relaxed">{strategy.useFor || "General goal achievement."}</p>
               </div>
           </CardContent>
       </Card>
