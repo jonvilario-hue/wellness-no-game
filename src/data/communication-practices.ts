@@ -1,3 +1,5 @@
+'use client';
+
 import { 
   Wind, Mic2, MessageSquare, User, Eye, ArrowLeftRight, 
   Target, Sparkles, Brain, ShieldAlert, BookOpen, Presentation, 
@@ -6,7 +8,7 @@ import {
   ListChecks, Map, Trash2, Gift, Repeat, RefreshCcw, 
   Layers, Link as LinkIcon, ShieldCheck, X, Users, Lightbulb,
   Briefcase, MonitorSmartphone, Shield, Bell, CheckCircle2, 
-  LayoutGrid, Pointer, TrendingUp, DoorOpen, HeartPulse
+  LayoutGrid, Pointer, TrendingUp, DoorOpen, HeartPulse, Zap
 } from 'lucide-react';
 import type { Exercise } from './exercises';
 
@@ -372,8 +374,8 @@ export const communicationPractices: Exercise[] = [
       '5. Scan body for tension and consciously release it.'
     ],
     modifications: [
-      'Easier: Just focus on uncrossing arms for 30 seconds.',
-      'Harder: Maintain open posture during an entire conversation.'
+      'Make it easier: Just focus on uncrossing arms for 30 seconds.',
+      'Make it harder: Maintain open posture during an entire conversation.'
     ],
     completionCue: 'Feeling open and ready? Done.'
   },
@@ -396,8 +398,8 @@ export const communicationPractices: Exercise[] = [
       '5. Practice with different people to build the skill.'
     ],
     modifications: [
-      'Easier: Just mirror posture (sitting/standing position).',
-      'Harder: Mirror gesture style and speaking pace too.'
+      'Make it easier: Just mirror posture (sitting/standing position).',
+      'Make it harder: Mirror gesture style and speaking pace too.'
     ],
     completionCue: 'Rapport established? Excellent.'
   },
@@ -420,8 +422,8 @@ export const communicationPractices: Exercise[] = [
       '5. Notice when the other person looks away and give them space.'
     ],
     modifications: [
-      'Easier: Start with 50/50 for both.',
-      'Harder: Adjust percentages based on cultural context.'
+      'Make it easier: Start with 50/50 for both.',
+      'Make it harder: Adjust percentages based on cultural context.'
     ],
     completionCue: 'Calibration complete. Gaze balanced.'
   },
@@ -444,8 +446,8 @@ export const communicationPractices: Exercise[] = [
       '5. Avoid repetitive filler gestures (constant pointing, hand-wringing).'
     ],
     modifications: [
-      'Easier: Just focus on keeping hands visible and still.',
-      'Harder: Match gestures to specific words for maximum impact.'
+      'Make it easier: Just keep hands visible and still.',
+      'Make it harder: Match gestures to specific words for maximum impact.'
     ],
     completionCue: 'Gestures feeling intentional? Done.'
   },
@@ -468,8 +470,8 @@ export const communicationPractices: Exercise[] = [
       '5. If sharing good news, let yourself smile fully.'
     ],
     modifications: [
-      'Easier: Just avoid smiling during serious topics.',
-      'Harder: Practice micro-expressions that match nuanced emotions.'
+      'Make it easier: Just avoid smiling during serious topics.',
+      'Make it harder: Practice micro-expressions that match nuanced emotions.'
     ],
     completionCue: 'Expressions matching message? Great.'
   },
@@ -492,8 +494,8 @@ export const communicationPractices: Exercise[] = [
       '5. Adjust for context: closer for friends, farther for strangers.'
     ],
     modifications: [
-      'Easier: Just maintain arm\'s length distance.',
-      'Harder: Calibrate in real-time based on micro-cues (body tension).'
+      'Make it easier: Just maintain arm\'s length distance.',
+      'Make it harder: Calibrate in real-time based on micro-cues (body tension).'
     ],
     completionCue: 'Spatial awareness checked. Done.'
   },
@@ -518,8 +520,8 @@ export const communicationPractices: Exercise[] = [
       '5. Practice in low-stakes conversations first.'
     ],
     modifications: [
-      'Easier: Just focus on pitch drop when done speaking.',
-      'Harder: Read multiple signals simultaneously in group conversations.'
+      'Make it easier: Just focus on pitch drop when done speaking.',
+      'Make it harder: Read multiple signals simultaneously in group conversations.'
     ],
     completionCue: 'Turns feeling more fluid? Done.'
   },
@@ -542,7 +544,7 @@ export const communicationPractices: Exercise[] = [
       '5. Avoid abrupt topic drops mid-conversation.'
     ],
     modifications: [
-      'Easier: Use any bridging phrase consistently.',
+      'Make it easier: Use any bridging phrase consistently.',
       'Harder: Find thematic connections even between unrelated topics.'
     ],
     completionCue: 'Transition smooth? Done.'
@@ -566,8 +568,8 @@ export const communicationPractices: Exercise[] = [
       '5. Pair with nonverbal nods or facial expressions.'
     ],
     modifications: [
-      'Easier: Just nod physically without verbal responses.',
-      'Harder: Use backchannels that advance the conversation ("And then what?").'
+      'Make it easier: Just nod physically without verbal responses.',
+      'Make it harder: Use backchannels that advance the conversation ("And then what?").'
     ],
     completionCue: 'Actively engaged? Done.'
   },
@@ -590,8 +592,8 @@ export const communicationPractices: Exercise[] = [
       '5. Don\'t keep going if confusion persists.'
     ],
     modifications: [
-      'Easier: Just say "Sorry, what I meant was..." and restate.',
-      'Harder: Diagnose WHY they\'re confused and target that specifically.'
+      'Make it easier: Just say "Sorry, what I meant was..." and restate.',
+      'Make it harder: Diagnose WHY they\'re confused and target that specifically.'
     ],
     completionCue: 'Misunderstanding cleared? Done.'
   },
@@ -614,8 +616,8 @@ export const communicationPractices: Exercise[] = [
       '5. Practice in everyday interactions.'
     ],
     modifications: [
-      'Easier: Focus on greetings and thanks.',
-      'Harder: Handle complex pairs like criticism→defense/acceptance.'
+      'Make it easier: Focus on greetings and thanks.',
+      'Make it harder: Handle complex pairs like criticism→defense/acceptance.'
     ],
     completionCue: 'Social pairs closed? Done.'
   },
@@ -638,8 +640,8 @@ export const communicationPractices: Exercise[] = [
       '5. End with a clear closer: "Great talking with you!".'
     ],
     modifications: [
-      'Easier: Just say "I need to run" directly.',
-      'Harder: Layer multiple signals for smoother exit.'
+      'Make it easier: Just say "I need to run" directly.',
+      'Make it harder: Layer multiple signals for smoother exit.'
     ],
     completionCue: 'Graceful exit achieved. Done.'
   },
@@ -664,8 +666,8 @@ export const communicationPractices: Exercise[] = [
       '5. Maintain the relationship even if they say no.'
     ],
     modifications: [
-      'Easier: Compliment someone before asking for help.',
-      'Harder: Build reciprocity over weeks with multiple small gives.'
+      'Make it easier: Compliment someone before asking for help.',
+      'Make it harder: Build reciprocity over weeks with multiple small gives.'
     ],
     completionCue: 'Principle applied? Done.'
   },
@@ -688,8 +690,8 @@ export const communicationPractices: Exercise[] = [
       '5. Use truthfully - false social proof destroys trust.'
     ],
     modifications: [
-      'Easier: Just mention one other person who did it.',
-      'Harder: Layer multiple forms of social proof (experts + peers + statistics).'
+      'Make it easier: Just mention one other person who did it.',
+      'Make it harder: Layer multiple forms of social proof (experts + peers + statistics).'
     ],
     completionCue: 'Framing tested? Done.'
   },
@@ -712,8 +714,8 @@ export const communicationPractices: Exercise[] = [
       '5. Be prepared for a no, and remain polite.'
     ],
     modifications: [
-      'Easier: Just ask for the small thing and stop if they agree.',
-      'Harder: Chain multiple escalating asks over weeks.'
+      'Make it easier: Just ask for the small thing and stop if they agree.',
+      'Make it harder: Chain multiple escalating asks over weeks.'
     ],
     completionCue: 'Commitment ladder started? Done.'
   },
@@ -736,8 +738,8 @@ export const communicationPractices: Exercise[] = [
       '5. Notice which one triggers more action.'
     ],
     modifications: [
-      'Easier: Just pick one frame and stick with it.',
-      'Harder: Switch frames mid-conversation based on response.'
+      'Make it easier: Just pick one frame and stick with it.',
+      'Make it harder: Switch frames mid-conversation based on response.'
     ],
     completionCue: 'Message framed? Done.'
   },
@@ -760,8 +762,8 @@ export const communicationPractices: Exercise[] = [
       '5. Provide rationale for your anchor.'
     ],
     modifications: [
-      'Easier: Just state your number first.',
-      'Harder: Layer multiple anchors (salary + benefits).'
+      'Make it easier: Just state your number first.',
+      'Make it harder: Layer multiple anchors (salary + benefits).'
     ],
     completionCue: 'Reference point set? Done.'
   },
@@ -784,8 +786,8 @@ export const communicationPractices: Exercise[] = [
       '5. Let them decide without pressure.'
     ],
     modifications: [
-      'Easier: Just mention a deadline.',
-      'Harder: Combine scarcity with social proof.'
+      'Make it easier: Just mention a deadline.',
+      'Make it harder: Combine scarcity with social proof.'
     ],
     completionCue: 'Scarcity communicated? Done.'
   },
@@ -808,8 +810,8 @@ export const communicationPractices: Exercise[] = [
       '5. Use a calm, non-defensive tone.'
     ],
     modifications: [
-      'Easier: Address one obvious objection.',
-      'Harder: Inoculate against 2-3 counterarguments.'
+      'Make it easier: Address one obvious objection.',
+      'Make it harder: Inoculate against 2-3 counterarguments.'
     ],
     completionCue: 'Objections neutralized? Done.'
   },
@@ -834,8 +836,8 @@ export const communicationPractices: Exercise[] = [
       '5. Test with "Can a 10-year-old visualize this?".'
     ],
     modifications: [
-      'Easier: Focus on nouns only.',
-      'Harder: Make verbs concrete too ("utilize" → "use").'
+      'Make it easier: Focus on nouns only.',
+      'Make it harder: Make verbs concrete too ("utilize" → "use").'
     ],
     completionCue: 'Message tangible? Done.'
   },
@@ -858,8 +860,8 @@ export const communicationPractices: Exercise[] = [
       '5. Practice on old emails or documents.'
     ],
     modifications: [
-      'Easier: Convert one sentence per paragraph.',
-      'Harder: Eliminate all passive voice in a full document.'
+      'Make it easier: Convert one sentence per paragraph.',
+      'Make it harder: Eliminate all passive voice in a full document.'
     ],
     completionCue: 'Responsibility clear? Done.'
   },
@@ -882,8 +884,8 @@ export const communicationPractices: Exercise[] = [
       '5. Use simpler connecting words (but, so).'
     ],
     modifications: [
-      'Easier: Just split sentences with "and".',
-      'Harder: Apply to an entire document/speech.'
+      'Make it easier: Just split sentences with "and".',
+      'Make it harder: Apply to an entire document/speech.'
     ],
     completionCue: 'Reading easy? Done.'
   },
@@ -906,8 +908,8 @@ export const communicationPractices: Exercise[] = [
       '5. Reference back: "As I mentioned earlier".'
     ],
     modifications: [
-      'Easier: Just use "First, second, third".',
-      'Harder: Layer multiple signpost types in one talk.'
+      'Make it easier: Just use "First, second, third".',
+      'Make it harder: Layer multiple signpost types in one talk.'
     ],
     completionCue: 'Roadmap clear? Done.'
   },
@@ -930,8 +932,8 @@ export const communicationPractices: Exercise[] = [
       '5. Be ruthless with acronyms.'
     ],
     modifications: [
-      'Easier: Remove obvious acronyms.',
-      'Harder: Eliminate ALL jargon, even semi-common terms.'
+      'Make it easier: Remove obvious acronyms.',
+      'Make it harder: Eliminate ALL jargon, even semi-common terms.'
     ],
     completionCue: 'Language inclusive? Done.'
   },
@@ -954,8 +956,8 @@ export const communicationPractices: Exercise[] = [
       '5. Test on someone to see if it clarifies.'
     ],
     modifications: [
-      'Easier: Use simple physical analogies.',
-      'Harder: Build multi-step analogies.'
+      'Make it easier: Use simple physical analogies.',
+      'Make it harder: Build multi-step analogies.'
     ],
     completionCue: 'Concept explained? Done.'
   },
@@ -980,8 +982,8 @@ export const communicationPractices: Exercise[] = [
       '5. Use an emotion wheel if needed.'
     ],
     modifications: [
-      'Easier: Use mad/sad/glad/scared.',
-      'Harder: Identify layered emotions.'
+      'Make it easier: Use mad/sad/glad/scared.',
+      'Make it harder: Identify layered emotions.'
     ],
     completionCue: 'Intensity reduced? Done.'
   },
@@ -1004,8 +1006,8 @@ export const communicationPractices: Exercise[] = [
       '5. Practice on minor things first.'
     ],
     modifications: [
-      'Easier: Just use "I feel [emotion]" without the full structure.',
-      'Harder: Use in real-time conflict.'
+      'Make it easier: Just use "I feel [emotion]" without the full structure.',
+      'Make it harder: Use in real-time conflict.'
     ],
     completionCue: 'Statement structured? Done.'
   },
@@ -1028,8 +1030,8 @@ export const communicationPractices: Exercise[] = [
       '5. If you must advise, ask first.'
     ],
     modifications: [
-      'Easier: Just say "That makes sense".',
-      'Harder: Validate even when you disagree.'
+      'Make it easier: Just say "That makes sense".',
+      'Make it harder: Validate even when you disagree.'
     ],
     completionCue: 'Trust built? Done.'
   },
@@ -1052,8 +1054,8 @@ export const communicationPractices: Exercise[] = [
       '5. Notice how this changes your emotional response.'
     ],
     modifications: [
-      'Easier: List 3 reasons why they might hold that view.',
-      'Harder: Steelman their argument.'
+      'Make it easier: List 3 reasons why they might hold that view.',
+      'Make it harder: Steelman their argument.'
     ],
     completionCue: 'Empathy felt? Done.'
   },
@@ -1076,8 +1078,8 @@ export const communicationPractices: Exercise[] = [
       '5. Avoid one-upping or trauma-dumping.'
     ],
     modifications: [
-      'Easier: Share only positive experiences.',
-      'Harder: Share current struggles appropriately.'
+      'Make it easier: Share only positive experiences.',
+      'Make it harder: Share current struggles appropriately.'
     ],
     completionCue: 'Connection made? Done.'
   },
@@ -1267,7 +1269,7 @@ export const communicationPractices: Exercise[] = [
     setup: ['Recall a recent observation you need to share.'],
     steps: [
       '1. Situation: "In yesterday\'s client meeting..." (specific time/place).',
-      '2. Behavior: "...when you interrupted Sarah twice..." (observable action).',
+      '2. Behavior: "...when you interrupted Sarah twice..." (observable action, not interpretation).',
       '3. Impact: "...the client seemed confused, and Sarah stopped contributing.".',
       '4. Pause and let them respond - don\'t pile on.',
       '5. Collaborate on solution: "How could we handle that differently next time?"'
