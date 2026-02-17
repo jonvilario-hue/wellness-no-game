@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo, useState } from "react"
@@ -22,9 +21,18 @@ import { CommunicationDashboard } from "./CommunicationDashboard"
 import { cn } from "@/lib/utils"
 
 const categories: CommunicationCategory[] = [
-  'Vocal Mechanics', 'Active Listening', 'Nonverbal', 'Conversation Structure', 
-  'Persuasion', 'Clarity', 'Emotional Intelligence', 'Conflict Resolution', 
-  'Storytelling', 'Public Speaking', 'Professional', 'Digital'
+  'Vocal Mechanics', 
+  'Active Listening', 
+  'Nonverbal', 
+  'Conversation Structure', 
+  'Persuasion', 
+  'Clarity', 
+  'Emotional Intelligence', 
+  'Storytelling', 
+  'Conflict Resolution', 
+  'Public Speaking', 
+  'Professional', 
+  'Digital'
 ];
 
 export default function CommunicationContent() {
