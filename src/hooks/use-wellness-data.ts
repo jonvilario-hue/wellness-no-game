@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -60,6 +59,16 @@ export type StillnessLog = {
   trigger?: 'Proactive' | 'Stress' | 'Anxiety' | "Can't Sleep" | 'Other';
 };
 
+export type CommunicationLog = {
+  id: string;
+  practiceId: string;
+  practiceName: string;
+  duration: number;
+  timestamp: string;
+  effectiveness?: number;
+  context?: string;
+};
+
 export type MovementProgress = {
   exerciseId: string;
   bestReps?: number;
@@ -91,9 +100,10 @@ export type WellnessState = {
   weightLogs: { date: string; weight: number }[];
   flexMealsPerWeek: number;
 
-  // Movement & Stillness Logs
+  // Activity Logs
   movementLogs: MovementLog[];
   stillnessLogs: StillnessLog[];
+  communicationLogs: CommunicationLog[];
   movementProgress: Record<string, MovementProgress>;
   
   // Routines (Stacks)
@@ -123,6 +133,8 @@ export type WellnessState = {
   deleteMovementLog: (id: string) => void;
   addStillnessLog: (log: Omit<StillnessLog, 'id'>) => void;
   deleteStillnessLog: (id: string) => void;
+  addCommunicationLog: (log: Omit<CommunicationLog, 'id'>) => void;
+  deleteCommunicationLog: (id: string) => void;
   
   addRoutine: (routine: Omit<CustomRoutine, 'id' | 'createdAt'>) => void;
   deleteRoutine: (id: string) => void;
@@ -152,6 +164,7 @@ export const useWellnessData = create<WellnessState>()(
 
       movementLogs: [],
       stillnessLogs: [],
+      communicationLogs: [],
       movementProgress: {},
       routines: [],
 
@@ -232,6 +245,15 @@ export const useWellnessData = create<WellnessState>()(
       },
       deleteStillnessLog: (id) => set((state) => ({
         stillnessLogs: state.stillnessLogs.filter(l => l.id !== id)
+      })),
+      addCommunicationLog: (log) => {
+        set((state) => ({
+          communicationLogs: [{ ...log, id: crypto.randomUUID() }, ...state.communicationLogs]
+        }));
+        get().logCompletion();
+      },
+      deleteCommunicationLog: (id) => set((state) => ({
+        communicationLogs: state.communicationLogs.filter(l => l.id !== id)
       })),
 
       addRoutine: (routine) => set((state) => ({

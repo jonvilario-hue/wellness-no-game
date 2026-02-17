@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, Suspense } from "react"
@@ -6,9 +5,10 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import MovementContent from "./MovementContent"
 import StillnessContent from "./StillnessContent"
+import CommunicationContent from "./CommunicationContent"
 import { FinanceTracker } from "./FinanceTracker"
 import { DietTracker } from "./DietTracker"
-import { HeartPulse, Waves, Wallet, Utensils } from "lucide-react"
+import { HeartPulse, Waves, Wallet, Utensils, MessageSquare } from "lucide-react"
 import { AssistantTooltip } from "@/components/assistant-tooltip"
 
 interface WellnessTabsProps {
@@ -26,7 +26,7 @@ function WellnessTabsContent({ filterTags = [] }: WellnessTabsProps) {
   // Sync state with URL changes (e.g. back/forward buttons)
   useEffect(() => {
     const tab = searchParams.get('tab')
-    if (tab && ['movement', 'stillness', 'finance', 'diet'].includes(tab)) {
+    if (tab && ['movement', 'stillness', 'communication', 'finance', 'diet'].includes(tab)) {
       setActiveTab(tab)
     }
   }, [searchParams])
@@ -42,7 +42,7 @@ function WellnessTabsContent({ filterTags = [] }: WellnessTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
-        <TabsList className="grid grid-cols-4 w-full max-w-2xl h-auto p-1 bg-muted/50">
+        <TabsList className="grid grid-cols-5 w-full max-w-3xl h-auto p-1 bg-muted/50">
             <AssistantTooltip text="Physical activity to restore ease, build strength, or boost energy.">
               <TabsTrigger value="movement" className="gap-2 py-2 text-xs sm:text-sm w-full">
                 <HeartPulse className="w-4 h-4 hidden sm:inline"/>
@@ -54,6 +54,13 @@ function WellnessTabsContent({ filterTags = [] }: WellnessTabsProps) {
               <TabsTrigger value="stillness" className="gap-2 py-2 text-xs sm:text-sm w-full">
                 <Waves className="w-4 h-4 hidden sm:inline"/>
                 Stillness
+              </TabsTrigger>
+            </AssistantTooltip>
+
+            <AssistantTooltip text="Evidence-based dialogue and interpersonal practices.">
+              <TabsTrigger value="communication" className="gap-2 py-2 text-xs sm:text-sm w-full">
+                <MessageSquare className="w-4 h-4 hidden sm:inline"/>
+                Communication
               </TabsTrigger>
             </AssistantTooltip>
             
@@ -79,6 +86,10 @@ function WellnessTabsContent({ filterTags = [] }: WellnessTabsProps) {
 
       <TabsContent value="stillness" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
          <StillnessContent filterTags={filterTags} />
+      </TabsContent>
+
+      <TabsContent value="communication" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+         <CommunicationContent />
       </TabsContent>
 
       <TabsContent value="finance" className="animate-in fade-in slide-in-from-bottom-2 duration-300">

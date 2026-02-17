@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -29,7 +28,6 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
   const [showRatings, setShowAdditions] = useState(false);
   const [trackNumbers, setTrackNumbers] = useState(false);
   
-  // Phase 2 Optional Fields
   const [difficulty, setDifficulty] = useState<number>(3);
   const [energy, setEnergy] = useState<'Low' | 'Medium' | 'High'>('Medium');
   const [reps, setReps] = useState<string>('');
@@ -37,11 +35,15 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
   const [preStress, setPreStress] = useState<string>('5');
   const [postCalm, setPostCalm] = useState<string>('7');
   const [trigger, setTrigger] = useState<string>('Proactive');
+  const [commContext, setCommContext] = useState<string>('');
 
-  const { addMovementLog, addStillnessLog, movementProgress } = useWellnessData();
+  const { addMovementLog, addStillnessLog, addCommunicationLog, movementProgress } = useWellnessData();
   const { toast } = useToast();
   
-  const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'].includes(exercise.category);
+  const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
+  const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
+  const isCommunication = !isMovement && !isStillness;
+
   const bestProgress = movementProgress[exercise.id];
   const ExerciseIcon = exercise.icon;
 
@@ -60,26 +62,38 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
   }, [isActive, timeLeft]);
 
   const handleLog = () => {
+    const duration = Math.ceil((exercise.duration - timeLeft) / 60) || 1;
+    const timestamp = new Date().toISOString();
+
     if (isMovement) {
       addMovementLog({
         exerciseId: exercise.id,
         exerciseName: exercise.name,
-        duration: Math.ceil((exercise.duration - timeLeft) / 60) || 1,
-        timestamp: new Date().toISOString(),
+        duration,
+        timestamp,
         difficulty,
         energyLevel: energy,
         reps: reps ? parseInt(reps) : undefined,
         holdTime: holdTime ? parseInt(holdTime) : undefined
       });
-    } else {
+    } else if (isStillness) {
       addStillnessLog({
         techniqueId: exercise.id,
         techniqueName: exercise.name,
-        duration: Math.ceil((exercise.duration - timeLeft) / 60) || 1,
-        timestamp: new Date().toISOString(),
+        duration,
+        timestamp,
         preStress: parseInt(preStress),
         postCalm: parseInt(postCalm),
         trigger: trigger as any
+      });
+    } else {
+      addCommunicationLog({
+        practiceId: exercise.id,
+        practiceName: exercise.name,
+        duration,
+        timestamp,
+        effectiveness: difficulty,
+        context: commContext
       });
     }
     toast({ title: "Session Recorded!", variant: 'success' });
@@ -138,7 +152,7 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
                 <SlidersHorizontal className="w-3 h-3" /> Post-Session Survey
               </h4>
               
-              {isMovement ? (
+              {isMovement && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <Label className="text-[10px] font-bold uppercase">Difficulty (1-5)</Label>
@@ -174,7 +188,9 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
                     </>
                   )}
                 </div>
-              ) : (
+              )}
+
+              {isStillness && (
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
@@ -199,6 +215,26 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
                   </div>
                 </div>
               )}
+
+              {isCommunication && (
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <Label className="text-[10px] font-bold uppercase">Effectiveness (1-5)</Label>
+                    <div className="flex gap-1">
+                      {[1,2,3,4,5].map(n => (
+                        <Button key={n} variant={difficulty === n ? 'default' : 'outline'} size="sm" className="h-7 w-7 p-0" onClick={() => setDifficulty(n)}>
+                          {n}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] font-bold uppercase">Context (Optional)</Label>
+                    <Input value={commContext} onChange={e => setCommContext(e.target.value)} className="h-7 text-xs" placeholder="e.g. Work call, First date..." />
+                  </div>
+                </div>
+              )}
+
               <Button className="w-full h-8 text-xs font-bold" onClick={handleLog}>Save Log Details</Button>
             </motion.div>
           ) : (
@@ -210,7 +246,7 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
               </ol>
 
               <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="setup">
+                  <AccordionItem value="setup" className="border-primary/10">
                       <AccordionTrigger className="text-sm font-semibold">Quick Setup</AccordionTrigger>
                       <AccordionContent>
                           <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1">
@@ -218,7 +254,7 @@ export const PracticeInstructionCard = ({ exercise }: { exercise: Exercise }) =>
                           </ul>
                       </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="modifications">
+                  <AccordionItem value="modifications" className="border-primary/10">
                       <AccordionTrigger className="text-sm font-semibold">Modifications</AccordionTrigger>
                       <AccordionContent>
                           <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1">

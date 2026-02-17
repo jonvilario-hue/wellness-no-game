@@ -1,17 +1,21 @@
 import { movementExercises, mindfulnessPractices, type Exercise, type MindfulnessPractice } from './exercises';
+import { communicationPractices } from './communication-practices';
 import { wellnessPlans, type WellnessPlan } from './wellness-plans';
+import { communicationPlans } from './communication-plans';
 import { kits } from './wellness-kits';
+import { communicationKits } from './communication-kits';
 import type { MiniKit } from './wellness-kits';
 import type { LucideIcon } from 'lucide-react';
-import { Package, ClipboardCheck } from 'lucide-react';
+import { Package, ClipboardCheck, MessageSquare } from 'lucide-react';
 
 export type LibraryItemType = 'Practice' | 'Kit' | 'Plan';
 
 export type LibraryTag = 
-    | 'Movement' | 'Stillness' 
+    | 'Movement' | 'Stillness' | 'Communication'
     | 'Short' | 'Medium' | 'Long' 
     | 'Low Energy' | 'High Energy'
-    | 'Calm' | 'Focus' | 'Energy' | 'Recovery' | 'Sleep' | 'Clarity' | 'Anxiety Relief' | 'Grounding' | 'Self-Compassion' | 'Creativity' | 'ADHD-Friendly';
+    | 'Calm' | 'Focus' | 'Energy' | 'Recovery' | 'Sleep' | 'Clarity' | 'Anxiety Relief' | 'Grounding' | 'Self-Compassion' | 'Creativity' | 'ADHD-Friendly'
+    | 'public-speaking' | 'vocal' | 'confidence' | 'conflict' | 'de-escalation' | 'emotional-intelligence' | 'persuasion' | 'professional' | 'listening' | 'small-talk' | 'storytelling' | 'vulnerability' | 'quick';
 
 export type LibraryItem = {
     id: string;
@@ -27,10 +31,12 @@ export type LibraryItem = {
 const getPracticeTags = (practice: Exercise | MindfulnessPractice): LibraryTag[] => {
     const tags: LibraryTag[] = [];
     if ('category' in practice) {
-        if (['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'].includes(practice.category)) {
+        if (['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(practice.category)) {
             tags.push('Movement');
-        } else {
+        } else if (['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(practice.category)) {
             tags.push('Stillness');
+        } else {
+            tags.push('Communication');
         }
     }
     if (practice.duration < 120) tags.push('Short');
@@ -48,64 +54,62 @@ const getPracticeTags = (practice: Exercise | MindfulnessPractice): LibraryTag[]
         case 'Self-Compassion': tags.push('Self-Compassion', 'Recovery'); break;
     }
 
-    return [...new Set(tags)];
+    return [...new Set([...tags, ...(practice.tags as LibraryTag[])])];
 };
 
-const getKitTags = (kit: MiniKit): LibraryTag[] => {
-    const tags: LibraryTag[] = kit.tags ? (kit.tags as LibraryTag[]) : [];
-    tags.push('Short');
-    if (kit.title.includes('Stress') || kit.title.includes('Emotional') || kit.title.includes('Calm')) tags.push('Anxiety Relief', 'Recovery');
-    if (kit.title.includes('Focus') || kit.title.includes('Brain') || kit.title.includes('Reboot')) tags.push('Focus', 'Clarity');
-    if (kit.title.includes('Morning') || kit.title.includes('Jumpstart') || kit.title.includes('Move')) tags.push('Energy');
-    if (kit.title.includes('Creative') || kit.title.includes('Flow')) tags.push('Creativity');
-    if (kit.title.includes('Boundaries') || kit.title.includes('Self-Talk')) tags.push('Self-Compassion');
-    if (kit.title.includes('Unfreeze') || kit.title.includes('SOS') || kit.title.includes('Grounding')) tags.push('Grounding');
-    if (kit.title.includes('Evening') || kit.title.includes('Sleep')) tags.push('Sleep', 'Calm');
-
-    return [...new Set(tags)];
-}
-
-const getPlanTags = (plan: WellnessPlan): LibraryTag[] => {
-    const tags: LibraryTag[] = ['Long'];
-    if (plan.title.includes('Stress') || plan.title.includes('De-Stress')) tags.push('Anxiety Relief', 'Recovery');
-    if (plan.title.includes('Sleep')) tags.push('Sleep');
-    if (plan.title.includes('Morning') || plan.title.includes('Momentum')) tags.push('Energy', 'Focus');
-    if (plan.title.includes('Desk')) tags.push('Recovery');
-    if (plan.title.includes('Regulate')) tags.push('Anxiety Relief', 'Grounding');
-    return [...new Set(tags)];
-}
-
-const allPractices: LibraryItem[] = [...movementExercises, ...mindfulnessPractices].map(p => ({
+const allMovement: LibraryItem[] = movementExercises.map(p => ({
     id: p.id,
     type: 'Practice',
     title: p.name,
     description: p.description,
     icon: p.icon,
     tags: getPracticeTags(p),
-    actionLink: `/exercises?tab=${['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'].includes(p.category) ? 'movement' : 'stillness'}#practice-${p.id}`,
+    actionLink: `/exercises?tab=movement#practice-${p.id}`,
     content: p
 }));
 
-const allKits: LibraryItem[] = kits.map(k => ({
+const allStillness: LibraryItem[] = mindfulnessPractices.map(p => ({
+    id: p.id,
+    type: 'Practice',
+    title: p.name,
+    description: p.description,
+    icon: p.icon,
+    tags: getPracticeTags(p),
+    actionLink: `/exercises?tab=stillness#practice-${p.id}`,
+    content: p
+}));
+
+const allCommunication: LibraryItem[] = communicationPractices.map(p => ({
+    id: p.id,
+    type: 'Practice',
+    title: p.name,
+    description: p.description,
+    icon: p.icon,
+    tags: getPracticeTags(p),
+    actionLink: `/exercises?tab=communication#practice-${p.id}`,
+    content: p
+}));
+
+const allKits: LibraryItem[] = [...kits, ...communicationKits].map(k => ({
     id: k.title.toLowerCase().replace(/ /g, '-'),
     type: 'Kit',
     title: k.title,
     description: k.description,
     icon: Package,
-    tags: getKitTags(k),
-    actionLink: `/exercises?tab=packs#kit-${k.title.toLowerCase().replace(/ /g, '-')}`,
+    tags: [...(k.tags as LibraryTag[]), 'Short'],
+    actionLink: `/exercises?tab=${k.tags.includes('vocal') || k.tags.includes('conflict') ? 'communication' : 'movement'}#kit-${k.title.toLowerCase().replace(/ /g, '-')}`,
     content: k
 }));
 
-const allPlans: LibraryItem[] = wellnessPlans.map(p => ({
+const allPlans: LibraryItem[] = [...wellnessPlans, ...communicationPlans].map(p => ({
     id: p.id,
     type: 'Plan',
     title: p.title,
     description: p.description,
     icon: ClipboardCheck,
-    tags: getPlanTags(p),
+    tags: ['Long'],
     actionLink: `/exercises/plans/${p.id}`,
     content: p,
 }));
 
-export const wellnessLibrary: LibraryItem[] = [...allPractices, ...allKits, ...allPlans];
+export const wellnessLibrary: LibraryItem[] = [...allMovement, ...allStillness, ...allCommunication, ...allKits, ...allPlans];
