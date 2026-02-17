@@ -1,24 +1,105 @@
-
 rules_version = '2';
+
+/**
+ * FIRESTORE SECURITY RULES - PROTOTYPING MODE
+ * 
+ * CORE PHILOSOPHY:
+ * This ruleset implements a strict User-Ownership model. Access to data is tied directly 
+ * to the Firebase Authentication UID, ensuring that users can only manage their own 
+ * profiles and Anki deck metadata.
+ * 
+ * DATA STRUCTURE:
+ * The data is organized hierarchically:
+ * - /users/{userId}: The root document for a user's profile and storage metrics.
+ * - /users/{userId}/anki-decks/{deckId}: Metadata documents for individual Anki (.apkg) files.
+ * 
+ * KEY SECURITY DECISIONS:
+ * 1. Authorization Independence: All documents include a 'userId' field that must match 
+ *    the document's path and the authenticated user's UID. This avoids costly cross-document 
+ *    lookups (get() calls) during Firestore rule evaluation.
+ * 2. Query-as-Permission (QAP): By nesting deck metadata under the user's specific path, 
+ *    the system naturally restricts list operations to the user's own data.
+ * 3. Prototyping Flexibility: While ownership is strictly enforced, the rules do not 
+ *    validate the specific schema of content fields (e.g., displayName, description) to 
+ *    allow for rapid frontend iteration.
+ * 4. Relational Integrity: The rules mandate that the 'userId' field within a document 
+ *    is immutable and matches the path-based owner.
+ * 
+ * DENORMALIZATION FOR AUTHORIZATION:
+ * The 'userId' is explicitly stored on every AnkiDeck document. This allows for simple, 
+ * fast rules like `isOwner(userId)` without needing to query the parent UserProfile.
+ */
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Global templates are readable by anyone, but only system (admin logic) can write
-    match /blueprintTemplates/{templateId} {
-      allow read: if request.auth != null;
-      allow write: if false; // Only manageable via admin/server logic
+
+    // --- GLOBAL HELPER FUNCTIONS ---
+
+    /**
+     * @description Checks if the request is coming from a signed-in user.
+     */
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    match /users/{userId}/{allPaths=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    /**
+     * @description Checks if the authenticated user's UID matches the provided userId.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if a document exists and if the authenticated user is the owner.
+     * Used for update and delete operations to ensure state-change robustness.
+     */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    // --- COLLECTION RULES ---
+
+    /**
+     * @description Rules for the UserProfile collection.
+     * @path /users/{userId}
+     * @allow get: (get) if the UID in the path matches the auth UID.
+     * @allow create: (create) if the user is creating their own profile.
+     * @deny update: (update) if the user tries to modify a different user's profile.
+     * @principle Pattern 1 (Ownership) and Pattern 4 (Self-Creation).
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Users cannot be listed for privacy.
+      
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Rules for AnkiDeck metadata subcollection.
+       * @path /users/{userId}/anki-decks/{deckId}
+       * @allow list: (list) user can list their own uploaded decks.
+       * @allow create: (create) user can save metadata for a deck they own.
+       * @deny update: (update) user attempts to change the owner (userId) of the deck.
+       * @principle Pattern 1 (Ownership) with relational integrity enforcement.
+       */
+      match /anki-decks/{deckId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        
+        // Ensure the internal userId matches the path owner on creation
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        
+        // Ensure the internal userId remains immutable on update
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        
+        allow delete: if isExistingOwner(userId);
+      }
     }
     
-    // Validation helpers
-    function isValidAmount(val) {
-      return val is number && val > 0;
-    }
-    
-    match /users/{userId}/financeTransactions/{txId} {
-      allow create, update: if isValidAmount(request.resource.data.amount);
+    // Explicitly deny access to any other paths
+    match /{path=**} {
+      allow read, write: if false;
     }
   }
 }
