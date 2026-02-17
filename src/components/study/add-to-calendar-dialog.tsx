@@ -21,6 +21,7 @@ interface AddToCalendarDialogProps {
   buttonVariant?: "ghost" | "outline" | "default";
   buttonSize?: "icon" | "sm" | "default";
   className?: string;
+  children?: React.ReactNode;
 }
 
 export function AddToCalendarDialog({ 
@@ -29,11 +30,13 @@ export function AddToCalendarDialog({
   resourceName,
   buttonVariant = "ghost",
   buttonSize = "icon",
-  className
+  className,
+  children
 }: AddToCalendarDialogProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState('09:00');
   const [duration, setDuration] = useState('30');
+  const [customName, setCustomName] = useState(resourceName);
   const { addStudySessionEvent } = useCalendarPlansStore();
   const { toast } = useToast();
 
@@ -45,7 +48,7 @@ export function AddToCalendarDialog({
       dateStr,
       toolId,
       resourceId,
-      `${resourceName} (${toolId})`,
+      customName || resourceName,
       time
     );
 
@@ -56,17 +59,28 @@ export function AddToCalendarDialog({
     });
   };
 
+  const isAdhoc = resourceId === 'manual-entry';
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant={buttonVariant} size={buttonSize} className={cn("text-primary hover:bg-primary/10", className)}>
-          <CalendarIcon className="h-4 w-4" />
+          {children || <CalendarIcon className="h-4 w-4" />}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4 space-y-4">
+      <PopoverContent className="w-80 p-4 space-y-4 z-[100]">
         <div className="space-y-1">
-          <h4 className="font-bold text-sm">Schedule Session</h4>
-          <p className="text-xs text-muted-foreground truncate">"{resourceName}"</p>
+          <h4 className="font-bold text-sm">{isAdhoc ? 'Schedule Custom Session' : 'Schedule Session'}</h4>
+          {isAdhoc ? (
+            <Input 
+              value={customName} 
+              onChange={e => setCustomName(e.target.value)} 
+              placeholder="What are you studying?"
+              className="h-8 text-xs mt-2"
+            />
+          ) : (
+            <p className="text-xs text-muted-foreground truncate">"{resourceName}"</p>
+          )}
         </div>
 
         <div className="space-y-2">
