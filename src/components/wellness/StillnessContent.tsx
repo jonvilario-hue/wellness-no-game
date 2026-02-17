@@ -1,23 +1,32 @@
-
 "use client"
 
+import { useMemo } from "react"
 import { mindfulnessPractices, type MindfulnessCategory } from "@/data/exercises"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
 import CategoryOverview from "./CategoryOverview"
 import { stillnessCategoryDetails } from "@/data/wellness-categories"
-import { ChevronDown, Waves, Wind, CheckCircle2 } from "lucide-react"
+import { ChevronDown, Waves, Wind, CheckCircle2, LayoutGrid, PlusCircle } from "lucide-react"
 import { StillnessDashboard } from "./StillnessDashboard"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 
 const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
 
 export default function StillnessContent({ filterTags = [] }: { filterTags?: string[] }) {
-    const { lowEnergyMode, addStillnessLog } = useWellnessData();
+    const { 
+      lowEnergyMode, addStillnessLog, customPractices, 
+      collapsedCategories, toggleCategoryCollapse 
+    } = useWellnessData();
     const { toast } = useToast();
+
+    const allPractices = useMemo(() => [
+      ...mindfulnessPractices,
+      ...customPractices.filter(p => ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(p.category))
+    ], [customPractices]);
 
     const handleMVDLog = () => {
       addStillnessLog({
@@ -30,9 +39,19 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
       toast({ title: "Stillness Logged", description: "System recalibrated. Streak preserved.", variant: 'success' });
     };
 
-    const filteredPractices = mindfulnessPractices.filter(p => 
-      filterTags.length === 0 || filterTags.every(t => p.tags.includes(t))
+    const filteredPractices = useMemo(() => 
+      allPractices.filter(p => filterTags.length === 0 || filterTags.every(t => p.tags.includes(t))),
+      [allPractices, filterTags]
     );
+
+    const openCategories = useMemo(() => {
+      const list = [...categories, 'Custom'];
+      return list.filter((cat, idx) => {
+        const isCollapsed = collapsedCategories[cat];
+        if (isCollapsed === undefined) return idx < 2; // Default first 2 open
+        return !isCollapsed;
+      });
+    }, [collapsedCategories]);
 
     if (lowEnergyMode) {
       return (
@@ -68,7 +87,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
         <StillnessDashboard />
 
         {/* FILTERED RESULTS */}
-        {filteredPractices.length > 0 && filterTags.length > 0 && (
+        {filterTags.length > 0 && (
           <div className="space-y-4">
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Filtered Results</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -81,38 +100,69 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
           </div>
         )}
 
-        {filterTags.length === 0 && categories.map(category => {
-            const practices = mindfulnessPractices.filter(p => p.category === category);
-            const details = stillnessCategoryDetails[category];
-            if(practices.length === 0 || !details) return null;
+        {filterTags.length === 0 && (
+          <div className="space-y-8 pt-4">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-4 px-1">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-black uppercase tracking-tighter">Stillness Library</h2>
+                <p className="text-xs text-muted-foreground">Protocols for mental recovery and internal regulation.</p>
+              </div>
+            </div>
 
-            const CategoryIcon = details.icon;
+            <Accordion type="multiple" value={openCategories} onValueChange={(vals) => {
+              const list = [...categories, 'Custom'];
+              list.forEach(cat => {
+                const isNowOpen = vals.includes(cat);
+                const wasOpen = !collapsedCategories[cat];
+                const effectivelyWasOpen = wasOpen || (collapsedCategories[cat] === undefined && list.indexOf(cat) < 2);
+                if (isNowOpen !== effectivelyWasOpen) toggleCategoryCollapse(cat);
+              });
+            }}>
+              {categories.map(category => {
+                const practices = allPractices.filter(p => p.category === category);
+                const details = stillnessCategoryDetails[category];
+                if (!details) return null;
+                const Icon = details.icon;
 
-            return (
-                <details key={category} open className="group">
-                    <summary className="list-none cursor-pointer flex justify-between items-start">
-                        <div className="flex-grow">
-                             <CategoryOverview
-                                title={details.title}
-                                icon={<CategoryIcon className="w-6 h-6 text-primary" />}
-                                purpose={details.purpose}
-                                useWhen={details.useWhen}
-                                includes={details.includes}
-                                tagline={details.tagline}
-                            />
+                return (
+                  <AccordionItem key={category} value={category} className="border-b border-primary/5">
+                    <AccordionTrigger className="hover:no-underline px-1">
+                      <div className="flex items-center gap-4 text-left">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <Icon className="w-5 h-5 text-primary" />
                         </div>
-                        <ChevronDown className="w-5 h-5 m-6 shrink-0 transition-transform duration-200 group-open:rotate-180" />
-                    </summary>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                        <div>
+                          <h3 className="text-sm font-bold uppercase tracking-tight">
+                            {category} ({practices.length})
+                          </h3>
+                          <p className="text-[10px] text-muted-foreground italic line-clamp-1">"{details.tagline}"</p>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-4">
+                      <div className="mb-6">
+                        <CategoryOverview
+                          title={details.title}
+                          purpose={details.purpose}
+                          useWhen={details.useWhen}
+                          includes={details.includes}
+                          tagline={details.tagline}
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {practices.map((practice) => (
-                             <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-20">
-                                <PracticeInstructionCard exercise={practice} />
-                            </div>
+                          <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-20">
+                            <PracticeInstructionCard exercise={practice} />
+                          </div>
                         ))}
-                    </div>
-                </details>
-            )
-        })}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          </div>
+        )}
 
         <WellnessActivityCalendar categoryFilter="Stillness" />
     </div>

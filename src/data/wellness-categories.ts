@@ -192,5 +192,13 @@ export const communicationCategoryDetails: Record<CommunicationCategory, Wellnes
         useWhen: ['Video calls', 'Email', 'Slack'],
         includes: ['Subject Line Clarity', 'Video Framing'],
         tagline: 'Be present, even when remote.'
+    },
+    'Custom': {
+        title: 'Custom',
+        icon: Sparkles,
+        purpose: 'Your personalized collection of success protocols.',
+        useWhen: ['Personal routines', 'Unique challenges'],
+        includes: ['User-created practices'],
+        tagline: 'Designed by you.'
     }
 };
