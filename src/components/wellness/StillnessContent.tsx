@@ -5,12 +5,62 @@ import { mindfulnessPractices, type MindfulnessCategory } from "@/data/exercises
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
 import CategoryOverview from "./CategoryOverview"
 import { stillnessCategoryDetails } from "@/data/wellness-categories"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Waves, Wind, CheckCircle2 } from "lucide-react"
 import { StillnessDashboard } from "./StillnessDashboard"
+import { useWellnessData } from "@/hooks/use-wellness-data"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { useToast } from "@/hooks/use-toast"
 
 const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
 
 export default function StillnessContent() {
+    const { lowEnergyMode, addStillnessLog } = useWellnessData();
+    const { toast } = useToast();
+
+    const handleMVDLog = () => {
+      addStillnessLog({
+        techniqueId: 'mvd_stillness',
+        techniqueName: 'MVD Stillness (3 Breaths)',
+        duration: 1,
+        timestamp: new Date().toISOString(),
+        trigger: 'Proactive'
+      });
+      toast({ title: "Stillness Logged", description: "System recalibrated. Streak preserved.", variant: 'success' });
+    };
+
+    if (lowEnergyMode) {
+      return (
+        <div className="max-w-md mx-auto space-y-6 pt-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <Card className="text-center p-8 bg-blue-500/5 border-blue-500/20 shadow-lg">
+            <CardHeader>
+              <Waves className="mx-auto h-12 w-12 text-blue-500 mb-2" />
+              <CardTitle className="text-2xl font-black uppercase tracking-tight">MVD Stillness</CardTitle>
+              <CardDescription className="font-medium text-blue-700/70">Minimum Viable Day mode active.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="p-4 bg-background/50 rounded-xl border border-dashed border-blue-500/30 text-sm">
+                <p className="italic text-muted-foreground">"Three intentional breaths are enough to reset the vagus nerve and maintain your habit chain."</p>
+              </div>
+              <div className="space-y-4">
+                <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Quick Action</p>
+                <Button 
+                  onClick={handleMVDLog}
+                  className="w-full h-16 text-lg font-bold gap-3 bg-blue-500 hover:bg-blue-600 text-white shadow-xl shadow-blue-500/20"
+                >
+                  <Wind className="w-5 h-5" />
+                  Log 3-Breath Reset
+                </Button>
+              </div>
+            </CardContent>
+            <div className="pt-4 opacity-50 text-[10px] font-bold uppercase tracking-[0.2em]">
+              Streak Preservation Active
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
     return (
      <div className="space-y-8">
         <StillnessDashboard />
