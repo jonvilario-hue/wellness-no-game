@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -7,42 +6,27 @@ import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import WellnessTabs from '@/components/wellness/WellnessTabs';
 import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
-import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, InfoIcon, Lightbulb, Play, Trash2, Rocket, ArrowRight } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Rocket, ArrowRight } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { QuickLogBar } from '@/components/wellness/QuickLogBar';
 import { format } from 'date-fns';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
-import { wellnessLibrary } from '@/data/wellness-library';
 import { wellnessPlans } from '@/data/wellness-plans';
 import Link from 'next/link';
-
-const QUICK_PICKS = [
-  { label: "Neck & Shoulders", tags: ["neck"] },
-  { label: "Hips & Low Back", tags: ["hips", "low-back"] },
-  { label: "Desk Reset", tags: ["desk"] },
-  { label: "Low Energy", tags: ["low-energy"] },
-  { label: "Morning", tags: ["morning"] },
-  { label: "Before Sleep", tags: ["sleep"] },
-  { label: "Under 3 Min", tags: ["quick"] },
-  { label: "Feeling Anxious", tags: ["anxiety"] },
-];
 
 export default function ExercisesPage() {
   const [isOpen, setIsOpen] = useState(true);
   const [activeRoutineIds, setActiveRoutineIds] = useState<string[] | null>(null);
   const [activeRoutineName, setActiveRoutineName] = useState<string>("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
-  const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs, routines, deleteRoutine, completions, planProgress } = useWellnessData();
+  const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs, completions, planProgress } = useWellnessData();
   const { settings } = useDashboardSettings();
 
   useEffect(() => {
@@ -68,24 +52,6 @@ export default function ExercisesPage() {
     });
     return Object.entries(counts).map(([date, count]) => ({ date, count }));
   }, [movementLogs, stillnessLogs]);
-
-  const handleStartRoutine = (ids: string[], name: string = "Custom Routine") => {
-    setActiveRoutineIds(ids);
-    setActiveRoutineName(name);
-  };
-
-  const toggleTag = (tags: string[]) => {
-    setSelectedTags(prev => {
-      const allTags = new Set(prev);
-      const isPresent = tags.every(t => allTags.has(t));
-      if (isPresent) {
-        tags.forEach(t => allTags.delete(t));
-      } else {
-        tags.forEach(t => allTags.add(t));
-      }
-      return Array.from(allTags);
-    });
-  };
 
   const activePlan = useMemo(() => {
     return wellnessPlans.find(plan => {
@@ -171,26 +137,6 @@ export default function ExercisesPage() {
                   </div>
                 </Collapsible>
 
-                {/* QUICK PICKS BAR */}
-                <div className="w-full overflow-x-auto no-scrollbar pb-2">
-                  <div className="flex gap-2 w-max">
-                    {QUICK_PICKS.map((pick) => {
-                      const isActive = pick.tags.every(t => selectedTags.includes(t));
-                      return (
-                        <Button
-                          key={pick.label}
-                          variant={isActive ? "default" : "outline"}
-                          size="sm"
-                          className={cn("rounded-full font-bold transition-all", isActive && "shadow-md")}
-                          onClick={() => toggleTag(pick.tags)}
-                        >
-                          {pick.label}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                </div>
-
                 {/* PLANS SECTION */}
                 <div className="space-y-3">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Journey Plans</h3>
@@ -229,7 +175,7 @@ export default function ExercisesPage() {
                 </div>
             </div>
             
-            <WellnessTabs filterTags={selectedTags} />
+            <WellnessTabs />
 
             <div className="space-y-8 pt-8 border-t border-primary/5">
               <WellnessHeatmap activityData={activityData} />
