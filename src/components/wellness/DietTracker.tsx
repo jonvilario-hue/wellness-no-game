@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -18,6 +19,7 @@ import { format, subDays, isSameDay } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
+import { useToast } from '@/hooks/use-toast';
 
 export function DietTracker() {
     const { 
@@ -29,6 +31,8 @@ export function DietTracker() {
     const [showAdd, setShowAdd] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [mounted, setMounted] = useState(false);
+    const [mvdInput, setMvdInput] = useState('');
+    const { toast } = useToast();
 
     useEffect(() => {
         setMounted(true);
@@ -60,7 +64,6 @@ export function DietTracker() {
     const handleLogMeal = () => {
         addMealLog({ ...mealForm, date: dateStr });
         setShowAdd(false);
-        // Reset form for next entry
         setMealForm({
             mealType: 'Breakfast',
             calories: 0,
@@ -68,6 +71,24 @@ export function DietTracker() {
             carbs: 0,
             fat: 0
         });
+    };
+
+    const handleMVDLog = () => {
+        addMealLog({
+            date: dateStr,
+            mealType: 'Snacks',
+            calories: 150, // Minimal token calories
+            protein: 0,
+            carbs: 0,
+            fat: 0,
+            isFlexMeal: false
+        });
+        toast({ 
+            title: "Nutrition Logged", 
+            description: "MVD check-in complete. Streak preserved.", 
+            variant: 'success' 
+        });
+        setMvdInput('');
     };
 
     const handleCopyYesterday = () => {
@@ -84,8 +105,19 @@ export function DietTracker() {
                     <CardDescription className="mb-6">Streak preservation active. Low-friction logging only.</CardDescription>
                     <div className="space-y-4">
                         <p className="text-sm font-medium">Log one thing you ate or drank today:</p>
-                        <Input placeholder="e.g. Water and a sandwich" className="h-12" />
-                        <Button className="w-full bg-primary h-12">Log MVD Entry</Button>
+                        <Input 
+                            placeholder="e.g. Water and a sandwich" 
+                            className="h-12" 
+                            value={mvdInput}
+                            onChange={(e) => setMvdInput(e.target.value)}
+                        />
+                        <Button 
+                            className="w-full bg-primary h-12" 
+                            onClick={handleMVDLog}
+                            disabled={!mvdInput.trim()}
+                        >
+                            Log MVD Entry
+                        </Button>
                     </div>
                 </Card>
             </div>

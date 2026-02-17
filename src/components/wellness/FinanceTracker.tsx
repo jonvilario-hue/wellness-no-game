@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -22,6 +23,7 @@ import { useWellnessData } from '@/hooks/use-wellness-data';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
+import { useToast } from '@/hooks/use-toast';
 
 const defaultCategories = [
     { id: 'groceries', name: 'Groceries', icon: ShoppingCart },
@@ -46,6 +48,7 @@ export function FinanceTracker() {
     const [activeView, setActiveView] = useState('overview');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [mounted, setMounted] = useState(false);
+    const { toast } = useToast();
 
     useEffect(() => {
         setMounted(true);
@@ -83,6 +86,30 @@ export function FinanceTracker() {
         setMerchant('');
     };
 
+    const handleMVDLog = (spent: boolean) => {
+        if (!spent) {
+            addTransaction({
+                amount: 0,
+                type: 'expense',
+                category: 'misc',
+                merchant: 'MVD Check-in (No Spend)',
+                date: format(selectedDate, 'yyyy-MM-dd'),
+                moodTag: 'happy'
+            });
+            toast({ 
+                title: "Finance Logged", 
+                description: "Discipline streak maintained. Great job.", 
+                variant: 'success' 
+            });
+        } else {
+            toast({ 
+                title: "Friction Reduced", 
+                description: "Expense noted. Log details when your energy returns.", 
+                variant: 'default' 
+            });
+        }
+    };
+
     if (lowEnergyMode) {
         return (
             <div className="max-w-md mx-auto space-y-6 pt-10">
@@ -93,8 +120,19 @@ export function FinanceTracker() {
                     <div className="space-y-4">
                         <p className="text-sm font-medium">Did you avoid unplanned spending today?</p>
                         <div className="flex gap-2">
-                            <Button className="flex-1 bg-green-600 hover:bg-green-700 h-12 font-bold">Yes</Button>
-                            <Button variant="outline" className="flex-1 h-12 font-bold">No</Button>
+                            <Button 
+                                className="flex-1 bg-green-600 hover:bg-green-700 h-12 font-bold"
+                                onClick={() => handleMVDLog(false)}
+                            >
+                                Yes
+                            </Button>
+                            <Button 
+                                variant="outline" 
+                                className="flex-1 h-12 font-bold"
+                                onClick={() => handleMVDLog(true)}
+                            >
+                                No
+                            </Button>
                         </div>
                     </div>
                 </Card>
