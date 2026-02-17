@@ -14,7 +14,7 @@ import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { QuickLogBar } from '@/components/wellness/QuickLogBar';
 import { WellnessRecommendations } from '@/components/wellness/WellnessRecommendations';
 import { format } from 'date-fns';
@@ -114,7 +114,7 @@ export default function ExercisesPage() {
                             <span className="text-xl font-black">{wellnessStats.streak}</span>
                             <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
                         </div>
-                        <div className="h-4 w-[1px] bg-border" />
+                        <div className="h-4 w-[1px] bg-border mx-2" />
                         <div className="flex gap-3">
                             <div className={cn("w-3 h-3 rounded-full transition-colors border", wellnessStats.moveToday ? "bg-primary border-primary" : "bg-muted border-transparent")} />
                             <div className={cn("w-3 h-3 rounded-full transition-colors border", wellnessStats.stillToday ? "bg-blue-400 border-blue-400" : "bg-muted border-transparent")} />
@@ -204,8 +204,8 @@ export default function ExercisesPage() {
                               <Card key={routine.id} className="group hover:border-primary/50 transition-all border-primary/10">
                                 <CardHeader className="p-4 pb-2">
                                   <CardTitle className="text-sm font-bold flex justify-between items-start">
-                                    {routine.name}
-                                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => deleteRoutine(routine.id)}>
+                                    <span className="truncate pr-2">{routine.name}</span>
+                                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 shrink-0" onClick={() => deleteRoutine(routine.id)}>
                                       <Trash2 className="w-3 h-3 text-destructive" />
                                     </Button>
                                   </CardTitle>
