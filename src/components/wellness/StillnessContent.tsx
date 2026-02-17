@@ -173,7 +173,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
                 value={category} 
                 className={cn(
                   "border-b border-primary/5 transition-opacity",
-                  exercises.length === 0 && "opacity-40"
+                  practices.length === 0 && "opacity-40"
                 )}
               >
                 <AccordionTrigger className="hover:no-underline px-1">
