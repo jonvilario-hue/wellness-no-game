@@ -10,7 +10,7 @@ import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
 import RoutineBuilderModal from '@/components/wellness/RoutineBuilderModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, InfoIcon, Lightbulb, Play, Trash2, Rocket } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, InfoIcon, Lightbulb, Play, Trash2, Rocket, ArrowRight } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -20,15 +20,29 @@ import { QuickLogBar } from '@/components/wellness/QuickLogBar';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
-import { WellnessActivityCalendar } from '@/components/wellness/WellnessActivityCalendar';
 import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
+import { wellnessLibrary } from '@/data/wellness-library';
+import { wellnessPlans } from '@/data/wellness-plans';
+import Link from 'next/link';
+
+const QUICK_PICKS = [
+  { label: "Neck & Shoulders", tags: ["neck"] },
+  { label: "Hips & Low Back", tags: ["hips", "low-back"] },
+  { label: "Desk Reset", tags: ["desk"] },
+  { label: "Low Energy", tags: ["low-energy"] },
+  { label: "Morning", tags: ["morning"] },
+  { label: "Before Sleep", tags: ["sleep"] },
+  { label: "Under 3 Min", tags: ["quick"] },
+  { label: "Feeling Anxious", tags: ["anxiety"] },
+];
 
 export default function ExercisesPage() {
   const [isOpen, setIsOpen] = useState(true);
   const [activeRoutineIds, setActiveRoutineIds] = useState<string[] | null>(null);
   const [activeRoutineName, setActiveRoutineName] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
-  const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs, routines, deleteRoutine } = useWellnessData();
+  const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs, routines, deleteRoutine, completions, planProgress } = useWellnessData();
   const { settings } = useDashboardSettings();
 
   useEffect(() => {
@@ -43,31 +57,7 @@ export default function ExercisesPage() {
     localStorage.setItem('health-check-collapsible-state', JSON.stringify(open));
   };
 
-  const wellnessStats = useMemo(() => {
-    const combinedLogs = [...movementLogs, ...stillnessLogs];
-    const streak = calculateStreak(combinedLogs);
-    
-    const today = format(new Date(), 'yyyy-MM-dd');
-    const moveToday = movementLogs.some(l => format(new Date(l.timestamp), 'yyyy-MM-dd') === today);
-    const stillToday = stillnessLogs.some(l => format(new Date(l.timestamp), 'yyyy-MM-dd') === today);
-    
-    const moveDates = new Set(movementLogs.map(l => format(new Date(l.timestamp), 'yyyy-MM-dd')));
-    const stillDates = new Set(stillnessLogs.map(l => format(new Date(l.timestamp), 'yyyy-MM-dd')));
-    
-    let bothCount = 0;
-    moveDates.forEach(date => {
-        if (stillDates.has(date)) bothCount++;
-    });
-
-    return { 
-        streak, 
-        moveToday, 
-        stillToday,
-        moveDays: moveDates.size,
-        stillDays: stillDates.size,
-        bothCount
-    };
-  }, [movementLogs, stillnessLogs]);
+  const streak = useMemo(() => calculateStreak(completions), [completions]);
 
   const activityData = useMemo(() => {
     const combined = [...movementLogs, ...stillnessLogs];
@@ -83,6 +73,28 @@ export default function ExercisesPage() {
     setActiveRoutineIds(ids);
     setActiveRoutineName(name);
   };
+
+  const toggleTag = (tags: string[]) => {
+    setSelectedTags(prev => {
+      const allTags = new Set(prev);
+      const isPresent = tags.every(t => allTags.has(t));
+      if (isPresent) {
+        tags.forEach(t => allTags.delete(t));
+      } else {
+        tags.forEach(t => allTags.add(t));
+      }
+      return Array.from(allTags);
+    });
+  };
+
+  const activePlan = useMemo(() => {
+    return wellnessPlans.find(plan => {
+      const progress = planProgress[plan.id];
+      if (!progress) return false;
+      const completedCount = Object.values(progress).filter(Boolean).length;
+      return completedCount > 0 && completedCount < plan.steps.length;
+    });
+  }, [planProgress]);
 
   if (activeRoutineIds) {
     return (
@@ -104,45 +116,39 @@ export default function ExercisesPage() {
       <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24">
         <div className="mx-auto max-w-7xl space-y-8">
             
+            {/* STREAK WIDGET */}
             <div className="flex justify-center">
-              <Popover>
-                <PopoverTrigger asChild>
-                    <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 cursor-pointer hover:bg-primary/10 transition-colors shadow-sm">
-                        <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-2">
-                            <Flame className="w-5 h-5 text-orange-500" />
-                            <span className="text-xl font-black">{wellnessStats.streak}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
-                        </div>
-                        <div className="h-4 w-[1px] bg-border mx-2" />
-                        <div className="flex gap-3">
-                            <div className={cn("w-3 h-3 rounded-full transition-colors border", wellnessStats.moveToday ? "bg-primary border-primary" : "bg-muted border-transparent")} />
-                            <div className={cn("w-3 h-3 rounded-full transition-colors border", wellnessStats.stillToday ? "bg-blue-400 border-blue-400" : "bg-muted border-transparent")} />
-                        </div>
-                        <InfoIcon className="w-3 h-3 text-muted-foreground opacity-40" />
-                        </div>
-                    </Card>
-                </PopoverTrigger>
-                <PopoverContent className="w-64">
-                    <div className="space-y-3">
-                        <h4 className="font-bold text-sm uppercase tracking-wider">Streak Analytics</h4>
-                        <div className="space-y-2 text-xs">
-                            <div className="flex justify-between items-center p-2 bg-muted/50 rounded-md">
-                                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-primary" /> Movement Days</span>
-                                <span className="font-bold">{wellnessStats.moveDays}</span>
-                            </div>
-                            <div className="flex justify-between items-center p-2 bg-muted/50 rounded-md">
-                                <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-400" /> Stillness Days</span>
-                                <span className="font-bold">{wellnessStats.stillDays}</span>
-                            </div>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground italic">
-                            Keep either streak going to maintain your combined Wellness momentum.
-                        </p>
-                    </div>
-                </PopoverContent>
-              </Popover>
+              <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm">
+                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                      <Flame className="w-5 h-5 text-orange-500" />
+                      <span className="text-xl font-black">{streak}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
+                  </div>
+                  </div>
+              </Card>
             </div>
+
+            {/* ACTIVE PLAN BANNER */}
+            {activePlan && (
+              <Link href={`/exercises/plans/${activePlan.id}`}>
+                <Card className="bg-primary border-primary text-primary-foreground p-4 flex items-center justify-between group hover:opacity-90 transition-opacity">
+                  <div className="flex items-center gap-3">
+                    <Rocket className="w-5 h-5" />
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest opacity-80">Continue Journey</p>
+                      <p className="font-black text-lg">{activePlan.title}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold">
+                      Day {Object.values(planProgress[activePlan.id]).filter(Boolean).length + 1} of {activePlan.steps.length}
+                    </span>
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Card>
+              </Link>
+            )}
 
             <div className="flex flex-col gap-4">
                 <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full">
@@ -165,6 +171,46 @@ export default function ExercisesPage() {
                   </div>
                 </Collapsible>
 
+                {/* QUICK PICKS BAR */}
+                <div className="w-full overflow-x-auto no-scrollbar pb-2">
+                  <div className="flex gap-2 w-max">
+                    {QUICK_PICKS.map((pick) => {
+                      const isActive = pick.tags.every(t => selectedTags.includes(t));
+                      return (
+                        <Button
+                          key={pick.label}
+                          variant={isActive ? "default" : "outline"}
+                          size="sm"
+                          className={cn("rounded-full font-bold transition-all", isActive && "shadow-md")}
+                          onClick={() => toggleTag(pick.tags)}
+                        >
+                          {pick.label}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* PLANS SECTION */}
+                <div className="space-y-3">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Journey Plans</h3>
+                  <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+                    {wellnessPlans.map((plan) => (
+                      <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[280px]">
+                        <Card className="hover:border-primary/50 transition-all h-full group">
+                          <CardHeader className="p-4">
+                            <CardTitle className="text-base">{plan.title}</CardTitle>
+                            <CardDescription className="text-[10px] uppercase font-black">{plan.steps.length} DAYS</CardDescription>
+                          </CardHeader>
+                          <CardContent className="p-4 pt-0">
+                            <p className="text-xs text-muted-foreground line-clamp-2">{plan.description}</p>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="flex flex-col items-center gap-4">
                     <div className={cn(
                         "flex items-center gap-3 px-4 py-2 rounded-full border transition-all",
@@ -180,54 +226,10 @@ export default function ExercisesPage() {
                             onCheckedChange={setLowEnergyMode}
                         />
                     </div>
-                    
-                    {settings.assistantMode && (
-                        <div className="max-w-md p-3 bg-primary/10 rounded-lg text-center relative animate-in fade-in slide-in-from-top-1">
-                            <p className="text-xs flex items-start gap-2 text-left">
-                                <Lightbulb className="w-4 h-4 mt-0.5 text-primary shrink-0" />
-                                <span className="text-foreground">
-                                    <span className="font-bold">MVD Logic:</span> Minimum Viable Day mode preserves your streak with low-friction check-ins when energy is low.
-                                </span>
-                            </p>
-                        </div>
-                    )}
-
-                    {!lowEnergyMode && (
-                      <div className="flex flex-col items-center gap-6 w-full max-w-4xl">
-                        <RoutineBuilderModal onStartRoutine={handleStartRoutine} />
-                        
-                        {routines.length > 0 && (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
-                            {routines.map(routine => (
-                              <Card key={routine.id} className="group hover:border-primary/50 transition-all border-primary/10">
-                                <CardHeader className="p-4 pb-2">
-                                  <CardTitle className="text-sm font-bold flex justify-between items-start">
-                                    <span className="truncate pr-2">{routine.name}</span>
-                                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 shrink-0" onClick={() => deleteRoutine(routine.id)}>
-                                      <Trash2 className="w-3 h-3 text-destructive" />
-                                    </Button>
-                                  </CardTitle>
-                                  <CardDescription className="text-[10px] font-bold uppercase">{routine.exerciseIds.length} Steps</CardDescription>
-                                </CardHeader>
-                                <CardFooter className="p-4 pt-2">
-                                  <Button 
-                                    className="w-full h-8 text-xs font-bold gap-2" 
-                                    variant="secondary"
-                                    onClick={() => handleStartRoutine(routine.exerciseIds, routine.name)}
-                                  >
-                                    <Play className="w-3 h-3 fill-current" /> Start
-                                  </Button>
-                                </CardFooter>
-                              </Card>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
                 </div>
             </div>
             
-            <WellnessTabs />
+            <WellnessTabs filterTags={selectedTags} />
 
             <div className="space-y-8 pt-8 border-t border-primary/5">
               <WellnessHeatmap activityData={activityData} />

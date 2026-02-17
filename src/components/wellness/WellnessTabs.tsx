@@ -11,7 +11,11 @@ import { DietTracker } from "./DietTracker"
 import { HeartPulse, Waves, Wallet, Utensils } from "lucide-react"
 import { AssistantTooltip } from "@/components/assistant-tooltip"
 
-function WellnessTabsContent() {
+interface WellnessTabsProps {
+  filterTags?: string[];
+}
+
+function WellnessTabsContent({ filterTags = [] }: WellnessTabsProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -39,28 +43,28 @@ function WellnessTabsContent() {
     <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
         <TabsList className="grid grid-cols-4 w-full max-w-2xl h-auto p-1 bg-muted/50">
-            <AssistantTooltip text="Physical activity to restore ease, build strength, or boost energy. Even 1 minute of movement can reset neural pathways and boost dopamine.">
+            <AssistantTooltip text="Physical activity to restore ease, build strength, or boost energy.">
               <TabsTrigger value="movement" className="gap-2 py-2 text-xs sm:text-sm w-full">
                 <HeartPulse className="w-4 h-4 hidden sm:inline"/>
                 Movement
               </TabsTrigger>
             </AssistantTooltip>
             
-            <AssistantTooltip text="Mindfulness and breathwork to regulate your nervous system. These practices switch your system from 'stress' to 'recovery' mode.">
+            <AssistantTooltip text="Mindfulness and breathwork to regulate your nervous system.">
               <TabsTrigger value="stillness" className="gap-2 py-2 text-xs sm:text-sm w-full">
                 <Waves className="w-4 h-4 hidden sm:inline"/>
                 Stillness
               </TabsTrigger>
             </AssistantTooltip>
             
-            <AssistantTooltip text="Resource management to reduce survival stress. Tracking small wins here builds the financial foundation required for deep cognitive focus.">
+            <AssistantTooltip text="Resource management to reduce survival stress.">
               <TabsTrigger value="finance" className="gap-2 py-2 text-xs sm:text-sm w-full">
                 <Wallet className="w-4 h-4 hidden sm:inline"/>
                 Finance
               </TabsTrigger>
             </AssistantTooltip>
             
-            <AssistantTooltip text="Optimizing your intake for brain health. Consistent fueling and hydration prevent the glucose drops that cause mental fog and irritability.">
+            <AssistantTooltip text="Optimizing your intake for brain health.">
               <TabsTrigger value="diet" className="gap-2 py-2 text-xs sm:text-sm w-full">
                 <Utensils className="w-4 h-4 hidden sm:inline"/>
                 Nutrition
@@ -70,11 +74,11 @@ function WellnessTabsContent() {
       </div>
 
       <TabsContent value="movement" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-        <MovementContent />
+        <MovementContent filterTags={filterTags} />
       </TabsContent>
 
       <TabsContent value="stillness" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-         <StillnessContent />
+         <StillnessContent filterTags={filterTags} />
       </TabsContent>
 
       <TabsContent value="finance" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -88,10 +92,10 @@ function WellnessTabsContent() {
   )
 }
 
-export default function WellnessTabs() {
+export default function WellnessTabs({ filterTags }: WellnessTabsProps) {
   return (
     <Suspense fallback={<div className="w-full h-48 bg-muted animate-pulse rounded-xl" />}>
-      <WellnessTabsContent />
+      <WellnessTabsContent filterTags={filterTags} />
     </Suspense>
   )
 }

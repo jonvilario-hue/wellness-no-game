@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -34,7 +35,7 @@ export function RoutinePlayer({ exerciseIds, onClose, routineName = "Active Rout
   const [timeLeft, setTimeLeft] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   
-  const { addMovementLog, addStillnessLog } = useWellnessData();
+  const { addMovementLog, addStillnessLog, logCompletion } = useWellnessData();
 
   const currentExercise = useMemo(() => {
     const id = exerciseIds[currentIndex];
@@ -91,6 +92,7 @@ export function RoutinePlayer({ exerciseIds, onClose, routineName = "Active Rout
     } else {
       setIsFinished(true);
       setIsActive(false);
+      logCompletion();
     }
   };
 

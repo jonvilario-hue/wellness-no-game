@@ -12,10 +12,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
+import { kits } from "@/data/wellness-kits"
+import { Badge } from "@/components/ui/badge"
 
 const categories: ExerciseCategory[] = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
-export default function MovementContent() {
+export default function MovementContent({ filterTags = [] }: { filterTags?: string[] }) {
   const { lowEnergyMode, addMovementLog } = useWellnessData();
   const { toast } = useToast();
 
@@ -30,6 +32,14 @@ export default function MovementContent() {
     });
     toast({ title: "Movement Logged", description: "Streak preserved. Rest is progress.", variant: 'success' });
   };
+
+  const filteredExercises = movementExercises.filter(e => 
+    filterTags.length === 0 || filterTags.every(t => e.tags.includes(t))
+  );
+
+  const filteredKits = kits.filter(k => 
+    filterTags.length === 0 || filterTags.every(t => k.tags.includes(t))
+  );
 
   if (lowEnergyMode) {
     return (
@@ -55,9 +65,6 @@ export default function MovementContent() {
               </Button>
             </div>
           </CardContent>
-          <div className="pt-4 opacity-50 text-[10px] font-bold uppercase tracking-[0.2em]">
-            Streak Preservation Active
-          </div>
         </Card>
       </div>
     );
@@ -67,9 +74,40 @@ export default function MovementContent() {
     <div className="space-y-8">
         <MovementDashboard />
         
-        <WellnessActivityCalendar categoryFilter="Movement" />
+        {/* MIXED LIST: KITS + EXERCISES */}
+        {(filteredExercises.length > 0 || filteredKits.length > 0) && (
+          <div className="space-y-4">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Filtered Results</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredKits.map(kit => (
+                <Card key={kit.id} className="border-primary/20 bg-primary/5 hover:border-primary/40 transition-all flex flex-col group relative overflow-hidden">
+                  <div className="absolute top-2 right-2">
+                    <Badge className="bg-primary text-primary-foreground font-bold text-[8px] uppercase tracking-widest">Session</Badge>
+                  </div>
+                  <CardHeader className="p-4 pb-2">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{kit.emoji}</span>
+                      <CardTitle className="text-base">{kit.title}</CardTitle>
+                    </div>
+                    <CardDescription className="text-xs line-clamp-2 mt-1">{kit.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="p-4 pt-2 mt-auto">
+                    <Button className="w-full h-8 text-xs font-bold gap-2">
+                      <Play className="w-3 h-3 fill-current" /> Start Session ({kit.estimatedMinutes}m)
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+              {filteredExercises.map(exercise => (
+                <div key={exercise.id} id={`practice-${exercise.id}`} className="scroll-mt-20">
+                  <PracticeInstructionCard exercise={exercise} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {categories.map(category => {
+        {filterTags.length === 0 && categories.map(category => {
             const exercises = movementExercises.filter(e => e.category === category);
             const details = movementCategoryDetails[category];
             if(exercises.length === 0 || !details) return null;
@@ -101,6 +139,8 @@ export default function MovementContent() {
                 </details>
             )
         })}
+
+        <WellnessActivityCalendar categoryFilter="Movement" />
     </div>
   )
 }

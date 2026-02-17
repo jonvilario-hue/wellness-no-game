@@ -1,8 +1,9 @@
+
 'use client';
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { subDays, isSameDay, format, startOfWeek, differenceInDays } from 'date-fns';
+import { subDays, isSameDay, format, startOfDay, differenceInDays } from 'date-fns';
 
 export type Transaction = {
   id: string;
@@ -95,8 +96,12 @@ export type WellnessState = {
   stillnessLogs: StillnessLog[];
   movementProgress: Record<string, MovementProgress>;
   
-  // Routines
+  // Routines (Stacks)
   routines: CustomRoutine[];
+
+  // Plans & Progress
+  planProgress: Record<string, Record<number, boolean>>;
+  completions: Record<string, boolean>;
 
   // Actions
   setLowEnergyMode: (enabled: boolean) => void;
@@ -121,6 +126,9 @@ export type WellnessState = {
   
   addRoutine: (routine: Omit<CustomRoutine, 'id' | 'createdAt'>) => void;
   deleteRoutine: (id: string) => void;
+
+  togglePlanDay: (planId: string, dayNumber: number) => void;
+  logCompletion: () => void;
 };
 
 export const useWellnessData = create<WellnessState>()(
@@ -147,12 +155,18 @@ export const useWellnessData = create<WellnessState>()(
       movementProgress: {},
       routines: [],
 
+      planProgress: {},
+      completions: {},
+
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
       setFeaturePhase: (featurePhase) => set({ featurePhase }),
 
-      addTransaction: (tx) => set((state) => ({ 
-        transactions: [{ ...tx, id: crypto.randomUUID() }, ...state.transactions] 
-      })),
+      addTransaction: (tx) => {
+        set((state) => ({ 
+          transactions: [{ ...tx, id: crypto.randomUUID() }, ...state.transactions] 
+        }));
+        get().logCompletion();
+      },
       deleteTransaction: (id) => set((state) => ({
         transactions: state.transactions.filter(t => t.id !== id)
       })),
@@ -164,9 +178,12 @@ export const useWellnessData = create<WellnessState>()(
       })),
       updateNetWorth: (assets, liabilities) => set({ assets, liabilities }),
 
-      addMealLog: (log) => set((state) => ({
-        mealLogs: [{ ...log, id: crypto.randomUUID() }, ...state.mealLogs]
-      })),
+      addMealLog: (log) => {
+        set((state) => ({
+          mealLogs: [{ ...log, id: crypto.randomUUID() }, ...state.mealLogs]
+        }));
+        get().logCompletion();
+      },
       deleteMealLog: (id) => set((state) => ({
         mealLogs: state.mealLogs.filter(l => l.id !== id)
       })),
@@ -182,31 +199,37 @@ export const useWellnessData = create<WellnessState>()(
         weightLogs: [...state.weightLogs.filter(w => w.date !== date), { date, weight }]
       })),
 
-      addMovementLog: (log) => set((state) => {
-        const newLog = { ...log, id: crypto.randomUUID() };
-        const newProgress = { ...state.movementProgress };
-        
-        if (log.reps || log.holdTime) {
-          const currentBest = newProgress[log.exerciseId] || { exerciseId: log.exerciseId, lastUpdated: new Date().toISOString() };
-          newProgress[log.exerciseId] = {
-            ...currentBest,
-            bestReps: Math.max(currentBest.bestReps || 0, log.reps || 0),
-            bestHoldTime: Math.max(currentBest.bestHoldTime || 0, log.holdTime || 0),
-            lastUpdated: new Date().toISOString()
-          };
-        }
+      addMovementLog: (log) => {
+        set((state) => {
+          const newLog = { ...log, id: crypto.randomUUID() };
+          const newProgress = { ...state.movementProgress };
+          
+          if (log.reps || log.holdTime) {
+            const currentBest = newProgress[log.exerciseId] || { exerciseId: log.exerciseId, lastUpdated: new Date().toISOString() };
+            newProgress[log.exerciseId] = {
+              ...currentBest,
+              bestReps: Math.max(currentBest.bestReps || 0, log.reps || 0),
+              bestHoldTime: Math.max(currentBest.bestHoldTime || 0, log.holdTime || 0),
+              lastUpdated: new Date().toISOString()
+            };
+          }
 
-        return {
-          movementLogs: [newLog, ...state.movementLogs],
-          movementProgress: newProgress
-        };
-      }),
+          return {
+            movementLogs: [newLog, ...state.movementLogs],
+            movementProgress: newProgress
+          };
+        });
+        get().logCompletion();
+      },
       deleteMovementLog: (id) => set((state) => ({
         movementLogs: state.movementLogs.filter(l => l.id !== id)
       })),
-      addStillnessLog: (log) => set((state) => ({
-        stillnessLogs: [{ ...log, id: crypto.randomUUID() }, ...state.stillnessLogs]
-      })),
+      addStillnessLog: (log) => {
+        set((state) => ({
+          stillnessLogs: [{ ...log, id: crypto.randomUUID() }, ...state.stillnessLogs]
+        }));
+        get().logCompletion();
+      },
       deleteStillnessLog: (id) => set((state) => ({
         stillnessLogs: state.stillnessLogs.filter(l => l.id !== id)
       })),
@@ -217,6 +240,29 @@ export const useWellnessData = create<WellnessState>()(
       deleteRoutine: (id) => set((state) => ({
         routines: state.routines.filter(r => r.id !== id)
       })),
+
+      togglePlanDay: (planId, dayNumber) => {
+        set((state) => {
+          const currentPlan = state.planProgress[planId] || {};
+          const isCompleting = !currentPlan[dayNumber];
+          const newProgress = {
+            ...state.planProgress,
+            [planId]: {
+              ...currentPlan,
+              [dayNumber]: isCompleting
+            }
+          };
+          return { planProgress: newProgress };
+        });
+        get().logCompletion();
+      },
+
+      logCompletion: () => {
+        const today = format(new Date(), 'yyyy-MM-dd');
+        set((state) => ({
+          completions: { ...state.completions, [today]: true }
+        }));
+      }
     }),
     {
       name: 'wellness-data-storage-v2',
@@ -226,11 +272,9 @@ export const useWellnessData = create<WellnessState>()(
 );
 
 // Utility to calculate streak with a 1-day grace period
-export const calculateStreak = (logs: { timestamp: string }[]) => {
-  if (logs.length === 0) return 0;
-  
-  const dates = Array.from(new Set(logs.map(l => format(new Date(l.timestamp), 'yyyy-MM-dd'))))
-    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+export const calculateStreak = (completions: Record<string, boolean>) => {
+  const dates = Object.keys(completions).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+  if (dates.length === 0) return 0;
     
   const today = format(new Date(), 'yyyy-MM-dd');
   const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
@@ -240,7 +284,7 @@ export const calculateStreak = (logs: { timestamp: string }[]) => {
   let streak = 1;
   for (let i = 0; i < dates.length - 1; i++) {
     const diff = differenceInDays(new Date(dates[i]), new Date(dates[i+1]));
-    if (diff <= 2) { // 1 day gap allowed
+    if (diff === 1) {
       streak++;
     } else {
       break;

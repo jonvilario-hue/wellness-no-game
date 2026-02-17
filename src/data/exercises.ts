@@ -12,6 +12,7 @@ type BasePractice = {
   description: string;
   duration: number; // in seconds
   icon: LucideIcon;
+  tags: string[];
 };
 
 export type Exercise = BasePractice & {
@@ -38,6 +39,7 @@ export const movementExercises: Exercise[] = [
     duration: 120,
     icon: PersonStanding,
     category: 'Stretching',
+    tags: ['neck', 'desk', 'low-energy', 'quick'],
     intention: 'Release neck and upper shoulder tension from stress or sitting.',
     setup: ['Sit or stand comfortably, spine tall.', 'Relax your arms at your sides or on your lap.'],
     steps: [
@@ -57,6 +59,7 @@ export const movementExercises: Exercise[] = [
     duration: 180,
     icon: PersonStanding,
     category: 'Stretching',
+    tags: ['hips', 'low-back', 'desk'],
     intention: 'Open stiff hips and counteract long sitting.',
     setup: ['Sit on the floor or a firm bed.', 'Cross legs or place soles of feet together (butterfly pose).'],
     steps: [
@@ -76,6 +79,7 @@ export const movementExercises: Exercise[] = [
     duration: 90,
     icon: Cat,
     category: 'Stretching',
+    tags: ['desk', 'low-back', 'quick'],
     intention: 'Mobilize mid-back, improve posture.',
     setup: ['Sit on a chair or mat.', 'Place hands behind your head.'],
     steps: [
@@ -97,6 +101,7 @@ export const movementExercises: Exercise[] = [
     duration: 120,
     icon: Dumbbell,
     category: 'Strength',
+    tags: ['neck', 'quick'],
     intention: 'Gentle strength work for upper body.',
     setup: ['Stand 2–3 feet away from a wall.', 'Place palms flat on wall at chest height.'],
     steps: [
@@ -115,6 +120,7 @@ export const movementExercises: Exercise[] = [
     duration: 60,
     icon: Mountain,
     category: 'Strength',
+    tags: ['morning', 'quick', 'low-energy'],
     intention: 'Improve focus, joint stability.',
     setup: ['Stand near a chair or wall for balance.', 'Shift weight to one foot.'],
     steps: [
@@ -133,6 +139,7 @@ export const movementExercises: Exercise[] = [
     duration: 90,
     icon: Dumbbell,
     category: 'Strength',
+    tags: ['morning', 'low-back', 'quick'],
     intention: 'Engage deep core muscles for posture and energy.',
     setup: ['Find a clear space to lie down or use a mat.', 'Get into a plank position (on forearms or hands).'],
     steps: [
@@ -153,6 +160,7 @@ export const movementExercises: Exercise[] = [
     duration: 60,
     icon: Zap,
     category: 'Energizer',
+    tags: ['morning', 'quick', 'anxiety'],
     intention: 'Quick cardio boost to reset energy.',
     setup: ['Stand tall, arms at your side.', 'Set a 1-minute timer.'],
     steps: [
@@ -171,6 +179,7 @@ export const movementExercises: Exercise[] = [
     duration: 120,
     icon: Zap,
     category: 'Energizer',
+    tags: ['anxiety', 'quick'],
     intention: 'Release agitation or sluggishness.',
     setup: ['Stand in a fighter stance.', 'Loosen shoulders.'],
     steps: [
@@ -188,6 +197,7 @@ export const movementExercises: Exercise[] = [
     duration: 90,
     icon: Zap,
     category: 'Energizer',
+    tags: ['morning', 'quick', 'desk'],
     intention: 'Synchronize breath and body for energy.',
     setup: ['Stand with feet shoulder-width apart.', 'Inhale deeply.'],
     steps: [
@@ -208,6 +218,7 @@ export const movementExercises: Exercise[] = [
     duration: 180,
     icon: Sunrise,
     category: 'Wakeup & Wind-Down',
+    tags: ['morning', 'low-energy'],
     intention: 'Gently activate your body for the day.',
     setup: ['Stand or sit comfortably.', 'Roll out wrists, shoulders, ankles.'],
     steps: [
@@ -226,6 +237,7 @@ export const movementExercises: Exercise[] = [
     duration: 240,
     icon: Moon,
     category: 'Wakeup & Wind-Down',
+    tags: ['sleep', 'low-back', 'neck'],
     intention: 'Relax body tension before sleep.',
     setup: ['Dim lights.', 'Lay down on floor or bed.'],
     steps: [
@@ -250,6 +262,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 180, 
     icon: Wind, 
     category: 'Breathwork',
+    tags: ['anxiety', 'desk', 'quick'],
     intention: "Regain calm and sharpen focus with structured breath.",
     setup: ["Sit or lie down with back supported.", "Optional: Set a 2-minute timer."],
     steps: [
@@ -269,6 +282,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 120, 
     icon: Wind, 
     category: 'Breathwork',
+    tags: ['sleep', 'anxiety', 'quick'],
     intention: "Calm anxiety and prepare the body for rest.",
     setup: ["Sit or lie down with eyes closed.", "Optional: Hand on chest or belly."],
     steps: [
@@ -287,6 +301,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 300, 
     icon: Wind, 
     category: 'Breathwork',
+    tags: ['low-energy', 'sleep'],
     intention: "Harmonize the nervous system by syncing your breath rhythm.",
     setup: ["Sit or recline.", "Optional: Play calming music at 60 bpm."],
     steps: [
@@ -305,6 +320,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 120, 
     icon: Brain, 
     category: 'Clarity & Focus',
+    tags: ['morning', 'low-energy', 'quick'],
     intention: "Boost confidence and sense of progress.",
     setup: ["Open journal or note app.", "Optional: Set a 2-minute timer."],
     steps: [
@@ -323,6 +339,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 180, 
     icon: Eye, 
     category: 'Clarity & Focus',
+    tags: ['morning', 'anxiety'],
     intention: "Mentally rehearse a task to reduce anxiety and boost readiness.",
     setup: ["Sit with eyes closed or gaze lowered.", "Choose 1 task you want to do soon."],
     steps: [
@@ -342,6 +359,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 120, 
     icon: Brain, 
     category: 'Clarity & Focus',
+    tags: ['desk', 'anxiety', 'quick'],
     intention: "Stop the spin of distraction and restart mental focus.",
     setup: ["Sit or lie down with no goal but stillness.", "Optional: Timer for 2 minutes."],
     steps: [
@@ -361,6 +379,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 180, 
     icon: Shield, 
     category: 'Grounding & Safety',
+    tags: ['anxiety', 'grounding'],
     intention: "Ground yourself in the present during overwhelm or panic.",
     setup: ["Sit wherever you are.", "Look around gently."],
     steps: [
@@ -380,6 +399,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 120, 
     icon: Shield, 
     category: 'Grounding & Safety',
+    tags: ['anxiety', 'grounding', 'quick'],
     intention: "Anchor your attention by engaging one sense deeply.",
     setup: ["Pick up a small object (rock, leaf, keychain, etc.).", "Sit comfortably."],
     steps: [
@@ -399,6 +419,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 300, 
     icon: TreeDeciduous, 
     category: 'Grounding & Safety',
+    tags: ['low-energy', 'sleep'],
     intention: "Create a safe, calm mental space.",
     setup: ["Sit or lie down in a quiet place.", "Close your eyes or gaze downward."],
     steps: [
@@ -418,6 +439,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 300, 
     icon: HeartHandshake, 
     category: 'Self-Compassion',
+    tags: ['low-energy', 'anxiety'],
     intention: "Increase emotional warmth for self and others.",
     setup: ["Sit or lie in a cozy position.", "Take one slow breath."],
     steps: [
@@ -436,6 +458,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 180, 
     icon: HeartHandshake, 
     category: 'Self-Compassion',
+    tags: ['low-energy', 'anxiety'],
     intention: "Increase emotional clarity and meet your current need.",
     setup: ["Open journal or notes app.", "Write or say aloud."],
     steps: [
@@ -454,6 +477,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     duration: 120, 
     icon: HeartHandshake, 
     category: 'Self-Compassion',
+    tags: ['anxiety', 'low-energy', 'quick'],
     intention: "Reframe self-criticism with softness.",
     setup: ["Sit still and breathe for 15 seconds.", "Recall a recent moment of struggle."],
     steps: [
