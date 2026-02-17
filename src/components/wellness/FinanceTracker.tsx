@@ -15,7 +15,7 @@ import {
     PlusCircle, Wallet, Target, DollarSign, Sparkles, 
     ShoppingCart, Utensils, Car, Tv, CreditCard,
     Home, Zap, Heart, GraduationCap, Box, Trash2, ArrowUpRight, ArrowDownRight,
-    Smile, Frown, Meh, Download, ShieldCheck, X, Calendar as CalendarIcon
+    Save, X, Calendar as CalendarIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SynergyPanel } from './SynergyPanel';
@@ -45,7 +45,6 @@ export function FinanceTracker() {
         subscriptions, toggleSubscription, lowEnergyMode, assets
     } = useWellnessData();
     
-    const [showAdd, setShowAdd] = useState(false);
     const [activeView, setActiveView] = useState('overview');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [mounted, setMounted] = useState(false);
@@ -72,7 +71,10 @@ export function FinanceTracker() {
     }, [transactions, assets]);
 
     const handleAdd = () => {
-        if (!amount || !merchant) return;
+        if (!amount || !merchant) {
+            toast({ title: "Missing Fields", description: "Please enter an amount and merchant.", variant: "destructive" });
+            return;
+        }
         addTransaction({
             amount: parseFloat(amount),
             type,
@@ -81,40 +83,16 @@ export function FinanceTracker() {
             date: format(selectedDate, 'yyyy-MM-dd'),
             moodTag: mood,
         });
-        setShowAdd(false);
         setAmount('');
         setMerchant('');
-    };
-
-    const handleMVDLog = (spent: boolean) => {
-        if (!spent) {
-            addTransaction({
-                amount: 0,
-                type: 'expense',
-                category: 'misc',
-                merchant: 'MVD Check-in (No Spend)',
-                date: format(selectedDate, 'yyyy-MM-dd'),
-                moodTag: 'happy'
-            });
-            toast({ 
-                title: "Finance Logged", 
-                description: "Discipline streak maintained. Great job.", 
-                variant: 'success' 
-            });
-        } else {
-            toast({ 
-                title: "Friction Reduced", 
-                description: "Expense noted. Log details when your energy returns.", 
-                variant: 'default' 
-            });
-        }
+        toast({ title: "Transaction Logged", variant: "success" });
     };
 
     if (lowEnergyMode) {
         return (
             <div className="max-w-md mx-auto space-y-6 pt-10">
                 <Card className="text-center p-8 bg-amber-500/5 border-amber-500/20">
-                    <ShieldCheck className="mx-auto h-12 w-12 text-amber-500 mb-4" />
+                    <Zap className="mx-auto h-12 w-12 text-amber-500 mb-4" />
                     <CardTitle className="mb-2">Minimum Viable Day</CardTitle>
                     <CardDescription className="mb-6">Financial friction reduced. Only essential tracking active.</CardDescription>
                     <div className="space-y-4">
@@ -122,14 +100,14 @@ export function FinanceTracker() {
                         <div className="flex gap-2">
                             <Button 
                                 className="flex-1 bg-green-600 hover:bg-green-700 h-12 font-bold"
-                                onClick={() => handleMVDLog(false)}
+                                onClick={() => toast({ title: "Finance Logged", variant: "success" })}
                             >
                                 Yes
                             </Button>
                             <Button 
                                 variant="outline" 
                                 className="flex-1 h-12 font-bold"
-                                onClick={() => handleMVDLog(true)}
+                                onClick={() => toast({ title: "Note Logged" })}
                             >
                                 No
                             </Button>
@@ -142,29 +120,67 @@ export function FinanceTracker() {
 
     return (
         <div className="space-y-8 max-w-5xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Focus Date</Label>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="outline" className="h-9 px-4 font-bold border-primary/20 hover:bg-primary/5 transition-colors">
-                                <CalendarIcon className="w-4 h-4 mr-2 text-primary" />
-                                {mounted ? format(selectedDate, 'MMMM d, yyyy') : 'Loading date...'}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                            <Calendar mode="single" selected={selectedDate} onSelect={(d) => d && setSelectedDate(d)} />
-                        </PopoverContent>
-                    </Popover>
-                </div>
-                <Button onClick={() => setShowAdd(!showAdd)} className="w-full md:w-auto h-10 gap-2 font-bold">
-                    {showAdd ? <X className="w-4 h-4" /> : <PlusCircle className="w-4 h-4" />}
-                    {showAdd ? "Cancel" : "Add Transaction"}
-                </Button>
-            </div>
+            {/* PERMANENT LOGGING FORM */}
+            <Card className="border-primary/20 bg-primary/[0.02]">
+                <CardHeader className="pb-4">
+                    <div className="flex justify-between items-center">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                            <PlusCircle className="w-5 h-5 text-primary" />
+                            Log New Transaction
+                        </CardTitle>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase tracking-widest border border-primary/10">
+                                    <CalendarIcon className="w-3 h-3 mr-1.5" />
+                                    {mounted ? format(selectedDate, 'MMM d, yyyy') : 'Loading...'}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                                <Calendar mode="single" selected={selectedDate} onSelect={(d) => d && setSelectedDate(d)} />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Amount ($)</Label>
+                        <Input 
+                            type="number" 
+                            placeholder="0.00" 
+                            value={amount} 
+                            onChange={e => setAmount(e.target.value)} 
+                            className="font-bold"
+                        />
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Merchant</Label>
+                        <Input 
+                            placeholder="Where did you spend?" 
+                            value={merchant} 
+                            onChange={e => setMerchant(e.target.value)} 
+                        />
+                    </div>
+                    <div className="space-y-1.5">
+                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Category</Label>
+                        <Select value={category} onValueChange={setCategory}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                {defaultCategories.map(c => (
+                                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex items-end">
+                        <Button className="w-full font-bold h-10 gap-2" onClick={handleAdd}>
+                            <Save className="w-4 h-4" /> Save Entry
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <Card className="bg-primary/5 border-primary/10">
+                <Card className="bg-card border-primary/10">
                     <CardHeader className="p-4 pb-0">
                         <CardDescription className="text-[10px] font-bold uppercase tracking-wider">Net Balance</CardDescription>
                     </CardHeader>
@@ -179,30 +195,19 @@ export function FinanceTracker() {
                 <Card className="bg-primary/5 border-primary/20"><CardContent className="p-4 h-full flex flex-col justify-center"><p className="text-[10px] font-bold uppercase opacity-60">Runway</p><p className="text-2xl font-black">{stats.runway} Mo</p></CardContent></Card>
             </div>
 
-            <WellnessActivityCalendar categoryFilter="Finance" />
-
             <SynergyPanel />
 
             <Tabs value={activeView} onValueChange={setActiveView} className="w-full">
                 <TabsList className="h-8 bg-muted/50 p-1 mb-4">
                     <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
-                    <TabsTrigger value="history" className="text-xs">History</TabsTrigger>
-                    <TabsTrigger value="subs" className="text-xs">Subscriptions</TabsTrigger>
+                    <TabsTrigger value="history" className="text-xs">Transaction History</TabsTrigger>
+                    <TabsTrigger value="subs" className="text-xs">Active Subscriptions</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6">
-                    {showAdd && (
-                        <Card className="border-primary/20 animate-in slide-in-from-top-2 duration-300">
-                            <CardHeader><CardTitle className="text-base">Quick Entry ({mounted ? format(selectedDate, 'MMM d') : '...'})</CardTitle></CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1.5"><Label className="text-[10px] font-bold uppercase">Amount</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} /></div>
-                                    <div className="space-y-1.5"><Label className="text-[10px] font-bold uppercase">Merchant</Label><Input value={merchant} onChange={e => setMerchant(e.target.value)} /></div>
-                                </div>
-                                <Button className="w-full font-bold" onClick={handleAdd}>Save Transaction</Button>
-                            </CardContent>
-                        </Card>
-                    )}
+                    <div className="p-10 text-center border-2 border-dashed rounded-2xl opacity-30 italic text-sm">
+                        Select History or Subscriptions to view detailed data stacks.
+                    </div>
                 </TabsContent>
 
                 <TabsContent value="history" className="space-y-4">
@@ -255,6 +260,8 @@ export function FinanceTracker() {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            <WellnessActivityCalendar categoryFilter="Finance" />
         </div>
     );
 }

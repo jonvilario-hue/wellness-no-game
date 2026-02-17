@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "../ui/card"
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { cn } from "@/lib/utils"
 import { Skeleton } from "../ui/skeleton";
+import { TrendingUp } from "lucide-react";
 
 const today = new Date()
 
@@ -20,12 +21,16 @@ export default function WellnessHeatmap({ activityData }: { activityData: { date
   }, [])
 
   return (
-    <Card className="mt-6">
-        <CardHeader>
-            <CardTitle>Wellness Progress</CardTitle>
+    <Card className="mt-6 border-primary/10 shadow-sm overflow-hidden">
+        <CardHeader className="bg-primary/[0.02] border-b border-primary/5">
+            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                Wellness Progress Marker
+            </CardTitle>
+            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Historical Consistency (Last 90 Days)</p>
         </CardHeader>
-        <CardContent>
-            <div className="w-full h-full text-[10px] pl-2">
+        <CardContent className="pt-8">
+            <div className="w-full h-full text-[10px] pl-2 transition-all duration-1000">
               {isClient ? (
                 <CalendarHeatmap
                     startDate={subDays(today, 90)}
@@ -46,10 +51,21 @@ export default function WellnessHeatmap({ activityData }: { activityData: { date
                     showWeekdayLabels
                 />
               ) : (
-                <Skeleton className="h-[150px] w-full" />
+                <Skeleton className="h-[120px] w-full" />
               )}
             </div>
-            {isClient && <ReactTooltip id="heatmap-tooltip" />}
+            {isClient && <ReactTooltip id="heatmap-tooltip" className="z-50" />}
+            
+            <div className="flex justify-end items-center gap-4 mt-4 text-[9px] font-bold uppercase text-muted-foreground opacity-60">
+                <span>Less</span>
+                <div className="flex gap-1">
+                    <div className="w-2.5 h-2.5 rounded-sm bg-muted/30" />
+                    <div className="w-2.5 h-2.5 rounded-sm bg-primary/30" />
+                    <div className="w-2.5 h-2.5 rounded-sm bg-primary/60" />
+                    <div className="w-2.5 h-2.5 rounded-sm bg-primary/90" />
+                </div>
+                <span>More</span>
+            </div>
         </CardContent>
     </Card>
   )
