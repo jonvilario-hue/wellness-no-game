@@ -171,15 +171,6 @@ export function StrategyGuide({ strategy }: StrategyGuideProps) {
                   <p className="text-xs italic text-muted-foreground">{strategy.useFor || "No specific context provided."}</p>
               </div>
           </CardContent>
-          {isFavorite && (
-            <AssistantTooltip text="Current mastery level. Track and update this status in 'My Playbook'.">
-              <div className="px-6 pb-4 w-fit">
-                <Badge variant="secondary" className="text-[9px] uppercase tracking-widest border border-primary/10">
-                  {entry?.status || 'Not tried'}
-                </Badge>
-              </div>
-            </AssistantTooltip>
-          )}
       </Card>
     </AssistantTooltip>
   );
