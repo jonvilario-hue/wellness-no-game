@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GitBranch, BoxSelect, Palette, Image, ArrowRight } from "lucide-react";
+import Link from 'next/link';
 
 export function EffectiveMindMappingGuide() {
   return (
@@ -31,8 +31,8 @@ export function EffectiveMindMappingGuide() {
                 </li>
             </ul>
         </div>
-        <Button className="w-full" disabled>
-            Try the Mind Map Tool <ArrowRight className="ml-2 h-4 w-4"/>
+        <Button className="w-full" asChild>
+            <Link href="#mindmap">Try the Mind Map Tool <ArrowRight className="ml-2 h-4 w-4"/></Link>
         </Button>
       </CardContent>
     </Card>

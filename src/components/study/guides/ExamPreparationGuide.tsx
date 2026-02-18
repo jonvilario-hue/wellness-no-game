@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookCheck, CalendarDays, Timer, Wind, ArrowRight } from "lucide-react";
+import Link from 'next/link';
 
 export function ExamPreparationGuide() {
   return (
@@ -31,8 +31,8 @@ export function ExamPreparationGuide() {
                 </li>
             </ul>
         </div>
-        <Button className="w-full" disabled>
-            Try the Exam Simulator <ArrowRight className="ml-2 h-4 w-4"/>
+        <Button className="w-full" asChild>
+            <Link href="#exam">Try the Exam Simulator <ArrowRight className="ml-2 h-4 w-4"/></Link>
         </Button>
       </CardContent>
     </Card>

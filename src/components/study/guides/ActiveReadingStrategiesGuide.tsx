@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookMarked, PenSquare, FileQuestion, ArrowRight } from "lucide-react";
+import Link from 'next/link';
 
 export function ActiveReadingStrategiesGuide() {
   return (
@@ -27,8 +27,8 @@ export function ActiveReadingStrategiesGuide() {
                 </li>
             </ul>
         </div>
-         <Button className="w-full" disabled>
-            Go to Smart Highlighter <ArrowRight className="ml-2 h-4 w-4"/>
+         <Button className="w-full" asChild>
+            <Link href="#highlighter">Go to Smart Highlighter <ArrowRight className="ml-2 h-4 w-4"/></Link>
         </Button>
       </CardContent>
     </Card>

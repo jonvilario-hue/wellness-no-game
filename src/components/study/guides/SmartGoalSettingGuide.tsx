@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, ListChecks, Check, Link as LinkIcon, Clock, ArrowRight } from "lucide-react";
+import Link from 'next/link';
 
 export function SmartGoalSettingGuide() {
   return (
@@ -24,8 +24,8 @@ export function SmartGoalSettingGuide() {
                 <li className="flex items-center gap-3"><Clock className="w-4 h-4 text-primary"/><div><strong>T</strong>ime-bound: When will you achieve it?</div></li>
             </ul>
         </div>
-         <Button className="w-full" disabled>
-            Try the SMART Goal Wizard <ArrowRight className="ml-2 h-4 w-4"/>
+         <Button className="w-full" asChild>
+            <Link href="#goals">Try the SMART Goal Wizard <ArrowRight className="ml-2 h-4 w-4"/></Link>
         </Button>
       </CardContent>
     </Card>

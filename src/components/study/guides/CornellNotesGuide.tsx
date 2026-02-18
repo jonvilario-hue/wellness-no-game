@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { NotebookTabs, PenLine, FileQuestion, Pilcrow, ArrowRight } from "lucide-react";
+import Link from 'next/link';
 
 export function CornellNotesGuide() {
   return (
@@ -31,8 +31,8 @@ export function CornellNotesGuide() {
                 </li>
             </ul>
         </div>
-        <Button className="w-full" disabled>
-            Try the Three Section Notes Editor <ArrowRight className="ml-2 h-4 w-4"/>
+        <Button className="w-full" asChild>
+            <Link href="#notes">Try the Three Section Notes Editor <ArrowRight className="ml-2 h-4 w-4"/></Link>
         </Button>
       </CardContent>
     </Card>

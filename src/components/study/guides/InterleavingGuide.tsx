@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Shuffle, Combine, BrainCog, ArrowRight } from "lucide-react";
+import Link from 'next/link';
 
 export function InterleavingGuide() {
   return (
@@ -27,8 +27,8 @@ export function InterleavingGuide() {
                 </li>
             </ul>
         </div>
-        <Button className="w-full" disabled>
-            Try the Interleaving Planner <ArrowRight className="ml-2 h-4 w-4"/>
+        <Button className="w-full" asChild>
+            <Link href="#interleaving">Try the Interleaving Planner <ArrowRight className="ml-2 h-4 w-4"/></Link>
         </Button>
       </CardContent>
     </Card>

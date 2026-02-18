@@ -14,7 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Brain, Layers, HelpCircle, PenTool, TrendingUp, Sparkles, 
   BookOpen, GraduationCap, ChevronRight, Zap, Inbox, BarChart3,
-  ChevronUp, ChevronDown, Target, ShieldAlert, History, CalendarDays, LayoutDashboard, Cloud
+  ChevronUp, ChevronDown, Target, ShieldAlert, History, CalendarDays, LayoutDashboard, Cloud,
+  NotebookTabs, Timer, Shuffle, GitBranch, Highlighter, Coffee
 } from 'lucide-react';
 import Link from 'next/link';
 import { VisualPairingTool } from '@/components/study/visual-pairing-tool';
@@ -33,7 +34,18 @@ import {
   ActiveReadingStrategiesGuide, 
   TimeManagementGuide 
 } from '@/components/study/guides';
-import { SelfQuizCreator, DistractionLog } from '@/components/study/tools';
+import { 
+  SelfQuizCreator, 
+  DistractionLog, 
+  CornellNotesEditor, 
+  MindMapTool, 
+  SmartGoalWizard, 
+  TeachBackRecorder, 
+  ExamSimulator, 
+  InterleavingPlanner, 
+  SmartHighlightExporter, 
+  StudyBreakOptimizer 
+} from '@/components/study/tools';
 import { StudyDashboardView } from '@/components/study/study-dashboard-view';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { AnkiDeckUploader } from '@/components/study/anki-deck-uploader';
@@ -53,6 +65,24 @@ export default function ScholarHub() {
     if (savedState !== null) {
       setIsOpen(JSON.parse(savedState));
     }
+
+    // Handle hash-based tab switching
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      const toolHashes = ['#quiz', '#visual', '#curve', '#notes', '#feynman', '#mindmap', '#goals', '#exam', '#interleaving', '#highlighter', '#breaks'];
+      if (hash && toolHashes.includes(hash)) {
+        setActiveTab('tools');
+      } else if (hash === '#anki') {
+        setActiveTab('anki');
+      } else if (hash === '#decks') {
+        setActiveTab('decks');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const handleOpenChange = (open: boolean) => {
@@ -228,12 +258,32 @@ export default function ScholarHub() {
                   <DistractionLog />
                 </section>
 
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div id="notes" className="scroll-mt-24 h-full"><CornellNotesEditor /></div>
+                  <div id="feynman" className="scroll-mt-24 h-full"><TeachBackRecorder /></div>
+                </section>
+
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div id="mindmap" className="scroll-mt-24 h-full"><MindMapTool /></div>
+                  <div id="goals" className="scroll-mt-24 h-full"><SmartGoalWizard /></div>
+                </section>
+
                 <section id="visual" className="scroll-mt-24">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="h-10 w-1 bg-primary rounded-full" />
                     <h2 className="text-2xl font-black tracking-tight uppercase">Visual Pairing Tool</h2>
                   </div>
                   <VisualPairingTool />
+                </section>
+
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div id="exam" className="scroll-mt-24 h-full"><ExamSimulator /></div>
+                  <div id="interleaving" className="scroll-mt-24 h-full"><InterleavingPlanner /></div>
+                </section>
+
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div id="highlighter" className="scroll-mt-24 h-full"><SmartHighlightExporter /></div>
+                  <div id="breaks" className="scroll-mt-24 h-full"><StudyBreakOptimizer /></div>
                 </section>
 
                 <section id="curve" className="scroll-mt-24">

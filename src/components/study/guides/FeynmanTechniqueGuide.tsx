@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Pen, Group, BookUp, ArrowRight } from "lucide-react";
+import Link from 'next/link';
 
 export function FeynmanTechniqueGuide() {
   return (
@@ -31,8 +31,8 @@ export function FeynmanTechniqueGuide() {
                 </li>
             </ul>
         </div>
-        <Button className="w-full" disabled>
-            Try the Teach-Back Recorder <ArrowRight className="ml-2 h-4 w-4"/>
+        <Button className="w-full" asChild>
+            <Link href="#feynman">Try the Teach-Back Recorder <ArrowRight className="ml-2 h-4 w-4"/></Link>
         </Button>
       </CardContent>
     </Card>
