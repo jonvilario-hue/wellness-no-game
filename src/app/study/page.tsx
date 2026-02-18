@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -15,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Brain, Layers, HelpCircle, PenTool, TrendingUp, Sparkles, 
   BookOpen, GraduationCap, ChevronRight, Zap, Inbox, BarChart3,
-  ChevronUp, ChevronDown, Target, ShieldAlert, History, CalendarDays, LayoutDashboard
+  ChevronUp, ChevronDown, Target, ShieldAlert, History, CalendarDays, LayoutDashboard, Cloud
 } from 'lucide-react';
 import Link from 'next/link';
 import { VisualPairingTool } from '@/components/study/visual-pairing-tool';
@@ -37,6 +36,8 @@ import {
 import { SelfQuizCreator, DistractionLog } from '@/components/study/tools';
 import { StudyDashboardView } from '@/components/study/study-dashboard-view';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
+import { AnkiDeckUploader } from '@/components/study/anki-deck-uploader';
+import { AnkiDeckList } from '@/components/study/anki-deck-list';
 
 export default function ScholarHub() {
   const { sessions, visualPairs } = useScholarStore();
@@ -165,28 +166,23 @@ export default function ScholarHub() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="flex justify-center mb-8">
-              <TabsList className="grid w-full max-w-2xl grid-cols-4 bg-muted/50 p-1">
-                <AssistantTooltip text="Your unified study overview. Activity history, workload forecasts, and daily priorities.">
-                  <TabsTrigger value="dashboard" className="gap-2 w-full">
-                    <LayoutDashboard className="h-4 w-4" /> Dashboard
-                  </TabsTrigger>
-                </AssistantTooltip>
-                <AssistantTooltip text="Your Spaced Repetition System (SRS). Organizes knowledge into card decks that are scheduled for review precisely when you're about to forget them.">
-                  <TabsTrigger value="decks" className="gap-2 w-full">
-                    <Layers className="h-4 w-4" /> Decks
-                  </TabsTrigger>
-                </AssistantTooltip>
-                <AssistantTooltip text="Interactive tools designed to facilitate deep encoding of new information through dual coding, self-testing, and visualization.">
-                  <TabsTrigger value="tools" className="gap-2 w-full">
-                    <Zap className="h-4 w-4" /> Tools
-                  </TabsTrigger>
-                </AssistantTooltip>
-                <AssistantTooltip text="Step-by-step breakdowns of proven academic techniques like the Feynman Technique or Cornell Note-taking.">
-                  <TabsTrigger value="guides" className="gap-2 w-full">
-                    <BookOpen className="h-4 w-4" /> Guides
-                  </TabsTrigger>
-                </AssistantTooltip>
+            <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
+              <TabsList className="flex w-full max-w-3xl h-auto bg-muted/50 p-1 min-w-max">
+                <TabsTrigger value="dashboard" className="gap-2 px-6 font-bold">
+                  <LayoutDashboard className="h-4 w-4" /> Dashboard
+                </TabsTrigger>
+                <TabsTrigger value="decks" className="gap-2 px-6 font-bold">
+                  <Layers className="h-4 w-4" /> Decks
+                </TabsTrigger>
+                <TabsTrigger value="anki" className="gap-2 px-6 font-bold">
+                  <Cloud className="h-4 w-4" /> Anki Vault
+                </TabsTrigger>
+                <TabsTrigger value="tools" className="gap-2 px-6 font-bold">
+                  <Zap className="h-4 w-4" /> Tools
+                </TabsTrigger>
+                <TabsTrigger value="guides" className="gap-2 px-6 font-bold">
+                  <BookOpen className="h-4 w-4" /> Guides
+                </TabsTrigger>
               </TabsList>
             </div>
 
@@ -196,6 +192,11 @@ export default function ScholarHub() {
 
             <TabsContent value="decks" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
               <FlashcardDecks />
+            </TabsContent>
+
+            <TabsContent value="anki" className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <AnkiDeckUploader />
+              <AnkiDeckList />
             </TabsContent>
 
             <TabsContent value="tools" className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
