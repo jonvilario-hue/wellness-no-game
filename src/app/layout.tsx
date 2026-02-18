@@ -7,6 +7,7 @@ import { TrainingFocusProvider } from '@/hooks/use-training-focus';
 import { TrainingOverrideProvider } from '@/hooks/use-training-override.tsx';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SnapshotManager } from '@/components/snapshot-manager';
+import { FirebaseClientProvider } from '@/firebase';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,17 +27,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning={true}>
-        <ThemeProvider>
-          <TooltipProvider>
-            <TrainingFocusProvider>
-              <TrainingOverrideProvider>
-                <SnapshotManager />
-                {children}
-                <Toaster />
-              </TrainingOverrideProvider>
-            </TrainingFocusProvider>
-          </TooltipProvider>
-        </ThemeProvider>
+        <FirebaseClientProvider>
+          <ThemeProvider>
+            <TooltipProvider>
+              <TrainingFocusProvider>
+                <TrainingOverrideProvider>
+                  <SnapshotManager />
+                  {children}
+                  <Toaster />
+                </TrainingOverrideProvider>
+              </TrainingFocusProvider>
+            </TooltipProvider>
+          </ThemeProvider>
+        </FirebaseClientProvider>
       </body>
     </html>
   );
