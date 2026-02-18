@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo, useState } from "react"
@@ -185,7 +184,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
                       <h3 className="text-sm font-bold uppercase tracking-tight">
                         {category} ({practices.length})
                       </h3>
-                      <p className="text-[10px] text-muted-foreground italic line-clamp-1">"{details.tagline}"</p>
+                      <p className="text-[10px] text-muted-foreground italic">"{details.tagline}"</p>
                     </div>
                   </div>
                 </AccordionTrigger>

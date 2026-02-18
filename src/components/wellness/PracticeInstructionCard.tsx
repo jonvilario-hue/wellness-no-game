@@ -11,7 +11,7 @@ import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '../ui/switch';
 
 const formatTime = (totalSeconds: number): string => {
@@ -120,13 +120,13 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
     <Card className="flex flex-col hover:shadow-lg transition-shadow duration-300 h-full group">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
+          <div className="flex items-start gap-3 flex-grow min-w-0">
+              <div className="p-2 bg-primary/10 rounded-lg shrink-0">
                   <ExerciseIcon className="w-6 h-6 text-primary" />
               </div>
-              <CardTitle className="line-clamp-1">{exercise.name}</CardTitle>
+              <CardTitle className="leading-tight pt-1">{exercise.name}</CardTitle>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0 ml-2">
             {onEdit && (
               <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={onEdit}>
                 <Edit className="w-3.5 h-3.5" />
@@ -145,7 +145,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
             )}
           </div>
         </div>
-        <CardDescription className="flex-grow pt-2 line-clamp-2">{exercise.description}</CardDescription>
+        <CardDescription className="flex-grow pt-2">{exercise.description}</CardDescription>
       </CardHeader>
       
       <CardContent className="flex-grow space-y-4">
