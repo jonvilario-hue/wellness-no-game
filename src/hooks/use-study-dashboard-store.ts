@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -15,6 +14,7 @@ interface StudyDashboardState {
   addTask: (task: Omit<StudyTask, 'id' | 'completed' | 'completedAt'>) => void;
   toggleTask: (id: string) => void;
   deleteTask: (id: string) => void;
+  rescheduleTodayTasks: (targetDate: string) => void;
   
   addDeadline: (deadline: Omit<ExamDeadline, 'id' | 'createdAt'>) => void;
   deleteDeadline: (id: string) => void;
@@ -49,6 +49,15 @@ export const useStudyDashboardStore = create<StudyDashboardState>()(
       deleteTask: (id) => set((state) => ({
         tasks: state.tasks.filter(t => t.id !== id)
       })),
+
+      rescheduleTodayTasks: (targetDate) => set((state) => {
+        const today = format(new Date(), 'yyyy-MM-dd');
+        return {
+          tasks: state.tasks.map(t => 
+            (t.date === today && !t.completed) ? { ...t, date: targetDate } : t
+          )
+        };
+      }),
 
       addDeadline: (deadline) => set((state) => ({
         deadlines: [...state.deadlines, { ...deadline, id: crypto.randomUUID(), createdAt: new Date().toISOString() }]

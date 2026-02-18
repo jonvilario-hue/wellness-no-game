@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Card, Deck, CardType, DeckSettings } from '@/types/flashcards';
+import { addDays } from 'date-fns';
 
 export const DEFAULT_DECK_SETTINGS: DeckSettings = {
   activePreset: 'casual',
@@ -62,6 +63,7 @@ type FlashcardStore = {
   addCards: (cards: { front: string; back: string; deckId: string; type: CardType; tags?: string[] }[]) => void;
   updateCard: (updatedCard: Card) => void;
   deleteCard: (cardId: string) => void;
+  rescheduleDueCards: (offsetDays: number) => void;
 };
 
 const createInitialState = () => {
@@ -141,6 +143,16 @@ export const useFlashcardStore = create<FlashcardStore>()(
         set((state) => ({
           cards: state.cards.filter((c) => c.id !== cardId),
         })),
+      rescheduleDueCards: (offsetDays) => set((state) => ({
+        cards: state.cards.map(card => {
+          const isDue = new Date(card.dueDate) <= new Date();
+          if (!isDue) return card;
+          return {
+            ...card,
+            dueDate: addDays(new Date(card.dueDate), offsetDays).toISOString()
+          };
+        })
+      }))
     }),
     {
       name: 'flashcard-storage-v4',

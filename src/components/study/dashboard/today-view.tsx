@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -12,11 +11,13 @@ import { format, parseISO, isToday } from 'date-fns';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
+import { RescheduleDialog } from './reschedule-dialog';
 
 export function TodayPlan() {
   const { decks, cards } = useFlashcardStore();
   const { tasks, toggleTask } = useStudyDashboardStore();
   const [isMounted, setIsMounted] = useState(false);
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -165,7 +166,11 @@ export function TodayPlan() {
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Feeling overwhelmed? Use cognitive offsets to redistribute your workload without breaking your streak.
               </p>
-              <Button variant="outline" className="w-full h-9 text-[10px] font-black uppercase border-primary/20 hover:bg-primary/10">
+              <Button 
+                variant="outline" 
+                className="w-full h-9 text-[10px] font-black uppercase border-primary/20 hover:bg-primary/10"
+                onClick={() => setIsRescheduleOpen(true)}
+              >
                 Reschedule Options
               </Button>
             </CardContent>
@@ -183,6 +188,8 @@ export function TodayPlan() {
           </Card>
         </div>
       </div>
+
+      <RescheduleDialog open={isRescheduleOpen} onOpenChange={setIsRescheduleOpen} />
     </div>
   );
 }
