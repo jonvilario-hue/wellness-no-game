@@ -2,8 +2,8 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Target, PlusCircle, Trash2, Edit, TrendingUp, Zap, Calendar, Check } from 'lucide-react';
-import { useState, useEffect, useCallback, memo } from 'react';
+import { Target, PlusCircle, Trash2, Edit, TrendingUp, Zap, Calendar, Check, BarChart3 } from 'lucide-react';
+import { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import { useHydratedJournalStore as useJournal, type Habit } from '@/hooks/use-journal';
 import { journalConfig, type JournalCategory, type HabitId, allHabits } from '@/lib/journal-config';
 import { cn } from '@/lib/utils';
@@ -35,7 +35,8 @@ import { Progress } from '../ui/progress';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
-
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { format, subDays, isSameDay } from 'date-fns';
 
 const habitCategories = Object.keys(journalConfig) as JournalCategory[];
 
@@ -224,6 +225,21 @@ export function HabitsView() {
 
     const completionPercentage = habits.length > 0 ? (todaysHabits.length / habits.length) * 100 : 0;
     
+    const weeklyData = useMemo(() => {
+      const data = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = subDays(new Date(), i);
+        const dateStr = format(date, 'yyyy-MM-dd');
+        const count = (completedHabits[dateStr] || []).length;
+        data.push({
+          day: format(date, 'EEE'),
+          count,
+          fullDate: format(date, 'MMM d')
+        });
+      }
+      return data;
+    }, [completedHabits]);
+
     // Mock data for streak stats
     const streakStats = {
         currentStreak: 5,
@@ -248,8 +264,14 @@ export function HabitsView() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>Habit Tracker</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Habit Tracker</CardTitle>
+                  <CardDescription>Workspace: Next.js + Firebase Power</CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 uppercase text-[10px] font-black h-6">Next.js Optimized</Badge>
+                </div>
             </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -318,44 +340,69 @@ export function HabitsView() {
                         </CardFooter>
                     </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Your Progress</CardTitle>
-                            <CardDescription>Visualize your consistency and build momentum.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div>
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-sm font-medium text-muted-foreground">Today's Completion</span>
-                                    <span className="text-sm font-bold text-primary">{todaysHabits.length} / {habits.length}</span>
-                                </div>
-                                <Progress value={completionPercentage} />
-                            </div>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <Zap className="w-5 h-5"/>
-                                        <span className="font-medium">Current Streak</span>
+                    <div className="space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                  <TrendingUp className="w-4 h-4 text-primary" />
+                                  Weekly Consistency
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-40">
+                                <ResponsiveContainer width="100%" height="100%">
+                                  <BarChart data={weeklyData}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
+                                    <XAxis dataKey="day" fontSize={10} axisLine={false} tickLine={false} />
+                                    <YAxis hide domain={[0, 'dataMax + 1']} />
+                                    <Tooltip 
+                                      contentStyle={{ backgroundColor: 'hsl(var(--background))', borderRadius: '8px', fontSize: '10px', border: '1px solid hsl(var(--border))' }}
+                                      labelStyle={{ fontWeight: 'bold' }}
+                                    />
+                                    <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                                  </BarChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Your Progress</CardTitle>
+                                <CardDescription>Visualize your consistency and build momentum.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-sm font-medium text-muted-foreground">Today's Completion</span>
+                                        <span className="text-sm font-bold text-primary">{todaysHabits.length} / {habits.length}</span>
                                     </div>
-                                    <span className="font-bold text-lg">{streakStats.currentStreak} days</span>
+                                    <Progress value={completionPercentage} />
                                 </div>
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <TrendingUp className="w-5 h-5"/>
-                                        <span className="font-medium">Longest Streak</span>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <Zap className="w-5 h-5"/>
+                                            <span className="font-medium">Current Streak</span>
+                                        </div>
+                                        <span className="font-bold text-lg">{streakStats.currentStreak} days</span>
                                     </div>
-                                    <span className="font-bold text-lg">{streakStats.longestStreak} days</span>
-                                </div>
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                                    <div className="flex items-center gap-2 text-muted-foreground">
-                                        <Calendar className="w-5 h-5"/>
-                                        <span className="font-medium">Weekly Completion</span>
+                                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <TrendingUp className="w-5 h-5"/>
+                                            <span className="font-medium">Longest Streak</span>
+                                        </div>
+                                        <span className="font-bold text-lg">{streakStats.longestStreak} days</span>
                                     </div>
-                                    <span className="font-bold text-lg">{streakStats.weeklyCompletion}%</span>
+                                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                            <Calendar className="w-5 h-5"/>
+                                            <span className="font-medium">Weekly Completion</span>
+                                        </div>
+                                        <span className="font-bold text-lg">{streakStats.weeklyCompletion}%</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </CardContent>
             <HabitDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onSave={handleSaveHabit} habitToEdit={habitToEdit} />
