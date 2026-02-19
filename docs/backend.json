@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "AnkiDeck": {
@@ -12,19 +13,19 @@
         },
         "userId": {
           "type": "string",
-          "description": "Reference to the UserProfile that owns this Anki deck. (Relationship: UserProfile 1:N AnkiDeck)"
+          "description": "Reference to the UserProfile that owns this Anki deck."
         },
         "fileName": {
           "type": "string",
-          "description": "The original file name of the uploaded Anki deck (e.g., 'Voice Acting Basics.apkg')."
+          "description": "The original file name of the uploaded Anki deck."
         },
         "displayName": {
           "type": "string",
-          "description": "A user-friendly name for the Anki deck, editable by the user."
+          "description": "A user-friendly name for the Anki deck."
         },
         "description": {
           "type": "string",
-          "description": "A brief description of the Anki deck's content or purpose."
+          "description": "A brief description of the Anki deck's content."
         },
         "fileSize": {
           "type": "number",
@@ -32,7 +33,7 @@
         },
         "downloadUrl": {
           "type": "string",
-          "description": "A temporary signed URL to download the Anki deck file from Firebase Storage.",
+          "description": "A temporary signed URL to download the Anki deck file.",
           "format": "uri"
         },
         "uploadedAt": {
@@ -42,7 +43,7 @@
         },
         "category": {
           "type": "string",
-          "description": "An optional category assigned by the user to organize the Anki deck."
+          "description": "An optional category assigned by the user."
         }
       },
       "required": [
@@ -50,7 +51,6 @@
         "userId",
         "fileName",
         "displayName",
-        "description",
         "fileSize",
         "downloadUrl",
         "uploadedAt"
@@ -60,7 +60,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user's profile and settings, including their Anki deck storage usage. This entity is assumed to be existing and is being extended.",
+      "description": "Represents a user's profile and settings, including storage usage metrics.",
       "properties": {
         "id": {
           "type": "string",
@@ -68,15 +68,15 @@
         },
         "storageUsedBytes": {
           "type": "number",
-          "description": "The total number of bytes currently used by the user for storing Anki deck files."
+          "description": "Total bytes currently used for Anki decks."
         },
         "storageQuotaBytes": {
           "type": "number",
-          "description": "The maximum allowed storage in bytes for Anki deck files for this user (e.g., 10MB)."
+          "description": "Maximum allowed storage in bytes (default 10MB)."
         },
         "deckCount": {
           "type": "number",
-          "description": "The total number of Anki deck files uploaded by this user."
+          "description": "Total number of Anki decks uploaded."
         }
       },
       "required": [
@@ -85,6 +85,34 @@
         "storageQuotaBytes",
         "deckCount"
       ]
+    },
+    "Habit": {
+      "title": "Habit",
+      "type": "object",
+      "description": "A recurring cognitive or wellness habit defined by the user.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string", "enum": ["Movement", "Stillness", "Communication", "Finance", "Study", "Journaling"] },
+        "frequency": { "type": "string", "enum": ["daily", "weekly", "monthly"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "name", "category", "frequency", "createdAt"]
+    },
+    "HabitLog": {
+      "title": "HabitLog",
+      "type": "object",
+      "description": "A daily record of a habit's completion status.",
+      "properties": {
+        "id": { "type": "string" },
+        "habitId": { "type": "string" },
+        "userId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["completed", "skipped", "missed"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "habitId", "userId", "date", "status", "timestamp"]
     }
   },
   "auth": {
@@ -102,11 +130,11 @@
           "schema": {
             "$ref": "#/backend/entities/UserProfile"
           },
-          "description": "Represents a user's profile, extended with storage usage metrics. This collection stores the `storageUsedBytes`, `storageQuotaBytes`, and `deckCount` for each user. Access is restricted to the authenticated user matching the `userId` path parameter.",
+          "description": "Represents a user's profile and storage metrics.",
           "params": [
             {
               "name": "userId",
-              "description": "The unique identifier of the user, matching their Firebase Authentication UID."
+              "description": "The unique identifier of the user."
             }
           ]
         }
@@ -118,20 +146,48 @@
           "schema": {
             "$ref": "#/backend/entities/AnkiDeck"
           },
-          "description": "Stores metadata for Anki flashcard deck files (`.apkg`) uploaded by a specific user to Firebase Storage. This collection is a subcollection of a user's profile. Each document includes denormalized 'userId' for authorization independence, `fileName`, `displayName`, `description`, `fileSize`, `downloadUrl`, `uploadedAt`, and an optional `category`. Access is restricted to the authenticated user matching the `userId` path parameter, who is also the owner.",
+          "description": "Stores metadata for Anki flashcard deck files.",
           "params": [
             {
               "name": "userId",
-              "description": "The unique identifier of the user who owns this Anki deck, matching their Firebase Authentication UID."
+              "description": "The unique identifier of the owner."
             },
             {
               "name": "deckId",
-              "description": "The unique identifier for the Anki deck metadata document."
+              "description": "The unique identifier for the deck metadata."
             }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/habits/{habitId}",
+        "definition": {
+          "entityName": "Habit",
+          "schema": {
+            "$ref": "#/backend/entities/Habit"
+          },
+          "description": "User-defined habits for tracking consistency.",
+          "params": [
+            { "name": "userId", "description": "Owner UID" },
+            { "name": "habitId", "description": "Habit UID" }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/habit-logs/{logId}",
+        "definition": {
+          "entityName": "HabitLog",
+          "schema": {
+            "$ref": "#/backend/entities/HabitLog"
+          },
+          "description": "Daily logs for habit completion.",
+          "params": [
+            { "name": "userId", "description": "Owner UID" },
+            { "name": "logId", "description": "Log UID" }
           ]
         }
       }
     ],
-    "reasoning": "The recommended Firestore structure prioritizes Authorization Independence and Query-as-Permission (QAP) principles, ensuring a secure, scalable, and debuggable backend for managing Anki deck files and their metadata.\n\n**Authorization Independence:**\n1.  **Anki Deck Metadata:** The `AnkiDeck` documents are nested under the user's path at `/users/{userId}/anki-decks/{deckId}`. Critically, each `AnkiDeck` document explicitly includes the `userId` field. This denormalization ensures that authorization rules for `AnkiDeck` documents (read, write, delete) can be evaluated solely by inspecting the document's own data (`resource.data.userId`) and the path (`userId`), without needing to perform `get()` calls to a parent `UserProfile` document. This allows for atomic operations (like creating a user and their first deck metadata in a batch) and simplifies rule debugging.\n2.  **User Profile Updates:** The `UserProfile` document at `/users/{userId}` contains denormalized fields like `storageUsedBytes` and `deckCount`. While the Storage rules use a `firestore.get()` to access this data for quota checks (a standard and accepted pattern for Storage rules), the *Firestore rules themselves* will not rely on `get()` calls for authorization for `AnkiDeck` metadata. The `userId` in the document and path provides sufficient context.\n\n**Query-as-Permission (QAP):**\n1.  **Hierarchical Structure:** By placing `AnkiDeck` metadata in a subcollection of `UserProfile` (`/users/{userId}/anki-decks/{deckId}`), we inherently enforce QAPs for listing operations. A user can only `list` documents within their own `/users/{userId}/anki-decks` path. This structure ensures that a client-side query for `anki-decks` is naturally scoped to the authenticated user's data, making rules robust (e.g., `allow list: if request.auth.uid == userId;`). The database effectively acts as its own filter, preventing broad, unauthorized list attempts.\n2.  **Structural Segregation:** This design places all Anki deck metadata owned by a specific user into a dedicated subcollection under that user's document. All documents within `/users/{userId}/anki-decks` share the same security posture: they are owned by `{userId}`. This simplifies security rules immensely, as there's no need to differentiate between public and private decks within the same collection. If different access patterns were needed, a separate collection or a different field (e.g., `isPublic: true`) would be used, but for this request, all decks are user-private.\n\n**Overall Benefits:**\n*   **Simplified Firestore Rules:** Rules become straightforward checks against `request.auth.uid`, `userId` from the path, and `resource.data.userId`, eliminating complex `get()` calls.\n*   **Atomic Operations:** Creating an AnkiDeck metadata document no longer requires first asserting ownership of a parent, as the `userId` is self-contained within the document and path.\n*   **Scalability:** Denormalized data (`storageUsedBytes`, `deckCount`) in `UserProfile` avoids fan-out reads when checking user quotas, enhancing performance.\n*   **Debuggability:** The explicit `userId` field and clear hierarchical paths make authorization logic easy to understand and troubleshoot."
+    "reasoning": "This structure supports the Health and Wellness workspace pattern by enabling synchronized habit tracking and storage-backed knowledge management while maintaining strict authorization independence."
   }
 }
