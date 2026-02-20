@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -11,7 +12,7 @@ const navLinks = [
       href: '/exercises', 
       icon: HeartPulse, 
       label: 'Health Check',
-      tooltip: 'Manage your physical and emotional baseline. Track movement, stillness, nutrition, and resources to support high cognitive output.'
+      tooltip: 'Manage your physical and emotional baseline. Track movement, stillness, and communication to support high cognitive output.'
     },
     { 
       href: '/study', 
@@ -29,7 +30,7 @@ const navLinks = [
       href: '/tools', 
       icon: BookMarked, 
       label: 'Reflections',
-      tooltip: 'A digital laboratory for your thoughts. Practice structured and freeform journaling to build metacognition and emotional regulation.'
+      tooltip: 'A digital laboratory for your thoughts and resources. Manage your notebook, nutritional intake, and financial health in one place.'
     },
     { 
       href: '/calendar', 
