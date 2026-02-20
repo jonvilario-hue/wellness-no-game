@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -41,15 +40,26 @@ const defaultCategories = [
 
 export function FinanceTracker() {
     const { 
-        transactions, addTransaction, deleteTransaction, 
-        subscriptions, toggleSubscription, lowEnergyMode, assets, 
-        budgets, setBudget, savingsGoals, addSavingsGoal, contributeToGoal,
-        bills, addBill, toggleBillPaid, envelopes, updateEnvelope
+        transactions = [], 
+        addTransaction, 
+        deleteTransaction, 
+        subscriptions = [], 
+        toggleSubscription, 
+        assets = {}, 
+        budgets = [], 
+        setBudget, 
+        savingsGoals = [], 
+        addSavingsGoal, 
+        contributeToGoal,
+        bills = [], 
+        envelopes = [], 
+        updateEnvelope 
     } = useWellnessData();
     
     const [activeTab, setActiveTab] = useState('overview');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [isImporting, setIsImporting] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
     const { toast } = useToast();
 
     // Form States
@@ -58,19 +68,25 @@ export function FinanceTracker() {
     const [category, setCategory] = useState('misc');
     const [merchant, setMerchant] = useState('');
 
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const stats = useMemo(() => {
-        const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-        const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+        if (!isMounted) return { income: 0, expense: 0, net: 0, liquidAssets: 0, monthSpend: 0, macroData: [] };
+
+        const income = (transactions || []).filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+        const expense = (transactions || []).filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
         const net = income - expense;
-        const liquidAssets = Object.values(assets).reduce((a, b) => a + b, 0);
+        const liquidAssets = Object.values(assets || {}).reduce((a, b) => a + b, 0);
         
         const currentMonth = { start: startOfMonth(new Date()), end: endOfMonth(new Date()) };
-        const monthSpend = transactions
+        const monthSpend = (transactions || [])
             .filter(t => t.type === 'expense' && isWithinInterval(parseISO(t.date), currentMonth))
             .reduce((s, t) => s + t.amount, 0);
 
         return { income, expense, net, liquidAssets, monthSpend };
-    }, [transactions, assets]);
+    }, [transactions, assets, isMounted]);
 
     const handleAdd = () => {
         if (!amount || !merchant) return;
@@ -100,9 +116,10 @@ export function FinanceTracker() {
         }, 1500);
     };
 
+    if (!isMounted) return null;
+
     return (
         <div className="space-y-8 max-w-6xl mx-auto pb-20">
-            {/* Action Bar */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h2 className="text-3xl font-black uppercase tracking-tighter">Financial Architecture</h2>

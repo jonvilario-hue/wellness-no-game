@@ -68,9 +68,37 @@ export type StillnessLog = {
 
 export type DietaryApproach = 'Balanced' | 'Keto' | 'High Protein' | 'Low Carb' | 'Custom';
 
+export type SavingsGoal = {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  icon: string;
+};
+
+export type Subscription = {
+  id: string;
+  name: string;
+  amount: number;
+  active: boolean;
+  nextBillingDate: string;
+};
+
+export type Envelope = {
+  id: string;
+  name: string;
+  balance: number;
+  limit: number;
+};
+
+export type Budget = {
+  category: string;
+  limit: number;
+  period: 'weekly' | 'monthly';
+};
+
 /**
  * Utility to calculate consecutive days of activity.
- * Supports both log arrays and completion maps.
  */
 export const calculateStreak = (data: any[] | Record<string, boolean>): number => {
   const dates = new Set<string>();
@@ -92,7 +120,6 @@ export const calculateStreak = (data: any[] | Record<string, boolean>): number =
   let streak = 0;
   let checkDate = new Date();
   
-  // If not completed today, start checking from yesterday to keep streak alive
   if (!dates.has(format(checkDate, 'yyyy-MM-dd'))) {
     checkDate = subDays(checkDate, 1);
   }
@@ -121,6 +148,14 @@ export type WellnessState = {
   collapsedCategories: Record<string, boolean>;
   planProgress: Record<string, Record<number, boolean>>;
   completions: Record<string, boolean>;
+  
+  // Finance specific state
+  assets: Record<string, number>;
+  budgets: Budget[];
+  savingsGoals: SavingsGoal[];
+  subscriptions: Subscription[];
+  bills: any[];
+  envelopes: Envelope[];
 
   setLowEnergyMode: (enabled: boolean) => void;
   addTransaction: (tx: Omit<Transaction, 'id'>) => void;
@@ -133,14 +168,22 @@ export type WellnessState = {
   addMovementLog: (log: any) => void;
   addStillnessLog: (log: any) => void;
   addCommunicationLog: (log: any) => void;
-  addRoutine: (routine: any) => void;
   toggleCategoryCollapse: (category: string) => void;
-  togglePlanDay: (planId: string, dayNumber: number) => void;
   logCompletion: () => void;
   deleteMovementLog: (id: string) => void;
   deleteStillnessLog: (id: string) => void;
   deleteMealLog: (id: string) => void;
   deleteTransaction: (id: string) => void;
+  
+  // Finance actions
+  setBudget: (category: string, limit: number) => void;
+  addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'currentAmount'>) => void;
+  contributeToGoal: (id: string, amount: number) => void;
+  addBill: (bill: any) => void;
+  toggleBillPaid: (id: string) => void;
+  updateEnvelope: (id: string, delta: number) => void;
+  toggleSubscription: (id: string) => void;
+  copyDayLog: (from: string, to: string) => void;
 };
 
 export const useWellnessData = create<WellnessState>()(
@@ -168,6 +211,25 @@ export const useWellnessData = create<WellnessState>()(
       collapsedCategories: {},
       planProgress: {},
       completions: {},
+      
+      assets: { 'Cash': 1250, 'Savings': 4500, 'Investments': 8200 },
+      budgets: [
+        { category: 'groceries', limit: 400, period: 'monthly' },
+        { category: 'dining', limit: 200, period: 'monthly' }
+      ],
+      savingsGoals: [
+        { id: '1', name: 'Emergency Fund', targetAmount: 10000, currentAmount: 2500, icon: '🛡️' },
+        { id: '2', name: 'New Laptop', targetAmount: 2000, currentAmount: 850, icon: '💻' }
+      ],
+      subscriptions: [
+        { id: 'sub1', name: 'Streaming', amount: 15.99, active: true, nextBillingDate: '2024-04-15' },
+        { id: 'sub2', name: 'Gym', amount: 45.00, active: true, nextBillingDate: '2024-04-01' }
+      ],
+      bills: [],
+      envelopes: [
+        { id: 'env1', name: 'Coffee', balance: 45, limit: 100 },
+        { id: 'env2', name: 'Entertainment', balance: 120, limit: 300 }
+      ],
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
       addTransaction: (tx) => set(s => ({ transactions: [{ ...tx, id: crypto.randomUUID() }, ...s.transactions] })),
@@ -180,9 +242,7 @@ export const useWellnessData = create<WellnessState>()(
       addMovementLog: (log) => set(s => ({ movementLogs: [{ ...log, id: crypto.randomUUID() }, ...s.movementLogs] })),
       addStillnessLog: (log) => set(s => ({ stillnessLogs: [{ ...log, id: crypto.randomUUID() }, ...s.stillnessLogs] })),
       addCommunicationLog: (log) => set(s => ({ communicationLogs: [{ ...log, id: crypto.randomUUID() }, ...s.communicationLogs] })),
-      addRoutine: (routine) => {},
       toggleCategoryCollapse: (category) => set(s => ({ collapsedCategories: { ...s.collapsedCategories, [category]: !s.collapsedCategories[category] } })),
-      togglePlanDay: (planId, dayNumber) => {},
       logCompletion: () => {
         const today = format(new Date(), 'yyyy-MM-dd');
         set(s => ({ completions: { ...s.completions, [today]: true } }));
@@ -191,9 +251,21 @@ export const useWellnessData = create<WellnessState>()(
       deleteStillnessLog: (id) => set(s => ({ stillnessLogs: s.stillnessLogs.filter(l => l.id !== id) })),
       deleteMealLog: (id) => set(s => ({ mealLogs: s.mealLogs.filter(l => l.id !== id) })),
       deleteTransaction: (id) => set(s => ({ transactions: s.transactions.filter(t => t.id !== id) })),
+
+      setBudget: (category, limit) => set(s => ({ budgets: [...s.budgets.filter(b => b.category !== category), { category, limit, period: 'monthly' }] })),
+      addSavingsGoal: (goal) => set(s => ({ savingsGoals: [...s.savingsGoals, { ...goal, id: crypto.randomUUID(), currentAmount: 0 }] })),
+      contributeToGoal: (id, amount) => set(s => ({ savingsGoals: s.savingsGoals.map(g => g.id === id ? { ...g, currentAmount: g.currentAmount + amount } : g) })),
+      addBill: (bill) => set(s => ({ bills: [...s.bills, bill] })),
+      toggleBillPaid: (id) => {},
+      updateEnvelope: (id, delta) => set(s => ({ envelopes: s.envelopes.map(e => e.id === id ? { ...e, balance: Math.max(0, e.balance + delta) } : e) })),
+      toggleSubscription: (id) => set(s => ({ subscriptions: s.subscriptions.map(sub => sub.id === id ? { ...sub, active: !sub.active } : sub) })),
+      copyDayLog: (from, to) => {
+        const logsToCopy = get().mealLogs.filter(l => l.date === from);
+        logsToCopy.forEach(l => get().addMealLog({ ...l, date: to }));
+      },
     }),
     {
-      name: 'wellness-data-storage-v5',
+      name: 'wellness-data-storage-v6',
       storage: createJSONStorage(() => localStorage),
     }
   )
