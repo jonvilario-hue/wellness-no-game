@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { subDays, isSameDay, format, startOfDay, differenceInDays } from 'date-fns';
+import { subDays, isSameDay, format, startOfDay, differenceInDays, parseISO, isBefore } from 'date-fns';
 import type { Exercise } from '@/data/exercises';
 
 export type Transaction = {
@@ -224,6 +224,40 @@ export type WellnessState = {
   toggleCategoryCollapse: (category: string) => void;
   togglePlanDay: (planId: string, dayNumber: number) => void;
   logCompletion: () => void;
+};
+
+export const calculateStreak = (activityLogs: any[] | Record<string, any>) => {
+  let dates: string[] = [];
+  if (Array.isArray(activityLogs)) {
+    dates = activityLogs.map(l => (l.timestamp || l.date).split('T')[0]);
+  } else {
+    dates = Object.keys(activityLogs).filter(k => activityLogs[k]);
+  }
+
+  if (dates.length === 0) return 0;
+
+  const uniqueDates = Array.from(new Set(dates)).sort((a, b) => b.localeCompare(a));
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
+
+  if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) {
+    return 0;
+  }
+
+  let streak = 0;
+  let checkDate = parseISO(uniqueDates[0]);
+
+  for (const dateStr of uniqueDates) {
+    const date = parseISO(dateStr);
+    if (isSameDay(date, checkDate)) {
+      streak++;
+      checkDate = subDays(checkDate, 1);
+    } else {
+      break;
+    }
+  }
+
+  return streak;
 };
 
 export const useWellnessData = create<WellnessState>()(
