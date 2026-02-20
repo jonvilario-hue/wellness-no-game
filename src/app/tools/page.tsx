@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -51,7 +50,7 @@ function ToolsPageContent() {
                 </div>
                 <h1 className="text-4xl font-bold font-headline tracking-tight">Reflections Lab</h1>
                 <p className="text-lg text-muted-foreground max-w-2xl">
-                  Synchronize your internal state with your physical and financial architecture.
+                  Synchronize your internal state through thoughtful planning.
                 </p>
               </div>
             </CollapsibleContent>
