@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -12,9 +13,7 @@ import {
     Utensils, Droplets, Scale, PlusCircle, Info, Sparkles, CheckCircle2, 
     Zap, Coffee, Copy, History, X, Save, Calendar as CalendarIcon,
     Search, Apple, BookOpen, LineChart, Settings2, ChefHat, Filter,
-    Plus,
-    ChevronRight,
-    ChevronLeft
+    Plus, ArrowRight, ChevronRight, ShoppingCart, Library
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWellnessData, type MealLog, type DietaryApproach, type MealPlan } from '@/hooks/use-wellness-data';
@@ -25,13 +24,17 @@ import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart as RechartsLine, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { MealPlannerCalendar } from './MealPlannerCalendar';
+import { MealGuideLibrary } from './MealGuideLibrary';
+import { ShoppingListView } from './ShoppingListView';
+import { DietaryProfileSettings } from './DietaryProfileSettings';
 
 const mockFoodDB = [
-    { name: 'Oatmeal', cals: 150, p: 5, c: 27, f: 3 },
-    { name: 'Chicken Breast', cals: 165, p: 31, c: 0, f: 4 },
-    { name: 'Greek Yogurt', cals: 100, p: 15, c: 6, f: 0 },
-    { name: 'Avocado', cals: 240, p: 3, c: 12, f: 22 },
-    { name: 'Quinoa Bowl', cals: 350, p: 12, c: 50, f: 8 }
+    { name: 'Oatmeal', cals: 150, p: 5, c: 27, f: 3, cost: 0.50 },
+    { name: 'Chicken Breast', cals: 165, p: 31, c: 0, f: 4, cost: 2.50 },
+    { name: 'Greek Yogurt', cals: 100, p: 15, c: 6, f: 0, cost: 1.20 },
+    { name: 'Avocado', cals: 240, p: 3, c: 12, f: 22, cost: 1.50 },
+    { name: 'Quinoa Bowl', cals: 350, p: 12, c: 50, f: 8, cost: 3.00 }
 ];
 
 export function DietTracker() {
@@ -47,12 +50,6 @@ export function DietTracker() {
     const [searchQuery, setSearchQuery] = useState('');
     const [isMounted, setIsMounted] = useState(false);
     const { toast } = useToast();
-
-    // Planner State
-    const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
-    const [planDate, setPlanPlanDate] = useState<Date>(new Date());
-    const [planMealType, setPlanMealType] = useState('Lunch');
-    const [planFoodName, setPlanFoodName] = useState('');
 
     useEffect(() => {
         setIsMounted(true);
@@ -89,39 +86,6 @@ export function DietTracker() {
         toast({ title: `${food.name} Added`, variant: 'success' });
     };
 
-    const handleAddPlan = () => {
-        if (!planFoodName) return;
-        addMealPlan({
-            date: format(planDate, 'yyyy-MM-dd'),
-            mealType: planMealType,
-            foodId: 'manual',
-            foodName: planFoodName
-        });
-        setIsPlanModalOpen(false);
-        setPlanFoodName('');
-        toast({ title: "Meal Planned", description: `Added to ${format(planDate, 'MMM d')}.` });
-    };
-
-    const logPlannedMeal = (plan: MealPlan) => {
-        // Find nutritional data if possible, otherwise default to a simple calorie entry
-        const foodData = mockFoodDB.find(f => f.name === plan.foodName) || { cals: 300, p: 15, c: 30, f: 10 };
-        addMealLog({
-            date: plan.date,
-            mealType: plan.mealType as any,
-            foodName: plan.foodName,
-            calories: foodData.cals,
-            protein: foodData.p,
-            carbs: foodData.c,
-            fat: foodData.f
-        });
-        toast({ title: "Meal Consumed", description: "Successfully logged your planned meal.", variant: 'success' });
-    };
-
-    const weekDays = useMemo(() => {
-        const start = startOfWeek(new Date());
-        return Array.from({ length: 7 }, (_, i) => addDays(start, i));
-    }, []);
-
     if (!isMounted) return null;
 
     return (
@@ -142,10 +106,17 @@ export function DietTracker() {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="bg-muted/50 p-1 mb-8 grid grid-cols-2 md:flex md:w-fit h-auto">
                     <TabsTrigger value="daily" className="text-xs uppercase font-bold px-6">Daily Intake</TabsTrigger>
-                    <TabsTrigger value="search" className="text-xs uppercase font-bold px-6">Food Search</TabsTrigger>
-                    <TabsTrigger value="plan" className="text-xs uppercase font-bold px-6">Meal Planner</TabsTrigger>
+                    <TabsTrigger value="planner" className="text-xs uppercase font-bold px-6">
+                        <CalendarIcon className="w-3 h-3 mr-2" /> Planner
+                    </TabsTrigger>
+                    <TabsTrigger value="guides" className="text-xs uppercase font-bold px-6">
+                        <Library className="w-3 h-3 mr-2" /> Guides
+                    </TabsTrigger>
+                    <TabsTrigger value="shopping" className="text-xs uppercase font-bold px-6">
+                        <ShoppingCart className="w-3 h-3 mr-2" /> Shopping
+                    </TabsTrigger>
                     <TabsTrigger value="progress" className="text-xs uppercase font-bold px-6">Body Progress</TabsTrigger>
-                    <TabsTrigger value="settings" className="text-xs uppercase font-bold px-6">Goals</TabsTrigger>
+                    <TabsTrigger value="settings" className="text-xs uppercase font-bold px-6">Profile</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="daily" className="space-y-8 animate-in fade-in duration-500">
@@ -235,84 +206,19 @@ export function DietTracker() {
                     </div>
                 </TabsContent>
 
-                <TabsContent value="search" className="space-y-6">
-                    <Card className="border-primary/10">
-                        <CardHeader>
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                                <Input 
-                                    placeholder="Search 10,000+ foods..." 
-                                    className="pl-10 h-12" 
-                                    value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
-                                />
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Quick Add Favorites</p>
-                            {mockFoodDB.filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase())).map(food => (
-                                <div key={food.name} className="flex items-center justify-between p-4 border rounded-xl hover:bg-muted/30 transition-all cursor-pointer" onClick={() => handleQuickAdd(food)}>
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-2.5 bg-background rounded-lg border shadow-sm"><Apple className="w-5 h-5 text-emerald-500" /></div>
-                                        <div>
-                                            <p className="font-bold text-sm">{food.name}</p>
-                                            <p className="text-xs text-muted-foreground">{food.cals} kcal per serving</p>
-                                        </div>
-                                    </div>
-                                    <PlusCircle className="w-5 h-5 text-primary opacity-0 group-hover:opacity-100" />
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
+                <TabsContent value="planner">
+                    <MealPlannerCalendar />
                 </TabsContent>
 
-                <TabsContent value="plan" className="space-y-6">
-                    <div className="flex justify-between items-center px-1">
-                        <h3 className="text-lg font-black uppercase tracking-tighter">Weekly Meal Architecture</h3>
-                        <Button onClick={() => setIsPlanModalOpen(true)} className="gap-2 font-bold h-9">
-                            <Plus className="w-4 h-4" /> Add Planned Meal
-                        </Button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
-                        {weekDays.map(day => {
-                            const dStr = format(day, 'yyyy-MM-dd');
-                            const plans = mealPlans.filter(p => p.date === dStr);
-                            const isToday = format(new Date(), 'yyyy-MM-dd') === dStr;
-
-                            return (
-                                <Card key={dStr} className={cn("min-h-[200px] border-primary/5", isToday && "border-primary/30 ring-1 ring-primary/10 bg-primary/[0.02]")}>
-                                    <CardHeader className="p-3 border-b text-center">
-                                        <p className="text-[10px] font-black uppercase text-muted-foreground">{format(day, 'EEE')}</p>
-                                        <p className={cn("text-lg font-black leading-none mt-1", isToday && "text-primary")}>{format(day, 'd')}</p>
-                                    </CardHeader>
-                                    <CardContent className="p-2 space-y-2">
-                                        {plans.length === 0 ? (
-                                            <p className="text-[9px] text-center text-muted-foreground italic py-4 opacity-40">No plans</p>
-                                        ) : (
-                                            plans.map((p, idx) => (
-                                                <div key={idx} className="p-2 bg-background border rounded-lg shadow-sm group">
-                                                    <p className="text-[8px] font-black uppercase text-primary mb-0.5">{p.mealType}</p>
-                                                    <p className="text-[10px] font-bold truncate leading-tight">{p.foodName}</p>
-                                                    <Button 
-                                                        variant="ghost" 
-                                                        size="sm" 
-                                                        className="w-full h-6 p-0 mt-2 text-[8px] font-black uppercase text-muted-foreground hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
-                                                        onClick={() => logPlannedMeal(p)}
-                                                    >
-                                                        Log as Consumed <ChevronRight className="w-2 h-2 ml-1" />
-                                                    </Button>
-                                                </div>
-                                            ))
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            );
-                        })}
-                    </div>
+                <TabsContent value="guides">
+                    <MealGuideLibrary />
                 </TabsContent>
 
-                <TabsContent value="progress" className="space-y-8">
+                <TabsContent value="shopping">
+                    <ShoppingListView />
+                </TabsContent>
+
+                <TabsContent value="progress">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <Card className="border-primary/10">
                             <CardHeader><CardTitle className="text-sm font-black uppercase tracking-widest">Add Measurement</CardTitle></CardHeader>
@@ -321,96 +227,27 @@ export function DietTracker() {
                                     <Label className="text-[10px] font-bold uppercase">Weight (kg/lb)</Label>
                                     <Input type="number" placeholder="0.0" onBlur={e => addBodyMetric({ date: dateStr, weight: parseFloat(e.target.value) })} />
                                 </div>
-                                <div className="space-y-1.5">
-                                    <Label className="text-[10px] font-bold uppercase">Body Fat %</Label>
-                                    <Input type="number" placeholder="0.0" />
-                                </div>
                                 <Button className="w-full font-bold">Save Progress</Button>
                             </CardContent>
                         </Card>
-                        
-                        <Card className="md:col-span-2 border-primary/10">
-                            <CardHeader><CardTitle className="text-sm font-black uppercase tracking-widest">Weight Trajectory</CardTitle></CardHeader>
-                            <CardContent className="h-64 pt-4">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <RechartsLine data={bodyMetrics.slice(-7)}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
-                                        <XAxis dataKey="date" fontSize={10} axisLine={false} tickLine={false} />
-                                        <YAxis fontSize={10} axisLine={false} tickLine={false} domain={['dataMin - 2', 'dataMax + 2']} />
-                                        <Tooltip />
-                                        <Line type="monotone" dataKey="weight" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4, fill: 'hsl(var(--primary))' }} />
-                                    </RechartsLine>
-                                </ResponsiveContainer>
-                            </CardContent>
+                        <Card className="md:col-span-2 border-primary/10 h-80">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <RechartsLine data={bodyMetrics.slice(-7)}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
+                                    <XAxis dataKey="date" fontSize={10} axisLine={false} tickLine={false} />
+                                    <YAxis fontSize={10} axisLine={false} tickLine={false} domain={['dataMin - 2', 'dataMax + 2']} />
+                                    <Tooltip />
+                                    <Line type="monotone" dataKey="weight" stroke="hsl(var(--primary))" strokeWidth={3} />
+                                </RechartsLine>
+                            </ResponsiveContainer>
                         </Card>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="settings" className="space-y-6">
-                    <Card className="border-primary/10">
-                        <CardHeader>
-                            <CardTitle>Dietary Architecture</CardTitle>
-                            <CardDescription>Select an approach to automatically adjust your daily macro targets.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {(['Balanced', 'Keto', 'High Protein', 'Low Carb'] as DietaryApproach[]).map(app => (
-                                <div key={app} className={cn(
-                                    "p-4 border rounded-xl cursor-pointer transition-all flex items-center justify-between",
-                                    dietaryApproach === app ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "hover:bg-muted/50"
-                                )} onClick={() => setDietaryApproach(app, calorieTarget)}>
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-background rounded-lg border shadow-sm"><Filter className="w-4 h-4" /></div>
-                                        <p className="font-bold text-sm">{app}</p>
-                                    </div>
-                                    {dietaryApproach === app && <CheckCircle2 className="w-5 h-5 text-primary" />}
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
+                <TabsContent value="settings">
+                    <DietaryProfileSettings />
                 </TabsContent>
             </Tabs>
-
-            <Dialog open={isPlanModalOpen} onOpenChange={setIsPlanModalOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Plan a Meal</DialogTitle>
-                        <DialogDescription>Schedule brain-fueling food for later in the week.</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                        <div className="space-y-1.5">
-                            <Label className="text-[10px] font-bold uppercase">Meal Type</Label>
-                            <Select value={planMealType} onValueChange={setPlanMealType}>
-                                <SelectTrigger><SelectValue /></SelectTrigger>
-                                <SelectContent>
-                                    {['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label className="text-[10px] font-bold uppercase">Food Item</Label>
-                            <Input value={planFoodName} onChange={e => setPlanFoodName(e.target.value)} placeholder="e.g. Salmon & Asparagus" />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label className="text-[10px] font-bold uppercase">Date</Label>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button variant="outline" className="w-full justify-start text-left font-normal">
-                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {format(planDate, 'PPP')}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0">
-                                    <Calendar mode="single" selected={planDate} onSelect={(d) => d && setPlanPlanDate(d)} />
-                                </PopoverContent>
-                            </Popover>
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <Button variant="ghost" onClick={() => setIsPlanModalOpen(false)}>Cancel</Button>
-                        <Button onClick={handleAddPlan} disabled={!planFoodName}>Schedule Meal</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </div>
     );
 }

@@ -1,65 +1,31 @@
 
 rules_version = '2';
-
-/**
- * FIRESTORE SECURITY RULES
- * 
- * CORE PHILOSOPHY:
- * This ruleset implements a strict User-Ownership model. Access to data is tied directly 
- * to the Firebase Authentication UID.
- */
-
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // --- GLOBAL HELPER FUNCTIONS ---
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-      return resource != null && isOwner(userId);
-    }
-
-    // --- COLLECTION RULES ---
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
 
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; 
-      
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
-
-      match /anki-decks/{deckId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-        allow delete: if isExistingOwner(userId);
-      }
-
-      match /habits/{habitId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-        allow delete: if isExistingOwner(userId);
-      }
-
-      match /habit-logs/{logId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-        allow delete: if isExistingOwner(userId);
-      }
+      allow get, write: if isOwner(userId);
+      match /anki-decks/{deckId} { allow read, write: if isOwner(userId); }
     }
-    
-    match /{path=**} {
-      allow read, write: if false;
+
+    match /mealPlans/{docId} {
+      allow read, write: if isSignedIn() && docId.startsWith(request.auth.uid);
+    }
+
+    match /shoppingLists/{docId} {
+      allow read, write: if isSignedIn() && docId.startsWith(request.auth.uid);
+    }
+
+    match /mealGuides/{guideId} {
+      allow read: if isSignedIn();
+      allow write: if false; // System only
+    }
+
+    match /ingredientPrices/{priceId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
     }
   }
 }
