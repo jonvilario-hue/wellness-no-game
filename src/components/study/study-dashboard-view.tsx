@@ -20,10 +20,12 @@ import { TodayPlan } from './dashboard/today-view';
 import { ActivityView } from './dashboard/activity-view';
 import { ForecastView } from './dashboard/forecast-view';
 import { AssistantTooltip } from '../assistant-tooltip';
+import { useFirebase } from '@/firebase';
 
 export function StudyDashboardView() {
   const { tasks, deadlines, getStreak } = useStudyDashboardStore();
-  const { decks, cards } = useFlashcardStore();
+  const { decks, cards, initializeSync } = useFlashcardStore();
+  const { user } = useFirebase();
   
   const [isTaskOpen, setIsTaskOpen] = useState(false);
   const [isDeadlineOpen, setIsDeadlineOpen] = useState(false);
@@ -42,6 +44,14 @@ export function StudyDashboardView() {
     setTodayDate(format(new Date(), 'EEEE, MMMM do'));
     setStreak(getStreak());
   }, [getStreak]);
+
+  // Handle Firebase Sync for Flashcards
+  useEffect(() => {
+    if (user?.uid) {
+      const unsub = initializeSync(user.uid);
+      return () => unsub();
+    }
+  }, [user?.uid, initializeSync]);
 
   const upcomingDeadline = useMemo(() => {
     if (!isMounted) return null;

@@ -5,7 +5,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "AnkiDeck",
       "type": "object",
-      "description": "Represents the metadata for an uploaded Anki flashcard deck file (.apkg) stored in Firebase Storage.",
+      "description": "Metadata for an uploaded Anki flashcard deck file (.apkg).",
       "properties": {
         "id": { "type": "string" },
         "userId": { "type": "string" },
@@ -17,95 +17,39 @@
       },
       "required": ["id", "userId", "fileName", "displayName", "fileSize", "downloadUrl", "uploadedAt"]
     },
-    "UserProfile": {
-      "title": "UserProfile",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "storageUsedBytes": { "type": "number" },
-        "storageQuotaBytes": { "type": "number" },
-        "deckCount": { "type": "number" },
-        "dietaryProfile": {
-          "type": "object",
-          "properties": {
-            "allergies": { "type": "array", "items": { "type": "string" } },
-            "dietaryPreference": { "type": "string", "enum": ["omnivore", "vegetarian", "vegan", "pescatarian", "halal", "kosher"] },
-            "medicalRestrictions": { "type": "array", "items": { "type": "string" } },
-            "weeklyFoodBudget": { "type": "number" },
-            "maxPrepTimeMinutes": { "type": "number" },
-            "householdSize": { "type": "number" }
-          }
-        }
-      }
-    },
-    "MealPlan": {
-      "title": "MealPlan",
-      "type": "object",
-      "description": "Calendar-based meal assignment.",
-      "properties": {
-        "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "date": { "type": "string", "format": "date" },
-        "slots": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "slot": { "type": "string", "enum": ["Breakfast", "Lunch", "Dinner", "Snacks"] },
-              "foodId": { "type": "string" },
-              "foodName": { "type": "string" },
-              "servings": { "type": "number" },
-              "logged": { "type": "boolean" },
-              "loggedAt": { "type": "string", "format": "date-time" }
-            }
-          }
-        }
-      }
-    },
-    "MealGuide": {
-      "title": "MealGuide",
+    "FlashcardDeck": {
+      "title": "FlashcardDeck",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
         "name": { "type": "string" },
         "description": { "type": "string" },
-        "tags": { "type": "array", "items": { "type": "string" } },
-        "targetCalories": { "type": "number" },
-        "macroRatios": { "type": "object" },
-        "costRange": { "type": "object" },
-        "templateDays": { "type": "array" }
-      }
+        "settings": { "type": "object" }
+      },
+      "required": ["id", "name"]
     },
-    "ShoppingList": {
-      "title": "ShoppingList",
+    "Flashcard": {
+      "title": "Flashcard",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "weekStart": { "type": "string" },
-        "items": { "type": "array" }
-      }
-    },
-    "IngredientPrice": {
-      "title": "IngredientPrice",
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "unit": { "type": "string" },
-        "price": { "type": "number" },
-        "source": { "type": "string" },
-        "userId": { "type": "string" }
-      }
+        "deckId": { "type": "string" },
+        "front": { "type": "string" },
+        "back": { "type": "string" },
+        "type": { "type": "string", "enum": ["basic", "cloze"] },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "interval": { "type": "number" },
+        "easeFactor": { "type": "number" }
+      },
+      "required": ["id", "deckId", "front", "back", "type", "dueDate"]
     }
   },
   "auth": { "providers": ["password", "anonymous"] },
   "firestore": {
     "structure": [
-      { "path": "/users/{userId}", "definition": { "entityName": "UserProfile", "description": "User settings." } },
-      { "path": "/mealPlans/{userId_date}", "definition": { "entityName": "MealPlan", "description": "Daily meal assignments." } },
-      { "path": "/mealGuides/{guideId}", "definition": { "entityName": "MealGuide", "description": "Pre-built nutritional protocols." } },
-      { "path": "/shoppingLists/{userId_weekStart}", "definition": { "entityName": "ShoppingList", "description": "Aggregated ingredients." } },
-      { "path": "/ingredientPrices/{priceId}", "definition": { "entityName": "IngredientPrice", "description": "Estimate database." } }
+      { "path": "/users/{userId}/anki-decks/{deckId}", "definition": { "entityName": "AnkiDeck", "description": "Cloud metadata for Anki files." } },
+      { "path": "/users/{userId}/flashcard-decks/{deckId}", "definition": { "entityName": "FlashcardDeck", "description": "User created study decks." } },
+      { "path": "/users/{userId}/flashcard-decks/{deckId}/cards/{cardId}", "definition": { "entityName": "Flashcard", "description": "Individual cards within a deck." } }
     ]
   }
 }
