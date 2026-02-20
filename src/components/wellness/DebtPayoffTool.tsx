@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -9,6 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { ArrowRight, Calculator, TrendingDown, PiggyBank, PlusCircle, Trash2, SlidersHorizontal, Info, ShieldAlert } from 'lucide-react';
 import { calculateMonthsToPayoff, calculateTotalInterest } from '@/lib/finance-utils';
 import { cn } from '@/lib/utils';
@@ -213,5 +219,3 @@ export function DebtPayoffTool() {
     </div>
   );
 }
-
-import { Dialog } from '@/components/ui/dialog';

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useFinanceEngine } from '@/hooks/use-finance-engine';
@@ -8,9 +7,15 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { CreditCard as CardIcon, Calendar, TrendingDown, Info, ShieldAlert, PlusCircle, Trash2, Edit, Save } from 'lucide-react';
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 export function CreditOptimizer() {
@@ -140,7 +145,7 @@ export function CreditOptimizer() {
               creditCards.filter(c => c.balance / c.limit > 0.1).map(c => (
                 <div key={c.id} className="p-3 border border-amber-200 bg-amber-50 rounded-lg text-amber-800 text-[10px] flex items-center gap-2">
                   <TrendingDown className="w-3 h-3" />
-                  <span><b>{c.name}:</b> Pay down $${Math.round(c.balance - (c.limit * 0.09))} to reach the 10% elite tier.</span>
+                  <span><b>{c.name}:</b> Pay down ${Math.round(c.balance - (c.limit * 0.09))} to reach the 10% elite tier.</span>
                 </div>
               ))
             ) : (
