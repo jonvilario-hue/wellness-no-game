@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
+import { format, startOfWeek, addDays, subDays, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Plus, CheckCircle2, Circle, ChevronLeft, ChevronRight, Utensils, Zap, Apple } from 'lucide-react';
 import { useWellnessData, type MealPlan } from '@/hooks/use-wellness-data';

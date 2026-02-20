@@ -1,13 +1,12 @@
-
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, CheckCircle2, Circle, Trash2, Printer, Plus, DollarSign } from 'lucide-react';
-import { format, startOfWeek } from 'date-fns';
+import { ShoppingCart, CheckCircle2, Circle, Trash2, Printer, Plus, DollarSign, Sparkles } from 'lucide-react';
+import { format, startOfWeek, addDays, parseISO } from 'date-fns';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
@@ -24,7 +23,6 @@ export function ShoppingListView() {
     const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
     const weekStart = startOfWeek(new Date());
-    const weekStr = format(weekStart, 'yyyy-MM-dd');
 
     const aggregatedList = useMemo(() => {
         const currentWeekPlans = mealPlans.filter(p => {
@@ -145,14 +143,4 @@ export function ShoppingListView() {
             </div>
         </div>
     );
-}
-
-function parseISO(date: string) {
-    return new Date(date + 'T12:00:00');
-}
-
-function addDays(date: Date, days: number) {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
 }

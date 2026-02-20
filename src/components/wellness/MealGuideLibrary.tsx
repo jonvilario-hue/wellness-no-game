@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -10,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { useWellnessData, type MealPlan } from '@/hooks/use-wellness-data';
 import { useToast } from '@/hooks/use-toast';
 import { format, startOfWeek, addDays } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 const STARTER_GUIDES = [
     {
