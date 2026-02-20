@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -16,7 +15,7 @@ import {
     Home, Zap, Heart, GraduationCap, Box, Trash2,
     Save, X, Calendar as CalendarIcon, Download, History, PiggyBank,
     AlertCircle, Layers, Bell, CheckCircle2, RefreshCw, BarChart3,
-    TrendingUp, Calculator, ShieldCheck, Info
+    TrendingUp, Calculator, ShieldCheck, Info, Camera
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWellnessData } from '@/hooks/use-wellness-data';
@@ -67,7 +66,6 @@ export function FinanceTracker() {
 
     const [activeTab, setActiveTab] = useState('overview');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [isImporting, setIsImporting] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
     const [showFV, setShowFV] = useState(false);
     const { toast } = useToast();

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -47,7 +46,6 @@ export function DietTracker() {
     
     const [activeTab, setActiveTab] = useState('daily');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [searchQuery, setSearchQuery] = useState('');
     const [isMounted, setIsMounted] = useState(false);
     const { toast } = useToast();
 
@@ -72,19 +70,6 @@ export function DietTracker() {
 
         return { totalCals, totalP, totalC, totalF, macroData };
     }, [mealLogs, dateStr]);
-
-    const handleQuickAdd = (food: typeof mockFoodDB[0]) => {
-        addMealLog({
-            date: dateStr,
-            mealType: 'Snacks',
-            foodName: food.name,
-            calories: food.cals,
-            protein: food.p,
-            carbs: food.c,
-            fat: food.f
-        });
-        toast({ title: `${food.name} Added`, variant: 'success' });
-    };
 
     if (!isMounted) return null;
 
@@ -199,7 +184,7 @@ export function DietTracker() {
                                             <p className="text-[9px] text-muted-foreground uppercase">{log.calories} KCAL • {log.protein}P {log.carbs}C {log.fat}F</p>
                                         </div>
                                     </div>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100"><X className="w-4 h-4" /></Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100" onClick={() => deleteMealLog(log.id)}><X className="w-4 h-4" /></Button>
                                 </div>
                             ))}
                         </div>

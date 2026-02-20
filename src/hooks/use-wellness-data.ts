@@ -55,6 +55,10 @@ export type MovementLog = {
   exerciseName: string;
   duration: number;
   timestamp: string;
+  difficulty?: number;
+  energyLevel?: string;
+  reps?: number;
+  holdTime?: number;
 };
 
 export type StillnessLog = {
@@ -64,6 +68,8 @@ export type StillnessLog = {
   duration: number;
   timestamp: string;
   trigger?: string;
+  preStress?: number;
+  postCalm?: number;
 };
 
 export type DietaryApproach = 'Balanced' | 'Keto' | 'High Protein' | 'Low Carb' | 'Custom';
@@ -148,6 +154,7 @@ export type WellnessState = {
   collapsedCategories: Record<string, boolean>;
   planProgress: Record<string, Record<number, boolean>>;
   completions: Record<string, boolean>;
+  movementProgress: Record<string, { bestReps?: number; bestHoldTime?: number }>;
   
   // Finance specific state
   assets: Record<string, number>;
@@ -174,6 +181,7 @@ export type WellnessState = {
   deleteStillnessLog: (id: string) => void;
   deleteMealLog: (id: string) => void;
   deleteTransaction: (id: string) => void;
+  togglePlanDay: (planId: string, day: number) => void;
   
   // Finance actions
   setBudget: (category: string, limit: number) => void;
@@ -211,6 +219,7 @@ export const useWellnessData = create<WellnessState>()(
       collapsedCategories: {},
       planProgress: {},
       completions: {},
+      movementProgress: {},
       
       assets: { 'Cash': 1250, 'Savings': 4500, 'Investments': 8200 },
       budgets: [
@@ -239,7 +248,25 @@ export const useWellnessData = create<WellnessState>()(
       addMealPlan: (plan) => set(s => ({ mealPlans: [{ ...plan, id: crypto.randomUUID() }, ...s.mealPlans] })),
       updateMealPlan: (id, updates) => set(s => ({ mealPlans: s.mealPlans.map(p => p.id === id ? { ...p, ...updates } : p) })),
       updateDietaryProfile: (updates) => set(s => ({ dietaryProfile: { ...s.dietaryProfile, ...updates } })),
-      addMovementLog: (log) => set(s => ({ movementLogs: [{ ...log, id: crypto.randomUUID() }, ...s.movementLogs] })),
+      
+      addMovementLog: (log) => set(s => {
+        const id = crypto.randomUUID();
+        const currentBest = s.movementProgress[log.exerciseId] || {};
+        const newBest = { ...currentBest };
+        
+        if (log.reps !== undefined && (!currentBest.bestReps || log.reps > currentBest.bestReps)) {
+          newBest.bestReps = log.reps;
+        }
+        if (log.holdTime !== undefined && (!currentBest.bestHoldTime || log.holdTime > currentBest.bestHoldTime)) {
+          newBest.bestHoldTime = log.holdTime;
+        }
+
+        return { 
+          movementLogs: [{ ...log, id }, ...s.movementLogs],
+          movementProgress: { ...s.movementProgress, [log.exerciseId]: newBest }
+        };
+      }),
+
       addStillnessLog: (log) => set(s => ({ stillnessLogs: [{ ...log, id: crypto.randomUUID() }, ...s.stillnessLogs] })),
       addCommunicationLog: (log) => set(s => ({ communicationLogs: [{ ...log, id: crypto.randomUUID() }, ...s.communicationLogs] })),
       toggleCategoryCollapse: (category) => set(s => ({ collapsedCategories: { ...s.collapsedCategories, [category]: !s.collapsedCategories[category] } })),
@@ -251,6 +278,19 @@ export const useWellnessData = create<WellnessState>()(
       deleteStillnessLog: (id) => set(s => ({ stillnessLogs: s.stillnessLogs.filter(l => l.id !== id) })),
       deleteMealLog: (id) => set(s => ({ mealLogs: s.mealLogs.filter(l => l.id !== id) })),
       deleteTransaction: (id) => set(s => ({ transactions: s.transactions.filter(t => t.id !== id) })),
+
+      togglePlanDay: (planId, day) => set(state => {
+        const planDays = state.planProgress[planId] || {};
+        return {
+          planProgress: {
+            ...state.planProgress,
+            [planId]: {
+              ...planDays,
+              [day]: !planDays[day]
+            }
+          }
+        };
+      }),
 
       setBudget: (category, limit) => set(s => ({ budgets: [...s.budgets.filter(b => b.category !== category), { category, limit, period: 'monthly' }] })),
       addSavingsGoal: (goal) => set(s => ({ savingsGoals: [...s.savingsGoals, { ...goal, id: crypto.randomUUID(), currentAmount: 0 }] })),
@@ -267,6 +307,11 @@ export const useWellnessData = create<WellnessState>()(
     {
       name: 'wellness-data-storage-v6',
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          if (!state.movementProgress) state.movementProgress = {};
+        }
+      }
     }
   )
 );
