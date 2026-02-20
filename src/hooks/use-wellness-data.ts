@@ -1,3 +1,4 @@
+
 'use client';
 
 import { create } from 'zustand';
@@ -15,6 +16,7 @@ export type Transaction = {
   note?: string;
   moodTag?: 'happy' | 'neutral' | 'stressed';
   isSubscription?: boolean;
+  isAnomaly?: boolean;
 };
 
 export type Subscription = {
@@ -24,17 +26,78 @@ export type Subscription = {
   billingCycle: 'monthly' | 'annually';
   category: string;
   active: boolean;
+  nextBillingDate?: string;
+};
+
+export type SavingsGoal = {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline?: string;
+  icon: string;
+};
+
+export type Bill = {
+  id: string;
+  name: string;
+  amount: number;
+  dueDate: string;
+  category: string;
+  isPaid: boolean;
+};
+
+export type Budget = {
+  category: string;
+  limit: number;
+  period: 'weekly' | 'monthly';
+};
+
+export type Envelope = {
+  id: string;
+  name: string;
+  balance: number;
+  limit: number;
 };
 
 export type MealLog = {
   id: string;
   date: string;
   mealType: 'Breakfast' | 'Lunch' | 'Dinner' | 'Snacks';
+  foodName: string;
   calories: number;
   protein: number;
   carbs: number;
   fat: number;
   isFlexMeal?: boolean;
+};
+
+export type Food = {
+  id: string;
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  servingSize: string;
+};
+
+export type Recipe = Food & {
+  ingredients: string[];
+};
+
+export type BodyMetric = {
+  date: string;
+  weight: number;
+  bodyFat?: number;
+  waist?: number;
+};
+
+export type MealPlan = {
+  date: string;
+  mealType: string;
+  foodId: string;
+  foodName: string;
 };
 
 export type MovementLog = {
@@ -84,6 +147,8 @@ export type CustomRoutine = {
   createdAt: string;
 };
 
+export type DietaryApproach = 'Balanced' | 'Keto' | 'High Protein' | 'Low Carb' | 'Custom';
+
 export type WellnessState = {
   // Global
   lowEnergyMode: boolean;
@@ -92,14 +157,23 @@ export type WellnessState = {
   // Finance
   transactions: Transaction[];
   subscriptions: Subscription[];
+  budgets: Budget[];
+  envelopes: Envelope[];
+  savingsGoals: SavingsGoal[];
+  bills: Bill[];
   assets: Record<string, number>;
   liabilities: Record<string, number>;
   
   // Nutrition
   mealLogs: MealLog[];
   waterLogs: Record<string, number>;
-  weightLogs: { date: string; weight: number }[];
+  bodyMetrics: BodyMetric[];
+  mealPlans: MealPlan[];
+  customFoods: Food[];
+  recipes: Recipe[];
   flexMealsPerWeek: number;
+  dietaryApproach: DietaryApproach;
+  calorieTarget: number;
 
   // Activity Logs
   movementLogs: MovementLog[];
@@ -120,35 +194,34 @@ export type WellnessState = {
 
   // Actions
   setLowEnergyMode: (enabled: boolean) => void;
-  setFeaturePhase: (phase: number) => void;
   
   addTransaction: (tx: Omit<Transaction, 'id'>) => void;
   deleteTransaction: (id: string) => void;
-  addSubscription: (sub: Omit<Subscription, 'id' | 'active'>) => void;
+  setBudget: (budget: Budget) => void;
+  addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'currentAmount'>) => void;
+  contributeToGoal: (id: string, amount: number) => void;
+  addBill: (bill: Omit<Bill, 'id' | 'isPaid'>) => void;
+  toggleBillPaid: (id: string) => void;
+  updateEnvelope: (id: string, amount: number) => void;
   toggleSubscription: (id: string) => void;
   updateNetWorth: (assets: Record<string, number>, liabilities: Record<string, number>) => void;
   
   addMealLog: (log: Omit<MealLog, 'id'>) => void;
   deleteMealLog: (id: string) => void;
-  copyDayLog: (fromDate: string, toDate: string) => void;
+  addMealPlan: (plan: MealPlan) => void;
+  addBodyMetric: (metric: BodyMetric) => void;
+  setDietaryApproach: (approach: DietaryApproach, target: number) => void;
+  addCustomFood: (food: Omit<Food, 'id'>) => void;
+  addRecipe: (recipe: Omit<Recipe, 'id'>) => void;
   addWater: (date: string, amount: number) => void;
-  addWeight: (date: string, weight: number) => void;
 
   addMovementLog: (log: Omit<MovementLog, 'id'>) => void;
   deleteMovementLog: (id: string) => void;
   addStillnessLog: (log: Omit<StillnessLog, 'id'>) => void;
-  deleteStillnessLog: (id: string) => void;
   addCommunicationLog: (log: Omit<CommunicationLog, 'id'>) => void;
-  deleteCommunicationLog: (id: string) => void;
   
   addRoutine: (routine: Omit<CustomRoutine, 'id' | 'createdAt'>) => void;
-  deleteRoutine: (id: string) => void;
-
-  addCustomPractice: (practice: Exercise) => void;
-  updateCustomPractice: (id: string, updates: Partial<Exercise>) => void;
-  deleteCustomPractice: (id: string) => void;
   toggleCategoryCollapse: (category: string) => void;
-
   togglePlanDay: (planId: string, dayNumber: number) => void;
   logCompletion: () => void;
 };
@@ -157,20 +230,33 @@ export const useWellnessData = create<WellnessState>()(
   persist(
     (set, get) => ({
       lowEnergyMode: false,
-      featurePhase: 1,
+      featurePhase: 4,
       
       transactions: [],
       subscriptions: [
-        { id: 's1', name: 'Netflix', amount: 15.99, billingCycle: 'monthly', category: 'entertainment', active: true },
-        { id: 's2', name: 'Spotify', amount: 9.99, billingCycle: 'monthly', category: 'entertainment', active: true },
+        { id: 's1', name: 'Netflix', amount: 15.99, billingCycle: 'monthly', category: 'entertainment', active: true, nextBillingDate: '2024-04-15' },
+        { id: 's2', name: 'Spotify', amount: 9.99, billingCycle: 'monthly', category: 'entertainment', active: true, nextBillingDate: '2024-04-20' },
       ],
+      budgets: [],
+      envelopes: [
+        { id: 'env-1', name: 'Groceries', balance: 400, limit: 400 },
+        { id: 'env-2', name: 'Dining', balance: 150, limit: 150 },
+        { id: 'env-3', name: 'Transit', balance: 100, limit: 100 },
+      ],
+      savingsGoals: [],
+      bills: [],
       assets: { cash: 5000, savings: 12000, investments: 8500 },
       liabilities: { creditCard: 1200, carLoan: 15000 },
       
       mealLogs: [],
       waterLogs: {},
-      weightLogs: [],
+      bodyMetrics: [],
+      mealPlans: [],
+      customFoods: [],
+      recipes: [],
       flexMealsPerWeek: 2,
+      dietaryApproach: 'Balanced',
+      calorieTarget: 2200,
 
       movementLogs: [],
       stillnessLogs: [],
@@ -185,19 +271,37 @@ export const useWellnessData = create<WellnessState>()(
       completions: {},
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
-      setFeaturePhase: (featurePhase) => set({ featurePhase }),
 
       addTransaction: (tx) => {
+        const id = crypto.randomUUID();
+        const avg = get().transactions.filter(t => t.category === tx.category).reduce((s,t) => s + t.amount, 0) / (get().transactions.length || 1);
+        const isAnomaly = tx.amount > (avg * 2.5) && get().transactions.length > 5;
+        
         set((state) => ({ 
-          transactions: [{ ...tx, id: crypto.randomUUID() }, ...state.transactions] 
+          transactions: [{ ...tx, id, isAnomaly }, ...state.transactions] 
         }));
         get().logCompletion();
       },
       deleteTransaction: (id) => set((state) => ({
         transactions: state.transactions.filter(t => t.id !== id)
       })),
-      addSubscription: (sub) => set((state) => ({
-        subscriptions: [...state.subscriptions, { ...sub, id: crypto.randomUUID(), active: true }]
+      setBudget: (budget) => set((state) => ({
+        budgets: [...state.budgets.filter(b => b.category !== budget.category), budget]
+      })),
+      addSavingsGoal: (goal) => set((state) => ({
+        savingsGoals: [...state.savingsGoals, { ...goal, id: crypto.randomUUID(), currentAmount: 0 }]
+      })),
+      contributeToGoal: (id, amount) => set((state) => ({
+        savingsGoals: state.savingsGoals.map(g => g.id === id ? { ...g, currentAmount: g.currentAmount + amount } : g)
+      })),
+      addBill: (bill) => set((state) => ({
+        bills: [...state.bills, { ...bill, id: crypto.randomUUID(), isPaid: false }]
+      })),
+      toggleBillPaid: (id) => set((state) => ({
+        bills: state.bills.map(b => b.id === id ? { ...b, isPaid: !b.isPaid } : b)
+      })),
+      updateEnvelope: (id, amount) => set((state) => ({
+        envelopes: state.envelopes.map(e => e.id === id ? { ...e, balance: e.balance + amount } : e)
       })),
       toggleSubscription: (id) => set((state) => ({
         subscriptions: state.subscriptions.map(s => s.id === id ? { ...s, active: !s.active } : s)
@@ -213,23 +317,27 @@ export const useWellnessData = create<WellnessState>()(
       deleteMealLog: (id) => set((state) => ({
         mealLogs: state.mealLogs.filter(l => l.id !== id)
       })),
-      copyDayLog: (fromDate, toDate) => set((state) => {
-        const fromLogs = state.mealLogs.filter(l => l.date === fromDate);
-        const newLogs = fromLogs.map(l => ({ ...l, id: crypto.randomUUID(), date: toDate }));
-        return { mealLogs: [...newLogs, ...state.mealLogs] };
-      }),
+      addMealPlan: (plan) => set((state) => ({
+        mealPlans: [...state.mealPlans, plan]
+      })),
+      addBodyMetric: (metric) => set((state) => ({
+        bodyMetrics: [...state.bodyMetrics.filter(m => m.date !== metric.date), metric]
+      })),
+      setDietaryApproach: (dietaryApproach, calorieTarget) => set({ dietaryApproach, calorieTarget }),
+      addCustomFood: (food) => set((state) => ({
+        customFoods: [...state.customFoods, { ...food, id: crypto.randomUUID() }]
+      })),
+      addRecipe: (recipe) => set((state) => ({
+        recipes: [...state.recipes, { ...recipe, id: crypto.randomUUID() }]
+      })),
       addWater: (date, amount) => set((state) => ({
         waterLogs: { ...state.waterLogs, [date]: (state.waterLogs[date] || 0) + amount }
-      })),
-      addWeight: (date, weight) => set((state) => ({
-        weightLogs: [...state.weightLogs.filter(w => w.date !== date), { date, weight }]
       })),
 
       addMovementLog: (log) => {
         set((state) => {
           const newLog = { ...log, id: crypto.randomUUID() };
           const newProgress = { ...state.movementProgress };
-          
           if (log.reps || log.holdTime) {
             const currentBest = newProgress[log.exerciseId] || { exerciseId: log.exerciseId, lastUpdated: new Date().toISOString() };
             newProgress[log.exerciseId] = {
@@ -239,11 +347,7 @@ export const useWellnessData = create<WellnessState>()(
               lastUpdated: new Date().toISOString()
             };
           }
-
-          return {
-            movementLogs: [newLog, ...state.movementLogs],
-            movementProgress: newProgress
-          };
+          return { movementLogs: [newLog, ...state.movementLogs], movementProgress: newProgress };
         });
         get().logCompletion();
       },
@@ -268,83 +372,27 @@ export const useWellnessData = create<WellnessState>()(
       deleteCommunicationLog: (id) => set((state) => ({
         communicationLogs: state.communicationLogs.filter(l => l.id !== id)
       })),
-      
       addRoutine: (routine) => set((state) => ({
         routines: [{ ...routine, id: crypto.randomUUID(), createdAt: new Date().toISOString() }, ...state.routines]
       })),
-      deleteRoutine: (id) => set((state) => ({
-        routines: state.routines.filter(r => r.id !== id)
-      })),
-
-      addCustomPractice: (practice) => set((state) => ({
-        customPractices: [...state.customPractices, practice]
-      })),
-      updateCustomPractice: (id, updates) => set((state) => ({
-        customPractices: state.customPractices.map(p => p.id === id ? { ...p, ...updates } : p)
-      })),
-      deleteCustomPractice: (id) => set((state) => ({
-        customPractices: state.customPractices.filter(p => p.id !== id)
-      })),
       toggleCategoryCollapse: (category) => set((state) => ({
-        collapsedCategories: {
-          ...state.collapsedCategories,
-          [category]: !state.collapsedCategories[category]
-        }
+        collapsedCategories: { ...state.collapsedCategories, [category]: !state.collapsedCategories[category] }
       })),
-
       togglePlanDay: (planId, dayNumber) => {
         set((state) => {
           const currentPlan = state.planProgress[planId] || {};
-          const isCompleting = !currentPlan[dayNumber];
-          const newProgress = {
-            ...state.planProgress,
-            [planId]: {
-              ...currentPlan,
-              [dayNumber]: isCompleting
-            }
-          };
-          return { planProgress: newProgress };
+          return { planProgress: { ...state.planProgress, [planId]: { ...currentPlan, [dayNumber]: !currentPlan[dayNumber] } } };
         });
         get().logCompletion();
       },
-
       logCompletion: () => {
         const today = format(new Date(), 'yyyy-MM-dd');
-        set((state) => ({
-          completions: { ...state.completions, [today]: true }
-        }));
+        set((state) => ({ completions: { ...state.completions, [today]: true } }));
       }
     }),
     {
-      name: 'wellness-data-storage-v3',
+      name: 'wellness-data-storage-v4',
       storage: createJSONStorage(() => localStorage),
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.setFeaturePhase(3); // Track versioning for hydration
-        }
-      }
     }
   )
 );
-
-// Utility to calculate streak with a 1-day grace period
-export const calculateStreak = (completions: Record<string, boolean>) => {
-  const dates = Object.keys(completions).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-  if (dates.length === 0) return 0;
-    
-  const today = format(new Date(), 'yyyy-MM-dd');
-  const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
-  
-  if (dates[0] !== today && dates[0] !== yesterday) return 0;
-  
-  let streak = 1;
-  for (let i = 0; i < dates.length - 1; i++) {
-    const diff = differenceInDays(new Date(dates[i]), new Date(dates[i+1]));
-    if (diff === 1) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-  return streak;
-};

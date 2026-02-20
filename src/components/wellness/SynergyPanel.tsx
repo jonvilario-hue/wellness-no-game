@@ -2,23 +2,21 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, ArrowRight, Utensils, DollarSign, Brain, HeartPulse } from "lucide-react";
+import { Sparkles, ArrowRight, Utensils, DollarSign, Brain, HeartPulse, ShieldAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
-interface SynergyInsight {
-    title: string;
-    description: string;
-    icon: React.ElementType;
-    action: string;
-    link: string;
-}
+import { useWellnessData } from "@/hooks/use-wellness-data";
+import { useMemo } from "react";
 
 export function SynergyPanel() {
-    // In a real app, this logic would live in a utility that compares 
-    // transactions vs meal logs. Here we provide high-fidelity placeholders.
-    const insights: SynergyInsight[] = [
+    const { transactions, mealLogs } = useWellnessData();
+
+    const anomalies = useMemo(() => {
+        return transactions.filter(t => t.isAnomaly);
+    }, [transactions]);
+
+    const insights = [
         {
             title: "Dining vs. Wellness",
             description: "You've spent $145 on dining out this week. Home-cooked meals dropped by 30% correlate with your reported 'Lower Energy' days.",
@@ -45,6 +43,17 @@ export function SynergyPanel() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {anomalies.length > 0 && (
+                    <Card className="bg-destructive/5 border-destructive/20 col-span-full">
+                        <CardHeader className="p-4 flex flex-row items-center gap-3">
+                            <ShieldAlert className="w-5 h-5 text-destructive" />
+                            <CardTitle className="text-sm font-bold text-destructive">Anomaly Detected: High Variance Spending</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                            <p className="text-xs">Your spend at "{anomalies[0].merchant}" is significantly higher than your historical average for this category.</p>
+                        </CardContent>
+                    </Card>
+                )}
                 {insights.map((insight, i) => (
                     <Card key={i} className="bg-primary/[0.02] border-primary/10 overflow-hidden group">
                         <CardHeader className="pb-2">
