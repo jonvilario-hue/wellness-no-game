@@ -101,6 +101,47 @@ export type WellnessState = {
   toggleCategoryCollapse: (category: string) => void;
   togglePlanDay: (planId: string, dayNumber: number) => void;
   logCompletion: () => void;
+  deleteMovementLog: (id: string) => void;
+  deleteStillnessLog: (id: string) => void;
+  deleteMealLog: (id: string) => void;
+  deleteTransaction: (id: string) => void;
+};
+
+/**
+ * Utility to calculate consecutive days of activity.
+ * Supports both log arrays and completion maps.
+ */
+export const calculateStreak = (data: any[] | Record<string, boolean>): number => {
+  const dates = new Set<string>();
+  if (Array.isArray(data)) {
+    data.forEach(item => {
+      const timestamp = item.timestamp || (item.date ? `${item.date}T12:00:00` : null);
+      if (timestamp) {
+        dates.add(format(new Date(timestamp), 'yyyy-MM-dd'));
+      }
+    });
+  } else {
+    Object.entries(data).forEach(([date, completed]) => {
+      if (completed) dates.add(date);
+    });
+  }
+
+  if (dates.size === 0) return 0;
+
+  let streak = 0;
+  let checkDate = new Date();
+  
+  // If not completed today, start checking from yesterday to keep streak alive
+  if (!dates.has(format(checkDate, 'yyyy-MM-dd'))) {
+    checkDate = subDays(checkDate, 1);
+  }
+
+  while (dates.has(format(checkDate, 'yyyy-MM-dd'))) {
+    streak++;
+    checkDate = subDays(checkDate, 1);
+  }
+
+  return streak;
 };
 
 export const useWellnessData = create<WellnessState>()(
@@ -146,7 +187,11 @@ export const useWellnessData = create<WellnessState>()(
       logCompletion: () => {
         const today = format(new Date(), 'yyyy-MM-dd');
         set(s => ({ completions: { ...s.completions, [today]: true } }));
-      }
+      },
+      deleteMovementLog: (id) => set(s => ({ movementLogs: s.movementLogs.filter(l => l.id !== id) })),
+      deleteStillnessLog: (id) => set(s => ({ stillnessLogs: s.stillnessLogs.filter(l => l.id !== id) })),
+      deleteMealLog: (id) => set(s => ({ mealLogs: s.mealLogs.filter(l => l.id !== id) })),
+      deleteTransaction: (id) => set(s => ({ transactions: s.transactions.filter(t => t.id !== id) })),
     }),
     {
       name: 'wellness-data-storage-v5',
