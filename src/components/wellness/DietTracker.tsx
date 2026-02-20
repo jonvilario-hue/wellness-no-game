@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -12,17 +11,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
     Utensils, Droplets, Scale, PlusCircle, Info, Sparkles, CheckCircle2, 
     Zap, Coffee, Copy, History, X, Save, Calendar as CalendarIcon,
-    Search, Apple, BookOpen, LineChart, Settings2, ChefHat, Filter
+    Search, Apple, BookOpen, LineChart, Settings2, ChefHat, Filter,
+    Plus,
+    ChevronRight,
+    ChevronLeft
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useWellnessData, type MealLog, type DietaryApproach } from '@/hooks/use-wellness-data';
-import { format, subDays, startOfDay, isSameDay } from 'date-fns';
+import { useWellnessData, type MealLog, type DietaryApproach, type MealPlan } from '@/hooks/use-wellness-data';
+import { format, subDays, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
-import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart as RechartsLine, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 
 const mockFoodDB = [
     { name: 'Oatmeal', cals: 150, p: 5, c: 27, f: 3 },
@@ -36,7 +38,7 @@ export function DietTracker() {
     const { 
         mealLogs, addMealLog, copyDayLog, 
         waterLogs, addWater, bodyMetrics, addBodyMetric,
-        lowEnergyMode, dietaryApproach, setDietaryApproach, calorieTarget,
+        dietaryApproach, setDietaryApproach, calorieTarget,
         mealPlans, addMealPlan
     } = useWellnessData();
     
@@ -45,6 +47,12 @@ export function DietTracker() {
     const [searchQuery, setSearchQuery] = useState('');
     const [isMounted, setIsMounted] = useState(false);
     const { toast } = useToast();
+
+    // Planner State
+    const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+    const [planDate, setPlanPlanDate] = useState<Date>(new Date());
+    const [planMealType, setPlanMealType] = useState('Lunch');
+    const [planFoodName, setPlanFoodName] = useState('');
 
     useEffect(() => {
         setIsMounted(true);
@@ -80,6 +88,39 @@ export function DietTracker() {
         });
         toast({ title: `${food.name} Added`, variant: 'success' });
     };
+
+    const handleAddPlan = () => {
+        if (!planFoodName) return;
+        addMealPlan({
+            date: format(planDate, 'yyyy-MM-dd'),
+            mealType: planMealType,
+            foodId: 'manual',
+            foodName: planFoodName
+        });
+        setIsPlanModalOpen(false);
+        setPlanFoodName('');
+        toast({ title: "Meal Planned", description: `Added to ${format(planDate, 'MMM d')}.` });
+    };
+
+    const logPlannedMeal = (plan: MealPlan) => {
+        // Find nutritional data if possible, otherwise default to a simple calorie entry
+        const foodData = mockFoodDB.find(f => f.name === plan.foodName) || { cals: 300, p: 15, c: 30, f: 10 };
+        addMealLog({
+            date: plan.date,
+            mealType: plan.mealType as any,
+            foodName: plan.foodName,
+            calories: foodData.cals,
+            protein: foodData.p,
+            carbs: foodData.c,
+            fat: foodData.f
+        });
+        toast({ title: "Meal Consumed", description: "Successfully logged your planned meal.", variant: 'success' });
+    };
+
+    const weekDays = useMemo(() => {
+        const start = startOfWeek(new Date());
+        return Array.from({ length: 7 }, (_, i) => addDays(start, i));
+    }, []);
 
     if (!isMounted) return null;
 
@@ -225,6 +266,52 @@ export function DietTracker() {
                     </Card>
                 </TabsContent>
 
+                <TabsContent value="plan" className="space-y-6">
+                    <div className="flex justify-between items-center px-1">
+                        <h3 className="text-lg font-black uppercase tracking-tighter">Weekly Meal Architecture</h3>
+                        <Button onClick={() => setIsPlanModalOpen(true)} className="gap-2 font-bold h-9">
+                            <Plus className="w-4 h-4" /> Add Planned Meal
+                        </Button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+                        {weekDays.map(day => {
+                            const dStr = format(day, 'yyyy-MM-dd');
+                            const plans = mealPlans.filter(p => p.date === dStr);
+                            const isToday = format(new Date(), 'yyyy-MM-dd') === dStr;
+
+                            return (
+                                <Card key={dStr} className={cn("min-h-[200px] border-primary/5", isToday && "border-primary/30 ring-1 ring-primary/10 bg-primary/[0.02]")}>
+                                    <CardHeader className="p-3 border-b text-center">
+                                        <p className="text-[10px] font-black uppercase text-muted-foreground">{format(day, 'EEE')}</p>
+                                        <p className={cn("text-lg font-black leading-none mt-1", isToday && "text-primary")}>{format(day, 'd')}</p>
+                                    </CardHeader>
+                                    <CardContent className="p-2 space-y-2">
+                                        {plans.length === 0 ? (
+                                            <p className="text-[9px] text-center text-muted-foreground italic py-4 opacity-40">No plans</p>
+                                        ) : (
+                                            plans.map((p, idx) => (
+                                                <div key={idx} className="p-2 bg-background border rounded-lg shadow-sm group">
+                                                    <p className="text-[8px] font-black uppercase text-primary mb-0.5">{p.mealType}</p>
+                                                    <p className="text-[10px] font-bold truncate leading-tight">{p.foodName}</p>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        className="w-full h-6 p-0 mt-2 text-[8px] font-black uppercase text-muted-foreground hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
+                                                        onClick={() => logPlannedMeal(p)}
+                                                    >
+                                                        Log as Consumed <ChevronRight className="w-2 h-2 ml-1" />
+                                                    </Button>
+                                                </div>
+                                            ))
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </div>
+                </TabsContent>
+
                 <TabsContent value="progress" className="space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <Card className="border-primary/10">
@@ -282,6 +369,48 @@ export function DietTracker() {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            <Dialog open={isPlanModalOpen} onOpenChange={setIsPlanModalOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Plan a Meal</DialogTitle>
+                        <DialogDescription>Schedule brain-fueling food for later in the week.</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase">Meal Type</Label>
+                            <Select value={planMealType} onValueChange={setPlanMealType}>
+                                <SelectTrigger><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                    {['Breakfast', 'Lunch', 'Dinner', 'Snacks'].map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase">Food Item</Label>
+                            <Input value={planFoodName} onChange={e => setPlanFoodName(e.target.value)} placeholder="e.g. Salmon & Asparagus" />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase">Date</Label>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-start text-left font-normal">
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {format(planDate, 'PPP')}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar mode="single" selected={planDate} onSelect={(d) => d && setPlanPlanDate(d)} />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={() => setIsPlanModalOpen(false)}>Cancel</Button>
+                        <Button onClick={handleAddPlan} disabled={!planFoodName}>Schedule Meal</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
