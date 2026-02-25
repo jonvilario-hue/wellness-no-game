@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -28,20 +29,12 @@ import { MealGuideLibrary } from './MealGuideLibrary';
 import { ShoppingListView } from './ShoppingListView';
 import { DietaryProfileSettings } from './DietaryProfileSettings';
 
-const mockFoodDB = [
-    { name: 'Oatmeal', cals: 150, p: 5, c: 27, f: 3, cost: 0.50 },
-    { name: 'Chicken Breast', cals: 165, p: 31, c: 0, f: 4, cost: 2.50 },
-    { name: 'Greek Yogurt', cals: 100, p: 15, c: 6, f: 0, cost: 1.20 },
-    { name: 'Avocado', cals: 240, p: 3, c: 12, f: 22, cost: 1.50 },
-    { name: 'Quinoa Bowl', cals: 350, p: 12, c: 50, f: 8, cost: 3.00 }
-];
-
 export function DietTracker() {
     const { 
-        mealLogs, addMealLog, copyDayLog, 
+        mealLogs, addMealLog, deleteMealLog, copyDayLog, 
         waterLogs, addWater, bodyMetrics, addBodyMetric,
         dietaryApproach, setDietaryApproach, calorieTarget,
-        mealPlans, addMealPlan
+        mealPlans, addMealPlan, dietaryProfile
     } = useWellnessData();
     
     const [activeTab, setActiveTab] = useState('daily');
