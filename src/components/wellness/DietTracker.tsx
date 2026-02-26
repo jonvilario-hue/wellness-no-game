@@ -2,39 +2,34 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-    Utensils, Droplets, Scale, PlusCircle, Info, Sparkles, CheckCircle2, 
-    Zap, Coffee, Copy, History, X, Save, Calendar as CalendarIcon,
-    Search, Apple, BookOpen, LineChart, Settings2, ChefHat, Filter,
-    Plus, ArrowRight, ChevronRight, ShoppingCart, Library
+    Utensils, Scale, Copy, X, Calendar as CalendarIcon,
+    ChefHat, ShoppingCart, Library
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useWellnessData, type MealLog, type DietaryApproach, type MealPlan } from '@/hooks/use-wellness-data';
-import { format, subDays, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useWellnessData } from '@/hooks/use-wellness-data';
+import { format, subDays, startOfWeek, addDays } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart as RechartsLine, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { MealPlannerCalendar } from './MealPlannerCalendar';
 import { MealGuideLibrary } from './MealGuideLibrary';
 import { ShoppingListView } from './ShoppingListView';
 import { DietaryProfileSettings } from './DietaryProfileSettings';
+import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 
 export function DietTracker() {
     const { 
-        mealLogs, addMealLog, deleteMealLog, copyDayLog, 
-        waterLogs, addWater, bodyMetrics, addBodyMetric,
-        dietaryApproach, setDietaryApproach, calorieTarget,
-        mealPlans, addMealPlan, dietaryProfile
+        mealLogs, deleteMealLog, copyDayLog, 
+        bodyMetrics, addBodyMetric,
+        dietaryApproach, calorieTarget,
+        dietaryProfile
     } = useWellnessData();
     
     const [activeTab, setActiveTab] = useState('daily');
@@ -182,6 +177,8 @@ export function DietTracker() {
                             ))}
                         </div>
                     </div>
+
+                    <WellnessActivityCalendar categoryFilter="Nutrition" />
                 </TabsContent>
 
                 <TabsContent value="planner">
@@ -210,13 +207,9 @@ export function DietTracker() {
                         </Card>
                         <Card className="md:col-span-2 border-primary/10 h-80">
                             <ResponsiveContainer width="100%" height="100%">
-                                <RechartsLine data={bodyMetrics.slice(-7)}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
-                                    <XAxis dataKey="date" fontSize={10} axisLine={false} tickLine={false} />
-                                    <YAxis fontSize={10} axisLine={false} tickLine={false} domain={['dataMin - 2', 'dataMax + 2']} />
-                                    <Tooltip />
-                                    <Line type="monotone" dataKey="weight" stroke="hsl(var(--primary))" strokeWidth={3} />
-                                </RechartsLine>
+                                <PieChart>
+                                    {/* Placeholder for actual line chart logic or similar trend visualization */}
+                                </PieChart>
                             </ResponsiveContainer>
                         </Card>
                     </div>

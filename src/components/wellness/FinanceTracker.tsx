@@ -11,17 +11,15 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-    PlusCircle, Wallet, Target, DollarSign, Sparkles, 
-    ShoppingCart, Utensils, Car, Tv, CreditCard,
-    Home, Zap, Heart, GraduationCap, Box, Trash2,
-    Save, X, Calendar as CalendarIcon, Download, History, PiggyBank,
-    AlertCircle, Layers, Bell, CheckCircle2, RefreshCw, BarChart3,
-    TrendingUp, Calculator, ShieldCheck, Info, Camera
+    PlusCircle, ShoppingCart, Utensils, Car, Tv, CreditCard,
+    Home, Zap, Heart, GraduationCap, Box,
+    Save, Calendar as CalendarIcon, 
+    Bell, CheckCircle2, TrendingUp, Camera, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useFinanceEngine } from '@/hooks/use-finance-engine';
-import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
+import { format, startOfMonth, endOfMonth, isWithinInterval, parseISO } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
@@ -51,14 +49,10 @@ export function FinanceTracker() {
     const { 
         transactions = [], 
         addTransaction, 
-        deleteTransaction, 
-        subscriptions = [], 
         assets = {}, 
-        budgets = [], 
+        subscriptions = [], 
         savingsGoals = [], 
-        contributeToGoal,
-        envelopes = [], 
-        updateEnvelope 
+        envelopes = [] 
     } = useWellnessData();
     
     const { 
