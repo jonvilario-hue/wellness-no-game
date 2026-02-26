@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo } from "react"
@@ -18,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import CategoryOverview from "./CategoryOverview"
+import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 
 const categories: ExerciseCategory[] = ['Mind-Body', 'Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
@@ -282,6 +284,8 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <WellnessActivityCalendar categoryFilter="Movement" />
     </div>
   )
 }
