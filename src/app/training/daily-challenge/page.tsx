@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft, Loader2, Zap } from 'lucide-react';
 import { getDailyCircuitAction } from '@/app/actions';
-import type { DailyCircuitOutput } from '@/ai/flows';
+import type { DailyCircuitOutput } from '@/types/cognitive';
 import { gameComponents } from '@/components/training/game-components';
 import { chcDomains } from '@/types';
 import { Progress } from '@/components/ui/progress';
@@ -44,7 +44,6 @@ export default function DailyChallengePage() {
   };
 
   const currentSegment = circuit?.segments[taskIndex];
-  const domainInfo = currentSegment ? chcDomains.find(d => d.key === currentSegment.domain) : null;
   const TaskComponent = currentSegment ? gameComponents[currentSegment.domain] : null;
 
 
@@ -111,7 +110,6 @@ export default function DailyChallengePage() {
             </p>
           </div>
           <div className="flex-1 flex justify-end">
-            {/* Timer could go here */}
           </div>
         </div>
         <Progress value={((taskIndex + 1) / (circuit?.segments.length || 3)) * 100} className="w-full h-1" />

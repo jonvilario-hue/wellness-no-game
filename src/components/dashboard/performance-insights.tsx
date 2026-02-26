@@ -2,10 +2,10 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Lightbulb, TrendingUp, Zap, X } from 'lucide-react';
+import { Sparkles, Lightbulb, TrendingUp, Zap } from 'lucide-react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import type { TrainingRecommendationOutput } from '@/ai/flows';
+import type { TrainingRecommendationOutput } from '@/types/cognitive';
 import { useState, useEffect, useTransition } from 'react';
 import { getTrainingRecommendationAction } from '@/app/actions';
 import { Skeleton } from '../ui/skeleton';

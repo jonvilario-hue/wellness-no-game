@@ -1,11 +1,12 @@
+
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getWeakAreaRecommendationsAction } from '@/app/actions';
-import type { WeakAreaRecommendationOutput } from '@/ai/flows';
-import { Lightbulb, Loader2, Info, ArrowRight, Target, X } from 'lucide-react';
+import type { WeakAreaRecommendationOutput } from '@/types/cognitive';
+import { Lightbulb, Info, ArrowRight, Target, X } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { domainIcons } from '../icons';
 import { chcDomains } from '@/types';

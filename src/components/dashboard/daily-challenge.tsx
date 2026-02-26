@@ -1,14 +1,14 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Zap, Loader2 } from 'lucide-react';
+import { ArrowRight, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useTransition } from 'react';
 import { getDailyCircuitAction } from '@/app/actions';
-import type { DailyCircuitOutput } from '@/ai/flows';
+import type { DailyCircuitOutput } from '@/types/cognitive';
 import { domainIcons } from '../icons';
-import { chcDomains } from '@/types';
 import { Skeleton } from '../ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { useTheme } from '@/hooks/use-theme';
