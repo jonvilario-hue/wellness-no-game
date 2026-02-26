@@ -25,6 +25,7 @@ import {
 import type { Exercise } from "@/data/exercises"
 import { CommunicationDashboard } from "./CommunicationDashboard"
 import { cn } from "@/lib/utils"
+import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 
 const categories: CommunicationCategory[] = [
   'Vocal Mechanics', 
@@ -297,6 +298,8 @@ export default function CommunicationContent() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <WellnessActivityCalendar categoryFilter="Communication" />
     </div>
   )
 }

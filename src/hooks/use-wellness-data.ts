@@ -72,6 +72,16 @@ export type StillnessLog = {
   postCalm?: number;
 };
 
+export type CommunicationLog = {
+  id: string;
+  practiceId: string;
+  practiceName: string;
+  duration: number;
+  timestamp: string;
+  effectiveness?: number;
+  context?: string;
+};
+
 export type DietaryApproach = 'Balanced' | 'Keto' | 'High Protein' | 'Low Carb' | 'Custom';
 
 export type SavingsGoal = {
@@ -149,7 +159,7 @@ export type WellnessState = {
   dietaryProfile: DietaryProfile;
   movementLogs: MovementLog[];
   stillnessLogs: StillnessLog[];
-  communicationLogs: any[];
+  communicationLogs: CommunicationLog[];
   customPractices: Exercise[];
   collapsedCategories: Record<string, boolean>;
   planProgress: Record<string, Record<number, boolean>>;
@@ -179,6 +189,7 @@ export type WellnessState = {
   logCompletion: () => void;
   deleteMovementLog: (id: string) => void;
   deleteStillnessLog: (id: string) => void;
+  deleteCommunicationLog: (id: string) => void;
   deleteMealLog: (id: string) => void;
   deleteTransaction: (id: string) => void;
   togglePlanDay: (planId: string, day: number) => void;
@@ -276,6 +287,7 @@ export const useWellnessData = create<WellnessState>()(
       },
       deleteMovementLog: (id) => set(s => ({ movementLogs: s.movementLogs.filter(l => l.id !== id) })),
       deleteStillnessLog: (id) => set(s => ({ stillnessLogs: s.stillnessLogs.filter(l => l.id !== id) })),
+      deleteCommunicationLog: (id) => set(s => ({ communicationLogs: s.communicationLogs.filter(l => l.id !== id) })),
       deleteMealLog: (id) => set(s => ({ mealLogs: s.mealLogs.filter(l => l.id !== id) })),
       deleteTransaction: (id) => set(s => ({ transactions: s.transactions.filter(t => t.id !== id) })),
 
