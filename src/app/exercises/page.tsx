@@ -5,7 +5,6 @@ import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import WellnessTabs from '@/components/wellness/WellnessTabs';
-import WellnessHeatmap from '@/components/wellness/WellnessHeatmap';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Rocket, ArrowRight } from 'lucide-react';
@@ -43,16 +42,6 @@ export default function ExercisesPage() {
   };
 
   const streak = useMemo(() => calculateStreak(completions), [completions]);
-
-  const activityData = useMemo(() => {
-    const combined = [...movementLogs, ...stillnessLogs];
-    const counts: Record<string, number> = {};
-    combined.forEach(l => {
-        const d = format(new Date(l.timestamp), 'yyyy-MM-dd');
-        counts[d] = (counts[d] || 0) + 1;
-    });
-    return Object.entries(counts).map(([date, count]) => ({ date, count }));
-  }, [movementLogs, stillnessLogs]);
 
   const activePlan = useMemo(() => {
     return wellnessPlans.find(plan => {
@@ -188,10 +177,6 @@ export default function ExercisesPage() {
             </div>
             
             <WellnessTabs />
-
-            <div className="space-y-8 pt-8 border-t border-primary/5">
-              <WellnessHeatmap activityData={activityData} />
-            </div>
         </div>
       </main>
       <QuickLogBar />
