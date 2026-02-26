@@ -1,9 +1,10 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Check, Goal, ClipboardCheck, SlidersHorizontal, Star, Activity, History, Edit, Trash2 } from 'lucide-react';
+import { Play, Pause, Check, Goal, ClipboardCheck, SlidersHorizontal, Star, Activity, History, Edit, Trash2, Trophy } from 'lucide-react';
 import type { Exercise } from '@/data/exercises';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
@@ -139,8 +140,8 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
             )}
             {isMovement && (
               <div className="flex items-center gap-2 ml-2">
-                <Label htmlFor="track-toggle" className="text-[10px] font-bold uppercase opacity-60">Track</Label>
-                <Switch id="track-toggle" checked={trackNumbers} onCheckedChange={setTrackNumbers} />
+                <Label htmlFor={`track-toggle-${exercise.id}`} className="text-[10px] font-bold uppercase opacity-60">Track</Label>
+                <Switch id={`track-toggle-${exercise.id}`} checked={trackNumbers} onCheckedChange={setTrackNumbers} />
               </div>
             )}
           </div>
@@ -155,11 +156,24 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         </div>
 
         {trackNumbers && isMovement && bestProgress && (
-          <div className="p-2 border border-dashed rounded-md bg-primary/5 flex items-center gap-2 text-[10px]">
-            <History className="w-3 h-3 text-primary" />
-            <span className="font-bold">Personal Best:</span>
-            {bestProgress.bestReps && <span>{bestProgress.bestReps} reps</span>}
-            {bestProgress.bestHoldTime && <span>{bestProgress.bestHoldTime}s hold</span>}
+          <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 space-y-2 animate-in fade-in zoom-in-95">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+              <Trophy className="w-3.5 h-3.5" /> Achievement Records
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
+              {bestProgress.bestReps !== undefined && (
+                <div className="p-2 bg-background rounded-lg text-center border">
+                  <p className="text-[8px] font-bold text-muted-foreground uppercase">Best Reps</p>
+                  <p className="text-lg font-black">{bestProgress.bestReps}</p>
+                </div>
+              )}
+              {bestProgress.bestHoldTime !== undefined && (
+                <div className="p-2 bg-background rounded-lg text-center border">
+                  <p className="text-[8px] font-bold text-muted-foreground uppercase">Best Hold</p>
+                  <p className="text-lg font-black">{bestProgress.bestHoldTime}s</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
