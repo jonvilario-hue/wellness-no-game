@@ -3,6 +3,11 @@
 import * as Engine from '@/lib/cognitive-engine';
 import type { CHCDomain } from '@/types';
 
+/**
+ * These actions are powered by deterministic local engines in @/lib/cognitive-engine.
+ * No AI models or third-party token-based services are used.
+ */
+
 export async function getWeakAreaRecommendationsAction(performanceData: { domain: string; score: number; sessions: number }[]) {
   return Engine.getWeakAreaRecommendation(performanceData as any);
 }

@@ -113,9 +113,6 @@ export type Budget = {
   period: 'weekly' | 'monthly';
 };
 
-/**
- * Utility to calculate consecutive days of activity.
- */
 export const calculateStreak = (data: any[] | Record<string, boolean>): number => {
   const dates = new Set<string>();
   if (Array.isArray(data)) {
@@ -166,7 +163,6 @@ export type WellnessState = {
   completions: Record<string, boolean>;
   movementProgress: Record<string, { bestReps?: number; bestHoldTime?: number }>;
   
-  // Finance specific state
   assets: Record<string, number>;
   budgets: Budget[];
   savingsGoals: SavingsGoal[];
@@ -194,7 +190,6 @@ export type WellnessState = {
   deleteTransaction: (id: string) => void;
   togglePlanDay: (planId: string, day: number) => void;
   
-  // Finance actions
   setBudget: (category: string, limit: number) => void;
   addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'currentAmount'>) => void;
   contributeToGoal: (id: string, amount: number) => void;
