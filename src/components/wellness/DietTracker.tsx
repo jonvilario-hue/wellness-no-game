@@ -7,9 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { 
     Utensils, Scale, Copy, X, Calendar as CalendarIcon,
-    ChefHat, ShoppingCart, Library
+    ChefHat, ShoppingCart, Library, Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWellnessData } from '@/hooks/use-wellness-data';
@@ -23,6 +25,7 @@ import { MealGuideLibrary } from './MealGuideLibrary';
 import { ShoppingListView } from './ShoppingListView';
 import { DietaryProfileSettings } from './DietaryProfileSettings';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
+import { NutritionArchitect } from './NutritionArchitect';
 
 export function DietTracker() {
     const { 
@@ -81,6 +84,9 @@ export function DietTracker() {
                     <TabsTrigger value="daily" className="text-xs uppercase font-bold px-6">Daily Intake</TabsTrigger>
                     <TabsTrigger value="planner" className="text-xs uppercase font-bold px-6">
                         <CalendarIcon className="w-3 h-3 mr-2" /> Planner
+                    </TabsTrigger>
+                    <TabsTrigger value="ai-architect" className="text-xs uppercase font-bold px-6">
+                        <Sparkles className="w-3 h-3 mr-2" /> AI Architect
                     </TabsTrigger>
                     <TabsTrigger value="guides" className="text-xs uppercase font-bold px-6">
                         <Library className="w-3 h-3 mr-2" /> Guides
@@ -185,6 +191,10 @@ export function DietTracker() {
                     <MealPlannerCalendar />
                 </TabsContent>
 
+                <TabsContent value="ai-architect">
+                    <NutritionArchitect />
+                </TabsContent>
+
                 <TabsContent value="guides">
                     <MealGuideLibrary />
                 </TabsContent>
@@ -205,12 +215,8 @@ export function DietTracker() {
                                 <Button className="w-full font-bold">Save Progress</Button>
                             </CardContent>
                         </Card>
-                        <Card className="md:col-span-2 border-primary/10 h-80">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    {/* Placeholder for actual line chart logic or similar trend visualization */}
-                                </PieChart>
-                            </ResponsiveContainer>
+                        <Card className="md:col-span-2 border-primary/10 h-80 flex items-center justify-center">
+                             <div className="text-muted-foreground text-sm italic">Body metric visualization engine active</div>
                         </Card>
                     </div>
                 </TabsContent>

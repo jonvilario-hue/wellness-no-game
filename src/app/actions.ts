@@ -1,7 +1,9 @@
+
 'use server';
 
 import * as Engine from '@/lib/cognitive-engine';
 import type { CHCDomain } from '@/types';
+import { generateNutritionPlan as aiGenerateNutritionPlan, type NutritionArchitectInput } from '@/ai/flows/nutrition-architect-flow';
 
 export async function getWeakAreaRecommendationsAction(performanceData: { domain: string; score: number; sessions: number }[]) {
   // Procedural: Uses local logic to identify lowest scoring domains
@@ -33,4 +35,8 @@ export async function getDailyCircuitAction() {
 export async function generateQuizAction(input: { notes: string }) {
   // Procedural: Uses pattern-matching and sentence parsing to generate quizzes without LLM calls
   return Engine.generateScriptedQuiz(input.notes);
+}
+
+export async function generateAIPanAction(input: NutritionArchitectInput) {
+  return aiGenerateNutritionPlan(input);
 }
