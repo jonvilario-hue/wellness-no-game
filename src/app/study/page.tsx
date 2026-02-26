@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -36,7 +35,6 @@ import {
   TimeManagementGuide 
 } from '@/components/study/guides';
 import { 
-  SelfQuizCreator, 
   DistractionLog, 
   CornellNotesEditor, 
   MindMapTool, 
@@ -45,9 +43,7 @@ import {
   ExamSimulator, 
   InterleavingPlanner, 
   SmartHighlightExporter, 
-  StudyBreakOptimizer,
-  WhyChainTool,
-  ConceptExampleTool
+  StudyBreakOptimizer
 } from '@/components/study/tools';
 import { StudyDashboardView } from '@/components/study/study-dashboard-view';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
@@ -72,7 +68,7 @@ export default function ScholarHub() {
     // Handle hash-based tab switching
     const handleHashChange = () => {
       const hash = window.location.hash;
-      const toolHashes = ['#quiz', '#visual', '#curve', '#notes', '#feynman', '#mindmap', '#goals', '#exam', '#interleaving', '#highlighter', '#breaks', '#whychain', '#realizer'];
+      const toolHashes = ['#visual', '#curve', '#notes', '#feynman', '#mindmap', '#goals', '#exam', '#interleaving', '#highlighter', '#breaks'];
       if (hash && toolHashes.includes(hash)) {
         setActiveTab('tools');
       } else if (hash === '#anki') {
@@ -92,36 +88,6 @@ export default function ScholarHub() {
     setIsOpen(open);
     localStorage.setItem('scholar-hub-collapsible-state', JSON.stringify(open));
   };
-
-  const toolCards = [
-    {
-      id: 'quiz',
-      title: 'AI Quiz Master',
-      desc: 'Generate deep quizzes from notes.',
-      icon: HelpCircle,
-      stat: 'Genkit Powered',
-      link: '#quiz',
-      tooltip: "Turn passive notes into active testing using AI reasoning."
-    },
-    {
-      id: 'whychain',
-      title: 'Why-Chain Explorer',
-      desc: 'Deep-dive elaborative interrogation.',
-      icon: Brain,
-      stat: 'Metacognitive',
-      link: '#whychain',
-      tooltip: "Build deep systemic understanding through recursive questioning."
-    },
-    {
-      id: 'realizer',
-      title: 'Concrete Realizer',
-      desc: 'Turn theory into examples.',
-      icon: BookOpen,
-      stat: 'Synthesis',
-      link: '#realizer',
-      tooltip: "Visualize abstract concepts through real-world scenarios."
-    }
-  ];
 
   const aggregateStats = useMemo(() => {
     if (!isMounted) return { currentStreak: 0, avgFocus: '0' };
@@ -245,43 +211,12 @@ export default function ScholarHub() {
             </TabsContent>
 
             <TabsContent value="tools" className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {toolCards.map(tool => (
-                  <AssistantTooltip key={tool.id} text={tool.tooltip}>
-                    <Card className="hover:shadow-md transition-all group border-primary/10 h-full">
-                      <CardHeader className="pb-2">
-                        <div className="p-2 bg-primary/10 rounded-lg w-fit group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                          <tool.icon className="h-5 w-5" />
-                        </div>
-                        <CardTitle className="text-lg mt-4">{tool.title}</CardTitle>
-                        <CardDescription className="text-xs">{tool.desc}</CardDescription>
-                      </CardHeader>
-                      <CardFooter className="pt-4 flex justify-between items-center border-t border-primary/5">
-                        <Badge variant="secondary" className="font-bold text-[10px]">{tool.stat}</Badge>
-                        <Button variant="ghost" size="sm" asChild className="h-8 px-2 hover:bg-primary/10">
-                          <Link href={tool.link}>Launch <ChevronRight className="ml-1 h-3 w-3"/></Link>
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </AssistantTooltip>
-                ))}
-              </div>
-
               <div className="space-y-20 pt-4">
-                <section id="whychain" className="scroll-mt-24 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <WhyChainTool />
-                  <ConceptExampleTool />
-                </section>
-
-                <section id="quiz" className="scroll-mt-24 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <SelfQuizCreator />
-                  <DistractionLog />
-                </section>
-
-                <section id="realizer" className="hidden" /> {/* Anchor for realizer */}
-
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div id="notes" className="scroll-mt-24 h-full"><CornellNotesEditor /></div>
+                  <div id="notes" className="scroll-mt-24 h-full space-y-6">
+                    <CornellNotesEditor />
+                    <DistractionLog />
+                  </div>
                   <div id="feynman" className="scroll-mt-24 h-full"><TeachBackRecorder /></div>
                 </section>
 

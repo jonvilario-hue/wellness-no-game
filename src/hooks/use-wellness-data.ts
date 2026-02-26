@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -32,24 +31,6 @@ export type MealPlan = {
   foodName: string;
   logged: boolean;
   loggedAt?: string;
-};
-
-export type GeneratedNutritionPlan = {
-  id: string;
-  createdAt: string;
-  goal: string;
-  days: {
-    day: number;
-    meals: {
-      type: string;
-      name: string;
-      calories: number;
-      protein: number;
-      carbs: number;
-      fat: number;
-      ingredients: string[];
-    }[];
-  }[];
 };
 
 export type MealLog = {
@@ -173,7 +154,6 @@ export type WellnessState = {
   mealLogs: MealLog[];
   bodyMetrics: BodyMetric[];
   mealPlans: MealPlan[];
-  nutritionPlans: GeneratedNutritionPlan[];
   dietaryApproach: DietaryApproach;
   calorieTarget: number;
   dietaryProfile: DietaryProfile;
@@ -214,11 +194,6 @@ export type WellnessState = {
   deleteTransaction: (id: string) => void;
   togglePlanDay: (planId: string, day: number) => void;
   
-  // Nutrition Architect
-  addNutritionPlan: (plan: GeneratedNutritionPlan) => void;
-  deleteNutritionPlan: (id: string) => void;
-  applyNutritionPlanToCalendar: (planId: string, startDate: Date) => void;
-  
   // Finance actions
   setBudget: (category: string, limit: number) => void;
   addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'currentAmount'>) => void;
@@ -238,7 +213,6 @@ export const useWellnessData = create<WellnessState>()(
       mealLogs: [],
       bodyMetrics: [],
       mealPlans: [],
-      nutritionPlans: [],
       dietaryApproach: 'Balanced',
       calorieTarget: 2200,
       dietaryProfile: {
@@ -330,36 +304,6 @@ export const useWellnessData = create<WellnessState>()(
         };
       }),
 
-      addNutritionPlan: (plan) => set(s => ({ nutritionPlans: [plan, ...s.nutritionPlans].slice(0, 10) })),
-      deleteNutritionPlan: (id) => set(s => ({ nutritionPlans: s.nutritionPlans.filter(p => p.id !== id) })),
-      applyNutritionPlanToCalendar: (planId, startDate) => {
-        const state = get();
-        const plan = state.nutritionPlans.find(p => p.id === planId);
-        if (!plan) return;
-
-        const newMealPlans: MealPlan[] = [];
-        plan.days.forEach(day => {
-          const currentDate = addDays(startDate, day.day - 1);
-          const dateStr = format(currentDate, 'yyyy-MM-dd');
-          
-          day.meals.forEach(meal => {
-            newMealPlans.push({
-              id: crypto.randomUUID(),
-              date: dateStr,
-              mealType: meal.type,
-              foodName: meal.name,
-              logged: false
-            });
-          });
-        });
-
-        // Filter out existing plans for these dates if they conflict, then add new
-        const datesToClear = new Set(newMealPlans.map(p => p.date));
-        set(s => ({
-          mealPlans: [...s.mealPlans.filter(p => !datesToClear.has(p.date)), ...newMealPlans]
-        }));
-      },
-
       setBudget: (category, limit) => set(s => ({ budgets: [...s.budgets.filter(b => b.category !== category), { category, limit, period: 'monthly' }] })),
       addSavingsGoal: (goal) => set(s => ({ savingsGoals: [...s.savingsGoals, { ...goal, id: crypto.randomUUID(), currentAmount: 0 }] })),
       contributeToGoal: (id, amount) => set(s => ({ savingsGoals: s.savingsGoals.map(g => g.id === id ? { ...g, currentAmount: g.currentAmount + amount } : g) })),
@@ -378,7 +322,6 @@ export const useWellnessData = create<WellnessState>()(
       onRehydrateStorage: () => (state) => {
         if (state) {
           if (!state.movementProgress) state.movementProgress = {};
-          if (!state.nutritionPlans) state.nutritionPlans = [];
         }
       }
     }

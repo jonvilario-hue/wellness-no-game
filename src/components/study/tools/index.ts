@@ -1,5 +1,3 @@
-
-export { SelfQuizCreator } from './SelfQuizCreator';
 export { CornellNotesEditor } from './CornellNotesEditor';
 export { MindMapTool } from './MindMapTool';
 export { SmartGoalWizard } from './SmartGoalWizard';
@@ -9,5 +7,3 @@ export { InterleavingPlanner } from './InterleavingPlanner';
 export { SmartHighlightExporter } from './SmartHighlightExporter';
 export { StudyBreakOptimizer } from './StudyBreakOptimizer';
 export { DistractionLog } from './DistractionLog';
-export { WhyChainTool } from './WhyChainTool';
-export { ConceptExampleTool } from './ConceptExampleTool';

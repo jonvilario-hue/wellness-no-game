@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -11,11 +10,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { 
     Utensils, Scale, Copy, X, Calendar as CalendarIcon,
-    ChefHat, ShoppingCart, Library, Sparkles
+    ChefHat, ShoppingCart, Library
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWellnessData } from '@/hooks/use-wellness-data';
-import { format, subDays, startOfWeek, addDays } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
@@ -25,14 +24,12 @@ import { MealGuideLibrary } from './MealGuideLibrary';
 import { ShoppingListView } from './ShoppingListView';
 import { DietaryProfileSettings } from './DietaryProfileSettings';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
-import { NutritionArchitect } from './NutritionArchitect';
 
 export function DietTracker() {
     const { 
         mealLogs, deleteMealLog, copyDayLog, 
         bodyMetrics, addBodyMetric,
-        dietaryApproach, calorieTarget,
-        dietaryProfile
+        dietaryApproach, calorieTarget
     } = useWellnessData();
     
     const [activeTab, setActiveTab] = useState('daily');
@@ -84,9 +81,6 @@ export function DietTracker() {
                     <TabsTrigger value="daily" className="text-xs uppercase font-bold px-6">Daily Intake</TabsTrigger>
                     <TabsTrigger value="planner" className="text-xs uppercase font-bold px-6">
                         <CalendarIcon className="w-3 h-3 mr-2" /> Planner
-                    </TabsTrigger>
-                    <TabsTrigger value="ai-architect" className="text-xs uppercase font-bold px-6">
-                        <Sparkles className="w-3 h-3 mr-2" /> AI Architect
                     </TabsTrigger>
                     <TabsTrigger value="guides" className="text-xs uppercase font-bold px-6">
                         <Library className="w-3 h-3 mr-2" /> Guides
@@ -189,10 +183,6 @@ export function DietTracker() {
 
                 <TabsContent value="planner">
                     <MealPlannerCalendar />
-                </TabsContent>
-
-                <TabsContent value="ai-architect">
-                    <NutritionArchitect />
                 </TabsContent>
 
                 <TabsContent value="guides">
