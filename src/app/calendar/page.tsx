@@ -5,7 +5,32 @@ import { useState, useMemo, useEffect } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
-import { Calendar as CalendarIcon, ChevronDown, ChevronUp, CalendarDays, ListChecks, Plus, LayoutGrid, CheckCircle2, Circle, Trash2, RotateCcw, Edit, Play, Clock, ArrowLeft, ArrowRight, TrendingUp, Brain, Utensils, Wallet, HeartPulse, Waves } from 'lucide-react';
+import { 
+  Calendar as CalendarIcon, 
+  ChevronDown, 
+  ChevronUp, 
+  CalendarDays, 
+  ListChecks, 
+  Plus, 
+  LayoutGrid, 
+  CheckCircle2, 
+  Circle, 
+  Trash2, 
+  RotateCcw, 
+  Edit, 
+  Play, 
+  Clock, 
+  ArrowLeft, 
+  ArrowRight, 
+  TrendingUp, 
+  Brain, 
+  Utensils, 
+  Wallet, 
+  HeartPulse, 
+  Waves,
+  MessageSquare,
+  BookMarked
+} from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -21,10 +46,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { PlanCategory, CalendarPlan } from '@/types/calendar-plans';
+import type { PlanCategory, CalendarPlan, ActivityStatus } from '@/types/calendar-plans';
 import { DayDetailsDialog } from '@/components/calendar/day-details-dialog';
 import { calendarContent } from '@/data/calendar-content';
 import { useWellnessData } from '@/hooks/use-wellness-data';
+import { useHydratedJournalStore } from '@/hooks/use-journal';
 import Link from 'next/link';
 
 export default function CalendarPage() {
@@ -42,7 +68,8 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { movementLogs, stillnessLogs, mealLogs, transactions } = useWellnessData();
+  const { movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs } = useWellnessData();
+  const { entries } = useHydratedJournalStore();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -109,7 +136,7 @@ export default function CalendarPage() {
       studyResourceId: inst.studyResourceId
     }));
 
-    // Amalgamate Wellness Logs
+    // Amalgamate Wellness & Reflection Logs
     const wellnessTasks = [
       ...movementLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({
         id: l.id,
@@ -131,9 +158,19 @@ export default function CalendarPage() {
         instanceId: l.id,
         icon: Waves
       })),
+      ...communicationLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({
+        id: l.id,
+        name: l.practiceName,
+        category: 'Communication' as PlanCategory,
+        planName: 'Communication Lab',
+        planColor: '#a855f7',
+        status: 'completed' as ActivityStatus,
+        instanceId: l.id,
+        icon: MessageSquare
+      })),
       ...mealLogs.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({
         id: l.id,
-        name: `${l.mealType}: ${l.calories} kcal`,
+        name: `${l.mealType}: ${l.foodName || 'Meal'}`,
         category: 'Nutrition' as PlanCategory,
         planName: 'Nutrition Lab',
         planColor: '#fb923c',
@@ -150,13 +187,23 @@ export default function CalendarPage() {
         status: 'completed' as ActivityStatus,
         instanceId: l.id,
         icon: Wallet
+      })),
+      ...entries.filter(e => isSameDay(new Date(e.displayDate || e.date + 'T12:00:00'), date)).map(e => ({
+        id: e.id,
+        name: e.label || 'Reflection',
+        category: 'Journaling' as PlanCategory,
+        planName: 'Notebook',
+        planColor: '#6b7280',
+        status: 'completed' as ActivityStatus,
+        instanceId: e.id,
+        icon: BookMarked
       }))
     ];
 
     return [...planTasks, ...studyTasks, ...wellnessTasks];
   };
 
-  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, activePlans, activityInstances, movementLogs, stillnessLogs, mealLogs, transactions]);
+  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, activePlans, activityInstances, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, entries]);
 
   const weekDays = useMemo(() => {
     const start = startOfWeek(selectedDate);
@@ -328,7 +375,7 @@ export default function CalendarPage() {
                     <CalendarIcon className="w-5 h-5 text-primary" />
                     {view === 'month' ? format(selectedDate, 'MMMM yyyy') : view === 'week' ? `Week of ${format(weekDays[0], 'MMM d')}` : format(selectedDate, 'PPPP')}
                   </CardTitle>
-                  <CardDescription>Master schedule: Plans + Direct Wellness Logs.</CardDescription>
+                  <CardDescription>Master schedule: Plans + Direct Wellness & Reflection Logs.</CardDescription>
                 </div>
                 <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
                   <Button variant={view === 'month' ? 'secondary' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
@@ -369,7 +416,6 @@ export default function CalendarPage() {
                   <div className="p-4 grid grid-cols-1 md:grid-cols-7 gap-4">
                     {weekDays.map(date => {
                       const tasks = getTasksForDate(date);
-                      const focus = getDayFocus(date);
                       const isToday = isSameDay(date, new Date());
                       const isSelected = isSameDay(date, selectedDate);
 
