@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -44,7 +45,9 @@ import {
   ExamSimulator, 
   InterleavingPlanner, 
   SmartHighlightExporter, 
-  StudyBreakOptimizer 
+  StudyBreakOptimizer,
+  WhyChainTool,
+  ConceptExampleTool
 } from '@/components/study/tools';
 import { StudyDashboardView } from '@/components/study/study-dashboard-view';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
@@ -69,7 +72,7 @@ export default function ScholarHub() {
     // Handle hash-based tab switching
     const handleHashChange = () => {
       const hash = window.location.hash;
-      const toolHashes = ['#quiz', '#visual', '#curve', '#notes', '#feynman', '#mindmap', '#goals', '#exam', '#interleaving', '#highlighter', '#breaks'];
+      const toolHashes = ['#quiz', '#visual', '#curve', '#notes', '#feynman', '#mindmap', '#goals', '#exam', '#interleaving', '#highlighter', '#breaks', '#whychain', '#realizer'];
       if (hash && toolHashes.includes(hash)) {
         setActiveTab('tools');
       } else if (hash === '#anki') {
@@ -93,30 +96,30 @@ export default function ScholarHub() {
   const toolCards = [
     {
       id: 'quiz',
-      title: 'Self-Quiz Creator',
-      desc: 'Generate procedural quizzes from your notes.',
+      title: 'AI Quiz Master',
+      desc: 'Generate deep quizzes from notes.',
       icon: HelpCircle,
-      stat: 'Interactive Prep',
+      stat: 'Genkit Powered',
       link: '#quiz',
-      tooltip: "Turn passive notes into active testing. Research shows self-testing is significantly more effective than re-reading."
+      tooltip: "Turn passive notes into active testing using AI reasoning."
     },
     {
-      id: 'visual',
-      title: 'Dual Coding',
-      desc: 'Pair text with sketches for memory.',
-      icon: PenTool,
-      stat: `${visualPairs.length} Pairs Created`,
-      link: '#visual',
-      tooltip: "The Dual Coding theory suggests that combining verbal and visual information creates two distinct mental representations, doubling your chances of recall."
+      id: 'whychain',
+      title: 'Why-Chain Explorer',
+      desc: 'Deep-dive elaborative interrogation.',
+      icon: Brain,
+      stat: 'Metacognitive',
+      link: '#whychain',
+      tooltip: "Build deep systemic understanding through recursive questioning."
     },
     {
-      id: 'curve',
-      title: 'Retention Forecast',
-      desc: 'Visualize knowledge decay.',
-      icon: TrendingUp,
-      stat: 'Predictive Map',
-      link: '#curve',
-      tooltip: "Based on Ebbinghaus's Forgetting Curve. This tool predicts when you will forget information, allowing you to review just in time."
+      id: 'realizer',
+      title: 'Concrete Realizer',
+      desc: 'Turn theory into examples.',
+      icon: BookOpen,
+      stat: 'Synthesis',
+      link: '#realizer',
+      tooltip: "Visualize abstract concepts through real-world scenarios."
     }
   ];
 
@@ -265,10 +268,17 @@ export default function ScholarHub() {
               </div>
 
               <div className="space-y-20 pt-4">
+                <section id="whychain" className="scroll-mt-24 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <WhyChainTool />
+                  <ConceptExampleTool />
+                </section>
+
                 <section id="quiz" className="scroll-mt-24 grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <SelfQuizCreator />
                   <DistractionLog />
                 </section>
+
+                <section id="realizer" className="hidden" /> {/* Anchor for realizer */}
 
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div id="notes" className="scroll-mt-24 h-full"><CornellNotesEditor /></div>
