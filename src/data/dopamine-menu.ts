@@ -24,7 +24,7 @@ export const dopamineWizardData: Record<Feeling, Record<Craving, DopamineAction>
   'Mentally foggy': {
     Relief: {
       action: 'Brain Warm-Up Protocol',
-      reason: 'Use structured box breathing to clear carbon dioxide and CO2 buildup, sharpening mental focus.',
+      reason: 'Use structured box breathing to clear carbon dioxide buildup, sharpening mental focus.',
       link: '/library?tab=wellness#kit-brain-warm-up-kit',
     },
     Energy: {
@@ -81,7 +81,7 @@ export const dopamineWizardData: Record<Feeling, Record<Craving, DopamineAction>
     Energy: {
       action: 'Music & Move Challenge',
       reason: 'Leverage auditory dopamine and rhythmic movement to "unlock" your emotional and physical state.',
-      link: '/library?tab=wellness#kit-music-&-move-kit',
+      link: '/library?tab=wellness#kit-music-move-kit',
     },
     Progress: {
       action: 'Creative Flow Primer',

@@ -68,8 +68,8 @@ export function DopamineMenu() {
         const hash = result.link.split('#')[1] || '';
         
         if (hash.startsWith('kit-')) {
-            const kitId = hash.replace('kit-', '');
-            const kit = kits.find(k => k.title.toLowerCase().replace(/ /g, '-') === kitId);
+            // Precise ID matching for kits
+            const kit = kits.find(k => k.id === hash);
             return kit ? { type: 'kit', data: kit } : null;
         }
         
@@ -141,7 +141,7 @@ export function DopamineMenu() {
                      <motion.div key={3} {...stepTransition} className="w-full flex flex-col h-[500px]">
                         <DialogHeader className="text-center mb-4 flex-shrink-0">
                             <DialogTitle className="text-2xl font-headline">Prescribed Protocol</DialogTitle>
-                            <DialogDescription>Read the details below and act when ready.</DialogDescription>
+                            <DialogDescription>Review the full solution then act when ready.</DialogDescription>
                         </DialogHeader>
                         
                         <ScrollArea className="flex-grow pr-4 -mr-4">
@@ -202,13 +202,19 @@ export function DopamineMenu() {
                                             </div>
                                         </div>
                                     )}
+
+                                    {!detail && (
+                                        <div className="p-8 text-center border-2 border-dashed rounded-xl opacity-50 italic text-sm">
+                                            Full protocol details are synchronized in the main Lab.
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </ScrollArea>
 
-                        <div className="flex-shrink-0 pt-4 flex gap-2">
+                        <div className="flex-shrink-0 pt-4 flex gap-2 border-t">
                             <Button variant="outline" onClick={handleReset} className="flex-1">Start Over</Button>
-                            <Button onClick={() => handleAction(result?.link || '')} className="flex-1">
+                            <Button onClick={() => handleAction(result?.link || '')} className="flex-1 shadow-lg">
                                 Execute in Lab <Rocket className="w-4 h-4 ml-2" />
                             </Button>
                         </div>
