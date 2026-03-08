@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -13,6 +12,7 @@ import {
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { getSpeedRank } from '@/lib/speedreading-utils';
 import { AssistantTooltip } from '../assistant-tooltip';
+import { cn } from '@/lib/utils';
 
 export function SpeedReadingDashboard() {
   const { logs, achievements, getStreak } = useSpeedReadingStore();
@@ -38,7 +38,9 @@ export function SpeedReadingDashboard() {
   }, [logs]);
 
   const bestTier = useMemo(() => {
-    return Object.entries(achievements).sort((a, b) => b[1].highestERR - a[1].highestERR)[0];
+    const entries = Object.entries(achievements);
+    if (entries.length === 0) return ['Casual', { highestERR: 0 }] as const;
+    return entries.sort((a, b) => b[1].highestERR - a[1].highestERR)[0];
   }, [achievements]);
 
   return (
@@ -136,7 +138,7 @@ export function SpeedReadingDashboard() {
                   <Brain className="w-3 h-3" /> Cognitive Cross-Load
                 </h4>
                 <p className="text-[10px] leading-relaxed text-muted-foreground">
-                  Your efficiency is highest on <b>{bestTier[0]}</b> content. Consider a "Stillness" reset before <b>{Object.keys(achievements).find(k => k !== bestTier[0])}</b> tasks.
+                  Your efficiency is highest on <b>{bestTier[0]}</b> content. Consider a "Stillness" reset before tasks in other domains.
                 </p>
               </div>
             </div>
