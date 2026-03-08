@@ -1,3 +1,4 @@
+
 import { movementExercises, mindfulnessPractices, type Exercise, type MindfulnessPractice } from './exercises';
 import { communicationPractices } from './communication-practices';
 import { wellnessPlans, type WellnessPlan } from './wellness-plans';
@@ -58,7 +59,7 @@ const getPracticeTags = (practice: Exercise | MindfulnessPractice): LibraryTag[]
 };
 
 const allMovement: LibraryItem[] = movementExercises.map(p => ({
-    id: p.id,
+    id: `practice-${p.id}`,
     type: 'Practice',
     title: p.name,
     description: p.description,
@@ -69,7 +70,7 @@ const allMovement: LibraryItem[] = movementExercises.map(p => ({
 }));
 
 const allStillness: LibraryItem[] = mindfulnessPractices.map(p => ({
-    id: p.id,
+    id: `practice-${p.id}`,
     type: 'Practice',
     title: p.name,
     description: p.description,
@@ -80,7 +81,7 @@ const allStillness: LibraryItem[] = mindfulnessPractices.map(p => ({
 }));
 
 const allCommunication: LibraryItem[] = communicationPractices.map(p => ({
-    id: p.id,
+    id: `practice-${p.id}`,
     type: 'Practice',
     title: p.name,
     description: p.description,
@@ -91,7 +92,7 @@ const allCommunication: LibraryItem[] = communicationPractices.map(p => ({
 }));
 
 const allKits: LibraryItem[] = [...kits, ...communicationKits].map(k => ({
-    id: k.title.toLowerCase().replace(/ /g, '-'),
+    id: `kit-${k.title.toLowerCase().replace(/ /g, '-')}`,
     type: 'Kit',
     title: k.title,
     description: k.description,

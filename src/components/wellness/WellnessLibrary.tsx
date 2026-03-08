@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -94,7 +95,7 @@ const DetailedLibraryCard = ({ item }: { item: LibraryItem }) => {
     }
 
     return (
-        <Card className="flex flex-col hover:shadow-lg transition-shadow duration-300 border-primary/5 h-full" id={item.id}>
+        <Card className="flex flex-col h-full hover:shadow-md transition-all duration-300 border-primary/5 scroll-mt-48" id={item.id}>
             <CardHeader className="pb-3">
                 <div className="flex justify-between items-start mb-1">
                     <item.icon className="w-5 h-5 text-primary" />
