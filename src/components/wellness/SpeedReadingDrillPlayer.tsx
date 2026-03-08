@@ -11,9 +11,9 @@ import { Label } from '@/components/ui/label';
 import { 
   Play, Pause, RotateCcw, X, Check, 
   Target, Zap, Brain, Activity, Clock,
-  ArrowRight
+  ArrowRight, Eye, MousePointer2
 } from 'lucide-react';
-import type { ReadingPassage, DrillType, ReadingLog } from '@/types/speedreading';
+import type { ReadingPassage, DrillType } from '@/types/speedreading';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,11 +29,10 @@ interface Props {
 export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) {
   const [gameState, setGameState] = useState<'prep' | 'reading' | 'quiz' | 'summary'>('prep');
   const [isActive, setIsActive] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0); // Index of word or chunk
+  const [currentIndex, setCurrentIndex] = useState(0); 
   const [startTime, setStartTime] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   
-  // Logic params
   const [currentWpm, setCurrentWpm] = useState(300);
   const [preFocus, setPreFocus] = useState(3);
   const [postFatigue, setPostFatigue] = useState(3);
@@ -45,20 +44,19 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
   const words = useMemo(() => passage.content.split(/\s+/), [passage]);
   
   const chunks = useMemo(() => {
-    if (drillType === 'Chunk Training') {
-      const size = 3;
-      const res = [];
-      for (let i = 0; i < words.length; i += size) {
-        res.push(words.slice(i, i + size).join(' '));
-      }
-      return res;
+    const size = 3;
+    const res = [];
+    for (let i = 0; i < words.length; i += size) {
+      res.push(words.slice(i, i + size).join(' '));
     }
+    return res;
+  }, [words]);
+
+  const units = useMemo(() => {
+    if (drillType === 'Chunk Training') return chunks;
     return words;
-  }, [words, drillType]);
+  }, [drillType, words, chunks]);
 
-  const units = drillType === 'Chunk Training' ? chunks : words;
-
-  // Interval calculation based on WPM
   const msPerUnit = useMemo(() => {
     const wordsPerUnit = drillType === 'Chunk Training' ? 3 : 1;
     return (60 / currentWpm) * 1000 * wordsPerUnit;
@@ -118,10 +116,62 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
     onClose();
   };
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s.toString().padStart(2, '0')}`;
+  const renderDrillContent = () => {
+    // 1. RSVP MODES (Center display)
+    if (drillType === 'Chunk Training' || drillType === 'Regression Eliminator') {
+      return (
+        <div className="text-center relative">
+          <span className="text-4xl md:text-6xl font-black tracking-tight text-primary animate-in zoom-in-95 duration-75">
+            {units[currentIndex]}
+          </span>
+          {drillType === 'Regression Eliminator' && (
+            <div className="mt-4 text-[10px] uppercase font-bold text-muted-foreground opacity-40">
+              Forward Momentum Only
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // 2. FLOW MODES (Full text with highlight)
+    if (drillType === 'Pacer') {
+      return (
+        <div className="max-w-2xl text-xl leading-relaxed text-muted-foreground/40 font-medium text-justify">
+          {words.map((word, i) => (
+            <span 
+              key={i} 
+              className={cn(
+                "transition-colors duration-150 px-0.5 rounded",
+                i === currentIndex ? "bg-primary text-primary-foreground font-bold shadow-lg scale-110 inline-block" : ""
+              )}
+            >
+              {word}{' '}
+            </span>
+          ))}
+        </div>
+      );
+    }
+
+    // 3. PERIPHERAL MODE (Narrow column)
+    if (drillType === 'Peripheral Expansion') {
+      return (
+        <div className="w-[300px] text-center space-y-4 text-2xl font-medium leading-relaxed">
+          {words.map((word, i) => (
+            <div 
+              key={i} 
+              className={cn(
+                "transition-all duration-150",
+                i === currentIndex ? "text-primary font-black scale-125" : "opacity-10"
+              )}
+            >
+              {word}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return <div>Unsupported Drill Type</div>;
   };
 
   return (
@@ -143,7 +193,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
         </div>
       </header>
 
-      <main className="flex-1 flex items-center justify-center p-6 bg-muted/5">
+      <main className="flex-1 flex items-center justify-center p-6 bg-muted/5 overflow-hidden">
         <AnimatePresence mode="wait">
           {gameState === 'prep' && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="max-w-md w-full">
@@ -182,30 +232,10 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
           )}
 
           {gameState === 'reading' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl w-full">
-              <div className="relative min-h-[300px] flex flex-col items-center justify-center p-12 bg-background rounded-[40px] shadow-inner border-4 border-muted/20">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center overflow-y-auto">
+              <div className="relative min-h-[400px] w-full max-w-4xl flex flex-col items-center justify-center p-12 bg-background rounded-[40px] shadow-inner border-4 border-muted/20">
                 
-                {drillType === 'Peripheral Expansion' ? (
-                  <div className="max-w-[300px] text-center space-y-4 text-2xl font-medium leading-relaxed opacity-40">
-                    {words.slice(Math.max(0, currentIndex - 10), currentIndex).join(' ')}
-                    <span className="text-primary font-black scale-110 inline-block px-2 bg-primary/5 rounded">
-                      {words[currentIndex]}
-                    </span>
-                    {words.slice(currentIndex + 1, currentIndex + 11).join(' ')}
-                  </div>
-                ) : (
-                  <div className="text-center">
-                    <span className="text-5xl md:text-7xl font-black tracking-tight text-primary animate-in zoom-in-95 duration-75">
-                      {units[currentIndex]}
-                    </span>
-                  </div>
-                )}
-
-                {drillType === 'Regression Eliminator' && (
-                  <div className="absolute inset-0 pointer-events-none opacity-5">
-                    <div className="w-full h-full bg-grid-slate-200" />
-                  </div>
-                )}
+                {renderDrillContent()}
 
                 <div className="absolute bottom-8 flex gap-4">
                   <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full" onClick={() => setIsActive(!isActive)}>
