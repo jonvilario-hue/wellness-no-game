@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { HelpCircle, Brain, ArrowRight } from 'lucide-react';
 import type { ReadingPassage } from '@/types/speedreading';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -83,5 +84,3 @@ export function SpeedReadingQuiz({ passage, onComplete }: Props) {
     </motion.div>
   );
 }
-
-import { Badge } from '../ui/badge';

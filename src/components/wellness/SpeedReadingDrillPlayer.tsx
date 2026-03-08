@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 import { 
   Play, Pause, RotateCcw, X, Check, 
   Target, Zap, Brain, Activity, Clock,
@@ -58,8 +59,6 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
   const units = drillType === 'Chunk Training' ? chunks : words;
 
   // Interval calculation based on WPM
-  // WPM = (WordCount / Time) * 60 => Time = (WordCount / WPM) * 60
-  // Per word time = (60 / WPM) seconds
   const msPerUnit = useMemo(() => {
     const wordsPerUnit = drillType === 'Chunk Training' ? 3 : 1;
     return (60 / currentWpm) * 1000 * wordsPerUnit;
@@ -117,6 +116,12 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
 
     toast({ title: "Drill Results Synchronized", variant: 'success' });
     onClose();
+  };
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
   return (
