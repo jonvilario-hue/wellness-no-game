@@ -5,14 +5,13 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 // Keys that are part of the portable "User Data"
-// Cleaned up to only include current active versions to save space
 export const ALL_STORAGE_KEYS = [
-  'blueprint-store-local-vachievement-v2', // v2 is current
+  'blueprint-store-local-vachievement-v2',
   'calendar-plans-storage-v3',
-  'flashcard-storage-v4', // v4 is current for Study Hub
-  'srs-master-storage-v1', // SRS Master page
+  'flashcard-storage-v4',
+  'srs-master-storage-v1',
   'journal-storage-v2',
-  'wellness-data-storage-v3', // v3 is current
+  'wellness-data-storage-v6',
   'alarm-storage',
   'dashboard-settings-storage-v6',
   'motivation-storage',
@@ -41,6 +40,7 @@ interface SnapshotState {
   maxSnapshots: number;
   lastAutoSnapshotDate: string | null;
   isLoaded: boolean;
+  isQuotaExceeded: boolean;
   
   setHasHydrated: (state: boolean) => void;
   setMaxSnapshots: (limit: number) => void;
@@ -55,9 +55,10 @@ export const useSnapshotStore = create<SnapshotState>()(
   persist(
     (set, get) => ({
       snapshots: [],
-      maxSnapshots: 3, // Reduced from 10 to 3 to prevent LocalStorage Quota errors
+      maxSnapshots: 2, // Reduced to save space
       lastAutoSnapshotDate: null,
       isLoaded: false,
+      isQuotaExceeded: false,
 
       setHasHydrated: (state) => set({ isLoaded: state }),
 
@@ -68,7 +69,11 @@ export const useSnapshotStore = create<SnapshotState>()(
         
         const data: Record<string, string | null> = {};
         ALL_STORAGE_KEYS.forEach(key => {
-          data[key] = localStorage.getItem(key);
+          try {
+            data[key] = localStorage.getItem(key);
+          } catch (e) {
+            data[key] = null;
+          }
         });
 
         const newSnapshot: DataSnapshot = {
@@ -78,15 +83,21 @@ export const useSnapshotStore = create<SnapshotState>()(
           label: label || 'Manual Snapshot'
         };
 
-        // Rolling deletion logic
         const updatedSnapshots = [newSnapshot, ...snapshots].slice(0, maxSnapshots);
         
         try {
-          set({ snapshots: updatedSnapshots });
+          set({ snapshots: updatedSnapshots, isQuotaExceeded: false });
         } catch (e) {
-          // If we still hit quota, try keeping only 1 snapshot
-          console.warn("Snapshot failed due to quota, attempting to keep only most recent.");
-          set({ snapshots: [newSnapshot] });
+          console.warn("Storage quota exceeded. Purging old snapshots to make room...");
+          
+          // Try with just the NEW snapshot (clearing all others)
+          try {
+            set({ snapshots: [newSnapshot], isQuotaExceeded: false });
+          } catch (e2) {
+            // If even 1 snapshot is too big, the data itself is too large.
+            console.error("Data too large for local snapshots. Please export your backup manually.");
+            set({ snapshots: [], isQuotaExceeded: true });
+          }
         }
       },
 
@@ -100,26 +111,26 @@ export const useSnapshotStore = create<SnapshotState>()(
           }
         });
 
-        // Trigger a hard reload to re-hydrate all stores with the restored data
         window.location.reload();
       },
 
       deleteSnapshot: (id) => {
         set(state => ({
-          snapshots: state.snapshots.filter(s => s.id !== id)
+          snapshots: state.snapshots.filter(s => s.id !== id),
+          isQuotaExceeded: false
         }));
       },
 
       clearAllSnapshots: () => {
-        set({ snapshots: [] });
+        set({ snapshots: [], isQuotaExceeded: false });
       },
 
       checkAutoSnapshot: () => {
-        const { lastAutoSnapshotDate, createSnapshot } = get();
+        const { lastAutoSnapshotDate, createSnapshot, isQuotaExceeded } = get();
+        if (isQuotaExceeded) return; // Don't keep trying if we know we're full
+
         const now = new Date();
         const lastDate = lastAutoSnapshotDate ? new Date(lastAutoSnapshotDate) : null;
-
-        // Trigger every 7 days (weekly)
         const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
         
         if (!lastDate || (now.getTime() - lastDate.getTime() >= ONE_WEEK_MS)) {
