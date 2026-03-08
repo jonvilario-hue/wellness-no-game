@@ -1,10 +1,10 @@
+
 'use client';
 
 import { useMemo } from 'react';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
 import { 
   Flame, Zap, Target, BarChart3, TrendingUp, 
   Trophy, BookOpen, Brain, Activity, Info
