@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { StillnessAnalytics } from "./StillnessAnalytics"
 
 const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
 
@@ -284,6 +285,10 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
         </Dialog>
 
         <WellnessActivityCalendar categoryFilter="Stillness" />
+
+        <div className="pt-6">
+          <StillnessAnalytics />
+        </div>
     </div>
   )
 }
