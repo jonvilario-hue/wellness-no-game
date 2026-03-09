@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -307,7 +306,7 @@ export default function CalendarPage() {
               <div className="flex items-center gap-4">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <LayoutGrid className="w-5 h-5 text-primary" />
-                  Amalgamated Routines
+                  Routines
                 </h2>
                 {deletedPresetIds.length > 0 && (
                   <Button variant="outline" size="sm" onClick={resetDefaults} className="h-7 text-[10px] uppercase font-bold">
@@ -317,7 +316,7 @@ export default function CalendarPage() {
               </div>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="sm">
-                  {plansOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {plansOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="h-4 w-4" />}
                 </Button>
               </CollapsibleTrigger>
             </div>
