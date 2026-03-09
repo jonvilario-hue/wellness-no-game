@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -43,6 +43,8 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
 
   const { addLog } = useSpeedReadingStore();
   const { toast } = useToast();
+  const activeWordRef = useRef<HTMLSpanElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const words = useMemo(() => passage.content.split(/\s+/).filter(w => w.length > 0), [passage]);
   
@@ -68,6 +70,21 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     const wordsPerUnit = drillType === 'Chunk Training' ? 3 : 1;
     return (60 / currentWpm) * 1000 * wordsPerUnit;
   }, [currentWpm, drillType]);
+
+  // Handle auto-scroll to keep active text centered
+  useEffect(() => {
+    if (activeWordRef.current && containerRef.current) {
+      const container = containerRef.current;
+      const element = activeWordRef.current;
+      
+      const containerRect = container.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+      
+      if (elementRect.bottom > containerRect.bottom - 100 || elementRect.top < containerRect.top + 100) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [currentIndex]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -95,7 +112,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
   const handleFinishedReading = () => {
     setIsActive(false);
     setElapsedSeconds((Date.now() - startTime) / 1000);
-    setGameState(isCustomText ? 'summary' : 'quiz');
+    setGameState((isCustomText || !passage.quiz || passage.quiz.length === 0) ? 'summary' : 'quiz');
   };
 
   const handleQuizComplete = (score: number) => {
@@ -105,7 +122,6 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
 
   const handleSaveAndExit = () => {
     const finalWpm = Math.round((words.length / elapsedSeconds) * 60);
-    // Weighted score for self-assessed drills
     const finalComp = isCustomText ? (selfComprehensionRating * 20) : comprehensionScore;
     const err = Math.round(finalWpm * (finalComp / 100));
 
@@ -128,9 +144,10 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
   };
 
   const renderDrillContent = () => {
-    if (drillType === 'Chunk Training' || drillType === 'Regression Eliminator') {
+    // 1. CHUNK TRAINING (RSVP Mode - flashing chunks in the center)
+    if (drillType === 'Chunk Training') {
       return (
-        <div className="text-center relative px-4">
+        <div className="text-center relative px-4 py-20">
           <span className="text-4xl md:text-6xl font-black tracking-tight text-primary animate-in zoom-in-95 duration-75">
             {units[currentIndex]}
           </span>
@@ -138,15 +155,18 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       );
     }
 
-    if (drillType === 'Pacer') {
+    // 2. REGRESSION ELIMINATOR (Text vanishes after reading to stop re-reading)
+    if (drillType === 'Regression Eliminator') {
       return (
-        <div className="max-w-2xl text-xl leading-relaxed text-muted-foreground/40 font-medium text-justify">
+        <div className="max-w-2xl text-xl leading-relaxed font-medium text-justify">
           {words.map((word, i) => (
             <span 
               key={i} 
+              ref={i === currentIndex ? (activeWordRef as any) : null}
               className={cn(
-                "transition-colors duration-150 px-0.5 rounded",
-                i === currentIndex ? "bg-primary text-primary-foreground font-bold shadow-lg scale-110 inline-block" : ""
+                "transition-all duration-150 px-0.5 rounded inline-block",
+                i === currentIndex ? "bg-primary text-primary-foreground font-bold shadow-lg scale-110" : 
+                i < currentIndex ? "opacity-0 invisible h-0 w-0 overflow-hidden" : "text-muted-foreground/20"
               )}
             >
               {word}{' '}
@@ -156,20 +176,44 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       );
     }
 
-    if (drillType === 'Peripheral Expansion') {
+    // 3. PACER (Standard full-text highlight)
+    if (drillType === 'Pacer') {
       return (
-        <div className="w-[300px] text-center space-y-4 text-2xl font-medium leading-relaxed">
+        <div className="max-w-2xl text-xl leading-relaxed text-muted-foreground/30 font-medium text-justify">
           {words.map((word, i) => (
-            <div 
+            <span 
               key={i} 
+              ref={i === currentIndex ? (activeWordRef as any) : null}
               className={cn(
-                "transition-all duration-150",
-                i === currentIndex ? "text-primary font-black scale-125" : "opacity-10"
+                "transition-colors duration-150 px-0.5 rounded inline-block",
+                i === currentIndex ? "bg-primary text-primary-foreground font-bold shadow-lg scale-110" : ""
               )}
             >
-              {word}
-            </div>
+              {word}{' '}
+            </span>
           ))}
+        </div>
+      );
+    }
+
+    // 4. PERIPHERAL EXPANSION (Narrow column to force vertical gaze)
+    if (drillType === 'Peripheral Expansion') {
+      return (
+        <div className="w-[320px] bg-muted/10 p-8 rounded-[40px] border-x-8 border-primary/5 flex flex-col items-center">
+          <div className="text-center space-y-6 text-2xl font-bold leading-relaxed w-full">
+            {words.map((word, i) => (
+              <div 
+                key={i} 
+                ref={i === currentIndex ? (activeWordRef as any) : null}
+                className={cn(
+                  "transition-all duration-150 py-2",
+                  i === currentIndex ? "text-primary font-black scale-150" : "opacity-5 grayscale blur-[1px]"
+                )}
+              >
+                {word}
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
@@ -192,7 +236,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
         </div>
         <div className="flex items-center gap-6">
           <div className="hidden sm:flex flex-col items-end">
-            <span className="text-[9px] font-black uppercase opacity-60">Target Velocity</span>
+            <span className="text-[9px] font-black uppercase opacity-60">Pace</span>
             <span className="text-xs font-bold text-primary">{currentWpm} WPM</span>
           </div>
           <Progress value={(currentIndex / units.length) * 100} className="w-32 h-1.5" />
@@ -208,15 +252,15 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                   <div className="p-4 bg-primary/10 rounded-full w-fit mx-auto mb-2">
                     <Target className="w-10 h-10 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl font-black uppercase">Pre-Drill Readiness</CardTitle>
+                  <CardTitle className="text-2xl font-black uppercase">Pre-Drill Calibration</CardTitle>
                   <CardDescription>
-                    {isCustomText ? `Estimating Difficulty: ${estimatedTier}` : 'Calibrate your focus before we engage the pacer.'}
+                    {isCustomText ? `Difficulty Estimated: ${estimatedTier}` : 'Set your target velocity before we engage the pacer.'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8 py-6">
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest">Initial Focus (1-5)</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest">Readiness Focus (1-5)</Label>
                       <span className="text-xl font-black text-primary">{preFocus}</span>
                     </div>
                     <Slider value={[preFocus]} onValueChange={([v]) => setPreFocus(v)} min={1} max={5} step={1} />
@@ -224,10 +268,10 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest">Pace Calibration (WPM)</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest">Target Velocity (WPM)</Label>
                       <span className="text-xl font-black text-primary">{currentWpm}</span>
                     </div>
-                    <Slider value={[currentWpm]} onValueChange={([v]) => setCurrentWpm(v)} min={100} max={1000} step={50} />
+                    <Slider value={[currentWpm]} onValueChange={([v]) => setCurrentWpm(v)} min={100} max={1200} step={50} />
                   </div>
                 </CardContent>
                 <CardFooter>
@@ -240,16 +284,21 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
           )}
 
           {gameState === 'reading' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center overflow-y-auto">
-              <div className="relative min-h-[400px] w-full max-w-4xl flex flex-col items-center justify-center p-12 bg-background rounded-[40px] shadow-inner border-4 border-muted/20">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center">
+              <div 
+                ref={containerRef}
+                className="relative h-full max-h-[600px] w-full max-w-4xl flex flex-col items-center justify-center p-12 bg-background rounded-[40px] shadow-inner border-4 border-muted/20 overflow-y-auto no-scrollbar"
+              >
                 {renderDrillContent()}
-                <div className="absolute bottom-8 flex gap-4">
-                  <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full" onClick={() => setIsActive(!isActive)}>
-                    {isActive ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full" onClick={() => setCurrentIndex(0)}>
-                    <RotateCcw className="w-6 h-6" />
-                  </Button>
+                <div className="sticky bottom-0 w-full flex justify-center pt-8 pb-4 bg-gradient-to-t from-background via-background to-transparent">
+                  <div className="flex gap-4">
+                    <Button variant="outline" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-background" onClick={() => setIsActive(!isActive)}>
+                      {isActive ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                    </Button>
+                    <Button variant="outline" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-background" onClick={() => setCurrentIndex(0)}>
+                      <RotateCcw className="w-6 h-6" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -269,13 +318,13 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                   <div className="p-4 bg-emerald-500/10 rounded-full w-fit mx-auto mb-2">
                     <Check className="w-10 h-10 text-emerald-600" />
                   </div>
-                  <CardTitle className="text-2xl font-black uppercase">Analysis Complete</CardTitle>
-                  <CardDescription>Review your efficiency metrics before saving.</CardDescription>
+                  <CardTitle className="text-2xl font-black uppercase">Performance Analysis</CardTitle>
+                  <CardDescription>Review your efficiency metrics before finalizing the session.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-muted/30 rounded-2xl text-center space-y-1">
-                      <p className="text-[10px] font-black uppercase text-muted-foreground">Raw Speed</p>
+                      <p className="text-[10px] font-black uppercase text-muted-foreground">Raw Velocity</p>
                       <p className="text-2xl font-black">{Math.round((words.length / elapsedSeconds) * 60)} WPM</p>
                     </div>
                     <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl text-center space-y-1">
@@ -290,7 +339,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                     <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
                       <div className="flex justify-between items-center">
                         <Label className="text-[10px] font-bold uppercase flex items-center gap-2">
-                          <Sparkles className="w-3 h-3" /> Self-Assessed Comp (1-5)
+                          <Sparkles className="w-3 h-3" /> Self-Assessed Understanding (1-5)
                         </Label>
                         <span className="text-xl font-black text-primary">{selfComprehensionRating}</span>
                       </div>
@@ -298,14 +347,14 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                     </div>
                   ) : (
                     <div className="p-4 bg-muted/20 rounded-2xl flex justify-between items-center">
-                      <span className="text-sm font-bold">Comprehension</span>
+                      <span className="text-sm font-bold">Comprehension Quiz Score</span>
                       <Badge variant="secondary" className="font-black text-sm">{comprehensionScore}%</Badge>
                     </div>
                   )}
 
                   <div className="space-y-4 pt-4 border-t">
                     <div className="flex justify-between items-center">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest">Post-Drill Fatigue (1-5)</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest">Cognitive Fatigue (1-5)</Label>
                       <span className="text-xl font-black text-primary">{postFatigue}</span>
                     </div>
                     <Slider value={[postFatigue]} onValueChange={([v]) => setPostFatigue(v)} min={1} max={5} step={1} />
