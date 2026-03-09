@@ -19,16 +19,24 @@ export function SpeedReadingStats() {
   const streak = getStreak();
 
   const aggregateStats = useMemo(() => {
-    if (logs.length === 0) return { avgWpm: 0, avgErr: 0 };
+    if (logs.length === 0) return { avgWpm: 0, avgErr: 0, topDrill: 'None yet' };
+    
     const totalWpm = logs.reduce((s, l) => s + l.wpm, 0);
     const totalErr = logs.reduce((s, l) => s + l.err, 0);
+    
+    const counts: Record<string, number> = {};
+    logs.forEach(l => {
+      counts[l.drillType] = (counts[l.drillType] || 0) + 1;
+    });
+    
+    const topDrill = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'None yet';
+
     return {
       avgWpm: Math.round(totalWpm / logs.length),
-      avgErr: Math.round(totalErr / logs.length)
+      avgErr: Math.round(totalErr / logs.length),
+      topDrill
     };
   }, [logs]);
-
-  const rank = getSpeedRank(aggregateStats.avgWpm);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -49,16 +57,13 @@ export function SpeedReadingStats() {
       </Card>
 
       <Card className="bg-primary/5 border-primary/10 flex flex-col justify-center p-4 text-center">
-        <AssistantTooltip text="Your current rank and True Efficiency (ERR). ERR is your WPM adjusted for comprehension.">
+        <AssistantTooltip text="The specific reading protocol you use most frequently. Specializing in one drill builds deep perceptual habits.">
           <div className="space-y-1">
-            <p className={cn("text-xl font-black", rank.color)}>
-              {rank.label}
+            <Trophy className="w-5 h-5 text-primary opacity-80 mx-auto mb-1" />
+            <p className="text-sm font-bold truncate w-full">
+              {aggregateStats.topDrill}
             </p>
-            <div className="flex items-center justify-center gap-1.5">
-              <Target className="w-3 h-3 text-primary opacity-60" />
-              <span className="text-xs font-black">{aggregateStats.avgErr} ERR</span>
-            </div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Reading Mastery</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Drill</p>
           </div>
         </AssistantTooltip>
       </Card>
