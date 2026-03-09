@@ -80,7 +80,8 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       const containerRect = container.getBoundingClientRect();
       const elementRect = element.getBoundingClientRect();
       
-      if (elementRect.bottom > containerRect.bottom - 100 || elementRect.top < containerRect.top + 100) {
+      // Keep active text centered vertically in the viewport
+      if (elementRect.bottom > containerRect.bottom - 150 || elementRect.top < containerRect.top + 150) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
@@ -166,7 +167,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
               className={cn(
                 "transition-all duration-150 px-0.5 rounded inline-block",
                 i === currentIndex ? "bg-primary text-primary-foreground font-bold shadow-lg scale-110" : 
-                i < currentIndex ? "opacity-0 invisible h-0 w-0 overflow-hidden" : "text-muted-foreground/20"
+                i < currentIndex ? "opacity-0" : "text-muted-foreground/20"
               )}
             >
               {word}{' '}
@@ -260,7 +261,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                 <CardContent className="space-y-8 py-6">
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest">Readiness Focus (1-5)</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest">Initial Focus (1-5)</Label>
                       <span className="text-xl font-black text-primary">{preFocus}</span>
                     </div>
                     <Slider value={[preFocus]} onValueChange={([v]) => setPreFocus(v)} min={1} max={5} step={1} />
@@ -298,7 +299,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                     <Button variant="outline" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-background" onClick={() => setIsActive(!isActive)}>
                       {isActive ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
                     </Button>
-                    <Button variant="outline" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-background" onClick={() => setCurrentIndex(0)}>
+                    <Button variant="outline" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-background" onClick={() => { setCurrentIndex(0); if(containerRef.current) containerRef.current.scrollTo(0,0); }}>
                       <RotateCcw className="w-6 h-6" />
                     </Button>
                   </div>
