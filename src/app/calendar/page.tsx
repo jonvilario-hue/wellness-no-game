@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -30,7 +31,8 @@ import {
   MessageSquare,
   BookMarked,
   X,
-  Target
+  Target,
+  AlertCircle
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -140,7 +142,6 @@ export default function CalendarPage() {
       studyResourceId: inst.studyResourceId
     }));
 
-    // Amalgamate Wellness & Reflection Logs
     const wellnessTasks = [
       ...movementLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({
         id: l.id,
@@ -219,14 +220,22 @@ export default function CalendarPage() {
       setEditingPlan(plan);
       setNewPlanName(plan.name);
       setNewPlanDesc(plan.description);
-      setSelectedCategories(plan.categories);
-      setNewActivities(plan.activities);
+      setSelectedCategories([...plan.categories]);
+      setNewActivities([...plan.activities]);
     } else {
       setEditingPlan(null);
       setNewPlanName('');
       setNewPlanDesc('');
       setSelectedCategories([]);
-      setNewActivities([]);
+      // Start with one default activity to reduce friction
+      setNewActivities([{
+        id: `act-${Date.now()}`,
+        name: 'Primary Activity',
+        category: 'Custom',
+        recurrence: 'daily',
+        duration: 15,
+        reminderEnabled: false
+      }]);
     }
     setIsBuilderOpen(true);
   };
@@ -235,7 +244,7 @@ export default function CalendarPage() {
     const id = `act-${Date.now()}`;
     setNewActivities([...newActivities, {
       id,
-      name: 'New Activity',
+      name: 'Additional Activity',
       category: 'Custom',
       recurrence: 'daily',
       duration: 15,
@@ -275,6 +284,8 @@ export default function CalendarPage() {
 
     setIsBuilderOpen(false);
   };
+
+  const isFormValid = newPlanName.trim().length > 0 && newActivities.length > 0;
 
   const handleDayClick = (date: Date | undefined) => {
     if (!date) return;
@@ -546,8 +557,14 @@ export default function CalendarPage() {
             <div className="space-y-6 py-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Routine Name</Label>
-                  <Input placeholder="e.g. Work-Life Sync" value={newPlanName} onChange={e => setNewPlanName(e.target.value)} />
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Routine Name <span className="text-red-500">*</span></Label>
+                  <Input 
+                    placeholder="e.g. Work-Life Sync" 
+                    value={newPlanName} 
+                    onChange={e => setNewPlanName(e.target.value)}
+                    className={cn(!newPlanName.trim() && "border-amber-500/50")}
+                  />
+                  {!newPlanName.trim() && <p className="text-[9px] text-amber-600 font-bold uppercase">Name is required to initialize</p>}
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Theme Categories</Label>
@@ -568,7 +585,7 @@ export default function CalendarPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Activity Sequence</Label>
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Activity Sequence <span className="text-red-500">*</span></Label>
                   <Button variant="outline" size="sm" className="h-7 text-[10px] font-bold" onClick={handleAddActivity}>
                     <Plus className="w-3 h-3 mr-1" /> Add Step
                   </Button>
@@ -576,8 +593,10 @@ export default function CalendarPage() {
                 
                 <div className="space-y-3">
                   {newActivities.length === 0 ? (
-                    <div className="py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-sm">
-                      No activities added yet.
+                    <div className="py-10 text-center border-2 border-dashed border-amber-500/20 rounded-xl bg-amber-500/5">
+                      <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-2 opacity-50" />
+                      <p className="text-xs font-bold text-amber-700 uppercase">No activities added</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Add at least one step to build this routine.</p>
                     </div>
                   ) : (
                     newActivities.map((act, i) => (
@@ -593,11 +612,12 @@ export default function CalendarPage() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <Label className="text-[10px] font-bold uppercase">Activity Name</Label>
+                            <Label className="text-[10px] font-bold uppercase">Activity Name <span className="text-red-500">*</span></Label>
                             <Input 
                               value={act.name} 
                               onChange={e => updateActivity(act.id, { name: e.target.value })}
-                              className="h-8 text-xs"
+                              className="h-8 text-xs font-bold"
+                              placeholder="e.g. Morning Coffee"
                             />
                           </div>
                           <div className="space-y-1.5">
@@ -649,7 +669,7 @@ export default function CalendarPage() {
           </ScrollArea>
           <DialogFooter className="pt-4 border-t">
             <Button variant="ghost" onClick={() => setIsBuilderOpen(false)}>Cancel</Button>
-            <Button className="w-full font-bold h-12" disabled={!newPlanName.trim() || newActivities.length === 0} onClick={handleSavePlan}>
+            <Button className="w-full font-bold h-12" disabled={!isFormValid} onClick={handleSavePlan}>
               {editingPlan ? 'Update Protocol' : 'Initialize Protocol'}
             </Button>
           </DialogFooter>
