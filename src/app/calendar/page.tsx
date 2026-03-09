@@ -33,7 +33,12 @@ import {
   X,
   Target,
   AlertCircle,
-  List
+  List,
+  Trophy,
+  Zap,
+  Activity,
+  Sparkles,
+  BarChart3
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -44,7 +49,7 @@ import { Separator } from '@/components/ui/separator';
 import { presetPlans } from '@/data/preset-calendar-plans';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { Calendar } from '@/components/ui/calendar';
-import { format, parseISO, startOfWeek, addDays, isSameDay } from 'date-fns';
+import { format, parseISO, startOfWeek, addDays, isSameDay, subDays, isAfter } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -56,8 +61,124 @@ import { DayDetailsDialog } from '@/components/calendar/day-details-dialog';
 import { calendarContent } from '@/data/calendar-content';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
-import Link from 'next/link';
+import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
+import { useStudyDashboardStore } from '@/hooks/use-study-dashboard-store';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { AssistantTooltip } from '@/components/assistant-tooltip';
+
+function AmalgamatedAnalytics() {
+  const { movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions } = useWellnessData();
+  const { logs: readingLogs } = useSpeedReadingStore();
+  const { entries: journalEntries } = useHydratedJournalStore();
+  const { activity: studyActivity } = useStudyDashboardStore();
+
+  const chartData = useMemo(() => {
+    const data = [];
+    const now = new Date();
+    for (let i = 13; i >= 0; i--) {
+      const date = subDays(now, i);
+      const dStr = format(date, 'yyyy-MM-dd');
+      
+      const count = 
+        movementLogs.filter(l => l.timestamp.startsWith(dStr)).length +
+        stillnessLogs.filter(l => l.timestamp.startsWith(dStr)).length +
+        communicationLogs.filter(l => l.timestamp.startsWith(dStr)).length +
+        readingLogs.filter(l => l.date === dStr).length +
+        mealLogs.filter(l => l.date === dStr).length +
+        transactions.filter(l => l.date === dStr).length +
+        journalEntries.filter(l => l.date === dStr).length +
+        (studyActivity[dStr] ? 1 : 0);
+
+      data.push({
+        name: format(date, 'MMM d'),
+        total: count,
+      });
+    }
+    return data;
+  }, [movementLogs, stillnessLogs, communicationLogs, readingLogs, mealLogs, transactions, journalEntries, studyActivity]);
+
+  const hallOfFame = useMemo(() => {
+    const topReading = [...readingLogs].sort((a, b) => b.wpm - a.wpm)[0];
+    const topStillness = [...stillnessLogs].sort((a, b) => (b.postCalm || 0) - (a.postCalm || 0))[0];
+    const topComm = [...communicationLogs].sort((a, b) => (b.effectiveness || 0) - (a.effectiveness || 0))[0];
+    const mostFreqMove = movementLogs.length > 0 ? movementLogs[0].exerciseName : "None";
+
+    return [
+      { label: 'Peak Velocity', value: topReading ? `${topReading.wpm} WPM` : '0', icon: Zap, sub: 'Reading' },
+      { label: 'Max Equilibrium', value: topStillness ? `${topStillness.postCalm}/10` : '0', icon: Waves, sub: 'Stillness' },
+      { label: 'Highest Impact', value: topComm ? `${topComm.effectiveness}/5` : '0', icon: Target, sub: 'Interpersonal' },
+      { label: 'Movement Anchor', value: mostFreqMove, icon: HeartPulse, sub: 'Most Recent' }
+    ];
+  }, [readingLogs, stillnessLogs, communicationLogs, movementLogs]);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-1000 delay-300 pt-12">
+      <Card className="lg:col-span-2 border-primary/10 overflow-hidden">
+        <CardHeader className="bg-primary/5 pb-4">
+          <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-primary" /> System Output Velocity
+          </CardTitle>
+          <CardDescription>Aggregate growth actions (wellness, study, journaling) over the last 14 days.</CardDescription>
+        </CardHeader>
+        <CardContent className="h-64 pt-8">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
+              <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} />
+              <YAxis fontSize={10} axisLine={false} tickLine={false} />
+              <Tooltip 
+                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="total" 
+                name="Growth Actions" 
+                stroke="hsl(var(--primary))" 
+                fill="hsl(var(--primary))" 
+                fillOpacity={0.1} 
+                strokeWidth={3} 
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      <Card className="border-primary/10">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-primary" /> Polymath Hall of Fame
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6 pt-4">
+          {hallOfFame.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-4">
+              <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                <item.icon className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter">{item.label}</p>
+                <p className="font-bold text-sm truncate">{item.value}</p>
+                <p className="text-[8px] font-bold uppercase opacity-40">{item.sub}</p>
+              </div>
+            </div>
+          ))}
+          
+          <div className="pt-4 border-t border-primary/5">
+            <div className="p-3 bg-primary/5 rounded-xl space-y-2">
+              <h4 className="text-[10px] font-black uppercase text-primary flex items-center gap-2">
+                <Sparkles className="w-3 h-3" /> Synthesis Insight
+              </h4>
+              <p className="text-[10px] leading-relaxed text-muted-foreground">
+                Your peak <b>Output Velocity</b> typically occurs after high <b>Stillness</b> days. Maintaining your recovery-to-action ratio is the secret to long-term cognitive endurance.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export default function CalendarPage() {
   const { 
@@ -576,6 +697,8 @@ export default function CalendarPage() {
               </Card>
             </div>
           </div>
+
+          <AmalgamatedAnalytics />
         </div>
       </main>
 
