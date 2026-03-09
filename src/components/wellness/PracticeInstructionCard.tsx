@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   Play, Pause, Check, Goal, ClipboardCheck, SlidersHorizontal, 
   Trophy, Edit, Trash2, Clock, ChevronRight, X, Sparkles, BarChart3, Info
@@ -133,11 +134,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   }, [isActive, timeLeft, exercise.duration, isComplete]);
 
   const handleToggleTracking = () => {
-    const newValue = !trackNumbers;
     toggleTracking(exercise.id);
-    if (newValue && !trackExplainerDismissed) {
-      // First time explainer logic
-    }
   };
 
   const getTrackingPreview = () => {
@@ -169,7 +166,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 </div>
                 {trackNumbers && (
                   <Link href="/calendar" className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1">
-                    View tracked data <ChevronRight className="w-2 h-2" />
+                    View tracked data <ChevronRight className="w-2.5 h-2.5" />
                   </Link>
                 )}
               </div>
