@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -8,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { AlertCircle, Clock, Zap } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function ForgettingCurveVisualizer() {
   const { cards } = useFlashcardStore();
