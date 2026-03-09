@@ -218,6 +218,12 @@ export default function CalendarPage() {
   const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
 
+  // Form states for builder
+  const [newPlanName, setNewPlanName] = useState("");
+  const [newPlanDesc, setNewPlanDesc] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<PlanCategory[]>([]);
+  const [newActivities, setNewActivities] = useState<PlanActivity[]>([]);
+
   const availablePlans = useMemo(() => {
     const presets = presetPlans.filter(p => !deletedPresetIds.includes(p.id));
     const all = [...presets, ...customPlans];
@@ -847,11 +853,14 @@ export default function CalendarPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Routine Name <span className="text-red-500">*</span></Label>
-                  <Input 
+                  <input 
                     placeholder="e.g. Work-Life Sync" 
                     value={newPlanName} 
                     onChange={e => setNewPlanName(e.target.value)}
-                    className={cn(!newPlanName.trim() && "border-amber-500/50")}
+                    className={cn(
+                      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                      !newPlanName.trim() && "border-amber-500/50"
+                    )}
                   />
                   {!newPlanName.trim() && <p className="text-[9px] text-amber-600 font-bold uppercase">Name is required to initialize</p>}
                 </div>

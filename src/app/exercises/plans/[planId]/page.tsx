@@ -14,10 +14,11 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { Progress } from '@/components/ui/progress';
-import { Play, CheckCircle2, ChevronRight, Target, Brain, Activity } from 'lucide-react';
+import { Play, CheckCircle2, ChevronRight, Target, Brain, Activity, Lightbulb } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { AssistantTooltip } from '@/components/assistant-tooltip';
 
 export default function PlanDetailPage() {
   const params = useParams();
@@ -69,7 +70,14 @@ export default function PlanDetailPage() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Sequence Pathway</h3>
+            <div className="flex justify-between items-center px-1">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Sequence Pathway</h3>
+              <AssistantTooltip text="This plan follows a 'Ramping' logic: Phase 1 establishes the habit, Phase 2 builds structural endurance, and Phase 3 integrates peak intensity practices for maximum transfer.">
+                <div className="p-1.5 bg-primary/10 rounded-full text-primary hover:bg-primary/20 transition-colors cursor-help">
+                  <Lightbulb className="w-4 h-4" />
+                </div>
+              </AssistantTooltip>
+            </div>
             {plan.steps.map((day) => {
               const isCompleted = planProgress[planId]?.[day.day] || false;
               const isPhaseHeader = day.title.includes('Phase');
@@ -82,7 +90,10 @@ export default function PlanDetailPage() {
                 )}>
                   <CardContent className="p-0">
                     <div className="flex items-center gap-4 p-4">
-                      <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-primary/5 text-primary">
+                      <div className={cn(
+                        "flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-colors",
+                        isCompleted ? "bg-muted text-muted-foreground" : "bg-primary/5 text-primary"
+                      )}>
                         <span className="text-[10px] font-black uppercase">Day</span>
                         <span className="text-lg font-black leading-none">{day.day}</span>
                       </div>

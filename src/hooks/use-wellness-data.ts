@@ -207,7 +207,12 @@ export const useWellnessData = create<WellnessState>()(
   persist(
     (set, get) => ({
       lowEnergyMode: false,
-      trackingEnabled: {},
+      trackingEnabled: {
+        'Movement': true,
+        'Stillness': true,
+        'Communication': true,
+        'Speed Reading': true
+      },
       transactions: [],
       mealLogs: [],
       bodyMetrics: [],
@@ -327,7 +332,12 @@ export const useWellnessData = create<WellnessState>()(
       onRehydrateStorage: () => (state) => {
         if (state) {
           if (!state.movementProgress) state.movementProgress = {};
-          if (!state.trackingEnabled) state.trackingEnabled = {};
+          if (!state.trackingEnabled) state.trackingEnabled = {
+            'Movement': true,
+            'Stillness': true,
+            'Communication': true,
+            'Speed Reading': true
+          };
         }
       }
     }
