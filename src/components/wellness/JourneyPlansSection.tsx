@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Rocket, ArrowRight, Info, ChevronDown, ChevronRight, 
-  CheckCircle2, Circle, LayoutList, BookOpen
+  CheckCircle2, Circle, LayoutList, BookOpen, Zap
 } from 'lucide-react';
 import Link from 'next/link';
 import { useWellnessData } from '@/hooks/use-wellness-data';
@@ -53,7 +53,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
       const progress = planProgress[plan.id];
       if (!progress) return false;
       const completedCount = Object.values(progress).filter(Boolean).length;
-      return completedCount > 0 && completedCount < plan.steps.length;
+      return completedCount > 0 && completedCount < plan.durationDays;
     });
   }, [planProgress, tabPlans]);
 
@@ -62,7 +62,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
     return tabPlans.every(plan => {
       const progress = planProgress[plan.id];
       if (!progress) return false;
-      return Object.values(progress).filter(Boolean).length === plan.steps.length;
+      return Object.values(progress).filter(Boolean).length === plan.durationDays;
     });
   }, [planProgress, tabPlans]);
 
@@ -75,10 +75,10 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
   // --- STATE 3: ACTIVE PLAN ---
   if (activePlan) {
     const completedCount = Object.values(planProgress[activePlan.id]).filter(Boolean).length;
-    const progress = (completedCount / activePlan.steps.length) * 100;
+    const progress = (completedCount / activePlan.durationDays) * 100;
     
     return (
-      <div className="animate-in fade-in slide-in-from-top-2 duration-500">
+      <div className="animate-in fade-in slide-in-from-top-2 duration-500 mb-6">
         <Link href={`/exercises/plans/${activePlan.id}`}>
           <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all group">
             <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -91,7 +91,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
                     Active Journey: {activePlan.title}
                   </p>
                   <Badge variant="outline" className="text-[8px] h-4 py-0 font-black border-primary/20">
-                    DAY {completedCount + 1}/{activePlan.steps.length}
+                    DAY {completedCount + 1}/{activePlan.durationDays}
                   </Badge>
                 </div>
                 <div className="mt-1.5 w-full max-w-[200px]">
@@ -111,17 +111,15 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
   // --- STATE 1: EMPTY STATE (NOT LOGGED AND NOT DISMISSED) ---
   if (!hasLogs && !isDismissed || isExpanded) {
     return (
-      <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
+      <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500 mb-8">
         <div className="flex justify-between items-center px-1">
           <div className="flex items-center gap-2">
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-              {isExpanded ? 'All Guided Plans' : 'Not sure where to start? Pick a guided plan:'}
+              {isExpanded ? 'Guided Curricula' : 'Not sure where to start? Pick a journey:'}
             </h3>
-            {!isExpanded && (
-              <AssistantTooltip text="Journey Plans are structured curricula (3-14 days) following a 'Ramping' logic: Phase 1 (Entry), Phase 2 (Capacity), and Phase 3 (Peak).">
-                <Info className="w-3 h-3 text-muted-foreground" />
-              </AssistantTooltip>
-            )}
+            <AssistantTooltip text="Ascending Modules: Start with Day Zero to break inertia, then progress to deeper foundations.">
+              <Info className="w-3 h-3 text-muted-foreground" />
+            </AssistantTooltip>
           </div>
           <button 
             onClick={() => isExpanded ? setIsExpanded(false) : setPlanDismissed(category, true)}
@@ -131,17 +129,33 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
           </button>
         </div>
         
-        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {tabPlans.map((plan) => (
-            <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[260px] sm:min-w-[280px]">
-              <Card className="hover:border-primary/50 transition-all h-full group bg-card">
-                <CardHeader className="p-4">
-                  <CardTitle className="text-base">{plan.title}</CardTitle>
-                  <CardDescription className="text-[10px] uppercase font-black">{plan.steps.length} DAYS</CardDescription>
+            <Link key={plan.id} href={`/exercises/plans/${plan.id}`}>
+              <Card className={cn(
+                "hover:border-primary/50 transition-all h-full group bg-card border-primary/5",
+                plan.durationDays === 1 && "border-primary/20 ring-1 ring-primary/10"
+              )}>
+                <CardHeader className="p-4 pb-2">
+                  <div className="flex justify-between items-start mb-2">
+                    <Badge variant={plan.durationDays === 1 ? "default" : "secondary"} className="uppercase font-black text-[8px] tracking-widest h-4">
+                      {plan.durationDays === 1 ? 'RECOMMENDED' : `${plan.durationDays} DAYS`}
+                    </Badge>
+                    {plan.durationDays === 1 && <Zap className="w-3.5 h-3.5 text-primary fill-current" />}
+                  </div>
+                  <CardTitle className="text-base font-bold group-hover:text-primary transition-colors">{plan.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <p className="text-xs text-muted-foreground line-clamp-2">{plan.description}</p>
+                <CardContent className="p-4 pt-0 space-y-3">
+                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{plan.description}</p>
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                    <Clock className="w-3 h-3" /> ~{plan.steps[0].estimatedMinutes}m daily
+                  </div>
                 </CardContent>
+                <CardFooter className="p-4 pt-0 mt-auto">
+                  <Button variant="ghost" size="sm" className="w-full h-8 text-[10px] font-black uppercase border border-primary/5 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                    Start Protocol <ArrowRight className="ml-1 w-3 h-3" />
+                  </Button>
+                </CardFooter>
               </Card>
             </Link>
           ))}
@@ -152,12 +166,12 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
 
   // --- STATE 2: ACTIVE/DISMISSED (COMPACT ROW) ---
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="animate-in fade-in duration-500 mb-6">
       <div className="flex items-center justify-between py-1 px-1 border-b border-primary/5">
         <div className="flex items-center gap-2 text-muted-foreground">
           <BookOpen className="w-3.5 h-3.5" />
           <span className="text-[10px] font-bold uppercase tracking-widest">
-            Guided Plans available · {tabPlans[0]?.title}
+            {category} Journeys Available · {tabPlans[0]?.title}
           </span>
         </div>
         <button 

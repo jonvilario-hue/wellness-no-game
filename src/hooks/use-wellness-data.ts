@@ -194,6 +194,7 @@ export type WellnessState = {
   deleteTransaction: (id: string) => void;
   togglePlanDay: (planId: string, day: number) => void;
   setPlanDismissed: (category: string, dismissed: boolean) => void;
+  markPlanDayComplete: (planId: string, day: number) => void;
   
   setBudget: (category: string, limit: number) => void;
   addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'currentAmount'>) => void;
@@ -317,6 +318,19 @@ export const useWellnessData = create<WellnessState>()(
         };
       }),
 
+      markPlanDayComplete: (planId, day) => set(state => {
+        const planDays = state.planProgress[planId] || {};
+        return {
+          planProgress: {
+            ...state.planProgress,
+            [planId]: {
+              ...planDays,
+              [day]: true
+            }
+          }
+        };
+      }),
+
       setPlanDismissed: (category, dismissed) => set(s => ({
         dismissedPlans: {
           ...s.dismissedPlans,
@@ -337,7 +351,7 @@ export const useWellnessData = create<WellnessState>()(
       },
     }),
     {
-      name: 'wellness-data-storage-v7',
+      name: 'wellness-data-storage-v8',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) {
