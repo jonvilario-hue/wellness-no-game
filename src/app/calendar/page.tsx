@@ -28,7 +28,9 @@ import {
   HeartPulse, 
   Waves,
   MessageSquare,
-  BookMarked
+  BookMarked,
+  X,
+  Target
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -45,12 +47,13 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { PlanCategory, CalendarPlan, ActivityStatus } from '@/types/calendar-plans';
+import type { PlanCategory, CalendarPlan, ActivityStatus, PlanActivity } from '@/types/calendar-plans';
 import { DayDetailsDialog } from '@/components/calendar/day-details-dialog';
 import { calendarContent } from '@/data/calendar-content';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
 import Link from 'next/link';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function CalendarPage() {
   const { 
@@ -77,9 +80,11 @@ export default function CalendarPage() {
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
   const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
 
+  // Builder state
   const [newPlanName, setNewPlanName] = useState('');
   const [newPlanDesc, setNewPlanDesc] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<PlanCategory[]>([]);
+  const [newActivities, setNewActivities] = useState<PlanActivity[]>([]);
 
   const availablePlans = useMemo(() => {
     const presets = presetPlans.filter(p => !deletedPresetIds.includes(p.id));
@@ -215,52 +220,59 @@ export default function CalendarPage() {
       setNewPlanName(plan.name);
       setNewPlanDesc(plan.description);
       setSelectedCategories(plan.categories);
+      setNewActivities(plan.activities);
     } else {
       setEditingPlan(null);
       setNewPlanName('');
       setNewPlanDesc('');
       setSelectedCategories([]);
+      setNewActivities([]);
     }
     setIsBuilderOpen(true);
+  };
+
+  const handleAddActivity = () => {
+    const id = `act-${Date.now()}`;
+    setNewActivities([...newActivities, {
+      id,
+      name: 'New Activity',
+      category: 'Custom',
+      recurrence: 'daily',
+      duration: 15,
+      reminderEnabled: false
+    }]);
+  };
+
+  const removeActivity = (id: string) => {
+    setNewActivities(newActivities.filter(a => a.id !== id));
+  };
+
+  const updateActivity = (id: string, updates: Partial<PlanActivity>) => {
+    setNewActivities(newActivities.map(a => a.id === id ? { ...a, ...updates } : a));
   };
 
   const handleSavePlan = () => {
     if (!newPlanName.trim()) return;
 
+    const planData: CalendarPlan = {
+      id: editingPlan?.id || `custom-${Date.now()}`,
+      name: newPlanName,
+      description: newPlanDesc || "Personalized routine.",
+      isPreset: false,
+      isActive: true,
+      durationType: 'ongoing',
+      startDate: editingPlan?.startDate || new Date().toISOString(),
+      categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
+      color: editingPlan?.color || `hsl(${Math.floor(Math.random() * 360)} 70% 50%)`,
+      activities: newActivities
+    };
+
     if (editingPlan) {
-      updateCustomPlan(editingPlan.id, {
-        name: newPlanName,
-        description: newPlanDesc,
-        categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
-      });
+      updateCustomPlan(editingPlan.id, planData);
     } else {
-      addCustomPlan({
-        id: `custom-${Date.now()}`,
-        name: newPlanName,
-        description: newPlanDesc || "Personalized routine.",
-        isPreset: false,
-        isActive: true,
-        durationType: 'ongoing',
-        startDate: new Date().toISOString(),
-        categories: selectedCategories.length > 0 ? selectedCategories : ['Custom'],
-        color: `hsl(${Math.floor(Math.random() * 360)} 70% 50%)`,
-        activities: [
-          {
-            id: `act-${Date.now()}`,
-            name: `${newPlanName} Step`,
-            category: 'Custom',
-            recurrence: 'daily',
-            duration: 10,
-            reminderEnabled: true
-          }
-        ] 
-      });
+      addCustomPlan(planData);
     }
 
-    setNewPlanName('');
-    setNewPlanDesc('');
-    setSelectedCategories([]);
-    setEditingPlan(null);
     setIsBuilderOpen(false);
   };
 
@@ -283,10 +295,6 @@ export default function CalendarPage() {
     setSelectedCategories(prev => 
       prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
     );
-  };
-
-  const getDayFocus = (date: Date) => {
-    return calendarContent.find(c => c.day === date.getDate());
   };
 
   if (!_hasHydrated) return null;
@@ -510,7 +518,7 @@ export default function CalendarPage() {
               <Card className="bg-primary/5 border-primary/10 overflow-hidden">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" />
+                    <TrendingUp className="w-4 h-4 text-primary" />
                     Amalgamated Score
                   </CardTitle>
                 </CardHeader>
@@ -529,32 +537,120 @@ export default function CalendarPage() {
       </main>
 
       <Dialog open={isBuilderOpen} onOpenChange={setIsBuilderOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>{editingPlan ? 'Edit Routine' : 'Build Custom Routine'}</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Name</Label>
-              <Input placeholder="e.g. Work-Life Sync" value={newPlanName} onChange={e => setNewPlanName(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Categories</Label>
-              <div className="flex flex-wrap gap-2">
-                {(['Movement', 'Stillness', 'Nutrition', 'Finance', 'Study/Learning'] as PlanCategory[]).map(c => (
-                  <Badge 
-                    key={c} 
-                    variant={selectedCategories.includes(c) ? 'default' : 'outline'} 
-                    className="cursor-pointer hover:bg-primary/10 transition-colors"
-                    onClick={() => toggleCategory(c)}
-                  >
-                    {c}
-                  </Badge>
-                ))}
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>{editingPlan ? 'Edit Routine' : 'Routine Architect'}</DialogTitle>
+            <CardDescription>Design a recurring sequence of high-performance habits.</CardDescription>
+          </DialogHeader>
+          <ScrollArea className="flex-1 pr-4">
+            <div className="space-y-6 py-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Routine Name</Label>
+                  <Input placeholder="e.g. Work-Life Sync" value={newPlanName} onChange={e => setNewPlanName(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Theme Categories</Label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(['Movement', 'Stillness', 'Nutrition', 'Finance', 'Study/Learning'] as PlanCategory[]).map(c => (
+                      <Badge 
+                        key={c} 
+                        variant={selectedCategories.includes(c) ? 'default' : 'outline'} 
+                        className="cursor-pointer text-[9px] uppercase transition-colors"
+                        onClick={() => toggleCategory(c)}
+                      >
+                        {c}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Activity Sequence</Label>
+                  <Button variant="outline" size="sm" className="h-7 text-[10px] font-bold" onClick={handleAddActivity}>
+                    <Plus className="w-3 h-3 mr-1" /> Add Step
+                  </Button>
+                </div>
+                
+                <div className="space-y-3">
+                  {newActivities.length === 0 ? (
+                    <div className="py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-sm">
+                      No activities added yet.
+                    </div>
+                  ) : (
+                    newActivities.map((act, i) => (
+                      <div key={act.id} className="p-4 bg-muted/30 rounded-xl border border-primary/5 space-y-4 relative group">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity" 
+                          onClick={() => removeActivity(act.id)}
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase">Activity Name</Label>
+                            <Input 
+                              value={act.name} 
+                              onChange={e => updateActivity(act.id, { name: e.target.value })}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase">Recurrence</Label>
+                            <Select value={act.recurrence} onValueChange={(v: any) => updateActivity(act.id, { recurrence: v })}>
+                              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="daily">Daily</SelectItem>
+                                <SelectItem value="weekly">Weekly</SelectItem>
+                                <SelectItem value="monthly">Monthly</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase">Time (optional)</Label>
+                            <Input 
+                              type="time" 
+                              value={act.timeOfDay || ''} 
+                              onChange={e => updateActivity(act.id, { timeOfDay: e.target.value })}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase">Duration (min)</Label>
+                            <Input 
+                              type="number" 
+                              value={act.duration} 
+                              onChange={e => updateActivity(act.id, { duration: parseInt(e.target.value) || 0 })}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2 pt-4">
+                            <Switch 
+                              checked={act.reminderEnabled} 
+                              onCheckedChange={v => updateActivity(act.id, { reminderEnabled: v })}
+                            />
+                            <Label className="text-[10px] font-bold uppercase">Notify</Label>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          <DialogFooter>
-            <Button className="w-full font-bold h-12" disabled={!newPlanName.trim()} onClick={handleSavePlan}>
-              {editingPlan ? 'Save Changes' : 'Initialize Routine'}
+          </ScrollArea>
+          <DialogFooter className="pt-4 border-t">
+            <Button variant="ghost" onClick={() => setIsBuilderOpen(false)}>Cancel</Button>
+            <Button className="w-full font-bold h-12" disabled={!newPlanName.trim() || newActivities.length === 0} onClick={handleSavePlan}>
+              {editingPlan ? 'Update Protocol' : 'Initialize Protocol'}
             </Button>
           </DialogFooter>
         </DialogContent>

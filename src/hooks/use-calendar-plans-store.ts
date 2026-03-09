@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -106,8 +105,10 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
         const { activityInstances } = get();
         const dayInstances = activityInstances[today] || [];
         
+        // Find first incomplete matching instance for today
         const match = dayInstances.find(inst => {
           if (inst.status === 'completed') return false;
+          // Case insensitive match
           return inst.activityName.toLowerCase().includes(activityName.toLowerCase());
         });
 
