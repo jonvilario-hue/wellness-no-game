@@ -147,7 +147,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     // 1. CHUNK TRAINING (RSVP Mode - flashing chunks in the center)
     if (drillType === 'Chunk Training') {
       return (
-        <div className="text-center relative px-4 py-20">
+        <div className="text-center relative px-4 py-20 my-auto">
           <span className="text-4xl md:text-6xl font-black tracking-tight text-primary animate-in zoom-in-95 duration-75">
             {units[currentIndex]}
           </span>
@@ -158,7 +158,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     // 2. REGRESSION ELIMINATOR (Text vanishes after reading to stop re-reading)
     if (drillType === 'Regression Eliminator') {
       return (
-        <div className="max-w-2xl text-xl leading-relaxed font-medium text-justify">
+        <div className="max-w-2xl text-xl leading-relaxed font-medium text-justify mb-20">
           {words.map((word, i) => (
             <span 
               key={i} 
@@ -179,7 +179,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     // 3. PACER (Standard full-text highlight)
     if (drillType === 'Pacer') {
       return (
-        <div className="max-w-2xl text-xl leading-relaxed text-muted-foreground/30 font-medium text-justify">
+        <div className="max-w-2xl text-xl leading-relaxed text-muted-foreground/30 font-medium text-justify mb-20">
           {words.map((word, i) => (
             <span 
               key={i} 
@@ -199,7 +199,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     // 4. PERIPHERAL EXPANSION (Narrow column to force vertical gaze)
     if (drillType === 'Peripheral Expansion') {
       return (
-        <div className="w-[320px] bg-muted/10 p-8 rounded-[40px] border-x-8 border-primary/5 flex flex-col items-center">
+        <div className="w-[320px] bg-muted/10 p-8 rounded-[40px] border-x-8 border-primary/5 flex flex-col items-center mb-20">
           <div className="text-center space-y-6 text-2xl font-bold leading-relaxed w-full">
             {words.map((word, i) => (
               <div 
@@ -287,10 +287,13 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center">
               <div 
                 ref={containerRef}
-                className="relative h-full max-h-[600px] w-full max-w-4xl flex flex-col items-center justify-center p-12 bg-background rounded-[40px] shadow-inner border-4 border-muted/20 overflow-y-auto no-scrollbar"
+                className={cn(
+                  "relative h-full max-h-[600px] w-full max-w-4xl flex flex-col items-center p-12 bg-background rounded-[40px] shadow-inner border-4 border-muted/20 overflow-y-auto no-scrollbar transition-all",
+                  drillType === 'Chunk Training' ? "justify-center" : "justify-start pt-24"
+                )}
               >
                 {renderDrillContent()}
-                <div className="sticky bottom-0 w-full flex justify-center pt-8 pb-4 bg-gradient-to-t from-background via-background to-transparent">
+                <div className="sticky bottom-0 w-full flex justify-center pt-8 pb-4 bg-gradient-to-t from-background via-background to-transparent mt-auto">
                   <div className="flex gap-4">
                     <Button variant="outline" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-background" onClick={() => setIsActive(!isActive)}>
                       {isActive ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
