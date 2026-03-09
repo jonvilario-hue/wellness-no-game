@@ -32,13 +32,15 @@ import {
   BookMarked,
   X,
   Target,
-  AlertCircle
+  AlertCircle,
+  List
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { presetPlans } from '@/data/preset-calendar-plans';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { Calendar } from '@/components/ui/calendar';
@@ -81,6 +83,7 @@ export default function CalendarPage() {
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
   const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
+  const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
 
   // Builder state
   const [newPlanName, setNewPlanName] = useState('');
@@ -227,7 +230,6 @@ export default function CalendarPage() {
       setNewPlanName('');
       setNewPlanDesc('');
       setSelectedCategories([]);
-      // Start with one default activity to reduce friction
       setNewActivities([{
         id: `act-${Date.now()}`,
         name: 'Primary Activity',
@@ -341,7 +343,7 @@ export default function CalendarPage() {
             </div>
             <CollapsibleContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
               {availablePlans.map(plan => (
-                <Card key={plan.id} className={cn("transition-all relative group", activePlanIds.includes(plan.id) && "border-primary bg-primary/5 shadow-sm")}>
+                <Card key={plan.id} className={cn("transition-all relative group h-fit", activePlanIds.includes(plan.id) && "border-primary bg-primary/5 shadow-sm")}>
                   <CardHeader className="p-4 pb-2">
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-sm font-bold pr-8">{plan.name}</CardTitle>
@@ -354,10 +356,40 @@ export default function CalendarPage() {
                     </div>
                     <CardDescription className="text-xs line-clamp-2">{plan.description}</CardDescription>
                   </CardHeader>
+                  
+                  {expandedPlanId === plan.id && (
+                    <CardContent className="p-4 pt-0 space-y-3 animate-in fade-in slide-in-from-top-1">
+                      <Separator className="opacity-20" />
+                      <div className="space-y-2">
+                        {plan.activities.map((act) => (
+                          <div key={act.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 border border-primary/5">
+                            <div className="flex items-center gap-2">
+                              <div className="w-1 h-3 rounded-full bg-primary/40" />
+                              <div>
+                                <p className="text-[10px] font-bold leading-none">{act.name}</p>
+                                <p className="text-[8px] text-muted-foreground uppercase mt-1">{act.timeOfDay || 'Anytime'} • {act.duration}m</p>
+                              </div>
+                            </div>
+                            <Badge variant="outline" className="text-[7px] h-3.5 uppercase font-black px-1.5">{act.recurrence}</Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  )}
+
                   <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                       <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">{plan.categories[0]}</Badge>
-                      <span className="text-[9px] text-muted-foreground uppercase font-bold">{plan.activities.length} Steps</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-auto p-0 gap-1 text-[9px] text-muted-foreground uppercase font-black hover:text-primary transition-colors"
+                        onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
+                      >
+                        <List className="w-3 h-3" />
+                        {plan.activities.length} Steps
+                        {expandedPlanId === plan.id ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+                      </Button>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       {!plan.isPreset && (
