@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Rocket, ArrowRight, Info, ChevronDown, ChevronRight, 
-  CheckCircle2, Circle, LayoutList, BookOpen, Zap
+  CheckCircle2, Circle, LayoutList, BookOpen, Zap, Clock
 } from 'lucide-react';
 import Link from 'next/link';
 import { useWellnessData } from '@/hooks/use-wellness-data';
