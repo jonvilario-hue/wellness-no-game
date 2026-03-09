@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, useMemo, useCallback, Suspense } from 'react';
@@ -16,10 +17,10 @@ import { applySpacedRepetition } from '@/lib/srs';
 import { cn } from '@/lib/utils';
 import { useStatsStore } from '@/hooks/use-stats-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
+import { isToday, parseISO } from 'date-fns';
 
 const processContent = (text: string) => {
   if (!text) return '';
-  // Support Anki sound tags if they haven't been processed by the importer
   return text.replace(/\[sound:(.*?)\]/g, (_, filename) => {
     return `<audio controls src="${filename}" class="w-full mt-4"></audio>`;
   });
@@ -56,17 +57,38 @@ function SessionContent() {
 
   const dueCards = useMemo(() => {
     const now = new Date();
-    const filtered = cards.filter(card => 
-      (!deckId || card.deckId === deckId) && 
-      new Date(card.dueDate) <= now &&
-      !card.suspended
-    );
-    
-    const deck = decks.find(d => d.id === deckId);
-    if (deck?.settings.insertionOrder === 'random') {
-        return filtered.sort(() => Math.random() - 0.5);
-    }
-    return filtered.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+    const finalQueue: CardType[] = [];
+
+    // Identify which decks to include
+    const activeDecks = deckId ? decks.filter(d => d.id === deckId) : decks;
+
+    activeDecks.forEach(deck => {
+      const deckCards = cards.filter(c => c.deckId === deck.id && !c.suspended);
+      
+      // Calculate remaining limits for this deck
+      const finishedToday = deckCards.filter(c => c.lastReviewDate && isToday(parseISO(c.lastReviewDate))).length;
+      const reviewLimit = Math.max(0, deck.settings.maxReviewsPerDay - finishedToday);
+      const newLimit = Math.max(0, deck.settings.newCardsPerDay); // New cards usually have a separate daily cap
+
+      // Separate overdue and new
+      const overdue = deckCards
+        .filter(c => c.repetitions > 0 && new Date(c.dueDate) <= now)
+        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+        .slice(0, reviewLimit);
+
+      const news = deckCards
+        .filter(c => c.repetitions === 0)
+        .sort((a, b) => {
+          if (deck.settings.insertionOrder === 'random') return Math.random() - 0.5;
+          if (deck.settings.insertionOrder === 'newest-first') return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
+          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+        })
+        .slice(0, newLimit);
+
+      finalQueue.push(...overdue, ...news);
+    });
+
+    return finalQueue.sort(() => Math.random() - 0.5); // Final shuffle for the session
   }, [cards, deckId, decks]);
 
   const [sessionCards, setSessionCards] = useState<CardType[]>([]);
@@ -82,7 +104,6 @@ function SessionContent() {
     }
   }, [dueCards]);
 
-  // Handle completion tracking
   useEffect(() => {
     if (sessionComplete && deckId) {
       markStudySessionComplete('Flashcards', deckId);
@@ -153,7 +174,7 @@ function SessionContent() {
         </div>
         <div>
             <h1 className="text-4xl font-bold font-headline tracking-tight mb-2">Session Complete!</h1>
-            <p className="text-muted-foreground">Your cognitive map has been updated. All due cards have been processed.</p>
+            <p className="text-muted-foreground">Your cognitive map has been updated. You've completed your recommended reviews for now.</p>
         </div>
         <Button asChild size="lg" className="w-full h-14 text-lg font-bold">
           <Link href="/study">Return to Scholar Hub</Link>

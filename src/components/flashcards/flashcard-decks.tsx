@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { isToday, parseISO } from 'date-fns';
 
 export function FlashcardDecks() {
   const { decks, cards, deleteDeck } = useFlashcardStore();
@@ -34,15 +35,40 @@ export function FlashcardDecks() {
   const { toast } = useToast();
   
   const getDeckStats = (deckId: string) => {
-    const deckCards = cards.filter(c => c.deckId === deckId);
-    const dueCount = deckCards.filter(c => new Date(c.dueDate) <= new Date()).length;
+    const deck = decks.find(d => d.id === deckId);
+    const deckCards = cards.filter(c => c.deckId === deckId && !c.suspended);
+    
+    // Cards actually due for review
+    const overdueCount = deckCards.filter(c => c.repetitions > 0 && new Date(c.dueDate) <= new Date()).length;
+    
+    // New cards available
+    const newAvailable = deckCards.filter(c => c.repetitions === 0).length;
+    
+    // Cards already finished today (to calculate remaining limit)
+    const finishedToday = deckCards.filter(c => c.lastReviewDate && isToday(parseISO(c.lastReviewDate))).length;
+    
+    const dailyLimit = deck?.settings.maxReviewsPerDay || 200;
+    const newLimit = deck?.settings.newCardsPerDay || 20;
+
+    // What is actually "Due" today according to limits
+    const dueToday = Math.min(overdueCount, dailyLimit);
+    const newToday = Math.min(newAvailable, newLimit);
+
     return {
       total: deckCards.length,
-      due: dueCount,
+      due: dueToday + newToday,
+      rawDue: overdueCount,
+      rawNew: newAvailable
     };
   };
   
-  const totalDue = cards.filter(c => new Date(c.dueDate) <= new Date()).length;
+  // Calculate total recommended cards for "Study All"
+  const totalRecommended = useMemo(() => {
+    return decks.reduce((acc, deck) => {
+      const stats = getDeckStats(deck.id);
+      return acc + stats.due;
+    }, 0);
+  }, [decks, cards]);
 
   return (
      <Card className="border-primary/10">
@@ -64,10 +90,10 @@ export function FlashcardDecks() {
                     <Button onClick={() => setIsDialogOpen(true)} variant="secondary" size="sm" className="font-bold">
                         <PlusCircle className="mr-2 h-4 w-4" /> Create Deck
                     </Button>
-                    <AssistantTooltip text="Launch a session with all cards currently scheduled for review across all your decks.">
-                      <Button asChild disabled={totalDue === 0} size="sm" className="font-bold bg-primary shadow-md hover:scale-105 transition-transform">
+                    <AssistantTooltip text="Study all cards recommended for today across all decks, respecting your daily limits.">
+                      <Button asChild disabled={totalRecommended === 0} size="sm" className="font-bold bg-primary shadow-md hover:scale-105 transition-transform">
                           <Link href="/study/session">
-                              <Play className="mr-2 h-4 w-4 fill-current" /> Study All ({totalDue})
+                              <Play className="mr-2 h-4 w-4 fill-current" /> Study All ({totalRecommended})
                           </Link>
                       </Button>
                     </AssistantTooltip>
@@ -90,8 +116,8 @@ export function FlashcardDecks() {
                                 </CardHeader>
                                 <CardFooter className="text-[10px] uppercase font-bold text-muted-foreground justify-between border-t border-primary/5 pt-4 mt-auto">
                                     <span>{total} cards</span>
-                                    <AssistantTooltip text="'Complete' means you've reviewed everything currently due. The algorithm will show these cards again when your retention probability drops.">
-                                      <span className={due > 0 ? "text-primary" : ""}>{due > 0 ? `${due} due` : 'Complete'}</span>
+                                    <AssistantTooltip text="'Complete' means you've reviewed everything currently recommended by the algorithm today.">
+                                      <span className={due > 0 ? "text-primary" : ""}>{due > 0 ? `${due} recommended` : 'Complete'}</span>
                                     </AssistantTooltip>
                                 </CardFooter>
                             </Card>
