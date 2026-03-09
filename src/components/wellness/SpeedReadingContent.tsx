@@ -1,9 +1,10 @@
+
 'use client';
 
 import { useState, useMemo } from "react"
 import { useSpeedReadingStore } from "@/hooks/use-speedreading-store"
 import { readingPassages } from "@/data/speedreading-passages"
-import { SpeedReadingDashboard } from "./SpeedReadingDashboard"
+import { SpeedReadingStats, SpeedReadingAnalytics } from "./SpeedReadingDashboard"
 import { SpeedReadingDrillPlayer } from "./SpeedReadingDrillPlayer"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -93,7 +94,7 @@ export default function SpeedReadingContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <SpeedReadingDashboard />
+      <SpeedReadingStats />
 
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 px-1">
@@ -209,6 +210,10 @@ export default function SpeedReadingContent() {
 
       <div className="pt-10">
         <WellnessActivityCalendar categoryFilter="Speed Reading" /> 
+      </div>
+
+      <div className="pt-6">
+        <SpeedReadingAnalytics />
       </div>
     </div>
   )
