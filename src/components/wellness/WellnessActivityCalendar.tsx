@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -119,8 +120,9 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
   const modifiersStyles = {
     hasLog: {
       fontWeight: 'bold',
-      textDecoration: 'underline',
-      color: 'hsl(var(--primary))'
+      color: 'hsl(var(--primary))',
+      backgroundColor: 'hsl(var(--primary) / 0.1)',
+      borderRadius: '100%'
     }
   };
 
