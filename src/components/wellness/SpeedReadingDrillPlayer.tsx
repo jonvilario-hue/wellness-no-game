@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -11,22 +11,24 @@ import { Label } from '@/components/ui/label';
 import { 
   Play, Pause, RotateCcw, X, Check, 
   Target, Zap, Brain, Activity, Clock,
-  ArrowRight, Eye, MousePointer2
+  ArrowRight, Eye, MousePointer2, Sparkles
 } from 'lucide-react';
-import type { ReadingPassage, DrillType } from '@/types/speedreading';
+import type { ReadingPassage, DrillType, ReadingTier } from '@/types/speedreading';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SpeedReadingQuiz } from './SpeedReadingQuiz';
+import { estimateDifficulty } from '@/lib/speedreading-utils';
 import { cn } from '@/lib/utils';
 
 interface Props {
   drillType: DrillType;
   passage: ReadingPassage;
+  isCustomText?: boolean;
   onClose: () => void;
 }
 
-export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) {
+export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onClose }: Props) {
   const [gameState, setGameState] = useState<'prep' | 'reading' | 'quiz' | 'summary'>('prep');
   const [isActive, setIsActive] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0); 
@@ -37,12 +39,17 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
   const [preFocus, setPreFocus] = useState(3);
   const [postFatigue, setPostFatigue] = useState(3);
   const [comprehensionScore, setComprehensionScore] = useState(0);
+  const [selfComprehensionRating, setSelfRating] = useState(3);
 
   const { addLog } = useSpeedReadingStore();
   const { toast } = useToast();
 
-  const words = useMemo(() => passage.content.split(/\s+/), [passage]);
+  const words = useMemo(() => passage.content.split(/\s+/).filter(w => w.length > 0), [passage]);
   
+  const estimatedTier = useMemo(() => 
+    isCustomText ? estimateDifficulty(passage.content) : passage.tier, 
+  [isCustomText, passage.content]);
+
   const chunks = useMemo(() => {
     const size = 3;
     const res = [];
@@ -88,7 +95,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
   const handleFinishedReading = () => {
     setIsActive(false);
     setElapsedSeconds((Date.now() - startTime) / 1000);
-    setGameState('quiz');
+    setGameState(isCustomText ? 'summary' : 'quiz');
   };
 
   const handleQuizComplete = (score: number) => {
@@ -98,18 +105,22 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
 
   const handleSaveAndExit = () => {
     const finalWpm = Math.round((words.length / elapsedSeconds) * 60);
-    const err = Math.round(finalWpm * (comprehensionScore / 100));
+    // Weighted score for self-assessed drills
+    const finalComp = isCustomText ? (selfComprehensionRating * 20) : comprehensionScore;
+    const err = Math.round(finalWpm * (finalComp / 100));
 
     addLog({
       drillType,
       passageId: passage.id,
-      tier: passage.tier,
+      tier: estimatedTier,
       wpm: finalWpm,
-      comprehensionScore,
+      comprehensionScore: finalComp,
       err,
       preFocus,
       postFatigue,
-      durationSeconds: Math.round(elapsedSeconds)
+      durationSeconds: Math.round(elapsedSeconds),
+      isCustomText,
+      isSelfAssessed: isCustomText
     });
 
     toast({ title: "Drill Results Synchronized", variant: 'success' });
@@ -117,23 +128,16 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
   };
 
   const renderDrillContent = () => {
-    // 1. RSVP MODES (Center display)
     if (drillType === 'Chunk Training' || drillType === 'Regression Eliminator') {
       return (
-        <div className="text-center relative">
+        <div className="text-center relative px-4">
           <span className="text-4xl md:text-6xl font-black tracking-tight text-primary animate-in zoom-in-95 duration-75">
             {units[currentIndex]}
           </span>
-          {drillType === 'Regression Eliminator' && (
-            <div className="mt-4 text-[10px] uppercase font-bold text-muted-foreground opacity-40">
-              Forward Momentum Only
-            </div>
-          )}
         </div>
       );
     }
 
-    // 2. FLOW MODES (Full text with highlight)
     if (drillType === 'Pacer') {
       return (
         <div className="max-w-2xl text-xl leading-relaxed text-muted-foreground/40 font-medium text-justify">
@@ -152,7 +156,6 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
       );
     }
 
-    // 3. PERIPHERAL MODE (Narrow column)
     if (drillType === 'Peripheral Expansion') {
       return (
         <div className="w-[300px] text-center space-y-4 text-2xl font-medium leading-relaxed">
@@ -180,7 +183,10 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={onClose}><X className="w-5 h-5" /></Button>
           <div>
-            <h1 className="text-sm font-black uppercase tracking-widest">{drillType}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm font-black uppercase tracking-widest">{drillType}</h1>
+              {isCustomText && <Badge variant="outline" className="text-[8px] h-4 py-0 uppercase">Custom</Badge>}
+            </div>
             <p className="text-[10px] text-muted-foreground font-bold">{passage.title}</p>
           </div>
         </div>
@@ -203,7 +209,9 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
                     <Target className="w-10 h-10 text-primary" />
                   </div>
                   <CardTitle className="text-2xl font-black uppercase">Pre-Drill Readiness</CardTitle>
-                  <CardDescription>Calibrate your focus before we engage the pacer.</CardDescription>
+                  <CardDescription>
+                    {isCustomText ? `Estimating Difficulty: ${estimatedTier}` : 'Calibrate your focus before we engage the pacer.'}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8 py-6">
                   <div className="space-y-4">
@@ -234,9 +242,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
           {gameState === 'reading' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center overflow-y-auto">
               <div className="relative min-h-[400px] w-full max-w-4xl flex flex-col items-center justify-center p-12 bg-background rounded-[40px] shadow-inner border-4 border-muted/20">
-                
                 {renderDrillContent()}
-
                 <div className="absolute bottom-8 flex gap-4">
                   <Button variant="ghost" size="icon" className="h-12 w-12 rounded-full" onClick={() => setIsActive(!isActive)}>
                     {isActive ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
@@ -274,14 +280,28 @@ export function SpeedReadingDrillPlayer({ drillType, passage, onClose }: Props) 
                     </div>
                     <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl text-center space-y-1">
                       <p className="text-[10px] font-black uppercase text-primary">Efficiency (ERR)</p>
-                      <p className="text-2xl font-black text-primary">{Math.round(((words.length / elapsedSeconds) * 60) * (comprehensionScore / 100))}</p>
+                      <p className="text-2xl font-black text-primary">
+                        {Math.round(((words.length / elapsedSeconds) * 60) * ((isCustomText ? selfComprehensionRating * 20 : comprehensionScore) / 100))}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-muted/20 rounded-2xl flex justify-between items-center">
-                    <span className="text-sm font-bold">Comprehension</span>
-                    <Badge variant="secondary" className="font-black text-sm">{comprehensionScore}%</Badge>
-                  </div>
+                  {isCustomText ? (
+                    <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-[10px] font-bold uppercase flex items-center gap-2">
+                          <Sparkles className="w-3 h-3" /> Self-Assessed Comp (1-5)
+                        </Label>
+                        <span className="text-xl font-black text-primary">{selfComprehensionRating}</span>
+                      </div>
+                      <Slider value={[selfComprehensionRating]} onValueChange={([v]) => setSelfRating(v)} min={1} max={5} step={1} />
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-muted/20 rounded-2xl flex justify-between items-center">
+                      <span className="text-sm font-bold">Comprehension</span>
+                      <Badge variant="secondary" className="font-black text-sm">{comprehensionScore}%</Badge>
+                    </div>
+                  )}
 
                   <div className="space-y-4 pt-4 border-t">
                     <div className="flex justify-between items-center">

@@ -3,8 +3,8 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { ReadingLog, SpeedReadingAchievement, ReadingTier, DrillType } from '@/types/speedreading';
-import { isToday, subDays, format, parseISO } from 'date-fns';
+import type { ReadingLog, SpeedReadingAchievement, ReadingTier } from '@/types/speedreading';
+import { isToday, subDays, format, parseISO, addDays } from 'date-fns';
 
 interface SpeedReadingState {
   logs: ReadingLog[];
@@ -32,6 +32,7 @@ export const useSpeedReadingStore = create<SpeedReadingState>()(
         'Casual': initialAchievement(),
         'Technical': initialAchievement(),
         'Dense Data': initialAchievement(),
+        'Narrative': initialAchievement(),
       },
       targetWpm: 300,
 
@@ -45,18 +46,22 @@ export const useSpeedReadingStore = create<SpeedReadingState>()(
         
         const newLog: ReadingLog = { ...logData, id, date, timestamp };
         const tier = logData.tier;
-        const currentAchieve = state.achievements[tier];
+        const currentAchieve = state.achievements[tier] || initialAchievement();
 
-        // Update Achievements
+        // Update Achievements (Curated Passages Only for PBs)
         const updatedAchieve = { ...currentAchieve };
-        if (newLog.wpm > currentAchieve.highestWPM) updatedAchieve.highestWPM = newLog.wpm;
-        if (newLog.err > currentAchieve.highestERR) updatedAchieve.highestERR = newLog.err;
-        if (newLog.wpm >= 400 && newLog.comprehensionScore > currentAchieve.bestCompAtHighSpeed) {
-          updatedAchieve.bestCompAtHighSpeed = newLog.comprehensionScore;
+        if (!newLog.isCustomText) {
+          if (newLog.wpm > currentAchieve.highestWPM) updatedAchieve.highestWPM = newLog.wpm;
+          if (newLog.err > currentAchieve.highestERR) updatedAchieve.highestERR = newLog.err;
+          if (newLog.wpm >= 400 && newLog.comprehensionScore > currentAchieve.bestCompAtHighSpeed) {
+            updatedAchieve.bestCompAtHighSpeed = newLog.comprehensionScore;
+          }
         }
 
         // Update Streak Logic
-        const lastDate = currentAchieve.lastDrillDate ? parseISO(currentAchieve.lastDrillDate) : null;
+        const lastDateStr = currentAchieve.lastDrillDate;
+        const lastDate = lastDateStr ? parseISO(lastDateStr) : null;
+        
         if (!lastDate || !isToday(lastDate)) {
           if (lastDate && isToday(addDays(lastDate, 1))) {
             updatedAchieve.streak += 1;
@@ -92,14 +97,8 @@ export const useSpeedReadingStore = create<SpeedReadingState>()(
       }
     }),
     {
-      name: 'speedreading-storage-v1',
+      name: 'speedreading-storage-v2',
       storage: createJSONStorage(() => localStorage),
     }
   )
 );
-
-function addDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-}

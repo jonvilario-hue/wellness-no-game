@@ -7,18 +7,22 @@ import { readingPassages } from "@/data/speedreading-passages"
 import { SpeedReadingDashboard } from "./SpeedReadingDashboard"
 import { SpeedReadingDrillPlayer } from "./SpeedReadingDrillPlayer"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { 
   Zap, BookOpen, Layers, MousePointer2, 
   Eye, Target, Play, BarChart3, Clock,
-  Flame, Filter, Info
+  Flame, Filter, Info, PlusCircle, BookCopy
 } from "lucide-react"
 import type { ReadingPassage, DrillType, ReadingTier } from "@/types/speedreading"
 import { AssistantTooltip } from "@/components/assistant-tooltip"
 import { cn } from "@/lib/utils"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 
 const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: string }[] = [
   { 
@@ -52,19 +56,37 @@ const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: stri
 ];
 
 export default function SpeedReadingContent() {
-  const { logs, targetWpm, setTargetWpm } = useSpeedReadingStore();
-  const [activeDrill, setActiveDrill] = useState<{ type: DrillType; passage: ReadingPassage } | null>(null);
+  const { logs } = useSpeedReadingStore();
+  const [activeDrill, setActiveDrill] = useState<{ type: DrillType; passage: ReadingPassage; isCustom?: boolean } | null>(null);
   const [selectedTier, setSelectedTier] = useState<ReadingTier | 'All'>('All');
+  const [isCustomOpen, setIsCustomOpen] = useState(false);
+  const [customText, setCustomText] = useState("");
+  const [customTitle, setCustomName] = useState("");
 
   const filteredPassages = useMemo(() => {
     return readingPassages.filter(p => selectedTier === 'All' || p.tier === selectedTier);
   }, [selectedTier]);
+
+  const handleStartCustom = (type: DrillType) => {
+    if (!customText) return;
+    const passage: ReadingPassage = {
+      id: 'custom',
+      title: customTitle || "Personal Text",
+      content: customText,
+      wordCount: customText.split(/\s+/).length,
+      tier: 'Casual', // Will be estimated in the player
+      quiz: []
+    };
+    setActiveDrill({ type, passage, isCustom: true });
+    setIsCustomOpen(false);
+  };
 
   if (activeDrill) {
     return (
       <SpeedReadingDrillPlayer 
         drillType={activeDrill.type}
         passage={activeDrill.passage}
+        isCustomText={activeDrill.isCustom}
         onClose={() => setActiveDrill(null)}
       />
     );
@@ -82,9 +104,45 @@ export default function SpeedReadingContent() {
           </div>
           
           <div className="flex gap-2">
+            <Dialog open={isCustomOpen} onOpenChange={setIsCustomOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="h-10 gap-2 border-primary/20 font-bold">
+                  <BookCopy className="w-4 h-4" /> Open Drill
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Bring Your Own Text</DialogTitle>
+                  <DialogDescription>Paste an article or snippet to practice with your own material.</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold uppercase">Passage Title</Label>
+                    <Input value={customTitle} onChange={e => setCustomName(e.target.value)} placeholder="e.g. Research Paper Notes" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold uppercase">Paste Text</Label>
+                    <Textarea 
+                      className="min-h-[200px]" 
+                      value={customText} 
+                      onChange={e => setCustomText(e.target.value)} 
+                      placeholder="Paste your text here..."
+                    />
+                  </div>
+                </div>
+                <DialogFooter className="grid grid-cols-2 gap-2">
+                  {DRILLS.slice(0, 2).map(d => (
+                    <Button key={d.id} onClick={() => handleStartCustom(d.id)} disabled={!customText} variant="secondary" className="gap-2">
+                      <Play className="w-3 h-3 fill-current" /> {d.title}
+                    </Button>
+                  ))}
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
             <AssistantTooltip text="Filter passages by cognitive load tier. Your PBs are tracked separately for each tier.">
               <div className="flex items-center gap-2 p-1 bg-muted rounded-lg border">
-                {(['All', 'Casual', 'Technical', 'Dense Data'] as const).map(tier => (
+                {(['All', 'Casual', 'Technical', 'Dense Data', 'Narrative'] as const).map(tier => (
                   <Button 
                     key={tier}
                     variant={selectedTier === tier ? 'secondary' : 'ghost'}
@@ -126,11 +184,14 @@ export default function SpeedReadingContent() {
                     {filteredPassages.map(p => (
                       <button
                         key={p.id}
-                        onClick={() => setActiveDrill({ type: drill.id, passage: p })}
+                        onClick={() => setActiveDrill({ type: drill.id, passage: p, isCustom: false })}
                         className="flex items-center justify-between p-3 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover/btn:bg-primary transition-colors" />
+                          <div className={cn(
+                            "w-1.5 h-1.5 rounded-full",
+                            p.tier === 'Narrative' ? 'bg-amber-500' : 'bg-primary/40'
+                          )} />
                           <div>
                             <p className="text-sm font-bold">{p.title}</p>
                             <p className="text-[9px] text-muted-foreground uppercase">{p.wordCount} words • {p.tier}</p>
@@ -147,52 +208,12 @@ export default function SpeedReadingContent() {
         </div>
       </div>
 
-      <WellnessActivityCalendar categoryFilter="Movement" /> 
-      {/* Note: In a production app we'd add a 'Reading' filter to the generic calendar, 
-          but for now we use the isolated history below. */}
-      
       <div className="pt-10">
         <h3 className="text-xl font-black uppercase tracking-tighter mb-6 flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-primary" />
-          Isolated Reading History
+          Reading History
         </h3>
-        {logs.length === 0 ? (
-          <div className="py-20 text-center border-2 border-dashed rounded-3xl bg-muted/20">
-            <BookOpen className="w-12 h-12 text-muted-foreground opacity-20 mx-auto mb-4" />
-            <p className="text-lg font-bold text-muted-foreground">Library Empty</p>
-            <p className="text-sm text-muted-foreground mt-2">Complete your first drill to populate the history.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {logs.slice(0, 6).map(log => (
-              <Card key={log.id} className="border-primary/5 hover:border-primary/10 transition-all">
-                <CardHeader className="p-4 pb-2">
-                  <div className="flex justify-between items-start">
-                    <Badge variant="secondary" className="text-[8px] h-4 uppercase">{log.drillType}</Badge>
-                    <span className="text-[9px] font-bold text-muted-foreground">{format(parseISO(log.timestamp), 'MMM d, h:mm a')}</span>
-                  </div>
-                  <CardTitle className="text-sm font-bold mt-2">{readingPassages.find(p => p.id === log.passageId)?.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <div className="grid grid-cols-3 gap-2 mt-4 text-center">
-                    <div className="p-2 bg-muted/30 rounded-lg">
-                      <p className="text-[8px] font-black uppercase text-muted-foreground">WPM</p>
-                      <p className="text-xs font-black">{log.wpm}</p>
-                    </div>
-                    <div className="p-2 bg-muted/30 rounded-lg">
-                      <p className="text-[8px] font-black uppercase text-muted-foreground">Comp</p>
-                      <p className="text-xs font-black">{log.comprehensionScore}%</p>
-                    </div>
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <p className="text-[8px] font-black uppercase text-primary">ERR</p>
-                      <p className="text-xs font-black text-primary">{log.err}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+        <WellnessActivityCalendar categoryFilter="Movement" /> 
       </div>
     </div>
   )

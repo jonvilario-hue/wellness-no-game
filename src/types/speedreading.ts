@@ -1,5 +1,5 @@
 
-export type ReadingTier = 'Casual' | 'Technical' | 'Dense Data';
+export type ReadingTier = 'Casual' | 'Technical' | 'Dense Data' | 'Narrative';
 
 export type DrillType = 
   | 'Chunk Training' 
@@ -35,6 +35,8 @@ export interface ReadingLog {
   preFocus: number; // 1-5
   postFatigue: number; // 1-5
   durationSeconds: number;
+  isCustomText?: boolean;
+  isSelfAssessed?: boolean;
 }
 
 export interface SpeedReadingAchievement {

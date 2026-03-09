@@ -1,4 +1,6 @@
 
+import type { ReadingTier } from '@/types/speedreading';
+
 /**
  * Utility functions for Speed Reading metrics and logic.
  */
@@ -21,10 +23,29 @@ export const getSpeedRank = (wpm: number): { label: string; color: string } => {
 };
 
 export const chunkText = (text: string, chunkSize: number): string[][] => {
-  const words = text.split(/\s+/);
+  const words = text.split(/\s+/).filter(w => w.length > 0);
   const chunks: string[][] = [];
   for (let i = 0; i < words.length; i += chunkSize) {
     chunks.push(words.slice(i, i + chunkSize));
   }
   return chunks;
 };
+
+/**
+ * Estimates difficulty using a simplified Fog Index approximation
+ */
+export function estimateDifficulty(text: string): ReadingTier {
+  const words = text.split(/\s+/).filter(w => w.length > 0);
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  
+  if (words.length === 0 || sentences.length === 0) return 'Casual';
+
+  const avgSentenceLength = words.length / sentences.length;
+  const complexWords = words.filter(w => w.length > 7).length; // Heuristic for multi-syllable
+  const percentComplex = (complexWords / words.length) * 100;
+
+  // Simple Thresholds
+  if (percentComplex > 25 || avgSentenceLength > 20) return 'Dense Data';
+  if (percentComplex > 15 || avgSentenceLength > 15) return 'Technical';
+  return 'Casual';
+}

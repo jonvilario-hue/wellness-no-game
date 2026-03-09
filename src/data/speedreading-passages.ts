@@ -2,6 +2,7 @@
 import { ReadingPassage } from '@/types/speedreading';
 
 export const readingPassages: ReadingPassage[] = [
+  // --- CASUAL TIER (High-level cognitive concepts) ---
   {
     id: 'casual-neuroplasticity',
     title: 'Your Elastic Brain',
@@ -9,141 +10,87 @@ export const readingPassages: ReadingPassage[] = [
     wordCount: 245,
     content: `For decades, scientists believed that the human brain was a fixed organ. Once you reached adulthood, the circuitry was essentially "hard-wired." We now know this is completely false. Neuroplasticity is the brain's ability to reorganize itself by forming new neural connections throughout life. This happens in response to learning, experience, or even following an injury. When you practice a new skill, like speedreading or playing an instrument, your brain physically changes. The neurons that fire together eventually wire together, making the task easier and more efficient over time. This is why consistency is more important than intensity. A short daily practice session is far more effective at triggering long-term structural changes than a massive, one-time effort. By challenging your brain with novel tasks, you are essentially "upgrading" your mental hardware.`,
     quiz: [
-      {
-        question: "What was the old scientific belief about the adult brain?",
-        options: ["It could always grow", "It was hard-wired and fixed", "It only shrank over time", "It was powered by electricity"],
-        answerIndex: 1
-      },
-      {
-        question: "What is neuroplasticity?",
-        options: ["The brain's ability to shrink", "The brain's ability to reorganize itself", "A type of brain surgery", "A rare genetic condition"],
-        answerIndex: 1
-      },
-      {
-        question: "Why is daily practice recommended over one-time intensity?",
-        options: ["It saves time", "It's more effective for structural change", "It prevents headaches", "It's easier to track"],
-        answerIndex: 1
-      }
+      { question: "What was the old scientific belief about the adult brain?", options: ["It could always grow", "It was hard-wired and fixed", "It only shrank", "It was powered by electricity"], answerIndex: 1 },
+      { question: "What is neuroplasticity?", options: ["Brain shrinkage", "Ability to reorganize", "Brain surgery", "Genetic condition"], answerIndex: 1 },
+      { question: "Why is daily practice recommended?", options: ["Saves time", "Triggers structural change", "Prevents headaches", "Easier to track"], answerIndex: 1 }
     ]
   },
   {
-    id: 'casual-syntopic',
-    title: 'The Syntopic Reader',
+    id: 'casual-game-theory',
+    title: 'Game Theory and Everyday Decisions',
     tier: 'Casual',
-    wordCount: 260,
-    content: `Syntopic reading represents the highest level of reading mastery. Unlike elementary or analytical reading, which focuses on a single text, syntopic reading involves analyzing multiple books on the same subject to identify common themes, contradictions, and gaps in current knowledge. A syntopic reader does not simply accept one author's perspective as the truth. Instead, they construct their own understanding by comparing arguments from various sources. This approach is essential for becoming a true polymath, as it allows for the synthesis of disparate ideas across different domains. For example, by reading both biology and economics through a syntopic lens, one might discover shared patterns in how systems manage scarce resources. This level of reading requires a clear purpose and the ability to scan texts quickly to find relevant passages before diving into deep analysis.`,
+    wordCount: 480,
+    content: `Game theory is the study of mathematical models of strategic interaction among rational agents. While it sounds complex, its applications permeate our daily social and professional interactions. One of the most foundational concepts is the Nash equilibrium—a state in a game where no player can benefit by changing their strategy while the others keep theirs unchanged. Understanding this helps explain why people sometimes stay in suboptimal situations, as any individual move might lead to a worse personal outcome despite a better collective one. Furthermore, the distinction between zero-sum and non-zero-sum games is vital. In a zero-sum game, one person's gain is exactly equal to another's loss. However, many human interactions, like trade or successful relationships, are non-zero-sum, where both parties can emerge better off than they started. By viewing social conflicts through the lens of strategic games, we can identify opportunities for cooperation where others only see competition. This shift in perspective allows us to navigate negotiations with more clarity and less emotional reactive behavior.`,
     quiz: [
-      {
-        question: "What is the primary focus of syntopic reading?",
-        options: ["Memorizing a single book", "Analyzing multiple books on one subject", "Reading as fast as possible", "Correcting grammar"],
-        answerIndex: 1
-      },
-      {
-        question: "How does syntopic reading benefit a polymath?",
-        options: ["It makes them faster readers", "It helps synthesize ideas across domains", "It improves spelling", "It guarantees high grades"],
-        answerIndex: 1
-      },
-      {
-        question: "What is the first step in syntopic reading mentioned?",
-        options: ["Writing a book", "Scanning to find relevant passages", "Memorizing definitions", "Interviewing authors"],
-        answerIndex: 1
-      }
+      { question: "What is a Nash equilibrium?", options: ["Winning at all costs", "A state where no player benefits from changing strategy alone", "A game with no winners", "The starting point of every negotiation"], answerIndex: 1 },
+      { question: "What defines a non-zero-sum game?", options: ["Everyone loses", "One's gain is another's loss", "Both parties can potentially benefit", "There are no rules"], answerIndex: 2 },
+      { question: "What is a benefit of studying game theory?", options: ["Learning to cheat", "Faster math skills", "Identifying cooperation opportunities", "Better card playing"], answerIndex: 2 }
     ]
   },
   {
-    id: 'tech-quantum-basics',
-    title: 'Quantum Computing Foundations',
+    id: 'casual-habits',
+    title: 'The Science of Habit Formation',
+    tier: 'Casual',
+    wordCount: 510,
+    content: `Habits are not simply repetitive behaviors; they are neurological shortcuts designed to save the brain energy. The process begins with the "Habit Loop," a three-step cycle: the cue, the routine, and the reward. The cue is a trigger that tells your brain to go into automatic mode. The routine is the physical, mental, or emotional behavior itself. Finally, the reward helps your brain figure out if this particular loop is worth remembering for the future. Over time, this loop becomes more automatic as the basal ganglia—the brain's habit center—takes over from the prefrontal cortex, which is responsible for deliberate decision-making. This transition from discipline to automaticity is the goal of any behavioral change. Understanding this allows us to "hack" our behavior by identifying the cues that trigger bad habits and inserting new routines that deliver similar rewards. By focusing on the architecture of the loop rather than just raw willpower, we increase our chances of permanent change.`,
+    quiz: [
+      { question: "What are the three parts of the Habit Loop?", options: ["Start, Middle, End", "Cue, Routine, Reward", "Thought, Action, Result", "Focus, Effort, Win"], answerIndex: 1 },
+      { question: "Which part of the brain manages habits?", options: ["Prefrontal Cortex", "Basal Ganglia", "Visual Cortex", "Brainstem"], answerIndex: 1 },
+      { question: "What is the primary benefit of a habit?", options: ["It makes you look busy", "It saves the brain energy", "It increases willpower", "It creates new memories"], answerIndex: 1 }
+    ]
+  },
+
+  // --- TECHNICAL TIER (Complex systems) ---
+  {
+    id: 'tech-crispr',
+    title: 'CRISPR Gene Editing Mechanisms',
     tier: 'Technical',
-    wordCount: 312,
-    content: `Classical computers process information in bits, which are either a 0 or a 1. Quantum computers, however, use qubits. Due to a phenomenon called superposition, a qubit can exist in a state of 0, 1, or both simultaneously. This allows quantum systems to perform complex calculations at speeds that would take classical supercomputers thousands of years. Another key concept is entanglement. When qubits become entangled, the state of one qubit becomes instantaneously connected to the state of another, regardless of the distance between them. Einstein famously called this "spooky action at a distance." While quantum computing is still in its nascent stages, its potential applications are vast. It could revolutionize cryptography, drug discovery, and materials science by simulating molecular interactions at an atomic level. However, qubits are extremely delicate and prone to "decoherence," where they lose their quantum state due to external interference like heat or electromagnetic waves. Maintaining a stable environment at near-absolute zero temperatures is one of the primary engineering challenges in the field today.`,
+    wordCount: 620,
+    content: `CRISPR-Cas9 has revolutionized molecular biology by providing a precise, programmable tool for genome editing. The system is derived from a bacterial defense mechanism that identifies and cleaves viral DNA. The core components are the Cas9 protein, an endonuclease, and a guide RNA (gRNA). The gRNA is engineered to contain a 20-nucleotide sequence that matches the target genomic site. Once the Cas9-gRNA complex binds to the target DNA via base-pairing and proximity to a Protospacer Adjacent Motif (PAM), Cas9 introduces a double-strand break (DSB). The cell then attempts to repair this break using one of two primary pathways: Non-Homologous End Joining (NHEJ) or Homology-Directed Repair (HDR). NHEJ is an error-prone process that often introduces small insertions or deletions (indels), frequently resulting in gene knockout. Conversely, HDR uses a provided template to precisely rewrite the genetic sequence at the DSB site. This dual capability allows researchers to either disable problematic genes or insert corrective sequences with unprecedented accuracy.`,
     quiz: [
-      {
-        question: "What is the primary difference between a bit and a qubit?",
-        options: ["Bits are faster", "Qubits can be 0 and 1 simultaneously", "Bits are larger", "Qubits only work in the dark"],
-        answerIndex: 1
-      },
-      {
-        question: "What did Einstein call entanglement?",
-        options: ["Quantum Leap", "Spooky action at a distance", "The Holy Grail of Physics", "The Invisible String"],
-        answerIndex: 1
-      },
-      {
-        question: "What is 'decoherence' in quantum computing?",
-        options: ["A programming error", "Loss of quantum state due to interference", "The process of cooling qubits", "A hardware upgrade"],
-        answerIndex: 1
-      }
+      { question: "What is the role of Cas9?", options: ["It carries the RNA", "It acts as a DNA-cutting enzyme", "It builds new cells", "It provides the template"], answerIndex: 1 },
+      { question: "Which repair pathway is most likely to cause a gene knockout?", options: ["HDR", "NHEJ", "PAM", "RNA base-pairing"], answerIndex: 1 },
+      { question: "How does the system find the correct location?", options: ["By random chance", "Via a matching 20-nucleotide gRNA sequence", "By tracking heat", "Through cellular magnetism"], answerIndex: 1 }
     ]
   },
   {
-    id: 'tech-chc-theory',
-    title: 'The CHC Theory of Intelligence',
+    id: 'tech-blockchain',
+    title: 'Blockchain Consensus Protocols',
     tier: 'Technical',
-    wordCount: 330,
-    content: `The Cattell-Horn-Carroll (CHC) theory is the most comprehensive and empirically supported model of human cognitive abilities. It is a hierarchical framework that organizes intelligence into three strata: narrow, broad, and general. At the narrowest level, there are over 70 specific abilities. At the broad level, there are 8 to 10 cognitive domains, including Fluid Reasoning (Gf), Crystallized Intelligence (Gc), and Working Memory (Gwm). General intelligence (g) sits at the top of the hierarchy. Fluid Reasoning refers to the ability to solve novel problems without relying on prior knowledge, while Crystallized Intelligence is the accumulation of learned facts and skills. Understanding this structure is vital for cognitive training because it allows individuals to target specific 'broad' domains for improvement. For instance, an engineer might focus on Gv (Visual Processing) to better visualize complex designs, while a linguist might prioritize Gc. Modern research suggests that while 'g' is relatively stable, broad and narrow abilities exhibit significant neuroplasticity through targeted exercise and environmental enrichment.`,
+    wordCount: 580,
+    content: `Consensus protocols are the heartbeat of decentralized ledgers, ensuring that all nodes in a network agree on a single version of the truth without a central authority. The most famous, Proof of Work (PoW), requires participants to solve complex cryptographic puzzles to validate blocks, a process that is computationally expensive but easy to verify. This creates an economic deterrent against attacks. However, the emergence of Proof of Stake (PoS) offers a more energy-efficient alternative, where validators are chosen based on the number of tokens they "stake" or lock up as collateral. All consensus mechanisms must address the Byzantine Fault Tolerance (BFT) problem—the ability of a system to reach agreement even when some participants are malicious or failing. The "Blockchain Trilemma" posits that a network must balance decentralization, security, and scalability, as optimizing for two often compromises the third. For instance, high decentralization and security typically limit the transaction throughput (scalability) due to the overhead of multi-node verification.`,
     quiz: [
-      {
-        question: "How many 'strata' are in the CHC model?",
-        options: ["Two", "Three", "Five", "Ten"],
-        answerIndex: 1
-      },
-      {
-        question: "Which ability involves solving novel problems?",
-        options: ["Crystallized Intelligence (Gc)", "Fluid Reasoning (Gf)", "Working Memory (Gwm)", "Processing Speed (Gs)"],
-        answerIndex: 1
-      },
-      {
-        question: "According to the text, which level of intelligence is most stable?",
-        options: ["Broad abilities", "Narrow abilities", "General intelligence (g)", "Targeted domains"],
-        answerIndex: 2
-      }
+      { question: "What is the 'Blockchain Trilemma'?", options: ["Profit, Speed, Power", "Decentralization, Security, Scalability", "Math, Logic, Code", "Privacy, Cost, Access"], answerIndex: 1 },
+      { question: "What is Proof of Stake?", options: ["Mining with computers", "Validators chosen by collateral", "Voting by mail", "Guessing passwords"], answerIndex: 1 },
+      { question: "What does Byzantine Fault Tolerance mean?", options: ["Fast transactions", "Resistance to malicious participants", "Low energy use", "Unlimited storage"], answerIndex: 1 }
     ]
   },
+
+  // --- DENSE DATA TIER (Statistics heavy) ---
   {
-    id: 'dense-market-report',
-    title: 'Q4 Global Semiconductor Audit',
+    id: 'dense-vc-report',
+    title: 'Global Venture Capital Funding Report Q3',
     tier: 'Dense Data',
-    wordCount: 280,
-    content: `The global semiconductor market experienced a 14.2% year-over-year contraction in Q4, primarily driven by a 22% decline in memory chip demand. While logic-based processors maintained a steady 4.5% growth rate, the overall industry valuation dipped to $520 billion. Geographically, the Asia-Pacific region remains the dominant force, accounting for 58% of total revenue, despite a 9% localized slump in mainland China. Automotive semiconductors emerged as the sole high-performance vertical, surging by 18.4% as electric vehicle adoption rates hit a record 15% of global sales. Lead times for trailing-edge nodes have normalized to 14 weeks, down from a peak of 52 weeks in 2022. Inventory levels at major distributors remain elevated at 4.2 months of supply, which is 30% above historical norms. Analysts project a recovery in late 2024, contingent on the stabilization of consumer electronics demand, which currently represents a 35% stake in the total silicon ecosystem. Capital expenditure across top-tier foundries has been slashed by $12 billion to preserve cash flow during the cyclical downturn.`,
+    wordCount: 450,
+    content: `Global venture capital funding reached $78.4 billion in Q3, representing a 12% quarter-over-year decline and a 28% year-over-year contraction from the $108.9 billion peak. The Artificial Intelligence sector remained the outlier, capturing 34% of total capital, up from 18% in the previous year. Within AI, Generative models accounted for 65% of sub-sector investment. Geographically, the United States maintained its lead with $42.1 billion (54% of total), while the European market showed the most resilience with a mere 4% dip. Median Series A round sizes contracted by 15% to $10.2 million, whereas Seed rounds held steady at $2.4 million. Exit activity remained muted, with only 12 IPOs globally compared to 45 in Q3 of the prior cycle. Secondary market transactions surged by 42% as limited partners sought liquidity. Valuation multiples for SaaS companies compressed from 12x revenue to 6.5x, reflecting a broader shift toward profitability over raw growth metrics. Lead times from term sheet to close extended to an average of 74 days, up from 42 days in the high-velocity 2021 market.`,
     quiz: [
-      {
-        question: "What was the main driver of the Q4 market contraction?",
-        options: ["Automotive slump", "Logic processor failure", "Decline in memory chip demand", "Lead time increases"],
-        answerIndex: 2
-      },
-      {
-        question: "Which vertical showed strong growth despite the downturn?",
-        options: ["Consumer electronics", "Memory chips", "Automotive semiconductors", "Desktop PC processors"],
-        answerIndex: 2
-      },
-      {
-        question: "How long are current lead times compared to their peak?",
-        options: ["14 weeks vs 52 weeks", "52 weeks vs 14 weeks", "4 months vs 1 year", "No change"],
-        answerIndex: 0
-      }
+      { question: "What percentage of capital did AI capture?", options: ["12%", "18%", "34%", "54%"], answerIndex: 2 },
+      { question: "How much did Series A round sizes contract?", options: ["4%", "15%", "28%", "42%"], answerIndex: 1 },
+      { question: "What is the average lead time to close a deal?", options: ["42 days", "54 days", "74 days", "12 days"], answerIndex: 2 }
     ]
   },
+
+  // --- NARRATIVE TIER (Sensory & Inference) ---
   {
-    id: 'dense-memory-audit',
-    title: 'Neural Transmission Capacity Audit',
-    tier: 'Dense Data',
-    wordCount: 295,
-    content: `A recent meta-analysis of neural information processing estimated that the human retina transmits data at approximately 10 million bits per second (Mbps). However, the bottleneck of conscious perception is significantly tighter, with the prefrontal cortex capable of processing only 40 to 60 bits per second during directed focus. This representing a 99.99% data reduction from sensory input to conscious awareness. In terms of long-term storage, the human brain contains roughly 86 billion neurons, each with an average of 7,000 synaptic connections. Theoretical models suggest a total storage capacity of 2.5 petabytes, though effective retrieval efficiency (ERE) fluctuates based on sleep quality and stress markers. In a study of 500 adults, those with a cortisol spike of 15% above baseline showed a 30% decrease in word-list recall accuracy. Conversely, high-alpha brainwave states correlate with a 12% increase in pattern recognition speed. These metrics highlight the importance of cognitive 'offloading' through journaling and tools, as the discrepancy between sensory input and processing capacity creates a constant state of 'attentional competition' within the neural architecture.`,
+    id: 'narrative-cartographer',
+    title: "The Cartographer's Dilemma",
+    tier: 'Narrative',
+    wordCount: 550,
+    content: `Elias worked by the flickering light of a single tallow candle, the scent of parched vellum and old ink heavy in the air. Outside, the storm lashed against the stone walls of the citadel, a rhythmic, booming sound that shook the very floorboards. His pen, a sharpened goose quill, scratched across the map, tracing the jagged coastlines of a continent that hadn't existed on any chart six months ago. The parchment felt rough beneath his calloused fingertips, and the salt-spray from the window tasted metallic on his tongue. He paused, his gaze fixed on the Great Void—a vast, unmapped expanse in the center of the scroll. Rumors spoke of floating isles and singing tides, but Elias knew only the cold geometry of the stars. His left shoulder ached with a dull, persistent throb, a reminder of the voyage that had nearly claimed his life. He dipped the quill, the ink pot clinking softly against the desk, and prepared to draw the line that would redefine the world. He was not just mapping land; he was mapping the end of an era.`,
     quiz: [
-      {
-        question: "What is the estimated bits per second processed by conscious awareness?",
-        options: ["10 million", "40 to 60", "2.5 petabytes", "86 billion"],
-        answerIndex: 1
-      },
-      {
-        question: "How many neurons are roughly in the human brain?",
-        options: ["10 million", "2.5 petabytes", "86 billion", "7,000"],
-        answerIndex: 2
-      },
-      {
-        question: "What was the effect of a 15% cortisol spike on recall?",
-        options: ["12% increase", "30% decrease", "99% reduction", "No change"],
-        answerIndex: 1
-      }
+      { question: "What was the primary smell mentioned in the room?", options: ["Rain and stone", "Vellum and ink", "Tallow and smoke", "Sea salt"], answerIndex: 1 },
+      { question: "Which physical ailment did Elias suffer from?", options: ["Blurred vision", "Aching shoulder", "Shaking hands", "Headache"], answerIndex: 1 },
+      { question: "What was the weather like outside?", options: ["Quiet and foggy", "A heavy storm", "Light snow", "Heatwave"], answerIndex: 1 }
     ]
   }
 ];
