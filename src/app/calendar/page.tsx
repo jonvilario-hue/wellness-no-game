@@ -42,7 +42,8 @@ import {
   ChevronUpSquare,
   ChevronDownSquare,
   AlignJustify,
-  ShieldCheck
+  ShieldCheck,
+  Eye
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -107,11 +108,7 @@ function AmalgamatedAnalytics() {
     const topReading = [...readingLogs].sort((a, b) => b.wpm - a.wpm)[0];
     const topStillness = [...stillnessLogs].sort((a, b) => (b.postCalm || 0) - (a.postCalm || 0))[0];
     const topComm = [...communicationLogs].sort((a, b) => (b.effectiveness || 0) - (a.effectiveness || 0))[0];
-    
-    // Financial discipline: Largest transaction or lowest spend day
     const topFin = [...transactions].sort((a, b) => b.amount - a.amount)[0];
-    
-    // Study depth: highest card review day
     const topStudy = Object.entries(studyActivity)
       .sort(([, a], [_, b]) => b.cardsReviewed - a.cardsReviewed)[0];
 
@@ -209,7 +206,7 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs } = useWellnessData();
+  const { trackingEnabled, toggleTracking, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs } = useWellnessData();
   const { entries } = useHydratedJournalStore();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
@@ -220,12 +217,6 @@ export default function CalendarPage() {
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
   const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
-
-  // Builder state
-  const [newPlanName, setNewPlanName] = useState('');
-  const [newPlanDesc, setNewPlanDesc] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<PlanCategory[]>([]);
-  const [newActivities, setNewActivities] = useState<PlanActivity[]>([]);
 
   const availablePlans = useMemo(() => {
     const presets = presetPlans.filter(p => !deletedPresetIds.includes(p.id));
@@ -808,17 +799,34 @@ export default function CalendarPage() {
               <Card className="bg-primary/5 border-primary/10 overflow-hidden">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-primary" />
-                    Amalgamated Score
+                    <ShieldCheck className="w-4 h-4 text-primary" />
+                    Tracking Core
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="text-center py-2">
-                    <span className="text-4xl font-black">92%</span>
-                  </div>
                   <p className="text-[10px] text-muted-foreground leading-relaxed italic">
-                    Cross-module analysis: Financial discipline and Movement consistency are perfectly aligned this week.
+                    Manage which modules are actively synced to your analytics. Toggling off hides them from view but <b>never</b> deletes historical data.
                   </p>
+                  <div className="space-y-2">
+                    {[
+                      { id: 'Movement', icon: HeartPulse, label: 'Body Mastery' },
+                      { id: 'Stillness', icon: Waves, label: 'Mental Reset' },
+                      { id: 'Communication', icon: MessageSquare, label: 'Dialogue Drill' },
+                      { id: 'Speed Reading', icon: Zap, label: 'Cognitive Velocity' },
+                    ].map(track => (
+                      <div key={track.id} className="flex items-center justify-between p-2 rounded-lg bg-background border border-primary/5">
+                        <div className="flex items-center gap-2">
+                          <track.icon className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span className="text-[10px] font-bold uppercase">{track.label}</span>
+                        </div>
+                        <Switch 
+                          size="sm" 
+                          checked={trackingEnabled[track.id]} 
+                          onCheckedChange={() => toggleTracking(track.id)} 
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>

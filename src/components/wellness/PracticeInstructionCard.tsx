@@ -34,7 +34,6 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   const [timeLeft, setTimeLeft] = useState(exercise.duration);
   const [isComplete, setIsComplete] = useState(false);
   const [showRatings, setShowAdditions] = useState(false);
-  const [trackNumbers, setTrackNumbers] = useState(false);
   
   const [difficulty, setDifficulty] = useState<number>(3);
   const [energy, setEnergy] = useState<'Low' | 'Medium' | 'High'>('Medium');
@@ -45,7 +44,10 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   const [trigger, setTrigger] = useState<string>('Proactive');
   const [commContext, setCommContext] = useState<string>('');
 
-  const { addMovementLog, addStillnessLog, addCommunicationLog, movementProgress } = useWellnessData();
+  const { 
+    addMovementLog, addStillnessLog, addCommunicationLog, 
+    movementProgress, trackingEnabled, toggleTracking 
+  } = useWellnessData();
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
   
@@ -53,6 +55,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
   const isCommunication = !isMovement && !isStillness;
 
+  const trackNumbers = trackingEnabled[exercise.id] || false;
   const bestProgress = movementProgress[exercise.id];
   const ExerciseIcon = exercise.icon;
 
@@ -144,12 +147,14 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>
             )}
-            {isMovement && (
-              <div className="flex items-center gap-2 ml-2">
-                <Label htmlFor={`track-toggle-${exercise.id}`} className="text-[10px] font-bold uppercase opacity-60">Track</Label>
-                <Switch id={`track-toggle-${exercise.id}`} checked={trackNumbers} onCheckedChange={setTrackNumbers} />
-              </div>
-            )}
+            <div className="flex items-center gap-2 ml-2">
+              <Label htmlFor={`track-toggle-${exercise.id}`} className="text-[10px] font-bold uppercase opacity-60">Track</Label>
+              <Switch 
+                id={`track-toggle-${exercise.id}`} 
+                checked={trackNumbers} 
+                onCheckedChange={() => toggleTracking(exercise.id)} 
+              />
+            </div>
           </div>
         </div>
         <CardDescription className="flex-grow pt-2">{exercise.description}</CardDescription>

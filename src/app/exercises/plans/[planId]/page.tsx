@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -13,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { Progress } from '@/components/ui/progress';
-import { Play, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Play, CheckCircle2, ChevronRight, Target, Brain, Activity } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -52,6 +53,7 @@ export default function PlanDetailPage() {
         <div className="max-w-3xl mx-auto py-6 space-y-8">
           <div className="space-y-4">
             <div className="space-y-1">
+              <Badge variant="secondary" className="uppercase font-black text-[9px] tracking-widest">{plan.category} Journey</Badge>
               <h1 className="text-4xl font-black uppercase tracking-tighter">{plan.title}</h1>
               <p className="text-xl text-muted-foreground italic">“{plan.tagline}”</p>
             </div>
@@ -70,8 +72,14 @@ export default function PlanDetailPage() {
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Sequence Pathway</h3>
             {plan.steps.map((day) => {
               const isCompleted = planProgress[planId]?.[day.day] || false;
+              const isPhaseHeader = day.title.includes('Phase');
+              
               return (
-                <Card key={day.day} className={cn("transition-all border-primary/10", isCompleted && "opacity-60 bg-muted/20")}>
+                <Card key={day.day} className={cn(
+                  "transition-all border-primary/10", 
+                  isCompleted && "opacity-60 bg-muted/20",
+                  !isCompleted && isPhaseHeader && "ring-1 ring-primary/20 shadow-sm"
+                )}>
                   <CardContent className="p-0">
                     <div className="flex items-center gap-4 p-4">
                       <div className="flex flex-col items-center justify-center w-12 h-12 rounded-xl bg-primary/5 text-primary">
@@ -79,7 +87,10 @@ export default function PlanDetailPage() {
                         <span className="text-lg font-black leading-none">{day.day}</span>
                       </div>
                       <div className="flex-grow min-w-0">
-                        <h4 className="font-bold text-lg truncate">{day.title}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-lg truncate">{day.title}</h4>
+                          {isPhaseHeader && !isCompleted && <Badge className="h-4 text-[8px] bg-primary/20 text-primary border-none">ACTIVE PHASE</Badge>}
+                        </div>
                         <div className="flex flex-wrap gap-2 mt-1">
                           {day.practices.map((p, idx) => (
                             <Badge key={idx} variant="secondary" className="text-[9px] uppercase tracking-tighter">
@@ -100,10 +111,10 @@ export default function PlanDetailPage() {
                     {!isCompleted && (
                       <div className="px-4 pb-4 flex gap-2">
                         {day.practices.map((p, idx) => {
-                          const practiceId = p.title.toLowerCase().replace(/ /g, '_');
+                          const tab = p.type === 'Speed Reading' ? 'speedreading' : p.type.toLowerCase();
                           return (
                             <Button key={idx} variant="outline" size="sm" asChild className="h-8 text-xs font-bold gap-2">
-                              <Link href={`/exercises?tab=${p.type.toLowerCase()}`}>
+                              <Link href={`/exercises?tab=${tab}`}>
                                 Launch {p.type} <ChevronRight className="w-3 h-3" />
                               </Link>
                             </Button>
@@ -118,9 +129,13 @@ export default function PlanDetailPage() {
           </div>
 
           <div className="pt-8 flex flex-col items-center gap-4">
-            <Button variant="ghost" className="text-muted-foreground text-xs font-bold" onClick={() => {}}>
-              Reset Plan Progress
-            </Button>
+            <div className="p-6 bg-muted/30 rounded-2xl border border-dashed text-center max-w-md">
+              <Lightbulb className="w-6 h-6 text-primary mx-auto mb-2" />
+              <h5 className="font-bold text-sm">How these are selected</h5>
+              <p className="text-xs text-muted-foreground mt-1">
+                Practices are chosen to ramp metabolic and cognitive demand. Phase 1 targets neural accessibility, Phase 2 builds structural endurance, and Phase 3 focuses on mastery integration.
+              </p>
+            </div>
           </div>
         </div>
       </main>

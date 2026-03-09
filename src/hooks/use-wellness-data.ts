@@ -1,3 +1,4 @@
+
 'use client';
 
 import { create } from 'zustand';
@@ -147,6 +148,7 @@ export const calculateStreak = (data: any[] | Record<string, boolean>): number =
 
 export type WellnessState = {
   lowEnergyMode: boolean;
+  trackingEnabled: Record<string, boolean>; // Global record of which exercises/categories have quantitative tracking on
   transactions: Transaction[];
   mealLogs: MealLog[];
   bodyMetrics: BodyMetric[];
@@ -171,6 +173,7 @@ export type WellnessState = {
   envelopes: Envelope[];
 
   setLowEnergyMode: (enabled: boolean) => void;
+  toggleTracking: (id: string) => void;
   addTransaction: (tx: Omit<Transaction, 'id'>) => void;
   addMealLog: (log: Omit<MealLog, 'id'>) => void;
   addBodyMetric: (metric: BodyMetric) => void;
@@ -204,6 +207,7 @@ export const useWellnessData = create<WellnessState>()(
   persist(
     (set, get) => ({
       lowEnergyMode: false,
+      trackingEnabled: {},
       transactions: [],
       mealLogs: [],
       bodyMetrics: [],
@@ -247,6 +251,12 @@ export const useWellnessData = create<WellnessState>()(
       ],
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
+      toggleTracking: (id) => set(s => ({
+        trackingEnabled: {
+          ...s.trackingEnabled,
+          [id]: !s.trackingEnabled[id]
+        }
+      })),
       addTransaction: (tx) => set(s => ({ transactions: [{ ...tx, id: crypto.randomUUID() }, ...s.transactions] })),
       addMealLog: (log) => set(s => ({ mealLogs: [{ ...log, id: crypto.randomUUID() }, ...s.mealLogs] })),
       addBodyMetric: (metric) => set(s => ({ bodyMetrics: [...s.bodyMetrics.filter(m => m.date !== metric.date), metric] })),
@@ -317,6 +327,7 @@ export const useWellnessData = create<WellnessState>()(
       onRehydrateStorage: () => (state) => {
         if (state) {
           if (!state.movementProgress) state.movementProgress = {};
+          if (!state.trackingEnabled) state.trackingEnabled = {};
         }
       }
     }

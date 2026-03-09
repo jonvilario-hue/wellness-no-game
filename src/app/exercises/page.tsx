@@ -1,33 +1,46 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import WellnessTabs from '@/components/wellness/WellnessTabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Rocket, ArrowRight, Info } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Rocket, ArrowRight, Info, Lightbulb } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { format } from 'date-fns';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
 import { wellnessPlans } from '@/data/wellness-plans';
 import { WellnessBalance } from '@/components/wellness/WellnessBalance';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { AssistantTooltip } from '@/components/assistant-tooltip';
 import Link from 'next/link';
 
-export default function ExercisesPage() {
+function ExercisesPageContent() {
   const [isOpen, setIsOpen] = useState(true);
   const [activeRoutineIds, setActiveRoutineIds] = useState<string[] | null>(null);
   const [activeRoutineName, setActiveRoutineName] = useState<string>("");
+  const searchParams = useSearchParams();
+  const activeTabRaw = searchParams.get('tab') || 'movement';
   
-  const { lowEnergyMode, setLowEnergyMode, movementLogs, stillnessLogs, completions, planProgress } = useWellnessData();
+  const activeTabFormatted = useMemo(() => {
+    switch(activeTabRaw) {
+      case 'movement': return 'Movement';
+      case 'stillness': return 'Stillness';
+      case 'communication': return 'Communication';
+      case 'speedreading': return 'Speed Reading';
+      default: return 'Movement';
+    }
+  }, [activeTabRaw]);
+  
+  const { lowEnergyMode, setLowEnergyMode, completions, planProgress } = useWellnessData();
   const { settings } = useDashboardSettings();
 
   useEffect(() => {
@@ -44,14 +57,19 @@ export default function ExercisesPage() {
 
   const streak = useMemo(() => calculateStreak(completions), [completions]);
 
+  // Tab-specific plans
+  const tabPlans = useMemo(() => {
+    return wellnessPlans.filter(p => p.category === activeTabFormatted);
+  }, [activeTabFormatted]);
+
   const activePlan = useMemo(() => {
-    return wellnessPlans.find(plan => {
+    return tabPlans.find(plan => {
       const progress = planProgress[plan.id];
       if (!progress) return false;
       const completedCount = Object.values(progress).filter(Boolean).length;
       return completedCount > 0 && completedCount < plan.steps.length;
     });
-  }, [planProgress]);
+  }, [planProgress, tabPlans]);
 
   if (activeRoutineIds) {
     return (
@@ -80,7 +98,7 @@ export default function ExercisesPage() {
                   <div className="flex items-center gap-3">
                     <Rocket className="w-5 h-5" />
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest opacity-80">Continue Journey</p>
+                      <p className="text-xs font-bold uppercase tracking-widest opacity-80">Continue {activeTabFormatted} Journey</p>
                       <p className="font-black text-lg">{activePlan.title}</p>
                     </div>
                   </div>
@@ -113,7 +131,6 @@ export default function ExercisesPage() {
                             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">Actionable wellness for body and brain. Log your daily reps.</p>
                           </div>
 
-                          {/* WELLNESS STREAK */}
                           <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
                               <div className="flex items-center gap-2">
                                   <Flame className="w-5 h-5 text-orange-500" />
@@ -126,39 +143,38 @@ export default function ExercisesPage() {
                       {/* PLANS SECTION */}
                       <div className="space-y-3 overflow-hidden">
                         <div className="flex items-center justify-between px-1">
-                          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Journey Plans</h3>
-                          <TooltipProvider>
-                            <Tooltip delayDuration={0}>
-                              <TooltipTrigger asChild>
-                                <button className="text-muted-foreground hover:text-primary transition-colors">
-                                  <Info className="w-3.5 h-3.5" />
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-[250px] text-[10px] leading-relaxed">
-                                Journey Plans are structured curricula (3-14 days) designed to build specific physiological foundations. 
-                                They progress from low-friction starts to high-intensity practices.
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{activeTabFormatted} Journey Plans</h3>
+                            <AssistantTooltip text="Journey Plans are structured curricula (3-14 days) following a 'Ramping' logic: Phase 1 (Low-Friction Start), Phase 2 (Building Capacity), and Phase 3 (Peak Intensity).">
+                              <button className="text-muted-foreground hover:text-primary transition-colors">
+                                <Info className="w-3.5 h-3.5" />
+                              </button>
+                            </AssistantTooltip>
+                          </div>
                         </div>
                         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
-                          {wellnessPlans.map((plan) => (
-                            <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[260px] sm:min-w-[280px]">
-                              <Card className="hover:border-primary/50 transition-all h-full group">
-                                <CardHeader className="p-4">
-                                  <CardTitle className="text-base">{plan.title}</CardTitle>
-                                  <CardDescription className="text-[10px] uppercase font-black">{plan.steps.length} DAYS</CardDescription>
-                                </CardHeader>
-                                <CardContent className="p-4 pt-0">
-                                  <p className="text-xs text-muted-foreground line-clamp-2">{plan.description}</p>
-                                </CardContent>
-                              </Card>
-                            </Link>
-                          ))}
+                          {tabPlans.length === 0 ? (
+                            <div className="w-full py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-sm">
+                              New {activeTabFormatted} plans in development.
+                            </div>
+                          ) : (
+                            tabPlans.map((plan) => (
+                              <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[260px] sm:min-w-[280px]">
+                                <Card className="hover:border-primary/50 transition-all h-full group">
+                                  <CardHeader className="p-4">
+                                    <CardTitle className="text-base">{plan.title}</CardTitle>
+                                    <CardDescription className="text-[10px] uppercase font-black">{plan.steps.length} DAYS</CardDescription>
+                                  </CardHeader>
+                                  <CardContent className="p-4 pt-0">
+                                    <p className="text-xs text-muted-foreground line-clamp-2">{plan.description}</p>
+                                  </CardContent>
+                                </Card>
+                              </Link>
+                            ))
+                          )}
                         </div>
                       </div>
 
-                      {/* GLOBAL BALANCE */}
                       <WellnessBalance />
                   </CollapsibleContent>
 
@@ -197,4 +213,12 @@ export default function ExercisesPage() {
       </main>
     </>
   );
+}
+
+export default function ExercisesPage() {
+  return (
+    <Suspense fallback={<div>Loading Lab...</div>}>
+      <ExercisesPageContent />
+    </Suspense>
+  )
 }
