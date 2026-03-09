@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -38,7 +37,10 @@ import {
   Zap,
   Activity,
   Sparkles,
-  BarChart3
+  BarChart3,
+  ChevronUpSquare,
+  ChevronDownSquare,
+  AlignJustify
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -185,6 +187,7 @@ export default function CalendarPage() {
     activePlanIds, 
     customPlans, 
     deletedPresetIds, 
+    planOrder,
     togglePlan, 
     deletePlan, 
     resetDefaults, 
@@ -192,6 +195,7 @@ export default function CalendarPage() {
     updateActivityStatus,
     addCustomPlan,
     updateCustomPlan,
+    reorderPlan,
     _hasHydrated 
   } = useCalendarPlansStore();
 
@@ -199,6 +203,7 @@ export default function CalendarPage() {
   const { entries } = useHydratedJournalStore();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
+  const [routinesView, setRoutinesView] = useState<'grid' | 'list'>('grid');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [plansOpen, setPlansOpen] = useState(true);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
@@ -214,8 +219,20 @@ export default function CalendarPage() {
 
   const availablePlans = useMemo(() => {
     const presets = presetPlans.filter(p => !deletedPresetIds.includes(p.id));
-    return [...presets, ...customPlans];
-  }, [deletedPresetIds, customPlans]);
+    const all = [...presets, ...customPlans];
+    
+    if (planOrder.length === 0) return all;
+
+    // Sort by planOrder
+    return [...all].sort((a, b) => {
+      const idxA = planOrder.indexOf(a.id);
+      const idxB = planOrder.indexOf(b.id);
+      if (idxA === -1 && idxB === -1) return 0;
+      if (idxA === -1) return 1;
+      if (idxB === -1) return -1;
+      return idxA - idxB;
+    });
+  }, [deletedPresetIds, customPlans, planOrder]);
 
   const activePlans = useMemo(() => {
     return availablePlans.filter(p => activePlanIds.includes(p.id));
@@ -450,6 +467,14 @@ export default function CalendarPage() {
                   <LayoutGrid className="w-5 h-5 text-primary" />
                   Routines
                 </h2>
+                <div className="bg-muted p-1 rounded-lg flex items-center gap-1">
+                  <Button variant={routinesView === 'grid' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-3 text-[10px] font-bold uppercase" onClick={() => setRoutinesView('grid')}>
+                    <LayoutGrid className="w-3 h-3 mr-1.5" /> Squared
+                  </Button>
+                  <Button variant={routinesView === 'list' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-3 text-[10px] font-bold uppercase" onClick={() => setRoutinesView('list')}>
+                    <AlignJustify className="w-3 h-3 mr-1.5" /> List
+                  </Button>
+                </div>
                 {deletedPresetIds.length > 0 && (
                   <Button variant="outline" size="sm" onClick={resetDefaults} className="h-7 text-[10px] uppercase font-bold">
                     <RotateCcw className="w-3 h-3 mr-1" /> Reset Defaults
@@ -462,78 +487,144 @@ export default function CalendarPage() {
                 </Button>
               </CollapsibleTrigger>
             </div>
-            <CollapsibleContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
-              {availablePlans.map(plan => (
-                <Card key={plan.id} className={cn("transition-all relative group h-fit", activePlanIds.includes(plan.id) && "border-primary bg-primary/5 shadow-sm")}>
-                  <CardHeader className="p-4 pb-2">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-sm font-bold pr-8">{plan.name}</CardTitle>
-                      <div className="flex items-center gap-2">
-                        <Switch 
-                          checked={activePlanIds.includes(plan.id)} 
-                          onCheckedChange={() => togglePlan(plan.id)}
-                        />
-                      </div>
-                    </div>
-                    <CardDescription className="text-xs line-clamp-2">{plan.description}</CardDescription>
-                  </CardHeader>
-                  
-                  {expandedPlanId === plan.id && (
-                    <CardContent className="p-4 pt-0 space-y-3 animate-in fade-in slide-in-from-top-1">
-                      <Separator className="opacity-20" />
-                      <div className="space-y-2">
-                        {plan.activities.map((act) => (
-                          <div key={act.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 border border-primary/5">
-                            <div className="flex items-center gap-2">
-                              <div className="w-1 h-3 rounded-full bg-primary/40" />
-                              <div>
-                                <p className="text-[10px] font-bold leading-none">{act.name}</p>
-                                <p className="text-[8px] text-muted-foreground uppercase mt-1">{act.timeOfDay || 'Anytime'} • {act.duration}m</p>
-                              </div>
-                            </div>
-                            <Badge variant="outline" className="text-[7px] h-3.5 uppercase font-black px-1.5">{act.recurrence}</Badge>
+            <CollapsibleContent className={cn(
+              "pb-4 transition-all duration-500",
+              routinesView === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" : "flex flex-col gap-3"
+            )}>
+              {availablePlans.map((plan, index) => (
+                <Card key={plan.id} className={cn(
+                  "transition-all relative group h-fit", 
+                  activePlanIds.includes(plan.id) && "border-primary bg-primary/5 shadow-sm",
+                  routinesView === 'list' && "flex items-center justify-between py-2 px-4"
+                )}>
+                  {routinesView === 'grid' ? (
+                    <>
+                      <CardHeader className="p-4 pb-2">
+                        <div className="flex justify-between items-start">
+                          <CardTitle className="text-sm font-bold pr-8">{plan.name}</CardTitle>
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
+                              <ChevronUpSquare className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
+                              <ChevronDownSquare className="w-4 h-4" />
+                            </Button>
+                            <div className="w-px h-4 bg-border mx-1" />
+                            <Switch 
+                              checked={activePlanIds.includes(plan.id)} 
+                              onCheckedChange={() => togglePlan(plan.id)}
+                            />
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  )}
-
-                  <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                    <div className="flex gap-2 items-center">
-                      <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">{plan.categories[0]}</Badge>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-auto p-0 gap-1 text-[9px] text-muted-foreground uppercase font-black hover:text-primary transition-colors"
-                        onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
-                      >
-                        <List className="w-3 h-3" />
-                        {plan.activities.length} Steps
-                        {expandedPlanId === plan.id ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
-                      </Button>
-                    </div>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {!plan.isPreset && (
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenBuilder(plan)}>
-                          <Edit className="w-3.5 h-3.5" />
-                        </Button>
+                        </div>
+                        <CardDescription className="text-xs line-clamp-2">{plan.description}</CardDescription>
+                      </CardHeader>
+                      
+                      {expandedPlanId === plan.id && (
+                        <CardContent className="p-4 pt-0 space-y-3 animate-in fade-in slide-in-from-top-1">
+                          <Separator className="opacity-20" />
+                          <div className="space-y-2">
+                            {plan.activities.map((act) => (
+                              <div key={act.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 border border-primary/5">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-1 h-3 rounded-full bg-primary/40" />
+                                  <div>
+                                    <p className="text-[10px] font-bold leading-none">{act.name}</p>
+                                    <p className="text-[8px] text-muted-foreground uppercase mt-1">{act.timeOfDay || 'Anytime'} • {act.duration}m</p>
+                                  </div>
+                                </div>
+                                <Badge variant="outline" className="text-[7px] h-3.5 uppercase font-black px-1.5">{act.recurrence}</Badge>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
                       )}
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                        onClick={() => deletePlan(plan.id)}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  </CardFooter>
+
+                      <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                        <div className="flex gap-2 items-center">
+                          <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">{plan.categories[0]}</Badge>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-auto p-0 gap-1 text-[9px] text-muted-foreground uppercase font-black hover:text-primary transition-colors"
+                            onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
+                          >
+                            <List className="w-3 h-3" />
+                            {plan.activities.length} Steps
+                            {expandedPlanId === plan.id ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+                          </Button>
+                        </div>
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {!plan.isPreset && (
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenBuilder(plan)}>
+                              <Edit className="w-3.5 h-3.5" />
+                            </Button>
+                          )}
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                            onClick={() => deletePlan(plan.id)}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </CardFooter>
+                    </>
+                  ) : (
+                    // LIST VIEW
+                    <>
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
+                            <ChevronUpSquare className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
+                            <ChevronDownSquare className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold truncate">{plan.name}</p>
+                            <Badge variant="outline" className="text-[8px] h-4 py-0 uppercase">{plan.categories[0]}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground truncate">{plan.description}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 pl-4 border-l ml-4">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 gap-1.5 text-[9px] font-black uppercase"
+                          onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
+                        >
+                          {plan.activities.length} Steps
+                          {expandedPlanId === plan.id ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+                        </Button>
+                        
+                        <div className="flex items-center gap-3">
+                          {!plan.isPreset && (
+                            <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleOpenBuilder(plan)}>
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          )}
+                          <Switch 
+                            checked={activePlanIds.includes(plan.id)} 
+                            onCheckedChange={() => togglePlan(plan.id)}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </Card>
               ))}
-              <Card className="border-dashed cursor-pointer hover:bg-primary/[0.02] flex flex-col items-center justify-center p-6 text-center h-full min-h-[120px] transition-colors" onClick={() => handleOpenBuilder()}>
-                <Plus className="w-8 h-8 text-muted-foreground mb-2" />
+              <Card className={cn(
+                "border-dashed cursor-pointer hover:bg-primary/[0.02] flex items-center justify-center transition-colors",
+                routinesView === 'grid' ? "flex-col p-6 text-center h-full min-h-[120px]" : "py-3"
+              )} onClick={() => handleOpenBuilder()}>
+                <Plus className={cn("text-muted-foreground mb-2", routinesView === 'grid' ? "w-8 h-8" : "w-4 h-4 mr-2")} />
                 <p className="text-sm font-bold">New Custom Plan</p>
-                <p className="text-xs text-muted-foreground">Syncs with all category views</p>
+                {routinesView === 'grid' && <p className="text-xs text-muted-foreground">Syncs with all category views</p>}
               </Card>
             </CollapsibleContent>
           </Collapsible>

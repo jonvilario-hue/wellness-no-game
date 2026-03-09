@@ -10,6 +10,7 @@ interface CalendarPlansState {
   activePlanIds: string[];
   customPlans: CalendarPlan[];
   deletedPresetIds: string[]; // Track which preset plans the user has "deleted"
+  planOrder: string[]; // List of IDs to maintain manual sorting
   activityInstances: Record<string, CalendarActivityInstance[]>; // key: YYYY-MM-DD
   
   togglePlan: (planId: string) => void;
@@ -21,6 +22,9 @@ interface CalendarPlansState {
   syncFromTracker: (category: PlanCategory, activityName: string) => { matched: boolean; instanceId?: string };
   addAdHocActivity: (date: string, activity: Partial<CalendarActivityInstance>) => void;
   
+  // Sorting
+  reorderPlan: (planId: string, direction: 'up' | 'down') => void;
+
   // Study Tool Integration
   addStudySessionEvent: (date: string, toolId: string, resourceId: string, name: string, time?: string) => string;
   markStudySessionComplete: (toolId: string, resourceId: string) => void;
@@ -35,6 +39,7 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
       activePlanIds: [],
       customPlans: [],
       deletedPresetIds: [],
+      planOrder: [],
       activityInstances: {},
       _hasHydrated: false,
 
@@ -57,19 +62,21 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
           return {
             activePlanIds: state.activePlanIds.filter(id => id !== planId),
             customPlans: state.customPlans.filter(p => p.id !== planId),
+            planOrder: state.planOrder.filter(id => id !== planId),
             deletedPresetIds: isPreset ? [...state.deletedPresetIds, planId] : state.deletedPresetIds
           };
         });
       },
 
       resetDefaults: () => {
-        set({ deletedPresetIds: [] });
+        set({ deletedPresetIds: [], planOrder: [] });
       },
 
       addCustomPlan: (plan) => {
         set((state) => ({
           customPlans: [...state.customPlans, plan],
-          activePlanIds: [...state.activePlanIds, plan.id]
+          activePlanIds: [...state.activePlanIds, plan.id],
+          planOrder: [plan.id, ...state.planOrder]
         }));
       },
 
@@ -77,6 +84,31 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
         set((state) => ({
           customPlans: state.customPlans.map(p => p.id === planId ? { ...p, ...updates } : p)
         }));
+      },
+
+      reorderPlan: (planId, direction) => {
+        const { planOrder } = get();
+        // If order is empty, initialize it with current available plans
+        let currentOrder = planOrder.length > 0 ? [...planOrder] : [];
+        
+        if (currentOrder.length === 0) {
+          // Initialize order if it's the first move
+          const customIds = get().customPlans.map(p => p.id);
+          const presetIds = presetPlans.filter(p => !get().deletedPresetIds.includes(p.id)).map(p => p.id);
+          currentOrder = [...presetIds, ...customIds];
+        }
+
+        const index = currentOrder.indexOf(planId);
+        if (index === -1) return;
+
+        const newIndex = direction === 'up' ? index - 1 : index + 1;
+        if (newIndex < 0 || newIndex >= currentOrder.length) return;
+
+        const updatedOrder = [...currentOrder];
+        const [moved] = updatedOrder.splice(index, 1);
+        updatedOrder.splice(newIndex, 0, moved);
+
+        set({ planOrder: updatedOrder });
       },
 
       updateActivityStatus: (date, instanceId, status, source) => {
@@ -186,7 +218,7 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
       }
     }),
     {
-      name: 'calendar-plans-storage-v3',
+      name: 'calendar-plans-storage-v4',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
