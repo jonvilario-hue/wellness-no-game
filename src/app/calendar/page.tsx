@@ -672,38 +672,76 @@ export default function CalendarPage() {
                   <CardDescription>Master schedule: Plans + Direct Wellness & Reflection Logs.</CardDescription>
                 </div>
                 <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
-                  <Button variant={view === 'month' ? 'secondary' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
-                  <Button variant={view === 'week' ? 'secondary' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('week')}>Week</Button>
-                  <Button variant={view === 'day' ? 'secondary' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('day')}>Day</Button>
+                  <Button variant={view === 'month' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
+                  <Button variant={view === 'week' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('week')}>Week</Button>
+                  <Button variant={view === 'day' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('day')}>Day</Button>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
                 {view === 'month' && (
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={handleDayClick}
-                    className="w-full"
-                    components={{
-                      DayContent: ({ date }) => {
-                        const tasks = getTasksForDate(date);
-                        const hasActive = tasks.length > 0;
+                  <div className="space-y-6">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={handleDayClick}
+                      className="w-full"
+                      components={{
+                        DayContent: ({ date }) => {
+                          const tasks = getTasksForDate(date);
+                          const hasActive = tasks.length > 0;
+                          
+                          return (
+                            <div className="relative w-full h-full flex items-center justify-center">
+                              <span className="relative z-10">{date.getDate()}</span>
+                              {hasActive && (
+                                <div className="absolute bottom-1 flex gap-0.5">
+                                  {tasks.slice(0, 4).map((t, idx) => (
+                                    <div key={idx} className="w-1 h-1 rounded-full" style={{ backgroundColor: (t as any).planColor || 'hsl(var(--primary))' }} />
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        }
+                      }}
+                    />
+                    
+                    {selectedDate && (
+                      <div className="px-6 pb-6 pt-2 border-t border-primary/5 animate-in fade-in slide-in-from-top-2">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                            <ListChecks className="w-3 h-3 text-primary" /> Agenda: {format(selectedDate, 'MMM do')}
+                          </h3>
+                          <Badge variant="outline" className="text-[10px] font-bold">{todaysTasks.length} Logs</Badge>
+                        </div>
                         
-                        return (
-                          <div className="relative w-full h-full flex items-center justify-center">
-                            <span className="relative z-10">{date.getDate()}</span>
-                            {hasActive && (
-                              <div className="absolute bottom-1 flex gap-0.5">
-                                {tasks.slice(0, 4).map((t, idx) => (
-                                  <div key={idx} className="w-1 h-1 rounded-full" style={{ backgroundColor: (t as any).planColor || 'hsl(var(--primary))' }} />
-                                ))}
-                              </div>
-                            )}
+                        {todaysTasks.length === 0 ? (
+                          <div className="py-10 text-center border-2 border-dashed rounded-xl bg-muted/10">
+                            <p className="text-sm font-bold text-muted-foreground italic">No activity logged for this date.</p>
                           </div>
-                        );
-                      }
-                    }}
-                  />
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {todaysTasks.map(task => (
+                              <div key={task.instanceId} className={cn(
+                                "flex items-center gap-4 p-4 rounded-2xl border bg-card transition-all group",
+                                task.status === 'completed' && "opacity-60 bg-muted/20"
+                              )}>
+                                <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
+                                <div className="flex-grow">
+                                  <p className="font-bold text-sm">{task.name}</p>
+                                  <div className="flex gap-2 mt-1">
+                                    <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
+                                    <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
+                                  </div>
+                                </div>
+                                {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 {view === 'week' && (
