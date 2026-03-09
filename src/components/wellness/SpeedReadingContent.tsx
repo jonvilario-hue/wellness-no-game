@@ -24,6 +24,7 @@ import { AssistantTooltip } from "@/components/assistant-tooltip"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { useWellnessData } from "@/hooks/use-wellness-data"
+import { JourneyPlansSection } from "./JourneyPlansSection"
 
 const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: string }[] = [
   { 
@@ -68,7 +69,6 @@ export default function SpeedReadingContent() {
   const filteredPassages = useMemo(() => {
     let list = readingPassages;
     if (lowEnergyMode) {
-      // In low energy mode, we only show Casual tier to keep cognitive load low
       list = list.filter(p => p.tier === 'Casual');
     }
     return list.filter(p => selectedTier === 'All' || p.tier === selectedTier);
@@ -106,6 +106,8 @@ export default function SpeedReadingContent() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <SpeedReadingStats />
+
+      <JourneyPlansSection category="Speed Reading" />
 
       {lowEnergyMode && (
         <Card className="bg-amber-500/5 border-amber-500/20 border-dashed animate-in fade-in slide-in-from-top-4">

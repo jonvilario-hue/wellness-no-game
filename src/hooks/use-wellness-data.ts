@@ -148,7 +148,7 @@ export const calculateStreak = (data: any[] | Record<string, boolean>): number =
 
 export type WellnessState = {
   lowEnergyMode: boolean;
-  trackingEnabled: Record<string, boolean>; // Global record of which exercises/categories have quantitative tracking on
+  trackingEnabled: Record<string, boolean>; 
   transactions: Transaction[];
   mealLogs: MealLog[];
   bodyMetrics: BodyMetric[];
@@ -164,6 +164,7 @@ export type WellnessState = {
   planProgress: Record<string, Record<number, boolean>>;
   completions: Record<string, boolean>;
   movementProgress: Record<string, { bestReps?: number; bestHoldTime?: number }>;
+  dismissedPlans: Record<string, boolean>; // key is category
   
   assets: Record<string, number>;
   budgets: Budget[];
@@ -192,6 +193,7 @@ export type WellnessState = {
   deleteMealLog: (id: string) => void;
   deleteTransaction: (id: string) => void;
   togglePlanDay: (planId: string, day: number) => void;
+  setPlanDismissed: (category: string, dismissed: boolean) => void;
   
   setBudget: (category: string, limit: number) => void;
   addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'currentAmount'>) => void;
@@ -235,6 +237,7 @@ export const useWellnessData = create<WellnessState>()(
       planProgress: {},
       completions: {},
       movementProgress: {},
+      dismissedPlans: {},
       
       assets: { 'Cash': 1250, 'Savings': 4500, 'Investments': 8200 },
       budgets: [
@@ -314,6 +317,13 @@ export const useWellnessData = create<WellnessState>()(
         };
       }),
 
+      setPlanDismissed: (category, dismissed) => set(s => ({
+        dismissedPlans: {
+          ...s.dismissedPlans,
+          [category]: dismissed
+        }
+      })),
+
       setBudget: (category, limit) => set(s => ({ budgets: [...s.budgets.filter(b => b.category !== category), { category, limit, period: 'monthly' }] })),
       addSavingsGoal: (goal) => set(s => ({ savingsGoals: [...s.savingsGoals, { ...goal, id: crypto.randomUUID(), currentAmount: 0 }] })),
       contributeToGoal: (id, amount) => set(s => ({ savingsGoals: s.savingsGoals.map(g => g.id === id ? { ...g, currentAmount: g.currentAmount + amount } : g) })),
@@ -327,11 +337,12 @@ export const useWellnessData = create<WellnessState>()(
       },
     }),
     {
-      name: 'wellness-data-storage-v6',
+      name: 'wellness-data-storage-v7',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) {
           if (!state.movementProgress) state.movementProgress = {};
+          if (!state.dismissedPlans) state.dismissedPlans = {};
           if (!state.trackingEnabled) state.trackingEnabled = {
             'Movement': true,
             'Stillness': true,

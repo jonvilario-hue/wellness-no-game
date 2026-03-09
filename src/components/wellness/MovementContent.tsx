@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils"
 import CategoryOverview from "./CategoryOverview"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { MovementAnalytics } from "./MovementAnalytics"
+import { JourneyPlansSection } from "./JourneyPlansSection"
 
 const categories: ExerciseCategory[] = ['Mind-Body', 'Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
@@ -118,6 +119,8 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
     <div className="space-y-8">
         <MovementDashboard />
         
+        <JourneyPlansSection category="Movement" />
+
         {lowEnergyMode && (
           <Card className="bg-amber-500/5 border-amber-500/20 border-dashed animate-in fade-in slide-in-from-top-4">
             <CardHeader className="pb-2">

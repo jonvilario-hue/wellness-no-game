@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo, useState } from "react"
@@ -20,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { StillnessAnalytics } from "./StillnessAnalytics"
+import { JourneyPlansSection } from "./JourneyPlansSection"
 
 const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
 
@@ -47,7 +49,6 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
     const filteredPractices = useMemo(() => {
       let list = allPractices.filter(p => filterTags.length === 0 || filterTags.every(t => p.tags.includes(t)));
       if (lowEnergyMode) {
-        // Stillness is generally low effort, but "quick" is best for MVD
         list = list.filter(p => p.tags.includes('quick') || p.estimatedMinutes <= 2);
       }
       return list;
@@ -117,6 +118,8 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
     return (
      <div className="space-y-8">
         <StillnessDashboard />
+
+        <JourneyPlansSection category="Stillness" />
 
         {lowEnergyMode && (
           <Card className="bg-blue-500/5 border-blue-500/20 border-dashed animate-in fade-in slide-in-from-top-4">

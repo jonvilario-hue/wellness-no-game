@@ -28,6 +28,7 @@ import { CommunicationDashboard } from "./CommunicationDashboard"
 import { CommunicationAnalytics } from "./CommunicationAnalytics"
 import { cn } from "@/lib/utils"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
+import { JourneyPlansSection } from "./JourneyPlansSection"
 
 const categories: CommunicationCategory[] = [
   'Vocal Mechanics', 
@@ -134,6 +135,8 @@ export default function CommunicationContent() {
     return (
      <div className="space-y-8">
         <CommunicationDashboard />
+
+        <JourneyPlansSection category="Communication" />
 
         {lowEnergyMode && (
           <Card className="bg-purple-500/5 border-purple-500/20 border-dashed animate-in fade-in slide-in-from-top-4">
