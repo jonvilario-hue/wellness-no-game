@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from "react"
@@ -142,7 +141,7 @@ export default function SpeedReadingContent() {
 
             <AssistantTooltip text="Filter passages by cognitive load tier. Your PBs are tracked separately for each tier.">
               <div className="flex items-center gap-2 p-1 bg-muted rounded-lg border">
-                {(['All', 'Casual', 'Technical', 'Dense Data', 'Narrative'] as const).map(tier => (
+                {(['Narrative', 'Dense Data', 'Technical', 'Casual', 'All'] as const).map(tier => (
                   <Button 
                     key={tier}
                     variant={selectedTier === tier ? 'secondary' : 'ghost'}
