@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
@@ -84,13 +83,15 @@ function ExercisesPageContent() {
                             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">Actionable wellness for body and brain. Log your daily reps.</p>
                           </div>
 
-                          <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
-                              <div className="flex items-center gap-2">
-                                  <Flame className="w-5 h-5 text-orange-500" />
-                                  <span className="text-xl font-black">{streak}</span>
-                                  <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
-                              </div>
-                          </Card>
+                          <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice. Consistency is the primary driver of epigenetic and neurological adaptation.">
+                            <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit mx-auto">
+                                <div className="flex items-center gap-2">
+                                    <Flame className="w-5 h-5 text-orange-500" />
+                                    <span className="text-xl font-black">{streak}</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
+                                </div>
+                            </Card>
+                          </AssistantTooltip>
                       </div>
 
                       <WellnessBalance />
@@ -109,20 +110,22 @@ function ExercisesPageContent() {
                 </Collapsible>
 
                 <div className="flex flex-col items-center gap-4">
-                    <div className={cn(
-                        "flex items-center gap-3 px-4 py-2 rounded-full border transition-all",
-                        lowEnergyMode ? "bg-amber-500/10 border-amber-500/30" : "bg-muted/50 border-transparent"
-                    )}>
-                        {lowEnergyMode ? <ZapOff className="w-4 h-4 text-amber-500" /> : <Zap className="w-4 h-4 text-primary" />}
-                        <Label htmlFor="mvd-toggle" className="text-sm font-bold cursor-pointer">
-                            Low Energy Mode (MVD)
-                        </Label>
-                        <Switch 
-                            id="mvd-toggle" 
-                            checked={lowEnergyMode} 
-                            onCheckedChange={setLowEnergyMode}
-                        />
-                    </div>
+                    <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your entire library to show only 'zero-friction' practices. Use this when your cognitive or physical battery is low to maintain your habit streak without risking burnout.">
+                      <div className={cn(
+                          "flex items-center gap-3 px-4 py-2 rounded-full border transition-all",
+                          lowEnergyMode ? "bg-amber-500/10 border-amber-500/30" : "bg-muted/50 border-transparent"
+                      )}>
+                          {lowEnergyMode ? <ZapOff className="w-4 h-4 text-amber-500" /> : <Zap className="w-4 h-4 text-primary" />}
+                          <Label htmlFor="mvd-toggle" className="text-sm font-bold cursor-pointer">
+                              Low Energy Mode (MVD)
+                          </Label>
+                          <Switch 
+                              id="mvd-toggle" 
+                              checked={lowEnergyMode} 
+                              onCheckedChange={setLowEnergyMode}
+                          />
+                      </div>
+                    </AssistantTooltip>
                 </div>
             </div>
             

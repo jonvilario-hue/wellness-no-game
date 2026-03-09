@@ -6,6 +6,7 @@ import { Flame, Clock, Trophy } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { TodayScheduleWidget } from "./TodayScheduleWidget";
+import { AssistantTooltip } from "../assistant-tooltip";
 
 export function MovementDashboard() {
   const { movementLogs } = useWellnessData();
@@ -32,29 +33,35 @@ export function MovementDashboard() {
   return (
     <div className="space-y-6 mb-8">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Flame className="w-5 h-5 text-warning mb-1" />
-            <p className="text-2xl font-black">{stats.streak}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Day Streak</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="Your current consecutive days of movement. Daily physical activity signals the body to maintain higher metabolic efficiency and brain-derived neurotrophic factor (BDNF) levels.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Flame className="w-5 h-5 text-warning mb-1" />
+              <p className="text-2xl font-black">{stats.streak}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Day Streak</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
         
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Clock className="w-5 h-5 text-primary mb-1" />
-            <p className="text-2xl font-black">{stats.weekMovementMins}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Minutes</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="Total minutes spent in active movement this week. Aim for at least 150 minutes of moderate activity per week for optimal cardiovascular and cognitive health.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Clock className="w-5 h-5 text-primary mb-1" />
+              <p className="text-2xl font-black">{stats.weekMovementMins}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Minutes</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
 
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Trophy className="w-5 h-5 text-primary opacity-80 mb-1" />
-            <p className="text-sm font-bold truncate w-full">{stats.mostPracticed}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Choice</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="The physical drill you return to most frequently. Mastering one form deeply builds significant neuromuscular efficiency compared to constant variety.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Trophy className="w-5 h-5 text-primary opacity-80 mb-1" />
+              <p className="text-sm font-bold truncate w-full">{stats.mostPracticed}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Choice</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
       </div>
 
       <TodayScheduleWidget category="Movement" />

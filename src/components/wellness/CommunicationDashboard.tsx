@@ -6,6 +6,7 @@ import { Flame, Clock, Trophy, MessageSquare } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { TodayScheduleWidget } from "./TodayScheduleWidget";
+import { AssistantTooltip } from "../assistant-tooltip";
 
 export function CommunicationDashboard() {
   const { communicationLogs } = useWellnessData();
@@ -35,29 +36,35 @@ export function CommunicationDashboard() {
   return (
     <div className="space-y-6 mb-8">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Flame className="w-5 h-5 text-orange-500 mb-1" />
-            <p className="text-2xl font-black">{stats.streak}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Persuasion Streak</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="Consecutive days practicing interpersonal or vocal skills. Persuasion and clarity are social muscles that require frequent 'resistance training' through real or simulated dialogue.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Flame className="w-5 h-5 text-orange-500 mb-1" />
+              <p className="text-2xl font-black">{stats.streak}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Persuasion Streak</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
         
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Clock className="w-5 h-5 text-primary mb-1" />
-            <p className="text-2xl font-black">{stats.weekMinutes}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Minutes</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="Total minutes invested in refining your communication protocols this week. Even 5 minutes of focused vocal warmup can significantly shift your presence in a meeting.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Clock className="w-5 h-5 text-primary mb-1" />
+              <p className="text-2xl font-black">{stats.weekMinutes}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Minutes</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
 
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Trophy className="w-5 h-5 text-primary opacity-80 mb-1" />
-            <p className="text-sm font-bold truncate w-full">{stats.mostPracticed}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Skill</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="The communication framework you use most frequently. Specializing in a specific area like 'Active Listening' or 'Vocal Mechanics' allows for deeper mastery before diversifying.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Trophy className="w-5 h-5 text-primary opacity-80 mb-1" />
+              <p className="text-sm font-bold truncate w-full">{stats.mostPracticed}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Skill</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
       </div>
 
       <TodayScheduleWidget category="Communication" />

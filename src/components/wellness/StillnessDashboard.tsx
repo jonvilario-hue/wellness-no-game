@@ -6,6 +6,7 @@ import { Sparkles, Clock, Wind, TrendingDown } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { TodayScheduleWidget } from "./TodayScheduleWidget";
+import { AssistantTooltip } from "../assistant-tooltip";
 
 export function StillnessDashboard() {
   const { stillnessLogs } = useWellnessData();
@@ -49,47 +50,55 @@ export function StillnessDashboard() {
   return (
     <div className="space-y-6 mb-8">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Sparkles className="w-5 h-5 text-primary mb-1" />
-            <p className="text-2xl font-black">{stats.streak}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Zen Streak</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="Your current streak of stillness practice. Consistent regulation of the nervous system lowers baseline cortisol and improves emotional resilience.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Sparkles className="w-5 h-5 text-primary mb-1" />
+              <p className="text-2xl font-black">{stats.streak}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Zen Streak</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
         
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Clock className="w-5 h-5 text-primary mb-1" />
-            <p className="text-2xl font-black">{stats.weekMinutes}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Minutes</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="Minutes spent in intentional stillness this week. Brief, frequent resets are often more effective for focus than long, infrequent sessions.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Clock className="w-5 h-5 text-primary mb-1" />
+              <p className="text-2xl font-black">{stats.weekMinutes}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Minutes</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
 
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Wind className="w-5 h-5 text-primary opacity-80 mb-1" />
-            <p className="text-sm font-bold truncate w-full">{stats.mostUsed}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Technique</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="The mindfulness technique you use most often. Different methods target different aspects of the nervous system; this is your primary regulation tool.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Wind className="w-5 h-5 text-primary opacity-80 mb-1" />
+              <p className="text-sm font-bold truncate w-full">{stats.mostUsed}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Technique</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
       </div>
 
       <TodayScheduleWidget category="Stillness" />
 
       {stats.reliverName && (
-        <Card className="bg-primary/5 border-none">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-2 bg-primary/10 rounded-full">
-              <TrendingDown className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Stress-Response Insight</h4>
-              <p className="text-sm font-medium">
-                When you're stressed, <span className="text-primary font-bold">{stats.reliverName}</span> improves your calm score by an average of <span className="font-bold">{stats.avgReduction} points</span>.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="This insight uses your pre-stress and post-calm ratings to identify which technique provides the greatest 'Delta' (improvement) in your internal state.">
+          <Card className="bg-primary/5 border-none">
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <TrendingDown className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Stress-Response Insight</h4>
+                <p className="text-sm font-medium">
+                  When you're stressed, <span className="text-primary font-bold">{stats.reliverName}</span> improves your calm score by an average of <span className="font-bold">{stats.avgReduction} points</span>.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
       )}
     </div>
   );

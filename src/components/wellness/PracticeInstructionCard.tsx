@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -15,6 +14,7 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '../ui/switch';
+import { AssistantTooltip } from '../assistant-tooltip';
 
 const formatTime = (totalSeconds: number): string => {
   if (totalSeconds < 0) return '00:00';
@@ -148,12 +148,16 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               </Button>
             )}
             <div className="flex items-center gap-2 ml-2">
-              <Label htmlFor={`track-toggle-${exercise.id}`} className="text-[10px] font-bold uppercase opacity-60">Track</Label>
-              <Switch 
-                id={`track-toggle-${exercise.id}`} 
-                checked={trackNumbers} 
-                onCheckedChange={() => toggleTracking(exercise.id)} 
-              />
+              <AssistantTooltip text="Enabling 'Track' upgrades this practice from a simple habit check-in to high-fidelity training. You will be asked for quantitative metrics (reps, difficulty, calm scores) which populate your permanent performance records and the Hall of Fame.">
+                <div className="flex items-center gap-2">
+                  <Label htmlFor={`track-toggle-${exercise.id}`} className="text-[10px] font-bold uppercase opacity-60">Track</Label>
+                  <Switch 
+                    id={`track-toggle-${exercise.id}`} 
+                    checked={trackNumbers} 
+                    onCheckedChange={() => toggleTracking(exercise.id)} 
+                  />
+                </div>
+              </AssistantTooltip>
             </div>
           </div>
         </div>
@@ -167,25 +171,27 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         </div>
 
         {trackNumbers && isMovement && bestProgress && (
-          <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 space-y-2 animate-in fade-in zoom-in-95">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-              <Trophy className="w-3.5 h-3.5" /> Achievement Records
-            </h4>
-            <div className="grid grid-cols-2 gap-2">
-              {bestProgress.bestReps !== undefined && (
-                <div className="p-2 bg-background rounded-lg text-center border">
-                  <p className="text-[8px] font-bold text-muted-foreground uppercase">Best Reps</p>
-                  <p className="text-lg font-black">{bestProgress.bestReps}</p>
-                </div>
-              )}
-              {bestProgress.bestHoldTime !== undefined && (
-                <div className="p-2 bg-background rounded-lg text-center border">
-                  <p className="text-[8px] font-bold text-muted-foreground uppercase">Best Hold</p>
-                  <p className="text-lg font-black">{bestProgress.bestHoldTime}s</p>
-                </div>
-              )}
+          <AssistantTooltip text="Your historical bests are automatically tracked when the 'Track' toggle is on. Beating these records creates a 'Neuro-Grit' milestone.">
+            <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 space-y-2 animate-in fade-in zoom-in-95">
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                <Trophy className="w-3.5 h-3.5" /> Achievement Records
+              </h4>
+              <div className="grid grid-cols-2 gap-2">
+                {bestProgress.bestReps !== undefined && (
+                  <div className="p-2 bg-background rounded-lg text-center border">
+                    <p className="text-[8px] font-bold text-muted-foreground uppercase">Best Reps</p>
+                    <p className="text-lg font-black">{bestProgress.bestReps}</p>
+                  </div>
+                )}
+                {bestProgress.bestHoldTime !== undefined && (
+                  <div className="p-2 bg-background rounded-lg text-center border">
+                    <p className="text-[8px] font-bold text-muted-foreground uppercase">Best Hold</p>
+                    <p className="text-lg font-black">{bestProgress.bestHoldTime}s</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </AssistantTooltip>
         )}
 
         <AnimatePresence mode="wait">
@@ -325,14 +331,18 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
           </div>
           {!showRatings && (
             <div className="w-full grid grid-cols-2 gap-2">
-              <Button onClick={toggleTimer} size="lg">
-              {isActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-              {isActive ? formatTime(timeLeft) : 'Start'}
-              </Button>
-              <Button onClick={() => setShowAdditions(true)} variant="outline" size="lg">
-                <ClipboardCheck className="mr-2 h-4 w-4" />
-                Log Now
-              </Button>
+              <AssistantTooltip text="The session timer ensures you stay within the 'Goldilocks Zone' of effective training duration—not so short that it is ineffective, and not so long that it causes mental fatigue.">
+                <Button onClick={toggleTimer} size="lg" className="w-full">
+                {isActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+                {isActive ? formatTime(timeLeft) : 'Start'}
+                </Button>
+              </AssistantTooltip>
+              <AssistantTooltip text="Bypass the timer and jump straight to logging. Use this if you've already completed the practice offline and want to sync your progress to the Master Calendar.">
+                <Button onClick={() => setShowAdditions(true)} variant="outline" size="lg" className="w-full">
+                  <ClipboardCheck className="mr-2 h-4 w-4" />
+                  Log Now
+                </Button>
+              </AssistantTooltip>
             </div>
           )}
       </CardFooter>
