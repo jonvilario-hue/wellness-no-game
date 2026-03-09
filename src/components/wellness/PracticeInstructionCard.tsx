@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -11,7 +12,7 @@ import {
 import type { Exercise } from '@/data/exercises';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { useWellnessData } from '@/hooks/use-wellness-data';
+import { useWellnessData, type TrackingCategory } from '@/hooks/use-wellness-data';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '../ui/label';
@@ -39,7 +40,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(exercise.duration);
   const [isComplete, setIsComplete] = useState(false);
-  const [showRatings, setShowAdditions] = useState(false);
+  const [showRatings, setShowRatings] = useState(false);
   
   const [difficulty, setDifficulty] = useState<number>(3);
   const [energy, setEnergy] = useState<'Low' | 'Medium' | 'High'>('Medium');
@@ -62,7 +63,8 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
   const isCommunication = !isMovement && !isStillness;
 
-  const trackNumbers = trackingEnabled[exercise.id] || false;
+  const trackingCategory: TrackingCategory = isMovement ? 'Movement' : isStillness ? 'Stillness' : 'Communication';
+  const trackNumbers = trackingEnabled[trackingCategory] || false;
   const bestProgress = movementProgress[exercise.id];
   const ExerciseIcon = exercise.icon;
 
@@ -73,14 +75,12 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         setTimeLeft(prev => prev - 1);
       }, 1000);
     } else if (timeLeft === 0 && isActive) {
-      setIsActive(false);
-      setIsComplete(true);
-      setShowAdditions(true);
+      finishSession();
     }
     return () => clearInterval(timer);
   }, [isActive, timeLeft]);
 
-  const handleLog = () => {
+  const performLog = (isAuto = false) => {
     const duration = Math.ceil((exercise.duration - timeLeft) / 60) || 1;
     const timestamp = new Date().toISOString();
 
@@ -90,10 +90,10 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         exerciseName: exercise.name,
         duration,
         timestamp,
-        difficulty,
-        energyLevel: energy,
-        reps: reps ? parseInt(reps) : undefined,
-        holdTime: holdTime ? parseInt(holdTime) : undefined
+        difficulty: isAuto ? 3 : difficulty,
+        energyLevel: isAuto ? 'Medium' : energy,
+        reps: !isAuto && reps ? parseInt(reps) : undefined,
+        holdTime: !isAuto && holdTime ? parseInt(holdTime) : undefined
       });
       syncFromTracker('Movement', exercise.name);
     } else if (isStillness) {
@@ -102,9 +102,9 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         techniqueName: exercise.name,
         duration,
         timestamp,
-        preStress: parseInt(preStress),
-        postCalm: parseInt(postCalm),
-        trigger: trigger as any
+        preStress: isAuto ? 5 : parseInt(preStress),
+        postCalm: isAuto ? 7 : parseInt(postCalm),
+        trigger: isAuto ? 'Proactive' : trigger as any
       });
       syncFromTracker('Stillness', exercise.name);
     } else {
@@ -113,35 +113,50 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         practiceName: exercise.name,
         duration,
         timestamp,
-        effectiveness: difficulty,
-        context: commContext
+        effectiveness: isAuto ? 3 : difficulty,
+        context: isAuto ? '' : commContext
       });
       syncFromTracker('Communication', exercise.name);
     }
-    
-    toast({ title: "Session Recorded!", description: "Synchronized with Master Calendar.", variant: 'success' });
+  };
+
+  const finishSession = () => {
+    setIsActive(false);
+    if (trackNumbers) {
+      setShowRatings(true);
+      setIsComplete(false);
+    } else {
+      performLog(true);
+      setIsComplete(true);
+      toast({ title: "Logged!", description: "Habit streak updated.", variant: 'success' });
+    }
+  };
+
+  const handleFinalizeLog = () => {
+    performLog(false);
+    toast({ title: "Session Recorded!", description: "High-fidelity metrics saved.", variant: 'success' });
     setIsComplete(true);
-    setShowAdditions(false);
+    setShowRatings(false);
   };
 
   const toggleTimer = useCallback(() => {
     if (isComplete || timeLeft === 0) {
         setTimeLeft(exercise.duration);
         setIsComplete(false);
-        setShowAdditions(false);
+        setShowRatings(false);
     }
     setIsActive(!isActive);
   }, [isActive, timeLeft, exercise.duration, isComplete]);
 
   const handleToggleTracking = () => {
-    toggleTracking(exercise.id);
+    toggleTracking(trackingCategory);
   };
 
   const getTrackingPreview = () => {
     if (isMovement) return "Will track: Reps, Hold Time, Personal Bests";
     if (isStillness) return "Will track: Stress Levels, Calm Scores, Trends";
     if (isCommunication) return "Will track: Effectiveness, Context, History";
-    return "Will track: WPM, Comprehension, Efficiency";
+    return "";
   };
 
   return (
@@ -183,7 +198,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               </Button>
             )}
             <div className="flex items-center gap-2 ml-2">
-              <AssistantTooltip text="Enabling 'Track' upgrades this practice from a simple habit check-in to high-fidelity training. You will be asked for quantitative metrics (reps, difficulty, calm scores) which populate your permanent performance records.">
+              <AssistantTooltip text="Enabling 'Track' upgrades this practice from a simple habit check-in to high-fidelity training. This setting is shared across all exercises in this category.">
                 <div className="flex items-center gap-2">
                   <Label htmlFor={`track-toggle-${exercise.id}`} className="text-[10px] font-bold uppercase opacity-60">Track</Label>
                   <Switch 
@@ -245,10 +260,13 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
 
         <AnimatePresence mode="wait">
           {showRatings ? (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4 py-2 border-t mt-4">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-                <SlidersHorizontal className="w-3 h-3" /> Post-Session Survey
-              </h4>
+            <motion.div key="survey" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4 py-2 border-t mt-4">
+              <div className="flex justify-between items-center">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                  <SlidersHorizontal className="w-3 h-3" /> Post-Session Survey
+                </h4>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowRatings(false)}><X className="w-3 h-3" /></Button>
+              </div>
               
               {isMovement && (
                 <div className="grid grid-cols-2 gap-4">
@@ -273,18 +291,14 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                       </SelectContent>
                     </Select>
                   </div>
-                  {trackNumbers && (
-                    <>
-                      <div className="space-y-1">
-                        <Label className="text-[10px] font-bold uppercase">Reps</Label>
-                        <Input type="number" value={reps} onChange={e => setReps(e.target.value)} className="h-7 text-xs" placeholder="0" />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-[10px] font-bold uppercase">Hold (Sec)</Label>
-                        <Input type="number" value={holdTime} onChange={e => setHoldTime(e.target.value)} className="h-7 text-xs" placeholder="0" />
-                      </div>
-                    </>
-                  )}
+                  <div className="space-y-1">
+                    <Label className="text-[10px] font-bold uppercase">Reps</Label>
+                    <Input type="number" value={reps} onChange={e => setReps(e.target.value)} className="h-7 text-xs" placeholder="0" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] font-bold uppercase">Hold (Sec)</Label>
+                    <Input type="number" value={holdTime} onChange={e => setHoldTime(e.target.value)} className="h-7 text-xs" placeholder="0" />
+                  </div>
                 </div>
               )}
 
@@ -333,10 +347,12 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 </div>
               )}
 
-              <Button className="w-full h-8 text-xs font-bold" onClick={handleLog}>Save Log Details</Button>
+              <Button className="w-full h-10 font-bold gap-2" onClick={handleFinalizeLog}>
+                <Check className="w-4 h-4" /> Save Data
+              </Button>
             </motion.div>
           ) : (
-            <div className="space-y-4">
+            <div key="instructions" className="space-y-4">
               <ol className="list-decimal list-inside space-y-2 text-xs">
                   {exercise.steps.map((step, i) => (
                       <li key={i}>{step}</li>
@@ -374,14 +390,12 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                     <div className="flex items-center gap-2 text-green-600">
                       <Check className="w-4 h-4" /> 
                       <span className="text-xs">
-                        {trackNumbers ? "Session logged with full tracking" : "Practice Logged"}
+                        {trackNumbers ? "✓ Session logged with full tracking" : "✓ Practice Logged"}
                       </span>
                     </div>
-                    {trackNumbers && (
-                      <Link href="/calendar" className="text-[10px] text-primary hover:underline flex items-center gap-1">
-                        View in Hall of Fame <ChevronRight className="w-2.5 h-2.5" />
-                      </Link>
-                    )}
+                    <Link href="/calendar" className="text-[10px] text-primary hover:underline flex items-center gap-1">
+                      View in Hall of Fame <ChevronRight className="w-2.5 h-2.5" />
+                    </Link>
                   </motion.div>
               ) : (
                   <div key="cue" className="italic text-muted-foreground text-[10px]">{exercise.completionCue}</div>
@@ -395,7 +409,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 {isActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
                 {isActive ? formatTime(timeLeft) : 'Start'}
                 </Button>
-                <Button onClick={() => setShowAdditions(true)} variant="outline" size="lg" className="w-full">
+                <Button onClick={finishSession} variant="outline" size="lg" className="w-full">
                   <ClipboardCheck className="mr-2 h-4 w-4" />
                   Log Now
                 </Button>

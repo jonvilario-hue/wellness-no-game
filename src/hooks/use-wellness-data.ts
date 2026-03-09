@@ -1,3 +1,4 @@
+
 'use client';
 
 import { create } from 'zustand';
@@ -84,34 +85,7 @@ export type CommunicationLog = {
 
 export type DietaryApproach = 'Balanced' | 'Keto' | 'High Protein' | 'Low Carb' | 'Custom';
 
-export type SavingsGoal = {
-  id: string;
-  name: string;
-  targetAmount: number;
-  currentAmount: number;
-  icon: string;
-};
-
-export type Subscription = {
-  id: string;
-  name: string;
-  amount: number;
-  active: boolean;
-  nextBillingDate: string;
-};
-
-export type Envelope = {
-  id: string;
-  name: string;
-  balance: number;
-  limit: number;
-};
-
-export type Budget = {
-  category: string;
-  limit: number;
-  period: 'weekly' | 'monthly';
-};
+export type TrackingCategory = 'Movement' | 'Stillness' | 'Communication' | 'Speed Reading';
 
 export const calculateStreak = (data: any[] | Record<string, boolean>): number => {
   const dates = new Set<string>();
@@ -147,7 +121,7 @@ export const calculateStreak = (data: any[] | Record<string, boolean>): number =
 
 export type WellnessState = {
   lowEnergyMode: boolean;
-  trackingEnabled: Record<string, boolean>; 
+  trackingEnabled: Record<TrackingCategory, boolean>; 
   trackExplainerDismissed: boolean;
   transactions: Transaction[];
   mealLogs: MealLog[];
@@ -174,7 +148,7 @@ export type WellnessState = {
   envelopes: Envelope[];
 
   setLowEnergyMode: (enabled: boolean) => void;
-  toggleTracking: (id: string) => void;
+  toggleTracking: (category: TrackingCategory) => void;
   setTrackExplainerDismissed: (dismissed: boolean) => void;
   addTransaction: (tx: Omit<Transaction, 'id'>) => void;
   addMealLog: (log: Omit<MealLog, 'id'>) => void;
@@ -262,10 +236,10 @@ export const useWellnessData = create<WellnessState>()(
       ],
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
-      toggleTracking: (id) => set(s => ({
+      toggleTracking: (category) => set(s => ({
         trackingEnabled: {
           ...s.trackingEnabled,
-          [id]: !s.trackingEnabled[id]
+          [category]: !s.trackingEnabled[category]
         }
       })),
       setTrackExplainerDismissed: (dismissed) => set({ trackExplainerDismissed: dismissed }),

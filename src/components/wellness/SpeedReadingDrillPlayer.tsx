@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -15,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { ReadingPassage, DrillType, ReadingTier } from '@/types/speedreading';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
+import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -43,10 +43,13 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
   const [selfComprehensionRating, setSelfRating] = useState(3);
 
   const { addLog } = useSpeedReadingStore();
+  const { trackingEnabled } = useWellnessData();
   const { markStudySessionComplete } = useCalendarPlansStore();
   const { toast } = useToast();
   const activeWordRef = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const trackNumbers = trackingEnabled['Speed Reading'] || false;
 
   const words = useMemo(() => passage.content.split(/\s+/).filter(w => w.length > 0), [passage]);
   
@@ -82,7 +85,6 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       const containerRect = container.getBoundingClientRect();
       const elementRect = element.getBoundingClientRect();
       
-      // Keep active text centered vertically in the viewport
       if (elementRect.bottom > containerRect.bottom - 150 || elementRect.top < containerRect.top + 150) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
@@ -114,8 +116,31 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
 
   const handleFinishedReading = () => {
     setIsActive(false);
-    setElapsedSeconds((Date.now() - startTime) / 1000);
-    setGameState((isCustomText || !passage.quiz || passage.quiz.length === 0) ? 'summary' : 'quiz');
+    const finalElapsed = (Date.now() - startTime) / 1000;
+    setElapsedSeconds(finalElapsed);
+
+    if (!trackNumbers) {
+      // Immediate log for zero-friction mode
+      const finalWpm = Math.round((words.length / finalElapsed) * 60);
+      addLog({
+        drillType,
+        passageId: passage.id,
+        tier: estimatedTier,
+        wpm: finalWpm,
+        comprehensionScore: 100, // Default for non-tracked
+        err: finalWpm,
+        preFocus: 3,
+        postFatigue: 3,
+        durationSeconds: Math.round(finalElapsed),
+        isCustomText,
+        isSelfAssessed: false
+      });
+      markStudySessionComplete('Speed Reading', passage.id);
+      toast({ title: "Drill Logged!", variant: 'success' });
+      onClose();
+    } else {
+      setGameState((isCustomText || !passage.quiz || passage.quiz.length === 0) ? 'summary' : 'quiz');
+    }
   };
 
   const handleQuizComplete = (score: number) => {
@@ -142,89 +167,9 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       isSelfAssessed: isCustomText
     });
 
-    // Notify Master Calendar
     markStudySessionComplete('Speed Reading', passage.id);
-
-    toast({ title: "Drill Results Synchronized", description: "Updated Master Calendar and Velocity Trends.", variant: 'success' });
+    toast({ title: "Results Synced", variant: 'success' });
     onClose();
-  };
-
-  const renderDrillContent = () => {
-    // 1. CHUNK TRAINING (RSVP Mode - flashing chunks in the center)
-    if (drillType === 'Chunk Training') {
-      return (
-        <div className="text-center relative px-4 py-20 my-auto">
-          <span className="text-4xl md:text-6xl font-black tracking-tight text-primary animate-in zoom-in-95 duration-75">
-            {units[currentIndex]}
-          </span>
-        </div>
-      );
-    }
-
-    // 2. REGRESSION ELIMINATOR (Text vanishes after reading to stop re-reading)
-    if (drillType === 'Regression Eliminator') {
-      return (
-        <div className="max-w-2xl text-xl leading-relaxed font-medium text-justify mb-20">
-          {words.map((word, i) => (
-            <span 
-              key={i} 
-              ref={i === currentIndex ? (activeWordRef as any) : null}
-              className={cn(
-                "transition-all duration-150 px-0.5 rounded inline-block",
-                i === currentIndex ? "bg-primary text-primary-foreground font-bold shadow-lg scale-110" : 
-                i < currentIndex ? "opacity-0" : "text-muted-foreground/20"
-              )}
-            >
-              {word}{' '}
-            </span>
-          ))}
-        </div>
-      );
-    }
-
-    // 3. PACER (Standard full-text highlight)
-    if (drillType === 'Pacer') {
-      return (
-        <div className="max-w-2xl text-xl leading-relaxed text-muted-foreground/30 font-medium text-justify mb-20">
-          {words.map((word, i) => (
-            <span 
-              key={i} 
-              ref={i === currentIndex ? (activeWordRef as any) : null}
-              className={cn(
-                "transition-colors duration-150 px-0.5 rounded inline-block",
-                i === currentIndex ? "bg-primary text-primary-foreground font-bold shadow-lg scale-110" : ""
-              )}
-            >
-              {word}{' '}
-            </span>
-          ))}
-        </div>
-      );
-    }
-
-    // 4. PERIPHERAL EXPANSION (Narrow column to force vertical gaze)
-    if (drillType === 'Peripheral Expansion') {
-      return (
-        <div className="w-[320px] bg-muted/10 p-8 rounded-[40px] border-x-8 border-primary/5 flex flex-col items-center mb-20">
-          <div className="text-center space-y-6 text-2xl font-bold leading-relaxed w-full">
-            {words.map((word, i) => (
-              <div 
-                key={i} 
-                ref={i === currentIndex ? (activeWordRef as any) : null}
-                className={cn(
-                  "transition-all duration-150 py-2",
-                  i === currentIndex ? "text-primary font-black scale-150" : "opacity-5 grayscale blur-[1px]"
-                )}
-              >
-                {word}
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    return <div>Unsupported Drill Type</div>;
   };
 
   return (
@@ -264,13 +209,15 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8 py-6">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest">Initial Focus (1-5)</Label>
-                      <span className="text-xl font-black text-primary">{preFocus}</span>
+                  {trackNumbers && (
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-[10px] font-bold uppercase tracking-widest">Initial Focus (1-5)</Label>
+                        <span className="text-xl font-black text-primary">{preFocus}</span>
+                      </div>
+                      <Slider value={[preFocus]} onValueChange={([v]) => setPreFocus(v)} min={1} max={5} step={1} />
                     </div>
-                    <Slider value={[preFocus]} onValueChange={([v]) => setPreFocus(v)} min={1} max={5} step={1} />
-                  </div>
+                  )}
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
