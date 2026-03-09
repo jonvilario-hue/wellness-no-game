@@ -128,13 +128,13 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
     } else {
       performLog(true);
       setIsComplete(true);
-      toast({ title: "Logged!", description: "Habit streak updated.", variant: 'success' });
+      toast({ title: "Check-in Logged", description: "Habit streak maintained.", variant: 'success' });
     }
   };
 
   const handleFinalizeLog = () => {
     performLog(false);
-    toast({ title: "Session Recorded!", description: "High-fidelity metrics saved.", variant: 'success' });
+    toast({ title: "Metrics Recorded!", description: "High-fidelity data saved to trends.", variant: 'success' });
     setIsComplete(true);
     setShowRatings(false);
   };
@@ -153,10 +153,16 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   };
 
   const getTrackingPreview = () => {
-    if (isMovement) return "Will track: Reps, Hold Time, Personal Bests";
-    if (isStillness) return "Will track: Stress Levels, Calm Scores, Trends";
-    if (isCommunication) return "Will track: Effectiveness, Context, History";
+    if (isMovement) return "Will track: Intensity, Reps, PBs";
+    if (isStillness) return "Will track: Stress, Calmness, Trigger";
+    if (isCommunication) return "Will track: Effectiveness, Context";
     return "";
+  };
+
+  const getDataDestinationLink = () => {
+    if (isStillness) return "View Calmness Trends →";
+    if (isMovement) return "View Intensity Trends →";
+    return "View Performance History →";
   };
 
   return (
@@ -181,7 +187,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 </div>
                 {trackNumbers && (
                   <Link href="/calendar" className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1">
-                    View tracked data <ChevronRight className="w-2.5 h-2.5" />
+                    {getDataDestinationLink()} <ChevronRight className="w-2.5 h-2.5" />
                   </Link>
                 )}
               </div>
@@ -411,7 +417,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 </Button>
                 <Button onClick={finishSession} variant="outline" size="lg" className="w-full">
                   <ClipboardCheck className="mr-2 h-4 w-4" />
-                  Log Now
+                  {trackNumbers ? "Detailed Log" : "Quick Log"}
                 </Button>
               </div>
               {trackNumbers && (
