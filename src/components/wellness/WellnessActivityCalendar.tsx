@@ -95,7 +95,6 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
         deleteTransaction(log.id);
         break;
       case 'Speed Reading':
-        // Drill logs are typically deleted through the reading store if needed
         toast({ title: "Drill logs cannot be deleted from here.", variant: 'destructive' });
         return;
     }

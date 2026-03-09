@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -117,7 +116,7 @@ export function CommunicationAnalytics() {
               <div key={idx} className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-bold uppercase truncate max-w-[150px]">{skill.name}</span>
-                  <Badge variant="secondary" className="text-[9px] font-black">{skill.avg} AVG</Badge>
+                  <span className="font-black text-[10px]">{skill.avg}/5 AVG</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">

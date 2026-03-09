@@ -1,9 +1,8 @@
-
 'use client';
 
 import { useMemo } from 'react';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { 
   Flame, Zap, Target, BarChart3, TrendingUp, 
@@ -92,6 +91,7 @@ export function SpeedReadingAnalytics() {
           <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-primary" /> Velocity Trends
           </CardTitle>
+          <CardDescription>Raw WPM and Effective Reading Rate (ERR) over your last 10 drills.</CardDescription>
         </CardHeader>
         <CardContent className="h-64 pt-8">
           {logs.length < 2 ? (
@@ -119,7 +119,7 @@ export function SpeedReadingAnalytics() {
       <Card className="border-primary/10">
         <CardHeader className="pb-2">
           <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-primary" /> Hall of Fame
+            <Trophy className="w-4 h-4 text-primary" /> Achievement Vault
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
