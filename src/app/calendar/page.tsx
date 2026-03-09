@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -40,7 +41,8 @@ import {
   BarChart3,
   ChevronUpSquare,
   ChevronDownSquare,
-  AlignJustify
+  AlignJustify,
+  ShieldCheck
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -105,24 +107,31 @@ function AmalgamatedAnalytics() {
     const topReading = [...readingLogs].sort((a, b) => b.wpm - a.wpm)[0];
     const topStillness = [...stillnessLogs].sort((a, b) => (b.postCalm || 0) - (a.postCalm || 0))[0];
     const topComm = [...communicationLogs].sort((a, b) => (b.effectiveness || 0) - (a.effectiveness || 0))[0];
-    const mostFreqMove = movementLogs.length > 0 ? movementLogs[0].exerciseName : "None";
+    
+    // Financial discipline: Largest transaction or lowest spend day
+    const topFin = [...transactions].sort((a, b) => b.amount - a.amount)[0];
+    
+    // Study depth: highest card review day
+    const topStudy = Object.entries(studyActivity)
+      .sort(([, a], [_, b]) => b.cardsReviewed - a.cardsReviewed)[0];
 
     return [
       { label: 'Peak Velocity', value: topReading ? `${topReading.wpm} WPM` : '0', icon: Zap, sub: 'Reading' },
       { label: 'Max Equilibrium', value: topStillness ? `${topStillness.postCalm}/10` : '0', icon: Waves, sub: 'Stillness' },
       { label: 'Highest Impact', value: topComm ? `${topComm.effectiveness}/5` : '0', icon: Target, sub: 'Interpersonal' },
-      { label: 'Movement Anchor', value: mostFreqMove, icon: HeartPulse, sub: 'Most Recent' }
+      { label: 'Asset Utilization', value: topFin ? `$${topFin.amount.toLocaleString()}` : '$0', icon: Wallet, sub: 'Largest Log' },
+      { label: 'Cognitive Load', value: topStudy ? `${topStudy[1].cardsReviewed}` : '0', icon: Brain, sub: 'Max Daily Cards' }
     ];
-  }, [readingLogs, stillnessLogs, communicationLogs, movementLogs]);
+  }, [readingLogs, stillnessLogs, communicationLogs, transactions, studyActivity]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-1000 delay-300 pt-12">
       <Card className="lg:col-span-2 border-primary/10 overflow-hidden">
         <CardHeader className="bg-primary/5 pb-4">
           <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-primary" /> System Output Velocity
+            <TrendingUp className="w-4 h-4 text-primary" /> Cross-Module Output Velocity
           </CardTitle>
-          <CardDescription>Aggregate growth actions (wellness, study, journaling) over the last 14 days.</CardDescription>
+          <CardDescription>Aggregate growth actions (wellness, study, journaling, finance) over the last 14 days.</CardDescription>
         </CardHeader>
         <CardContent className="h-64 pt-8">
           <ResponsiveContainer width="100%" height="100%">
@@ -136,7 +145,7 @@ function AmalgamatedAnalytics() {
               <Area 
                 type="monotone" 
                 dataKey="total" 
-                name="Growth Actions" 
+                name="System Actions" 
                 stroke="hsl(var(--primary))" 
                 fill="hsl(var(--primary))" 
                 fillOpacity={0.1} 
@@ -170,10 +179,10 @@ function AmalgamatedAnalytics() {
           <div className="pt-4 border-t border-primary/5">
             <div className="p-3 bg-primary/5 rounded-xl space-y-2">
               <h4 className="text-[10px] font-black uppercase text-primary flex items-center gap-2">
-                <Sparkles className="w-3 h-3" /> Synthesis Insight
+                <ShieldCheck className="w-3 h-3" /> Data Integrity Sync
               </h4>
               <p className="text-[10px] leading-relaxed text-muted-foreground">
-                Your peak <b>Output Velocity</b> typically occurs after high <b>Stillness</b> days. Maintaining your recovery-to-action ratio is the secret to long-term cognitive endurance.
+                Turning on "Tracking" in modules enables these high-fidelity Hall of Fame metrics. This data is persistent and rolls up across all labs.
               </p>
             </div>
           </div>
@@ -224,7 +233,6 @@ export default function CalendarPage() {
     
     if (planOrder.length === 0) return all;
 
-    // Sort by planOrder
     return [...all].sort((a, b) => {
       const idxA = planOrder.indexOf(a.id);
       const idxB = planOrder.indexOf(b.id);
@@ -586,7 +594,6 @@ export default function CalendarPage() {
                             </CardFooter>
                           </>
                         ) : (
-                          // LIST VIEW
                           <>
                             <div className="flex items-center gap-4 flex-1">
                               <div className="flex items-center gap-1 shrink-0">
