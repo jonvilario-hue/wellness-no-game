@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -7,7 +8,7 @@ import { MotivationalMessage } from '@/components/motivational-message';
 import WellnessTabs from '@/components/wellness/WellnessTabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Rocket, ArrowRight } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Rocket, ArrowRight, Info } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -18,6 +19,7 @@ import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
 import { wellnessPlans } from '@/data/wellness-plans';
 import { WellnessBalance } from '@/components/wellness/WellnessBalance';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import Link from 'next/link';
 
 export default function ExercisesPage() {
@@ -123,7 +125,22 @@ export default function ExercisesPage() {
 
                       {/* PLANS SECTION */}
                       <div className="space-y-3 overflow-hidden">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Journey Plans</h3>
+                        <div className="flex items-center justify-between px-1">
+                          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Journey Plans</h3>
+                          <TooltipProvider>
+                            <Tooltip delayDuration={0}>
+                              <TooltipTrigger asChild>
+                                <button className="text-muted-foreground hover:text-primary transition-colors">
+                                  <Info className="w-3.5 h-3.5" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-[250px] text-[10px] leading-relaxed">
+                                Journey Plans are structured curricula (3-14 days) designed to build specific physiological foundations. 
+                                They progress from low-friction starts to high-intensity practices.
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
                         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
                           {wellnessPlans.map((plan) => (
                             <Link key={plan.id} href={`/exercises/plans/${plan.id}`} className="min-w-[260px] sm:min-w-[280px]">
