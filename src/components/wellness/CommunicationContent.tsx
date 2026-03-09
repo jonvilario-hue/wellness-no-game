@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo, useState } from "react"
@@ -134,8 +133,6 @@ export default function CommunicationContent() {
 
     return (
      <div className="space-y-8">
-        <CommunicationDashboard />
-
         <JourneyPlansSection category="Communication" />
 
         {lowEnergyMode && (

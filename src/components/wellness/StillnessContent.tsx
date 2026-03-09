@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo, useState } from "react"
@@ -7,7 +6,6 @@ import { PracticeInstructionCard } from "./PracticeInstructionCard"
 import CategoryOverview from "./CategoryOverview"
 import { stillnessCategoryDetails } from "@/data/wellness-categories"
 import { ChevronDown, Waves, Wind, PlusCircle, Save, X, Plus, Zap } from "lucide-react"
-import { StillnessDashboard } from "./StillnessDashboard"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -117,8 +115,6 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
 
     return (
      <div className="space-y-8">
-        <StillnessDashboard />
-
         <JourneyPlansSection category="Stillness" />
 
         {lowEnergyMode && (

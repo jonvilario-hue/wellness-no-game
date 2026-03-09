@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from "react"
@@ -105,8 +104,6 @@ export default function SpeedReadingContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <SpeedReadingStats />
-
       <JourneyPlansSection category="Speed Reading" />
 
       {lowEnergyMode && (
@@ -129,9 +126,12 @@ export default function SpeedReadingContent() {
                     <p className="text-[10px] text-muted-foreground uppercase">{mvdSuggestion.wordCount} WORDS • {mvdSuggestion.tier}</p>
                   </div>
                 </div>
-                <Button size="sm" variant="secondary" className="font-bold" onClick={() => setActiveDrill({ type: 'Pacer', passage: mvdSuggestion, isCustom: false })}>
+                <button 
+                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-3 font-bold"
+                  onClick={() => setActiveDrill({ type: 'Pacer', passage: mvdSuggestion, isCustom: false })}
+                >
                   Start Easy Pacer
-                </Button>
+                </button>
               </div>
             )}
           </CardContent>

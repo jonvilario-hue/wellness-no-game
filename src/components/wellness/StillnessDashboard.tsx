@@ -48,7 +48,7 @@ export function StillnessDashboard() {
   }, [stillnessLogs]);
 
   return (
-    <div className="space-y-6 mb-8">
+    <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <AssistantTooltip text="Your current streak of stillness practice. Consistent regulation of the nervous system lowers baseline cortisol and improves emotional resilience.">
           <Card className="bg-primary/5 border-primary/10 h-full">

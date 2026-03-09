@@ -31,7 +31,7 @@ export function MovementDashboard() {
   }, [movementLogs]);
 
   return (
-    <div className="space-y-6 mb-8">
+    <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <AssistantTooltip text="Your current consecutive days of movement. Daily physical activity signals the body to maintain higher metabolic efficiency and brain-derived neurotrophic factor (BDNF) levels.">
           <Card className="bg-primary/5 border-primary/10 h-full">

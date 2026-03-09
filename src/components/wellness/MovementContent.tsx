@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useMemo } from "react"
@@ -6,7 +5,6 @@ import { movementExercises, type ExerciseCategory, type Exercise } from "@/data/
 import { movementCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
 import { ChevronDown, HeartPulse, Zap, Play, PlusCircle, Save, X, Plus, AlertCircle } from "lucide-react"
-import { MovementDashboard } from "./MovementDashboard"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -117,8 +115,6 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
 
   return (
     <div className="space-y-8">
-        <MovementDashboard />
-        
         <JourneyPlansSection category="Movement" />
 
         {lowEnergyMode && (

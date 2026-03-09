@@ -17,9 +17,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
 import { WellnessBalance } from '@/components/wellness/WellnessBalance';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
-import Link from 'next/link';
+import { MovementDashboard } from '@/components/wellness/MovementDashboard';
+import { StillnessDashboard } from '@/components/wellness/StillnessDashboard';
+import { CommunicationDashboard } from '@/components/wellness/CommunicationDashboard';
+import { SpeedReadingStats } from '@/components/wellness/SpeedReadingDashboard';
 
 function ExercisesPageContent() {
   const [isOpen, setIsOpen] = useState(true);
@@ -27,6 +29,7 @@ function ExercisesPageContent() {
   const [activeRoutineName, setActiveRoutineName] = useState<string>("");
   const searchParams = useSearchParams();
   
+  const activeTab = searchParams.get('tab') || 'movement';
   const { lowEnergyMode, setLowEnergyMode, completions } = useWellnessData();
   const { settings } = useDashboardSettings();
 
@@ -108,6 +111,14 @@ function ExercisesPageContent() {
                     </div>
                   )}
                 </Collapsible>
+
+                {/* Tab-specific Dashboard (Streak, Minutes, Top Choice) */}
+                <div className="w-full">
+                  {activeTab === 'movement' && <MovementDashboard />}
+                  {activeTab === 'stillness' && <StillnessDashboard />}
+                  {activeTab === 'communication' && <CommunicationDashboard />}
+                  {activeTab === 'speedreading' && <SpeedReadingStats />}
+                </div>
 
                 <div className="flex flex-col items-center gap-4">
                     <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your entire library to show only 'zero-friction' practices. Use this when your cognitive or physical battery is low to maintain your habit streak without risking burnout.">

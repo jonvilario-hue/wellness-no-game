@@ -34,7 +34,7 @@ export function CommunicationDashboard() {
   }, [communicationLogs]);
 
   return (
-    <div className="space-y-6 mb-8">
+    <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <AssistantTooltip text="Consecutive days practicing interpersonal or vocal skills. Persuasion and clarity are social muscles that require frequent 'resistance training' through real or simulated dialogue.">
           <Card className="bg-primary/5 border-primary/10 h-full">
