@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils"
 import CategoryOverview from "./CategoryOverview"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
+import { MovementAnalytics } from "./MovementAnalytics"
 
 const categories: ExerciseCategory[] = ['Mind-Body', 'Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
@@ -286,6 +287,10 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
         </Dialog>
 
         <WellnessActivityCalendar categoryFilter="Movement" />
+
+        <div className="pt-6">
+          <MovementAnalytics />
+        </div>
     </div>
   )
 }
