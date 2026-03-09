@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -5,17 +6,27 @@ import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PlusCircle, Layers, Play, Upload, Download, Settings, CalendarDays } from 'lucide-react';
+import { PlusCircle, Layers, Play, Upload, Download, Settings, Trash2 } from 'lucide-react';
 import { DeckDialog } from '@/components/flashcards/deck-dialog';
 import { ImportDialog } from '@/components/flashcards/import-dialog';
 import { ExportDialog } from '@/components/flashcards/export-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AddToCalendarDialog } from '../study/add-to-calendar-dialog';
 import { AssistantTooltip } from '../assistant-tooltip';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export function FlashcardDecks() {
-  const { decks, cards } = useFlashcardStore();
+  const { decks, cards, deleteDeck } = useFlashcardStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -96,13 +107,36 @@ export function FlashcardDecks() {
                                 buttonVariant="ghost"
                               />
                             </AssistantTooltip>
-                            <AssistantTooltip text="Configure the Spaced Repetition (SM-2) settings for this specific deck.">
+                            
+                            <AssistantTooltip text="Configure the Spaced Repetition settings for this specific deck.">
                                 <Button asChild variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10">
                                     <Link href={`/study/deck/${deck.id}/settings`}>
                                         <Settings className="w-4 h-4" />
                                     </Link>
                                 </Button>
                             </AssistantTooltip>
+
+                            {deck.id !== 'default' && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive transition-all">
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Deck?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This will remove "{deck.name}". All cards within will be moved to the "Default" deck so you don't lose your progress.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => { deleteDeck(deck.id); toast({ title: "Deck deleted" }); }} variant="destructive">Delete</AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
                         </div>
                     </div>
                 );
