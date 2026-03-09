@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { QuickLogBar } from '@/components/wellness/QuickLogBar';
 import { format } from 'date-fns';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
@@ -179,7 +178,6 @@ export default function ExercisesPage() {
             <WellnessTabs />
         </div>
       </main>
-      <QuickLogBar />
     </>
   );
 }
