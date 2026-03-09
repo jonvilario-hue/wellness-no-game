@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Rocket, ArrowRight, Info, ChevronDown, ChevronRight, 
+  Rocket, ArrowRight, Info, ChevronDown, ChevronUp, ChevronRight, 
   CheckCircle2, Circle, LayoutList, BookOpen, Zap, Clock
 } from 'lucide-react';
 import Link from 'next/link';
@@ -108,7 +108,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
   }
 
   // --- STATE 1: EMPTY STATE (NOT LOGGED AND NOT DISMISSED) ---
-  if (!hasLogs && !isDismissed || isExpanded) {
+  if ((!hasLogs && !isDismissed) || isExpanded) {
     return (
       <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500 mb-8">
         <div className="flex justify-between items-center px-1">
@@ -120,12 +120,15 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
               <Info className="w-3 h-3 text-muted-foreground" />
             </AssistantTooltip>
           </div>
-          <button 
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-6 w-6 text-muted-foreground hover:text-foreground"
             onClick={() => isExpanded ? setIsExpanded(false) : setPlanDismissed(category, true)}
-            className="text-[10px] font-bold uppercase text-muted-foreground hover:text-foreground transition-colors"
           >
-            {isExpanded ? 'Close' : 'Maybe later'}
-          </button>
+            <ChevronUp className="w-4 h-4" />
+            <span className="sr-only">Collapse</span>
+          </Button>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -173,12 +176,14 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
             {category} Journeys Available · {tabPlans[0]?.title}
           </span>
         </div>
-        <button 
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-6 gap-1 text-[10px] font-black uppercase text-primary hover:bg-primary/5"
           onClick={() => setIsExpanded(true)}
-          className="text-[10px] font-black uppercase text-primary flex items-center gap-1 hover:underline"
         >
-          View All <ChevronRight className="w-3 h-3" />
-        </button>
+          View All <ChevronDown className="w-3 h-3" />
+        </Button>
       </div>
     </div>
   );
