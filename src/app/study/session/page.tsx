@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useMemo, useCallback, Suspense } from 'react';
@@ -11,17 +10,39 @@ import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ThumbsUp, Loader2, Zap, Brain, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import type { Card as CardType } from '@/types/flashcards';
 import { applySpacedRepetition } from '@/lib/srs';
 import { cn } from '@/lib/utils';
 import { useStatsStore } from '@/hooks/use-stats-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 
+const processContent = (text: string) => {
+  if (!text) return '';
+  // Support Anki sound tags if they haven't been processed by the importer
+  return text.replace(/\[sound:(.*?)\]/g, (_, filename) => {
+    return `<audio controls src="${filename}" class="w-full mt-4"></audio>`;
+  });
+};
+
 const renderCloze = (text: string, reveal: boolean) => {
   const clozeContent = text.replace(/\{\{c\d::(.*?)\}\}/g, (_, match) => 
     reveal ? `<span class="font-bold text-primary border-b-2 border-primary/30">${match}</span>` : `<span class="font-bold text-primary bg-primary/10 px-2 rounded">[...]</span>`
   );
-  return <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: clozeContent }} />;
+  return (
+    <div className="prose dark:prose-invert max-w-none text-center">
+      <ReactMarkdown 
+        remarkPlugins={[remarkGfm]} 
+        rehypePlugins={[rehypeRaw]}
+        components={{
+          img: ({node, ...props}) => <img {...props} className="max-w-full h-auto rounded-xl mx-auto my-4 shadow-md" />,
+          audio: ({node, ...props}) => <audio {...props} className="w-full mt-4" controls />
+        }}
+      >
+        {processContent(clozeContent)}
+      </ReactMarkdown>
+    </div>
+  );
 };
 
 function SessionContent() {
@@ -156,26 +177,22 @@ function SessionContent() {
     const isCloze = currentCard.type === 'cloze';
 
     if (isCloze) {
-      if (!flipped) {
-        return renderCloze(currentCard.front, false);
-      } else {
-        return (
-          <div className="prose dark:prose-invert max-w-none text-left space-y-6">
-            <div className="p-4 bg-muted/30 rounded-xl border border-primary/5">
-                {renderCloze(currentCard.front, true)}
-            </div>
-            <div className="pt-4 border-t border-primary/10">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentCard.back}</ReactMarkdown>
-            </div>
-          </div>
-        );
-      }
+      return renderCloze(currentCard.front, flipped);
     }
     
     const contentToShow = flipped ? currentCard.back : currentCard.front;
     return (
-        <div className="prose dark:prose-invert max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{contentToShow}</ReactMarkdown>
+        <div className="prose dark:prose-invert max-w-none text-center">
+            <ReactMarkdown 
+              remarkPlugins={[remarkGfm]} 
+              rehypePlugins={[rehypeRaw]}
+              components={{
+                img: ({node, ...props}) => <img {...props} className="max-w-full h-auto rounded-xl mx-auto my-4 shadow-md" />,
+                audio: ({node, ...props}) => <audio {...props} className="w-full mt-4" controls />
+              }}
+            >
+              {processContent(contentToShow)}
+            </ReactMarkdown>
         </div>
     );
   };

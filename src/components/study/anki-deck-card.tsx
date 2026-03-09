@@ -6,9 +6,11 @@ import { ref, deleteObject } from 'firebase/storage';
 import { doc, deleteDoc, updateDoc, increment } from 'firebase/firestore';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileDown, Trash2, Clock, HardDrive, Play, ExternalLink } from 'lucide-react';
+import { FileDown, Trash2, Clock, HardDrive, Play, ExternalLink, Download, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { useFlashcardStore } from '@/hooks/use-flashcard-store';
+import { parseImportFile } from '@/lib/flashcard-import-export';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,23 +36,63 @@ interface AnkiDeckCardProps {
 
 export function AnkiDeckCard({ deck }: AnkiDeckCardProps) {
   const { user, storage, firestore } = useFirebase();
+  const { addDeck, addCards } = useFlashcardStore();
   const { toast } = useToast();
+  
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+
+  const handleImport = async () => {
+    setIsImporting(true);
+    try {
+      // 1. Fetch file from Cloud Storage
+      const response = await fetch(deck.downloadUrl);
+      const blob = await response.blob();
+      const file = new File([blob], deck.fileName, { type: 'application/octet-stream' });
+
+      // 2. Parse APKG
+      const data = await parseImportFile(file);
+      
+      // 3. Create Deck & Add Cards
+      for (const importDeck of data.decks) {
+        const newDeckId = crypto.randomUUID();
+        addDeck({ name: importDeck.name, description: `Imported from ${deck.fileName}` });
+        
+        // We need to wait a tiny bit for the store to update or manually handle the ID
+        // For MVP, we'll assume the last deck added is the target or use a better strategy
+        const deckToImportTo = useFlashcardStore.getState().decks.find(d => d.name === importDeck.name) || { id: 'default' };
+        
+        const cardsToSave = importDeck.cards.map(c => ({
+          front: c.front || '',
+          back: c.back || '',
+          deckId: deckToImportTo.id,
+          type: (c.type as any) || 'basic',
+          tags: c.tags
+        }));
+
+        addCards(cardsToSave);
+      }
+
+      toast({ title: "Import Successful!", description: `${deck.displayName} added to your study library.`, variant: 'success' });
+    } catch (err) {
+      console.error(err);
+      toast({ title: "Import failed", description: "Could not process Anki package.", variant: "destructive" });
+    } finally {
+      setIsImporting(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!user || !storage || !firestore) return;
     setIsDeleting(true);
 
     try {
-      // 1. Delete from Storage
       const storageRef = ref(storage, `users/${user.uid}/anki-decks/${deck.id}.apkg`);
       await deleteObject(storageRef);
 
-      // 2. Delete from Firestore
       const deckRef = doc(firestore, 'users', user.uid, 'anki-decks', deck.id);
       await deleteDoc(deckRef);
 
-      // 3. Update User Stats
       const userProfileRef = doc(firestore, 'users', user.uid);
       await updateDoc(userProfileRef, {
         storageUsedBytes: increment(-deck.fileSize),
@@ -78,8 +120,8 @@ export function AnkiDeckCard({ deck }: AnkiDeckCardProps) {
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                  <Trash2 className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" disabled={isDeleting}>
+                  <Trash2 className="w-4 h-4" />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -108,11 +150,17 @@ export function AnkiDeckCard({ deck }: AnkiDeckCardProps) {
           <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(deck.uploadedAt), 'MMM d')}</span>
         </div>
 
-        <Button asChild className="w-full h-10 gap-2 font-bold shadow-sm" variant="outline">
-          <a href={deck.downloadUrl} download={deck.fileName} target="_blank" rel="noopener noreferrer">
-            <FileDown className="h-4 w-4" /> Download .apkg
-          </a>
-        </Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button onClick={handleImport} disabled={isImporting} className="gap-2 font-bold h-10 shadow-sm" variant="secondary">
+            {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            Import
+          </Button>
+          <Button asChild className="h-10 gap-2 font-bold shadow-sm" variant="outline">
+            <a href={deck.downloadUrl} download={deck.fileName} target="_blank" rel="noopener noreferrer">
+              <FileDown className="h-4 w-4" /> Get File
+            </a>
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

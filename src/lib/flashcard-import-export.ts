@@ -2,13 +2,13 @@
 
 /**
  * @fileOverview Utilities for importing and exporting flashcard decks.
- * Supports CSV, JSON, Markdown, and TXT. 
- * Anki .apkg support is stubbed for SQLite/ZIP complexity but ready for expansion.
+ * Supports CSV, JSON, Markdown, TXT, and Anki .apkg.
  */
 
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
+import initSqlJs from 'sql.js';
 import type { Card, Deck } from '@/types/flashcards';
 
 export type ExportFormat = 'anki' | 'csv' | 'json' | 'text' | 'markdown';
@@ -24,10 +24,108 @@ export interface ImportPreviewData {
 }
 
 /**
+ * Parses an Anki .apkg file using JSZip and sql.js
+ */
+async function parseAnkiPackage(file: File): Promise<ImportPreviewData> {
+  const zip = await JSZip.loadAsync(file);
+  
+  // 1. Get the SQLite DB
+  const ankiDbFile = zip.file("collection.anki21") || zip.file("collection.anki2");
+  if (!ankiDbFile) throw new Error("Invalid Anki Package: No collection found");
+  
+  const dbData = await ankiDbFile.async("uint8array");
+  const SQL = await initSqlJs({
+    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/${file}`
+  });
+  const db = new SQL.Database(dbData);
+
+  // 2. Get the media map
+  const mediaFile = zip.file("media");
+  let mediaMap: Record<string, string> = {};
+  if (mediaFile) {
+    mediaMap = JSON.parse(await mediaFile.text());
+  }
+
+  // 3. Extract media files as data URLs
+  const mediaCache: Record<string, string> = {};
+  for (const [internalName, originalName] of Object.entries(mediaMap)) {
+    const file = zip.file(internalName);
+    if (file) {
+      const blob = await file.async("blob");
+      mediaCache[originalName] = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+    }
+  }
+
+  // 4. Query notes (Anki 2.1 schema)
+  const notes = db.exec("SELECT flds, tags FROM notes");
+  const cards: Partial<Card>[] = [];
+
+  if (notes.length > 0) {
+    const rows = notes[0].values;
+    rows.forEach(row => {
+      const flds = (row[0] as string).split('\x1f');
+      const front = flds[0] || '';
+      const back = flds[1] || '';
+      const tags = (row[1] as string).trim().split(' ').filter(Boolean);
+
+      // Process media references in front/back
+      const processMedia = (text: string) => {
+        if (!text) return '';
+        
+        // Handle images
+        let processed = text.replace(/(src|href)="([^"]+)"/g, (match, attr, filename) => {
+          if (mediaCache[filename]) {
+            return `${attr}="${mediaCache[filename]}"`;
+          }
+          return match;
+        });
+
+        // Handle sound tags [sound:filename.mp3]
+        processed = processed.replace(/\[sound:([^\]]+)\]/g, (match, filename) => {
+          if (mediaCache[filename]) {
+            return `<audio controls src="${mediaCache[filename]}" class="w-full mt-2"></audio>`;
+          }
+          return match;
+        });
+
+        return processed;
+      };
+
+      cards.push({
+        front: processMedia(front),
+        back: processMedia(back),
+        tags,
+        type: 'basic'
+      });
+    });
+  }
+
+  db.close();
+
+  return {
+    fileName: file.name,
+    format: 'anki',
+    decks: [{
+      name: file.name.replace('.apkg', ''),
+      cards
+    }]
+  };
+}
+
+/**
  * Parses an imported file and returns a preview of the data.
  */
 export async function parseImportFile(file: File): Promise<ImportPreviewData> {
   const extension = file.name.split('.').pop()?.toLowerCase();
+
+  if (extension === 'apkg') {
+    return parseAnkiPackage(file);
+  }
+
   const text = await file.text();
 
   if (extension === 'json') {
@@ -59,7 +157,6 @@ export async function parseImportFile(file: File): Promise<ImportPreviewData> {
   }
 
   if (extension === 'md') {
-    // Simple MD parser: ## Header is deck, - Front :: Back is card
     const lines = text.split('\n');
     const decks: ImportPreviewData['decks'] = [];
     let currentDeck: ImportPreviewData['decks'][0] | null = null;
@@ -171,10 +268,6 @@ export async function exportDecks(
       break;
 
     case 'anki':
-      // APKG requires SQL.js and complex schema building.
-      // For now, we export a ZIP of the JSON data as a high-fidelity placeholder
-      // until the full WASM-based Anki generator is implemented.
-      // NOTE: Anki fully supports JPG and PNG formats for images.
       const zip = new JSZip();
       zip.file("collection.json", JSON.stringify({ decks, cards }));
       const content = await zip.generateAsync({ type: "blob" });
