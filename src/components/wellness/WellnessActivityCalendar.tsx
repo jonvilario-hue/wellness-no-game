@@ -5,16 +5,17 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, isSameDay } from "date-fns";
 import { useWellnessData } from "@/hooks/use-wellness-data";
+import { useSpeedReadingStore } from "@/hooks/use-speedreading-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, HeartPulse, Waves, History, Utensils, Wallet, Trash2, MessageSquare } from "lucide-react";
+import { Plus, HeartPulse, Waves, History, Utensils, Wallet, Trash2, MessageSquare, Zap } from "lucide-react";
 import { WellnessLogDialog } from "./WellnessLogDialog";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from '@/hooks/use-toast';
 
 interface WellnessActivityCalendarProps {
-  categoryFilter?: 'Movement' | 'Stillness' | 'Nutrition' | 'Finance' | 'Communication';
+  categoryFilter?: 'Movement' | 'Stillness' | 'Nutrition' | 'Finance' | 'Communication' | 'Speed Reading';
 }
 
 export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCalendarProps) {
@@ -24,6 +25,8 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs,
     deleteMovementLog, deleteStillnessLog, deleteMealLog, deleteTransaction, deleteCommunicationLog
   } = useWellnessData();
+  const { logs: readingLogs } = useSpeedReadingStore();
+  
   const [isLogOpen, setIsLogOpen] = useState(false);
   const [logType, setLogType] = useState<'movement' | 'stillness' | 'nutrition' | 'finance' | 'communication'>('movement');
   const { toast } = useToast();
@@ -53,13 +56,21 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     if (!categoryFilter || categoryFilter === 'Finance') {
       logs.push(...transactions.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Finance', label: l.merchant, detail: `$${l.amount}` })));
     }
+    if (!categoryFilter || categoryFilter === 'Speed Reading') {
+      logs.push(...readingLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ 
+        ...l, 
+        type: 'Speed Reading', 
+        label: `${l.drillType}`, 
+        detail: `${l.wpm} WPM / ${l.err} ERR` 
+      })));
+    }
 
     return logs.sort((a, b) => {
       const timeA = 'timestamp' in a ? new Date(a.timestamp).getTime() : 0;
       const timeB = 'timestamp' in b ? new Date(b.timestamp).getTime() : 0;
       return timeB - timeA;
     });
-  }, [date, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, categoryFilter]);
+  }, [date, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, categoryFilter]);
 
   const handleAddLog = (type: typeof logType) => {
     setLogType(type);
@@ -83,6 +94,10 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
       case 'Finance':
         deleteTransaction(log.id);
         break;
+      case 'Speed Reading':
+        // Drill logs are typically deleted through the reading store if needed
+        toast({ title: "Drill logs cannot be deleted from here.", variant: 'destructive' });
+        return;
     }
     toast({ title: "Log Deleted", variant: 'default' });
   };
@@ -94,8 +109,9 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     if (!categoryFilter || categoryFilter === 'Communication') dates.push(...communicationLogs.map(l => new Date(l.timestamp)));
     if (!categoryFilter || categoryFilter === 'Nutrition') dates.push(...mealLogs.map(l => new Date(l.date + 'T12:00:00')));
     if (!categoryFilter || categoryFilter === 'Finance') dates.push(...transactions.map(l => new Date(l.date + 'T12:00:00')));
+    if (!categoryFilter || categoryFilter === 'Speed Reading') dates.push(...readingLogs.map(l => new Date(l.timestamp)));
     return dates;
-  }, [movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, categoryFilter]);
+  }, [movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, categoryFilter]);
 
   const modifiers = {
     hasLog: (d: Date) => activityDates.some(ad => isSameDay(ad, d))
@@ -111,7 +127,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
 
   if (!mounted) return null;
 
-  const defaultType = categoryFilter?.toLowerCase() as any || 'movement';
+  const defaultType = categoryFilter === 'Speed Reading' ? 'movement' : (categoryFilter?.toLowerCase() as any || 'movement');
 
   return (
     <Card className="border-primary/10 shadow-sm">
@@ -124,7 +140,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
             </CardTitle>
             <CardDescription>View your synchronized activity history.</CardDescription>
           </div>
-          {categoryFilter !== 'Communication' && (
+          {(categoryFilter !== 'Communication' && categoryFilter !== 'Speed Reading') && (
             <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => handleAddLog(defaultType)}>
               <Plus className="w-3.5 h-3.5" /> Log {categoryFilter || 'Activity'}
             </Button>
@@ -167,12 +183,14 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
                         log.type === 'Stillness' ? 'bg-blue-400/10 text-blue-500' :
                         log.type === 'Communication' ? 'bg-purple-400/10 text-purple-500' :
                         log.type === 'Nutrition' ? 'bg-orange-400/10 text-orange-500' :
+                        log.type === 'Speed Reading' ? 'bg-amber-400/10 text-amber-600' :
                         'bg-green-400/10 text-green-600'
                       )}>
                         {log.type === 'Movement' ? <HeartPulse className="w-4" /> : 
                          log.type === 'Stillness' ? <Waves className="w-4" /> : 
                          log.type === 'Communication' ? <MessageSquare className="w-4" /> :
                          log.type === 'Nutrition' ? <Utensils className="w-4" /> :
+                         log.type === 'Speed Reading' ? <Zap className="w-4" /> :
                          <Wallet className="w-4" />}
                       </div>
                       <div>
@@ -184,14 +202,16 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
                         </p>
                       </div>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-all"
-                      onClick={() => handleDelete(log)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    {log.type !== 'Speed Reading' && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive transition-all"
+                        onClick={() => handleDelete(log)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                 ))
               )}
@@ -202,7 +222,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
       <WellnessLogDialog 
         isOpen={isLogOpen} 
         onOpenChange={setIsLogOpen} 
-        initialType={logType === 'communication' ? 'movement' : logType as any} // Communication doesn't have an adhoc logger yet
+        initialType={logType === 'communication' ? 'movement' : logType as any} 
         initialDate={date} 
       />
     </Card>

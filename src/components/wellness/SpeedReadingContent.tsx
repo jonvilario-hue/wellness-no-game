@@ -73,7 +73,7 @@ export default function SpeedReadingContent() {
       title: customTitle || "Personal Text",
       content: customText,
       wordCount: customText.split(/\s+/).length,
-      tier: 'Casual', // Will be estimated in the player
+      tier: 'Casual', 
       quiz: []
     };
     setActiveDrill({ type, passage, isCustom: true });
@@ -208,11 +208,7 @@ export default function SpeedReadingContent() {
       </div>
 
       <div className="pt-10">
-        <h3 className="text-xl font-black uppercase tracking-tighter mb-6 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-primary" />
-          Reading History
-        </h3>
-        <WellnessActivityCalendar categoryFilter="Movement" /> 
+        <WellnessActivityCalendar categoryFilter="Speed Reading" /> 
       </div>
     </div>
   )
