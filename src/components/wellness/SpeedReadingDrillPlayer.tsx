@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import type { ReadingPassage, DrillType, ReadingTier } from '@/types/speedreading';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
+import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SpeedReadingQuiz } from './SpeedReadingQuiz';
@@ -42,6 +43,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
   const [selfComprehensionRating, setSelfRating] = useState(3);
 
   const { addLog } = useSpeedReadingStore();
+  const { markStudySessionComplete } = useCalendarPlansStore();
   const { toast } = useToast();
   const activeWordRef = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -140,7 +142,10 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       isSelfAssessed: isCustomText
     });
 
-    toast({ title: "Drill Results Synchronized", variant: 'success' });
+    // Notify Master Calendar
+    markStudySessionComplete('Speed Reading', passage.id);
+
+    toast({ title: "Drill Results Synchronized", description: "Updated Master Calendar and Velocity Trends.", variant: 'success' });
     onClose();
   };
 

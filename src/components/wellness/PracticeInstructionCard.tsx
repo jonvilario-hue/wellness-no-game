@@ -9,6 +9,7 @@ import type { Exercise } from '@/data/exercises';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { useWellnessData } from '@/hooks/use-wellness-data';
+import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -45,6 +46,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   const [commContext, setCommContext] = useState<string>('');
 
   const { addMovementLog, addStillnessLog, addCommunicationLog, movementProgress } = useWellnessData();
+  const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
   
   const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
@@ -83,6 +85,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         reps: reps ? parseInt(reps) : undefined,
         holdTime: holdTime ? parseInt(holdTime) : undefined
       });
+      syncFromTracker('Movement', exercise.name);
     } else if (isStillness) {
       addStillnessLog({
         techniqueId: exercise.id,
@@ -93,6 +96,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         postCalm: parseInt(postCalm),
         trigger: trigger as any
       });
+      syncFromTracker('Stillness', exercise.name);
     } else {
       addCommunicationLog({
         practiceId: exercise.id,
@@ -102,8 +106,10 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         effectiveness: difficulty,
         context: commContext
       });
+      syncFromTracker('Communication', exercise.name);
     }
-    toast({ title: "Session Recorded!", variant: 'success' });
+    
+    toast({ title: "Session Recorded!", description: "Synchronized with Master Calendar.", variant: 'success' });
     setIsComplete(true);
     setShowAdditions(false);
   };
