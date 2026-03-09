@@ -1,9 +1,8 @@
-
 'use client';
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { format, subDays, isSameDay, parseISO, addDays } from 'date-fns';
+import { format, subDays, isAfter, parseISO, addDays } from 'date-fns';
 import type { Exercise } from '@/data/exercises';
 
 export type Transaction = {
@@ -149,6 +148,7 @@ export const calculateStreak = (data: any[] | Record<string, boolean>): number =
 export type WellnessState = {
   lowEnergyMode: boolean;
   trackingEnabled: Record<string, boolean>; 
+  trackExplainerDismissed: boolean;
   transactions: Transaction[];
   mealLogs: MealLog[];
   bodyMetrics: BodyMetric[];
@@ -175,6 +175,7 @@ export type WellnessState = {
 
   setLowEnergyMode: (enabled: boolean) => void;
   toggleTracking: (id: string) => void;
+  setTrackExplainerDismissed: (dismissed: boolean) => void;
   addTransaction: (tx: Omit<Transaction, 'id'>) => void;
   addMealLog: (log: Omit<MealLog, 'id'>) => void;
   addBodyMetric: (metric: BodyMetric) => void;
@@ -216,6 +217,7 @@ export const useWellnessData = create<WellnessState>()(
         'Communication': true,
         'Speed Reading': true
       },
+      trackExplainerDismissed: false,
       transactions: [],
       mealLogs: [],
       bodyMetrics: [],
@@ -266,6 +268,7 @@ export const useWellnessData = create<WellnessState>()(
           [id]: !s.trackingEnabled[id]
         }
       })),
+      setTrackExplainerDismissed: (dismissed) => set({ trackExplainerDismissed: dismissed }),
       addTransaction: (tx) => set(s => ({ transactions: [{ ...tx, id: crypto.randomUUID() }, ...s.transactions] })),
       addMealLog: (log) => set(s => ({ mealLogs: [{ ...log, id: crypto.randomUUID() }, ...s.mealLogs] })),
       addBodyMetric: (metric) => set(s => ({ bodyMetrics: [...s.bodyMetrics.filter(m => m.date !== metric.date), metric] })),
@@ -351,7 +354,7 @@ export const useWellnessData = create<WellnessState>()(
       },
     }),
     {
-      name: 'wellness-data-storage-v8',
+      name: 'wellness-data-storage-v9',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -363,6 +366,7 @@ export const useWellnessData = create<WellnessState>()(
             'Communication': true,
             'Speed Reading': true
           };
+          if (state.trackExplainerDismissed === undefined) state.trackExplainerDismissed = false;
         }
       }
     }
