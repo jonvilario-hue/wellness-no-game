@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo, useState } from "react"
@@ -24,6 +25,7 @@ import {
 } from "../ui/select"
 import type { Exercise } from "@/data/exercises"
 import { CommunicationDashboard } from "./CommunicationDashboard"
+import { CommunicationAnalytics } from "./CommunicationAnalytics"
 import { cn } from "@/lib/utils"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 
@@ -300,6 +302,10 @@ export default function CommunicationContent() {
         </Dialog>
 
         <WellnessActivityCalendar categoryFilter="Communication" />
+
+        <div className="pt-6">
+          <CommunicationAnalytics />
+        </div>
     </div>
   )
 }
