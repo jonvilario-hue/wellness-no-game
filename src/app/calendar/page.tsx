@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -468,7 +467,6 @@ export default function CalendarPage() {
       ids.forEach(id => logExerciseById(id));
       toast({ title: "Routine Logged", description: `All ${ids.length} steps pushed to history.`, variant: 'success' });
     } else {
-      // Fallback for non-linked activities: just toast
       toast({ title: "Check-in logged", description: `"${plan.name}" completed.` });
     }
   };
@@ -626,7 +624,7 @@ export default function CalendarPage() {
                           )}
 
                           <Collapsible open={globalShowSteps}>
-                            <CollapsibleContent className="p-4 space-y-6 bg-background border-y border-primary/5">
+                            <CollapsibleContent className="p-4 space-y-6">
                               {plan.activities.map((act) => {
                                 const practice = allPractices.find(p => p.id === act.linkedTracker);
                                 if (!practice) {
@@ -639,7 +637,7 @@ export default function CalendarPage() {
                                 }
                                 return (
                                   <div key={act.id} className="scroll-mt-32">
-                                    <PracticeInstructionCard exercise={practice} />
+                                    <PracticeInstructionCard exercise={practice} variant="flat" />
                                   </div>
                                 );
                               })}
@@ -878,7 +876,7 @@ export default function CalendarPage() {
                               <div className="flex items-center gap-2">
                                 {task.status !== 'completed' && (
                                   <div className="flex gap-2">
-                                    <AssistantTooltip text="Quickly log completion without running the full timer. High-fidelity metrics are synced automatically.">
+                                    <AssistantTooltip text="Quickly log baseline metrics.">
                                       <Button 
                                         size="sm" 
                                         variant="outline"
