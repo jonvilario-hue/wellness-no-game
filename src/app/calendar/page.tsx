@@ -233,7 +233,7 @@ export default function CalendarPage() {
   const [plansOpen, setPlansOpen] = useState(true);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
-  const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
+  const [globalShowSteps, setGlobalShowSteps] = useState(false);
 
   // Timer states for routines
   const [activeTimerId, setActiveTimerId] = useState<string | null>(null);
@@ -601,7 +601,7 @@ export default function CalendarPage() {
                           </CardHeader>
                           
                           {isTimerRunning && (
-                            <div className="px-4 py-6 bg-primary/5 border-y border-primary/10 animate-in fade-in slide-in-from-top-2">
+                            <div className="px-4 py-6 bg-primary/5 border-y border-primary/10">
                               <div className="flex flex-col items-center gap-4">
                                 <div className="text-4xl font-black font-mono text-primary tracking-tighter">
                                   {formatTime(routineTimeLeft)}
@@ -625,7 +625,7 @@ export default function CalendarPage() {
                             </div>
                           )}
 
-                          <Collapsible open={expandedPlanId === plan.id} onOpenChange={(o) => setExpandedPlanId(o ? plan.id : null)}>
+                          <Collapsible open={globalShowSteps}>
                             <CollapsibleContent className="p-4 space-y-6 bg-background border-y border-primary/5">
                               {plan.activities.map((act) => {
                                 const practice = allPractices.find(p => p.id === act.linkedTracker);
@@ -658,8 +658,11 @@ export default function CalendarPage() {
                               
                               <Button 
                                 variant="outline" 
-                                className="flex-1 font-bold h-10 gap-2 border-primary/10 bg-background hover:bg-primary/5"
-                                onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
+                                className={cn(
+                                  "flex-1 font-bold h-10 gap-2 border-primary/10 bg-background hover:bg-primary/5",
+                                  globalShowSteps && "bg-primary/10 border-primary/30"
+                                )}
+                                onClick={() => setGlobalShowSteps(!globalShowSteps)}
                               >
                                 <LayoutList className="w-4 h-4" />
                                 Steps
