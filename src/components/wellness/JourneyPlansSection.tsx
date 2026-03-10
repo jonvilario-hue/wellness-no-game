@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -10,8 +10,7 @@ import {
   CheckCircle2, BookOpen, X
 } from 'lucide-react';
 import Link from 'next/link';
-import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from '@/hooks/use-wellness-data';
-import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
+import { useWellnessData } from '@/hooks/use-wellness-data';
 import { wellnessPlans } from '@/data/wellness-plans';
 import { cn } from '@/lib/utils';
 
@@ -23,11 +22,6 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
   const { 
     planProgress,
   } = useWellnessData();
-  
-  const movementLogs = useMovementLogs();
-  const stillnessLogs = useStillnessLogs();
-  const communicationLogs = useCommunicationLogs();
-  const { logs: readingLogs } = useSpeedReadingStore();
   
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -71,7 +65,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
   const handleToggleExpand = () => setIsExpanded(!isExpanded);
 
   return (
-    <>
+    <div className="flex flex-col">
       <div className="animate-in fade-in duration-500">
         <div className={cn(
           "flex items-center gap-4 p-2 px-4 rounded-full border bg-background/50 backdrop-blur-sm transition-all h-11",
@@ -103,11 +97,6 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
           </div>
 
           <div className="flex items-center gap-1 border-l border-primary/10 pl-3 ml-1">
-            {activePlan && (
-              <Button asChild variant="ghost" size="sm" className="h-7 text-[9px] font-black uppercase px-3 hover:bg-primary/10 text-primary">
-                <Link href={`/exercises/plans/${activePlan.id}`}>Resume</Link>
-              </Button>
-            )}
             <Button 
               variant="ghost" 
               size="sm" 
@@ -188,6 +177,6 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
           </Card>
         </div>
       )}
-    </>
+    </div>
   );
 }
