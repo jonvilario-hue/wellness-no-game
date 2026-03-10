@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -253,8 +252,9 @@ export default function CalendarPage() {
   }, [deletedPresetIds, customPlans, planOrder]);
 
   const activePlans = useMemo(() => {
-    return availablePlans.filter(p => activePlanIds.includes(p.id));
-  }, [availablePlans, activePlanIds]);
+    // Routines are now "always-on" by default
+    return availablePlans;
+  }, [availablePlans]);
 
   const getTasksForDate = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -563,7 +563,7 @@ export default function CalendarPage() {
                     >
                       <Card className={cn(
                         "transition-shadow relative group h-full", 
-                        activePlanIds.includes(plan.id) && "border-primary bg-primary/5 shadow-sm",
+                        "border-primary bg-primary/5 shadow-sm",
                         routinesView === 'list' && "flex items-center justify-between py-2 px-4"
                       )}>
                         {routinesView === 'grid' ? (
@@ -579,10 +579,7 @@ export default function CalendarPage() {
                                     <ChevronDownSquare className="w-4 h-4" />
                                   </Button>
                                   <div className="w-px h-4 bg-border mx-1" />
-                                  <Switch 
-                                    checked={activePlanIds.includes(plan.id)} 
-                                    onCheckedChange={() => togglePlan(plan.id)}
-                                  />
+                                  <Badge variant="secondary" className="text-[8px] h-5 uppercase font-black">Active</Badge>
                                 </div>
                               </div>
                               <CardDescription className="text-xs line-clamp-2">{plan.description}</CardDescription>
@@ -684,10 +681,7 @@ export default function CalendarPage() {
                                     <Edit className="w-4 h-4" />
                                   </Button>
                                 )}
-                                <Switch 
-                                  checked={activePlanIds.includes(plan.id)} 
-                                  onCheckedChange={() => togglePlan(plan.id)}
-                                />
+                                <Badge variant="secondary" className="text-[8px] uppercase h-5">On</Badge>
                               </div>
                             </div>
                           </>

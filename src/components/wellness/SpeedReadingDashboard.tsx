@@ -12,6 +12,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianG
 import { getSpeedRank } from '@/lib/speedreading-utils';
 import { AssistantTooltip } from '../assistant-tooltip';
 import { cn } from '@/lib/utils';
+import { TodayScheduleWidget } from "./TodayScheduleWidget";
 
 export function SpeedReadingStats() {
   const { logs, getStreak } = useSpeedReadingStore();
@@ -38,38 +39,42 @@ export function SpeedReadingStats() {
   }, [logs]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <AssistantTooltip text="Your current consecutive days of speed reading training. Developing higher reading velocity requires daily 're-calibration' of the eye-brain connection.">
-        <Card className="bg-primary/5 border-primary/10 h-full">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Flame className="w-5 h-5 text-orange-500 mb-1" />
-            <p className="text-2xl font-black">{streak}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Reading Streak</p>
-          </CardContent>
-        </Card>
-      </AssistantTooltip>
-      
-      <AssistantTooltip text="Your average raw words-per-minute (WPM) across all content tiers. The average reader reads at 200-250 WPM; higher numbers indicate reduced subvocalization and wider fixation spans.">
-        <Card className="bg-primary/5 border-primary/10 h-full">
-          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-            <Zap className="w-5 h-5 text-primary mb-1" />
-            <p className="text-2xl font-black">{aggregateStats.avgWpm}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Avg WPM</p>
-          </CardContent>
-        </Card>
-      </AssistantTooltip>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <AssistantTooltip text="Your current consecutive days of speed reading training. Developing higher reading velocity requires daily 're-calibration' of the eye-brain connection.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Flame className="w-5 h-5 text-orange-500 mb-1" />
+              <p className="text-2xl font-black">{streak}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Reading Streak</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
+        
+        <AssistantTooltip text="Your average raw words-per-minute (WPM) across all content tiers. The average reader reads at 200-250 WPM; higher numbers indicate reduced subvocalization and wider fixation spans.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Zap className="w-5 h-5 text-primary mb-1" />
+              <p className="text-2xl font-black">{aggregateStats.avgWpm}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Avg WPM</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
 
-      <AssistantTooltip text="The specific reading protocol you use most frequently. Specializing in one drill builds deep perceptual habits before layering on more complex techniques.">
-        <Card className="bg-primary/5 border-primary/10 flex flex-col justify-center p-4 text-center h-full">
-          <div className="space-y-1">
-            <Trophy className="w-5 h-5 text-primary opacity-80 mx-auto mb-1" />
-            <p className="text-sm font-bold truncate w-full">
-              {aggregateStats.topDrill}
-            </p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Drill</p>
-          </div>
-        </Card>
-      </AssistantTooltip>
+        <AssistantTooltip text="The specific reading protocol you use most frequently. Specializing in one drill builds deep perceptual habits before layering on more complex techniques.">
+          <Card className="bg-primary/5 border-primary/10 flex flex-col justify-center p-4 text-center h-full">
+            <div className="space-y-1">
+              <Trophy className="w-5 h-5 text-primary opacity-80 mx-auto mb-1" />
+              <p className="text-sm font-bold truncate w-full">
+                {aggregateStats.topDrill}
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Drill</p>
+            </div>
+          </Card>
+        </AssistantTooltip>
+      </div>
+
+      <TodayScheduleWidget category="Speed Reading" />
     </div>
   );
 }

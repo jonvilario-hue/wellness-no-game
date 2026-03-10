@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -6,6 +5,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { format, subDays, isAfter, parseISO, startOfWeek } from 'date-fns';
 import { movementExercises, mindfulnessPractices, type Exercise } from '@/data/exercises';
 import { communicationPractices } from '@/data/communication-practices';
+import { readingPassages } from '@/data/speedreading-passages';
+import { useSpeedReadingStore } from './use-speedreading-store';
 import { useMemo } from 'react';
 
 export type LogEntry = {
@@ -271,13 +272,16 @@ export const useWellnessData = create<WellnessState>()(
         const exercise = [
           ...movementExercises, 
           ...mindfulnessPractices, 
-          ...communicationPractices
+          ...communicationPractices,
+          ...readingPassages
         ].find(e => e.id === id);
         
         if (!exercise) return;
 
         const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
         const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
+        const isReading = !isMovement && !isStillness && 'tier' in exercise;
+        
         const timestamp = new Date().toISOString();
 
         if (isMovement) {
@@ -298,6 +302,22 @@ export const useWellnessData = create<WellnessState>()(
             preStress: 5,
             postCalm: 7,
             trigger: 'Proactive'
+          });
+        } else if (isReading) {
+          // Cross-hook dispatch for speed reading
+          const speedStore = useSpeedReadingStore.getState();
+          speedStore.addLog({
+            drillType: 'Pacer',
+            passageId: exercise.id,
+            tier: (exercise as any).tier,
+            wpm: 300,
+            comprehensionScore: 100,
+            err: 300,
+            preFocus: 3,
+            postFatigue: 3,
+            durationSeconds: 60,
+            isCustomText: false,
+            isSelfAssessed: false
           });
         } else {
           get().addCommunicationLog({

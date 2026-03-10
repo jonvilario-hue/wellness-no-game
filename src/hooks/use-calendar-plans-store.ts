@@ -75,7 +75,7 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
       addCustomPlan: (plan) => {
         set((state) => ({
           customPlans: [...state.customPlans, plan],
-          activePlanIds: [...state.activePlanIds, plan.id],
+          activePlanIds: [...new Set([...state.activePlanIds, plan.id])],
           planOrder: [plan.id, ...state.planOrder]
         }));
       },
@@ -221,7 +221,16 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
       name: 'calendar-plans-storage-v4',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+        if (state) {
+          // Ensure all current plans are active
+          const allPlanIds = [
+            ...presetPlans.map(p => p.id),
+            ...state.customPlans.map(p => p.id)
+          ].filter(id => !state.deletedPresetIds.includes(id));
+          
+          state.activePlanIds = [...new Set([...state.activePlanIds, ...allPlanIds])];
+          state.setHasHydrated(true);
+        }
       }
     }
   )
