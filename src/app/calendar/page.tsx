@@ -70,9 +70,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
-import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
 import { movementExercises, mindfulnessPractices } from '@/data/exercises';
 import { communicationPractices } from '@/data/communication-practices';
+import { PracticeInstructionCard } from '@/components/wellness/PracticeInstructionCard';
 
 const allPractices = [...movementExercises, ...mindfulnessPractices, ...communicationPractices];
 
@@ -225,8 +225,6 @@ export default function CalendarPage() {
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
-  const [activeRoutineIds, setActiveRoutineIds] = useState<string[] | null>(null);
-  const [activeRoutineName, setActiveRoutineName] = useState("");
 
   // Form states for builder
   const [newPlanName, setNewPlanName] = useState("");
@@ -451,28 +449,11 @@ export default function CalendarPage() {
     );
   };
 
-  const handleStartFullRoutine = (plan: CalendarPlan) => {
-    const ids = plan.activities.map(a => a.linkedTracker).filter(Boolean) as string[];
-    if (ids.length > 0) {
-      setActiveRoutineName(plan.name);
-      setActiveRoutineIds(ids);
-    } else {
-      toast({ title: "No playable activities", description: "Link exercises to this plan to start a guided session.", variant: 'destructive' });
-    }
-  };
-
   const handleQuickLogRoutine = (plan: CalendarPlan) => {
     const ids = plan.activities.map(a => a.linkedTracker).filter(Boolean) as string[];
     if (ids.length > 0) {
       ids.forEach(id => logExerciseById(id));
       toast({ title: "Routine Logged", description: `All ${ids.length} steps pushed to history.`, variant: 'success' });
-    }
-  };
-
-  const handleStartTask = (task: any) => {
-    if (task.linkedTracker) {
-      setActiveRoutineName(task.name);
-      setActiveRoutineIds([task.linkedTracker]);
     }
   };
 
@@ -485,16 +466,6 @@ export default function CalendarPage() {
   };
 
   if (!_hasHydrated) return null;
-
-  if (activeRoutineIds) {
-    return (
-      <RoutinePlayer 
-        exerciseIds={activeRoutineIds} 
-        routineName={activeRoutineName} 
-        onClose={() => setActiveRoutineIds(null)} 
-      />
-    );
-  }
 
   return (
     <>
@@ -588,30 +559,20 @@ export default function CalendarPage() {
                             
                             {expandedPlanId === plan.id ? (
                               <CardContent className="p-4 space-y-4 animate-in fade-in slide-in-from-top-1 bg-background">
-                                <div className="space-y-3">
+                                <div className="space-y-6">
                                   {plan.activities.map((act) => {
                                     const practice = allPractices.find(p => p.id === act.linkedTracker);
-                                    return (
-                                      <div key={act.id} className="p-3 rounded-xl bg-muted/30 border border-primary/5 space-y-2">
-                                        <div className="flex items-center justify-between">
-                                          <div className="flex items-center gap-2">
-                                            <div className="w-1 h-3 rounded-full bg-primary" />
-                                            <p className="text-xs font-bold">{act.name}</p>
-                                          </div>
-                                          <Badge variant="outline" className="text-[8px] h-4 uppercase">{act.duration}m</Badge>
+                                    if (!practice) {
+                                      return (
+                                        <div key={act.id} className="p-3 rounded-xl bg-muted/30 border border-primary/5">
+                                          <p className="text-xs font-bold">{act.name}</p>
+                                          <p className="text-[10px] text-muted-foreground">{act.duration}m • {act.category}</p>
                                         </div>
-                                        {practice && (
-                                          <div className="space-y-2 pl-3 border-l border-primary/10">
-                                            <div className="flex gap-2 items-start">
-                                              <Goal className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                                              <p className="text-[10px] text-muted-foreground leading-relaxed">{practice.intention}</p>
-                                            </div>
-                                            <div className="flex gap-2 items-start">
-                                              <Zap className="w-3 h-3 text-amber-500 mt-0.5 shrink-0" />
-                                              <p className="text-[10px] text-muted-foreground leading-relaxed italic">{practice.modifications[0]}</p>
-                                            </div>
-                                          </div>
-                                        )}
+                                      );
+                                    }
+                                    return (
+                                      <div key={act.id} className="scroll-mt-32">
+                                        <PracticeInstructionCard exercise={practice} />
                                       </div>
                                     );
                                   })}
@@ -645,7 +606,7 @@ export default function CalendarPage() {
                             <CardFooter className="p-4 flex gap-2 mt-auto border-t bg-muted/5">
                               <Button 
                                 className="flex-1 font-bold h-10 gap-2 shadow-sm" 
-                                onClick={() => handleStartFullRoutine(plan)}
+                                onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
                               >
                                 <Play className="w-4 h-4 fill-current" />
                                 Start
@@ -707,7 +668,7 @@ export default function CalendarPage() {
                               </Button>
                               
                               <div className="flex items-center gap-3">
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleStartFullRoutine(plan)}>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}>
                                   <Play className="w-4 h-4 fill-current" />
                                 </Button>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleQuickLogRoutine(plan)}>
@@ -906,19 +867,6 @@ export default function CalendarPage() {
                               <div className="flex items-center gap-2">
                                 {task.status !== 'completed' && (
                                   <div className="flex gap-2">
-                                    {task.linkedTracker && (
-                                      <AssistantTooltip text="Launch guided session with instructions and timer.">
-                                        <Button 
-                                          variant="secondary" 
-                                          size="sm" 
-                                          className="rounded-full gap-2 h-10 px-6 font-bold"
-                                          onClick={() => handleStartTask(task)}
-                                        >
-                                          <Play className="w-4 h-4 fill-current" />
-                                          Start
-                                        </Button>
-                                      </AssistantTooltip>
-                                    )}
                                     <AssistantTooltip text="Quickly log completion without running the full timer. High-fidelity metrics are synced automatically.">
                                       <Button 
                                         size="sm" 

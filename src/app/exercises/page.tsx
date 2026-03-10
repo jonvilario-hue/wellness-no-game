@@ -16,7 +16,6 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
-import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
 import { WellnessBalance } from '@/components/wellness/WellnessBalance';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { MovementDashboard } from '@/components/wellness/MovementDashboard';
@@ -26,8 +25,6 @@ import { SpeedReadingStats } from '@/components/wellness/SpeedReadingDashboard';
 
 function ExercisesPageContent() {
   const [isOpen, setIsOpen] = useState(true);
-  const [activeRoutineIds, setActiveRoutineIds] = useState<string[] | null>(null);
-  const [activeRoutineName, setActiveRoutineName] = useState<string>("");
   const searchParams = useSearchParams();
   
   const activeTab = searchParams.get('tab') || 'movement';
@@ -47,16 +44,6 @@ function ExercisesPageContent() {
   };
 
   const streak = useMemo(() => calculateStreak(completions), [completions]);
-
-  if (activeRoutineIds) {
-    return (
-      <RoutinePlayer 
-        exerciseIds={activeRoutineIds} 
-        routineName={activeRoutineName}
-        onClose={() => setActiveRoutineIds(null)} 
-      />
-    );
-  }
 
   return (
     <>

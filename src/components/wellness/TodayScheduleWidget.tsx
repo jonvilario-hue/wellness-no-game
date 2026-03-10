@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useCalendarPlansStore } from "@/hooks/use-calendar-plans-store";
@@ -12,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { AssistantTooltip } from "../assistant-tooltip";
 import { useWellnessData } from "@/hooks/use-wellness-data";
 import { useState, useMemo } from "react";
-import { RoutinePlayer } from "./RoutinePlayer";
 import { useToast } from "@/hooks/use-toast";
 
 interface TodayScheduleWidgetProps {
@@ -22,8 +22,6 @@ interface TodayScheduleWidgetProps {
 export function TodayScheduleWidget({ category }: TodayScheduleWidgetProps) {
   const { activityInstances, customPlans, deletedPresetIds, updateActivityStatus, _hasHydrated } = useCalendarPlansStore();
   const { logExerciseById } = useWellnessData();
-  const [activeDrillIds, setActiveDrillIds] = useState<string[] | null>(null);
-  const [activeDrillName, setActiveDrillName] = useState("");
   const { toast } = useToast();
   
   const today = useMemo(() => new Date(), []);
@@ -93,18 +91,6 @@ export function TodayScheduleWidget({ category }: TodayScheduleWidgetProps) {
 
   if (!_hasHydrated) return null;
 
-  if (activeDrillIds) {
-    return (
-      <div className="fixed inset-0 z-[100]">
-        <RoutinePlayer 
-          exerciseIds={activeDrillIds} 
-          routineName={activeDrillName} 
-          onClose={() => setActiveDrillIds(null)} 
-        />
-      </div>
-    );
-  }
-
   if (todaysActivities.length === 0) {
     return (
       <Card className="bg-muted/20 border-dashed">
@@ -129,13 +115,6 @@ export function TodayScheduleWidget({ category }: TodayScheduleWidgetProps) {
     }
   };
 
-  const handleStart = (inst: any) => {
-    if (inst.linkedTracker) {
-      setActiveDrillName(inst.activityName);
-      setActiveDrillIds([inst.linkedTracker]);
-    }
-  };
-
   return (
     <div className="space-y-2">
       <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground px-1 flex items-center gap-2">
@@ -154,20 +133,13 @@ export function TodayScheduleWidget({ category }: TodayScheduleWidgetProps) {
               <div className="flex items-center gap-1.5">
                 {inst.status !== 'completed' ? (
                   <>
-                    {inst.linkedTracker && (
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <AssistantTooltip text="Start guided player.">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleStart(inst)}>
-                            <Play className="w-3.5 h-3.5 fill-current" />
-                          </Button>
-                        </AssistantTooltip>
-                        <AssistantTooltip text="Quickly log baseline metrics.">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleQuickLog(inst)}>
-                            <ClipboardCheck className="w-3.5 h-3.5" />
-                          </Button>
-                        </AssistantTooltip>
-                      </div>
-                    )}
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <AssistantTooltip text="Quickly log baseline metrics.">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleQuickLog(inst)}>
+                          <ClipboardCheck className="w-3.5 h-3.5" />
+                        </Button>
+                      </AssistantTooltip>
+                    </div>
                     <Button 
                       variant="ghost" 
                       size="sm" 
