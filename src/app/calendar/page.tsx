@@ -16,8 +16,6 @@ import {
   Trash2, 
   RotateCcw, 
   Edit, 
-  Play, 
-  Pause,
   Clock, 
   TrendingUp, 
   Brain, 
@@ -39,7 +37,8 @@ import {
   PlusCircle,
   AlignJustify,
   ChevronUpSquare,
-  ChevronDownSquare
+  ChevronDownSquare,
+  MoreHorizontal
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -66,11 +65,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
-import { movementExercises, mindfulnessPractices } from '@/data/exercises';
-import { communicationPractices } from '@/data/communication-practices';
-import { PracticeInstructionCard } from '@/components/wellness/PracticeInstructionCard';
-
-const allPractices = [...movementExercises, ...mindfulnessPractices, ...communicationPractices];
 
 function AmalgamatedAnalytics() {
   const { mealLogs, transactions } = useWellnessData();
@@ -86,7 +80,7 @@ function AmalgamatedAnalytics() {
     const now = new Date();
     for (let i = 13; i >= 0; i--) {
       const date = subDays(now, i);
-      const dStr = format(date, 'yyyy-MM-dd');
+      const dStr = format(date, 'yyyy-MM-0dd');
       
       const count = 
         (movementLogs?.filter(l => l.timestamp.startsWith(dStr)).length || 0) +
@@ -191,13 +185,6 @@ function AmalgamatedAnalytics() {
   );
 }
 
-const formatTime = (totalSeconds: number): string => {
-  if (totalSeconds < 0) return '00:00';
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
-
 export default function CalendarPage() {
   const { 
     customPlans, 
@@ -222,16 +209,10 @@ export default function CalendarPage() {
   const { toast } = useToast();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
-  const [routinesView, setRoutinesView] = useState<'grid' | 'list'>('grid');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [plansOpen, setPlansOpen] = useState(true);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
-  const [globalShowSteps, setGlobalShowSteps] = useState(false);
-
-  // Timer states for routines
-  const [activeTimerId, setActiveTimerId] = useState<string | null>(null);
-  const [routineTimeLeft, setRoutineTimeLeft] = useState<number>(0);
 
   // Form states for builder
   const [newPlanName, setNewPlanName] = useState("");
@@ -474,30 +455,6 @@ export default function CalendarPage() {
     }
   };
 
-  const toggleRoutineTimer = (plan: CalendarPlan) => {
-    if (activeTimerId === plan.id) {
-      setActiveTimerId(null);
-    } else {
-      const totalSeconds = plan.activities.reduce((sum, act) => sum + (act.duration * 60), 0);
-      setActiveTimerId(plan.id);
-      setRoutineTimeLeft(totalSeconds);
-    }
-  };
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeTimerId && routineTimeLeft > 0) {
-      interval = setInterval(() => {
-        setRoutineTimeLeft(p => p - 1);
-      }, 1000);
-    } else if (activeTimerId && routineTimeLeft === 0) {
-      const plan = availablePlans.find(p => p.id === activeTimerId);
-      if (plan) handleQuickLogRoutine(plan);
-      setActiveTimerId(null);
-    }
-    return () => clearInterval(interval);
-  }, [activeTimerId, routineTimeLeft, availablePlans]);
-
   if (!_hasHydrated) return null;
 
   return (
@@ -511,23 +468,15 @@ export default function CalendarPage() {
         <div className="mx-auto max-w-7xl space-y-6">
           
           <Collapsible open={plansOpen} onOpenChange={setPlansOpen} className="w-full">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
-                <h2 className="text-lg font-bold flex items-center gap-2">
+                <h2 className="text-xl font-black uppercase tracking-tighter flex items-center gap-2">
                   <LayoutGrid className="w-5 h-5 text-primary" />
                   Active Routines
                 </h2>
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10" onClick={() => handleOpenBuilder()}>
                   <PlusCircle className="w-5 h-5" />
                 </Button>
-                <div className="bg-muted p-1 rounded-lg flex items-center gap-1">
-                  <Button variant={routinesView === 'grid' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-3 text-[10px] font-bold uppercase" onClick={() => setRoutinesView('grid')}>
-                    <LayoutGrid className="w-3 h-3 mr-1.5" /> Squared
-                  </Button>
-                  <Button variant={routinesView === 'list' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-3 text-[10px] font-bold uppercase" onClick={() => setRoutinesView('list')}>
-                    <AlignJustify className="w-3 h-3 mr-1.5" /> List
-                  </Button>
-                </div>
                 {deletedPresetIds.length > 0 && (
                   <Button variant="outline" size="sm" onClick={resetDefaults} className="h-7 text-[10px] uppercase font-bold">
                     <RotateCcw className="w-3 h-3 mr-1" /> Reset Defaults
@@ -542,197 +491,117 @@ export default function CalendarPage() {
             </div>
             
             <CollapsibleContent>
-              <motion.div 
-                layout
-                transition={{ type: "spring", stiffness: 80, damping: 25 }}
-                className={cn(
-                  "pb-4 gap-4",
-                  routinesView === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col"
-                )}
-              >
+              <div className="space-y-4 pb-10">
                 <AnimatePresence mode="popLayout">
-                  {availablePlans.map((plan, index) => {
-                    const isTimerRunning = activeTimerId === plan.id;
-                    const totalSeconds = plan.activities.reduce((sum, act) => sum + (act.duration * 60), 0);
-                    const progress = isTimerRunning ? (1 - routineTimeLeft / totalSeconds) * 100 : 0;
-
-                    return (
-                      <motion.div
-                        key={plan.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ type: "spring", stiffness: 80, damping: 25 }}
-                      >
-                        <Card className={cn(
-                          "transition-all relative group h-full overflow-hidden flex flex-col", 
-                          "border-primary/5 hover:border-primary/20 shadow-sm hover:shadow-md",
-                          routinesView === 'list' && "p-0"
-                        )}>
-                          <CardHeader className="bg-primary/5 p-4 pb-3">
-                            <div className="flex justify-between items-start mb-2">
-                              <div className="flex items-center gap-2">
-                                <div className="p-2 bg-background rounded-lg border border-primary/10">
-                                  <Activity className="w-4 h-4 text-primary" />
-                                </div>
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <CardTitle className="text-sm font-black uppercase tracking-tight truncate pr-8">{plan.name}</CardTitle>
-                                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 uppercase text-[8px] font-black h-4 px-1.5 shrink-0">Active</Badge>
+                  {availablePlans.map((plan, index) => (
+                    <motion.div
+                      key={plan.id}
+                      layout
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      transition={{ type: "spring", stiffness: 80, damping: 25 }}
+                    >
+                      <Card className="border-primary/5 hover:border-primary/10 transition-all overflow-hidden shadow-sm">
+                        <div className="flex flex-col md:flex-row">
+                          {/* Routine Info Row */}
+                          <div className="flex-1 p-4 bg-muted/30 border-b md:border-b-0 md:border-r border-primary/5">
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-2 bg-background rounded-lg border border-primary/10">
+                                    <Activity className="w-4 h-4 text-primary" />
                                   </div>
-                                  <p className="text-[10px] text-muted-foreground uppercase font-black">{plan.categories[0]}</p>
+                                  <h3 className="text-lg font-black uppercase tracking-tight">{plan.name}</h3>
                                 </div>
+                                <p className="text-xs text-muted-foreground italic line-clamp-2 pl-11">"{plan.description}"</p>
                               </div>
-                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <AssistantTooltip text="Schedule manual instance">
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-10 w-10 text-primary"
-                                    onClick={() => {
-                                      addAdHocActivity(format(selectedDate, 'yyyy-MM-dd'), {
-                                        planId: 'manual',
-                                        activityName: plan.name,
-                                        category: plan.categories[0] as any
-                                      });
-                                      toast({ title: "Routine added to agenda." });
-                                    }}
-                                  >
-                                    <Plus className="w-5 h-5" />
-                                  </Button>
-                                </AssistantTooltip>
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
+                              <div className="flex items-center gap-1">
+                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
                                   <ChevronUpSquare className="w-4 h-4" />
                                 </Button>
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
+                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
                                   <ChevronDownSquare className="w-4 h-4" />
                                 </Button>
-                              </div>
-                            </div>
-                            <CardDescription className="text-xs line-clamp-2 leading-relaxed italic">"{plan.description}"</CardDescription>
-                          </CardHeader>
-                          
-                          {isTimerRunning && (
-                            <div className="px-4 py-6 bg-primary/5 border-y border-primary/10">
-                              <div className="flex flex-col items-center gap-4">
-                                <div className="text-4xl font-black font-mono text-primary tracking-tighter">
-                                  {formatTime(routineTimeLeft)}
-                                </div>
-                                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-                                  <motion.div 
-                                    className="h-full bg-primary" 
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${progress}%` }}
-                                  />
-                                </div>
-                                <div className="flex gap-2">
-                                  <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => setRoutineTimeLeft(totalSeconds)}>
-                                    <RotateCcw className="w-3.5 h-3.5" />
-                                  </Button>
-                                  <Button size="sm" className="h-8 px-6 rounded-full font-bold" onClick={() => setActiveTimerId(null)}>
-                                    <Pause className="w-3.5 h-3.5 mr-1.5" /> Pause
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          <Collapsible open={globalShowSteps}>
-                            <CollapsibleContent className="p-4 space-y-6">
-                              {plan.activities.map((act) => {
-                                const practice = allPractices.find(p => p.id === act.linkedTracker);
-                                if (!practice) {
-                                  return (
-                                    <div key={act.id} className="p-3 rounded-xl bg-muted/30 border border-primary/5">
-                                      <p className="text-xs font-bold">{act.name}</p>
-                                      <p className="text-[10px] text-muted-foreground">{act.duration}m • {act.category}</p>
-                                    </div>
-                                  );
-                                }
-                                return (
-                                  <div key={act.id} className="scroll-mt-32">
-                                    <PracticeInstructionCard exercise={practice} variant="flat" />
-                                  </div>
-                                );
-                              })}
-                            </CollapsibleContent>
-                          </Collapsible>
-
-                          <div className="mt-auto">
-                            <CardFooter className="p-4 flex gap-2 border-t bg-muted/5">
-                              <Button 
-                                className={cn("flex-1 font-bold h-10 gap-2 shadow-sm", isTimerRunning && "bg-destructive text-destructive-foreground hover:bg-destructive/90")} 
-                                onClick={() => toggleRoutineTimer(plan)}
-                              >
-                                {isTimerRunning ? <X className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
-                                {isTimerRunning ? 'Stop' : 'Start'}
-                              </Button>
-                              
-                              <Button 
-                                variant="outline" 
-                                className={cn(
-                                  "flex-1 font-bold h-10 gap-2 border-primary/10 bg-background hover:bg-primary/5",
-                                  globalShowSteps && "bg-primary/10 border-primary/30"
-                                )}
-                                onClick={() => setGlobalShowSteps(!globalShowSteps)}
-                              >
-                                <LayoutList className="w-4 h-4" />
-                                Steps
-                              </Button>
-
-                              <Button 
-                                variant="outline" 
-                                className="flex-1 font-bold h-10 gap-2 border-primary/10 bg-background hover:bg-primary/5" 
-                                onClick={() => handleQuickLogRoutine(plan)}
-                              >
-                                <ClipboardCheck className="w-4 h-4" />
-                                Quick Log
-                              </Button>
-
-                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                                {!plan.isPreset && (
-                                  <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => handleOpenBuilder(plan)}>
-                                    <Edit className="w-4 h-4" />
-                                  </Button>
-                                )}
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-10 w-10 text-muted-foreground hover:text-destructive"
-                                  onClick={() => deletePlan(plan.id)}
-                                >
+                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenBuilder(plan)}>
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => deletePlan(plan.id)}>
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>
-                            </CardFooter>
+                            </div>
+                            <div className="pl-11 flex gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-8 font-black uppercase text-[10px] gap-2 border-primary/20 hover:bg-primary/5" 
+                                onClick={() => handleQuickLogRoutine(plan)}
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                Log Full Routine
+                              </Button>
+                              <AssistantTooltip text="Add one instance to today's agenda">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 font-black uppercase text-[10px] gap-2 hover:bg-primary/10"
+                                  onClick={() => {
+                                    addAdHocActivity(format(selectedDate, 'yyyy-MM-dd'), {
+                                      planId: 'manual',
+                                      activityName: plan.name,
+                                      category: plan.categories[0] as any
+                                    });
+                                    toast({ title: "Routine added to agenda." });
+                                  }}
+                                >
+                                  <Plus className="w-3.5 h-3.5" /> Schedule
+                                </Button>
+                              </AssistantTooltip>
+                            </div>
                           </div>
-                        </Card>
-                      </motion.div>
-                    );
-                  })}
+
+                          {/* Task List Row */}
+                          <div className="flex-[1.5] p-4 bg-card">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {plan.activities.map((act) => (
+                                <div key={act.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-primary/5 group/act hover:border-primary/20 transition-all">
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-bold truncate">{act.name}</p>
+                                    <p className="text-[9px] text-muted-foreground uppercase font-black">{act.duration}m • {act.category}</p>
+                                  </div>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="h-8 px-4 font-black uppercase text-[9px] border border-transparent hover:border-primary/20 group-hover/act:bg-primary/5"
+                                    onClick={() => handleQuickLog({ ...act, linkedTracker: act.linkedTracker, instanceId: `manual-${act.id}` })}
+                                  >
+                                    <Zap className="w-3 h-3 mr-1.5 fill-current" />
+                                    Log
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  ))}
                   
-                  <motion.div 
-                    key="add-plan-card"
-                    layout
-                    transition={{ type: "spring", stiffness: 80, damping: 25 }}
-                  >
+                  <motion.div key="add-plan-row" layout transition={{ type: "spring", stiffness: 80, damping: 25 }}>
                     <Card 
-                      className={cn(
-                        "border-dashed cursor-pointer hover:bg-primary/[0.02] flex items-center justify-center transition-colors h-full",
-                        routinesView === 'grid' ? "flex-col p-6 text-center min-h-[120px]" : "p-4"
-                      )} 
+                      className="border-dashed cursor-pointer hover:bg-primary/[0.02] flex items-center justify-center transition-colors p-6 text-center h-24"
                       onClick={() => handleOpenBuilder()}
                     >
-                      <PlusCircle className={cn("text-primary", routinesView === 'grid' ? "w-8 h-8 mb-2" : "w-5 h-5 mr-3")} />
-                      <div className={cn(routinesView === 'list' && "text-left")}>
-                        <p className="text-sm font-bold">Create New Routine</p>
-                        {routinesView === 'grid' && <p className="text-xs text-muted-foreground">Syncs with all category views</p>}
+                      <PlusCircle className="text-primary w-6 h-6 mr-3" />
+                      <div className="text-left">
+                        <p className="text-sm font-bold">Initialize New Routine</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Map an automated sequence to your calendar</p>
                       </div>
                     </Card>
                   </motion.div>
                 </AnimatePresence>
-              </motion.div>
+              </div>
             </CollapsibleContent>
           </Collapsible>
 
