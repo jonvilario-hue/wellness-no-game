@@ -20,7 +20,6 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { StillnessAnalytics } from "./StillnessAnalytics"
-import { JourneyPlansSection } from "./JourneyPlansSection"
 
 const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
 
@@ -52,10 +51,6 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
       }
       return list;
     }, [allPractices, filterTags, lowEnergyMode]);
-
-    const mvdSuggestion = useMemo(() => {
-      return filteredPractices.find(p => p.id === 'focus_reset') || filteredPractices[0];
-    }, [filteredPractices]);
 
     const resetForm = () => {
       setTitle("");
@@ -116,37 +111,6 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
 
     return (
      <div className="space-y-8">
-        <JourneyPlansSection category="Stillness" />
-
-        {lowEnergyMode && (
-          <Card className="bg-blue-500/5 border-blue-500/20 border-dashed animate-in fade-in slide-in-from-top-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-black uppercase tracking-widest text-blue-600 flex items-center gap-2">
-                <Zap className="w-3 h-3 fill-current" /> Minimum Viable Day active
-              </CardTitle>
-              <CardDescription>Reset your nervous system with zero performance pressure.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {mvdSuggestion && (
-                <div className="flex items-center justify-between p-4 bg-background rounded-xl border border-blue-500/10 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-500/10 rounded-lg">
-                      <mvdSuggestion.icon className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">{mvdSuggestion.name}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase">{mvdSuggestion.estimatedMinutes} MIN • {mvdSuggestion.category}</p>
-                    </div>
-                  </div>
-                  <Button size="sm" variant="secondary" className="font-bold" asChild>
-                    <a href={`#practice-${mvdSuggestion.id}`}>Log Now</a>
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
         <div className="flex justify-between items-center px-1">
           <h2 className="text-2xl font-black uppercase tracking-tighter">Stillness Library</h2>
           <Button onClick={() => { setTargetCategory('Breathwork'); setIsFormOpen(true); }} className="font-bold gap-2">

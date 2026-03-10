@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from "react"
@@ -23,7 +24,6 @@ import { AssistantTooltip } from "@/components/assistant-tooltip"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { useWellnessData } from "@/hooks/use-wellness-data"
-import { JourneyPlansSection } from "./JourneyPlansSection"
 
 const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: string }[] = [
   { 
@@ -73,10 +73,6 @@ export default function SpeedReadingContent() {
     return list.filter(p => selectedTier === 'All' || p.tier === selectedTier);
   }, [selectedTier, lowEnergyMode]);
 
-  const mvdSuggestion = useMemo(() => {
-    return filteredPassages.find(p => p.tier === 'Casual') || filteredPassages[0];
-  }, [filteredPassages]);
-
   const handleStartCustom = (type: DrillType) => {
     if (!customText) return;
     const passage: ReadingPassage = {
@@ -104,40 +100,6 @@ export default function SpeedReadingContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <JourneyPlansSection category="Speed Reading" />
-
-      {lowEnergyMode && (
-        <Card className="bg-amber-500/5 border-amber-500/20 border-dashed animate-in fade-in slide-in-from-top-4">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
-              <Zap className="w-3 h-3 fill-current" /> Minimum Viable Day active
-            </CardTitle>
-            <CardDescription>Maintaining literacy momentum with low-complexity content.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {mvdSuggestion && (
-              <div className="flex items-center justify-between p-4 bg-background rounded-xl border border-amber-500/10 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-amber-500/10 rounded-lg">
-                    <Zap className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold">{mvdSuggestion.title}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">{mvdSuggestion.wordCount} WORDS • {mvdSuggestion.tier}</p>
-                  </div>
-                </div>
-                <button 
-                  className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-3 font-bold"
-                  onClick={() => setActiveDrill({ type: 'Pacer', passage: mvdSuggestion, isCustom: false })}
-                >
-                  Start Easy Pacer
-                </button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 px-1">
           <div className="space-y-1">

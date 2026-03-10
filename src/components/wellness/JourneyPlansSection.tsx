@@ -90,112 +90,107 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
     const progress = (completedCount / activePlan.durationDays) * 100;
     
     return (
-      <div className="animate-in fade-in slide-in-from-top-2 duration-500 mb-6">
+      <div className="animate-in fade-in slide-in-from-top-2 duration-500">
         <Link href={`/exercises/plans/${activePlan.id}`}>
-          <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all group">
-            <div className="flex items-center gap-4 flex-1 min-w-0">
-              <div className="p-2 bg-primary/10 rounded-lg text-primary shrink-0">
-                <Rocket className="w-4 h-4" />
-              </div>
+          <div className="flex items-center justify-between p-2 px-4 rounded-full bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all group min-w-[280px]">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <Rocket className="w-4 h-4 text-primary shrink-0" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="text-xs font-bold uppercase tracking-tight truncate">
-                    Active Journey: {activePlan.title}
+                  <p className="text-[10px] font-bold uppercase tracking-tight truncate">
+                    {activePlan.title}
                   </p>
-                  <Badge variant="outline" className="text-[8px] h-4 py-0 font-black border-primary/20">
-                    DAY {completedCount + 1}/{activePlan.durationDays}
-                  </Badge>
+                  <span className="text-[8px] font-black text-muted-foreground">
+                    {completedCount + 1}/{activePlan.durationDays}
+                  </span>
                 </div>
-                <div className="mt-1.5 w-full max-w-[200px]">
-                  <Progress value={progress} className="h-1" />
+                <div className="mt-1 w-full max-w-[100px]">
+                  <Progress value={progress} className="h-0.5" />
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-widest ml-4">
-              Continue <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-            </div>
+            <ChevronRight className="w-3 h-3 text-primary ml-2 group-hover:translate-x-0.5 transition-transform" />
           </div>
         </Link>
       </div>
     );
   }
 
-  // --- STATE 1: EMPTY STATE (NOT LOGGED AND NOT DISMISSED) ---
+  // --- STATE 1: EMPTY STATE OR EXPLICITLY EXPANDED ---
   if ((!hasLogs && !isDismissed) || isExpanded) {
     return (
-      <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500 mb-8">
-        <div className="flex justify-between items-center px-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-              {isExpanded ? 'Guided Curricula' : 'Not sure where to start? Pick a journey:'}
-            </h3>
-            <AssistantTooltip text="Ascending Modules: Start with the Intro Session to break inertia, then progress to deeper foundations.">
-              <Info className="w-3 h-3 text-muted-foreground" />
-            </AssistantTooltip>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-6 w-6 text-muted-foreground hover:text-foreground"
-            onClick={() => isExpanded ? setIsExpanded(false) : setPlanDismissed(category, true)}
-          >
-            <ChevronUp className="w-4 h-4" />
-            <span className="sr-only">Collapse</span>
-          </Button>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {tabPlans.map((plan) => (
-            <Link key={plan.id} href={`/exercises/plans/${plan.id}`}>
-              <Card className={cn(
-                "hover:border-primary/50 transition-all h-full group bg-card border-primary/5",
-                plan.durationDays === 1 && "border-primary/20 ring-1 ring-primary/10"
-              )}>
-                <CardHeader className="p-4 pb-2">
-                  <div className="flex justify-between items-start mb-2">
-                    <Badge variant={plan.durationDays === 1 ? "default" : "secondary"} className="uppercase font-black text-[8px] tracking-widest h-4">
-                      {plan.durationDays === 1 ? 'RECOMMENDED' : `${plan.durationDays} DAYS`}
-                    </Badge>
-                    {plan.durationDays === 1 && <Zap className="w-3.5 h-3.5 text-primary fill-current" />}
-                  </div>
-                  <CardTitle className="text-base font-bold group-hover:text-primary transition-colors">{plan.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 pt-0 space-y-3">
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{plan.description}</p>
-                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
-                    <Clock className="w-3 h-3" /> ~{plan.steps[0].estimatedMinutes}m daily
-                  </div>
-                </CardContent>
-                <CardFooter className="p-4 pt-0 mt-auto">
-                  <Button variant="ghost" size="sm" className="w-full h-8 text-[10px] font-black uppercase border border-primary/5 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                    Start Protocol <ArrowRight className="ml-1 w-3 h-3" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            </Link>
-          ))}
+      <div className="fixed inset-x-0 top-[180px] z-30 flex justify-center px-4 animate-in fade-in slide-in-from-top-2 duration-500 pointer-events-none">
+        <div className="w-full max-w-7xl pointer-events-auto">
+          <Card className="shadow-2xl border-primary/20 bg-background/95 backdrop-blur-md">
+            <CardHeader className="p-4 flex flex-row items-center justify-between pb-2">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-primary" />
+                <CardTitle className="text-sm font-black uppercase tracking-widest">
+                  {category} Guided Curricula
+                </CardTitle>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={() => isExpanded ? setIsExpanded(false) : setPlanDismissed(category, true)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {tabPlans.map((plan) => (
+                  <Link key={plan.id} href={`/exercises/plans/${plan.id}`}>
+                    <Card className={cn(
+                      "hover:border-primary/50 transition-all h-full group bg-card border-primary/5",
+                      plan.durationDays === 1 && "border-primary/20 ring-1 ring-primary/10"
+                    )}>
+                      <CardHeader className="p-4 pb-2">
+                        <Badge variant={plan.durationDays === 1 ? "default" : "secondary"} className="uppercase font-black text-[8px] tracking-widest h-4 w-fit mb-2">
+                          {plan.durationDays === 1 ? 'RECOMMENDED' : `${plan.durationDays} DAYS`}
+                        </Badge>
+                        <CardTitle className="text-sm font-bold group-hover:text-primary transition-colors">{plan.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0">
+                        <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">{plan.description}</p>
+                      </CardContent>
+                      <CardFooter className="p-4 pt-0">
+                        <Button variant="ghost" size="sm" className="w-full h-7 text-[9px] font-black uppercase border border-primary/5 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                          Start Protocol <ArrowRight className="ml-1 w-3 h-3" />
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
   }
 
-  // --- STATE 2: ACTIVE/DISMISSED (COMPACT ROW) ---
+  // --- STATE 2: ACTIVE/DISMISSED (COMPACT BAR) ---
   return (
-    <div className="animate-in fade-in duration-500 mb-6">
-      <div className="flex items-center justify-between py-1 px-1 border-b border-primary/5">
+    <div className="animate-in fade-in duration-500">
+      <div className={cn(
+        "flex items-center gap-4 p-2 px-4 rounded-full border bg-background/50 backdrop-blur-sm transition-all",
+        "border-primary/10 hover:border-primary/30"
+      )}>
         <div className="flex items-center gap-2 text-muted-foreground">
           <BookOpen className="w-3.5 h-3.5" />
-          <span className="text-[10px] font-bold uppercase tracking-widest">
-            {category} Journeys · Recommended: {nextRecommendedPlan?.title || 'All Complete!'}
+          <span className="text-[9px] font-bold uppercase tracking-widest whitespace-nowrap">
+            {category} Curricula · Next: {nextRecommendedPlan?.title || 'All Complete!'}
           </span>
         </div>
         <Button 
           variant="ghost" 
           size="sm" 
-          className="h-6 gap-1 text-[10px] font-black uppercase text-primary hover:bg-primary/5"
+          className="h-6 gap-1 px-3 text-[9px] font-black uppercase text-primary hover:bg-primary/5 border border-primary/10 rounded-full"
           onClick={() => setIsExpanded(true)}
         >
-          View Plans <ChevronDown className="w-3 h-3" />
+          View Plans <ChevronDown className="w-2.5 h-2.5" />
         </Button>
       </div>
     </div>

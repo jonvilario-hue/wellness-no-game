@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo, useState } from "react"
@@ -23,11 +24,9 @@ import {
   SelectValue 
 } from "../ui/select"
 import type { Exercise } from "@/data/exercises"
-import { CommunicationDashboard } from "./CommunicationDashboard"
 import { CommunicationAnalytics } from "./CommunicationAnalytics"
 import { cn } from "@/lib/utils"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
-import { JourneyPlansSection } from "./JourneyPlansSection"
 
 const categories: CommunicationCategory[] = [
   'Vocal Mechanics', 
@@ -69,10 +68,6 @@ export default function CommunicationContent() {
       }
       return list;
     }, [allPractices, lowEnergyMode]);
-
-    const mvdSuggestion = useMemo(() => {
-      return filteredPractices.find(p => p.id === 'listen_encouragers') || filteredPractices[0];
-    }, [filteredPractices]);
 
     const resetForm = () => {
       setTitle("");
@@ -133,37 +128,6 @@ export default function CommunicationContent() {
 
     return (
      <div className="space-y-8">
-        <JourneyPlansSection category="Communication" />
-
-        {lowEnergyMode && (
-          <Card className="bg-purple-500/5 border-purple-500/20 border-dashed animate-in fade-in slide-in-from-top-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-black uppercase tracking-widest text-purple-600 flex items-center gap-2">
-                <Zap className="w-3 h-3 fill-current" /> Minimum Viable Day active
-              </CardTitle>
-              <CardDescription>Small interpersonal check-ins to stay socially Sharp.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {mvdSuggestion && (
-                <div className="flex items-center justify-between p-4 bg-background rounded-xl border border-purple-500/10 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-500/10 rounded-lg">
-                      <mvdSuggestion.icon className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">{mvdSuggestion.name}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase">{mvdSuggestion.estimatedMinutes} MIN • {mvdSuggestion.category}</p>
-                    </div>
-                  </div>
-                  <Button size="sm" variant="secondary" className="font-bold" asChild>
-                    <a href={`#practice-${mvdSuggestion.id}`}>Save Streak</a>
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-        
         <div className="flex justify-between items-center px-1">
           <h2 className="text-2xl font-black uppercase tracking-tighter">Communication Library</h2>
           <Button onClick={() => { setTargetCategory('Vocal Mechanics'); setIsFormOpen(true); }} className="font-bold gap-2">
@@ -252,7 +216,7 @@ export default function CommunicationContent() {
           <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
             <DialogHeader className="p-6 bg-primary/5 border-b shrink-0">
               <DialogTitle className="text-xl font-black uppercase tracking-tight">
-                {editingPractice ? "Edit Practice" : `Add Practice to ${communicationCategoryDetails[targetCategory]?.title || targetCategory}`}
+                {editingPractice ? "Edit Practice" : `Add Practice to ${targetCategory}`}
               </DialogTitle>
             </DialogHeader>
             <ScrollArea className="flex-1">

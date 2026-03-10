@@ -20,7 +20,6 @@ import { cn } from "@/lib/utils"
 import CategoryOverview from "./CategoryOverview"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { MovementAnalytics } from "./MovementAnalytics"
-import { JourneyPlansSection } from "./JourneyPlansSection"
 
 const categories: ExerciseCategory[] = ['Mind-Body', 'Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
@@ -52,10 +51,6 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
     }
     return list;
   }, [allPractices, filterTags, lowEnergyMode]);
-
-  const mvdSuggestion = useMemo(() => {
-    return filteredExercises.find(e => e.tags.includes('low-energy')) || filteredExercises[0];
-  }, [filteredExercises]);
 
   const resetForm = () => {
     setTitle("");
@@ -116,37 +111,6 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
 
   return (
     <div className="space-y-8">
-        <JourneyPlansSection category="Movement" />
-
-        {lowEnergyMode && (
-          <Card className="bg-amber-500/5 border-amber-500/20 border-dashed animate-in fade-in slide-in-from-top-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
-                <Zap className="w-3 h-3 fill-current" /> Minimum Viable Day active
-              </CardTitle>
-              <CardDescription>Maintaining consistency with zero-friction movement.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {mvdSuggestion && (
-                <div className="flex items-center justify-between p-4 bg-background rounded-xl border border-amber-500/10 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-500/10 rounded-lg">
-                      <mvdSuggestion.icon className="w-5 h-5 text-amber-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">{mvdSuggestion.name}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase">{mvdSuggestion.estimatedMinutes} MIN • {mvdSuggestion.category}</p>
-                    </div>
-                  </div>
-                  <Button size="sm" variant="secondary" className="font-bold" asChild>
-                    <a href={`#practice-${mvdSuggestion.id}`}>Log Now</a>
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
         <div className="flex justify-between items-center px-1">
           <h2 className="text-2xl font-black uppercase tracking-tighter">Movement Library</h2>
           <Button onClick={() => { setTargetCategory('Mind-Body'); setIsFormOpen(true); }} className="font-bold gap-2">
