@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -51,7 +51,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
 
   const { 
     addMovementLog, addStillnessLog, addCommunicationLog, 
-    movementProgress
+    movementProgress = {} 
   } = useWellnessData();
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();

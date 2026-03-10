@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -125,6 +124,7 @@ export type WellnessState = {
   planProgress: Record<string, Record<number, boolean>>;
   completions: Record<string, boolean>;
   dismissedPlans: Record<string, boolean>;
+  movementProgress: Record<string, { bestReps?: number; bestHoldTime?: number }>;
   
   assets: Record<string, number>;
   envelopes: any[];
@@ -135,6 +135,13 @@ export type WellnessState = {
   addLogEntry: (log: Omit<LogEntry, 'id'>) => void;
   deleteLogEntry: (id: string) => void;
   
+  addMovementLog: (log: Omit<LogEntry, 'id' | 'category'>) => void;
+  deleteMovementLog: (id: string) => void;
+  addStillnessLog: (log: Omit<LogEntry, 'id' | 'category'>) => void;
+  deleteStillnessLog: (id: string) => void;
+  addCommunicationLog: (log: Omit<LogEntry, 'id' | 'category'>) => void;
+  deleteCommunicationLog: (id: string) => void;
+
   addTransaction: (tx: any) => void;
   deleteTransaction: (id: string) => void;
   
@@ -178,6 +185,8 @@ export const useWellnessData = create<WellnessState>()(
       planProgress: {},
       completions: {},
       dismissedPlans: {},
+      movementProgress: {},
+      
       assets: { 'Cash': 1250, 'Savings': 4500, 'Investments': 8200 },
       envelopes: [],
       subscriptions: [],
@@ -187,6 +196,43 @@ export const useWellnessData = create<WellnessState>()(
       
       addLogEntry: (log) => set(s => ({ allLogs: [{ ...log, id: crypto.randomUUID() }, ...s.allLogs] })),
       deleteLogEntry: (id) => set(s => ({ allLogs: s.allLogs.filter(l => l.id !== id) })),
+
+      addMovementLog: (log) => set(s => {
+        const id = crypto.randomUUID();
+        const newLog = { ...log, id, category: 'Movement' } as LogEntry;
+        const currentProgress = (s.movementProgress || {})[log.exerciseId] || {};
+        const newProgress = { ...currentProgress };
+        
+        if (log.reps !== undefined && (currentProgress.bestReps === undefined || log.reps > currentProgress.bestReps)) {
+          newProgress.bestReps = log.reps;
+        }
+        if (log.holdTime !== undefined && (currentProgress.bestHoldTime === undefined || log.holdTime > currentProgress.bestHoldTime)) {
+          newProgress.bestHoldTime = log.holdTime;
+        }
+
+        return { 
+          allLogs: [newLog, ...s.allLogs],
+          movementProgress: {
+            ...(s.movementProgress || {}),
+            [log.exerciseId]: newProgress
+          }
+        };
+      }),
+      deleteMovementLog: (id) => set(s => ({ allLogs: s.allLogs.filter(l => l.id !== id) })),
+
+      addStillnessLog: (log) => set(s => {
+        const id = crypto.randomUUID();
+        const newLog = { ...log, id, category: 'Stillness' } as LogEntry;
+        return { allLogs: [newLog, ...s.allLogs] };
+      }),
+      deleteStillnessLog: (id) => set(s => ({ allLogs: s.allLogs.filter(l => l.id !== id) })),
+
+      addCommunicationLog: (log) => set(s => {
+        const id = crypto.randomUUID();
+        const newLog = { ...log, id, category: 'Communication' } as LogEntry;
+        return { allLogs: [newLog, ...s.allLogs] };
+      }),
+      deleteCommunicationLog: (id) => set(s => ({ allLogs: s.allLogs.filter(l => l.id !== id) })),
 
       addTransaction: (tx) => set(s => ({ transactions: [{ ...tx, id: crypto.randomUUID() }, ...s.transactions] })),
       deleteTransaction: (id) => set(s => ({ transactions: s.transactions.filter(t => t.id !== id) })),
@@ -222,6 +268,10 @@ export const useWellnessData = create<WellnessState>()(
     {
       name: 'wellness-data-storage-v11',
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+          if (!state) return;
+          if (!state.movementProgress) state.movementProgress = {};
+      },
     }
   )
 );
@@ -229,16 +279,15 @@ export const useWellnessData = create<WellnessState>()(
 // Helper selectors for categorization
 export const useMovementLogs = () => {
   const allLogs = useWellnessData(s => s.allLogs);
-  return useMemo(() => (allLogs || []).filter(l => ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(l.category)), [allLogs]);
+  return useMemo(() => (allLogs || []).filter(l => l.category === 'Movement'), [allLogs]);
 };
 
 export const useStillnessLogs = () => {
   const allLogs = useWellnessData(s => s.allLogs);
-  return useMemo(() => (allLogs || []).filter(l => ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(l.category)), [allLogs]);
+  return useMemo(() => (allLogs || []).filter(l => l.category === 'Stillness'), [allLogs]);
 };
 
 export const useCommunicationLogs = () => {
   const allLogs = useWellnessData(s => s.allLogs);
-  const commCategories = ['Vocal Mechanics', 'Active Listening', 'Nonverbal', 'Conversation Structure', 'Persuasion', 'clarity_language_craft', 'Storytelling', 'difficult_conversations', 'Public Speaking', 'professional_communication'];
-  return useMemo(() => (allLogs || []).filter(l => commCategories.includes(l.category)), [allLogs]);
+  return useMemo(() => (allLogs || []).filter(l => l.category === 'Communication'), [allLogs]);
 };
