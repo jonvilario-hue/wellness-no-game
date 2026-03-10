@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -38,7 +37,9 @@ import {
   ShieldCheck,
   ClipboardCheck,
   PlusCircle,
-  AlignJustify
+  AlignJustify,
+  ChevronUpSquare,
+  ChevronDownSquare
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
