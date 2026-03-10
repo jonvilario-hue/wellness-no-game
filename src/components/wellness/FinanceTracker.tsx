@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -169,6 +169,7 @@ export function FinanceTracker() {
                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Subscriptions</p>
                                 <p className="text-3xl font-black mt-1 text-foreground">{subscriptions.filter(s => s.active).length}</p>
                             </CardContent>
+                        </Card>
                         <Card className="bg-primary/5 border-primary/10 flex flex-col justify-center p-6">
                             <FinanceTips />
                         </Card>
