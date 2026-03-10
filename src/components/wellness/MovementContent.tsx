@@ -1,10 +1,11 @@
+
 "use client"
 
 import { useState, useMemo } from "react"
 import { movementExercises, type ExerciseCategory, type Exercise } from "@/data/exercises"
 import { movementCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
-import { ChevronDown, HeartPulse, Zap, Play, PlusCircle, Save, X, Plus, AlertCircle } from "lucide-react"
+import { ChevronDown, HeartPulse, Zap, Play, PlusCircle, Save, X, Plus } from "lucide-react"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -138,7 +139,7 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
                     </div>
                   </div>
                   <Button size="sm" variant="secondary" className="font-bold" asChild>
-                    <a href={`#practice-${mvdSuggestion.id}`}>Save Streak</a>
+                    <a href={`#practice-${mvdSuggestion.id}`}>Log Now</a>
                   </Button>
                 </div>
               )}
@@ -166,14 +167,12 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
             const details = movementCategoryDetails[category];
             if (!details) return null;
 
-            if (exercises.length === 0 && !lowEnergyMode) return null;
-
             return (
               <AccordionItem 
                 key={category} 
                 value={category} 
                 className={cn(
-                  "border-b transition-opacity",
+                  "border-b border-primary/5 transition-opacity",
                   exercises.length === 0 && "opacity-40"
                 )}
               >
@@ -194,6 +193,7 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
                   <div className="mb-6">
                     <CategoryOverview 
                       title={details.title}
+                      icon={details.icon}
                       purpose={details.purpose}
                       useWhen={details.useWhen}
                       includes={details.includes}

@@ -26,7 +26,7 @@ const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Gro
 
 export default function StillnessContent({ filterTags = [] }: { filterTags?: string[] }) {
     const { 
-      lowEnergyMode, addStillnessLog, customPractices, 
+      lowEnergyMode, customPractices, 
       addCustomPractice, updateCustomPractice, deleteCustomPractice,
       collapsedCategories, toggleCategoryCollapse 
     } = useWellnessData();
@@ -139,7 +139,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
                     </div>
                   </div>
                   <Button size="sm" variant="secondary" className="font-bold" asChild>
-                    <a href={`#practice-${mvdSuggestion.id}`}>Save Streak</a>
+                    <a href={`#practice-${mvdSuggestion.id}`}>Log Now</a>
                   </Button>
                 </div>
               )}
@@ -172,7 +172,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
                 key={category} 
                 value={category} 
                 className={cn(
-                  "border-b transition-opacity",
+                  "border-b border-primary/5 transition-opacity",
                   practices.length === 0 && "opacity-40"
                 )}
               >
@@ -193,11 +193,11 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
                   <div className="mb-6">
                     <CategoryOverview
                       title={details.title}
+                      icon={details.icon}
                       purpose={details.purpose}
                       useWhen={details.useWhen}
                       includes={details.includes}
                       tagline={details.tagline}
-                      icon={details.icon}
                     />
                   </div>
                   {practices.length === 0 ? (
@@ -291,5 +291,5 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
           <StillnessAnalytics />
         </div>
     </div>
-  )
+)
 }
