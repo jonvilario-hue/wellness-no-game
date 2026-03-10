@@ -43,7 +43,8 @@ import {
   ChevronDownSquare,
   AlignJustify,
   ShieldCheck,
-  Eye
+  Eye,
+  ClipboardCheck
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -73,6 +74,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
 
 function AmalgamatedAnalytics() {
   const { mealLogs, transactions } = useWellnessData();
@@ -225,6 +227,8 @@ export default function CalendarPage() {
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
   const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
+  const [activeRoutineIds, setActiveRoutineIds] = useState<string[] | null>(null);
+  const [activeRoutineName, setActiveRoutineName] = useState("");
 
   // Form states for builder
   const [newPlanName, setNewPlanName] = useState("");
@@ -463,7 +467,42 @@ export default function CalendarPage() {
     );
   };
 
+  const handleStartFullRoutine = (plan: CalendarPlan) => {
+    const ids = plan.activities.map(a => a.linkedTracker).filter(Boolean) as string[];
+    if (ids.length > 0) {
+      setActiveRoutineName(plan.name);
+      setActiveRoutineIds(ids);
+    } else {
+      toast({ title: "No playable activities", description: "Link exercises to this plan to start a guided session.", variant: 'destructive' });
+    }
+  };
+
+  const handleStartTask = (task: any) => {
+    if (task.linkedTracker) {
+      setActiveRoutineName(task.name);
+      setActiveRoutineIds([task.linkedTracker]);
+    }
+  };
+
+  const handleQuickLog = (task: any) => {
+    if (task.linkedTracker) {
+      logExerciseById(task.linkedTracker);
+      updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, 'completed');
+      toast({ title: "Quick Log Successful", description: `${task.name} metrics synced to history.` });
+    }
+  };
+
   if (!_hasHydrated) return null;
+
+  if (activeRoutineIds) {
+    return (
+      <RoutinePlayer 
+        exerciseIds={activeRoutineIds} 
+        routineName={activeRoutineName} 
+        onClose={() => setActiveRoutineIds(null)} 
+      />
+    );
+  }
 
   return (
     <>
@@ -506,7 +545,7 @@ export default function CalendarPage() {
             <CollapsibleContent>
               <motion.div 
                 layout
-                transition={{ type: "spring", stiffness: 150, damping: 25 }}
+                transition={{ type: "spring", stiffness: 100, damping: 20 }}
                 className={cn(
                   "pb-4 gap-4",
                   routinesView === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col"
@@ -520,7 +559,7 @@ export default function CalendarPage() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 150, damping: 25 }}
+                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
                     >
                       <Card className={cn(
                         "transition-shadow relative group h-full", 
@@ -569,7 +608,7 @@ export default function CalendarPage() {
                               </CardContent>
                             )}
 
-                            <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                            <CardFooter className="p-4 pt-0 flex justify-between items-center mt-auto">
                               <div className="flex gap-2 items-center">
                                 <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">{plan.categories[0]}</Badge>
                                 <Button 
@@ -584,6 +623,11 @@ export default function CalendarPage() {
                                 </Button>
                               </div>
                               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <AssistantTooltip text="Play this entire routine in sequence.">
+                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-primary" onClick={() => handleStartFullRoutine(plan)}>
+                                    <Play className="w-3.5 h-3.5 fill-current" />
+                                  </Button>
+                                </AssistantTooltip>
                                 {!plan.isPreset && (
                                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenBuilder(plan)}>
                                     <Edit className="w-3.5 h-3.5" />
@@ -632,6 +676,9 @@ export default function CalendarPage() {
                               </Button>
                               
                               <div className="flex items-center gap-3">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary opacity-0 group-hover:opacity-100" onClick={() => handleStartFullRoutine(plan)}>
+                                  <Play className="w-4 h-4 fill-current" />
+                                </Button>
                                 {!plan.isPreset && (
                                   <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleOpenBuilder(plan)}>
                                     <Edit className="w-4 h-4" />
@@ -652,7 +699,7 @@ export default function CalendarPage() {
                   <motion.div 
                     key="add-plan-card"
                     layout
-                    transition={{ type: "spring", stiffness: 150, damping: 25 }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
                   >
                     <Card 
                       className={cn(
@@ -827,21 +874,32 @@ export default function CalendarPage() {
                               </div>
                               <div className="flex items-center gap-2">
                                 {task.status !== 'completed' && (
-                                  <Button 
-                                    size="sm" 
-                                    variant="outline"
-                                    className="rounded-full gap-2 h-10 px-6 font-bold"
-                                    onClick={() => {
-                                      updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, 'completed');
-                                      if (task.linkedTracker) {
-                                        logExerciseById(task.linkedTracker);
-                                        toast({ title: "Health Check Updated", description: `${task.name} progress synced.`, variant: 'success' });
-                                      }
-                                    }}
-                                  >
-                                    <Circle className="w-4 h-4 text-muted-foreground" />
-                                    Complete
-                                  </Button>
+                                  <div className="flex gap-2">
+                                    {task.linkedTracker && (
+                                      <AssistantTooltip text="Launch guided session with instructions and timer.">
+                                        <Button 
+                                          variant="secondary" 
+                                          size="sm" 
+                                          className="rounded-full gap-2 h-10 px-6 font-bold"
+                                          onClick={() => handleStartTask(task)}
+                                        >
+                                          <Play className="w-4 h-4 fill-current" />
+                                          Start
+                                        </Button>
+                                      </AssistantTooltip>
+                                    )}
+                                    <AssistantTooltip text="Quickly log completion without running the full timer. High-fidelity metrics are synced automatically.">
+                                      <Button 
+                                        size="sm" 
+                                        variant="outline"
+                                        className="rounded-full gap-2 h-10 px-6 font-bold"
+                                        onClick={() => handleQuickLog(task)}
+                                      >
+                                        <ClipboardCheck className="w-4 h-4 text-primary" />
+                                        Quick Log
+                                      </Button>
+                                    </AssistantTooltip>
+                                  </div>
                                 )}
                                 {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
                               </div>
