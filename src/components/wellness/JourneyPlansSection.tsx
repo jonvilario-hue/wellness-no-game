@@ -10,7 +10,7 @@ import {
   CheckCircle2, Circle, LayoutList, BookOpen, Zap, Clock
 } from 'lucide-react';
 import Link from 'next/link';
-import { useWellnessData } from '@/hooks/use-wellness-data';
+import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from '@/hooks/use-wellness-data';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
 import { wellnessPlans, type WellnessPlan } from '@/data/wellness-plans';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
@@ -23,9 +23,13 @@ interface JourneyPlansSectionProps {
 export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
   const { 
     planProgress, dismissedPlans, setPlanDismissed,
-    movementLogs, stillnessLogs, communicationLogs 
   } = useWellnessData();
+  
+  const movementLogs = useMovementLogs();
+  const stillnessLogs = useStillnessLogs();
+  const communicationLogs = useCommunicationLogs();
   const { logs: readingLogs } = useSpeedReadingStore();
+  
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -68,7 +72,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
   if (!mounted) return null;
   if (allCompleted) return null;
 
-  const hasLogs = logs.length > 0;
+  const hasLogs = (logs || []).length > 0;
   const isDismissed = dismissedPlans[category] || false;
 
   // --- STATE 3: ACTIVE PLAN ---
