@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Play, Pause, Check, Goal, ClipboardCheck, SlidersHorizontal, 
-  Trophy, Edit, Trash2, Clock, ChevronRight, X, Sparkles, BarChart3, Info, Plus, ListChecks
+  Trophy, Edit, Trash2, Clock, ChevronRight, X, Sparkles, BarChart3, Info, Plus, ListChecks,
+  Activity, HeartPulse, Waves
 } from 'lucide-react';
 import type { Exercise } from '@/data/exercises';
 import { useWellnessData } from '@/hooks/use-wellness-data';
@@ -368,6 +369,17 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 <ul className="list-disc list-inside text-[10px] text-muted-foreground/80 space-y-1">
                     {exercise.modifications.map((mod, i) => <li key={i}>{mod}</li>)}
                 </ul>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-primary/5">
+              <div className="space-y-1.5">
+                <h4 className="font-bold flex items-center gap-2 text-sm"><Waves className="w-4 h-4 text-primary" /> Intention</h4>
+                <p className="text-[10px] text-muted-foreground leading-relaxed">{exercise.intention}</p>
+              </div>
+              <div className="space-y-1.5">
+                <h4 className="font-bold flex items-center gap-2 text-sm"><HeartPulse className="w-4 h-4 text-primary" /> Tip</h4>
+                <p className="text-[10px] text-muted-foreground leading-relaxed">{exercise.modifications[0]}</p>
               </div>
             </div>
           </div>
