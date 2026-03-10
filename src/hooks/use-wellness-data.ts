@@ -121,7 +121,7 @@ export const calculateStreak = (data: any[] | Record<string, boolean>): number =
 
 export type WellnessState = {
   lowEnergyMode: boolean;
-  trackingEnabled: Record<TrackingCategory, boolean>; 
+  trackingEnabled: Record<string, boolean>; // Key can be category or exerciseId
   trackExplainerDismissed: boolean;
   transactions: Transaction[];
   mealLogs: MealLog[];
@@ -141,14 +141,14 @@ export type WellnessState = {
   dismissedPlans: Record<string, boolean>; // key is category
   
   assets: Record<string, number>;
-  budgets: Budget[];
-  savingsGoals: SavingsGoal[];
-  subscriptions: Subscription[];
+  budgets: any[];
+  savingsGoals: any[];
+  subscriptions: any[];
   bills: any[];
-  envelopes: Envelope[];
+  envelopes: any[];
 
   setLowEnergyMode: (enabled: boolean) => void;
-  toggleTracking: (category: TrackingCategory) => void;
+  toggleTracking: (id: string) => void;
   setTrackExplainerDismissed: (dismissed: boolean) => void;
   addTransaction: (tx: Omit<Transaction, 'id'>) => void;
   addMealLog: (log: Omit<MealLog, 'id'>) => void;
@@ -171,13 +171,6 @@ export type WellnessState = {
   setPlanDismissed: (category: string, dismissed: boolean) => void;
   markPlanDayComplete: (planId: string, day: number) => void;
   
-  setBudget: (category: string, limit: number) => void;
-  addSavingsGoal: (goal: Omit<SavingsGoal, 'id' | 'currentAmount'>) => void;
-  contributeToGoal: (id: string, amount: number) => void;
-  addBill: (bill: any) => void;
-  toggleBillPaid: (id: string) => void;
-  updateEnvelope: (id: string, delta: number) => void;
-  toggleSubscription: (id: string) => void;
   copyDayLog: (from: string, to: string) => void;
 };
 
@@ -217,29 +210,17 @@ export const useWellnessData = create<WellnessState>()(
       dismissedPlans: {},
       
       assets: { 'Cash': 1250, 'Savings': 4500, 'Investments': 8200 },
-      budgets: [
-        { category: 'groceries', limit: 400, period: 'monthly' },
-        { category: 'dining', limit: 200, period: 'monthly' }
-      ],
-      savingsGoals: [
-        { id: '1', name: 'Emergency Fund', targetAmount: 10000, currentAmount: 2500, icon: '🛡️' },
-        { id: '2', name: 'New Laptop', targetAmount: 2000, currentAmount: 850, icon: '💻' }
-      ],
-      subscriptions: [
-        { id: 'sub1', name: 'Streaming', amount: 15.99, active: true, nextBillingDate: '2024-04-15' },
-        { id: 'sub2', name: 'Gym', amount: 45.00, active: true, nextBillingDate: '2024-04-01' }
-      ],
+      budgets: [],
+      savingsGoals: [],
+      subscriptions: [],
       bills: [],
-      envelopes: [
-        { id: 'env1', name: 'Coffee', balance: 45, limit: 100 },
-        { id: 'env2', name: 'Entertainment', balance: 120, limit: 300 }
-      ],
+      envelopes: [],
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
-      toggleTracking: (category) => set(s => ({
+      toggleTracking: (id) => set(s => ({
         trackingEnabled: {
           ...s.trackingEnabled,
-          [category]: !s.trackingEnabled[category]
+          [id]: !s.trackingEnabled[id]
         }
       })),
       setTrackExplainerDismissed: (dismissed) => set({ trackExplainerDismissed: dismissed }),
@@ -315,20 +296,13 @@ export const useWellnessData = create<WellnessState>()(
         }
       })),
 
-      setBudget: (category, limit) => set(s => ({ budgets: [...s.budgets.filter(b => b.category !== category), { category, limit, period: 'monthly' }] })),
-      addSavingsGoal: (goal) => set(s => ({ savingsGoals: [...s.savingsGoals, { ...goal, id: crypto.randomUUID(), currentAmount: 0 }] })),
-      contributeToGoal: (id, amount) => set(s => ({ savingsGoals: s.savingsGoals.map(g => g.id === id ? { ...g, currentAmount: g.currentAmount + amount } : g) })),
-      addBill: (bill) => set(s => ({ bills: [...s.bills, bill] })),
-      toggleBillPaid: (id) => {},
-      updateEnvelope: (id, delta) => set(s => ({ envelopes: s.envelopes.map(e => e.id === id ? { ...e, balance: Math.max(0, e.balance + delta) } : e) })),
-      toggleSubscription: (id) => set(s => ({ subscriptions: s.subscriptions.map(sub => sub.id === id ? { ...sub, active: !sub.active } : sub) })),
       copyDayLog: (from, to) => {
         const logsToCopy = get().mealLogs.filter(l => l.date === from);
         logsToCopy.forEach(l => get().addMealLog({ ...l, date: to }));
       },
     }),
     {
-      name: 'wellness-data-storage-v9',
+      name: 'wellness-data-storage-v10',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -340,7 +314,6 @@ export const useWellnessData = create<WellnessState>()(
             'Communication': true,
             'Speed Reading': true
           };
-          if (state.trackExplainerDismissed === undefined) state.trackExplainerDismissed = false;
         }
       }
     }

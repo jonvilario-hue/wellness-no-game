@@ -57,14 +57,16 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
     trackExplainerDismissed, setTrackExplainerDismissed
   } = useWellnessData();
   const { syncFromTracker } = useCalendarPlansStore();
-  const { toast } = useToast();
   
   const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
   const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
   const isCommunication = !isMovement && !isStillness;
 
   const trackingCategory: TrackingCategory = isMovement ? 'Movement' : isStillness ? 'Stillness' : 'Communication';
-  const trackNumbers = trackingEnabled[trackingCategory] || false;
+  
+  // Use individual module tracking or fallback to category default
+  const trackNumbers = trackingEnabled[exercise.id] ?? trackingEnabled[trackingCategory] ?? false;
+  
   const bestProgress = movementProgress[exercise.id];
   const ExerciseIcon = exercise.icon;
 
@@ -75,7 +77,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
         setTimeLeft(prev => prev - 1);
       }, 1000);
     } else if (timeLeft === 0 && isActive) {
-      finishSession();
+      finishSession(false);
     }
     return () => clearInterval(timer);
   }, [isActive, timeLeft]);
@@ -120,21 +122,20 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
     }
   };
 
-  const finishSession = () => {
+  const finishSession = (forceQuick: boolean = false) => {
     setIsActive(false);
-    if (trackNumbers) {
+    if (trackNumbers && !forceQuick) {
       setShowRatings(true);
       setIsComplete(false);
     } else {
       performLog(true);
       setIsComplete(true);
-      toast({ title: "Check-in Logged", description: "Habit streak maintained.", variant: 'success' });
+      setShowRatings(false);
     }
   };
 
   const handleFinalizeLog = () => {
     performLog(false);
-    toast({ title: "Metrics Recorded!", description: "High-fidelity data saved to trends.", variant: 'success' });
     setIsComplete(true);
     setShowRatings(false);
   };
@@ -149,7 +150,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   }, [isActive, timeLeft, exercise.duration, isComplete]);
 
   const handleToggleTracking = () => {
-    toggleTracking(trackingCategory);
+    toggleTracking(exercise.id);
   };
 
   const getTrackingPreview = () => {
@@ -204,7 +205,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               </Button>
             )}
             <div className="flex items-center gap-2 ml-2">
-              <AssistantTooltip text="Enabling 'Track' upgrades this practice from a simple habit check-in to high-fidelity training. This setting is shared across all exercises in this category.">
+              <AssistantTooltip text="Enabling 'Track' for this module allows you to capture detailed metrics like reps or stress levels for long-term analytics.">
                 <div className="flex items-center gap-2">
                   <Label htmlFor={`track-toggle-${exercise.id}`} className="text-[10px] font-bold uppercase opacity-60">Track</Label>
                   <Switch 
@@ -232,7 +233,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               <X className="w-3 h-3" />
             </Button>
             <p className="text-[10px] leading-relaxed font-medium pr-4">
-              <span className="font-bold text-primary">Configuration active.</span> Tracking enriches your sessions with detailed metrics. Tap <span className="font-bold">Start</span> to begin — the app will ask for specifics when you finish.
+              <span className="font-bold text-primary">Module tracking active.</span> Detailed metrics will be requested when you finish the timer. Tap <span className="font-bold">Quick Log</span> to bypass.
             </p>
           </div>
         )}
@@ -415,9 +416,9 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 {isActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
                 {isActive ? formatTime(timeLeft) : 'Start'}
                 </Button>
-                <Button onClick={finishSession} variant="outline" size="lg" className="w-full">
+                <Button onClick={() => finishSession(true)} variant="outline" size="lg" className="w-full">
                   <ClipboardCheck className="mr-2 h-4 w-4" />
-                  {trackNumbers ? "Detailed Log" : "Quick Log"}
+                  Quick Log
                 </Button>
               </div>
               {trackNumbers && (
