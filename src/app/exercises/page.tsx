@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
@@ -9,13 +8,12 @@ import { MotivationalMessage } from '@/components/motivational-message';
 import WellnessTabs from '@/components/wellness/WellnessTabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame, Rocket, ArrowRight, Info, Lightbulb } from 'lucide-react';
+import { ChevronUp, ChevronDown, HeartPulse, Zap, ZapOff, Flame } from 'lucide-react';
 import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
+import { Card } from '@/components/ui/card';
 import { WellnessBalance } from '@/components/wellness/WellnessBalance';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { MovementDashboard } from '@/components/wellness/MovementDashboard';
@@ -30,7 +28,6 @@ function ExercisesPageContent() {
   
   const activeTab = searchParams.get('tab') || 'movement';
   const { lowEnergyMode, setLowEnergyMode, completions } = useWellnessData();
-  const { settings } = useDashboardSettings();
 
   useEffect(() => {
     const savedState = localStorage.getItem('health-check-collapsible-state');
@@ -109,7 +106,7 @@ function ExercisesPageContent() {
                   )}
                 </Collapsible>
 
-                <div className="flex flex-wrap items-center justify-center gap-4 py-2 border-y border-primary/5 bg-muted/10 rounded-2xl">
+                <div className="flex flex-wrap items-center justify-center gap-4 py-3 border-y border-primary/5 bg-muted/10 rounded-2xl">
                     <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice.">
                       <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
                           <div className="flex items-center gap-2">
