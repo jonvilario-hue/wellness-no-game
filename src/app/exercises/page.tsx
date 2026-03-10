@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
@@ -82,7 +83,7 @@ function ExercisesPageContent() {
                       <div className="flex flex-col items-center text-center pb-4 px-10 space-y-4">
                           <div>
                             <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
-                            <h1 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight">Health Check</h1>
+                            <h1 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight text-foreground">Health Check</h1>
                             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">Actionable wellness for body and brain. Log your daily reps.</p>
                           </div>
 
@@ -98,11 +99,19 @@ function ExercisesPageContent() {
                       </div>
 
                       <WellnessBalance />
+
+                      {/* Moved dashboards inside CollapsibleContent */}
+                      <div className="w-full">
+                        {activeTab === 'movement' && <MovementDashboard />}
+                        {activeTab === 'stillness' && <StillnessDashboard />}
+                        {activeTab === 'communication' && <CommunicationDashboard />}
+                        {activeTab === 'speedreading' && <SpeedReadingStats />}
+                      </div>
                   </CollapsibleContent>
 
                   {!isOpen && (
                     <div className="flex flex-col items-center text-center">
-                      <h1 className="text-xl font-bold font-headline tracking-tight">Health Check</h1>
+                      <h1 className="text-xl font-bold font-headline tracking-tight text-foreground">Health Check</h1>
                       <CollapsibleTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-auto py-1 px-4 text-[10px] uppercase font-black text-muted-foreground hover:text-primary gap-1">
                           <ChevronDown className="h-3 w-3" /> Expand Insights
@@ -111,14 +120,6 @@ function ExercisesPageContent() {
                     </div>
                   )}
                 </Collapsible>
-
-                {/* Tab-specific Dashboard (Streak, Minutes, Top Choice) */}
-                <div className="w-full">
-                  {activeTab === 'movement' && <MovementDashboard />}
-                  {activeTab === 'stillness' && <StillnessDashboard />}
-                  {activeTab === 'communication' && <CommunicationDashboard />}
-                  {activeTab === 'speedreading' && <SpeedReadingStats />}
-                </div>
 
                 <div className="flex flex-col items-center gap-4">
                     <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your entire library to show only 'zero-friction' practices. Use this when your cognitive or physical battery is low to maintain your habit streak without risking burnout.">
