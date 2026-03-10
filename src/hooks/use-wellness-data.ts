@@ -4,7 +4,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { format, subDays, isAfter, parseISO, startOfWeek } from 'date-fns';
-import type { Exercise } from '@/data/exercises';
+import { movementExercises, mindfulnessPractices, type Exercise } from '@/data/exercises';
+import { communicationPractices } from '@/data/communication-practices';
 import { useMemo } from 'react';
 
 export type LogEntry = {
@@ -159,6 +160,7 @@ export type WellnessState = {
   setPlanDismissed: (category: string, dismissed: boolean) => void;
   markPlanDayComplete: (planId: string, day: number) => void;
   copyDayLog: (from: string, to: string) => void;
+  logExerciseById: (id: string) => void;
 };
 
 export const useWellnessData = create<WellnessState>()(
@@ -264,6 +266,49 @@ export const useWellnessData = create<WellnessState>()(
       copyDayLog: (from, to) => {
         const logsToCopy = get().mealLogs.filter(l => l.date === from);
         logsToCopy.forEach(l => get().addMealLog({ ...l, date: to }));
+      },
+      logExerciseById: (id: string) => {
+        const exercise = [
+          ...movementExercises, 
+          ...mindfulnessPractices, 
+          ...communicationPractices
+        ].find(e => e.id === id);
+        
+        if (!exercise) return;
+
+        const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
+        const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
+        const timestamp = new Date().toISOString();
+
+        if (isMovement) {
+          get().addMovementLog({
+            exerciseId: exercise.id,
+            exerciseName: exercise.name,
+            duration: exercise.estimatedMinutes,
+            timestamp,
+            difficulty: 3,
+            energyLevel: 'Medium'
+          });
+        } else if (isStillness) {
+          get().addStillnessLog({
+            techniqueId: exercise.id,
+            techniqueName: exercise.name,
+            duration: exercise.estimatedMinutes,
+            timestamp,
+            preStress: 5,
+            postCalm: 7,
+            trigger: 'Proactive'
+          });
+        } else {
+          get().addCommunicationLog({
+            practiceId: exercise.id,
+            practiceName: exercise.name,
+            duration: exercise.estimatedMinutes,
+            timestamp,
+            effectiveness: 3,
+            context: 'Routine'
+          });
+        }
       },
     }),
     {

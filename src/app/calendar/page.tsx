@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -71,6 +72,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianG
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
 
 function AmalgamatedAnalytics() {
   const { mealLogs, transactions } = useWellnessData();
@@ -208,11 +210,12 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { mealLogs, transactions } = useWellnessData();
+  const { mealLogs, transactions, logExerciseById } = useWellnessData();
   const movementLogs = useMovementLogs();
   const stillnessLogs = useStillnessLogs();
   const communicationLogs = useCommunicationLogs();
   const { entries } = useHydratedJournalStore();
+  const { toast } = useToast();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [routinesView, setRoutinesView] = useState<'grid' | 'list'>('grid');
@@ -276,7 +279,8 @@ export default function CalendarPage() {
             planName: plan.name,
             planColor: plan.color,
             status: existing?.status || 'not-started',
-            instanceId: existing?.id || `v-${plan.id}-${act.id}-${dateStr}`
+            instanceId: existing?.id || `v-${plan.id}-${act.id}-${dateStr}`,
+            linkedTracker: act.linkedTracker
           };
         })
     );
@@ -502,7 +506,7 @@ export default function CalendarPage() {
             <CollapsibleContent>
               <motion.div 
                 layout
-                transition={{ duration: 0.2 }}
+                transition={{ type: "spring", stiffness: 150, damping: 25 }}
                 className={cn(
                   "pb-4 gap-4",
                   routinesView === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col"
@@ -516,7 +520,7 @@ export default function CalendarPage() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                      transition={{ type: "spring", stiffness: 150, damping: 25 }}
                     >
                       <Card className={cn(
                         "transition-shadow relative group h-full", 
@@ -648,7 +652,7 @@ export default function CalendarPage() {
                   <motion.div 
                     key="add-plan-card"
                     layout
-                    transition={{ duration: 0.2 }}
+                    transition={{ type: "spring", stiffness: 150, damping: 25 }}
                   >
                     <Card 
                       className={cn(
@@ -827,7 +831,13 @@ export default function CalendarPage() {
                                     size="sm" 
                                     variant="outline"
                                     className="rounded-full gap-2 h-10 px-6 font-bold"
-                                    onClick={() => updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, 'completed')}
+                                    onClick={() => {
+                                      updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, 'completed');
+                                      if (task.linkedTracker) {
+                                        logExerciseById(task.linkedTracker);
+                                        toast({ title: "Health Check Updated", description: `${task.name} progress synced.`, variant: 'success' });
+                                      }
+                                    }}
                                   >
                                     <Circle className="w-4 h-4 text-muted-foreground" />
                                     Complete
@@ -878,7 +888,7 @@ export default function CalendarPage() {
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Theme Categories</Label>
                   <div className="flex flex-wrap gap-1.5">
-                    {(['Movement', 'Stillness', 'Nutrition', 'Finance', 'Study/Learning'] as PlanCategory[]).map(c => (
+                    {(['Movement', 'Stillness', 'Nutrition', 'Finance', 'Study/Learning', 'Communication'] as PlanCategory[]).map(c => (
                       <Badge 
                         key={c} 
                         variant={selectedCategories.includes(c) ? 'default' : 'outline'} 

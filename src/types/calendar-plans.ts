@@ -8,6 +8,7 @@ export type PlanCategory =
   | 'Finance' 
   | 'Journaling' 
   | 'Study/Learning' 
+  | 'Communication'
   | 'Custom';
 
 export type RecurrenceType = 'daily' | 'weekly' | 'monthly' | 'custom';
@@ -55,4 +56,5 @@ export type CalendarActivityInstance = {
   studyResourceId?: string; // Reference to specific deck/topic
   scheduledTime?: string;
   activityName: string;
+  linkedTracker?: string;
 };

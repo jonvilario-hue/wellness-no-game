@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Play, Pause, Check, Goal, ClipboardCheck, SlidersHorizontal, 
-  Trophy, Edit, Trash2, Clock, ChevronRight, X, Sparkles, BarChart3, Info
+  Trophy, Edit, Trash2, Clock, ChevronRight, X, Sparkles, BarChart3, Info, Plus
 } from 'lucide-react';
 import type { Exercise } from '@/data/exercises';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -53,7 +54,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
     addMovementLog, addStillnessLog, addCommunicationLog, 
     movementProgress = {} 
   } = useWellnessData();
-  const { syncFromTracker } = useCalendarPlansStore();
+  const { syncFromTracker, addCustomPlan } = useCalendarPlansStore();
   const { toast } = useToast();
   
   const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
@@ -133,6 +134,40 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
     setShowRatings(false);
   };
 
+  const handleAddToCalendar = () => {
+    const category = isMovement ? 'Movement' : isStillness ? 'Stillness' : 'Communication';
+    const color = isMovement ? '#14b8a6' : isStillness ? '#60a5fa' : '#a855f7';
+
+    addCustomPlan({
+      id: `routine-${exercise.id}-${Date.now()}`,
+      name: `${exercise.name} Routine`,
+      description: `Daily practice of ${exercise.name} synchronized from Health Check.`,
+      isPreset: false,
+      isActive: true,
+      durationType: 'ongoing',
+      startDate: new Date().toISOString(),
+      categories: [category as any],
+      color: color,
+      activities: [
+        {
+          id: `act-${exercise.id}-${Date.now()}`,
+          name: exercise.name,
+          category: category as any,
+          recurrence: 'daily',
+          duration: exercise.estimatedMinutes,
+          reminderEnabled: true,
+          linkedTracker: exercise.id
+        }
+      ]
+    });
+
+    toast({ 
+      title: "Added to Calendar", 
+      description: `"${exercise.name}" is now a daily routine.`, 
+      variant: 'success' 
+    });
+  };
+
   const toggleTimer = useCallback(() => {
     if (isComplete || timeLeft === 0) {
         setTimeLeft(exercise.duration);
@@ -166,6 +201,11 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               </div>
           </div>
           <div className="flex items-center gap-1 shrink-0 ml-2">
+            <AssistantTooltip text="Add this practice as a daily routine to your Calendar.">
+              <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:bg-primary/10" onClick={handleAddToCalendar}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </AssistantTooltip>
             {onEdit && (
               <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={onEdit}>
                 <Edit className="w-3.5 h-3.5" />
