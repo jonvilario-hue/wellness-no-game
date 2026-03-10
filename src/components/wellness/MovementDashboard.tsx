@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,7 +5,6 @@ import { calculateStreak, useMovementLogs } from "@/hooks/use-wellness-data";
 import { Flame, Clock, Trophy } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
-import { TodayScheduleWidget } from "./TodayScheduleWidget";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function MovementDashboard() {
@@ -64,8 +62,6 @@ export function MovementDashboard() {
           </Card>
         </AssistantTooltip>
       </div>
-
-      <TodayScheduleWidget category="Movement" />
     </div>
   );
 }

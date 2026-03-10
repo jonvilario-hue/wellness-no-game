@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,7 +5,6 @@ import { calculateStreak, useStillnessLogs } from "@/hooks/use-wellness-data";
 import { Sparkles, Clock, Wind, TrendingDown } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
-import { TodayScheduleWidget } from "./TodayScheduleWidget";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function StillnessDashboard() {
@@ -80,8 +78,6 @@ export function StillnessDashboard() {
           </Card>
         </AssistantTooltip>
       </div>
-
-      <TodayScheduleWidget category="Stillness" />
 
       {stats.reliverName && (
         <AssistantTooltip text="This insight uses your pre-stress and post-calm ratings to identify which technique provides the greatest 'Delta' (improvement) in your internal state.">

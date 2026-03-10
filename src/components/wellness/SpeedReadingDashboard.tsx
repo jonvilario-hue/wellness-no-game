@@ -12,7 +12,6 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianG
 import { getSpeedRank } from '@/lib/speedreading-utils';
 import { AssistantTooltip } from '../assistant-tooltip';
 import { cn } from '@/lib/utils';
-import { TodayScheduleWidget } from "./TodayScheduleWidget";
 
 export function SpeedReadingStats() {
   const { logs, getStreak } = useSpeedReadingStore();
@@ -73,8 +72,6 @@ export function SpeedReadingStats() {
           </Card>
         </AssistantTooltip>
       </div>
-
-      <TodayScheduleWidget category="Speed Reading" />
     </div>
   );
 }
