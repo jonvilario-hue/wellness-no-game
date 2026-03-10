@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -16,19 +17,33 @@ import { cn } from '@/lib/utils';
 
 interface JourneyPlansSectionProps {
   category: "Movement" | "Stillness" | "Communication" | "Speed Reading";
+  isExpanded?: boolean;
+  onToggle?: () => void;
+  mode?: 'trigger' | 'gallery';
 }
 
-export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
-  const { 
-    planProgress,
-  } = useWellnessData();
-  
-  const [isExpanded, setIsExpanded] = useState(false);
+/**
+ * Guided Curricula Section
+ * mode="trigger" renders the compact status bar in the action row.
+ * mode="gallery" renders the expanded list of available plans.
+ */
+export function JourneyPlansSection({ 
+  category, 
+  isExpanded: externalIsExpanded, 
+  onToggle, 
+  mode = 'trigger' 
+}: JourneyPlansSectionProps) {
+  const { planProgress } = useWellnessData();
+  const [internalIsExpanded, setInternalIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Use external state if provided (for page-level control) or fallback to internal
+  const isExpanded = externalIsExpanded !== undefined ? externalIsExpanded : internalIsExpanded;
+  const toggleExpand = onToggle || (() => setInternalIsExpanded(!internalIsExpanded));
 
   const tabPlans = useMemo(() => {
     return wellnessPlans.filter(p => p.category === category);
@@ -51,21 +66,10 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
     });
   }, [planProgress, tabPlans]);
 
-  const allCompleted = useMemo(() => {
-    if (tabPlans.length === 0) return true;
-    return tabPlans.every(plan => {
-      const progress = planProgress[plan.id] || {};
-      return Object.values(progress).filter(Boolean).length === plan.durationDays;
-    });
-  }, [planProgress, tabPlans]);
-
   if (!mounted) return null;
-  if (allCompleted) return null;
 
-  const handleToggleExpand = () => setIsExpanded(!isExpanded);
-
-  return (
-    <div className="flex flex-col">
+  if (mode === 'trigger') {
+    return (
       <div className="animate-in fade-in duration-500">
         <div className={cn(
           "flex items-center gap-4 p-2 px-4 rounded-full border bg-background/50 backdrop-blur-sm transition-all h-11",
@@ -104,7 +108,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
                 "h-7 gap-1 px-3 text-[9px] font-black uppercase rounded-full transition-all",
                 isExpanded ? "bg-primary text-primary-foreground hover:bg-primary/90" : "text-primary hover:bg-primary/5"
               )}
-              onClick={handleToggleExpand}
+              onClick={toggleExpand}
             >
               {isExpanded ? 'Hide' : 'View Plans'}
               {isExpanded ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
@@ -112,71 +116,72 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
           </div>
         </div>
       </div>
+    );
+  }
 
-      {isExpanded && (
-        <div className="w-full animate-in fade-in slide-in-from-top-2 duration-500 mt-2">
-          <Card className="border-primary/20 bg-background/50 backdrop-blur-sm shadow-xl">
-            <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-primary" />
-                <CardTitle className="text-sm font-black uppercase tracking-widest">
-                  {category} Guided Curricula
-                </CardTitle>
-              </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setIsExpanded(false)}>
-                <X className="w-4 h-4" />
-              </Button>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {tabPlans.map((plan) => {
-                  const progress = planProgress[plan.id] || {};
-                  const done = Object.values(progress).filter(Boolean).length;
-                  const isFinished = done === plan.durationDays;
-                  const isCurrent = activePlan?.id === plan.id;
+  // Gallery Mode: Renders the full grid of plans
+  return (
+    <div className="w-full animate-in fade-in slide-in-from-top-2 duration-500 px-4 sm:px-6">
+      <Card className="border-primary/20 bg-background/50 backdrop-blur-sm shadow-xl">
+        <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-primary" />
+            <CardTitle className="text-sm font-black uppercase tracking-widest">
+              {category} Guided Curricula
+            </CardTitle>
+          </div>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleExpand}>
+            <X className="w-4 h-4" />
+          </Button>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {tabPlans.map((plan) => {
+              const progress = planProgress[plan.id] || {};
+              const done = Object.values(progress).filter(Boolean).length;
+              const isFinished = done === plan.durationDays;
+              const isCurrent = activePlan?.id === plan.id;
 
-                  return (
-                    <Link key={plan.id} href={`/exercises/plans/${plan.id}`}>
-                      <Card className={cn(
-                        "hover:border-primary/50 transition-all h-full group bg-card border-primary/5",
-                        isCurrent && "border-primary/30 ring-1 ring-primary/10 bg-primary/5",
-                        isFinished && "opacity-60"
-                      )}>
-                        <CardHeader className="p-4 pb-2">
-                          <div className="flex justify-between items-start mb-2">
-                            <Badge variant={isCurrent ? "default" : "secondary"} className="uppercase font-black text-[8px] tracking-widest h-4 w-fit">
-                              {isCurrent ? 'ACTIVE' : isFinished ? 'COMPLETE' : `${plan.durationDays} DAYS`}
-                            </Badge>
-                            {isFinished && <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />}
+              return (
+                <Link key={plan.id} href={`/exercises/plans/${plan.id}`}>
+                  <Card className={cn(
+                    "hover:border-primary/50 transition-all h-full group bg-card border-primary/5",
+                    isCurrent && "border-primary/30 ring-1 ring-primary/10 bg-primary/5",
+                    isFinished && "opacity-60"
+                  )}>
+                    <CardHeader className="p-4 pb-2">
+                      <div className="flex justify-between items-start mb-2">
+                        <Badge variant={isCurrent ? "default" : "secondary"} className="uppercase font-black text-[8px] tracking-widest h-4 w-fit">
+                          {isCurrent ? 'ACTIVE' : isFinished ? 'COMPLETE' : `${plan.durationDays} DAYS`}
+                        </Badge>
+                        {isFinished && <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />}
+                      </div>
+                      <CardTitle className="text-sm font-bold group-hover:text-primary transition-colors">{plan.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4 pt-0">
+                      <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">{plan.description}</p>
+                      {done > 0 && !isFinished && (
+                        <div className="mt-3 space-y-1">
+                          <div className="flex justify-between text-[8px] font-bold text-primary">
+                            <span>Progress</span>
+                            <span>{done}/{plan.durationDays}</span>
                           </div>
-                          <CardTitle className="text-sm font-bold group-hover:text-primary transition-colors">{plan.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-4 pt-0">
-                          <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">{plan.description}</p>
-                          {done > 0 && !isFinished && (
-                            <div className="mt-3 space-y-1">
-                              <div className="flex justify-between text-[8px] font-bold text-primary">
-                                <span>Progress</span>
-                                <span>{done}/{plan.durationDays}</span>
-                              </div>
-                              <Progress value={(done/plan.durationDays)*100} className="h-0.5" />
-                            </div>
-                          )}
-                        </CardContent>
-                        <CardFooter className="p-4 pt-0">
-                          <Button variant="ghost" size="sm" className="w-full h-7 text-[9px] font-black uppercase border border-primary/5 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                            {isCurrent ? 'Continue' : isFinished ? 'Review' : 'Start'} <ArrowRight className="ml-1 w-3 h-3" />
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    </Link>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                          <Progress value={(done/plan.durationDays)*100} className="h-0.5" />
+                        </div>
+                      )}
+                    </CardContent>
+                    <CardFooter className="p-4 pt-0">
+                      <Button variant="ghost" size="sm" className="w-full h-7 text-[9px] font-black uppercase border border-primary/5 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                        {isCurrent ? 'Continue' : isFinished ? 'Review' : 'Start'} <ArrowRight className="ml-1 w-3 h-3" />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

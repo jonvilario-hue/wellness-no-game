@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
@@ -24,6 +25,7 @@ import { JourneyPlansSection } from '@/components/wellness/JourneyPlansSection';
 
 function ExercisesPageContent() {
   const [isOpen, setIsOpen] = useState(true);
+  const [isCurriculaExpanded, setIsCurriculaExpanded] = useState(false);
   const searchParams = useSearchParams();
   
   const activeTab = searchParams.get('tab') || 'movement';
@@ -106,35 +108,55 @@ function ExercisesPageContent() {
                   )}
                 </Collapsible>
 
-                <div className="flex flex-wrap items-center justify-center gap-4 py-3 border-y border-primary/5 bg-muted/10 rounded-2xl">
-                    <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice.">
-                      <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
-                          <div className="flex items-center gap-2">
-                              <Flame className="w-5 h-5 text-orange-500" />
-                              <span className="text-xl font-black">{streak}</span>
-                              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Wellness Streak</span>
+                {/* Global Action Bar */}
+                <div className="flex flex-col gap-4 py-3 border-y border-primary/5 bg-muted/10 rounded-2xl">
+                    <div className="flex flex-wrap items-center justify-center gap-4 px-4">
+                        <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice.">
+                          <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
+                              <div className="flex items-center gap-2">
+                                  <Flame className="w-5 h-5 text-orange-500" />
+                                  <span className="text-xl font-black">{streak}</span>
+                                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Wellness Streak</span>
+                              </div>
+                          </Card>
+                        </AssistantTooltip>
+
+                        <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your entire library to show only 'zero-friction' practices.">
+                          <div className={cn(
+                              "flex items-center gap-3 px-4 py-2 rounded-full border transition-all h-11",
+                              lowEnergyMode ? "bg-amber-500/10 border-amber-500/30" : "bg-background border-primary/10"
+                          )}>
+                              {lowEnergyMode ? <ZapOff className="w-4 h-4 text-amber-500" /> : <Zap className="w-4 h-4 text-primary" />}
+                              <Label htmlFor="mvd-toggle" className="text-sm font-bold cursor-pointer whitespace-nowrap">
+                                  MVD Mode
+                              </Label>
+                              <Switch 
+                                  id="mvd-toggle" 
+                                  checked={lowEnergyMode} 
+                                  onCheckedChange={setLowEnergyMode}
+                              />
                           </div>
-                      </Card>
-                    </AssistantTooltip>
+                        </AssistantTooltip>
 
-                    <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your entire library to show only 'zero-friction' practices.">
-                      <div className={cn(
-                          "flex items-center gap-3 px-4 py-2 rounded-full border transition-all h-11",
-                          lowEnergyMode ? "bg-amber-500/10 border-amber-500/30" : "bg-background border-primary/10"
-                      )}>
-                          {lowEnergyMode ? <ZapOff className="w-4 h-4 text-amber-500" /> : <Zap className="w-4 h-4 text-primary" />}
-                          <Label htmlFor="mvd-toggle" className="text-sm font-bold cursor-pointer whitespace-nowrap">
-                              MVD Mode
-                          </Label>
-                          <Switch 
-                              id="mvd-toggle" 
-                              checked={lowEnergyMode} 
-                              onCheckedChange={setLowEnergyMode}
-                          />
+                        <JourneyPlansSection 
+                          category={currentCategory} 
+                          isExpanded={isCurriculaExpanded}
+                          onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
+                          mode="trigger"
+                        />
+                    </div>
+
+                    {/* Inline Curricula Gallery Expansion */}
+                    {isCurriculaExpanded && (
+                      <div className="w-full pt-2">
+                        <JourneyPlansSection 
+                          category={currentCategory} 
+                          isExpanded={isCurriculaExpanded}
+                          onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
+                          mode="gallery"
+                        />
                       </div>
-                    </AssistantTooltip>
-
-                    <JourneyPlansSection category={currentCategory} />
+                    )}
                 </div>
             </div>
             
