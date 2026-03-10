@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -64,7 +63,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { PlanCategory, CalendarPlan, ActivityStatus, PlanActivity } from '@/types/calendar-plans';
 import { DayDetailsDialog } from '@/components/calendar/day-details-dialog';
 import { calendarContent } from '@/data/calendar-content';
-import { useWellnessData } from '@/hooks/use-wellness-data';
+import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from '@/hooks/use-wellness-data';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
 import { useStudyDashboardStore } from '@/hooks/use-study-dashboard-store';
@@ -74,7 +73,10 @@ import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function AmalgamatedAnalytics() {
-  const { movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions } = useWellnessData();
+  const { mealLogs, transactions } = useWellnessData();
+  const movementLogs = useMovementLogs();
+  const stillnessLogs = useStillnessLogs();
+  const communicationLogs = useCommunicationLogs();
   const { logs: readingLogs } = useSpeedReadingStore();
   const { entries: journalEntries } = useHydratedJournalStore();
   const { activity: studyActivity } = useStudyDashboardStore();
@@ -206,7 +208,10 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs } = useWellnessData();
+  const { mealLogs, transactions } = useWellnessData();
+  const movementLogs = useMovementLogs();
+  const stillnessLogs = useStillnessLogs();
+  const communicationLogs = useCommunicationLogs();
   const { entries } = useHydratedJournalStore();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
@@ -510,7 +515,7 @@ export default function CalendarPage() {
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30, duration: 0.4 }}
+                      transition={{ type: "spring", stiffness: 300, depth: 30, duration: 0.4 }}
                     >
                       <Card className={cn(
                         "transition-shadow relative group h-full", 
