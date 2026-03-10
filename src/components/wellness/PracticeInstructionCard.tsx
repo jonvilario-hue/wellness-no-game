@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -56,9 +57,6 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
   
-  // Tracking is now permanent
-  const trackNumbers = true;
-
   const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
   const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
   const isCommunication = !isMovement && !isStillness;
@@ -145,13 +143,6 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
     setIsActive(!isActive);
   }, [isActive, timeLeft, exercise.duration, isComplete]);
 
-  const getTrackingPreview = () => {
-    if (isMovement) return "Will track: Intensity, Reps, PBs";
-    if (isStillness) return "Will track: Stress, Calmness, Trigger";
-    if (isCommunication) return "Will track: Effectiveness, Context";
-    return "";
-  };
-
   const getDataDestinationLink = () => {
     if (isStillness) return "View Calmness Trends →";
     if (isMovement) return "View Intensity Trends →";
@@ -169,9 +160,6 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               <div className="flex flex-col gap-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <CardTitle className="leading-tight truncate">{exercise.name}</CardTitle>
-                  <Badge variant="secondary" className="text-[8px] font-black h-4 px-1.5 uppercase tracking-tighter shrink-0">
-                    📊 Tracking
-                  </Badge>
                 </div>
                 <Link href="/calendar" className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1">
                   {getDataDestinationLink()} <ChevronRight className="w-2.5 h-2.5" />
@@ -378,9 +366,6 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                   Quick Log
                 </Button>
               </div>
-              <p className="text-[9px] font-bold text-center text-primary uppercase tracking-widest opacity-80 animate-pulse">
-                {getTrackingPreview()}
-              </p>
             </div>
           )}
       </CardFooter>
