@@ -43,7 +43,8 @@ import {
   ChevronRight,
   Info,
   Goal,
-  AlertCircle
+  AlertCircle,
+  LayoutList
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
