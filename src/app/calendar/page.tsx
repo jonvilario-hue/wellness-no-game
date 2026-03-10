@@ -208,12 +208,11 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const mealLogs = useWellnessData(s => s.mealLogs);
-  const transactions = useWellnessData(s => s.transactions);
+  const { mealLogs, transactions } = useWellnessData();
   const movementLogs = useMovementLogs();
   const stillnessLogs = useStillnessLogs();
   const communicationLogs = useCommunicationLogs();
-  const entries = useHydratedJournalStore(s => s.entries);
+  const { entries } = useHydratedJournalStore();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [routinesView, setRoutinesView] = useState<'grid' | 'list'>('grid');
