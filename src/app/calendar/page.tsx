@@ -626,7 +626,7 @@ export default function CalendarPage() {
                           )}
 
                           <Collapsible open={expandedPlanId === plan.id} onOpenChange={(o) => setExpandedPlanId(o ? plan.id : null)}>
-                            <CollapsibleContent className="p-4 space-y-6 bg-background animate-in slide-in-from-top-1 border-y border-primary/5">
+                            <CollapsibleContent className="p-4 space-y-6 bg-background border-y border-primary/5">
                               {plan.activities.map((act) => {
                                 const practice = allPractices.find(p => p.id === act.linkedTracker);
                                 if (!practice) {

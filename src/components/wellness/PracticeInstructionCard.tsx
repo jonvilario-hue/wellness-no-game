@@ -7,11 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Play, Pause, Check, Goal, ClipboardCheck, SlidersHorizontal, 
-  Trophy, Edit, Trash2, Clock, ChevronRight, X, Sparkles, BarChart3, Info, Plus
+  Trophy, Edit, Trash2, Clock, ChevronRight, X, Sparkles, BarChart3, Info, Plus, ListChecks
 } from 'lucide-react';
 import type { Exercise } from '@/data/exercises';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
@@ -249,149 +247,150 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
           </div>
         )}
 
-        <AnimatePresence mode="wait">
-          {showRatings ? (
-            <motion.div key="survey" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4 py-2 border-t mt-4">
-              <div className="flex justify-between items-center">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-                  <SlidersHorizontal className="w-3 h-3" /> Post-Session Survey
-                </h4>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowRatings(false)}><X className="w-3 h-3" /></Button>
+        {showRatings ? (
+          <div className="space-y-4 py-2 border-t mt-4">
+            <div className="flex justify-between items-center">
+              <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                <SlidersHorizontal className="w-3 h-3" /> Post-Session Survey
+              </h4>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowRatings(false)}><X className="w-3 h-3" /></Button>
+            </div>
+            
+            {isMovement && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold uppercase">Difficulty (1-5)</Label>
+                  <div className="flex gap-1">
+                    {[1,2,3,4,5].map(n => (
+                      <Button key={n} variant={difficulty === n ? 'default' : 'outline'} size="sm" className="h-7 w-7 p-0" onClick={() => setDifficulty(n)}>
+                        {n}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold uppercase">Energy</Label>
+                  <Select value={energy} onValueChange={v => setEnergy(v as any)}>
+                    <SelectTrigger className="h-7 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['Low', 'Medium', 'High'].map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold uppercase">Reps</Label>
+                  <Input type="number" value={reps} onChange={e => setReps(e.target.value)} className="h-7 text-xs" placeholder="0" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold uppercase">Hold (Sec)</Label>
+                  <Input type="number" value={holdTime} onChange={e => setHoldTime(e.target.value)} className="h-7 text-xs" placeholder="0" />
+                </div>
               </div>
-              
-              {isMovement && (
+            )}
+
+            {isStillness && (
+              <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Difficulty (1-5)</Label>
-                    <div className="flex gap-1">
-                      {[1,2,3,4,5].map(n => (
-                        <Button key={n} variant={difficulty === n ? 'default' : 'outline'} size="sm" className="h-7 w-7 p-0" onClick={() => setDifficulty(n)}>
-                          {n}
-                        </Button>
-                      ))}
-                    </div>
+                    <Label className="text-[10px] font-bold uppercase">Pre-Stress (1-10)</Label>
+                    <Input type="number" value={preStress} onChange={e => setPreStress(e.target.value)} className="h-7 text-xs" />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Energy</Label>
-                    <Select value={energy} onValueChange={v => setEnergy(v as any)}>
-                      <SelectTrigger className="h-7 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['Low', 'Medium', 'High'].map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Reps</Label>
-                    <Input type="number" value={reps} onChange={e => setReps(e.target.value)} className="h-7 text-xs" placeholder="0" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Hold (Sec)</Label>
-                    <Input type="number" value={holdTime} onChange={e => setHoldTime(e.target.value)} className="h-7 text-xs" placeholder="0" />
+                    <Label className="text-[10px] font-bold uppercase">Post-Calm (1-10)</Label>
+                    <Input type="number" value={postCalm} onChange={e => setPostCalm(e.target.value)} className="h-7 text-xs" />
                   </div>
                 </div>
-              )}
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold uppercase">Primary Trigger</Label>
+                  <Select value={trigger} onValueChange={setTrigger}>
+                    <SelectTrigger className="h-7 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['Proactive', 'Stress', 'Anxiety', "Can't Sleep", 'Other'].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
 
-              {isStillness && (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-bold uppercase">Pre-Stress (1-10)</Label>
-                      <Input type="number" value={preStress} onChange={e => setPreStress(e.target.value)} className="h-7 text-xs" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-bold uppercase">Post-Calm (1-10)</Label>
-                      <Input type="number" value={postCalm} onChange={e => setPostCalm(e.target.value)} className="h-7 text-xs" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Primary Trigger</Label>
-                    <Select value={trigger} onValueChange={setTrigger}>
-                      <SelectTrigger className="h-7 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['Proactive', 'Stress', 'Anxiety', "Can't Sleep", 'Other'].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
+            {isCommunication && (
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold uppercase">Effectiveness (1-5)</Label>
+                  <div className="flex gap-1">
+                    {[1,2,3,4,5].map(n => (
+                      <Button key={n} variant={difficulty === n ? 'default' : 'outline'} size="sm" className="h-7 w-7 p-0" onClick={() => setDifficulty(n)}>
+                        {n}
+                      </Button>
+                    ))}
                   </div>
                 </div>
-              )}
-
-              {isCommunication && (
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Effectiveness (1-5)</Label>
-                    <div className="flex gap-1">
-                      {[1,2,3,4,5].map(n => (
-                        <Button key={n} variant={difficulty === n ? 'default' : 'outline'} size="sm" className="h-7 w-7 p-0" onClick={() => setDifficulty(n)}>
-                          {n}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-bold uppercase">Context (Optional)</Label>
-                    <Input value={commContext} onChange={e => setCommContext(e.target.value)} className="h-7 text-xs" placeholder="e.g. Work call, First date..." />
-                  </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold uppercase">Context (Optional)</Label>
+                  <Input value={commContext} onChange={e => setCommContext(e.target.value)} className="h-7 text-xs" placeholder="e.g. Work call, First date..." />
                 </div>
-              )}
+              </div>
+            )}
 
-              <Button className="w-full h-10 font-bold gap-2" onClick={handleFinalizeLog}>
-                <Check className="w-4 h-4" /> Save Data
-              </Button>
-            </motion.div>
-          ) : (
-            <div key="instructions" className="space-y-4">
+            <Button className="w-full h-10 font-bold gap-2" onClick={handleFinalizeLog}>
+              <Check className="w-4 h-4" /> Save Data
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                <ListChecks className="w-3.5 h-3.5" /> Instructions
+              </h4>
               <ol className="list-decimal list-inside space-y-2 text-xs">
                   {exercise.steps.map((step, i) => (
                       <li key={i}>{step}</li>
                   ))}
               </ol>
-
-              <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="setup" className="border-b-0">
-                      <AccordionTrigger className="text-[11px] font-semibold">Quick Setup</AccordionTrigger>
-                      <AccordionContent>
-                          <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-1">
-                              {exercise.setup.map((s, i) => <li key={i}>{s}</li>)}
-                          </ul>
-                      </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="modifications" className="border-b-0">
-                      <AccordionTrigger className="text-[11px] font-semibold">Modifications</AccordionTrigger>
-                      <AccordionContent>
-                          <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-1">
-                              {exercise.modifications.map((mod, i) => <li key={i}>{mod}</li>)}
-                          </ul>
-                      </AccordionContent>
-                  </AccordionItem>
-              </Accordion>
             </div>
-          )}
-        </AnimatePresence>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-primary/5">
+              <div className="space-y-1.5">
+                <h5 className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
+                  <Activity className="w-3 h-3" /> Quick Setup
+                </h5>
+                <ul className="list-disc list-inside text-[10px] text-muted-foreground/80 space-y-1">
+                    {exercise.setup.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </div>
+              <div className="space-y-1.5">
+                <h5 className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3" /> Modifications
+                </h5>
+                <ul className="list-disc list-inside text-[10px] text-muted-foreground/80 space-y-1">
+                    {exercise.modifications.map((mod, i) => <li key={i}>{mod}</li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
       </CardContent>
 
       <CardFooter className="flex-col gap-3">
           <div className="w-full min-h-8 text-center text-sm font-semibold">
-            <AnimatePresence mode="wait">
-              {isComplete && !showRatings ? (
-                  <motion.div key="complete" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center gap-1">
-                    <div className="flex items-center gap-2 text-green-600">
-                      <Check className="w-4 h-4" /> 
-                      <span className="text-xs">
-                        ✓ Session logged with full tracking
-                      </span>
-                    </div>
-                    <Link href="/calendar" className="text-[10px] text-primary hover:underline flex items-center gap-1">
-                      View in Hall of Fame <ChevronRight className="w-2.5 h-2.5" />
-                    </Link>
-                  </motion.div>
-              ) : (
-                  <div key="cue" className="italic text-muted-foreground text-[10px]">{exercise.completionCue}</div>
-              )}
-            </AnimatePresence>
+            {isComplete && !showRatings ? (
+                <div className="flex flex-col items-center gap-1">
+                  <div className="flex items-center gap-2 text-green-600">
+                    <Check className="w-4 h-4" /> 
+                    <span className="text-xs">
+                      ✓ Session logged with full tracking
+                    </span>
+                  </div>
+                  <Link href="/calendar" className="text-[10px] text-primary hover:underline flex items-center gap-1">
+                    View in Hall of Fame <ChevronRight className="w-2.5 h-2.5" />
+                  </Link>
+                </div>
+            ) : (
+                <div className="italic text-muted-foreground text-[10px]">{exercise.completionCue}</div>
+            )}
           </div>
           {!showRatings && (
             <div className="w-full flex flex-col gap-2">
