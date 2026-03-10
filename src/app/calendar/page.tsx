@@ -62,7 +62,6 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { PlanCategory, CalendarPlan, ActivityStatus, PlanActivity } from '@/types/calendar-plans';
-import { DayDetailsDialog } from '@/components/calendar/day-details-dialog';
 import { calendarContent } from '@/data/calendar-content';
 import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from '@/hooks/use-wellness-data';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
@@ -224,7 +223,6 @@ export default function CalendarPage() {
   const [plansOpen, setPlansOpen] = useState(true);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
-  const [selectedDayContent, setSelectedDayContent] = useState<any>(null);
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
   const [activeRoutineIds, setActiveRoutineIds] = useState<string[] | null>(null);
   const [activeRoutineName, setActiveRoutineName] = useState("");
@@ -252,7 +250,6 @@ export default function CalendarPage() {
   }, [deletedPresetIds, customPlans, planOrder]);
 
   const activePlans = useMemo(() => {
-    // Routines are now "always-on" by default
     return availablePlans;
   }, [availablePlans]);
 
@@ -449,16 +446,6 @@ export default function CalendarPage() {
   const handleDayClick = (date: Date | undefined) => {
     if (!date) return;
     setSelectedDate(date);
-    const day = date.getDate();
-    const content = calendarContent.find(c => c.day === day) || {
-      day,
-      icon: CalendarIcon,
-      prompt: "Daily Focus",
-      description: "Amalgamated wellness and study view.",
-      toolType: 'text',
-      toolContent: "View your integrated schedule for today."
-    };
-    setSelectedDayContent(content);
   };
 
   const toggleCategory = (cat: PlanCategory) => {
@@ -1046,16 +1033,6 @@ export default function CalendarPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {selectedDayContent && (
-        <DayDetailsDialog 
-          dayContent={selectedDayContent}
-          isOpen={!!selectedDayContent}
-          onClose={() => setSelectedDayContent(null)}
-          isCompleted={false}
-          onToggleCompletion={() => {}}
-        />
-      )}
     </>
   );
 }
