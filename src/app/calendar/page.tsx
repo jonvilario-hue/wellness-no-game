@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -209,10 +210,11 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { mealLogs, transactions, logExerciseById } = useWellnessData();
+  const { logExerciseById } = useWellnessData();
   const movementLogs = useMovementLogs();
   const stillnessLogs = useStillnessLogs();
   const communicationLogs = useCommunicationLogs();
+  const { mealLogs, transactions } = useWellnessData();
   const { entries } = useHydratedJournalStore();
   const { toast } = useToast();
   
@@ -1076,7 +1078,7 @@ export default function CalendarPage() {
           <DialogFooter className="pt-4 border-t">
             <Button variant="ghost" onClick={() => setIsBuilderOpen(false)}>Cancel</Button>
             <Button className="w-full font-bold h-12" disabled={!isFormValid} onClick={handleSavePlan}>
-              {editingPlan ? 'Update Protocol' : 'Initialize Protocol'}
+              {editingPlan ? 'Update Steps' : 'Initialize Routine'}
             </Button>
           </DialogFooter>
         </DialogContent>
