@@ -1,7 +1,8 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
-import { useWellnessData, calculateStreak } from "@/hooks/use-wellness-data";
+import { calculateStreak, useStillnessLogs } from "@/hooks/use-wellness-data";
 import { Sparkles, Clock, Wind, TrendingDown } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
@@ -9,7 +10,7 @@ import { TodayScheduleWidget } from "./TodayScheduleWidget";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function StillnessDashboard() {
-  const { stillnessLogs } = useWellnessData();
+  const stillnessLogs = useStillnessLogs();
 
   const stats = useMemo(() => {
     const streak = calculateStreak(stillnessLogs);
@@ -31,7 +32,6 @@ export function StillnessDashboard() {
     stillnessLogs.forEach(log => {
       if (log.preStress !== undefined && log.postCalm !== undefined && log.trigger === 'Stress') {
         if (!triggerStats[log.techniqueId]) triggerStats[log.techniqueId] = { sum: 0, count: 0 };
-        const reduction = log.preStress - (10 - log.postCalm);
         triggerStats[log.techniqueId].sum += Math.max(0, log.postCalm - (10 - log.preStress));
         triggerStats[log.techniqueId].count++;
       }

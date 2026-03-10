@@ -1,7 +1,8 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
-import { useWellnessData, calculateStreak } from "@/hooks/use-wellness-data";
+import { calculateStreak, useMovementLogs } from "@/hooks/use-wellness-data";
 import { Flame, Clock, Trophy } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
@@ -9,7 +10,7 @@ import { TodayScheduleWidget } from "./TodayScheduleWidget";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function MovementDashboard() {
-  const { movementLogs } = useWellnessData();
+  const movementLogs = useMovementLogs();
 
   const stats = useMemo(() => {
     const streak = calculateStreak(movementLogs);

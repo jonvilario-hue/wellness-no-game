@@ -1,21 +1,20 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
-import { useWellnessData, calculateStreak } from "@/hooks/use-wellness-data";
-import { Flame, Clock, Trophy, MessageSquare } from "lucide-react";
+import { calculateStreak, useCommunicationLogs } from "@/hooks/use-wellness-data";
+import { Flame, Clock, Trophy } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { TodayScheduleWidget } from "./TodayScheduleWidget";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function CommunicationDashboard() {
-  const { communicationLogs } = useWellnessData();
+  const communicationLogs = useCommunicationLogs();
 
   const stats = useMemo(() => {
     // We treat communication as a daily ritual for streak purposes
-    const streak = calculateStreak(
-      communicationLogs.reduce((acc, log) => ({ ...acc, [log.timestamp.split('T')[0]]: true }), {})
-    );
+    const streak = calculateStreak(communicationLogs);
     
     const weekStart = startOfWeek(new Date());
     const weekMinutes = communicationLogs

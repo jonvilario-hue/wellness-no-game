@@ -5,6 +5,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { format, subDays, isAfter, parseISO, startOfWeek } from 'date-fns';
 import type { Exercise } from '@/data/exercises';
+import { useMemo } from 'react';
 
 export type LogEntry = {
   id: string;
@@ -59,17 +60,42 @@ export type BodyMetric = {
 
 export type DietaryApproach = 'Balanced' | 'Keto' | 'High Protein' | 'Low Carb' | 'Custom';
 
-export const calculateStreak = (logs: LogEntry[]): number => {
-  if (!logs || logs.length === 0) return 0;
+/**
+ * Calculates a streak from either an array of logs or a Record of date strings.
+ */
+export const calculateStreak = (logs: any): number => {
+  if (!logs) return 0;
   
   const dates = new Set<string>();
-  logs.forEach(log => {
-    dates.add(format(new Date(log.timestamp || log.completedAt), 'yyyy-MM-dd'));
-  });
+  if (Array.isArray(logs)) {
+    logs.forEach(log => {
+      const d = log.timestamp || log.completedAt || log.date;
+      if (d) {
+        try {
+          dates.add(format(new Date(d), 'yyyy-MM-dd'));
+        } catch (e) {}
+      }
+    });
+  } else if (typeof logs === 'object') {
+    Object.keys(logs).forEach(dateStr => {
+      if (logs[dateStr]) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+          dates.add(dateStr);
+        } else {
+          try {
+            dates.add(format(new Date(dateStr), 'yyyy-MM-dd'));
+          } catch (e) {}
+        }
+      }
+    });
+  }
+
+  if (dates.size === 0) return 0;
 
   let streak = 0;
   let checkDate = new Date();
   
+  // If today hasn't been logged yet, start checking from yesterday
   if (!dates.has(format(checkDate, 'yyyy-MM-dd'))) {
     checkDate = subDays(checkDate, 1);
   }
