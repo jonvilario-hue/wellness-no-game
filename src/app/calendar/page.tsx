@@ -43,7 +43,8 @@ import {
   Info,
   Goal,
   AlertCircle,
-  LayoutList
+  LayoutList,
+  PlusCircle
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -215,6 +216,7 @@ export default function CalendarPage() {
     addCustomPlan,
     updateCustomPlan,
     reorderPlan,
+    addAdHocActivity,
     _hasHydrated 
   } = useCalendarPlansStore();
 
@@ -522,6 +524,9 @@ export default function CalendarPage() {
                   <LayoutGrid className="w-5 h-5 text-primary" />
                   Active Routines
                 </h2>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10" onClick={() => handleOpenBuilder()}>
+                  <PlusCircle className="w-5 h-5" />
+                </Button>
                 <div className="bg-muted p-1 rounded-lg flex items-center gap-1">
                   <Button variant={routinesView === 'grid' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-3 text-[10px] font-bold uppercase" onClick={() => setRoutinesView('grid')}>
                     <LayoutGrid className="w-3 h-3 mr-1.5" /> Squared
@@ -587,6 +592,23 @@ export default function CalendarPage() {
                                 </div>
                               </div>
                               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <AssistantTooltip text="Schedule manual instance">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-10 w-10 text-primary"
+                                    onClick={() => {
+                                      addAdHocActivity(format(selectedDate, 'yyyy-MM-dd'), {
+                                        planId: 'manual',
+                                        activityName: plan.name,
+                                        category: plan.categories[0] as any
+                                      });
+                                      toast({ title: "Routine added to agenda." });
+                                    }}
+                                  >
+                                    <Plus className="w-5 h-5" />
+                                  </Button>
+                                </AssistantTooltip>
                                 <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
                                   <ChevronUpSquare className="w-4 h-4" />
                                 </Button>
@@ -705,13 +727,15 @@ export default function CalendarPage() {
                     <Card 
                       className={cn(
                         "border-dashed cursor-pointer hover:bg-primary/[0.02] flex items-center justify-center transition-colors h-full",
-                        routinesView === 'grid' ? "flex-col p-6 text-center min-h-[120px]" : "py-3"
+                        routinesView === 'grid' ? "flex-col p-6 text-center min-h-[120px]" : "p-4"
                       )} 
                       onClick={() => handleOpenBuilder()}
                     >
-                      <Plus className={cn("text-muted-foreground mb-2", routinesView === 'grid' ? "w-8 h-8" : "w-4 h-4 mr-2")} />
-                      <p className="text-sm font-bold">New Custom Plan</p>
-                      {routinesView === 'grid' && <p className="text-xs text-muted-foreground">Syncs with all category views</p>}
+                      <PlusCircle className={cn("text-primary", routinesView === 'grid' ? "w-8 h-8 mb-2" : "w-5 h-5 mr-3")} />
+                      <div className={cn(routinesView === 'list' && "text-left")}>
+                        <p className="text-sm font-bold">Create New Routine</p>
+                        {routinesView === 'grid' && <p className="text-xs text-muted-foreground">Syncs with all category views</p>}
+                      </div>
                     </Card>
                   </motion.div>
                 </AnimatePresence>
