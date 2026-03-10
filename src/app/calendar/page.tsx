@@ -89,13 +89,13 @@ function AmalgamatedAnalytics() {
       const dStr = format(date, 'yyyy-MM-dd');
       
       const count = 
-        movementLogs.filter(l => l.timestamp.startsWith(dStr)).length +
-        stillnessLogs.filter(l => l.timestamp.startsWith(dStr)).length +
-        communicationLogs.filter(l => l.timestamp.startsWith(dStr)).length +
-        readingLogs.filter(l => l.date === dStr).length +
-        mealLogs.filter(l => l.date === dStr).length +
-        transactions.filter(l => l.date === dStr).length +
-        journalEntries.filter(l => l.date === dStr).length +
+        (movementLogs?.filter(l => l.timestamp.startsWith(dStr)).length || 0) +
+        (stillnessLogs?.filter(l => l.timestamp.startsWith(dStr)).length || 0) +
+        (communicationLogs?.filter(l => l.timestamp.startsWith(dStr)).length || 0) +
+        (readingLogs?.filter(l => l.date === dStr).length || 0) +
+        (mealLogs?.filter(l => l.date === dStr).length || 0) +
+        (transactions?.filter(l => l.date === dStr).length || 0) +
+        (journalEntries?.filter(l => l.date === dStr).length || 0) +
         (studyActivity[dStr] ? 1 : 0);
 
       data.push({
@@ -208,11 +208,12 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { mealLogs, transactions } = useWellnessData();
+  const mealLogs = useWellnessData(s => s.mealLogs);
+  const transactions = useWellnessData(s => s.transactions);
   const movementLogs = useMovementLogs();
   const stillnessLogs = useStillnessLogs();
   const communicationLogs = useCommunicationLogs();
-  const { entries } = useHydratedJournalStore();
+  const entries = useHydratedJournalStore(s => s.entries);
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [routinesView, setRoutinesView] = useState<'grid' | 'list'>('grid');
@@ -295,7 +296,7 @@ export default function CalendarPage() {
     }));
 
     const wellnessTasks = [
-      ...movementLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({
+      ...(movementLogs?.filter(l => isSameDay(new Date(l.timestamp), date)) || []).map(l => ({
         id: l.id,
         name: l.exerciseName,
         category: 'Movement' as PlanCategory,
@@ -305,7 +306,7 @@ export default function CalendarPage() {
         instanceId: l.id,
         icon: HeartPulse
       })),
-      ...stillnessLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({
+      ...(stillnessLogs?.filter(l => isSameDay(new Date(l.timestamp), date)) || []).map(l => ({
         id: l.id,
         name: l.techniqueName,
         category: 'Stillness' as PlanCategory,
@@ -315,7 +316,7 @@ export default function CalendarPage() {
         instanceId: l.id,
         icon: Waves
       })),
-      ...communicationLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({
+      ...(communicationLogs?.filter(l => isSameDay(new Date(l.timestamp), date)) || []).map(l => ({
         id: l.id,
         name: l.practiceName,
         category: 'Communication' as PlanCategory,
@@ -325,7 +326,7 @@ export default function CalendarPage() {
         instanceId: l.id,
         icon: MessageSquare
       })),
-      ...mealLogs.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({
+      ...(mealLogs?.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)) || []).map(l => ({
         id: l.id,
         name: `${l.mealType}: ${l.foodName || 'Meal'}`,
         category: 'Nutrition' as PlanCategory,
@@ -335,7 +336,7 @@ export default function CalendarPage() {
         instanceId: l.id,
         icon: Utensils
       })),
-      ...transactions.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({
+      ...(transactions?.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)) || []).map(l => ({
         id: l.id,
         name: `${l.merchant}: $${l.amount}`,
         category: 'Finance' as PlanCategory,
@@ -345,7 +346,7 @@ export default function CalendarPage() {
         instanceId: l.id,
         icon: Wallet
       })),
-      ...entries.filter(e => isSameDay(new Date(e.displayDate || e.date + 'T12:00:00'), date)).map(e => ({
+      ...(entries?.filter(e => isSameDay(new Date(e.displayDate || e.date + 'T12:00:00'), date)) || []).map(e => ({
         id: e.id,
         name: e.label || 'Reflection',
         category: 'Journaling' as PlanCategory,
@@ -502,6 +503,7 @@ export default function CalendarPage() {
             <CollapsibleContent>
               <motion.div 
                 layout
+                transition={{ duration: 0.2 }}
                 className={cn(
                   "pb-4 gap-4",
                   routinesView === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col"
@@ -512,10 +514,10 @@ export default function CalendarPage() {
                     <motion.div
                       key={plan.id}
                       layout
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ type: "spring", stiffness: 300, depth: 30, duration: 0.4 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 200, damping: 25 }}
                     >
                       <Card className={cn(
                         "transition-shadow relative group h-full", 
@@ -647,7 +649,7 @@ export default function CalendarPage() {
                   <motion.div 
                     key="add-plan-card"
                     layout
-                    transition={{ duration: 0.4 }}
+                    transition={{ duration: 0.2 }}
                   >
                     <Card 
                       className={cn(
@@ -868,7 +870,7 @@ export default function CalendarPage() {
                     value={newPlanName} 
                     onChange={e => setNewPlanName(e.target.value)}
                     className={cn(
-                      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
                       !newPlanName.trim() && "border-amber-500/50"
                     )}
                   />
