@@ -7,6 +7,7 @@ import { readingPassages } from "@/data/speedreading-passages"
 import { SpeedReadingStats, SpeedReadingAnalytics } from "./SpeedReadingDashboard"
 import { SpeedReadingDrillPlayer } from "./SpeedReadingDrillPlayer"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
+import { TodayScheduleWidget } from "./TodayScheduleWidget"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -218,6 +219,8 @@ export default function SpeedReadingContent() {
           ))}
         </div>
       </div>
+
+      <TodayScheduleWidget category="Speed Reading" />
 
       <div className="pt-10">
         <WellnessActivityCalendar categoryFilter="Speed Reading" /> 

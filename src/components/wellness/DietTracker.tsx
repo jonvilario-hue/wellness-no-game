@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -24,6 +25,7 @@ import { MealGuideLibrary } from './MealGuideLibrary';
 import { ShoppingListView } from './ShoppingListView';
 import { DietaryProfileSettings } from './DietaryProfileSettings';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
+import { TodayScheduleWidget } from './TodayScheduleWidget';
 
 export function DietTracker() {
     const { 
@@ -93,7 +95,9 @@ export function DietTracker() {
                 </TabsList>
 
                 <TabsContent value="daily" className="space-y-8 animate-in fade-in duration-500">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <TodayScheduleWidget category="Nutrition" />
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
                         <Card className="md:col-span-2 border-primary/10">
                             <CardHeader className="pb-2">
                                 <div className="flex justify-between items-center">

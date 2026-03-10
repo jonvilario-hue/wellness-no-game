@@ -24,6 +24,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
+import { TodayScheduleWidget } from './TodayScheduleWidget';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { OpportunityEngine } from './OpportunityEngine';
 import { PlaybookLibrary } from './PlaybookLibrary';
@@ -168,7 +169,6 @@ export function FinanceTracker() {
                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Subscriptions</p>
                                 <p className="text-3xl font-black mt-1 text-foreground">{subscriptions.filter(s => s.active).length}</p>
                             </CardContent>
-                        </Card>
                         <Card className="bg-primary/5 border-primary/10 flex flex-col justify-center p-6">
                             <FinanceTips />
                         </Card>
@@ -244,8 +244,10 @@ export function FinanceTracker() {
                     </div>
                 </TabsContent>
 
-                <TabsContent value="log">
-                    <Card className="border-primary/20 bg-primary/[0.02] mb-8">
+                <TabsContent value="log" className="space-y-8 animate-in fade-in">
+                    <TodayScheduleWidget category="Finance" />
+
+                    <Card className="border-primary/20 bg-primary/[0.02]">
                         <CardHeader>
                             <CardTitle className="text-lg">Manual Pulse Entry</CardTitle>
                             <CardDescription>Log a new transaction to the local ledger.</CardDescription>
