@@ -8,23 +8,23 @@ import { SpeedReadingStats, SpeedReadingAnalytics } from "./SpeedReadingDashboar
 import { SpeedReadingDrillPlayer } from "./SpeedReadingDrillPlayer"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { TodayScheduleWidget } from "./TodayScheduleWidget"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { 
   Zap, BookOpen, Layers, MousePointer2, 
-  Eye, Target, Play, BarChart3, Clock,
-  Flame, Filter, Info, PlusCircle, BookCopy
+  Eye, Play, BookCopy, X
 } from "lucide-react"
 import type { ReadingPassage, DrillType, ReadingTier } from "@/types/speedreading"
 import { AssistantTooltip } from "@/components/assistant-tooltip"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { useWellnessData } from "@/hooks/use-wellness-data"
+import { speedReadingCategoryDetails } from "@/data/wellness-categories"
 
 const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: string }[] = [
   { 
@@ -59,7 +59,7 @@ const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: stri
 
 export default function SpeedReadingContent() {
   const { logs } = useSpeedReadingStore();
-  const { lowEnergyMode } = useWellnessData();
+  const { lowEnergyMode, collapsedCategories, toggleCategoryCollapse } = useWellnessData();
   const [activeDrill, setActiveDrill] = useState<{ type: DrillType; passage: ReadingPassage; isCustom?: boolean } | null>(null);
   const [selectedTier, setSelectedTier] = useState<ReadingTier | 'All'>('All');
   const [isCustomOpen, setIsCustomOpen] = useState(false);
@@ -87,6 +87,15 @@ export default function SpeedReadingContent() {
     setActiveDrill({ type, passage, isCustom: true });
     setIsCustomOpen(false);
   };
+
+  const openCategories = useMemo(() => {
+    const drillIds = DRILLS.map(d => d.id);
+    return drillIds.filter((id, idx) => {
+      const isCollapsed = collapsedCategories[id];
+      if (isCollapsed === undefined) return idx < 1;
+      return !isCollapsed;
+    });
+  }, [collapsedCategories]);
 
   if (activeDrill) {
     return (
@@ -166,58 +175,97 @@ export default function SpeedReadingContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {DRILLS.map((drill) => (
-            <Card key={drill.id} className="group hover:border-primary/30 transition-all overflow-hidden border-primary/5">
-              <CardHeader className="bg-primary/5 pb-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-background rounded-xl text-primary shadow-sm">
-                    <drill.icon className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-bold">{drill.title}</CardTitle>
-                    <CardDescription className="text-xs">{drill.desc}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 space-y-4">
-                <div className="p-3 bg-muted/30 rounded-lg border border-dashed flex gap-3">
-                  <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                  <p className="text-[10px] text-muted-foreground leading-relaxed italic">{drill.tip}</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Available Passages</p>
-                  <div className="grid gap-2">
-                    {filteredPassages.length === 0 ? (
-                      <div className="py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-xs">No passages match the current energy profile.</div>
-                    ) : (
-                      filteredPassages.map(p => (
-                        <button
-                          key={p.id}
-                          onClick={() => setActiveDrill({ type: drill.id, passage: p, isCustom: false })}
-                          className="flex items-center justify-between p-3 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className={cn(
-                              "w-1.5 h-1.5 rounded-full",
-                              p.tier === 'Narrative' ? 'bg-amber-500' : 'bg-primary/40'
-                            )} />
-                            <div>
-                              <p className="text-sm font-bold">{p.title}</p>
-                              <p className="text-[9px] text-muted-foreground uppercase">{p.wordCount} words • {p.tier}</p>
+        <Accordion type="multiple" value={openCategories} onValueChange={(vals) => {
+          DRILLS.forEach(drill => {
+            const isNowOpen = vals.includes(drill.id);
+            const wasOpen = !collapsedCategories[drill.id];
+            const effectivelyWasOpen = wasOpen || (collapsedCategories[drill.id] === undefined && DRILLS.indexOf(drill) < 1);
+            if (isNowOpen !== effectivelyWasOpen) toggleCategoryCollapse(drill.id);
+          });
+        }}>
+          {DRILLS.map((drill) => {
+            const details = speedReadingCategoryDetails[drill.id];
+            const isOpen = openCategories.includes(drill.id);
+            return (
+              <AccordionItem key={drill.id} value={drill.id} className="border-b border-primary/5">
+                <AccordionTrigger className="hover:no-underline px-1 py-4 items-start">
+                  <div className="flex flex-col w-full text-left">
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                        <drill.icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-bold uppercase tracking-tight">
+                            {drill.title}
+                          </h3>
+                        </div>
+                        {!isOpen && (
+                          <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
+                        )}
+                        
+                        {isOpen && (
+                          <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-1 duration-300 pr-8">
+                            <p className="text-xs text-muted-foreground leading-relaxed">{details.purpose}</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Use When:</p>
+                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                                  {details.useWhen.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Includes:</p>
+                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                                  {details.includes.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
                             </div>
+                            <p className="text-xs italic text-primary mt-2">“{details.tagline}”</p>
                           </div>
-                          <Play className="w-4 h-4 text-muted-foreground opacity-0 group-hover/btn:opacity-100 transition-all translate-x-[-10px] group-hover/btn:translate-x-0" />
-                        </button>
-                      ))
-                    )}
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-4">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Available Passages</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {filteredPassages.length === 0 ? (
+                        <div className="col-span-full py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-xs">No passages match filters.</div>
+                      ) : (
+                        filteredPassages.map(p => (
+                          <button
+                            key={p.id}
+                            onClick={() => setActiveDrill({ type: drill.id, passage: p, isCustom: false })}
+                            className="flex items-center justify-between p-3 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={cn(
+                                "w-1.5 h-1.5 rounded-full",
+                                p.tier === 'Narrative' ? 'bg-amber-500' : 'bg-primary/40'
+                              )} />
+                              <div>
+                                <p className="text-sm font-bold">{p.title}</p>
+                                <p className="text-[9px] text-muted-foreground uppercase">{p.wordCount} words • {p.tier}</p>
+                              </div>
+                            </div>
+                            <Play className="w-4 h-4 text-muted-foreground opacity-0 group-hover/btn:opacity-100 transition-all translate-x-[-10px] group-hover/btn:translate-x-0" />
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
       </div>
 
       <TodayScheduleWidget category="Speed Reading" />

@@ -4,9 +4,9 @@ import {
     Brain, Shield, HeartHandshake, type LucideIcon,
     Wallet, Utensils, TrendingUp, Apple, Waves,
     Mic2, MessageSquare, User, Eye, ArrowLeftRight, 
-    Target, Sparkles, ShieldAlert, BookOpen, Presentation, 
+    Target, Sparkles, BookOpen, Presentation, 
     Mail, Video, ClipboardList, Heart, Briefcase, MonitorSmartphone,
-    PenTool
+    PenTool, Layers, MousePointer2
 } from "lucide-react";
 import type { ExerciseCategory, MindfulnessCategory } from "./exercises";
 import type { CommunicationCategory } from "./communication-practices";
@@ -186,5 +186,40 @@ export const communicationCategoryDetails: Record<CommunicationCategory, Wellnes
         useWhen: ['Personal routines', 'Unique challenges'],
         includes: ['User-created practices'],
         tagline: 'Designed by you.'
+    }
+};
+
+export const speedReadingCategoryDetails: Record<string, WellnessCategoryDetails> = {
+    'Chunk Training': {
+        title: 'Chunk Training',
+        icon: Layers,
+        purpose: 'Absorb multiple words at once to expand your perceptual span and reduce eye fixations.',
+        useWhen: ['Expanding peripheral vision', 'Reducing fixations per line'],
+        includes: ['RSVP Drills', 'Grouped Word Recognition'],
+        tagline: 'See more, read less.'
+    },
+    'Pacer': {
+        title: 'Pacer Drills',
+        icon: MousePointer2,
+        purpose: 'Keep up with a moving visual guide to suppress subvocalization and maintain forward momentum.',
+        useWhen: ['Breaking speed plateaus', 'Maintaining consistent rhythm'],
+        includes: ['Highlight Pacing', 'Auto-scroll Training'],
+        tagline: 'Set the tempo for your brain.'
+    },
+    'Peripheral Expansion': {
+        title: 'Peripheral Expansion',
+        icon: Eye,
+        purpose: 'Train your eyes to capture information from the edges of your vision, increasing reading efficiency.',
+        useWhen: ['Developing soft-gaze', 'High-density scanning'],
+        includes: ['Column Drills', 'Schulte Tables'],
+        tagline: 'Widen your window of focus.'
+    },
+    'Regression Eliminator': {
+        title: 'Regression Eliminator',
+        icon: Zap,
+        purpose: 'Prevent the habit of re-reading text by removing words after they are displayed.',
+        useWhen: ['Improving focus', 'Eliminating second-guessing'],
+        includes: ['Vanishing Text Drills', 'Forward-Only Mode'],
+        tagline: 'No looking back.'
     }
 };

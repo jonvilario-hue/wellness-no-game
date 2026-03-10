@@ -4,22 +4,21 @@
 import { useMemo, useState } from "react"
 import { mindfulnessPractices, type MindfulnessCategory, type Exercise } from "@/data/exercises"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
-import CategoryOverview from "./CategoryOverview"
-import { stillnessCategoryDetails } from "@/data/wellness-categories"
-import { ChevronDown, Waves, Wind, PlusCircle, Save, X, Plus, Zap } from "lucide-react"
+import { Waves, PlusCircle, Save, X, Plus } from "lucide-react"
 import { useWellnessData } from "@/hooks/use-wellness-data"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { StillnessAnalytics } from "./StillnessAnalytics"
+import { stillnessCategoryDetails } from "@/data/wellness-categories"
+import { Badge } from "@/components/ui/badge"
 
 const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
 
@@ -130,6 +129,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
             const practices = filteredPractices.filter(p => p.category === category);
             const details = stillnessCategoryDetails[category];
             if (!details) return null;
+            const isOpen = openCategories.includes(category);
 
             return (
               <AccordionItem 
@@ -140,56 +140,74 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
                   practices.length === 0 && "opacity-40"
                 )}
               >
-                <AccordionTrigger className="hover:no-underline px-1">
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <details.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold uppercase tracking-tight">
-                        {category} ({practices.length})
-                      </h3>
-                      <p className="text-[10px] text-muted-foreground italic">"{details.tagline}"</p>
+                <AccordionTrigger className="hover:no-underline px-1 py-4 items-start">
+                  <div className="flex flex-col w-full text-left">
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                        <details.icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-bold uppercase tracking-tight">
+                            {category}
+                          </h3>
+                          <Badge variant="secondary" className="text-[10px] h-4 py-0">
+                            {practices.length}
+                          </Badge>
+                        </div>
+                        {!isOpen && (
+                          <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
+                        )}
+                        
+                        {isOpen && (
+                          <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-1 duration-300 pr-8">
+                            <p className="text-xs text-muted-foreground leading-relaxed">{details.purpose}</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Use When:</p>
+                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                                  {details.useWhen.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Includes:</p>
+                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                                  {details.includes.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                            <p className="text-xs italic text-primary mt-2">“{details.tagline}”</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pt-4">
-                  <div className="mb-6">
-                    <CategoryOverview
-                      title={details.title}
-                      icon={details.icon}
-                      purpose={details.purpose}
-                      useWhen={details.useWhen}
-                      includes={details.includes}
-                      tagline={details.tagline}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {practices.map((practice) => (
+                      <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-32">
+                        <PracticeInstructionCard 
+                          exercise={practice} 
+                          onEdit={practice.id.startsWith('custom') ? () => handleEdit(practice) : undefined}
+                          onDelete={practice.id.startsWith('custom') ? () => deleteCustomPractice(practice.id) : undefined}
+                        />
+                      </div>
+                    ))}
+                    {!lowEnergyMode && (
+                      <Card 
+                        className="border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors h-full min-h-[200px]"
+                        onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
+                      >
+                        <Plus className="w-8 h-8 text-muted-foreground mb-2" />
+                        <p className="text-sm font-bold">Add to {category}</p>
+                      </Card>
+                    )}
                   </div>
-                  {practices.length === 0 ? (
-                    <div className="p-8 text-center border-2 border-dashed rounded-xl opacity-50">
-                      <p className="text-xs font-bold uppercase text-muted-foreground">No quick practices in this category</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {practices.map((practice) => (
-                        <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-32">
-                          <PracticeInstructionCard 
-                            exercise={practice} 
-                            onEdit={practice.id.startsWith('custom') ? () => handleEdit(practice) : undefined}
-                            onDelete={practice.id.startsWith('custom') ? () => deleteCustomPractice(practice.id) : undefined}
-                          />
-                        </div>
-                      ))}
-                      {!lowEnergyMode && (
-                        <Card 
-                          className="border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors h-full min-h-[200px]"
-                          onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
-                        >
-                          <Plus className="w-8 h-8 text-muted-foreground mb-2" />
-                          <p className="text-sm font-bold">Add to {category}</p>
-                        </Card>
-                      )}
-                    </div>
-                  )}
                 </AccordionContent>
               </AccordionItem>
             );

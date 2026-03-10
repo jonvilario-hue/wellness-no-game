@@ -5,27 +5,26 @@ import { useState, useMemo } from "react"
 import { movementExercises, type ExerciseCategory, type Exercise } from "@/data/exercises"
 import { movementCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
-import { ChevronDown, HeartPulse, Zap, Play, PlusCircle, Save, X, Plus } from "lucide-react"
+import { HeartPulse, PlusCircle, Save, X, Plus } from "lucide-react"
 import { useWellnessData } from "@/hooks/use-wellness-data"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import CategoryOverview from "./CategoryOverview"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { MovementAnalytics } from "./MovementAnalytics"
+import { Badge } from "@/components/ui/badge"
 
 const categories: ExerciseCategory[] = ['Mind-Body', 'Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down'];
 
 export default function MovementContent({ filterTags = [] }: { filterTags?: string[] }) {
   const { 
-    lowEnergyMode, addMovementLog, customPractices, 
+    lowEnergyMode, customPractices, 
     addCustomPractice, updateCustomPractice, deleteCustomPractice,
     collapsedCategories, toggleCategoryCollapse
   } = useWellnessData();
@@ -130,6 +129,7 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
             const exercises = filteredExercises.filter(e => e.category === category);
             const details = movementCategoryDetails[category];
             if (!details) return null;
+            const isOpen = openCategories.includes(category);
 
             return (
               <AccordionItem 
@@ -140,56 +140,74 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
                   exercises.length === 0 && "opacity-40"
                 )}
               >
-                <AccordionTrigger className="hover:no-underline px-1">
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <details.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold uppercase tracking-tight">
-                        {category} ({exercises.length})
-                      </h3>
-                      <p className="text-[10px] text-muted-foreground italic">"{details.tagline}"</p>
+                <AccordionTrigger className="hover:no-underline px-1 py-4 items-start">
+                  <div className="flex flex-col w-full text-left">
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                        <details.icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-bold uppercase tracking-tight">
+                            {category}
+                          </h3>
+                          <Badge variant="secondary" className="text-[10px] h-4 py-0">
+                            {exercises.length}
+                          </Badge>
+                        </div>
+                        {!isOpen && (
+                          <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
+                        )}
+                        
+                        {isOpen && (
+                          <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-1 duration-300 pr-8">
+                            <p className="text-xs text-muted-foreground leading-relaxed">{details.purpose}</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Use When:</p>
+                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                                  {details.useWhen.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Includes:</p>
+                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                                  {details.includes.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                            <p className="text-xs italic text-primary mt-2">“{details.tagline}”</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pt-4">
-                  <div className="mb-6">
-                    <CategoryOverview 
-                      title={details.title}
-                      icon={details.icon}
-                      purpose={details.purpose}
-                      useWhen={details.useWhen}
-                      includes={details.includes}
-                      tagline={details.tagline}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {exercises.map(exercise => (
+                      <div key={exercise.id} id={`practice-${exercise.id}`} className="scroll-mt-32">
+                        <PracticeInstructionCard 
+                          exercise={exercise} 
+                          onEdit={exercise.id.startsWith('custom') ? () => handleEdit(exercise) : undefined}
+                          onDelete={exercise.id.startsWith('custom') ? () => deleteCustomPractice(exercise.id) : undefined}
+                        />
+                      </div>
+                    ))}
+                    {!lowEnergyMode && (
+                      <Card 
+                        className="border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors h-full min-h-[200px]"
+                        onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
+                      >
+                        <Plus className="w-8 h-8 text-muted-foreground mb-2" />
+                        <p className="text-sm font-bold">Add to {category}</p>
+                      </Card>
+                    )}
                   </div>
-                  {exercises.length === 0 ? (
-                    <div className="p-8 text-center border-2 border-dashed rounded-xl opacity-50">
-                      <p className="text-xs font-bold uppercase text-muted-foreground">No low-energy practices in this category</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {exercises.map(exercise => (
-                        <div key={exercise.id} id={`practice-${exercise.id}`} className="scroll-mt-32">
-                          <PracticeInstructionCard 
-                            exercise={exercise} 
-                            onEdit={exercise.id.startsWith('custom') ? () => handleEdit(exercise) : undefined}
-                            onDelete={exercise.id.startsWith('custom') ? () => deleteCustomPractice(exercise.id) : undefined}
-                          />
-                        </div>
-                      ))}
-                      {!lowEnergyMode && (
-                        <Card 
-                          className="border-dashed flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors h-full min-h-[200px]"
-                          onClick={() => { setTargetCategory(category); setIsFormOpen(true); }}
-                        >
-                          <Plus className="w-8 h-8 text-muted-foreground mb-2" />
-                          <p className="text-sm font-bold">Add to {category}</p>
-                        </Card>
-                      )}
-                    </div>
-                  )}
                 </AccordionContent>
               </AccordionItem>
             );
