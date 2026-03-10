@@ -535,7 +535,7 @@ export default function CalendarPage() {
             <CollapsibleContent>
               <motion.div 
                 layout
-                transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                transition={{ type: "spring", stiffness: 80, damping: 25 }}
                 className={cn(
                   "pb-4 gap-4",
                   routinesView === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col"
@@ -546,14 +546,14 @@ export default function CalendarPage() {
                     <motion.div
                       key={plan.id}
                       layout
-                      initial={{ opacity: 0, scale: 0.95 }}
+                      initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      transition={{ type: "spring", stiffness: 80, damping: 25 }}
                     >
                       <Card className={cn(
                         "transition-all relative group h-full overflow-hidden", 
-                        "border-primary/5 hover:border-primary/20",
+                        "border-primary/5 hover:border-primary/20 shadow-sm hover:shadow-md",
                         routinesView === 'list' && "flex items-center justify-between py-2 px-4"
                       )}>
                         {routinesView === 'grid' ? (
@@ -565,7 +565,10 @@ export default function CalendarPage() {
                                     <Activity className="w-4 h-4 text-primary" />
                                   </div>
                                   <div>
-                                    <CardTitle className="text-sm font-black uppercase tracking-tight truncate pr-8">{plan.name}</CardTitle>
+                                    <div className="flex items-center gap-2">
+                                      <CardTitle className="text-sm font-black uppercase tracking-tight truncate pr-8">{plan.name}</CardTitle>
+                                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 uppercase text-[8px] font-black h-4 px-1.5 shrink-0">Active</Badge>
+                                    </div>
                                     <p className="text-[10px] text-muted-foreground uppercase font-black">{plan.categories[0]}</p>
                                   </div>
                                 </div>
@@ -617,7 +620,7 @@ export default function CalendarPage() {
                                   className="w-full text-[9px] font-black uppercase"
                                   onClick={() => setExpandedPlanId(null)}
                                 >
-                                  Collapse Protocol <ChevronUp className="ml-1 w-3 h-3" />
+                                  Collapse Steps <ChevronUp className="ml-1 w-3 h-3" />
                                 </Button>
                               </CardContent>
                             ) : (
@@ -632,7 +635,7 @@ export default function CalendarPage() {
                                   className="h-7 text-[10px] font-black uppercase hover:bg-primary/5"
                                   onClick={() => setExpandedPlanId(plan.id)}
                                 >
-                                  Protocol <ChevronDown className="ml-1 w-3 h-3" />
+                                  Steps <ChevronDown className="ml-1 w-3 h-3" />
                                 </Button>
                               </CardContent>
                             )}
@@ -647,7 +650,7 @@ export default function CalendarPage() {
                               </Button>
                               <Button 
                                 variant="outline" 
-                                className="flex-1 font-bold h-10 gap-2 border-primary/10" 
+                                className="flex-1 font-bold h-10 gap-2 border-primary/10 bg-background hover:bg-primary/5" 
                                 onClick={() => handleQuickLogRoutine(plan)}
                               >
                                 <ClipboardCheck className="w-4 h-4" />
@@ -713,7 +716,7 @@ export default function CalendarPage() {
                                     <Edit className="w-4 h-4" />
                                   </Button>
                                 )}
-                                <Badge variant="secondary" className="text-[8px] uppercase h-5">On</Badge>
+                                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 uppercase text-[8px] font-black h-5">Active</Badge>
                               </div>
                             </div>
                           </>
@@ -725,7 +728,7 @@ export default function CalendarPage() {
                   <motion.div 
                     key="add-plan-card"
                     layout
-                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                    transition={{ type: "spring", stiffness: 80, damping: 25 }}
                   >
                     <Card 
                       className={cn(
