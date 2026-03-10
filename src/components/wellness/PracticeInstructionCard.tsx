@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -12,7 +11,7 @@ import {
 import type { Exercise } from '@/data/exercises';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { useWellnessData, type TrackingCategory } from '@/hooks/use-wellness-data';
+import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '../ui/label';
@@ -52,12 +51,12 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
 
   const { 
     addMovementLog, addStillnessLog, addCommunicationLog, 
-    movementProgress, trackExplainerDismissed, setTrackExplainerDismissed
+    movementProgress
   } = useWellnessData();
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
   
-  // Permanent Tracking active
+  // Tracking is now permanent
   const trackNumbers = true;
 
   const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
@@ -160,9 +159,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   };
 
   return (
-    <Card className={cn(
-      "flex flex-col hover:shadow-lg transition-all duration-300 h-full group relative overflow-hidden border-primary/20 bg-primary/[0.01] border-l-4 border-l-primary"
-    )}>
+    <Card className="flex flex-col hover:shadow-md transition-shadow duration-300 h-full group relative overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div className="flex items-start gap-3 flex-grow min-w-0">
@@ -172,7 +169,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               <div className="flex flex-col gap-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <CardTitle className="leading-tight truncate">{exercise.name}</CardTitle>
-                  <Badge variant="secondary" className="bg-primary/10 text-primary text-[8px] font-black h-4 px-1.5 uppercase tracking-tighter shrink-0">
+                  <Badge variant="secondary" className="text-[8px] font-black h-4 px-1.5 uppercase tracking-tighter shrink-0">
                     📊 Tracking
                   </Badge>
                 </div>
@@ -327,7 +324,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               </ol>
 
               <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="setup" className="border-primary/10">
+                  <AccordionItem value="setup" className="border-b-0">
                       <AccordionTrigger className="text-[11px] font-semibold">Quick Setup</AccordionTrigger>
                       <AccordionContent>
                           <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-1">
@@ -335,7 +332,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                           </ul>
                       </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="modifications" className="border-primary/10">
+                  <AccordionItem value="modifications" className="border-b-0">
                       <AccordionTrigger className="text-[11px] font-semibold">Modifications</AccordionTrigger>
                       <AccordionContent>
                           <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-1">

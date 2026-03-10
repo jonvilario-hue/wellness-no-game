@@ -171,7 +171,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
                 key={category} 
                 value={category} 
                 className={cn(
-                  "border-b border-primary/5 transition-opacity",
+                  "border-b transition-opacity",
                   practices.length === 0 && "opacity-40"
                 )}
               >
@@ -196,6 +196,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
                       useWhen={details.useWhen}
                       includes={details.includes}
                       tagline={details.tagline}
+                      icon={details.icon}
                     />
                   </div>
                   {practices.length === 0 ? (
@@ -240,7 +241,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
             <ScrollArea className="flex-1">
               <div className="p-6 space-y-6">
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Title</Label>
+                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Title</Label color="text-muted-foreground">Title</Label>
                   <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Morning Reset" />
                 </div>
                 <div className="space-y-1.5">

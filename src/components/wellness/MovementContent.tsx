@@ -173,7 +173,7 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
                 key={category} 
                 value={category} 
                 className={cn(
-                  "border-b border-primary/5 transition-opacity",
+                  "border-b transition-opacity",
                   exercises.length === 0 && "opacity-40"
                 )}
               >
