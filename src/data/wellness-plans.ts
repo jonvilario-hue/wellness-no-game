@@ -25,7 +25,7 @@ export const wellnessPlans: WellnessPlan[] = [
   // --- MOVEMENT ---
   {
     id: "move-0",
-    title: "Movement: Day Zero",
+    title: "Movement: Intro Session",
     tagline: "Just try this once. No commitment.",
     description: "Break the inertia with a single foundational mobility session.",
     category: "Movement",
@@ -106,7 +106,7 @@ export const wellnessPlans: WellnessPlan[] = [
   // --- STILLNESS ---
   {
     id: "still-0",
-    title: "Stillness: Day Zero",
+    title: "Stillness: Intro Session",
     tagline: "Just try this once.",
     description: "One single session to experience the power of breath control.",
     category: "Stillness",
@@ -169,7 +169,7 @@ export const wellnessPlans: WellnessPlan[] = [
   // --- COMMUNICATION ---
   {
     id: "comm-0",
-    title: "Communication: Day Zero",
+    title: "Communication: Intro Session",
     tagline: "Hear yourself clearly.",
     description: "A 5-minute enunciation drill to prime your vocal presence.",
     category: "Communication",
@@ -232,7 +232,7 @@ export const wellnessPlans: WellnessPlan[] = [
   // --- SPEED READING ---
   {
     id: "read-0",
-    title: "Speed Reading: Day Zero",
+    title: "Reading: Intro Session",
     tagline: "Measure your baseline.",
     description: "One single pacer drill to determine your starting WPM and ERR.",
     category: "Speed Reading",

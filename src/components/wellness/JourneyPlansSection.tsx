@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -57,6 +58,14 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
       if (!progress) return false;
       const completedCount = Object.values(progress).filter(Boolean).length;
       return completedCount > 0 && completedCount < plan.durationDays;
+    });
+  }, [planProgress, tabPlans]);
+
+  const nextRecommendedPlan = useMemo(() => {
+    return tabPlans.find(plan => {
+      const progress = planProgress[plan.id] || {};
+      const completedCount = Object.values(progress).filter(Boolean).length;
+      return completedCount < plan.durationDays;
     });
   }, [planProgress, tabPlans]);
 
@@ -120,7 +129,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
               {isExpanded ? 'Guided Curricula' : 'Not sure where to start? Pick a journey:'}
             </h3>
-            <AssistantTooltip text="Ascending Modules: Start with Day Zero to break inertia, then progress to deeper foundations.">
+            <AssistantTooltip text="Ascending Modules: Start with the Intro Session to break inertia, then progress to deeper foundations.">
               <Info className="w-3 h-3 text-muted-foreground" />
             </AssistantTooltip>
           </div>
@@ -177,7 +186,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
         <div className="flex items-center gap-2 text-muted-foreground">
           <BookOpen className="w-3.5 h-3.5" />
           <span className="text-[10px] font-bold uppercase tracking-widest">
-            {category} Journeys Available · {tabPlans[0]?.title}
+            {category} Journeys · Recommended: {nextRecommendedPlan?.title || 'All Complete!'}
           </span>
         </div>
         <Button 
