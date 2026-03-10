@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useWellnessData } from '@/hooks/use-wellness-data';
+import { useStillnessLogs } from '@/hooks/use-wellness-data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { 
   TrendingUp, Trophy, Waves, Brain, 
@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 export function StillnessAnalytics() {
-  const { stillnessLogs } = useWellnessData();
+  const stillnessLogs = useStillnessLogs();
 
   const chartData = useMemo(() => {
     return [...stillnessLogs]
