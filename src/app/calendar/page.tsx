@@ -40,7 +40,8 @@ import {
   ClipboardCheck,
   ChevronRight,
   Info,
-  Goal
+  Goal,
+  AlertCircle
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
