@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -8,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Rocket, ArrowRight, Info, ChevronDown, ChevronUp, ChevronRight, 
-  CheckCircle2, Circle, LayoutList, BookOpen, Zap, Clock
+  CheckCircle2, Circle, LayoutList, BookOpen, Zap, Clock, X
 } from 'lucide-react';
 import Link from 'next/link';
 import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from '@/hooks/use-wellness-data';
@@ -181,7 +180,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
         <div className="flex items-center gap-2 text-muted-foreground">
           <BookOpen className="w-3.5 h-3.5" />
           <span className="text-[9px] font-bold uppercase tracking-widest whitespace-nowrap">
-            {category} Curricula · Next: {nextRecommendedPlan?.title || 'All Complete!'}
+            {category} Guided Curricula · Next: {nextRecommendedPlan?.title || 'All Complete!'}
           </span>
         </div>
         <Button 
