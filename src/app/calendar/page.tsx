@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -33,25 +34,17 @@ import {
   Zap,
   Activity,
   Sparkles,
-  BarChart3,
-  ChevronUpSquare,
-  ChevronDownSquare,
-  AlignJustify,
+  LayoutList,
   ShieldCheck,
   ClipboardCheck,
-  ChevronRight,
-  Info,
-  Goal,
-  AlertCircle,
-  LayoutList,
-  PlusCircle
+  PlusCircle,
+  AlignJustify
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { presetPlans } from '@/data/preset-calendar-plans';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { Calendar } from '@/components/ui/calendar';
@@ -220,11 +213,10 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { logExerciseById } = useWellnessData();
+  const { logExerciseById, mealLogs, transactions } = useWellnessData();
   const movementLogs = useMovementLogs();
   const stillnessLogs = useStillnessLogs();
   const communicationLogs = useCommunicationLogs();
-  const { mealLogs, transactions } = useWellnessData();
   const { entries } = useHydratedJournalStore();
   const { toast } = useToast();
   
@@ -262,7 +254,7 @@ export default function CalendarPage() {
     });
   }, [deletedPresetIds, customPlans, planOrder]);
 
-  const getTasksForDate = (date: Date) => {
+  const getTasksForDate = useCallback((date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
     const dayOfWeek = date.getDay();
     const dayOfMonth = date.getDate();
@@ -372,9 +364,9 @@ export default function CalendarPage() {
     ];
 
     return [...planTasks, ...studyTasks, ...wellnessTasks];
-  };
+  }, [availablePlans, activityInstances, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries]);
 
-  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, availablePlans, activityInstances, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, entries]);
+  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, getTasksForDate]);
 
   const weekDays = useMemo(() => {
     const start = startOfWeek(selectedDate);
@@ -983,7 +975,7 @@ export default function CalendarPage() {
                 <div className="space-y-3">
                   {newActivities.length === 0 ? (
                     <div className="py-10 text-center border-2 border-dashed border-amber-500/20 rounded-xl bg-amber-500/5">
-                      <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-2 opacity-50" />
+                      <Zap className="w-8 h-8 text-amber-500 mx-auto mb-2 opacity-50" />
                       <p className="text-xs font-bold text-amber-700 uppercase">No activities added</p>
                       <p className="text-[10px] text-muted-foreground mt-1">Add at least one step to build this routine.</p>
                     </div>

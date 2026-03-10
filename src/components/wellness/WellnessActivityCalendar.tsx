@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, startOfDay } from "date-fns";
 import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from "@/hooks/use-wellness-data";
 import { useSpeedReadingStore } from "@/hooks/use-speedreading-store";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,6 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [mounted, setMounted] = useState(false);
   
-  // Use specialized hooks for filtered logs
   const movementLogs = useMovementLogs();
   const stillnessLogs = useStillnessLogs();
   const communicationLogs = useCommunicationLogs();
@@ -52,24 +51,25 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     if (!date) return [];
     
     const logs = [];
+    const checkDate = startOfDay(date);
     
     if (!categoryFilter || categoryFilter === 'Movement') {
-      logs.push(...(movementLogs || []).filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Movement' })));
+      logs.push(...(movementLogs || []).filter(l => isSameDay(new Date(l.timestamp), checkDate)).map(l => ({ ...l, type: 'Movement' })));
     }
     if (!categoryFilter || categoryFilter === 'Stillness') {
-      logs.push(...(stillnessLogs || []).filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Stillness' })));
+      logs.push(...(stillnessLogs || []).filter(l => isSameDay(new Date(l.timestamp), checkDate)).map(l => ({ ...l, type: 'Stillness' })));
     }
     if (!categoryFilter || categoryFilter === 'Communication') {
-      logs.push(...(communicationLogs || []).filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Communication', label: l.practiceName })));
+      logs.push(...(communicationLogs || []).filter(l => isSameDay(new Date(l.timestamp), checkDate)).map(l => ({ ...l, type: 'Communication', label: l.practiceName })));
     }
     if (!categoryFilter || categoryFilter === 'Nutrition') {
-      logs.push(...(mealLogs || []).filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Nutrition', label: l.mealType, detail: `${l.calories} kcal` })));
+      logs.push(...(mealLogs || []).filter(l => isSameDay(new Date(l.date + 'T12:00:00'), checkDate)).map(l => ({ ...l, type: 'Nutrition', label: l.mealType, detail: `${l.calories} kcal` })));
     }
     if (!categoryFilter || categoryFilter === 'Finance') {
-      logs.push(...(transactions || []).filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Finance', label: l.merchant, detail: `$${l.amount}` })));
+      logs.push(...(transactions || []).filter(l => isSameDay(new Date(l.date + 'T12:00:00'), checkDate)).map(l => ({ ...l, type: 'Finance', label: l.merchant, detail: `$${l.amount}` })));
     }
     if (!categoryFilter || categoryFilter === 'Speed Reading') {
-      logs.push(...(readingLogs || []).filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ 
+      logs.push(...(readingLogs || []).filter(l => isSameDay(new Date(l.timestamp), checkDate)).map(l => ({ 
         ...l, 
         type: 'Speed Reading', 
         label: `${l.drillType}`, 
@@ -84,19 +84,30 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     });
   }, [date, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, categoryFilter]);
 
-  const activityDates = useMemo(() => {
-    const dates = [];
-    if (!categoryFilter || categoryFilter === 'Movement') dates.push(...(movementLogs || []).map(l => new Date(l.timestamp)));
-    if (!categoryFilter || categoryFilter === 'Stillness') dates.push(...(stillnessLogs || []).map(l => new Date(l.timestamp)));
-    if (!categoryFilter || categoryFilter === 'Communication') dates.push(...(communicationLogs || []).map(l => new Date(l.timestamp)));
-    if (!categoryFilter || categoryFilter === 'Nutrition') dates.push(...(mealLogs || []).map(l => new Date(l.date + 'T12:00:00')));
-    if (!categoryFilter || categoryFilter === 'Finance') dates.push(...(transactions || []).map(l => new Date(l.date + 'T12:00:00')));
-    if (!categoryFilter || categoryFilter === 'Speed Reading') dates.push(...(readingLogs || []).map(l => new Date(l.timestamp)));
+  // Performance Optimization: Use a Set of date strings for lightning-fast lookup in the Calendar component
+  const activityDateStrings = useMemo(() => {
+    const dates = new Set<string>();
+    const process = (logs: any[], dateKey: string) => {
+      logs.forEach(l => {
+        try {
+          const d = l[dateKey];
+          if (d) dates.add(format(new Date(d.includes('T') ? d : d + 'T12:00:00'), 'yyyy-MM-dd'));
+        } catch(e) {}
+      });
+    };
+
+    if (!categoryFilter || categoryFilter === 'Movement') process(movementLogs || [], 'timestamp');
+    if (!categoryFilter || categoryFilter === 'Stillness') process(stillnessLogs || [], 'timestamp');
+    if (!categoryFilter || categoryFilter === 'Communication') process(communicationLogs || [], 'timestamp');
+    if (!categoryFilter || categoryFilter === 'Nutrition') process(mealLogs || [], 'date');
+    if (!categoryFilter || categoryFilter === 'Finance') process(transactions || [], 'date');
+    if (!categoryFilter || categoryFilter === 'Speed Reading') process(readingLogs || [], 'timestamp');
+    
     return dates;
   }, [movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, categoryFilter]);
 
   const modifiers = {
-    hasLog: (d: Date) => activityDates.some(ad => isSameDay(ad, d))
+    hasLog: (d: Date) => activityDateStrings.has(format(d, 'yyyy-MM-dd'))
   };
 
   const modifiersStyles = {

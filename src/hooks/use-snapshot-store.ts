@@ -127,15 +127,18 @@ export const useSnapshotStore = create<SnapshotState>()(
 
       checkAutoSnapshot: () => {
         const { lastAutoSnapshotDate, createSnapshot, isQuotaExceeded } = get();
-        if (isQuotaExceeded) return; // Don't keep trying if we know we're full
+        if (isQuotaExceeded) return; 
 
         const now = new Date();
         const lastDate = lastAutoSnapshotDate ? new Date(lastAutoSnapshotDate) : null;
         const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
         
         if (!lastDate || (now.getTime() - lastDate.getTime() >= ONE_WEEK_MS)) {
-          createSnapshot(`Auto-Weekly Backup`);
-          set({ lastAutoSnapshotDate: now.toISOString() });
+          // Use a small timeout to avoid blocking initial hydration/render
+          setTimeout(() => {
+            createSnapshot(`Auto-Weekly Backup`);
+            set({ lastAutoSnapshotDate: now.toISOString() });
+          }, 2000);
         }
       }
     }),
