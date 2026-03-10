@@ -13,8 +13,8 @@ export const presetPlans: CalendarPlan[] = [
     categories: ['Movement', 'Stillness', 'Nutrition'],
     color: '#3b82f6', // blue-500
     activities: [
-      { id: 'bw-1', name: 'Morning Stillness', category: 'Stillness', recurrence: 'daily', timeOfDay: '07:00', duration: 5, reminderEnabled: true },
-      { id: 'bw-2', name: 'Evening Movement', category: 'Movement', recurrence: 'daily', timeOfDay: '18:00', duration: 15, reminderEnabled: true },
+      { id: 'bw-1', name: 'Morning Stillness', category: 'Stillness', recurrence: 'daily', timeOfDay: '07:00', duration: 5, reminderEnabled: true, linkedTracker: 'breath_box' },
+      { id: 'bw-2', name: 'Evening Movement', category: 'Movement', recurrence: 'daily', timeOfDay: '18:00', duration: 15, reminderEnabled: true, linkedTracker: 'yoga_evening_sequence' },
       { id: 'bw-3', name: 'Meal Logging', category: 'Nutrition', recurrence: 'daily', duration: 5, reminderEnabled: true }
     ]
   },
@@ -46,8 +46,8 @@ export const presetPlans: CalendarPlan[] = [
     color: '#8b5cf6', // violet-500
     activities: [
       { id: 'mm-1', name: 'Morning Journal', category: 'Journaling', recurrence: 'daily', timeOfDay: '06:30', duration: 10, reminderEnabled: true },
-      { id: 'mm-2', name: 'Deep Breathing', category: 'Stillness', recurrence: 'daily', timeOfDay: '07:00', duration: 5, reminderEnabled: true },
-      { id: 'mm-3', name: 'Gentle Stretching', category: 'Movement', recurrence: 'daily', timeOfDay: '07:15', duration: 10, reminderEnabled: true }
+      { id: 'mm-2', name: 'Deep Breathing', category: 'Stillness', recurrence: 'daily', timeOfDay: '07:00', duration: 5, reminderEnabled: true, linkedTracker: 'breath_box' },
+      { id: 'mm-3', name: 'Gentle Stretching', category: 'Movement', recurrence: 'daily', timeOfDay: '07:15', duration: 10, reminderEnabled: true, linkedTracker: 'stretch_neck' }
     ]
   },
   {
@@ -93,7 +93,7 @@ export const presetPlans: CalendarPlan[] = [
     color: '#ec4899', // pink-500
     activities: [
       { id: 'ss-1', name: 'Focus Study Block', category: 'Study/Learning', recurrence: 'daily', duration: 50, reminderEnabled: true },
-      { id: 'ss-2', name: 'Active Recovery Break', category: 'Stillness', recurrence: 'daily', duration: 10, reminderEnabled: true },
+      { id: 'ss-2', name: 'Active Recovery Break', category: 'Stillness', recurrence: 'daily', duration: 10, reminderEnabled: true, linkedTracker: 'focus_reset' },
       { id: 'ss-3', name: 'Weekly Knowledge Audit', category: 'Study/Learning', recurrence: 'weekly', duration: 45, reminderEnabled: true }
     ]
   },

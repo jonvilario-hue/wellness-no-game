@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
@@ -18,6 +18,7 @@ import {
   RotateCcw, 
   Edit, 
   Play, 
+  Pause,
   Clock, 
   TrendingUp, 
   Brain, 
@@ -195,6 +196,13 @@ function AmalgamatedAnalytics() {
   );
 }
 
+const formatTime = (totalSeconds: number): string => {
+  if (totalSeconds < 0) return '00:00';
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
 export default function CalendarPage() {
   const { 
     customPlans, 
@@ -225,6 +233,10 @@ export default function CalendarPage() {
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<CalendarPlan | null>(null);
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
+
+  // Timer states for routines
+  const [activeTimerId, setActiveTimerId] = useState<string | null>(null);
+  const [routineTimeLeft, setRoutineTimeLeft] = useState<number>(0);
 
   // Form states for builder
   const [newPlanName, setNewPlanName] = useState("");
@@ -454,6 +466,9 @@ export default function CalendarPage() {
     if (ids.length > 0) {
       ids.forEach(id => logExerciseById(id));
       toast({ title: "Routine Logged", description: `All ${ids.length} steps pushed to history.`, variant: 'success' });
+    } else {
+      // Fallback for non-linked activities: just toast
+      toast({ title: "Check-in logged", description: `"${plan.name}" completed.` });
     }
   };
 
@@ -464,6 +479,30 @@ export default function CalendarPage() {
       toast({ title: "Quick Log Successful", description: `${task.name} metrics synced to history.` });
     }
   };
+
+  const toggleRoutineTimer = (plan: CalendarPlan) => {
+    if (activeTimerId === plan.id) {
+      setActiveTimerId(null);
+    } else {
+      const totalSeconds = plan.activities.reduce((sum, act) => sum + (act.duration * 60), 0);
+      setActiveTimerId(plan.id);
+      setRoutineTimeLeft(totalSeconds);
+    }
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeTimerId && routineTimeLeft > 0) {
+      interval = setInterval(() => {
+        setRoutineTimeLeft(p => p - 1);
+      }, 1000);
+    } else if (activeTimerId && routineTimeLeft === 0) {
+      const plan = availablePlans.find(p => p.id === activeTimerId);
+      if (plan) handleQuickLogRoutine(plan);
+      setActiveTimerId(null);
+    }
+    return () => clearInterval(interval);
+  }, [activeTimerId, routineTimeLeft, availablePlans]);
 
   if (!_hasHydrated) return null;
 
@@ -482,7 +521,7 @@ export default function CalendarPage() {
               <div className="flex items-center gap-4">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <LayoutGrid className="w-5 h-5 text-primary" />
-                  Routines
+                  Active Routines
                 </h2>
                 <div className="bg-muted p-1 rounded-lg flex items-center gap-1">
                   <Button variant={routinesView === 'grid' ? 'secondary' : 'ghost'} size="sm" className="h-7 px-3 text-[10px] font-bold uppercase" onClick={() => setRoutinesView('grid')}>
@@ -515,102 +554,116 @@ export default function CalendarPage() {
                 )}
               >
                 <AnimatePresence mode="popLayout">
-                  {availablePlans.map((plan, index) => (
-                    <motion.div
-                      key={plan.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ type: "spring", stiffness: 80, damping: 25 }}
-                    >
-                      <Card className={cn(
-                        "transition-all relative group h-full overflow-hidden", 
-                        "border-primary/5 hover:border-primary/20 shadow-sm hover:shadow-md",
-                        routinesView === 'list' && "flex items-center justify-between py-2 px-4"
-                      )}>
-                        {routinesView === 'grid' ? (
-                          <>
-                            <CardHeader className="bg-primary/5 p-4 pb-3">
-                              <div className="flex justify-between items-start mb-2">
-                                <div className="flex items-center gap-2">
-                                  <div className="p-2 bg-background rounded-lg border border-primary/10">
-                                    <Activity className="w-4 h-4 text-primary" />
-                                  </div>
-                                  <div>
-                                    <div className="flex items-center gap-2">
-                                      <CardTitle className="text-sm font-black uppercase tracking-tight truncate pr-8">{plan.name}</CardTitle>
-                                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 uppercase text-[8px] font-black h-4 px-1.5 shrink-0">Active</Badge>
-                                    </div>
-                                    <p className="text-[10px] text-muted-foreground uppercase font-black">{plan.categories[0]}</p>
-                                  </div>
+                  {availablePlans.map((plan, index) => {
+                    const isTimerRunning = activeTimerId === plan.id;
+                    const totalSeconds = plan.activities.reduce((sum, act) => sum + (act.duration * 60), 0);
+                    const progress = isTimerRunning ? (1 - routineTimeLeft / totalSeconds) * 100 : 0;
+
+                    return (
+                      <motion.div
+                        key={plan.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ type: "spring", stiffness: 80, damping: 25 }}
+                      >
+                        <Card className={cn(
+                          "transition-all relative group h-full overflow-hidden flex flex-col", 
+                          "border-primary/5 hover:border-primary/20 shadow-sm hover:shadow-md",
+                          routinesView === 'list' && "p-0"
+                        )}>
+                          <CardHeader className="bg-primary/5 p-4 pb-3">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex items-center gap-2">
+                                <div className="p-2 bg-background rounded-lg border border-primary/10">
+                                  <Activity className="w-4 h-4 text-primary" />
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
-                                    <ChevronUpSquare className="w-4 h-4" />
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <CardTitle className="text-sm font-black uppercase tracking-tight truncate pr-8">{plan.name}</CardTitle>
+                                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 uppercase text-[8px] font-black h-4 px-1.5 shrink-0">Active</Badge>
+                                  </div>
+                                  <p className="text-[10px] text-muted-foreground uppercase font-black">{plan.categories[0]}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
+                                  <ChevronUpSquare className="w-4 h-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
+                                  <ChevronDownSquare className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <CardDescription className="text-xs line-clamp-2 leading-relaxed italic">"{plan.description}"</CardDescription>
+                          </CardHeader>
+                          
+                          {isTimerRunning && (
+                            <div className="px-4 py-6 bg-primary/5 border-y border-primary/10 animate-in fade-in slide-in-from-top-2">
+                              <div className="flex flex-col items-center gap-4">
+                                <div className="text-4xl font-black font-mono text-primary tracking-tighter">
+                                  {formatTime(routineTimeLeft)}
+                                </div>
+                                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                                  <motion.div 
+                                    className="h-full bg-primary" 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${progress}%` }}
+                                  />
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => setRoutineTimeLeft(totalSeconds)}>
+                                    <RotateCcw className="w-3.5 h-3.5" />
                                   </Button>
-                                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
-                                    <ChevronDownSquare className="w-4 h-4" />
+                                  <Button size="sm" className="h-8 px-6 rounded-full font-bold" onClick={() => setActiveTimerId(null)}>
+                                    <Pause className="w-3.5 h-3.5 mr-1.5" /> Pause
                                   </Button>
                                 </div>
                               </div>
-                              <CardDescription className="text-xs line-clamp-2 leading-relaxed italic">"{plan.description}"</CardDescription>
-                            </CardHeader>
-                            
-                            {expandedPlanId === plan.id ? (
-                              <CardContent className="p-4 space-y-4 animate-in fade-in slide-in-from-top-1 bg-background">
-                                <div className="space-y-6">
-                                  {plan.activities.map((act) => {
-                                    const practice = allPractices.find(p => p.id === act.linkedTracker);
-                                    if (!practice) {
-                                      return (
-                                        <div key={act.id} className="p-3 rounded-xl bg-muted/30 border border-primary/5">
-                                          <p className="text-xs font-bold">{act.name}</p>
-                                          <p className="text-[10px] text-muted-foreground">{act.duration}m • {act.category}</p>
-                                        </div>
-                                      );
-                                    }
-                                    return (
-                                      <div key={act.id} className="scroll-mt-32">
-                                        <PracticeInstructionCard exercise={practice} />
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="w-full text-[9px] font-black uppercase"
-                                  onClick={() => setExpandedPlanId(null)}
-                                >
-                                  Collapse Steps <ChevronUp className="ml-1 w-3 h-3" />
-                                </Button>
-                              </CardContent>
-                            ) : (
-                              <CardContent className="p-4 flex justify-between items-center bg-background/50">
-                                <div className="flex items-center gap-4 text-[10px] font-black uppercase text-muted-foreground tracking-tighter">
-                                  <span className="flex items-center gap-1.5"><LayoutGrid className="w-3 h-3" /> {plan.activities.length} Steps</span>
-                                  <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> ~{Math.round(plan.activities.reduce((s,a) => s+a.duration, 0))} Min</span>
-                                </div>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="h-7 text-[10px] font-black uppercase hover:bg-primary/5"
-                                  onClick={() => setExpandedPlanId(plan.id)}
-                                >
-                                  Steps <ChevronDown className="ml-1 w-3 h-3" />
-                                </Button>
-                              </CardContent>
-                            )}
+                            </div>
+                          )}
 
-                            <CardFooter className="p-4 flex gap-2 mt-auto border-t bg-muted/5">
+                          <Collapsible open={expandedPlanId === plan.id} onOpenChange={(o) => setExpandedPlanId(o ? plan.id : null)}>
+                            <CollapsibleContent className="p-4 space-y-6 bg-background animate-in slide-in-from-top-1 border-y border-primary/5">
+                              {plan.activities.map((act) => {
+                                const practice = allPractices.find(p => p.id === act.linkedTracker);
+                                if (!practice) {
+                                  return (
+                                    <div key={act.id} className="p-3 rounded-xl bg-muted/30 border border-primary/5">
+                                      <p className="text-xs font-bold">{act.name}</p>
+                                      <p className="text-[10px] text-muted-foreground">{act.duration}m • {act.category}</p>
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <div key={act.id} className="scroll-mt-32">
+                                    <PracticeInstructionCard exercise={practice} />
+                                  </div>
+                                );
+                              })}
+                            </CollapsibleContent>
+                          </Collapsible>
+
+                          <div className="mt-auto">
+                            <CardFooter className="p-4 flex gap-2 border-t bg-muted/5">
                               <Button 
-                                className="flex-1 font-bold h-10 gap-2 shadow-sm" 
+                                className={cn("flex-1 font-bold h-10 gap-2 shadow-sm", isTimerRunning && "bg-destructive text-destructive-foreground hover:bg-destructive/90")} 
+                                onClick={() => toggleRoutineTimer(plan)}
+                              >
+                                {isTimerRunning ? <X className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                                {isTimerRunning ? 'Stop' : 'Start'}
+                              </Button>
+                              
+                              <Button 
+                                variant="outline" 
+                                className="flex-1 font-bold h-10 gap-2 border-primary/10 bg-background hover:bg-primary/5"
                                 onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
                               >
-                                <Play className="w-4 h-4 fill-current" />
-                                Start
+                                <LayoutList className="w-4 h-4" />
+                                Steps
                               </Button>
+
                               <Button 
                                 variant="outline" 
                                 className="flex-1 font-bold h-10 gap-2 border-primary/10 bg-background hover:bg-primary/5" 
@@ -619,6 +672,7 @@ export default function CalendarPage() {
                                 <ClipboardCheck className="w-4 h-4" />
                                 Quick Log
                               </Button>
+
                               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
                                 {!plan.isPreset && (
                                   <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => handleOpenBuilder(plan)}>
@@ -635,58 +689,11 @@ export default function CalendarPage() {
                                 </Button>
                               </div>
                             </CardFooter>
-                          </>
-                        ) : (
-                          <>
-                            <div className="flex items-center gap-4 flex-1">
-                              <div className="flex items-center gap-1 shrink-0">
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
-                                  <ChevronUpSquare className="w-4 h-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
-                                  <ChevronDownSquare className="w-4 h-4" />
-                                </Button>
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
-                                  <p className="text-sm font-bold truncate">{plan.name}</p>
-                                  <Badge variant="outline" className="text-[8px] h-4 py-0 uppercase">{plan.categories[0]}</Badge>
-                                </div>
-                                <p className="text-xs text-muted-foreground truncate">{plan.description}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-4 pl-4 border-l ml-4">
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="h-8 gap-1.5 text-[9px] font-black uppercase"
-                                onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
-                              >
-                                {plan.activities.length} Steps
-                                {expandedPlanId === plan.id ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
-                              </Button>
-                              
-                              <div className="flex items-center gap-3">
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}>
-                                  <Play className="w-4 h-4 fill-current" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleQuickLogRoutine(plan)}>
-                                  <ClipboardCheck className="w-4 h-4" />
-                                </Button>
-                                {!plan.isPreset && (
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleOpenBuilder(plan)}>
-                                    <Edit className="w-4 h-4" />
-                                  </Button>
-                                )}
-                                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 uppercase text-[8px] font-black h-5">Active</Badge>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </Card>
-                    </motion.div>
-                  ))}
+                          </div>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
                   
                   <motion.div 
                     key="add-plan-card"
