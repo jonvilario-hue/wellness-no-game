@@ -71,23 +71,13 @@ function ExercisesPageContent() {
                           <div>
                             <HeartPulse className="mx-auto h-12 w-12 text-primary mb-2"/>
                             <h1 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight text-foreground">Health Check</h1>
-                            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">Actionable wellness for body and brain. Log your daily reps.</p>
+                            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">Actionable wellness for body and brain. Log your daily reps.</p>
                           </div>
-
-                          <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice. Consistency is the primary driver of epigenetic and neurological adaptation.">
-                            <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit mx-auto">
-                                <div className="flex items-center gap-2">
-                                    <Flame className="w-5 h-5 text-orange-500" />
-                                    <span className="text-xl font-black">{streak}</span>
-                                    <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
-                                </div>
-                            </Card>
-                          </AssistantTooltip>
                       </div>
 
                       <WellnessBalance />
 
-                      {/* Moved dashboards inside CollapsibleContent */}
+                      {/* Dashboards */}
                       <div className="w-full">
                         {activeTab === 'movement' && <MovementDashboard />}
                         {activeTab === 'stillness' && <StillnessDashboard />}
@@ -108,7 +98,17 @@ function ExercisesPageContent() {
                   )}
                 </Collapsible>
 
-                <div className="flex flex-col items-center gap-4">
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                    <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice. Consistency is the primary driver of epigenetic and neurological adaptation.">
+                      <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
+                          <div className="flex items-center gap-2">
+                              <Flame className="w-5 h-5 text-orange-500" />
+                              <span className="text-xl font-black">{streak}</span>
+                              <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">Wellness Streak</span>
+                          </div>
+                      </Card>
+                    </AssistantTooltip>
+
                     <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your entire library to show only 'zero-friction' practices. Use this when your cognitive or physical battery is low to maintain your habit streak without risking burnout.">
                       <div className={cn(
                           "flex items-center gap-3 px-4 py-2 rounded-full border transition-all",
