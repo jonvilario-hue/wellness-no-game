@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo, useState } from "react"
@@ -241,7 +242,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
             <ScrollArea className="flex-1">
               <div className="p-6 space-y-6">
                 <div className="space-y-1.5">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Title</Label color="text-muted-foreground">Title</Label>
+                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Title</Label>
                   <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Morning Reset" />
                 </div>
                 <div className="space-y-1.5">
