@@ -68,16 +68,17 @@ export const calculateStreak = (logs: any): number => {
   
   const dates = new Set<string>();
   if (Array.isArray(logs)) {
-    logs.forEach(log => {
+    for (const log of logs) {
       const d = log.timestamp || log.completedAt || log.date;
       if (d) {
         try {
           dates.add(format(new Date(d), 'yyyy-MM-dd'));
         } catch (e) {}
       }
-    });
-  } else if (typeof logs === 'object') {
-    Object.keys(logs).forEach(dateStr => {
+    }
+  } else if (typeof logs === 'object' && logs !== null) {
+    const keys = Object.keys(logs);
+    for (const dateStr of keys) {
       if (logs[dateStr]) {
         if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
           dates.add(dateStr);
@@ -87,7 +88,7 @@ export const calculateStreak = (logs: any): number => {
           } catch (e) {}
         }
       }
-    });
+    }
   }
 
   if (dates.size === 0) return 0;
@@ -228,16 +229,16 @@ export const useWellnessData = create<WellnessState>()(
 // Helper selectors for categorization
 export const useMovementLogs = () => {
   const allLogs = useWellnessData(s => s.allLogs);
-  return useMemo(() => allLogs.filter(l => ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(l.category)), [allLogs]);
+  return useMemo(() => (allLogs || []).filter(l => ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(l.category)), [allLogs]);
 };
 
 export const useStillnessLogs = () => {
   const allLogs = useWellnessData(s => s.allLogs);
-  return useMemo(() => allLogs.filter(l => ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(l.category)), [allLogs]);
+  return useMemo(() => (allLogs || []).filter(l => ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(l.category)), [allLogs]);
 };
 
 export const useCommunicationLogs = () => {
   const allLogs = useWellnessData(s => s.allLogs);
   const commCategories = ['Vocal Mechanics', 'Active Listening', 'Nonverbal', 'Conversation Structure', 'Persuasion', 'clarity_language_craft', 'Storytelling', 'difficult_conversations', 'Public Speaking', 'professional_communication'];
-  return useMemo(() => allLogs.filter(l => commCategories.includes(l.category)), [allLogs]);
+  return useMemo(() => (allLogs || []).filter(l => commCategories.includes(l.category)), [allLogs]);
 };

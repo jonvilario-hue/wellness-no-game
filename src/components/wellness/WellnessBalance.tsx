@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
-import { useWellnessData } from "@/hooks/use-wellness-data";
+import { useMovementLogs, useStillnessLogs } from "@/hooks/use-wellness-data";
 import { Scale, Info, Zap, Wind, AlertCircle } from "lucide-react";
 import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
@@ -11,18 +11,19 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export function WellnessBalance() {
-  const { movementLogs, stillnessLogs } = useWellnessData();
+  const movementLogs = useMovementLogs();
+  const stillnessLogs = useStillnessLogs();
 
   const stats = useMemo(() => {
     // Week resets every Monday at midnight local time
     const now = new Date();
     const weekStart = startOfWeek(now, { weekStartsOn: 1 });
 
-    const moveCount = movementLogs.filter(log => 
+    const moveCount = (movementLogs || []).filter(log => 
       isAfter(new Date(log.timestamp), weekStart)
     ).length;
 
-    const restCount = stillnessLogs.filter(log => 
+    const restCount = (stillnessLogs || []).filter(log => 
       isAfter(new Date(log.timestamp), weekStart)
     ).length;
 
