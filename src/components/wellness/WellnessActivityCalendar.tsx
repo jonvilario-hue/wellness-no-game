@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, isSameDay } from "date-fns";
-import { useWellnessData } from "@/hooks/use-wellness-data";
+import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from "@/hooks/use-wellness-data";
 import { useSpeedReadingStore } from "@/hooks/use-speedreading-store";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,22 @@ interface WellnessActivityCalendarProps {
 export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCalendarProps) {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [mounted, setMounted] = useState(false);
+  
+  // Use specialized hooks for filtered logs
+  const movementLogs = useMovementLogs();
+  const stillnessLogs = useStillnessLogs();
+  const communicationLogs = useCommunicationLogs();
+  
   const { 
-    movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs,
-    deleteMovementLog, deleteStillnessLog, deleteMealLog, deleteTransaction, deleteCommunicationLog
+    mealLogs = [], 
+    transactions = [],
+    deleteMovementLog, 
+    deleteStillnessLog, 
+    deleteMealLog, 
+    deleteTransaction, 
+    deleteCommunicationLog
   } = useWellnessData();
-  const { logs: readingLogs } = useSpeedReadingStore();
+  const { logs: readingLogs = [] } = useSpeedReadingStore();
   
   const [isLogOpen, setIsLogOpen] = useState(false);
   const [logType, setLogType] = useState<'movement' | 'stillness' | 'nutrition' | 'finance' | 'communication'>('movement');
@@ -43,22 +54,22 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     const logs = [];
     
     if (!categoryFilter || categoryFilter === 'Movement') {
-      logs.push(...movementLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Movement' })));
+      logs.push(...(movementLogs || []).filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Movement' })));
     }
     if (!categoryFilter || categoryFilter === 'Stillness') {
-      logs.push(...stillnessLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Stillness' })));
+      logs.push(...(stillnessLogs || []).filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Stillness' })));
     }
     if (!categoryFilter || categoryFilter === 'Communication') {
-      logs.push(...communicationLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Communication', label: l.practiceName })));
+      logs.push(...(communicationLogs || []).filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ ...l, type: 'Communication', label: l.practiceName })));
     }
     if (!categoryFilter || categoryFilter === 'Nutrition') {
-      logs.push(...mealLogs.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Nutrition', label: l.mealType, detail: `${l.calories} kcal` })));
+      logs.push(...(mealLogs || []).filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Nutrition', label: l.mealType, detail: `${l.calories} kcal` })));
     }
     if (!categoryFilter || categoryFilter === 'Finance') {
-      logs.push(...transactions.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Finance', label: l.merchant, detail: `$${l.amount}` })));
+      logs.push(...(transactions || []).filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)).map(l => ({ ...l, type: 'Finance', label: l.merchant, detail: `$${l.amount}` })));
     }
     if (!categoryFilter || categoryFilter === 'Speed Reading') {
-      logs.push(...readingLogs.filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ 
+      logs.push(...(readingLogs || []).filter(l => isSameDay(new Date(l.timestamp), date)).map(l => ({ 
         ...l, 
         type: 'Speed Reading', 
         label: `${l.drillType}`, 
@@ -73,10 +84,33 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     });
   }, [date, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, categoryFilter]);
 
-  const handleAddLog = (type: typeof logType) => {
-    setLogType(type);
-    setIsLogOpen(true);
+  const activityDates = useMemo(() => {
+    const dates = [];
+    if (!categoryFilter || categoryFilter === 'Movement') dates.push(...(movementLogs || []).map(l => new Date(l.timestamp)));
+    if (!categoryFilter || categoryFilter === 'Stillness') dates.push(...(stillnessLogs || []).map(l => new Date(l.timestamp)));
+    if (!categoryFilter || categoryFilter === 'Communication') dates.push(...(communicationLogs || []).map(l => new Date(l.timestamp)));
+    if (!categoryFilter || categoryFilter === 'Nutrition') dates.push(...(mealLogs || []).map(l => new Date(l.date + 'T12:00:00')));
+    if (!categoryFilter || categoryFilter === 'Finance') dates.push(...(transactions || []).map(l => new Date(l.date + 'T12:00:00')));
+    if (!categoryFilter || categoryFilter === 'Speed Reading') dates.push(...(readingLogs || []).map(l => new Date(l.timestamp)));
+    return dates;
+  }, [movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, categoryFilter]);
+
+  const modifiers = {
+    hasLog: (d: Date) => activityDates.some(ad => isSameDay(ad, d))
   };
+
+  const modifiersStyles = {
+    hasLog: {
+      fontWeight: 'bold',
+      color: 'hsl(var(--primary))',
+      backgroundColor: 'hsl(var(--primary) / 0.1)',
+      borderRadius: '100%'
+    }
+  };
+
+  if (!mounted) return null;
+
+  const defaultType = categoryFilter === 'Speed Reading' ? 'movement' : (categoryFilter?.toLowerCase() as any || 'movement');
 
   const handleDelete = (log: any) => {
     switch (log.type) {
@@ -102,34 +136,6 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     toast({ title: "Log Deleted", variant: 'default' });
   };
 
-  const activityDates = useMemo(() => {
-    const dates = [];
-    if (!categoryFilter || categoryFilter === 'Movement') dates.push(...movementLogs.map(l => new Date(l.timestamp)));
-    if (!categoryFilter || categoryFilter === 'Stillness') dates.push(...stillnessLogs.map(l => new Date(l.timestamp)));
-    if (!categoryFilter || categoryFilter === 'Communication') dates.push(...communicationLogs.map(l => new Date(l.timestamp)));
-    if (!categoryFilter || categoryFilter === 'Nutrition') dates.push(...mealLogs.map(l => new Date(l.date + 'T12:00:00')));
-    if (!categoryFilter || categoryFilter === 'Finance') dates.push(...transactions.map(l => new Date(l.date + 'T12:00:00')));
-    if (!categoryFilter || categoryFilter === 'Speed Reading') dates.push(...readingLogs.map(l => new Date(l.timestamp)));
-    return dates;
-  }, [movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, categoryFilter]);
-
-  const modifiers = {
-    hasLog: (d: Date) => activityDates.some(ad => isSameDay(ad, d))
-  };
-
-  const modifiersStyles = {
-    hasLog: {
-      fontWeight: 'bold',
-      color: 'hsl(var(--primary))',
-      backgroundColor: 'hsl(var(--primary) / 0.1)',
-      borderRadius: '100%'
-    }
-  };
-
-  if (!mounted) return null;
-
-  const defaultType = categoryFilter === 'Speed Reading' ? 'movement' : (categoryFilter?.toLowerCase() as any || 'movement');
-
   return (
     <Card className="border-primary/10 shadow-sm">
       <CardHeader className="pb-4">
@@ -142,7 +148,10 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
             <CardDescription>View your synchronized activity history.</CardDescription>
           </div>
           {(categoryFilter !== 'Communication' && categoryFilter !== 'Speed Reading') && (
-            <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => handleAddLog(defaultType)}>
+            <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => {
+              setLogType(defaultType);
+              setIsLogOpen(true);
+            }}>
               <Plus className="w-3.5 h-3.5" /> Log {categoryFilter || 'Activity'}
             </Button>
           )}
@@ -223,7 +232,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
       <WellnessLogDialog 
         isOpen={isLogOpen} 
         onOpenChange={setIsLogOpen} 
-        initialType={logType === 'communication' ? 'movement' : logType as any} 
+        initialType={logType} 
         initialDate={date} 
       />
     </Card>
