@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -359,7 +358,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               <div className="grid grid-cols-2 gap-2">
                 <Button onClick={toggleTimer} size="lg" className="w-full">
                 {isActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-                {isActive ? formatTime(timeLeft) : 'Detailed Log'}
+                {isActive ? formatTime(timeLeft) : 'Start'}
                 </Button>
                 <Button onClick={() => finishSession(true)} variant="outline" size="lg" className="w-full">
                   <ClipboardCheck className="mr-2 h-4 w-4" />

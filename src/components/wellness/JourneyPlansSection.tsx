@@ -186,7 +186,7 @@ export function JourneyPlansSection({ category }: JourneyPlansSectionProps) {
           className="h-6 gap-1 text-[10px] font-black uppercase text-primary hover:bg-primary/5"
           onClick={() => setIsExpanded(true)}
         >
-          View All <ChevronDown className="w-3 h-3" />
+          View Plans <ChevronDown className="w-3 h-3" />
         </Button>
       </div>
     </div>
