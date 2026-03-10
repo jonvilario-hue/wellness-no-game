@@ -1,11 +1,11 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
 import { useRecommendationsStore } from '@/hooks/use-recommendations-store';
-import { Sparkles, BellOff, Sliders } from 'lucide-react';
+import { Sparkles, Sliders } from 'lucide-react';
 import type { RecommendationType } from '@/types/recommendations';
 
 const categories: { id: RecommendationType; label: string; desc: string }[] = [
