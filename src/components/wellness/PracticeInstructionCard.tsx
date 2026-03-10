@@ -18,7 +18,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '../ui/switch';
 import { AssistantTooltip } from '../assistant-tooltip';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -53,20 +52,15 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
 
   const { 
     addMovementLog, addStillnessLog, addCommunicationLog, 
-    movementProgress, trackingEnabled, toggleTracking,
-    trackExplainerDismissed, setTrackExplainerDismissed
+    movementProgress, trackExplainerDismissed, setTrackExplainerDismissed
   } = useWellnessData();
   const { syncFromTracker } = useCalendarPlansStore();
+  const { toast } = useToast();
   
   const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
   const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
   const isCommunication = !isMovement && !isStillness;
 
-  const trackingCategory: TrackingCategory = isMovement ? 'Movement' : isStillness ? 'Stillness' : 'Communication';
-  
-  // Use individual module tracking or fallback to category default
-  const trackNumbers = trackingEnabled[exercise.id] ?? trackingEnabled[trackingCategory] ?? false;
-  
   const bestProgress = movementProgress[exercise.id];
   const ExerciseIcon = exercise.icon;
 
@@ -124,7 +118,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
 
   const finishSession = (forceQuick: boolean = false) => {
     setIsActive(false);
-    if (trackNumbers && !forceQuick) {
+    if (!forceQuick) {
       setShowRatings(true);
       setIsComplete(false);
     } else {
@@ -149,10 +143,6 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
     setIsActive(!isActive);
   }, [isActive, timeLeft, exercise.duration, isComplete]);
 
-  const handleToggleTracking = () => {
-    toggleTracking(exercise.id);
-  };
-
   const getTrackingPreview = () => {
     if (isMovement) return "Will track: Intensity, Reps, PBs";
     if (isStillness) return "Will track: Stress, Calmness, Trigger";
@@ -168,8 +158,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
 
   return (
     <Card className={cn(
-      "flex flex-col hover:shadow-lg transition-all duration-300 h-full group relative overflow-hidden",
-      trackNumbers && "border-primary/20 bg-primary/[0.01] border-l-4 border-l-primary"
+      "flex flex-col hover:shadow-lg transition-all duration-300 h-full group relative overflow-hidden border-primary/20 bg-primary/[0.01] border-l-4 border-l-primary"
     )}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
@@ -180,17 +169,13 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               <div className="flex flex-col gap-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <CardTitle className="leading-tight truncate">{exercise.name}</CardTitle>
-                  {trackNumbers && (
-                    <Badge variant="secondary" className="bg-primary/10 text-primary text-[8px] font-black h-4 px-1.5 uppercase tracking-tighter shrink-0">
-                      📊 Tracking
-                    </Badge>
-                  )}
+                  <Badge variant="secondary" className="bg-primary/10 text-primary text-[8px] font-black h-4 px-1.5 uppercase tracking-tighter shrink-0">
+                    📊 Tracking
+                  </Badge>
                 </div>
-                {trackNumbers && (
-                  <Link href="/calendar" className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1">
-                    {getDataDestinationLink()} <ChevronRight className="w-2.5 h-2.5" />
-                  </Link>
-                )}
+                <Link href="/calendar" className="text-[9px] font-bold text-primary hover:underline flex items-center gap-1">
+                  {getDataDestinationLink()} <ChevronRight className="w-2.5 h-2.5" />
+                </Link>
               </div>
           </div>
           <div className="flex items-center gap-1 shrink-0 ml-2">
@@ -204,18 +189,6 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>
             )}
-            <div className="flex items-center gap-2 ml-2">
-              <AssistantTooltip text="Enabling 'Track' for this module allows you to capture detailed metrics like reps or stress levels for long-term analytics.">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor={`track-toggle-${exercise.id}`} className="text-[10px] font-bold uppercase opacity-60">Track</Label>
-                  <Switch 
-                    id={`track-toggle-${exercise.id}`} 
-                    checked={trackNumbers} 
-                    onCheckedChange={handleToggleTracking} 
-                  />
-                </div>
-              </AssistantTooltip>
-            </div>
           </div>
         </div>
         <CardDescription className="flex-grow pt-2 text-xs">{exercise.description}</CardDescription>
@@ -243,7 +216,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
             <p className="text-[11px] text-muted-foreground">{exercise.intention}</p>
         </div>
 
-        {trackNumbers && isMovement && bestProgress && (
+        {isMovement && bestProgress && (
           <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 space-y-2 animate-in fade-in zoom-in-95">
             <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
               <Trophy className="w-3.5 h-3.5" /> Achievement Records
@@ -397,7 +370,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                     <div className="flex items-center gap-2 text-green-600">
                       <Check className="w-4 h-4" /> 
                       <span className="text-xs">
-                        {trackNumbers ? "✓ Session logged with full tracking" : "✓ Practice Logged"}
+                        ✓ Session logged with full tracking
                       </span>
                     </div>
                     <Link href="/calendar" className="text-[10px] text-primary hover:underline flex items-center gap-1">
@@ -421,11 +394,9 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
                   Quick Log
                 </Button>
               </div>
-              {trackNumbers && (
-                <p className="text-[9px] font-bold text-center text-primary uppercase tracking-widest opacity-80 animate-pulse">
-                  {getTrackingPreview()}
-                </p>
-              )}
+              <p className="text-[9px] font-bold text-center text-primary uppercase tracking-widest opacity-80 animate-pulse">
+                {getTrackingPreview()}
+              </p>
             </div>
           )}
       </CardFooter>

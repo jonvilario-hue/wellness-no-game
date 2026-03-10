@@ -121,7 +121,6 @@ export const calculateStreak = (data: any[] | Record<string, boolean>): number =
 
 export type WellnessState = {
   lowEnergyMode: boolean;
-  trackingEnabled: Record<string, boolean>; // Key can be category or exerciseId
   trackExplainerDismissed: boolean;
   transactions: Transaction[];
   mealLogs: MealLog[];
@@ -148,7 +147,6 @@ export type WellnessState = {
   envelopes: any[];
 
   setLowEnergyMode: (enabled: boolean) => void;
-  toggleTracking: (id: string) => void;
   setTrackExplainerDismissed: (dismissed: boolean) => void;
   addTransaction: (tx: Omit<Transaction, 'id'>) => void;
   addMealLog: (log: Omit<MealLog, 'id'>) => void;
@@ -178,12 +176,6 @@ export const useWellnessData = create<WellnessState>()(
   persist(
     (set, get) => ({
       lowEnergyMode: false,
-      trackingEnabled: {
-        'Movement': true,
-        'Stillness': true,
-        'Communication': true,
-        'Speed Reading': true
-      },
       trackExplainerDismissed: false,
       transactions: [],
       mealLogs: [],
@@ -217,12 +209,6 @@ export const useWellnessData = create<WellnessState>()(
       envelopes: [],
 
       setLowEnergyMode: (lowEnergyMode) => set({ lowEnergyMode }),
-      toggleTracking: (id) => set(s => ({
-        trackingEnabled: {
-          ...s.trackingEnabled,
-          [id]: !s.trackingEnabled[id]
-        }
-      })),
       setTrackExplainerDismissed: (dismissed) => set({ trackExplainerDismissed: dismissed }),
       addTransaction: (tx) => set(s => ({ transactions: [{ ...tx, id: crypto.randomUUID() }, ...s.transactions] })),
       addMealLog: (log) => set(s => ({ mealLogs: [{ ...log, id: crypto.randomUUID() }, ...s.mealLogs] })),
@@ -308,12 +294,6 @@ export const useWellnessData = create<WellnessState>()(
         if (state) {
           if (!state.movementProgress) state.movementProgress = {};
           if (!state.dismissedPlans) state.dismissedPlans = {};
-          if (!state.trackingEnabled) state.trackingEnabled = {
-            'Movement': true,
-            'Stillness': true,
-            'Communication': true,
-            'Speed Reading': true
-          };
         }
       }
     }

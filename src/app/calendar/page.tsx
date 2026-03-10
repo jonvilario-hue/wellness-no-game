@@ -206,7 +206,7 @@ export default function CalendarPage() {
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { trackingEnabled, toggleTracking, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs } = useWellnessData();
+  const { movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs } = useWellnessData();
   const { entries } = useHydratedJournalStore();
   
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
@@ -840,39 +840,6 @@ export default function CalendarPage() {
             </Card>
 
             <div className="space-y-6">
-              <Card className="bg-primary/5 border-primary/10 overflow-hidden">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-primary" />
-                    Tracking Core
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-[10px] text-muted-foreground leading-relaxed italic">
-                    Manage which modules are actively synced to your analytics. Toggling off hides them from view but <b>never</b> deletes historical data.
-                  </p>
-                  <div className="space-y-2">
-                    {[
-                      { id: 'Movement', icon: HeartPulse, label: 'Body Mastery' },
-                      { id: 'Stillness', icon: Waves, label: 'Mental Reset' },
-                      { id: 'Communication', icon: MessageSquare, label: 'Dialogue Drill' },
-                      { id: 'Speed Reading', icon: Zap, label: 'Cognitive Velocity' },
-                    ].map(track => (
-                      <div key={track.id} className="flex items-center justify-between p-2 rounded-lg bg-background border border-primary/5">
-                        <div className="flex items-center gap-2">
-                          <track.icon className="w-3.5 h-3.5 text-muted-foreground" />
-                          <span className="text-[10px] font-bold uppercase">{track.label}</span>
-                        </div>
-                        <Switch 
-                          size="sm" 
-                          checked={trackingEnabled[track.id]} 
-                          onCheckedChange={() => toggleTracking(track.id)} 
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
 
