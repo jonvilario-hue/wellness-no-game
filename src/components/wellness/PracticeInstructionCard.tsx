@@ -57,6 +57,9 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
   
+  // Permanent Tracking active
+  const trackNumbers = true;
+
   const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
   const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
   const isCommunication = !isMovement && !isStillness;
@@ -195,22 +198,6 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
       </CardHeader>
       
       <CardContent className="flex-grow space-y-4">
-        {trackNumbers && !trackExplainerDismissed && (
-          <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl relative animate-in fade-in slide-in-from-top-1">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="absolute top-1 right-1 h-5 w-5"
-              onClick={() => setTrackExplainerDismissed(true)}
-            >
-              <X className="w-3 h-3" />
-            </Button>
-            <p className="text-[10px] leading-relaxed font-medium pr-4">
-              <span className="font-bold text-primary">Module tracking active.</span> Detailed metrics will be requested when you finish the timer. Tap <span className="font-bold">Quick Log</span> to bypass.
-            </p>
-          </div>
-        )}
-
         <div className="p-3 bg-muted/50 rounded-lg">
             <h4 className="font-semibold text-xs flex items-center gap-2"><Goal className="w-3.5 h-3.5"/>Intention</h4>
             <p className="text-[11px] text-muted-foreground">{exercise.intention}</p>
@@ -387,7 +374,7 @@ export const PracticeInstructionCard = ({ exercise, onEdit, onDelete }: Practice
               <div className="grid grid-cols-2 gap-2">
                 <Button onClick={toggleTimer} size="lg" className="w-full">
                 {isActive ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-                {isActive ? formatTime(timeLeft) : 'Start'}
+                {isActive ? formatTime(timeLeft) : 'Detailed Log'}
                 </Button>
                 <Button onClick={() => finishSession(true)} variant="outline" size="lg" className="w-full">
                   <ClipboardCheck className="mr-2 h-4 w-4" />

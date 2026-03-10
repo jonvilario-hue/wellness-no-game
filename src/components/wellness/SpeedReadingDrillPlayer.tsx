@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -49,7 +50,8 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
   const activeWordRef = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const trackNumbers = trackingEnabled['Speed Reading'] || false;
+  // Permanent Tracking active
+  const trackNumbers = true;
 
   const words = useMemo(() => passage.content.split(/\s+/).filter(w => w.length > 0), [passage]);
   
@@ -170,6 +172,58 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     markStudySessionComplete('Speed Reading', passage.id);
     toast({ title: "Results Synced", variant: 'success' });
     onClose();
+  };
+
+  const renderDrillContent = () => {
+    switch (drillType) {
+      case 'Chunk Training':
+        return (
+          <div className="text-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.1 }}
+                className="text-4xl md:text-6xl font-bold tracking-tight text-primary leading-tight"
+              >
+                {units[currentIndex]}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        );
+      
+      case 'Pacer':
+      case 'Regression Eliminator':
+      case 'Peripheral Expansion':
+      default:
+        return (
+          <div className={cn(
+            "flex flex-wrap gap-x-2 gap-y-4 text-2xl md:text-3xl font-medium text-muted-foreground",
+            drillType === 'Peripheral Expansion' && "max-w-md mx-auto justify-center text-center"
+          )}>
+            {units.map((unit, i) => {
+              const isCurrent = i === currentIndex;
+              const isPast = i < currentIndex;
+              
+              return (
+                <span
+                  key={i}
+                  ref={isCurrent ? activeWordRef : null}
+                  className={cn(
+                    "transition-all duration-200 rounded px-1",
+                    isCurrent && "text-primary bg-primary/10 ring-2 ring-primary/20 scale-110 shadow-sm",
+                    isPast && drillType === 'Regression Eliminator' && "opacity-0 scale-95",
+                    isPast && drillType !== 'Regression Eliminator' && "text-foreground/40"
+                  )}
+                >
+                  {unit}
+                </span>
+              );
+            })}
+          </div>
+        );
+    }
   };
 
   return (
