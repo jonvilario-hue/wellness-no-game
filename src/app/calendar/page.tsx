@@ -8,7 +8,6 @@ import {
   Calendar as CalendarIcon, 
   ChevronDown, 
   ChevronUp, 
-  CalendarDays, 
   ListChecks, 
   Plus, 
   LayoutGrid, 
@@ -19,8 +18,6 @@ import {
   Edit, 
   Play, 
   Clock, 
-  ArrowLeft, 
-  ArrowRight, 
   TrendingUp, 
   Brain, 
   Utensils, 
@@ -31,8 +28,6 @@ import {
   BookMarked,
   X,
   Target,
-  AlertCircle,
-  List,
   Trophy,
   Zap,
   Activity,
@@ -42,8 +37,10 @@ import {
   ChevronDownSquare,
   AlignJustify,
   ShieldCheck,
-  Eye,
-  ClipboardCheck
+  ClipboardCheck,
+  ChevronRight,
+  Info,
+  Goal
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -54,15 +51,14 @@ import { Separator } from '@/components/ui/separator';
 import { presetPlans } from '@/data/preset-calendar-plans';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { Calendar } from '@/components/ui/calendar';
-import { format, parseISO, startOfWeek, addDays, isSameDay, subDays, isAfter } from 'date-fns';
+import { format, parseISO, startOfWeek, addDays, isSameDay, subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { PlanCategory, CalendarPlan, ActivityStatus, PlanActivity } from '@/types/calendar-plans';
-import { calendarContent } from '@/data/calendar-content';
 import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from '@/hooks/use-wellness-data';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
@@ -73,6 +69,10 @@ import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { RoutinePlayer } from '@/components/wellness/RoutinePlayer';
+import { movementExercises, mindfulnessPractices } from '@/data/exercises';
+import { communicationPractices } from '@/data/communication-practices';
+
+const allPractices = [...movementExercises, ...mindfulnessPractices, ...communicationPractices];
 
 function AmalgamatedAnalytics() {
   const { mealLogs, transactions } = useWellnessData();
@@ -195,11 +195,9 @@ function AmalgamatedAnalytics() {
 
 export default function CalendarPage() {
   const { 
-    activePlanIds, 
     customPlans, 
     deletedPresetIds, 
     planOrder,
-    togglePlan, 
     deletePlan, 
     resetDefaults, 
     activityInstances, 
@@ -249,17 +247,13 @@ export default function CalendarPage() {
     });
   }, [deletedPresetIds, customPlans, planOrder]);
 
-  const activePlans = useMemo(() => {
-    return availablePlans;
-  }, [availablePlans]);
-
   const getTasksForDate = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
     const dayOfWeek = date.getDay();
     const dayOfMonth = date.getDate();
     const instances = activityInstances[dateStr] || [];
     
-    const planTasks = activePlans.flatMap(plan => 
+    const planTasks = availablePlans.flatMap(plan => 
       plan.activities
         .filter(act => {
           if (act.recurrence === 'daily') return true;
@@ -365,7 +359,7 @@ export default function CalendarPage() {
     return [...planTasks, ...studyTasks, ...wellnessTasks];
   };
 
-  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, activePlans, activityInstances, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, entries]);
+  const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, availablePlans, activityInstances, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, entries]);
 
   const weekDays = useMemo(() => {
     const start = startOfWeek(selectedDate);
@@ -464,6 +458,14 @@ export default function CalendarPage() {
     }
   };
 
+  const handleQuickLogRoutine = (plan: CalendarPlan) => {
+    const ids = plan.activities.map(a => a.linkedTracker).filter(Boolean) as string[];
+    if (ids.length > 0) {
+      ids.forEach(id => logExerciseById(id));
+      toast({ title: "Routine Logged", description: `All ${ids.length} steps pushed to history.`, variant: 'success' });
+    }
+  };
+
   const handleStartTask = (task: any) => {
     if (task.linkedTracker) {
       setActiveRoutineName(task.name);
@@ -549,15 +551,23 @@ export default function CalendarPage() {
                       transition={{ type: "spring", stiffness: 100, damping: 20 }}
                     >
                       <Card className={cn(
-                        "transition-shadow relative group h-full", 
-                        "border-primary bg-primary/5 shadow-sm",
+                        "transition-all relative group h-full overflow-hidden", 
+                        "border-primary/5 hover:border-primary/20",
                         routinesView === 'list' && "flex items-center justify-between py-2 px-4"
                       )}>
                         {routinesView === 'grid' ? (
                           <>
-                            <CardHeader className="p-4 pb-2">
-                              <div className="flex justify-between items-start">
-                                <CardTitle className="text-sm font-bold pr-8">{plan.name}</CardTitle>
+                            <CardHeader className="bg-primary/5 p-4 pb-3">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-2">
+                                  <div className="p-2 bg-background rounded-lg border border-primary/10">
+                                    <Activity className="w-4 h-4 text-primary" />
+                                  </div>
+                                  <div>
+                                    <CardTitle className="text-sm font-black uppercase tracking-tight truncate pr-8">{plan.name}</CardTitle>
+                                    <p className="text-[10px] text-muted-foreground uppercase font-black">{plan.categories[0]}</p>
+                                  </div>
+                                </div>
                                 <div className="flex items-center gap-1">
                                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
                                     <ChevronUpSquare className="w-4 h-4" />
@@ -565,65 +575,96 @@ export default function CalendarPage() {
                                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
                                     <ChevronDownSquare className="w-4 h-4" />
                                   </Button>
-                                  <div className="w-px h-4 bg-border mx-1" />
-                                  <Badge variant="secondary" className="text-[8px] h-5 uppercase font-black">Active</Badge>
                                 </div>
                               </div>
-                              <CardDescription className="text-xs line-clamp-2">{plan.description}</CardDescription>
+                              <CardDescription className="text-xs line-clamp-2 leading-relaxed italic">"{plan.description}"</CardDescription>
                             </CardHeader>
                             
-                            {expandedPlanId === plan.id && (
-                              <CardContent className="p-4 pt-0 space-y-3 animate-in fade-in slide-in-from-top-1">
-                                <Separator className="opacity-20" />
-                                <div className="space-y-2">
-                                  {plan.activities.map((act) => (
-                                    <div key={act.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 border border-primary/5">
-                                      <div className="flex items-center gap-2">
-                                        <div className="w-1 h-3 rounded-full bg-primary/40" />
-                                        <div>
-                                          <p className="text-[10px] font-bold leading-none">{act.name}</p>
-                                          <p className="text-[8px] text-muted-foreground uppercase mt-1">{act.timeOfDay || 'Anytime'} • {act.duration}m</p>
+                            {expandedPlanId === plan.id ? (
+                              <CardContent className="p-4 space-y-4 animate-in fade-in slide-in-from-top-1 bg-background">
+                                <div className="space-y-3">
+                                  {plan.activities.map((act) => {
+                                    const practice = allPractices.find(p => p.id === act.linkedTracker);
+                                    return (
+                                      <div key={act.id} className="p-3 rounded-xl bg-muted/30 border border-primary/5 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-1 h-3 rounded-full bg-primary" />
+                                            <p className="text-xs font-bold">{act.name}</p>
+                                          </div>
+                                          <Badge variant="outline" className="text-[8px] h-4 uppercase">{act.duration}m</Badge>
                                         </div>
+                                        {practice && (
+                                          <div className="space-y-2 pl-3 border-l border-primary/10">
+                                            <div className="flex gap-2 items-start">
+                                              <Goal className="w-3 h-3 text-primary mt-0.5 shrink-0" />
+                                              <p className="text-[10px] text-muted-foreground leading-relaxed">{practice.intention}</p>
+                                            </div>
+                                            <div className="flex gap-2 items-start">
+                                              <Zap className="w-3 h-3 text-amber-500 mt-0.5 shrink-0" />
+                                              <p className="text-[10px] text-muted-foreground leading-relaxed italic">{practice.modifications[0]}</p>
+                                            </div>
+                                          </div>
+                                        )}
                                       </div>
-                                      <Badge variant="outline" className="text-[7px] h-3.5 uppercase font-black px-1.5">{act.recurrence}</Badge>
-                                    </div>
-                                  ))}
+                                    );
+                                  })}
                                 </div>
-                              </CardContent>
-                            )}
-
-                            <CardFooter className="p-4 pt-0 flex justify-between items-center mt-auto">
-                              <div className="flex gap-2 items-center">
-                                <Badge variant="outline" className="text-[9px] uppercase tracking-tighter">{plan.categories[0]}</Badge>
                                 <Button 
                                   variant="ghost" 
                                   size="sm" 
-                                  className="h-auto p-0 gap-1 text-[9px] text-muted-foreground uppercase font-black hover:text-primary transition-colors"
-                                  onClick={() => setExpandedPlanId(expandedPlanId === plan.id ? null : plan.id)}
+                                  className="w-full text-[9px] font-black uppercase"
+                                  onClick={() => setExpandedPlanId(null)}
                                 >
-                                  <List className="w-3 h-3" />
-                                  {plan.activities.length} Steps
-                                  {expandedPlanId === plan.id ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+                                  Collapse Protocol <ChevronUp className="ml-1 w-3 h-3" />
                                 </Button>
-                              </div>
-                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <AssistantTooltip text="Play this entire routine in sequence.">
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-primary" onClick={() => handleStartFullRoutine(plan)}>
-                                    <Play className="w-3.5 h-3.5 fill-current" />
-                                  </Button>
-                                </AssistantTooltip>
+                              </CardContent>
+                            ) : (
+                              <CardContent className="p-4 flex justify-between items-center bg-background/50">
+                                <div className="flex items-center gap-4 text-[10px] font-black uppercase text-muted-foreground tracking-tighter">
+                                  <span className="flex items-center gap-1.5"><LayoutGrid className="w-3 h-3" /> {plan.activities.length} Steps</span>
+                                  <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> ~{Math.round(plan.activities.reduce((s,a) => s+a.duration, 0))} Min</span>
+                                </div>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-7 text-[10px] font-black uppercase hover:bg-primary/5"
+                                  onClick={() => setExpandedPlanId(plan.id)}
+                                >
+                                  Protocol <ChevronDown className="ml-1 w-3 h-3" />
+                                </Button>
+                              </CardContent>
+                            )}
+
+                            <CardFooter className="p-4 flex gap-2 mt-auto border-t bg-muted/5">
+                              <Button 
+                                className="flex-1 font-bold h-10 gap-2 shadow-sm" 
+                                onClick={() => handleStartFullRoutine(plan)}
+                              >
+                                <Play className="w-4 h-4 fill-current" />
+                                Start
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                className="flex-1 font-bold h-10 gap-2 border-primary/10" 
+                                onClick={() => handleQuickLogRoutine(plan)}
+                              >
+                                <ClipboardCheck className="w-4 h-4" />
+                                Quick Log
+                              </Button>
+                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
                                 {!plan.isPreset && (
-                                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenBuilder(plan)}>
-                                    <Edit className="w-3.5 h-3.5" />
+                                  <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => handleOpenBuilder(plan)}>
+                                    <Edit className="w-4 h-4" />
                                   </Button>
                                 )}
                                 <Button 
                                   variant="ghost" 
                                   size="icon" 
-                                  className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                  className="h-10 w-10 text-muted-foreground hover:text-destructive"
                                   onClick={() => deletePlan(plan.id)}
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>
                             </CardFooter>
@@ -660,8 +701,11 @@ export default function CalendarPage() {
                               </Button>
                               
                               <div className="flex items-center gap-3">
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary opacity-0 group-hover:opacity-100" onClick={() => handleStartFullRoutine(plan)}>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleStartFullRoutine(plan)}>
                                   <Play className="w-4 h-4 fill-current" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleQuickLogRoutine(plan)}>
+                                  <ClipboardCheck className="w-4 h-4" />
                                 </Button>
                                 {!plan.isPreset && (
                                   <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleOpenBuilder(plan)}>
