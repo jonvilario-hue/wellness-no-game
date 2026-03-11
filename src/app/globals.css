@@ -52,6 +52,26 @@
     --success: 142.1 76.2% 36.3%;
     --warning: 38 92% 50%;
   }
+
+  /* Accessibility Overrides */
+  .high-contrast {
+    font-size: 105%; /* Subtle global increase */
+  }
+
+  .high-contrast * {
+    text-rendering: optimizeLegibility;
+  }
+
+  .high-contrast *:focus {
+    outline: 3px solid hsl(var(--primary)) !important;
+    outline-offset: 2px !important;
+    border-radius: 2px;
+  }
+
+  .high-contrast .border-dashed {
+    border-style: solid;
+    border-width: 2px;
+  }
 }
 
 @layer base {

@@ -1,10 +1,10 @@
 
 import type { LucideIcon } from 'lucide-react';
-import { Target, Zap, Waves, MemoryStick, Shield, Sword } from 'lucide-react';
+import { Target, Zap, Waves, MemoryStick, Shield, Sword, Wind, Moon } from 'lucide-react';
 import type { CHCDomain } from '@/types';
 
 export interface Theme {
-  key: 'focus' | 'energize' | 'reflect' | 'memory' | 'confidence' | 'challenge';
+  key: 'focus' | 'energize' | 'reflect' | 'memory' | 'confidence' | 'challenge' | 'calm' | 'rest';
   name: string;
   icon: LucideIcon;
   idealFor: string;
@@ -13,7 +13,7 @@ export interface Theme {
   colorScheme: {
     background: string; // HSL value string 'H S% L%'
     panels: string;     // HSL value string 'H S% L%'
-    tertiary: string;   // HSL value string 'H S% L%' (for nested surfaces/muted items)
+    tertiary: string;   // HSL value string 'H S% L%'
     textPrimary: string;// HSL value string 'H S% L%'
     textSecondary: string; // HSL value string 'H S% L%'
     accent: string;     // HSL value string 'H S% L%'
@@ -33,50 +33,50 @@ export const themes: Theme[] = [
     icon: Target,
     idealFor: 'Users easily distracted or with low sustained attention.',
     chcDomains: ['EF', 'Gs'],
-    scientificRationale: 'Uses a low-arousal, dark background with cool, soft highlights (blue/teal) to minimize cognitive interference and reduce visual strain.',
+    scientificRationale: 'Deep navy base with a single bright cyan accent minimizes peripheral distraction and reduces visual noise.',
     colorScheme: {
-      background: '220 20% 12%',
-      panels: '220 15% 18%',
-      tertiary: '220 15% 22%',
-      textPrimary: '210 20% 90%',
-      textSecondary: '210 15% 65%',
-      accent: '173 58% 50%',
-      accentForeground: '220 20% 12%',
+      background: '222 47% 11%',
+      panels: '222 47% 15%',
+      tertiary: '222 47% 20%',
+      textPrimary: '210 40% 98%',
+      textSecondary: '215 20% 65%',
+      accent: '191 91% 50%',
+      accentForeground: '222 47% 11%',
       success: '142 71% 45%',
       warning: '38 92% 50%',
       destructive: '0 84% 60%',
       isDark: true,
     },
     uxFeatures: [
-      'Subtle, slow-fade animations to avoid distraction.',
-      'Minimalist UI with hidden secondary controls.',
-      'Progress bars fill smoothly without strobing effects.'
+      'Stripped-down UI components.',
+      'Minimalist color variety.',
+      'Soft-fade focus transitions.'
     ]
   },
   {
     key: 'energize',
     name: 'Energize Mode',
     icon: Zap,
-    idealFor: 'Users training processing speed or needing activation.',
+    idealFor: 'High-speed processing tasks and morning sessions.',
     chcDomains: ['Gs', 'Gwm'],
-    scientificRationale: 'Employs a high-contrast light theme with bright, warm colors (yellow/orange) to increase arousal and alertness.',
+    scientificRationale: 'Utilizes higher saturation and electric yellow-green accents to increase physiological arousal and alertness.',
     colorScheme: {
-      background: '20 50% 98%',
-      panels: '0 0% 100%',
-      tertiary: '20 20% 94%',
-      textPrimary: '20 10% 20%',
-      textSecondary: '20 10% 45%',
-      accent: '38 92% 55%',
-      accentForeground: '0 0% 100%',
+      background: '240 10% 4%',
+      panels: '240 10% 8%',
+      tertiary: '240 10% 12%',
+      textPrimary: '0 0% 98%',
+      textSecondary: '240 5% 65%',
+      accent: '84 81% 44%',
+      accentForeground: '240 10% 4%',
       success: '142 71% 45%',
       warning: '38 92% 50%',
       destructive: '0 84% 60%',
-      isDark: false,
+      isDark: true,
     },
     uxFeatures: [
-      'Fast, snappy UI transitions and feedback.',
-      'Bright, electric green for success confirmations.',
-      'Gamified score counters with rapid increments.'
+      'Snappy, high-velocity animations.',
+      'High-saturation status indicators.',
+      'Rhythmic UI pulsing.'
     ]
   },
   {
@@ -85,98 +85,154 @@ export const themes: Theme[] = [
     icon: Waves,
     idealFor: 'Analytical, logic-driven users working on reasoning tasks.',
     chcDomains: ['Gf', 'Gc'],
-    scientificRationale: 'A low-stimulation, cool-toned environment supports deliberate, analytical thought (System 2 thinking).',
+    scientificRationale: 'Cool gray base with soft indigo tones creates a spacious environment for deliberate, System 2 thinking.',
     colorScheme: {
-      background: '220 20% 95%',
-      panels: '0 0% 100%',
-      tertiary: '220 10% 92%',
-      textPrimary: '220 25% 25%',
-      textSecondary: '220 15% 50%',
-      accent: '215 50% 55%',
-      accentForeground: '0 0% 100%',
+      background: '210 15% 15%',
+      panels: '210 15% 20%',
+      tertiary: '210 15% 25%',
+      textPrimary: '210 20% 95%',
+      textSecondary: '210 10% 60%',
+      accent: '226 70% 70%',
+      accentForeground: '210 15% 10%',
       success: '142 71% 45%',
       warning: '38 92% 50%',
       destructive: '0 84% 60%',
-      isDark: false,
+      isDark: true,
     },
     uxFeatures: [
-      'Generous spacing and clean typography for readability.',
-      'Feedback is explanatory and delayed to encourage self-correction.'
+      'Spacious padding and layout.',
+      'Soft steel-blue dividers.',
+      'Delayed, thoughtful feedback animations.'
     ]
   },
   {
     key: 'memory',
     name: 'Memory Mode',
     icon: MemoryStick,
-    idealFor: 'Associative thinkers, language learners, or memory boosters.',
+    idealFor: 'Associative thinkers and long-term encoding.',
     chcDomains: ['Gwm', 'Glr'],
-    scientificRationale: 'Utilizes a palette of purple, lavender, and cyan to encourage associative thinking, critical for long-term memory encoding.',
+    scientificRationale: 'Layered purple and warm amber accents stimulate associative neural pathways required for mnemonic forming.',
     colorScheme: {
-      background: '250 25% 15%',
-      panels: '250 20% 22%',
-      tertiary: '250 20% 28%',
-      textPrimary: '250 30% 92%',
-      textSecondary: '250 20% 70%',
-      accent: '190 70% 60%',
-      accentForeground: '250 25% 15%',
+      background: '260 25% 11%',
+      panels: '260 25% 16%',
+      tertiary: '260 25% 22%',
+      textPrimary: '260 30% 95%',
+      textSecondary: '260 15% 70%',
+      accent: '38 92% 50%',
+      accentForeground: '260 25% 11%',
       success: '142 71% 45%',
       warning: '38 92% 50%',
       destructive: '0 84% 60%',
       isDark: true,
     },
     uxFeatures: [
-      'Visual mnemonics or icons are paired with concepts.',
-      'UI layout encourages spatial relationships between items.'
+      'Depth-based shadow hierarchy.',
+      'Associative icon sets.',
+      'Muted lavender surfaces.'
     ]
   },
   {
     key: 'confidence',
     name: 'Confidence Mode',
     icon: Shield,
-    idealFor: 'Users with low motivation or low self-confidence.',
+    idealFor: 'For building momentum when motivation is low.',
     chcDomains: ['EF', 'Gwm'],
-    scientificRationale: 'Soft, warm, and positive colors (blush, gold, mint) create a non-threatening environment focusing on effort and progress.',
+    scientificRationale: 'Grounded warm gold and rich coral accents create an affirming environment that focuses on stability and small wins.',
     colorScheme: {
-      background: '30 80% 96%',
-      panels: '0 0% 100%',
-      tertiary: '30 40% 92%',
-      textPrimary: '25 35% 30%',
-      textSecondary: '25 25% 55%',
-      accent: '45 85% 60%',
-      accentForeground: '25 35% 30%',
+      background: '30 15% 10%',
+      panels: '30 15% 15%',
+      tertiary: '30 15% 20%',
+      textPrimary: '30 20% 95%',
+      textSecondary: '30 10% 65%',
+      accent: '45 93% 47%',
+      accentForeground: '30 15% 10%',
       success: '142 71% 45%',
       warning: '38 92% 50%',
-      destructive: '0 84% 60%',
-      isDark: false,
+      destructive: '15 80% 60%',
+      isDark: true,
     },
     uxFeatures: [
-      'Gentle, affirming feedback messages.',
-      '"Mistake-forgiveness" mechanic where early errors have lower penalties.'
+      'Affirming, warm highlights.',
+      'Grounded, high-contrast buttons.',
+      'Achievement-focused UI elements.'
     ]
   },
   {
     key: 'challenge',
     name: 'Challenge Mode',
     icon: Sword,
-    idealFor: 'High-performing, competitive users who want intensity.',
+    idealFor: 'High-performing users seeking maximum intensity.',
     chcDomains: ['Gf', 'EF'],
-    scientificRationale: 'Designed to induce high focus and intensity. High-contrast crimson and amber signal importance and achievement.',
+    scientificRationale: 'Near-black base with bold crimson accents induces a state of high-alert focus suitable for competitive training.',
     colorScheme: {
-      background: '0 0% 5%',
-      panels: '0 0% 10%',
-      tertiary: '0 0% 15%',
-      textPrimary: '0 0% 95%',
-      textSecondary: '0 0% 65%',
-      accent: '0 84% 60%',
-      accentForeground: '0 0% 98%',
+      background: '0 0% 2%',
+      panels: '0 0% 6%',
+      tertiary: '0 0% 10%',
+      textPrimary: '0 0% 98%',
+      textSecondary: '0 0% 60%',
+      accent: '0 100% 50%',
+      accentForeground: '0 0% 100%',
+      success: '142 71% 45%',
+      warning: '38 92% 50%',
+      destructive: '0 100% 40%',
+      isDark: true,
+    },
+    uxFeatures: [
+      'Extreme contrast ratios.',
+      'Sharp, high-impact indicators.',
+      'Glow-effect primary actions.'
+    ]
+  },
+  {
+    key: 'calm',
+    name: 'Calm Mode',
+    icon: Wind,
+    idealFor: 'For winding down, managing anxiety, or reducing overwhelm.',
+    chcDomains: ['Ga', 'Stillness' as any],
+    scientificRationale: 'Muted cool tones and low contrast levels reduce ocular and cognitive load, acting like a visual quiet room.',
+    colorScheme: {
+      background: '210 20% 96%',
+      panels: '210 20% 98%',
+      tertiary: '210 10% 94%',
+      textPrimary: '210 20% 30%',
+      textSecondary: '210 15% 50%',
+      accent: '200 30% 60%',
+      accentForeground: '210 20% 98%',
+      success: '160 40% 50%',
+      warning: '40 30% 60%',
+      destructive: '0 30% 60%',
+      isDark: false,
+    },
+    uxFeatures: [
+      'Low-contrast borders.',
+      'Desaturated accent palette.',
+      'Ambient, slow-drift transitions.'
+    ]
+  },
+  {
+    key: 'rest',
+    name: 'Rest Mode',
+    icon: Moon,
+    idealFor: 'For low-energy moments or late-night use.',
+    chcDomains: ['Sleep' as any, 'Recovery' as any],
+    scientificRationale: 'Warm charcoal foundations with firelight-inspired accents protect circadian rhythms by minimizing blue light exposure.',
+    colorScheme: {
+      background: '0 0% 8%',
+      panels: '0 0% 12%',
+      tertiary: '0 0% 16%',
+      textPrimary: '40 30% 90%',
+      textSecondary: '40 10% 60%',
+      accent: '35 80% 60%',
+      accentForeground: '0 0% 8%',
       success: '142 71% 45%',
       warning: '38 92% 50%',
       destructive: '0 84% 60%',
       isDark: true,
     },
     uxFeatures: [
-      'High-glow, impactful feedback for correct answers.',
-      'Visible leaderboards or performance percentile rankings.'
+      'Warm-spectrum highlights.',
+      'Off-white cream typography.',
+      'Minimal high-arousal motion.'
     ]
   }
 ];
