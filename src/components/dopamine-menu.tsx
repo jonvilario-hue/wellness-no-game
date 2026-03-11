@@ -125,7 +125,7 @@ export function DopamineMenu() {
                             <>
                                 <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('numb'); setTriageStep(3); }}>Blank / Empty</Button>
                                 <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('mentally-foggy'); setTriageStep(3); }}>Cloudy / Slow</Button>
-                                <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('physically-tired'); setTriageStep(3); }}>My body hurts or is exhausted</Button>
+                                <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('physically-tired'); setTriageStep(3); }}>My body just hurts or is exhausted</Button>
                             </>
                         ) : (
                             <>
