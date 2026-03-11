@@ -26,6 +26,7 @@ interface CalendarPlansState {
   
   // Tally Actions
   incrementTally: (date: string, planId: string) => void;
+  decrementTally: (date: string, planId: string) => void;
   resetTally: (date: string, planId: string) => void;
 
   // Sorting
@@ -100,6 +101,29 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
           routineTallies: {
             ...state.routineTallies,
             [date]: { ...dayTallies, [planId]: current + 1 }
+          }
+        };
+      }),
+
+      decrementTally: (date, planId) => set(state => {
+        const dayTallies = state.routineTallies[date] || {};
+        const current = dayTallies[planId] || 0;
+        
+        if (current <= 1) {
+          const newDayTallies = { ...dayTallies };
+          delete newDayTallies[planId];
+          return {
+            routineTallies: {
+              ...state.routineTallies,
+              [date]: newDayTallies
+            }
+          };
+        }
+
+        return {
+          routineTallies: {
+            ...state.routineTallies,
+            [date]: { ...dayTallies, [planId]: current - 1 }
           }
         };
       }),

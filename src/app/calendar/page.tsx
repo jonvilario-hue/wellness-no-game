@@ -208,6 +208,7 @@ export default function CalendarPage() {
     updateCustomPlan,
     reorderPlan,
     incrementTally,
+    decrementTally,
     resetTally,
     _hasHydrated 
   } = useCalendarPlansStore();
@@ -307,7 +308,7 @@ export default function CalendarPage() {
         status: 'completed' as ActivityStatus,
         instanceId: `tally-${planId}-${dStr}`,
         canDelete: true,
-        onDelete: () => resetTally(dStr, planId),
+        onDelete: () => decrementTally(dStr, planId),
         tally: count
       };
     }).filter(Boolean) as any[];
@@ -402,7 +403,7 @@ export default function CalendarPage() {
     ];
 
     return [...planTasks, ...tallyTasks, ...studyTasks, ...wellnessTasks];
-  }, [availablePlans, activityInstances, routineTallies, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries, deleteActivityInstance, deleteMovementLog, deleteStillnessLog, deleteCommunicationLog, deleteMealLog, deleteTransaction, resetTally]);
+  }, [availablePlans, activityInstances, routineTallies, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries, deleteActivityInstance, deleteMovementLog, deleteStillnessLog, deleteCommunicationLog, deleteMealLog, deleteTransaction, decrementTally]);
 
   const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, getTasksForDate]);
 
@@ -593,12 +594,12 @@ export default function CalendarPage() {
 
                           <div className="flex items-center gap-2">
                             {isDone && (
-                              <AssistantTooltip text="Reset daily tally">
+                              <AssistantTooltip text="Remove one tally instance">
                                 <Button 
                                   variant="ghost" 
                                   size="icon" 
                                   className="h-8 w-8 text-muted-foreground"
-                                  onClick={() => resetTally(dateStr, plan.id)}
+                                  onClick={() => decrementTally(dateStr, plan.id)}
                                 >
                                   <RotateCcw className="w-3.5 h-3.5" />
                                 </Button>
