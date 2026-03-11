@@ -55,6 +55,14 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { PlanCategory, CalendarPlan, ActivityStatus, PlanActivity } from '@/types/calendar-plans';
 import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from '@/hooks/use-wellness-data';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
@@ -80,7 +88,7 @@ function AmalgamatedAnalytics() {
     const now = new Date();
     for (let i = 13; i >= 0; i--) {
       const date = subDays(now, i);
-      const dStr = format(date, 'yyyy-MM-0dd');
+      const dStr = format(date, 'yyyy-MM-dd');
       
       const count = 
         (movementLogs?.filter(l => l.timestamp.startsWith(dStr)).length || 0) +
@@ -193,11 +201,14 @@ export default function CalendarPage() {
     deletePlan, 
     resetDefaults, 
     activityInstances, 
+    routineTallies,
     updateActivityStatus,
     addCustomPlan,
     updateCustomPlan,
     reorderPlan,
     addAdHocActivity,
+    incrementTally,
+    resetTally,
     _hasHydrated 
   } = useCalendarPlansStore();
 
@@ -220,6 +231,8 @@ export default function CalendarPage() {
   const [selectedCategories, setSelectedCategories] = useState<PlanCategory[]>([]);
   const [newActivities, setNewActivities] = useState<PlanActivity[]>([]);
 
+  const dateStr = useMemo(() => format(selectedDate, 'yyyy-MM-dd'), [selectedDate]);
+
   const availablePlans = useMemo(() => {
     const presets = presetPlans.filter(p => !deletedPresetIds.includes(p.id));
     const all = [...presets, ...customPlans];
@@ -237,10 +250,10 @@ export default function CalendarPage() {
   }, [deletedPresetIds, customPlans, planOrder]);
 
   const getTasksForDate = useCallback((date: Date) => {
-    const dateStr = format(date, 'yyyy-MM-dd');
+    const dStr = format(date, 'yyyy-MM-dd');
     const dayOfWeek = date.getDay();
     const dayOfMonth = date.getDate();
-    const instances = activityInstances[dateStr] || [];
+    const instances = activityInstances[dStr] || [];
     
     const planTasks = availablePlans.flatMap(plan => 
       plan.activities
@@ -263,7 +276,7 @@ export default function CalendarPage() {
             planName: plan.name,
             planColor: plan.color,
             status: existing?.status || 'not-started',
-            instanceId: existing?.id || `v-${plan.id}-${act.id}-${dateStr}`,
+            instanceId: existing?.id || `v-${plan.id}-${act.id}-${dStr}`,
             linkedTracker: act.linkedTracker
           };
         })
@@ -437,22 +450,9 @@ export default function CalendarPage() {
     );
   };
 
-  const handleQuickLogRoutine = (plan: CalendarPlan) => {
-    const ids = plan.activities.map(a => a.linkedTracker).filter(Boolean) as string[];
-    if (ids.length > 0) {
-      ids.forEach(id => logExerciseById(id));
-      toast({ title: "Routine Logged", description: `All ${ids.length} steps pushed to history.`, variant: 'success' });
-    } else {
-      toast({ title: "Check-in logged", description: `"${plan.name}" completed.` });
-    }
-  };
-
-  const handleQuickLog = (task: any) => {
-    if (task.linkedTracker) {
-      logExerciseById(task.linkedTracker);
-      updateActivityStatus(format(selectedDate, 'yyyy-MM-dd'), task.instanceId, 'completed');
-      toast({ title: "Quick Log Successful", description: `${task.name} metrics synced to history.` });
-    }
+  const handleLogRoutine = (planId: string) => {
+    incrementTally(dateStr, planId);
+    toast({ title: "Routine Logged", description: "Progress updated for today.", variant: 'success' });
   };
 
   if (!_hasHydrated) return null;
@@ -491,114 +491,99 @@ export default function CalendarPage() {
             </div>
             
             <CollapsibleContent>
-              <div className="space-y-4 pb-10">
+              <div className="space-y-2 pb-10">
                 <AnimatePresence mode="popLayout">
-                  {availablePlans.map((plan, index) => (
-                    <motion.div
-                      key={plan.id}
-                      layout
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ type: "spring", stiffness: 80, damping: 25 }}
-                    >
-                      <Card className="border-primary/5 hover:border-primary/10 transition-all overflow-hidden shadow-sm">
-                        <div className="flex flex-col md:flex-row">
-                          {/* Routine Info Row */}
-                          <div className="flex-1 p-4 bg-muted/30 border-b md:border-b-0 md:border-r border-primary/5">
-                            <div className="flex justify-between items-start mb-3">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-3">
-                                  <div className="p-2 bg-background rounded-lg border border-primary/10">
-                                    <Activity className="w-4 h-4 text-primary" />
-                                  </div>
-                                  <h3 className="text-lg font-black uppercase tracking-tight">{plan.name}</h3>
-                                </div>
-                                <p className="text-xs text-muted-foreground italic line-clamp-2 pl-11">"{plan.description}"</p>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
-                                  <ChevronUpSquare className="w-4 h-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
-                                  <ChevronDownSquare className="w-4 h-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleOpenBuilder(plan)}>
-                                  <Edit className="w-4 h-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => deletePlan(plan.id)}>
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
+                  {availablePlans.map((plan, index) => {
+                    const tally = (routineTallies[dateStr] || {})[plan.id] || 0;
+                    const isDone = tally > 0;
+
+                    return (
+                      <motion.div
+                        key={plan.id}
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                      >
+                        <div className="flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-card hover:bg-muted/30 transition-all group">
+                          <div className="flex items-center gap-4 min-w-0">
+                            <div className={cn(
+                              "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all",
+                              isDone ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/20 text-muted-foreground/40"
+                            )}>
+                              {isDone ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-4 h-4" />}
                             </div>
-                            <div className="pl-11 flex gap-2">
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                className="h-8 font-black uppercase text-[10px] gap-2 border-primary/20 hover:bg-primary/5" 
-                                onClick={() => handleQuickLogRoutine(plan)}
-                              >
-                                <CheckCircle2 className="w-3.5 h-3.5" />
-                                Log Full Routine
-                              </Button>
-                              <AssistantTooltip text="Add one instance to today's agenda">
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="h-8 font-black uppercase text-[10px] gap-2 hover:bg-primary/10"
-                                  onClick={() => {
-                                    addAdHocActivity(format(selectedDate, 'yyyy-MM-dd'), {
-                                      planId: 'manual',
-                                      activityName: plan.name,
-                                      category: plan.categories[0] as any
-                                    });
-                                    toast({ title: "Routine added to agenda." });
-                                  }}
-                                >
-                                  <Plus className="w-3.5 h-3.5" /> Schedule
-                                </Button>
-                              </AssistantTooltip>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className={cn("text-sm font-bold truncate", isDone && "text-primary")}>{plan.name}</span>
+                                {tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{tally}</Badge>}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest truncate">{plan.categories.join(' • ')}</p>
                             </div>
                           </div>
 
-                          {/* Task List Row */}
-                          <div className="flex-[1.5] p-4 bg-card">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {plan.activities.map((act) => (
-                                <div key={act.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-primary/5 group/act hover:border-primary/20 transition-all">
-                                  <div className="min-w-0">
-                                    <p className="text-sm font-bold truncate">{act.name}</p>
-                                    <p className="text-[9px] text-muted-foreground uppercase font-black">{act.duration}m • {act.category}</p>
-                                  </div>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    className="h-8 px-4 font-black uppercase text-[9px] border border-transparent hover:border-primary/20 group-hover/act:bg-primary/5"
-                                    onClick={() => handleQuickLog({ ...act, linkedTracker: act.linkedTracker, instanceId: `manual-${act.id}` })}
-                                  >
-                                    <Zap className="w-3 h-3 mr-1.5 fill-current" />
-                                    Log
-                                  </Button>
-                                </div>
-                              ))}
-                            </div>
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              size="sm" 
+                              className="h-8 gap-2 font-black uppercase text-[10px] px-4" 
+                              onClick={() => handleLogRoutine(plan.id)}
+                            >
+                              <Zap className="w-3 h-3 fill-current" />
+                              Log
+                            </Button>
+                            
+                            {isDone && (
+                              <AssistantTooltip text="Reset daily tally">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-muted-foreground"
+                                  onClick={() => resetTally(dateStr, plan.id)}
+                                >
+                                  <RotateCcw className="w-3.5 h-3.5" />
+                                </Button>
+                              </AssistantTooltip>
+                            )}
+
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <MoreHorizontal className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Routine Management</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
+                                  <ChevronUpSquare className="w-4 h-4 mr-2" /> Move Up
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
+                                  <ChevronDownSquare className="w-4 h-4 mr-2" /> Move Down
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleOpenBuilder(plan)}>
+                                  <Edit className="w-4 h-4 mr-2" /> Edit Configuration
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="text-destructive" onClick={() => deletePlan(plan.id)}>
+                                  <Trash2 className="w-4 h-4 mr-2" /> Delete Routine
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                         </div>
-                      </Card>
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    );
+                  })}
                   
-                  <motion.div key="add-plan-row" layout transition={{ type: "spring", stiffness: 80, damping: 25 }}>
-                    <Card 
-                      className="border-dashed cursor-pointer hover:bg-primary/[0.02] flex items-center justify-center transition-colors p-6 text-center h-24"
+                  <motion.div key="add-plan-row" layout>
+                    <button 
+                      className="w-full p-4 border border-dashed border-primary/10 rounded-xl hover:bg-primary/[0.02] flex items-center justify-center gap-3 transition-colors text-muted-foreground hover:text-primary"
                       onClick={() => handleOpenBuilder()}
                     >
-                      <PlusCircle className="text-primary w-6 h-6 mr-3" />
-                      <div className="text-left">
-                        <p className="text-sm font-bold">Initialize New Routine</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Map an automated sequence to your calendar</p>
-                      </div>
-                    </Card>
+                      <PlusCircle className="w-5 h-5" />
+                      <span className="text-xs font-bold uppercase tracking-widest">Initialize New Routine</span>
+                    </button>
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -767,7 +752,13 @@ export default function CalendarPage() {
                                         size="sm" 
                                         variant="outline"
                                         className="rounded-full gap-2 h-10 px-6 font-bold"
-                                        onClick={() => handleQuickLog(task)}
+                                        onClick={() => {
+                                          if (task.linkedTracker) {
+                                            logExerciseById(task.linkedTracker);
+                                            updateActivityStatus(dateStr, task.instanceId, 'completed');
+                                            toast({ title: "Quick Log Successful", description: `${task.name} metrics synced to history.` });
+                                          }
+                                        }}
                                       >
                                         <ClipboardCheck className="w-4 h-4 text-primary" />
                                         Quick Log

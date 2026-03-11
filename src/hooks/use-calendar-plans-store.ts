@@ -12,6 +12,7 @@ interface CalendarPlansState {
   deletedPresetIds: string[]; // Track which preset plans the user has "deleted"
   planOrder: string[]; // List of IDs to maintain manual sorting
   activityInstances: Record<string, CalendarActivityInstance[]>; // key: YYYY-MM-DD
+  routineTallies: Record<string, Record<string, number>>; // date -> { planId -> count }
   
   togglePlan: (planId: string) => void;
   deletePlan: (planId: string) => void;
@@ -22,6 +23,10 @@ interface CalendarPlansState {
   syncFromTracker: (category: PlanCategory, activityName: string) => { matched: boolean; instanceId?: string };
   addAdHocActivity: (date: string, activity: Partial<CalendarActivityInstance>) => void;
   
+  // Tally Actions
+  incrementTally: (date: string, planId: string) => void;
+  resetTally: (date: string, planId: string) => void;
+
   // Sorting
   reorderPlan: (planId: string, direction: 'up' | 'down') => void;
 
@@ -41,6 +46,7 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
       deletedPresetIds: [],
       planOrder: [],
       activityInstances: {},
+      routineTallies: {},
       _hasHydrated: false,
 
       setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -85,6 +91,29 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
           customPlans: state.customPlans.map(p => p.id === planId ? { ...p, ...updates } : p)
         }));
       },
+
+      incrementTally: (date, planId) => set(state => {
+        const dayTallies = state.routineTallies[date] || {};
+        const current = dayTallies[planId] || 0;
+        return {
+          routineTallies: {
+            ...state.routineTallies,
+            [date]: { ...dayTallies, [planId]: current + 1 }
+          }
+        };
+      }),
+
+      resetTally: (date, planId) => set(state => {
+        const dayTallies = state.routineTallies[date] || {};
+        const newDayTallies = { ...dayTallies };
+        delete newDayTallies[planId];
+        return {
+          routineTallies: {
+            ...state.routineTallies,
+            [date]: newDayTallies
+          }
+        };
+      }),
 
       reorderPlan: (planId, direction) => {
         const { planOrder } = get();
@@ -218,7 +247,7 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
       }
     }),
     {
-      name: 'calendar-plans-storage-v4',
+      name: 'calendar-plans-storage-v5',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) {
