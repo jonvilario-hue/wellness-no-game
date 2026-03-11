@@ -203,16 +203,26 @@ export default function CalendarPage() {
     activityInstances, 
     routineTallies,
     updateActivityStatus,
+    deleteActivityInstance,
     addCustomPlan,
     updateCustomPlan,
     reorderPlan,
-    addAdHocActivity,
     incrementTally,
     resetTally,
     _hasHydrated 
   } = useCalendarPlansStore();
 
-  const { logExerciseById, mealLogs, transactions } = useWellnessData();
+  const { 
+    logExerciseById, 
+    deleteMovementLog, 
+    deleteStillnessLog, 
+    deleteCommunicationLog, 
+    deleteMealLog, 
+    deleteTransaction,
+    mealLogs, 
+    transactions 
+  } = useWellnessData();
+  
   const movementLogs = useMovementLogs();
   const stillnessLogs = useStillnessLogs();
   const communicationLogs = useCommunicationLogs();
@@ -277,7 +287,9 @@ export default function CalendarPage() {
             planColor: plan.color,
             status: existing?.status || 'not-started',
             instanceId: existing?.id || `v-${plan.id}-${act.id}-${dStr}`,
-            linkedTracker: act.linkedTracker
+            linkedTracker: act.linkedTracker,
+            canDelete: !!existing,
+            onDelete: existing ? () => deleteActivityInstance(dStr, existing.id) : undefined
           };
         })
     );
@@ -292,7 +304,9 @@ export default function CalendarPage() {
       instanceId: inst.id,
       scheduledTime: inst.scheduledTime,
       studyToolId: inst.studyToolId,
-      studyResourceId: inst.studyResourceId
+      studyResourceId: inst.studyResourceId,
+      canDelete: true,
+      onDelete: () => deleteActivityInstance(dStr, inst.id)
     }));
 
     const wellnessTasks = [
@@ -304,7 +318,9 @@ export default function CalendarPage() {
         planColor: 'hsl(var(--primary))',
         status: 'completed' as ActivityStatus,
         instanceId: l.id,
-        icon: HeartPulse
+        icon: HeartPulse,
+        canDelete: true,
+        onDelete: () => deleteMovementLog(l.id)
       })),
       ...(stillnessLogs?.filter(l => isSameDay(new Date(l.timestamp), date)) || []).map(l => ({
         id: l.id,
@@ -314,7 +330,9 @@ export default function CalendarPage() {
         planColor: '#60a5fa',
         status: 'completed' as ActivityStatus,
         instanceId: l.id,
-        icon: Waves
+        icon: Waves,
+        canDelete: true,
+        onDelete: () => deleteStillnessLog(l.id)
       })),
       ...(communicationLogs?.filter(l => isSameDay(new Date(l.timestamp), date)) || []).map(l => ({
         id: l.id,
@@ -324,7 +342,9 @@ export default function CalendarPage() {
         planColor: '#a855f7',
         status: 'completed' as ActivityStatus,
         instanceId: l.id,
-        icon: MessageSquare
+        icon: MessageSquare,
+        canDelete: true,
+        onDelete: () => deleteCommunicationLog(l.id)
       })),
       ...(mealLogs?.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)) || []).map(l => ({
         id: l.id,
@@ -334,7 +354,9 @@ export default function CalendarPage() {
         planColor: '#fb923c',
         status: 'completed' as ActivityStatus,
         instanceId: l.id,
-        icon: Utensils
+        icon: Utensils,
+        canDelete: true,
+        onDelete: () => deleteMealLog(l.id)
       })),
       ...(transactions?.filter(l => isSameDay(new Date(l.date + 'T12:00:00'), date)) || []).map(l => ({
         id: l.id,
@@ -344,7 +366,9 @@ export default function CalendarPage() {
         planColor: '#22c55e',
         status: 'completed' as ActivityStatus,
         instanceId: l.id,
-        icon: Wallet
+        icon: Wallet,
+        canDelete: true,
+        onDelete: () => deleteTransaction(l.id)
       })),
       ...(entries?.filter(e => isSameDay(new Date(e.displayDate || e.date + 'T12:00:00'), date)) || []).map(e => ({
         id: e.id,
@@ -354,12 +378,13 @@ export default function CalendarPage() {
         planColor: '#6b7280',
         status: 'completed' as ActivityStatus,
         instanceId: e.id,
-        icon: BookMarked
+        icon: BookMarked,
+        canDelete: false // Deleting journal entries is more complex
       }))
     ];
 
     return [...planTasks, ...studyTasks, ...wellnessTasks];
-  }, [availablePlans, activityInstances, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries]);
+  }, [availablePlans, activityInstances, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries, deleteActivityInstance, deleteMovementLog, deleteStillnessLog, deleteCommunicationLog, deleteMealLog, deleteTransaction]);
 
   const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, getTasksForDate]);
 
@@ -452,7 +477,6 @@ export default function CalendarPage() {
 
   const handleLogRoutine = (planId: string) => {
     incrementTally(dateStr, planId);
-    // Silent update: removed toast as per user request
   };
 
   if (!_hasHydrated) return null;
@@ -663,7 +687,14 @@ export default function CalendarPage() {
                                     <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
                                   </div>
                                 </div>
-                                {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+                                <div className="flex items-center gap-2">
+                                  {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+                                  {task.canDelete && (
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => { e.stopPropagation(); task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -767,6 +798,11 @@ export default function CalendarPage() {
                                   </div>
                                 )}
                                 {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+                                {task.canDelete && (
+                                  <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => { task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
+                                    <Trash2 className="w-5 h-5" />
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           ))}

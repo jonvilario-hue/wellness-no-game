@@ -20,6 +20,7 @@ interface CalendarPlansState {
   addCustomPlan: (plan: CalendarPlan) => void;
   updateCustomPlan: (planId: string, updates: Partial<CalendarPlan>) => void;
   updateActivityStatus: (date: string, instanceId: string, status: ActivityStatus, source?: string) => void;
+  deleteActivityInstance: (date: string, instanceId: string) => void;
   syncFromTracker: (category: PlanCategory, activityName: string) => { matched: boolean; instanceId?: string };
   addAdHocActivity: (date: string, activity: Partial<CalendarActivityInstance>) => void;
   
@@ -156,6 +157,18 @@ export const useCalendarPlansStore = create<CalendarPlansState>()(
             activityInstances: {
               ...state.activityInstances,
               [date]: updatedInstances
+            }
+          };
+        });
+      },
+
+      deleteActivityInstance: (date, instanceId) => {
+        set((state) => {
+          const dayInstances = state.activityInstances[date] || [];
+          return {
+            activityInstances: {
+              ...state.activityInstances,
+              [date]: dayInstances.filter(inst => inst.id !== instanceId)
             }
           };
         });
