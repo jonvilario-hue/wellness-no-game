@@ -566,15 +566,6 @@ export default function CalendarPage() {
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <Button 
-                              size="sm" 
-                              className="h-8 gap-2 font-black uppercase text-[10px] px-4" 
-                              onClick={() => handleLogRoutine(plan.id)}
-                            >
-                              <Zap className="w-3 h-3 fill-current" />
-                              Log
-                            </Button>
-                            
                             {isDone && (
                               <AssistantTooltip text="Reset daily tally">
                                 <Button 
@@ -588,6 +579,40 @@ export default function CalendarPage() {
                               </AssistantTooltip>
                             )}
 
+                            <Button 
+                              size="sm" 
+                              className="h-8 gap-2 font-black uppercase text-[10px] px-4" 
+                              onClick={() => handleLogRoutine(plan.id)}
+                            >
+                              <Zap className="w-3 h-3 fill-current" />
+                              Log
+                            </Button>
+                            
+                            <div className="flex items-center ml-2 border-l border-primary/5 pl-2 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <AssistantTooltip text="Move Up">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-7 w-7" 
+                                  onClick={() => reorderPlan(plan.id, 'up')} 
+                                  disabled={index === 0}
+                                >
+                                  <ChevronUpSquare className="w-4 h-4" />
+                                </Button>
+                              </AssistantTooltip>
+                              <AssistantTooltip text="Move Down">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-7 w-7" 
+                                  onClick={() => reorderPlan(plan.id, 'down')} 
+                                  disabled={index === availablePlans.length - 1}
+                                >
+                                  <ChevronDownSquare className="w-4 h-4" />
+                                </Button>
+                              </AssistantTooltip>
+                            </div>
+
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -595,14 +620,8 @@ export default function CalendarPage() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Routine Management</DropdownMenuLabel>
+                                <DropdownMenuLabel>Options</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => reorderPlan(plan.id, 'up')} disabled={index === 0}>
-                                  <ChevronUpSquare className="w-4 h-4 mr-2" /> Move Up
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => reorderPlan(plan.id, 'down')} disabled={index === availablePlans.length - 1}>
-                                  <ChevronDownSquare className="w-4 h-4 mr-2" /> Move Down
-                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleOpenBuilder(plan)}>
                                   <Edit className="w-4 h-4 mr-2" /> Edit Configuration
                                 </DropdownMenuItem>
