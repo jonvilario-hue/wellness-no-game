@@ -283,6 +283,7 @@ export default function CalendarPage() {
           const existing = instances.find(i => i.activityId === act.id);
           return {
             ...act,
+            name: plan.name, // Uniform name matching the routine list title
             planName: plan.name,
             planColor: plan.color,
             status: existing?.status || 'not-started',
@@ -293,6 +294,22 @@ export default function CalendarPage() {
           };
         })
     );
+
+    const tallyTasks = Object.entries(routineTallies[dStr] || {}).map(([planId, count]) => {
+      const plan = availablePlans.find(p => p.id === planId);
+      if (!plan) return null;
+      return {
+        id: `tally-${planId}-${dStr}`,
+        name: plan.name,
+        category: (plan.categories && plan.categories[0]) || 'Custom',
+        planName: plan.name,
+        planColor: plan.color,
+        status: 'completed' as ActivityStatus,
+        instanceId: `tally-${planId}-${dStr}`,
+        canDelete: true,
+        onDelete: () => resetTally(dStr, planId)
+      };
+    }).filter(Boolean) as any[];
 
     const studyTasks = instances.filter(inst => inst.planId === 'study-sessions').map(inst => ({
       id: inst.activityId,
@@ -379,12 +396,12 @@ export default function CalendarPage() {
         status: 'completed' as ActivityStatus,
         instanceId: e.id,
         icon: BookMarked,
-        canDelete: false // Deleting journal entries is more complex
+        canDelete: false
       }))
     ];
 
-    return [...planTasks, ...studyTasks, ...wellnessTasks];
-  }, [availablePlans, activityInstances, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries, deleteActivityInstance, deleteMovementLog, deleteStillnessLog, deleteCommunicationLog, deleteMealLog, deleteTransaction]);
+    return [...planTasks, ...tallyTasks, ...studyTasks, ...wellnessTasks];
+  }, [availablePlans, activityInstances, routineTallies, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries, deleteActivityInstance, deleteMovementLog, deleteStillnessLog, deleteCommunicationLog, deleteMealLog, deleteTransaction, resetTally]);
 
   const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, getTasksForDate]);
 
