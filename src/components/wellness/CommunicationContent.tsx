@@ -140,7 +140,6 @@ export default function CommunicationContent() {
             const practices = filteredPractices.filter(p => p.category === category);
             const details = communicationCategoryDetails[category];
             if (!details) return null;
-            const isOpen = openCategories.includes(category);
 
             return (
               <AccordionItem 
@@ -151,55 +150,48 @@ export default function CommunicationContent() {
                   practices.length === 0 && "opacity-40"
                 )}
               >
-                <AccordionTrigger className="hover:no-underline px-1 py-4 items-start">
-                  <div className="flex flex-col w-full text-left">
-                    <div className="flex items-center gap-4">
-                      <div className="p-2 bg-primary/10 rounded-lg shrink-0">
-                        <details.icon className="w-5 h-5 text-primary" />
+                <AccordionTrigger className="hover:no-underline px-1 py-4 items-center">
+                  <div className="flex items-center gap-4 text-left">
+                    <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                      <details.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-bold uppercase tracking-tight">
+                          {details.title}
+                        </h3>
+                        <Badge variant="secondary" className="text-[10px] h-4 py-0">
+                          {practices.length}
+                        </Badge>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold uppercase tracking-tight">
-                            {details.title}
-                          </h3>
-                          <Badge variant="secondary" className="text-[10px] h-4 py-0">
-                            {practices.length}
-                          </Badge>
-                        </div>
-                        {!isOpen && (
-                          <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
-                        )}
-                        
-                        {isOpen && (
-                          <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-1 duration-300 pr-8">
-                            <p className="text-xs text-muted-foreground leading-relaxed">{details.purpose}</p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                              <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Use When:</p>
-                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
-                                  {details.useWhen.map((item, i) => (
-                                    <li key={i}>{item}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Includes:</p>
-                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
-                                  {details.includes.map((item, i) => (
-                                    <li key={i}>{item}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            </div>
-                            <p className="text-xs italic text-primary mt-2">“{details.tagline}”</p>
-                          </div>
-                        )}
-                      </div>
+                      <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
                     </div>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="pt-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <AccordionContent className="pt-0">
+                  <div className="mb-8 p-4 bg-primary/[0.02] border-b border-primary/5 space-y-4 animate-in fade-in duration-500">
+                    <p className="text-xs text-muted-foreground leading-relaxed">{details.purpose}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Use When:</p>
+                        <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                          {details.useWhen.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Includes:</p>
+                        <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                          {details.includes.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
                     {practices.map((practice) => (
                       <div key={practice.id} id={`practice-${practice.id}`} className="scroll-mt-32">
                         <PracticeInstructionCard 

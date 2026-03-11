@@ -185,55 +185,47 @@ export default function SpeedReadingContent() {
         }}>
           {DRILLS.map((drill) => {
             const details = speedReadingCategoryDetails[drill.id];
-            const isOpen = openCategories.includes(drill.id);
             return (
               <AccordionItem key={drill.id} value={drill.id} className="border-b border-primary/5">
-                <AccordionTrigger className="hover:no-underline px-1 py-4 items-start">
-                  <div className="flex flex-col w-full text-left">
-                    <div className="flex items-center gap-4">
-                      <div className="p-2 bg-primary/10 rounded-lg shrink-0">
-                        <drill.icon className="w-5 h-5 text-primary" />
+                <AccordionTrigger className="hover:no-underline px-1 py-4 items-center">
+                  <div className="flex items-center gap-4 text-left">
+                    <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                      <drill.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-bold uppercase tracking-tight">
+                          {drill.title}
+                        </h3>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold uppercase tracking-tight">
-                            {drill.title}
-                          </h3>
-                        </div>
-                        {!isOpen && (
-                          <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
-                        )}
-                        
-                        {isOpen && (
-                          <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-1 duration-300 pr-8">
-                            <p className="text-xs text-muted-foreground leading-relaxed">{details.purpose}</p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                              <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Use When:</p>
-                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
-                                  {details.useWhen.map((item, i) => (
-                                    <li key={i}>{item}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Includes:</p>
-                                <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
-                                  {details.includes.map((item, i) => (
-                                    <li key={i}>{item}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            </div>
-                            <p className="text-xs italic text-primary mt-2">“{details.tagline}”</p>
-                          </div>
-                        )}
-                      </div>
+                      <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
                     </div>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="pt-4">
-                  <div className="space-y-2">
+                <AccordionContent className="pt-0">
+                  <div className="mb-8 p-4 bg-primary/[0.02] border-b border-primary/5 space-y-4 animate-in fade-in duration-500">
+                    <p className="text-xs text-muted-foreground leading-relaxed">{details.purpose}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Use When:</p>
+                        <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                          {details.useWhen.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Includes:</p>
+                        <ul className="list-disc list-inside text-[10px] text-muted-foreground space-y-0.5">
+                          {details.includes.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pb-4">
                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Available Passages</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {filteredPassages.length === 0 ? (
