@@ -549,9 +549,35 @@ export default function CalendarPage() {
                         transition={{ type: "spring", stiffness: 100, damping: 20 }}
                       >
                         <div className="flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-card hover:bg-muted/30 transition-all group">
-                          <div className="flex items-center gap-4 min-w-0">
+                          <div className="flex items-center gap-3 min-w-0">
+                            {/* Reorder Arrows on the left of the status squares */}
+                            <div className="flex flex-col items-center -ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <AssistantTooltip text="Move Up">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-5 w-5 text-muted-foreground hover:text-primary" 
+                                  onClick={() => reorderPlan(plan.id, 'up')} 
+                                  disabled={index === 0}
+                                >
+                                  <ChevronUp className="w-3 h-3" />
+                                </Button>
+                              </AssistantTooltip>
+                              <AssistantTooltip text="Move Down">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-5 w-5 text-muted-foreground hover:text-primary" 
+                                  onClick={() => reorderPlan(plan.id, 'down')} 
+                                  disabled={index === availablePlans.length - 1}
+                                >
+                                  <ChevronDown className="w-3 h-3" />
+                                </Button>
+                              </AssistantTooltip>
+                            </div>
+
                             <div className={cn(
-                              "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all",
+                              "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all shrink-0",
                               isDone ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/20 text-muted-foreground/40"
                             )}>
                               {isDone ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-4 h-4" />}
@@ -588,31 +614,6 @@ export default function CalendarPage() {
                               Log
                             </Button>
                             
-                            <div className="flex items-center ml-2 border-l border-primary/5 pl-2 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <AssistantTooltip text="Move Up">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-7 w-7" 
-                                  onClick={() => reorderPlan(plan.id, 'up')} 
-                                  disabled={index === 0}
-                                >
-                                  <ChevronUpSquare className="w-4 h-4" />
-                                </Button>
-                              </AssistantTooltip>
-                              <AssistantTooltip text="Move Down">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-7 w-7" 
-                                  onClick={() => reorderPlan(plan.id, 'down')} 
-                                  disabled={index === availablePlans.length - 1}
-                                >
-                                  <ChevronDownSquare className="w-4 h-4" />
-                                </Button>
-                              </AssistantTooltip>
-                            </div>
-
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
