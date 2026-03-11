@@ -11,6 +11,7 @@
         "userId": { "type": "string" },
         "fileName": { "type": "string" },
         "displayName": { "type": "string" },
+        "description": { "type": "string" },
         "fileSize": { "type": "number" },
         "downloadUrl": { "type": "string", "format": "uri" },
         "uploadedAt": { "type": "string", "format": "date-time" }
@@ -36,10 +37,14 @@
         "deckId": { "type": "string" },
         "front": { "type": "string" },
         "back": { "type": "string" },
-        "type": { "type": "string", "enum": ["basic", "cloze"] },
+        "type": { "type": "string", "enum": ["basic", "cloze", "basic-reversed", "image-occlusion", "type-in"] },
         "dueDate": { "type": "string", "format": "date-time" },
         "interval": { "type": "number" },
-        "easeFactor": { "type": "number" }
+        "easeFactor": { "type": "number" },
+        "repetitions": { "type": "number" },
+        "lapses": { "type": "number" },
+        "suspended": { "type": "boolean" },
+        "tags": { "type": "array", "items": { "type": "string" } }
       },
       "required": ["id", "deckId", "front", "back", "type", "dueDate"]
     }

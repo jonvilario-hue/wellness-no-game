@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -7,7 +8,7 @@ import { doc, collection, setDoc, updateDoc, increment, serverTimestamp } from '
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Upload, FileDown, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Upload, FileDown, CheckCircle2, AlertCircle, Loader2, Info, Music, ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -113,7 +114,7 @@ export function AnkiDeckUploader() {
         <div className="flex justify-between items-center">
           <div>
             <CardTitle className="text-xl">Cloud Anki Vault</CardTitle>
-            <CardDescription>Upload .apkg files for voice acting drills.</CardDescription>
+            <CardDescription>Upload .apkg files for voice acting drills. Supports embedded audio and images.</CardDescription>
           </div>
           <div className="text-right">
             <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Storage Usage</p>
@@ -124,7 +125,7 @@ export function AnkiDeckUploader() {
         </div>
         <Progress value={usagePercent} className="h-1.5 mt-2" />
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
         <div
           className={cn(
             "border-2 border-dashed rounded-2xl flex flex-col items-center justify-center p-10 transition-all cursor-pointer",
@@ -159,6 +160,34 @@ export function AnkiDeckUploader() {
               <p className="text-xs text-muted-foreground">Max file size: 10MB</p>
             </div>
           )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-4 bg-muted/30 rounded-xl border flex items-start gap-3">
+            <Music className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="text-xs font-bold uppercase tracking-tight">Audio Enabled</p>
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                Embedded Anki sound tags are automatically detected and converted into playable controls.
+              </p>
+            </div>
+          </div>
+          <div className="p-4 bg-muted/30 rounded-xl border flex items-start gap-3">
+            <ImageIcon className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="text-xs font-bold uppercase tracking-tight">Image Support</p>
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                Images within the package are extracted and stored as optimized local references for instant recall.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3 bg-primary/5 rounded-lg border border-primary/10 flex items-start gap-3">
+          <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            All processing is performed locally in your browser. No AI or external LLM services are used to analyze your study content.
+          </p>
         </div>
       </CardContent>
     </Card>
