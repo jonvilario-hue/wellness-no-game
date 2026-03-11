@@ -452,7 +452,7 @@ export default function CalendarPage() {
 
   const handleLogRoutine = (planId: string) => {
     incrementTally(dateStr, planId);
-    toast({ title: "Routine Logged", description: "Progress updated for today.", variant: 'success' });
+    // Silent update: removed toast as per user request
   };
 
   if (!_hasHydrated) return null;
