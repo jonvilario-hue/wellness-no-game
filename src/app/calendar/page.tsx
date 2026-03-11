@@ -307,7 +307,8 @@ export default function CalendarPage() {
         status: 'completed' as ActivityStatus,
         instanceId: `tally-${planId}-${dStr}`,
         canDelete: true,
-        onDelete: () => resetTally(dStr, planId)
+        onDelete: () => resetTally(dStr, planId),
+        tally: count
       };
     }).filter(Boolean) as any[];
 
@@ -698,7 +699,10 @@ export default function CalendarPage() {
                               )}>
                                 <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
                                 <div className="flex-grow">
-                                  <p className="font-bold text-sm">{task.name}</p>
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-bold text-sm">{task.name}</p>
+                                    {task.tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{task.tally}</Badge>}
+                                  </div>
                                   <div className="flex gap-2 mt-1">
                                     <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
                                     <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
@@ -783,6 +787,7 @@ export default function CalendarPage() {
                               <div className="flex-grow">
                                 <div className="flex items-center gap-2">
                                   <p className="font-bold text-sm">{task.name}</p>
+                                  {task.tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{task.tally}</Badge>}
                                   {task.status === 'completed' && (
                                     <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-none text-[8px] h-4">LOGGED</Badge>
                                   )}
@@ -917,7 +922,7 @@ export default function CalendarPage() {
                           </div>
                           <div className="space-y-1.5">
                             <Label className="text-[10px] font-bold uppercase">Recurrence</Label>
-                            <Select value={act.recurrence} onValueChange={(v: any) => updateActivity(act.id, { recurrence: v })}>
+                            <Select value={act.recurrence} onValueChange={v => updateActivity(act.id, { recurrence: v as any })}>
                               <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="daily">Daily</SelectItem>
