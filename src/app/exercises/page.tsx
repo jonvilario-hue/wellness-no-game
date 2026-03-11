@@ -45,6 +45,15 @@ function ExercisesPageContent() {
 
   const streak = useMemo(() => calculateStreak(completions), [completions]);
 
+  // Logic for the 7 tally marks
+  // If streak is 7, 14, etc., we show all 7 filled.
+  // Otherwise, we show the remainder.
+  const filledTallies = useMemo(() => {
+    if (streak === 0) return 0;
+    const remainder = streak % 7;
+    return remainder === 0 ? 7 : remainder;
+  }, [streak]);
+
   const currentCategory = useMemo(() => {
     const map: Record<string, "Movement" | "Stillness" | "Communication" | "Speed Reading"> = {
       'movement': 'Movement',
@@ -112,12 +121,23 @@ function ExercisesPageContent() {
                 <div className="flex flex-col gap-4 py-4 border-y border-primary/5 bg-muted/10 rounded-2xl">
                     {/* Row 1: Streak (Pinned to top of action bar) */}
                     <div className="flex justify-center px-4">
-                        <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice.">
-                          <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
+                        <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice. Indicators reset every 7 days.">
+                          <Card className="bg-primary/5 border-primary/10 rounded-3xl py-3 px-8 shadow-sm w-fit flex flex-col items-center gap-2">
                               <div className="flex items-center gap-2">
                                   <Flame className="w-5 h-5 text-orange-500" />
                                   <span className="text-xl font-black">{streak}</span>
                                   <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Wellness Streak</span>
+                              </div>
+                              <div className="flex gap-1.5">
+                                  {[...Array(7)].map((_, i) => (
+                                      <div 
+                                          key={i} 
+                                          className={cn(
+                                              "w-3 h-1 rounded-full transition-all duration-500",
+                                              i < filledTallies ? "bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.4)]" : "bg-muted"
+                                          )} 
+                                      />
+                                  ))}
                               </div>
                           </Card>
                         </AssistantTooltip>
