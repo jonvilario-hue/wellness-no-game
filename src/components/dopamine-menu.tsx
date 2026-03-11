@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from '@/components/ui/button';
 import { 
   Brain, Zap, HeartPulse, HelpCircle, Wind, Rocket, X, 
-  ArrowLeft, ListChecks, Info, Goal, ChevronRight, Sparkles, Clock, ShieldCheck
+  ArrowLeft, ListChecks, Info, Goal, ChevronRight, Sparkles, Clock, ShieldCheck,
+  Anchor, Utensils
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { dopamineActivities, feelingOptions, cravingOptions, type FeelingKey, type CravingKey, type DopamineActivity } from '@/data/dopamine-menu';
@@ -61,8 +62,10 @@ export function DopamineMenu() {
         return dopamineActivities
             .filter(a => a.feelingState === selectedFeeling && a.craving === selectedCraving)
             .sort((a, b) => {
+                // Priority 3A: Skill-building always last
                 if (a.isSkillBuilding && !b.isSkillBuilding) return 1;
                 if (!a.isSkillBuilding && b.isSkillBuilding) return -1;
+                // Reorder by difficulty gradient
                 return a.difficultyWeight - b.difficultyWeight;
             });
     }, [selectedFeeling, selectedCraving]);
@@ -228,11 +231,11 @@ export function DopamineMenu() {
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="p-3 rounded-xl bg-muted/30 border border-primary/5">
-                                    <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Time Investment</p>
+                                    <p className="text-[8px] font-black uppercase text-muted-foreground">Time Investment</p>
                                     <p className="text-xs font-bold flex items-center gap-1.5"><Clock className="w-3 h-3" /> {activeActivity.timeEstimate}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-muted/30 border border-primary/5">
-                                    <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Mobility</p>
+                                    <p className="text-[8px] font-black uppercase text-muted-foreground">Mobility</p>
                                     <p className="text-xs font-bold uppercase">{activeActivity.mobilityRequired}</p>
                                 </div>
                             </div>

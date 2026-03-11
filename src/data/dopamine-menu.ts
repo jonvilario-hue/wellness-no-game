@@ -36,7 +36,7 @@ export interface DopamineActivity {
 
 /**
  * Master data set for the Dopamine Menu.
- * Activities are mapped to feeling states and cravings.
+ * Priority 1 & 2: Replaced overstimulating branches, removed duplicates, and integrated skill-building.
  */
 export const dopamineActivities: DopamineActivity[] = [
   // --- MENTALLY FOGGY ---
@@ -58,7 +58,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
-    link: "/library?tab=wellness#kit-desk-reboot",
+    link: "/components/wellness/RoutineBuilderModal",
     difficultyWeight: 1
   },
   {
@@ -372,7 +372,7 @@ export const dopamineActivities: DopamineActivity[] = [
     difficultyWeight: 1
   },
   {
-    id: "tired-progress-pitch",
+    id: "tired-progress-skill-pitch",
     name: "Practice Optimal Pitch Finding",
     subtitle: "Find the vocal pitch that relaxes your body",
     description: "Humming and finding your resonant register stimulates the vagus nerve and provides a low-cost win for your self-efficacy.",
@@ -394,6 +394,26 @@ export const dopamineActivities: DopamineActivity[] = [
   },
 
   // --- NUMB / FLAT ---
+  {
+    id: "numb-relief-hand-activation",
+    name: "Do Hot/Cold Hand Activation",
+    subtitle: "Tactile temperature shock to ground you",
+    description: "Run warm water over your hands for 30 seconds, then cold water. This intense sensory input helps break the numb state.",
+    feelingState: "numb",
+    craving: "relief",
+    tier: "blue",
+    timeEstimate: "1 min",
+    requiresMovement: false,
+    category: "sensory",
+    isSkillBuilding: false,
+    mobilityRequired: "low",
+    privateSpacePreferred: false,
+    noiseLevel: "silent",
+    needsSupplies: true,
+    suppliesList: ["sink or water source"],
+    seatedAlternative: null,
+    difficultyWeight: 1
+  },
   {
     id: "numb-energy-gentle-dance",
     name: "Try a 60-Second Gentle Dance",
@@ -418,7 +438,7 @@ export const dopamineActivities: DopamineActivity[] = [
     id: "numb-progress-skill-emotion-vocab",
     name: "Practice Emotion Vocabulary Building",
     subtitle: "Name what you feel, even faintly",
-    description: "Look at a list of emotion words (search 'emotion wheel' or 'feeling words list') and try to identify 2-3 that describe your current state, even if only slightly. Over time this builds emotional granularity — the ability to distinguish between similar internal states.",
+    description: "Look at a list of emotion words (search 'emotion wheel' or 'feeling words list') and try to identify 2-3 that describe your current state, even if only slightly. Over time this builds emotional granularity.",
     feelingState: "numb",
     craving: "progress",
     tier: "green",
@@ -440,7 +460,7 @@ export const dopamineActivities: DopamineActivity[] = [
     id: "bored-progress-skill-speed-sketch",
     name: "Practice Speed Sketching",
     subtitle: "Draw any object in 60 seconds, repeat",
-    description: "Pick any nearby object and sketch it in 60 seconds. Don't aim for accuracy — aim for speed. Pick another object and repeat. Builds observation skill and gives the understimulated brain a novel challenge with visible output.",
+    description: "Pick any nearby object and sketch it in 60 seconds. Don't aim for accuracy — aim for speed. Pick another object and repeat. Builds observation skill and gives the understimulated brain a novel challenge.",
     feelingState: "bored",
     craving: "progress",
     tier: "green",
@@ -469,7 +489,7 @@ export const feelingOptions: { key: FeelingKey; label: string; icon: string }[] 
 ];
 
 export const cravingOptions: { key: CravingKey; label: string; icon: any }[] = [
-  { key: 'relief', label: 'Relief', icon: 'Wind' },
-  { key: 'energy', label: 'Energy', icon: 'Zap' },
-  { key: 'progress', label: 'Progress', icon: 'Rocket' },
+  { key: 'relief', label: 'Relief', icon: Wind },
+  { key: 'energy', label: 'Energy', icon: Zap },
+  { key: 'progress', label: 'Progress', icon: Rocket },
 ];
