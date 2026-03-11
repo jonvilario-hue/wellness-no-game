@@ -1,4 +1,6 @@
 
+import { Wind, Zap, Rocket } from 'lucide-react';
+
 export type FeelingKey =
   | 'mentally-foggy'
   | 'emotionally-overloaded'
