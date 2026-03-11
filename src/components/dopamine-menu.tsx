@@ -135,15 +135,15 @@ export function DopamineMenu() {
                     <div className="grid grid-cols-1 gap-2">
                         {triageBodyState === 'still' ? (
                             <>
-                                <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('numb'); setTriageStep(3); }}>Blank / Empty</Button>
-                                <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('mentally-foggy'); setTriageStep(3); }}>Cloudy / Slow</Button>
-                                <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('physically-tired'); setTriageStep(3); }}>My body just hurts or is exhausted</Button>
+                                <Button variant="outline" className="justify-start h-14 px-6 text-left" onClick={() => { setSelectedFeeling('numb'); setTriageStep(3); }}>Blank / Empty</Button>
+                                <Button variant="outline" className="justify-start h-14 px-6 text-left" onClick={() => { setSelectedFeeling('mentally-foggy'); setTriageStep(3); }}>Cloudy / Slow</Button>
+                                <Button variant="outline" className="justify-start h-14 px-6 text-left" onClick={() => { setSelectedFeeling('physically-tired'); setTriageStep(3); }}>My body just hurts or is exhausted</Button>
                             </>
                         ) : (
                             <>
-                                <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('anxious'); setTriageStep(3); }}>Racing / Looping</Button>
-                                <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('scattered'); setTriageStep(3); }}>Scattered / Bouncing</Button>
-                                <Button variant="outline" className="justify-start h-14 px-6" onClick={() => { setSelectedFeeling('emotionally-overloaded'); setTriageStep(3); }}>Everything is too much at once</Button>
+                                <Button variant="outline" className="justify-start h-14 px-6 text-left" onClick={() => { setSelectedFeeling('anxious'); setTriageStep(3); }}>Racing / Looping</Button>
+                                <Button variant="outline" className="justify-start h-14 px-6 text-left" onClick={() => { setSelectedFeeling('scattered'); setTriageStep(3); }}>Scattered / Bouncing</Button>
+                                <Button variant="outline" className="justify-start h-14 px-6 text-left" onClick={() => { setSelectedFeeling('emotionally-overloaded'); setTriageStep(3); }}>Everything is too much at once</Button>
                             </>
                         )}
                     </div>
@@ -235,70 +235,68 @@ export function DopamineMenu() {
                         <p className="text-sm font-bold text-muted-foreground">{activeActivity.subtitle}</p>
                     </div>
 
-                    <ScrollArea className="h-[400px] pr-4">
-                        <div className="space-y-6">
-                            <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                                <p className="text-xs leading-relaxed font-medium text-foreground">{activeActivity.description}</p>
-                            </div>
-
-                            {fullProtocol ? (
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                                            <ListChecks className="w-3.5 h-3.5" /> Protocol Sequence
-                                        </h4>
-                                        <ol className="space-y-3">
-                                            {fullProtocol.steps.map((step, i) => (
-                                                <li key={i} className="flex gap-3 items-start text-xs">
-                                                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold">{i + 1}</span>
-                                                    <p className="flex-1 pt-0.5">{step}</p>
-                                                </li>
-                                            ))}
-                                        </ol>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-primary/5">
-                                        <div className="space-y-1.5">
-                                            <h5 className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
-                                                <Activity className="w-3 h-3" /> Quick Setup
-                                            </h5>
-                                            <ul className="list-disc list-inside text-[10px] text-muted-foreground/80 space-y-1">
-                                                {fullProtocol.setup.map((s, i) => <li key={i}>{s}</li>)}
-                                            </ul>
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <h5 className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
-                                                <Sparkles className="w-3 h-3" /> Tip
-                                            </h5>
-                                            <p className="text-[10px] text-muted-foreground/80 italic">{fullProtocol.modifications[0]}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="p-3 rounded-xl bg-muted/30 border border-primary/5">
-                                        <p className="text-[8px] font-black uppercase text-muted-foreground">Time Investment</p>
-                                        <p className="text-xs font-bold flex items-center gap-1.5"><Clock className="w-3 h-3" /> {activeActivity.timeEstimate}</p>
-                                    </div>
-                                    <div className="p-3 rounded-xl bg-muted/30 border border-primary/5">
-                                        <p className="text-[8px] font-black uppercase text-muted-foreground">Mobility</p>
-                                        <p className="text-xs font-bold uppercase">{activeActivity.mobilityRequired}</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeActivity.needsSupplies && (
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-1.5"><ListChecks className="w-3 h-3" /> Equipment</p>
-                                    <ul className="text-xs space-y-1">
-                                        {activeActivity.suppliesList.map((s, i) => <li key={i} className="flex items-center gap-2">• {s}</li>)}
-                                    </ul>
-                                </div>
-                            )}
+                    <div className="space-y-6">
+                        <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                            <p className="text-xs leading-relaxed font-medium text-foreground">{activeActivity.description}</p>
                         </div>
-                    </ScrollArea>
 
-                    <div className="flex gap-2 pt-4 border-t">
+                        {fullProtocol ? (
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                                        <ListChecks className="w-3.5 h-3.5" /> Protocol Sequence
+                                    </h4>
+                                    <ol className="space-y-3">
+                                        {fullProtocol.steps.map((step, i) => (
+                                            <li key={i} className="flex gap-3 items-start text-xs">
+                                                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold">{i + 1}</span>
+                                                <p className="flex-1 pt-0.5">{step}</p>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-primary/5">
+                                    <div className="space-y-1.5">
+                                        <h5 className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
+                                            <Activity className="w-3 h-3" /> Quick Setup
+                                        </h5>
+                                        <ul className="list-disc list-inside text-[10px] text-muted-foreground/80 space-y-1">
+                                            {fullProtocol.setup.map((s, i) => <li key={i}>{s}</li>)}
+                                        </ul>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <h5 className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1.5">
+                                            <Sparkles className="w-3 h-3" /> Tip
+                                        </h5>
+                                        <p className="text-[10px] text-muted-foreground/80 italic">{fullProtocol.modifications[0]}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="p-3 rounded-xl bg-muted/30 border border-primary/5">
+                                    <p className="text-[8px] font-black uppercase text-muted-foreground">Time Investment</p>
+                                    <p className="text-xs font-bold flex items-center gap-1.5"><Clock className="w-3 h-3" /> {activeActivity.timeEstimate}</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-muted/30 border border-primary/5">
+                                    <p className="text-[8px] font-black uppercase text-muted-foreground">Mobility</p>
+                                    <p className="text-xs font-bold uppercase">{activeActivity.mobilityRequired}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeActivity.needsSupplies && (
+                            <div className="space-y-2">
+                                <p className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-1.5"><ListChecks className="w-3 h-3" /> Equipment</p>
+                                <ul className="text-xs space-y-1">
+                                    {activeActivity.suppliesList.map((s, i) => <li key={i} className="flex items-center gap-2">• {s}</li>)}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex gap-2 pt-4 border-t sticky bottom-0 bg-background pb-2">
                         <Button variant="outline" className="flex-1" onClick={() => setViewingActivityId(null)}>Back to List</Button>
                         <Button className="flex-1 shadow-lg" onClick={() => handleAction(activeActivity)}>
                             Launch Module <ChevronRight className="w-4 h-4 ml-1" />
@@ -323,32 +321,30 @@ export function DopamineMenu() {
                     <DialogTitle className="text-2xl font-black uppercase tracking-tighter">Recommended Protocols</DialogTitle>
                 </DialogHeader>
 
-                <ScrollArea className="h-80 pr-4">
-                    <div className="space-y-2">
-                        {filteredActivities.map((act) => (
-                            <button 
-                                key={act.id} 
-                                onClick={() => setViewingActivityId(act.id)}
-                                className={cn(
-                                    "w-full text-left p-4 rounded-xl border border-primary/5 hover:border-primary/30 hover:bg-primary/[0.02] transition-all group flex items-center justify-between",
-                                    act.isSkillBuilding && "bg-primary/5 border-primary/10"
-                                )}
-                            >
-                                <div className="flex-1 min-w-0 mr-4">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <h4 className="font-bold text-sm truncate">{act.name}</h4>
-                                        {act.isSkillBuilding && <Badge className="bg-primary text-white border-none text-[8px] h-4">SKILL</Badge>}
-                                    </div>
-                                    <p className="text-[10px] text-muted-foreground truncate">{act.subtitle}</p>
+                <div className="space-y-2">
+                    {filteredActivities.map((act) => (
+                        <button 
+                            key={act.id} 
+                            onClick={() => setViewingActivityId(act.id)}
+                            className={cn(
+                                "w-full text-left p-4 rounded-xl border border-primary/5 hover:border-primary/30 hover:bg-primary/[0.02] transition-all group flex items-center justify-between",
+                                act.isSkillBuilding && "bg-primary/5 border-primary/10"
+                            )}
+                        >
+                            <div className="flex-1 min-w-0 mr-4">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <h4 className="font-bold text-sm truncate">{act.name}</h4>
+                                    {act.isSkillBuilding && <Badge className="bg-primary text-white border-none text-[8px] h-4">SKILL</Badge>}
                                 </div>
-                                <div className="shrink-0 flex items-center gap-3">
-                                    <span className="text-[10px] font-black opacity-40 uppercase">{act.timeEstimate}</span>
-                                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
-                                </div>
-                            </button>
-                        ))}
-                    </div>
-                </ScrollArea>
+                                <p className="text-[10px] text-muted-foreground truncate">{act.subtitle}</p>
+                            </div>
+                            <div className="shrink-0 flex items-center gap-3">
+                                <span className="text-[10px] font-black opacity-40 uppercase">{act.timeEstimate}</span>
+                                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
+                            </div>
+                        </button>
+                    ))}
+                </div>
 
                 <div className="pt-4 border-t flex justify-center">
                     <Button variant="ghost" size="sm" className="text-[10px] uppercase font-bold text-muted-foreground" onClick={handleReset}>
@@ -375,15 +371,19 @@ export function DopamineMenu() {
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
-            <DialogContent className="sm:max-w-xl overflow-hidden max-h-[90vh]">
-                 <div className="min-h-[400px] flex flex-col justify-center py-4">
-                    <AnimatePresence mode="wait">
-                        {isTriage ? renderTriage() : renderSelection()}
-                    </AnimatePresence>
+            <DialogContent className="sm:max-w-2xl overflow-hidden max-h-[95vh] flex flex-col p-0 border-primary/10">
+                 <div className="flex-1 overflow-hidden">
+                    <ScrollArea className="h-full">
+                        <div className="p-6 pt-12 relative min-h-[450px] flex flex-col justify-center">
+                            <AnimatePresence mode="wait">
+                                {isTriage ? renderTriage() : renderSelection()}
+                            </AnimatePresence>
+                        </div>
+                    </ScrollArea>
                  </div>
-                 <div className="absolute top-4 left-4">
+                 <div className="absolute top-4 left-4 z-20">
                     {(selectedFeeling || isTriage) && (
-                        <Button variant="ghost" size="icon" onClick={handleReset}>
+                        <Button variant="ghost" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm shadow-sm" onClick={handleReset}>
                             <ArrowLeft className="w-4 h-4" />
                         </Button>
                     )}
