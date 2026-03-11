@@ -155,6 +155,11 @@ export type WellnessState = {
   addMealPlan: (plan: Omit<MealPlan, 'id'>) => void;
   updateMealPlan: (id: string, updates: Partial<MealPlan>) => void;
   updateDietaryProfile: (updates: Partial<DietaryProfile>) => void;
+  
+  addCustomPractice: (practice: Exercise) => void;
+  updateCustomPractice: (id: string, updates: Partial<Exercise>) => void;
+  deleteCustomPractice: (id: string) => void;
+  
   toggleCategoryCollapse: (category: string) => void;
   logCompletion: () => void;
   togglePlanDay: (planId: string, day: number) => void;
@@ -250,6 +255,14 @@ export const useWellnessData = create<WellnessState>()(
       updateMealPlan: (id, updates) => set(s => ({ mealPlans: s.mealPlans.map(p => p.id === id ? { ...p, ...updates } : p) })),
       updateDietaryProfile: (updates) => set(s => ({ dietaryProfile: { ...s.dietaryProfile, ...updates } })),
       
+      addCustomPractice: (practice) => set(s => ({ customPractices: [...s.customPractices, practice] })),
+      updateCustomPractice: (id, updates) => set(s => ({
+        customPractices: s.customPractices.map(p => p.id === id ? { ...p, ...updates } : p)
+      })),
+      deleteCustomPractice: (id) => set(s => ({
+        customPractices: s.customPractices.filter(p => p.id !== id)
+      })),
+
       toggleCategoryCollapse: (category) => set(s => ({ collapsedCategories: { ...s.collapsedCategories, [category]: !s.collapsedCategories[category] } })),
       logCompletion: () => {
         const today = format(new Date(), 'yyyy-MM-dd');
