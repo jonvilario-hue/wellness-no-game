@@ -109,8 +109,9 @@ function ExercisesPageContent() {
                 </Collapsible>
 
                 {/* Global Action Bar */}
-                <div className="flex flex-col gap-4 py-3 border-y border-primary/5 bg-muted/10 rounded-2xl">
-                    <div className="flex flex-wrap items-center justify-center gap-4 px-4">
+                <div className="flex flex-col gap-4 py-4 border-y border-primary/5 bg-muted/10 rounded-2xl">
+                    {/* Row 1: Streak (Pinned to top of action bar) */}
+                    <div className="flex justify-center px-4">
                         <AssistantTooltip text="Your Global Wellness Streak tracks consecutive days where you completed at least one full routine or practice.">
                           <Card className="bg-primary/5 border-primary/10 rounded-full py-2 px-6 shadow-sm w-fit">
                               <div className="flex items-center gap-2">
@@ -120,7 +121,10 @@ function ExercisesPageContent() {
                               </div>
                           </Card>
                         </AssistantTooltip>
+                    </div>
 
+                    {/* Row 2: Controls (MVD + Curricula Trigger) */}
+                    <div className="flex flex-wrap items-center justify-center gap-4 px-4">
                         <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your entire library to show only 'zero-friction' practices.">
                           <div className={cn(
                               "flex items-center gap-3 px-4 py-2 rounded-full border transition-all h-11",
@@ -146,9 +150,9 @@ function ExercisesPageContent() {
                         />
                     </div>
 
-                    {/* Inline Curricula Gallery Expansion */}
+                    {/* Row 3: Inline Curricula Gallery Expansion (Appears below without shifting triggers) */}
                     {isCurriculaExpanded && (
-                      <div className="w-full pt-2">
+                      <div className="w-full pt-2 animate-in fade-in slide-in-from-top-2 duration-500">
                         <JourneyPlansSection 
                           category={currentCategory} 
                           isExpanded={isCurriculaExpanded}
