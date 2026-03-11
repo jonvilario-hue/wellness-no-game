@@ -38,7 +38,7 @@ export interface DopamineActivity {
 
 /**
  * Master data set for the Dopamine Menu.
- * Reordered by difficulty gradient within each path.
+ * Synchronized with Wellness Library anchors.
  */
 export const dopamineActivities: DopamineActivity[] = [
   // --- MENTALLY FOGGY ---
@@ -60,6 +60,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/exercises?tab=movement#kit-desk-reboot",
     difficultyWeight: 1
   },
   {
@@ -80,6 +81,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: true,
     suppliesList: ["peppermint oil, mint, or toothpaste"],
     seatedAlternative: null,
+    link: "/library",
     difficultyWeight: 1
   },
   {
@@ -100,6 +102,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/journal",
     difficultyWeight: 1
   },
   {
@@ -120,6 +123,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/study",
     difficultyWeight: 3
   },
 
@@ -142,6 +146,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/exercises?tab=movement",
     difficultyWeight: 1
   },
   {
@@ -162,6 +167,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: "Seated arm jacks",
+    link: "/exercises?tab=movement#practice-energizer_high_knees",
     difficultyWeight: 2
   },
   {
@@ -182,6 +188,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: "Seated cross-body touches",
+    link: "/exercises?tab=movement",
     difficultyWeight: 1
   },
   {
@@ -246,6 +253,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: true,
     suppliesList: ["sink or water source"],
     seatedAlternative: null,
+    link: "/exercises?tab=stillness",
     difficultyWeight: 1
   },
   {
@@ -266,6 +274,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/journal",
     difficultyWeight: 2
   },
   {
@@ -286,6 +295,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/exercises?tab=stillness#practice-breath_box",
     difficultyWeight: 3
   },
 
@@ -308,6 +318,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/journal",
     difficultyWeight: 1
   },
   {
@@ -328,6 +339,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: "Seated side-taps",
+    link: "/exercises?tab=movement",
     difficultyWeight: 1
   },
   {
@@ -348,6 +360,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/architecture",
     difficultyWeight: 1
   },
   {
@@ -368,6 +381,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/settings?tab=time",
     difficultyWeight: 3
   },
 
@@ -390,6 +404,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: "Seated forward fold",
+    link: "/exercises?tab=movement#practice-yoga_mouse_pose",
     difficultyWeight: 1
   },
   {
@@ -410,6 +425,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/exercises?tab=movement",
     difficultyWeight: 1
   },
   {
@@ -453,6 +469,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: true,
     suppliesList: ["sink or water source"],
     seatedAlternative: null,
+    link: "/exercises?tab=stillness",
     difficultyWeight: 1
   },
   {
@@ -473,6 +490,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: "Seated torso swaying",
+    link: "/exercises?tab=movement",
     difficultyWeight: 1
   },
   {
@@ -493,6 +511,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/journal",
     difficultyWeight: 3
   },
 
@@ -515,6 +534,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: true,
     suppliesList: ["headphones"],
     seatedAlternative: null,
+    link: "/exercises?tab=stillness",
     difficultyWeight: 1
   },
   {
@@ -535,6 +555,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: false,
     suppliesList: [],
     seatedAlternative: null,
+    link: "/exercises?tab=movement",
     difficultyWeight: 2
   },
   {
@@ -555,6 +576,7 @@ export const dopamineActivities: DopamineActivity[] = [
     needsSupplies: true,
     suppliesList: ["paper and pencil"],
     seatedAlternative: null,
+    link: "/library",
     difficultyWeight: 2
   }
 ];
