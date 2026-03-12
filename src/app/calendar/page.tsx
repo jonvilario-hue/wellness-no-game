@@ -231,7 +231,7 @@ export default function CalendarPage() {
   const { entries } = useHydratedJournalStore();
   const { toast } = useToast();
   
-  const [view, setView] = useState<'month' | 'week' | 'day'>('month');
+  const [view, setView] = useState<'month' | 'week'>('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [plansOpen, setPlansOpen] = useState(true);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
@@ -660,14 +660,13 @@ export default function CalendarPage() {
                 <div>
                   <CardTitle className="text-xl flex items-center gap-2">
                     <CalendarIcon className="w-5 h-5 text-primary" />
-                    {view === 'month' ? format(selectedDate, 'MMMM yyyy') : view === 'week' ? `Week of ${format(weekDays[0], 'MMM d')}` : format(selectedDate, 'PPPP')}
+                    {view === 'month' ? format(selectedDate, 'MMMM yyyy') : `Week of ${format(weekDays[0], 'MMM d')}`}
                   </CardTitle>
                   <CardDescription>Master schedule: Plans + Direct Wellness & Reflection Logs.</CardDescription>
                 </div>
                 <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
                   <Button variant={view === 'month' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
                   <Button variant={view === 'week' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('week')}>Week</Button>
-                  <Button variant={view === 'day' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('day')}>Day</Button>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
@@ -741,81 +740,90 @@ export default function CalendarPage() {
                     })}
                   </div>
                 )}
+              </CardContent>
+            </Card>
 
-                {view === 'day' && (
-                  <div className="p-6 space-y-8 animate-in fade-in">
-                    <div className="space-y-4">
-                      <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                        <ListChecks className="w-3 h-3 text-primary" /> Combined Schedule
-                      </h3>
-                      {todaysTasks.length === 0 ? (
-                        <div className="text-center py-16 text-muted-foreground border-2 border-dashed rounded-2xl bg-muted/10">
-                          <p className="text-sm font-bold italic">Schedule is empty for this date.</p>
+            <Card className="lg:col-span-4 animate-in fade-in slide-in-from-top-4 duration-700">
+              <CardHeader className="pb-4 border-b border-primary/5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <ListChecks className="w-5 h-5 text-primary" />
+                      Agenda: {format(selectedDate, 'EEEE, MMMM do')}
+                    </CardTitle>
+                    <CardDescription>Combined schedule for your chosen date.</CardDescription>
+                  </div>
+                  <Badge variant="outline" className="h-6 font-black uppercase text-[10px]">
+                    {todaysTasks.length} {todaysTasks.length === 1 ? 'Item' : 'Items'}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                {todaysTasks.length === 0 ? (
+                  <div className="text-center py-16 text-muted-foreground border-2 border-dashed rounded-2xl bg-muted/10">
+                    <p className="text-sm font-bold italic">Schedule is empty for this date.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {todaysTasks.map(task => (
+                      <div key={task.instanceId} className={cn(
+                        "flex items-center gap-4 p-4 rounded-2xl border bg-card transition-all group",
+                        task.status === 'completed' && "opacity-60 bg-muted/20"
+                      )}>
+                        <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
+                        <div className="flex-grow">
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold text-sm">{task.name}</p>
+                            {task.tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{task.tally}</Badge>}
+                            {task.status === 'completed' && (
+                              <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-none text-[8px] h-4">LOGGED</Badge>
+                            )}
+                          </div>
+                          <div className="flex gap-2 mt-1">
+                            <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
+                            <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
+                          </div>
                         </div>
-                      ) : (
-                        <div className="grid grid-cols-1 gap-3">
-                          {todaysTasks.map(task => (
-                            <div key={task.instanceId} className={cn(
-                              "flex items-center gap-4 p-4 rounded-2xl border bg-card transition-all group",
-                              task.status === 'completed' && "opacity-60 bg-muted/20"
-                            )}>
-                              <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
-                              <div className="flex-grow">
-                                <div className="flex items-center gap-2">
-                                  <p className="font-bold text-sm">{task.name}</p>
-                                  {task.tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{task.tally}</Badge>}
-                                  {task.status === 'completed' && (
-                                    <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-none text-[8px] h-4">LOGGED</Badge>
-                                  )}
-                                </div>
-                                <div className="flex gap-2 mt-1">
-                                  <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
-                                  <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                {task.status !== 'completed' && (
-                                  <div className="flex gap-2">
-                                    <AssistantTooltip text="Quickly log baseline metrics.">
-                                      <Button 
-                                        size="sm" 
-                                        variant="outline"
-                                        className="rounded-full gap-2 h-10 px-6 font-bold"
-                                        onClick={() => {
-                                          if (task.linkedTracker) {
-                                            logExerciseById(task.linkedTracker);
-                                            updateActivityStatus(dateStr, task.instanceId, 'completed');
-                                            toast({ title: "Quick Log Successful", description: `${task.name} metrics synced to history.` });
-                                          }
-                                        }}
-                                      >
-                                        <ClipboardCheck className="w-4 h-4 text-primary" />
-                                        Quick Log
-                                      </Button>
-                                    </AssistantTooltip>
-                                  </div>
-                                )}
-                                {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
-                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  {task.tally !== undefined && (
-                                    <AssistantTooltip text="Reset this routine's log for today">
-                                      <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { (task as any).onReset?.(); toast({ title: "Tally Reset" }); }}>
-                                        <RotateCw className="w-4 h-4" />
-                                      </Button>
-                                    </AssistantTooltip>
-                                  )}
-                                  {task.canDelete && (
-                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
-                                      <Trash2 className="w-5 h-5" />
-                                    </Button>
-                                  )}
-                                </div>
-                              </div>
+                        <div className="flex items-center gap-2">
+                          {task.status !== 'completed' && (
+                            <div className="flex gap-2">
+                              <AssistantTooltip text="Quickly log baseline metrics.">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  className="rounded-full gap-2 h-10 px-6 font-bold"
+                                  onClick={() => {
+                                    if (task.linkedTracker) {
+                                      logExerciseById(task.linkedTracker);
+                                      updateActivityStatus(dateStr, task.instanceId, 'completed');
+                                      toast({ title: "Quick Log Successful", description: `${task.name} metrics synced to history.` });
+                                    }
+                                  }}
+                                >
+                                  <ClipboardCheck className="w-4 h-4 text-primary" />
+                                  Quick Log
+                                </Button>
+                              </AssistantTooltip>
                             </div>
-                          ))}
+                          )}
+                          {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {task.tally !== undefined && (
+                              <AssistantTooltip text="Reset this routine's log for today">
+                                <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { (task as any).onReset?.(); toast({ title: "Tally Reset" }); }}>
+                                  <RotateCw className="w-4 h-4" />
+                                </Button>
+                              </AssistantTooltip>
+                            )}
+                            {task.canDelete && (
+                              <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
+                                <Trash2 className="w-5 h-5" />
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </CardContent>
