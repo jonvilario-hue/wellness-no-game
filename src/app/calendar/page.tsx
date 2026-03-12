@@ -263,39 +263,10 @@ export default function CalendarPage() {
 
   const getTasksForDate = useCallback((date: Date) => {
     const dStr = format(date, 'yyyy-MM-dd');
-    const dayOfWeek = date.getDay();
-    const dayOfMonth = date.getDate();
     const instances = activityInstances[dStr] || [];
     
-    const planTasks = availablePlans.flatMap(plan => 
-      plan.activities
-        .filter(act => {
-          if (act.recurrence === 'daily') return true;
-          if (act.recurrence === 'weekly') {
-            const planStart = parseISO(plan.startDate);
-            return planStart.getDay() === dayOfWeek;
-          }
-          if (act.recurrence === 'monthly') {
-            const planStart = parseISO(plan.startDate);
-            return planStart.getDate() === dayOfMonth;
-          }
-          return true;
-        })
-        .map(act => {
-          const existing = instances.find(i => i.activityId === act.id);
-          return {
-            ...act,
-            name: plan.name, 
-            planName: plan.name,
-            planColor: plan.color,
-            status: existing?.status || 'not-started',
-            instanceId: existing?.id || `v-${plan.id}-${act.id}-${dStr}`,
-            linkedTracker: act.linkedTracker,
-            canDelete: !!existing,
-            onDelete: existing ? () => deleteActivityInstance(dStr, existing.id) : undefined
-          };
-        })
-    );
+    // Trackers List: Only show what has been explicitly logged or scheduled
+    // Plan templates (planTasks) are removed so the list stays empty by default
 
     const tallyTasks = Object.entries(routineTallies[dStr] || {}).map(([planId, count]) => {
       const plan = availablePlans.find(p => p.id === planId);
@@ -404,7 +375,7 @@ export default function CalendarPage() {
       }))
     ];
 
-    return [...planTasks, ...tallyTasks, ...studyTasks, ...wellnessTasks];
+    return [...tallyTasks, ...studyTasks, ...wellnessTasks];
   }, [availablePlans, activityInstances, routineTallies, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries, deleteActivityInstance, deleteMovementLog, deleteStillnessLog, deleteCommunicationLog, deleteMealLog, deleteTransaction, decrementTally, resetTally]);
 
   const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, getTasksForDate]);
@@ -600,7 +571,10 @@ export default function CalendarPage() {
                                   variant="ghost" 
                                   size="icon" 
                                   className="h-8 w-8 text-muted-foreground"
-                                  onClick={() => decrementTally(dateStr, plan.id)}
+                                  onClick={() => {
+                                    decrementTally(dateStr, plan.id);
+                                    toast({ title: "Log Removed" });
+                                  }}
                                 >
                                   <RotateCcw className="w-3.5 h-3.5" />
                                 </Button>
@@ -610,7 +584,10 @@ export default function CalendarPage() {
                             <Button 
                               size="sm" 
                               className="h-8 gap-2 font-black uppercase text-[10px] px-4" 
-                              onClick={() => handleLogRoutine(plan.id)}
+                              onClick={() => {
+                                handleLogRoutine(plan.id);
+                                toast({ title: "Routine Logged", variant: 'success' });
+                              }}
                             >
                               <Zap className="w-3 h-3 fill-current" />
                               Log
@@ -662,7 +639,7 @@ export default function CalendarPage() {
                     <CalendarIcon className="w-5 h-5 text-primary" />
                     {view === 'month' ? format(selectedDate, 'MMMM yyyy') : `Week of ${format(weekDays[0], 'MMM d')}`}
                   </CardTitle>
-                  <CardDescription>Master schedule: Plans + Direct Wellness & Reflection Logs.</CardDescription>
+                  <CardDescription>Master schedule: Monthly and Weekly overviews.</CardDescription>
                 </div>
                 <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
                   <Button variant={view === 'month' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
@@ -749,19 +726,23 @@ export default function CalendarPage() {
                   <div>
                     <CardTitle className="text-xl flex items-center gap-2">
                       <ListChecks className="w-5 h-5 text-primary" />
-                      Agenda: {format(selectedDate, 'EEEE, MMMM do')}
+                      Daily Agenda: {format(selectedDate, 'EEEE, MMMM do')}
                     </CardTitle>
-                    <CardDescription>Combined schedule for your chosen date.</CardDescription>
+                    <CardDescription>Trackers List: Comprising actual logs and scheduled sessions.</CardDescription>
                   </div>
                   <Badge variant="outline" className="h-6 font-black uppercase text-[10px]">
-                    {todaysTasks.length} {todaysTasks.length === 1 ? 'Item' : 'Items'}
+                    {todaysTasks.length} {todaysTasks.length === 1 ? 'Log' : 'Logs'}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="p-6">
                 {todaysTasks.length === 0 ? (
                   <div className="text-center py-16 text-muted-foreground border-2 border-dashed rounded-2xl bg-muted/10">
-                    <p className="text-sm font-bold italic">Schedule is empty for this date.</p>
+                    <div className="flex flex-col items-center gap-2">
+                      <Activity className="w-8 h-8 opacity-20" />
+                      <p className="text-sm font-bold italic">No trackers active for this date yet.</p>
+                      <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Log a routine above to start your tracker list</p>
+                    </div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
