@@ -38,7 +38,8 @@ import {
   AlignJustify,
   ChevronUpSquare,
   ChevronDownSquare,
-  MoreHorizontal
+  MoreHorizontal,
+  RotateCw
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -284,7 +285,7 @@ export default function CalendarPage() {
           const existing = instances.find(i => i.activityId === act.id);
           return {
             ...act,
-            name: plan.name, // Uniform name matching the routine list title
+            name: plan.name, 
             planName: plan.name,
             planColor: plan.color,
             status: existing?.status || 'not-started',
@@ -309,6 +310,7 @@ export default function CalendarPage() {
         instanceId: `tally-${planId}-${dStr}`,
         canDelete: true,
         onDelete: () => decrementTally(dStr, planId),
+        onReset: () => resetTally(dStr, planId),
         tally: count
       };
     }).filter(Boolean) as any[];
@@ -403,7 +405,7 @@ export default function CalendarPage() {
     ];
 
     return [...planTasks, ...tallyTasks, ...studyTasks, ...wellnessTasks];
-  }, [availablePlans, activityInstances, routineTallies, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries, deleteActivityInstance, deleteMovementLog, deleteStillnessLog, deleteCommunicationLog, deleteMealLog, deleteTransaction, decrementTally]);
+  }, [availablePlans, activityInstances, routineTallies, movementLogs, stillnessLogs, communicationLogs, mealLogs, transactions, entries, deleteActivityInstance, deleteMovementLog, deleteStillnessLog, deleteCommunicationLog, deleteMealLog, deleteTransaction, decrementTally, resetTally]);
 
   const todaysTasks = useMemo(() => getTasksForDate(selectedDate), [selectedDate, getTasksForDate]);
 
@@ -551,7 +553,6 @@ export default function CalendarPage() {
                       >
                         <div className="flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-card hover:bg-muted/30 transition-all group">
                           <div className="flex items-center gap-3 min-w-0">
-                            {/* Reorder Arrows on the left of the status squares */}
                             <div className="flex flex-col items-center -ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               <AssistantTooltip text="Move Up">
                                 <Button 
@@ -654,7 +655,7 @@ export default function CalendarPage() {
           </Collapsible>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <Card className="lg:col-span-3">
+            <Card className="lg:col-span-4">
               <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-primary/5">
                 <div>
                   <CardTitle className="text-xl flex items-center gap-2">
@@ -697,52 +698,6 @@ export default function CalendarPage() {
                         }
                       }}
                     />
-                    
-                    {selectedDate && (
-                      <div className="px-6 pb-6 pt-2 border-t border-primary/5 animate-in fade-in slide-in-from-top-2">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                            <ListChecks className="w-3 h-3 text-primary" /> Agenda: {format(selectedDate, 'MMM do')}
-                          </h3>
-                          <Badge variant="outline" className="text-[10px] font-bold">{todaysTasks.length} Logs</Badge>
-                        </div>
-                        
-                        {todaysTasks.length === 0 ? (
-                          <div className="py-10 text-center border-2 border-dashed rounded-xl bg-muted/10">
-                            <p className="text-sm font-bold text-muted-foreground italic">No activity logged for this date.</p>
-                          </div>
-                        ) : (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {todaysTasks.map(task => (
-                              <div key={task.instanceId} className={cn(
-                                "flex items-center gap-4 p-4 rounded-2xl border bg-card transition-all group",
-                                task.status === 'completed' && "opacity-60 bg-muted/20"
-                              )}>
-                                <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
-                                <div className="flex-grow">
-                                  <div className="flex items-center gap-2">
-                                    <p className="font-bold text-sm">{task.name}</p>
-                                    {task.tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{task.tally}</Badge>}
-                                  </div>
-                                  <div className="flex gap-2 mt-1">
-                                    <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
-                                    <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
-                                  {task.canDelete && (
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => { e.stopPropagation(); task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
                 )}
 
@@ -841,11 +796,20 @@ export default function CalendarPage() {
                                   </div>
                                 )}
                                 {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
-                                {task.canDelete && (
-                                  <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => { task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
-                                    <Trash2 className="w-5 h-5" />
-                                  </Button>
-                                )}
+                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  {task.tally !== undefined && (
+                                    <AssistantTooltip text="Reset this routine's log for today">
+                                      <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { (task as any).onReset?.(); toast({ title: "Tally Reset" }); }}>
+                                        <RotateCw className="w-4 h-4" />
+                                      </Button>
+                                    </AssistantTooltip>
+                                  )}
+                                  {task.canDelete && (
+                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
+                                      <Trash2 className="w-5 h-5" />
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           ))}
@@ -856,9 +820,6 @@ export default function CalendarPage() {
                 )}
               </CardContent>
             </Card>
-
-            <div className="space-y-6">
-            </div>
           </div>
 
           <AmalgamatedAnalytics />
