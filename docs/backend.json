@@ -47,6 +47,23 @@
         "tags": { "type": "array", "items": { "type": "string" } }
       },
       "required": ["id", "deckId", "front", "back", "type", "dueDate"]
+    },
+    "MathSession": {
+      "title": "MathSession",
+      "type": "object",
+      "description": "A record of a mathematical composure practice session.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "domainId": { "type": "string" },
+        "mode": { "type": "string", "enum": ["Slow Work", "Steady Rhythm", "Real Life"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "problemsAttempted": { "type": "number" },
+        "habitsOfMind": { "type": "array", "items": { "type": "string" } },
+        "feeling": { "type": "string", "enum": ["Grounded", "Shaky"] },
+        "isApplied": { "type": "boolean" }
+      },
+      "required": ["id", "userId", "domainId", "mode", "timestamp", "feeling"]
     }
   },
   "auth": { "providers": ["password", "anonymous"] },
@@ -54,7 +71,8 @@
     "structure": [
       { "path": "/users/{userId}/anki-decks/{deckId}", "definition": { "entityName": "AnkiDeck", "description": "Cloud metadata for Anki files." } },
       { "path": "/users/{userId}/flashcard-decks/{deckId}", "definition": { "entityName": "FlashcardDeck", "description": "User created study decks." } },
-      { "path": "/users/{userId}/flashcard-decks/{deckId}/cards/{cardId}", "definition": { "entityName": "Flashcard", "description": "Individual cards within a deck." } }
+      { "path": "/users/{userId}/flashcard-decks/{deckId}/cards/{cardId}", "definition": { "entityName": "Flashcard", "description": "Individual cards within a deck." } },
+      { "path": "/users/{userId}/math-sessions/{sessionId}", "definition": { "entityName": "MathSession", "description": "Mathematical composure logs." } }
     ]
   }
 }

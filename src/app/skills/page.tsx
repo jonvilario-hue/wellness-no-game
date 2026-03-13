@@ -8,7 +8,7 @@ import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff } from 'lucide-react';
+import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma } from 'lucide-react';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -21,6 +21,7 @@ import { JourneyPlansSection } from '@/components/wellness/JourneyPlansSection';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CommunicationContent from '@/components/wellness/CommunicationContent';
 import SpeedReadingContent from '@/components/wellness/SpeedReadingContent';
+import { MathComposureLab } from '@/components/wellness/MathComposureLab';
 import { communicationPractices } from '@/data/communication-practices';
 import { readingPassages } from '@/data/speedreading-passages';
 import { Badge } from '@/components/ui/badge';
@@ -55,7 +56,9 @@ function SkillBuilderPageContent() {
   };
 
   const currentCategory = useMemo(() => {
-    return activeTab === 'speedreading' ? 'Speed Reading' : 'Communication';
+    if (activeTab === 'speedreading') return 'Speed Reading';
+    if (activeTab === 'math') return 'Math';
+    return 'Communication';
   }, [activeTab]);
 
   const mvdRecommendation = useMemo(() => {
@@ -142,15 +145,17 @@ function SkillBuilderPageContent() {
                           </div>
                         </AssistantTooltip>
 
-                        <JourneyPlansSection 
-                          category={currentCategory as any} 
-                          isExpanded={isCurriculaExpanded}
-                          onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
-                          mode="trigger"
-                        />
+                        {activeTab !== 'math' && (
+                          <JourneyPlansSection 
+                            category={currentCategory as any} 
+                            isExpanded={isCurriculaExpanded}
+                            onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
+                            mode="trigger"
+                          />
+                        )}
                     </div>
 
-                    {isCurriculaExpanded && (
+                    {isCurriculaExpanded && activeTab !== 'math' && (
                       <div className="w-full pt-2 animate-in fade-in slide-in-from-top-2 duration-500">
                         <JourneyPlansSection 
                           category={currentCategory as any} 
@@ -165,12 +170,15 @@ function SkillBuilderPageContent() {
             
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <div className="flex justify-center mb-6">
-                <TabsList className="grid w-full max-w-md grid-cols-2 bg-muted/50 p-1">
+                <TabsList className="grid w-full max-w-lg grid-cols-3 bg-muted/50 p-1">
                   <TabsTrigger value="communication" className="gap-2">
                     <MessageSquare className="w-4 h-4" /> Communication
                   </TabsTrigger>
                   <TabsTrigger value="speedreading" className="gap-2">
                     <Zap className="w-4 h-4" /> Speed Reading
+                  </TabsTrigger>
+                  <TabsTrigger value="math" className="gap-2">
+                    <Sigma className="w-4 h-4" /> Math Composure Lab
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -207,6 +215,9 @@ function SkillBuilderPageContent() {
               </TabsContent>
               <TabsContent value="speedreading" className="animate-in fade-in duration-300">
                 <SpeedReadingContent />
+              </TabsContent>
+              <TabsContent value="math" className="animate-in fade-in duration-300">
+                <MathComposureLab />
               </TabsContent>
             </Tabs>
         </div>
