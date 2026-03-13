@@ -348,7 +348,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                   {isCustomText ? (
                     <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
                       <div className="flex justify-between items-center">
-                        <Label className="text-[10px] font-bold uppercase flex items-center gap-2">
+                        <Label className="text-[10px] font-bold uppercase flex items-gap-2">
                           <Sparkles className="w-3 h-3" /> Self-Assessed Understanding (1-5)
                         </Label>
                         <span className="text-xl font-black text-primary">{selfComprehensionRating}</span>

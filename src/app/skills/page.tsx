@@ -91,7 +91,7 @@ function SkillBuilderPageContent() {
                             <div className="p-3 bg-primary/10 rounded-full mb-3 mx-auto w-fit">
                                 <BrainCircuit className="h-10 w-10 text-primary"/>
                             </div>
-                            <h1 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight text-foreground">Skill Builder</h1>
+                            <h1 className="text-3xl sm:text-4xl font-bold font-headline tracking-tight text-foreground uppercase tracking-tighter">Skill Builder</h1>
                             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">Adaptive cognitive training laboratory. Sharpen your mental and interpersonal hardware.</p>
                           </div>
                       </div>
@@ -104,7 +104,7 @@ function SkillBuilderPageContent() {
 
                   {!isOpen && (
                     <div className="flex flex-col items-center text-center">
-                      <h1 className="text-xl font-bold font-headline tracking-tight text-foreground">Skill Builder</h1>
+                      <h1 className="text-xl font-bold font-headline tracking-tight text-foreground uppercase tracking-tighter">Skill Builder</h1>
                       <CollapsibleTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-auto py-1 px-4 text-[10px] uppercase font-black text-muted-foreground hover:text-primary gap-1">
                           <ChevronDown className="h-3 w-3" /> Expand Insights
@@ -155,7 +155,7 @@ function SkillBuilderPageContent() {
                 </div>
             </div>
             
-            <Tabs defaultValue={activeTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <div className="flex justify-center mb-6">
                 <TabsList className="grid w-full max-w-md grid-cols-2 bg-muted/50 p-1">
                   <TabsTrigger value="communication" className="gap-2">
@@ -209,7 +209,7 @@ function SkillBuilderPageContent() {
 
 export default function SkillBuilderPage() {
   return (
-    <Suspense fallback={<div>Loading Skills...</div>}>
+    <Suspense fallback={<div>Loading Lab...</div>}>
       <SkillBuilderPageContent />
     </Suspense>
   )
