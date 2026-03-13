@@ -1,12 +1,11 @@
-
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import React, { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { wellnessPlans, type WellnessPlan } from '@/data/wellness-plans';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo } from "react";
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
@@ -20,10 +19,9 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 
-export default function PlanDetailPage() {
-  const params = useParams();
+export default function PlanDetailPage({ params }: { params: Promise<{ planId: string }> }) {
+  const { planId } = React.use(params);
   const router = useRouter();
-  const planId = params.planId as string;
   const plan = wellnessPlans.find(p => p.id === planId);
 
   const { planProgress, markPlanDayComplete } = useWellnessData();

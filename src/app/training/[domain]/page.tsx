@@ -1,22 +1,22 @@
-
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Brain, Settings, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { chcDomains, type CHCDomain } from '@/types';
 import { domainIcons, SigmaIcon } from '@/components/icons';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { gameComponents } from '@/components/training/game-components';
 import { useTrainingFocus } from '@/hooks/use-training-focus';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTrainingOverride } from '@/hooks/use-training-override.tsx';
 
-export default function TrainingPage() {
-  const params = useParams();
-  const domain = params.domain as CHCDomain;
-  const domainInfo = chcDomains.find(d => d.key === domain);
+export default function TrainingPage({ params }: { params: Promise<{ domain: string }> }) {
+  const { domain } = React.use(params);
+  const domainKey = domain as CHCDomain;
+  const domainInfo = chcDomains.find(d => d.key === domainKey);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();
   const { override, isLoaded: isOverrideLoaded } = useTrainingOverride();
 

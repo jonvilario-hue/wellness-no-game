@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { Button } from '@/components/ui/button';
@@ -32,10 +32,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 
-export default function DeckPage() {
+export default function DeckPage({ params }: { params: Promise<{ deckId: string }> }) {
+  const { deckId } = React.use(params);
   const router = useRouter();
-  const params = useParams();
-  const deckId = params.deckId as string;
   const { decks, cards, deleteDeck, deleteCard } = useFlashcardStore();
   
   const deck = decks.find(d => d.id === deckId);

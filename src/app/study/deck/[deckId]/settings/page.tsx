@@ -1,8 +1,7 @@
-
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useFlashcardStore, DEFAULT_DECK_SETTINGS } from '@/hooks/use-flashcard-store';
 import { useForm, Controller } from 'react-hook-form';
@@ -135,10 +134,9 @@ const deckSettingsSchema = z.object({
 
 type DeckSettingsFormValues = z.infer<typeof deckSettingsSchema>;
 
-export default function DeckSettingsPage() {
+export default function DeckSettingsPage({ params }: { params: Promise<{ deckId: string }> }) {
+  const { deckId } = React.use(params);
   const router = useRouter();
-  const params = useParams();
-  const deckId = params.deckId as string;
   const { decks, updateDeck } = useFlashcardStore();
   const deck = decks.find(d => d.id === deckId);
 
