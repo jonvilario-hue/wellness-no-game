@@ -5,7 +5,7 @@ import { useMemo, useState } from "react"
 import { mindfulnessPractices, type MindfulnessCategory, type Exercise } from "@/data/exercises"
 import { stillnessCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
-import { Waves, PlusCircle, Save, X, Plus } from "lucide-react"
+import { Waves, Save, X, Plus } from "lucide-react"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -112,9 +112,6 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
      <div className="space-y-8">
         <div className="flex justify-between items-center px-1">
           <h2 className="text-2xl font-black uppercase tracking-tighter">Stillness Library</h2>
-          <Button onClick={() => { setTargetCategory('Breathwork'); setIsFormOpen(true); }} className="font-bold gap-2">
-            <PlusCircle className="w-4 h-4" /> Create Practice
-          </Button>
         </div>
 
         <Accordion type="multiple" value={openCategories} onValueChange={(vals) => {

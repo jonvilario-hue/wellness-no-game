@@ -5,7 +5,7 @@ import { useState, useMemo } from "react"
 import { movementExercises, type ExerciseCategory, type Exercise } from "@/data/exercises"
 import { movementCategoryDetails } from "@/data/wellness-categories"
 import { PracticeInstructionCard } from "./PracticeInstructionCard"
-import { HeartPulse, PlusCircle, Save, X, Plus } from "lucide-react"
+import { HeartPulse, Save, X, Plus } from "lucide-react"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -112,9 +112,6 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
     <div className="space-y-8">
         <div className="flex justify-between items-center px-1">
           <h2 className="text-2xl font-black uppercase tracking-tighter">Movement Library</h2>
-          <Button onClick={() => { setTargetCategory('Mind-Body'); setIsFormOpen(true); }} className="font-bold gap-2">
-            <PlusCircle className="w-4 h-4" /> Create Practice
-          </Button>
         </div>
 
         <Accordion type="multiple" value={openCategories} onValueChange={(vals) => {
