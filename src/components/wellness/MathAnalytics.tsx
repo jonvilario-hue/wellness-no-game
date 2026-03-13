@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -96,7 +95,7 @@ export function MathAnalytics() {
             <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-primary" /> Mathematical Velocity
             </CardTitle>
-            <CardDescription>Problems attempted per session over your last 10 logs.</CardDescription>
+            <CardDescription>Tracks actual measurable improvement in your numerical throughput and speed over the last 10 logs.</CardDescription>
           </CardHeader>
           <CardContent className="h-64 pt-8">
             {!sessions || sessions.length < 2 ? (
@@ -191,7 +190,7 @@ export function MathAnalytics() {
             <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
               <BrainCircuit className="w-4 h-4 text-primary" /> Habits You're Building
             </CardTitle>
-            <CardDescription>Frequency of meta-cognitive habits reported during reflection.</CardDescription>
+            <CardDescription>Tracks your commitment to specific mathematical thinking protocols. Consistency in these habits builds long-term resilience.</CardDescription>
           </CardHeader>
           <CardContent className="h-64 pt-4">
             {habitData.length > 0 ? (
@@ -214,7 +213,7 @@ export function MathAnalytics() {
           <Sparkles className="w-8 h-8 text-primary mx-auto mb-3 opacity-40" />
           <h4 className="text-xs font-black uppercase tracking-widest mb-2">Meta-Cognitive Growth</h4>
           <p className="text-[11px] text-muted-foreground leading-relaxed">
-            By naming your <b>Habits of Mind</b>, you reinforce the neural pathways for deliberate reasoning. These habits eventually become automatic "pre-calculations" that lower your cognitive load during complex tasks.
+            Meta-cognitive growth refers to your developing ability to monitor, direct, and improve your own thinking processes. By naming your <b>Habits of Mind</b>, you move from reactive, automatic calculation to deliberate, high-level strategic reasoning. This reduces cognitive load and allows you to catch errors before they propagate through complex problems.
           </p>
         </Card>
       </div>
