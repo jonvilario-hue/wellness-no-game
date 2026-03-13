@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Header } from '@/components/header';
 import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
@@ -30,6 +30,8 @@ function SkillBuilderPageContent() {
   const [isOpen, setIsOpen] = useState(true);
   const [isCurriculaExpanded, setIsCurriculaExpanded] = useState(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   
   const activeTab = searchParams.get('tab') || 'communication';
   const { lowEnergyMode, setLowEnergyMode } = useWellnessData();
@@ -44,6 +46,12 @@ function SkillBuilderPageContent() {
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     localStorage.setItem('skill-builder-collapsible-state', JSON.stringify(open));
+  };
+
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', value);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const currentCategory = useMemo(() => {
