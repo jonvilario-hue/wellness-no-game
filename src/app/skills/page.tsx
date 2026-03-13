@@ -8,12 +8,6 @@ import { MotivationalMessage } from '@/components/motivational-message';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronUp, ChevronDown, BrainCircuit } from 'lucide-react';
-import { DailyChallenge } from '@/components/dashboard/daily-challenge';
-import { AllGames } from '@/components/dashboard/all-games';
-import { HyperfocusBuilder } from '@/components/dashboard/hyperfocus-builder';
-import { WeakAreaRecommendations } from '@/components/dashboard/weak-area-recommendations';
-import { PerformanceInsights } from '@/components/dashboard/performance-insights';
-import { MainDashboardView } from '@/components/dashboard/main-dashboard-view';
 
 export default function SkillBuilderPage() {
   const [isOpen, setIsOpen] = useState(true);
@@ -61,8 +55,6 @@ export default function SkillBuilderPage() {
                             <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">Adaptive cognitive training across 8 core domains. Sharpen your mental hardware.</p>
                           </div>
                       </div>
-
-                      <MainDashboardView />
                   </CollapsibleContent>
 
                   {!isOpen && (
@@ -76,18 +68,6 @@ export default function SkillBuilderPage() {
                     </div>
                   )}
                 </Collapsible>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-8">
-                    <DailyChallenge />
-                    <AllGames />
-                </div>
-                <div className="space-y-8">
-                    <WeakAreaRecommendations />
-                    <HyperfocusBuilder />
-                    <PerformanceInsights />
-                </div>
             </div>
         </div>
       </main>
