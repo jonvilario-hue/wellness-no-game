@@ -17,6 +17,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { CommunicationDashboard } from '@/components/wellness/CommunicationDashboard';
 import { SpeedReadingStats } from '@/components/wellness/SpeedReadingDashboard';
+import { MathDashboard } from '@/components/wellness/MathDashboard';
 import { JourneyPlansSection } from '@/components/wellness/JourneyPlansSection';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CommunicationContent from '@/components/wellness/CommunicationContent';
@@ -118,6 +119,7 @@ function SkillBuilderPageContent() {
                       <div className="w-full">
                         {activeTab === 'communication' && <CommunicationDashboard />}
                         {activeTab === 'speedreading' && <SpeedReadingStats />}
+                        {activeTab === 'math' && <MathDashboard />}
                       </div>
                   </CollapsibleContent>
 
