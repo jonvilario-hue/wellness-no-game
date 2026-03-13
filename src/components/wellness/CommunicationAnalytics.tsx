@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo } from 'react';
@@ -49,6 +50,8 @@ export function CommunicationAnalytics() {
       .slice(0, 3);
   }, [communicationLogs]);
 
+  const topSkillName = topSkills[0]?.name || 'Active Listening';
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-700">
       <Card className="lg:col-span-2 border-primary/10 overflow-hidden">
@@ -56,7 +59,7 @@ export function CommunicationAnalytics() {
           <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-primary" /> Interpersonal Velocity
           </CardTitle>
-          <CardDescription>Effectiveness ratings over your last 10 practice sessions.</CardDescription>
+          <CardDescription>Effectiveness ratings (1-5) over your last 10 practice sessions.</CardDescription>
         </CardHeader>
         <CardContent className="h-64 pt-8">
           {chartData.length < 2 ? (
@@ -134,10 +137,10 @@ export function CommunicationAnalytics() {
           <div className="pt-4 border-t border-primary/5">
             <div className="p-3 bg-primary/5 rounded-xl space-y-2">
               <h4 className="text-[10px] font-black uppercase text-primary flex items-center gap-2">
-                <Brain className="w-3 h-3" /> Communication Strategy
+                <Brain className="w-3 h-3" /> Somatic Strategy
               </h4>
               <p className="text-[10px] leading-relaxed text-muted-foreground">
-                Your highest effectiveness correlates with <b>Active Listening</b>. When facing resistance, lead with <b>Minimal Encouragers</b> to lower the other party's defenses.
+                Your biological data suggests <b>{topSkillName}</b> is your highest-impact protocol. Lead with this technique in your next high-stakes interaction to maximize social resonance.
               </p>
             </div>
           </div>
