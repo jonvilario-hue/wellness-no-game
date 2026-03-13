@@ -72,6 +72,14 @@ function SkillBuilderPageContent() {
       const rec = readingPassages.find(p => p.tier === 'Casual') || readingPassages[0];
       return { ...rec, type: 'speedreading', name: rec.title, description: `A ${rec.tier} drill to maintain velocity.` };
     }
+    if (activeTab === 'math') {
+      return { 
+        id: 'math-estimation-mvd', 
+        name: 'Number Sense Check-in', 
+        description: 'Maintain your streak with a 2-minute estimation session.', 
+        type: 'math' 
+      };
+    }
     return null;
   }, [lowEnergyMode, activeTab]);
 
@@ -145,17 +153,15 @@ function SkillBuilderPageContent() {
                           </div>
                         </AssistantTooltip>
 
-                        {activeTab !== 'math' && (
-                          <JourneyPlansSection 
-                            category={currentCategory as any} 
-                            isExpanded={isCurriculaExpanded}
-                            onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
-                            mode="trigger"
-                          />
-                        )}
+                        <JourneyPlansSection 
+                          category={currentCategory as any} 
+                          isExpanded={isCurriculaExpanded}
+                          onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
+                          mode="trigger"
+                        />
                     </div>
 
-                    {isCurriculaExpanded && activeTab !== 'math' && (
+                    {isCurriculaExpanded && (
                       <div className="w-full pt-2 animate-in fade-in slide-in-from-top-2 duration-500">
                         <JourneyPlansSection 
                           category={currentCategory as any} 

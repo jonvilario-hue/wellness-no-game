@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -9,7 +10,7 @@ import {
   BrainCircuit, Scale, Calculator, 
   Activity, CalendarDays, History, 
   ArrowRight, Info, Sparkles, CheckCircle2,
-  TrendingUp
+  TrendingUp, Clock, Trophy
 } from 'lucide-react';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
@@ -18,6 +19,7 @@ import { MathSessionPlayer } from './MathSessionPlayer';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { cn } from '@/lib/utils';
 import WellnessHeatmap from './WellnessHeatmap';
+import { AssistantTooltip } from '../assistant-tooltip';
 
 export type MathDomain = {
   id: string;
@@ -49,7 +51,7 @@ export function MathComposureLab() {
   const { data: sessions, isLoading } = useCollection(sessionsQuery);
 
   const stats = useMemo(() => {
-    if (!sessions) return { streak: 0, weekDomains: 0, practicalLogged: 0 };
+    if (!sessions) return { streak: 0, weekDomains: 0, practicalLogged: 0, weekCount: 0, topDomain: 'None' };
     
     // Streak
     const dates = new Set(sessions.map(s => format(parseISO(s.timestamp), 'yyyy-MM-dd')));
@@ -60,15 +62,29 @@ export function MathComposureLab() {
       checkDate = subDays(checkDate, 1);
     }
 
-    // Weekly Domains
+    // Weekly stats
     const weekStart = startOfWeek(new Date());
     const weekSessions = sessions.filter(s => isAfter(parseISO(s.timestamp), weekStart));
     const uniqueDomains = new Set(weekSessions.map(s => s.domainId));
 
+    // Top Domain
+    const domainCounts: Record<string, number> = {};
+    sessions.forEach(s => {
+      domainCounts[s.domainId] = (domainCounts[s.domainId] || 0) + 1;
+    });
+    const topDomainId = Object.entries(domainCounts).sort((a,b) => b[1] - a[1])[0]?.[0];
+    const topDomain = domains.find(d => d.id === topDomainId)?.name || 'None yet';
+
     // Practical Logged
     const practical = sessions.filter(s => s.isApplied).length;
 
-    return { streak, weekDomains: uniqueDomains.size, practicalLogged: practical };
+    return { 
+      streak, 
+      weekDomains: uniqueDomains.size, 
+      practicalLogged: practical,
+      weekCount: weekSessions.length,
+      topDomain
+    };
   }, [sessions]);
 
   const habitData = useMemo(() => {
@@ -105,37 +121,36 @@ export function MathComposureLab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* DASHBOARD */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-            <Flame className="w-6 h-6 text-orange-500 mb-2" />
-            <p className="text-3xl font-black">{stats.streak}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Composure Streak</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <AssistantTooltip text="Consecutive days practicing numerical intuition and composure. Math is a perceptual language that requires daily 'tuning' to maintain speed and accuracy.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Flame className="w-5 h-5 text-orange-500 mb-1" />
+              <p className="text-2xl font-black">{stats.streak}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Composure Streak</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
+        
+        <AssistantTooltip text="Total math sessions completed this week across all domains. Consistent volume builds the 'mental hardware' necessary for complex reasoning.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Clock className="w-5 h-5 text-primary mb-1" />
+              <p className="text-2xl font-black">{stats.weekCount}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Sessions</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
 
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex gap-1 mb-2">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className={cn(
-                  "w-3 h-3 rounded-full border-2",
-                  i < stats.weekDomains ? "bg-primary border-primary" : "border-primary/20"
-                )} />
-              ))}
-            </div>
-            <p className="text-xl font-black">{stats.weekDomains} / 5</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Domains This Week</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-primary/5 border-primary/10">
-          <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-            <CheckCircle2 className="w-6 h-6 text-primary mb-2" />
-            <p className="text-3xl font-black">{stats.practicalLogged}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Practical Math Logged</p>
-          </CardContent>
-        </Card>
+        <AssistantTooltip text="The mathematical domain where you have invested the most time. Deep specialization in one area like 'Number Sense' provides a stable base for the others.">
+          <Card className="bg-primary/5 border-primary/10 h-full">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <Trophy className="w-5 h-5 text-primary opacity-80 mb-1" />
+              <p className="text-sm font-bold truncate w-full">{stats.topDomain}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Domain</p>
+            </CardContent>
+          </Card>
+        </AssistantTooltip>
       </div>
 
       {/* DOMAINS */}

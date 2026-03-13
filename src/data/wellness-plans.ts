@@ -16,7 +16,7 @@ export type WellnessPlan = {
   title: string;
   tagline: string;
   description: string;
-  category: "Movement" | "Stillness" | "Communication" | "Speed Reading";
+  category: "Movement" | "Stillness" | "Communication" | "Speed Reading" | "Math";
   durationDays: number;
   steps: DailyStep[];
 };
@@ -289,6 +289,38 @@ export const wellnessPlans: WellnessPlan[] = [
       { day: 5, title: "Stamina", estimatedMinutes: 15, actions: [{ label: "Long Passage", link: "/exercises?tab=speedreading" }] },
       { day: 6, title: "Review", estimatedMinutes: 10, actions: [{ label: "Technique Audit", link: "/exercises?tab=speedreading" }] },
       { day: 7, title: "Leisure", estimatedMinutes: 30, actions: [{ label: "Read a physical book", link: "/calendar" }] }
+    ]
+  },
+
+  // --- MATH ---
+  {
+    id: "math-7-reboot",
+    title: "7-Day Mental Math Reboot",
+    tagline: "Restore your arithmetic hardware.",
+    description: "Daily sessions progressing from single-digit speed drills to chained operations.",
+    category: "Math",
+    durationDays: 7,
+    steps: [
+      { day: 1, title: "Addition Foundations", estimatedMinutes: 5, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
+      { day: 2, title: "Subtraction Composure", estimatedMinutes: 5, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
+      { day: 3, title: "Multiplication Tables", estimatedMinutes: 8, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
+      { day: 4, title: "Division Speed", estimatedMinutes: 8, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
+      { day: 5, title: "Chained Operations", estimatedMinutes: 10, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
+      { day: 6, title: "Complexity Handling", estimatedMinutes: 12, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
+      { day: 7, title: "Full Composure Test", estimatedMinutes: 15, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] }
+    ]
+  },
+  {
+    id: "math-14-sense",
+    title: "14-Day Number Sense Builder",
+    tagline: "Build quantitative intuition.",
+    description: "Focuses on estimation and magnitude. Train your gut to 'feel' the right answer.",
+    category: "Math",
+    durationDays: 14,
+    steps: [
+      { day: 1, title: "Rounding Foundations", estimatedMinutes: 5, actions: [{ label: "Number Sense Drill", link: "/skills?tab=math" }] },
+      { day: 7, title: "Fermi Problems", estimatedMinutes: 10, actions: [{ label: "Number Sense Drill", link: "/skills?tab=math" }] },
+      { day: 14, title: "Instant Estimation", estimatedMinutes: 15, actions: [{ label: "Number Sense Drill", link: "/skills?tab=math" }] }
     ]
   }
 ];
