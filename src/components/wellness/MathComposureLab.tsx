@@ -17,8 +17,9 @@ import { format, startOfWeek, isAfter, subDays, parseISO } from 'date-fns';
 import { MathSessionPlayer } from './MathSessionPlayer';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { cn } from '@/lib/utils';
-import WellnessHeatmap from './WellnessHeatmap';
 import { AssistantTooltip } from '../assistant-tooltip';
+import { MathAnalytics } from './MathAnalytics';
+import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 
 export type MathDomain = {
   id: string;
@@ -60,16 +61,6 @@ export function MathComposureLab() {
     return Object.entries(habitCounts).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
   }, [sessions]);
 
-  const heatmapData = useMemo(() => {
-    if (!sessions) return [];
-    const counts: Record<string, number> = {};
-    sessions.forEach(s => {
-      const d = format(parseISO(s.timestamp), 'yyyy-MM-dd');
-      counts[d] = (counts[d] || 0) + 1;
-    });
-    return Object.entries(counts).map(([date, count]) => ({ date, count }));
-  }, [sessions]);
-
   if (activeSession) {
     return (
       <MathSessionPlayer 
@@ -81,7 +72,7 @@ export function MathComposureLab() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-12 animate-in fade-in duration-700">
       {/* DOMAINS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {domains.map(domain => {
@@ -132,8 +123,10 @@ export function MathComposureLab() {
         })}
       </div>
 
-      {/* ANALYTICS */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-8">
+      {/* ANALYTICS MODULES */}
+      <div className="space-y-12 pt-8">
+        <WellnessActivityCalendar categoryFilter="Math" />
+        
         <div className="space-y-4">
           <div className="flex items-center gap-2 px-1">
             <TrendingUp className="w-4 h-4 text-primary" />
@@ -157,13 +150,7 @@ export function MathComposureLab() {
           </Card>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 px-1">
-            <CalendarDays className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Practice History</h3>
-          </div>
-          <WellnessHeatmap activityData={heatmapData} />
-        </div>
+        <MathAnalytics />
       </div>
     </div>
   );
