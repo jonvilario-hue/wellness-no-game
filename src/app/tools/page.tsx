@@ -67,13 +67,6 @@ function ToolsPageContent() {
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
           <TabsList className="grid w-full max-w-2xl grid-cols-3 h-auto bg-muted/50 p-1">
-            <AssistantTooltip text="Structured and freeform journaling to build metacognition and emotional regulation." className="flex-1" display="block">
-              <TabsTrigger value="notebook" className="w-full gap-2 py-2">
-                <BookMarked className="w-4 h-4" />
-                Notebook
-              </TabsTrigger>
-            </AssistantTooltip>
-            
             <AssistantTooltip text="Optimizing your intake for brain health. Plan meals and track daily macros." className="flex-1" display="block">
               <TabsTrigger value="nutrition" className="w-full gap-2 py-2">
                 <Utensils className="w-4 h-4" />
@@ -81,6 +74,13 @@ function ToolsPageContent() {
               </TabsTrigger>
             </AssistantTooltip>
 
+            <AssistantTooltip text="Structured and freeform journaling to build metacognition and emotional regulation." className="flex-1" display="block">
+              <TabsTrigger value="notebook" className="w-full gap-2 py-2">
+                <BookMarked className="w-4 h-4" />
+                Notebook
+              </TabsTrigger>
+            </AssistantTooltip>
+            
             <AssistantTooltip text="Architect your wealth through strategic insight. Monitor assets, manage debt, and optimize utilization." className="flex-1" display="block">
               <TabsTrigger value="finance" className="w-full gap-2 py-2">
                 <Wallet className="w-4 h-4" />
