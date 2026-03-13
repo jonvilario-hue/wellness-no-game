@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -9,7 +8,8 @@ import {
   Sigma, Flame, Target, Box, 
   BrainCircuit, Scale, Calculator, 
   Activity, CalendarDays, History, 
-  ArrowRight, Info, Sparkles, CheckCircle2
+  ArrowRight, Info, Sparkles, CheckCircle2,
+  TrendingUp
 } from 'lucide-react';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
