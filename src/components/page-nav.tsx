@@ -12,13 +12,13 @@ const navLinks = [
       href: '/exercises', 
       icon: HeartPulse, 
       label: 'Health Check',
-      tooltip: 'Manage your physical and emotional baseline. Track movement, stillness, and communication to support high cognitive output.'
+      tooltip: 'Manage your physical and emotional baseline. Track movement and stillness to support high cognitive output.'
     },
     { 
       href: '/skills', 
       icon: BrainCircuit, 
       label: 'Skill Builder',
-      tooltip: 'Cognitive training laboratory. Sharpen fluid reasoning, working memory, and processing speed through adaptive neuro-games.'
+      tooltip: 'Cognitive and interpersonal laboratory. Master speed reading, vocal presence, and persuasive dialogue through adaptive drills.'
     },
     { 
       href: '/study', 

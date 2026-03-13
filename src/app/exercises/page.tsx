@@ -19,8 +19,6 @@ import { WellnessBalance } from '@/components/wellness/WellnessBalance';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { MovementDashboard } from '@/components/wellness/MovementDashboard';
 import { StillnessDashboard } from '@/components/wellness/StillnessDashboard';
-import { CommunicationDashboard } from '@/components/wellness/CommunicationDashboard';
-import { SpeedReadingStats } from '@/components/wellness/SpeedReadingDashboard';
 import { JourneyPlansSection } from '@/components/wellness/JourneyPlansSection';
 
 function ExercisesPageContent() {
@@ -45,9 +43,6 @@ function ExercisesPageContent() {
 
   const streak = useMemo(() => calculateStreak(completions), [completions]);
 
-  // Logic for the 7 tally marks
-  // If streak is 7, 14, etc., we show all 7 filled.
-  // Otherwise, we show the remainder.
   const filledTallies = useMemo(() => {
     if (streak === 0) return 0;
     const remainder = streak % 7;
@@ -55,13 +50,7 @@ function ExercisesPageContent() {
   }, [streak]);
 
   const currentCategory = useMemo(() => {
-    const map: Record<string, "Movement" | "Stillness" | "Communication" | "Speed Reading"> = {
-      'movement': 'Movement',
-      'stillness': 'Stillness',
-      'communication': 'Communication',
-      'speedreading': 'Speed Reading'
-    };
-    return map[activeTab] || 'Movement';
+    return activeTab === 'stillness' ? 'Stillness' : 'Movement';
   }, [activeTab]);
 
   return (
@@ -100,8 +89,6 @@ function ExercisesPageContent() {
                       <div className="w-full">
                         {activeTab === 'movement' && <MovementDashboard />}
                         {activeTab === 'stillness' && <StillnessDashboard />}
-                        {activeTab === 'communication' && <CommunicationDashboard />}
-                        {activeTab === 'speedreading' && <SpeedReadingStats />}
                       </div>
                   </CollapsibleContent>
 
@@ -163,7 +150,7 @@ function ExercisesPageContent() {
                         </AssistantTooltip>
 
                         <JourneyPlansSection 
-                          category={currentCategory} 
+                          category={currentCategory as any} 
                           isExpanded={isCurriculaExpanded}
                           onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
                           mode="trigger"
@@ -174,7 +161,7 @@ function ExercisesPageContent() {
                     {isCurriculaExpanded && (
                       <div className="w-full pt-2 animate-in fade-in slide-in-from-top-2 duration-500">
                         <JourneyPlansSection 
-                          category={currentCategory} 
+                          category={currentCategory as any} 
                           isExpanded={isCurriculaExpanded}
                           onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
                           mode="gallery"
