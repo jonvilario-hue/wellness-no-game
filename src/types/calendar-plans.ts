@@ -9,6 +9,7 @@ export type PlanCategory =
   | 'Journaling' 
   | 'Study/Learning' 
   | 'Communication'
+  | 'Math'
   | 'Custom';
 
 export type RecurrenceType = 'daily' | 'weekly' | 'monthly' | 'custom';

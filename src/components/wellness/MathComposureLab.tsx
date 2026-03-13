@@ -9,7 +9,7 @@ import {
   Sigma, BrainCircuit, Scale, Calculator, 
   Activity, CalendarDays, History, 
   ArrowRight, Info, Sparkles, CheckCircle2,
-  TrendingUp, Clock, Trophy
+  TrendingUp, Clock, Trophy, Plus
 } from 'lucide-react';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
@@ -20,6 +20,8 @@ import { cn } from '@/lib/utils';
 import { AssistantTooltip } from '../assistant-tooltip';
 import { MathAnalytics } from './MathAnalytics';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
+import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
+import { useToast } from '@/hooks/use-toast';
 
 export type MathDomain = {
   id: string;
@@ -39,6 +41,8 @@ export const domains: MathDomain[] = [
 export function MathComposureLab() {
   const { user, firestore } = useFirebase();
   const [activeSession, setActiveSession] = useState<{ domainId: string; mode: string } | null>(null);
+  const { addCustomPlan } = useCalendarPlansStore();
+  const { toast } = useToast();
 
   const sessionsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.uid) return null;
@@ -49,6 +53,37 @@ export function MathComposureLab() {
   }, [firestore, user?.uid]);
 
   const { data: sessions, isLoading } = useCollection(sessionsQuery);
+
+  const handleAddDomainToCalendar = (domain: MathDomain) => {
+    addCustomPlan({
+      id: `math-routine-${domain.id}-${Date.now()}`,
+      name: `${domain.name} Practice`,
+      description: `Daily mathematical composure training for ${domain.name}.`,
+      isPreset: false,
+      isActive: true,
+      durationType: 'ongoing',
+      startDate: new Date().toISOString(),
+      categories: ['Math'],
+      color: '#22d3ee', // Cyan for math
+      activities: [
+        {
+          id: `act-math-${domain.id}-${Date.now()}`,
+          name: domain.name,
+          category: 'Math',
+          recurrence: 'daily',
+          duration: 10,
+          reminderEnabled: true,
+          linkedTracker: domain.id
+        }
+      ]
+    });
+
+    toast({
+      title: "Routine Added",
+      description: `"${domain.name}" has been added to your Master Calendar.`,
+      variant: 'success'
+    });
+  };
 
   if (activeSession) {
     return (
@@ -71,13 +106,25 @@ export function MathComposureLab() {
           const lastDate = domainSessions[0] ? format(parseISO(domainSessions[0].timestamp), 'MMM d') : 'Never';
 
           return (
-            <Card key={domain.id} className="group hover:border-primary/50 transition-all border-primary/5 overflow-hidden">
+            <Card key={domain.id} className="group hover:border-primary/50 transition-all border-primary/5 overflow-hidden relative">
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <AssistantTooltip text="Add this domain as a daily routine to your Master Calendar.">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-7 w-7 text-primary hover:bg-primary/10"
+                    onClick={() => handleAddDomainToCalendar(domain)}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </AssistantTooltip>
+              </div>
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <domain.icon className="w-5 h-5 text-primary" />
                   </div>
-                  <CardTitle className="text-sm font-bold truncate">{domain.name}</CardTitle>
+                  <CardTitle className="text-sm font-bold truncate pr-6">{domain.name}</CardTitle>
                 </div>
                 <CardDescription className="text-xs italic leading-relaxed h-8">"{domain.philosophy}"</CardDescription>
               </CardHeader>
