@@ -8,8 +8,8 @@ import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, BrainCircuit, Flame, Zap, ZapOff, Lightbulb, Play } from 'lucide-react';
-import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
+import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff } from 'lucide-react';
+import { useWellnessData } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -32,7 +32,7 @@ function SkillBuilderPageContent() {
   const searchParams = useSearchParams();
   
   const activeTab = searchParams.get('tab') || 'communication';
-  const { lowEnergyMode, setLowEnergyMode, completions } = useWellnessData();
+  const { lowEnergyMode, setLowEnergyMode } = useWellnessData();
 
   useEffect(() => {
     const savedState = localStorage.getItem('skill-builder-collapsible-state');
@@ -214,5 +214,3 @@ export default function SkillBuilderPage() {
     </Suspense>
   )
 }
-
-import { MessageSquare } from 'lucide-react';
