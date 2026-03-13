@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { GraduationCap, Target, HeartPulse, BookMarked, Calendar } from 'lucide-react';
+import { GraduationCap, Target, HeartPulse, BookMarked, Calendar, BrainCircuit } from 'lucide-react';
 import { AssistantTooltip } from './assistant-tooltip';
 
 const navLinks = [
@@ -13,6 +13,12 @@ const navLinks = [
       icon: HeartPulse, 
       label: 'Health Check',
       tooltip: 'Manage your physical and emotional baseline. Track movement, stillness, and communication to support high cognitive output.'
+    },
+    { 
+      href: '/skills', 
+      icon: BrainCircuit, 
+      label: 'Skill Builder',
+      tooltip: 'Cognitive training laboratory. Sharpen fluid reasoning, working memory, and processing speed through adaptive neuro-games.'
     },
     { 
       href: '/study', 
