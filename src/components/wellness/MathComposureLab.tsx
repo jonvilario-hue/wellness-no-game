@@ -50,17 +50,6 @@ export function MathComposureLab() {
 
   const { data: sessions, isLoading } = useCollection(sessionsQuery);
 
-  const habitData = useMemo(() => {
-    if (!sessions) return [];
-    const habitCounts: Record<string, number> = {};
-    sessions.forEach(s => {
-      s.habitsOfMind?.forEach((h: string) => {
-        habitCounts[h] = (habitCounts[h] || 0) + 1;
-      });
-    });
-    return Object.entries(habitCounts).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
-  }, [sessions]);
-
   if (activeSession) {
     return (
       <MathSessionPlayer 
@@ -126,30 +115,6 @@ export function MathComposureLab() {
       {/* ANALYTICS MODULES */}
       <div className="space-y-12 pt-8">
         <WellnessActivityCalendar categoryFilter="Math" />
-        
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 px-1">
-            <TrendingUp className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Habits You're Building</h3>
-          </div>
-          <Card className="border-primary/10 bg-primary/[0.02]">
-            <CardContent className="h-64 pt-8">
-              {habitData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={habitData} layout="vertical">
-                    <XAxis type="number" hide />
-                    <YAxis dataKey="name" type="category" fontSize={10} width={100} axisLine={false} tickLine={false} />
-                    <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '12px' }} />
-                    <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex items-center justify-center h-full opacity-30 italic text-xs">Complete a session to track habits</div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
         <MathAnalytics />
       </div>
     </div>
