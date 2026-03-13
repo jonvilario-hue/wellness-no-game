@@ -294,6 +294,37 @@ export const wellnessPlans: WellnessPlan[] = [
 
   // --- MATH ---
   {
+    id: "math-0",
+    title: "Math: Intro Pulse",
+    tagline: "Just one session. No calculation required.",
+    description: "Break the ice with a single session focused on estimation and number sense.",
+    category: "Math",
+    durationDays: 1,
+    steps: [
+      {
+        day: 1,
+        title: "Numerical Grounding",
+        estimatedMinutes: 5,
+        actions: [
+          { label: "Estimation Drill", link: "/skills?tab=math" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "math-3",
+    title: "Math: 3-Day Composure Kickstart",
+    tagline: "Build a micro-habit of numerical calm.",
+    description: "Three days of low-stakes arithmetic and estimation to build confidence.",
+    category: "Math",
+    durationDays: 3,
+    steps: [
+      { day: 1, title: "Estimation Flow", estimatedMinutes: 5, actions: [{ label: "Number Sense Drill", link: "/skills?tab=math" }] },
+      { day: 2, title: "Arithmetic Rhythm", estimatedMinutes: 5, actions: [{ label: "Arithmetic Drill", link: "/skills?tab=math" }] },
+      { day: 3, title: "Scenario Logic", estimatedMinutes: 8, actions: [{ label: "Real Life Scenario", link: "/skills?tab=math" }] }
+    ]
+  },
+  {
     id: "math-7-reboot",
     title: "7-Day Mental Math Reboot",
     tagline: "Restore your arithmetic hardware.",
