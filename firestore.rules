@@ -23,6 +23,10 @@ service cloud.firestore {
       match /math-sessions/{sessionId} {
         allow read, write: if isOwner(userId);
       }
+
+      match /music-drill-logs/{logId} {
+        allow read, write: if isOwner(userId);
+      }
     }
   }
 }

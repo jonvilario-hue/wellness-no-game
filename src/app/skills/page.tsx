@@ -8,7 +8,7 @@ import { PageNav } from '@/components/page-nav';
 import { MotivationalMessage } from '@/components/motivational-message';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma } from 'lucide-react';
+import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma, Music } from 'lucide-react';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -22,6 +22,7 @@ import { JourneyPlansSection } from '@/components/wellness/JourneyPlansSection';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CommunicationContent from '@/components/wellness/CommunicationContent';
 import SpeedReadingContent from '@/components/wellness/SpeedReadingContent';
+import MusicContent from '@/components/wellness/MusicContent';
 import { MathComposureLab } from '@/components/wellness/MathComposureLab';
 import { communicationPractices } from '@/data/communication-practices';
 import { readingPassages } from '@/data/speedreading-passages';
@@ -59,6 +60,7 @@ function SkillBuilderPageContent() {
   const currentCategory = useMemo(() => {
     if (activeTab === 'speedreading') return 'Speed Reading';
     if (activeTab === 'math') return 'Math';
+    if (activeTab === 'music') return 'Communication'; // Shared visual structure
     return 'Communication';
   }, [activeTab]);
 
@@ -120,6 +122,11 @@ function SkillBuilderPageContent() {
                         {activeTab === 'communication' && <CommunicationDashboard />}
                         {activeTab === 'speedreading' && <SpeedReadingStats />}
                         {activeTab === 'math' && <MathDashboard />}
+                        {activeTab === 'music' && (
+                          <div className="p-10 text-center border-2 border-dashed rounded-2xl bg-muted/20 opacity-50 italic text-sm">
+                            Music insights engine initializing...
+                          </div>
+                        )}
                       </div>
                   </CollapsibleContent>
 
@@ -177,15 +184,18 @@ function SkillBuilderPageContent() {
             </div>
             
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-              <div className="flex justify-center mb-6">
-                <TabsList className="grid w-full max-w-lg grid-cols-3 bg-muted/50 p-1">
-                  <TabsTrigger value="communication" className="gap-2">
+              <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
+                <TabsList className="flex w-full max-w-2xl bg-muted/50 p-1 gap-1">
+                  <TabsTrigger value="communication" className="gap-2 flex-1 px-4 font-bold">
                     <MessageSquare className="w-4 h-4" /> Communication
                   </TabsTrigger>
-                  <TabsTrigger value="speedreading" className="gap-2">
-                    <Zap className="w-4 h-4" /> Speed Reading
+                  <TabsTrigger value="speedreading" className="gap-2 flex-1 px-4 font-bold">
+                    <Zap className="w-4 h-4" /> Reading
                   </TabsTrigger>
-                  <TabsTrigger value="math" className="gap-2">
+                  <TabsTrigger value="music" className="gap-2 flex-1 px-4 font-bold">
+                    <Music className="w-4 h-4" /> Music
+                  </TabsTrigger>
+                  <TabsTrigger value="math" className="gap-2 flex-1 px-4 font-bold">
                     <Sigma className="w-4 h-4" /> Arithmetic
                   </TabsTrigger>
                 </TabsList>
@@ -223,6 +233,9 @@ function SkillBuilderPageContent() {
               </TabsContent>
               <TabsContent value="speedreading" className="animate-in fade-in duration-300">
                 <SpeedReadingContent />
+              </TabsContent>
+              <TabsContent value="music" className="animate-in fade-in duration-300">
+                <MusicContent />
               </TabsContent>
               <TabsContent value="math" className="animate-in fade-in duration-300">
                 <MathComposureLab />

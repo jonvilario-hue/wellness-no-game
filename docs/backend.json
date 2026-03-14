@@ -64,6 +64,42 @@
         "isApplied": { "type": "boolean" }
       },
       "required": ["id", "userId", "domainId", "mode", "timestamp", "feeling"]
+    },
+    "MusicDrillLog": {
+      "title": "MusicDrillLog",
+      "type": "object",
+      "description": "A comprehensive record of a music training drill session.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "domain": { "type": "string" },
+        "drillName": { "type": "string" },
+        "difficulty": { "type": "string", "enum": ["Beginner", "Intermediate", "Advanced"] },
+        "difficultyMultiplier": { "type": "number" },
+        "focusLevel": { "type": "number" },
+        "score": { "type": "number" },
+        "har": { "type": "number" },
+        "averageResponseTime": { "type": "number" },
+        "effectivenessRating": { "type": "number" },
+        "context": { "type": "string" },
+        "durationMinutes": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "syncedToCalendar": { "type": "boolean" },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "prompt": { "type": "string" },
+              "userAnswer": { "type": "string" },
+              "correctAnswer": { "type": "string" },
+              "isCorrect": { "type": "boolean" },
+              "responseTimeMs": { "type": "number" }
+            }
+          }
+        }
+      },
+      "required": ["id", "userId", "domain", "drillName", "difficulty", "score", "har", "timestamp"]
     }
   },
   "auth": { "providers": ["password", "anonymous"] },
@@ -72,7 +108,8 @@
       { "path": "/users/{userId}/anki-decks/{deckId}", "definition": { "entityName": "AnkiDeck", "description": "Cloud metadata for Anki files." } },
       { "path": "/users/{userId}/flashcard-decks/{deckId}", "definition": { "entityName": "FlashcardDeck", "description": "User created study decks." } },
       { "path": "/users/{userId}/flashcard-decks/{deckId}/cards/{cardId}", "definition": { "entityName": "Flashcard", "description": "Individual cards within a deck." } },
-      { "path": "/users/{userId}/math-sessions/{sessionId}", "definition": { "entityName": "MathSession", "description": "Mathematical composure logs." } }
+      { "path": "/users/{userId}/math-sessions/{sessionId}", "definition": { "entityName": "MathSession", "description": "Mathematical composure logs." } },
+      { "path": "/users/{userId}/music-drill-logs/{logId}", "definition": { "entityName": "MusicDrillLog", "description": "Music practice and drill performance data." } }
     ]
   }
 }
