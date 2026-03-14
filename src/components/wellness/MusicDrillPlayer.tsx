@@ -8,10 +8,12 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { 
   Play, Pause, X, Check, ArrowRight,
   Music, Target, Brain, Activity, Clock,
-  Sparkles, RotateCcw, CheckCircle2, XCircle
+  Sparkles, RotateCcw, CheckCircle2, XCircle,
+  Type as TextIcon
 } from 'lucide-react';
 import type { MusicDifficulty, MusicDrillQuestion, MusicDomain } from '@/types/music';
 import { useMusicStore } from '@/hooks/use-music-store';
@@ -19,7 +21,7 @@ import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { drillsData, DrillDefinition } from '@/data/music-drills';
+import { drillsData } from '@/data/music-drills';
 
 interface Props {
   drillId: string;
@@ -33,13 +35,21 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<MusicDrillQuestion[]>([]);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [constructionInput, setConstructionInput] = useState('');
   const [isAnswered, setIsAnswered] = useState(false);
   const [startTime, setStartTime] = useState(0);
   const [questionStartTime, setQuestionStartTime] = useState(0);
   const [tapTimestamps, setTapTimestamps] = useState<number[]>([]);
 
-  const drill = useMemo(() => drillsData.find(d => d.id === drillId) || drillsData[0], [drillId]);
-  const currentQuestion = drill.questions[currentIndex % drill.questions.length];
+  const drill = useMemo(() => {
+    const found = drillsData.find(d => d.id === drillId || d.name === drillId);
+    return found || drillsData[0];
+  }, [drillId]);
+
+  const currentQuestion = useMemo(() => {
+    const qList = drill.questions;
+    return qList[currentIndex % qList.length];
+  }, [drill, currentIndex]);
   
   const { logDrill } = useMusicStore();
   const { syncFromTracker } = useCalendarPlansStore();
@@ -58,7 +68,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
     const now = Date.now();
     const time = now - questionStartTime;
     
-    const isCorrect = val === currentQuestion.answer;
+    const isCorrect = val.toLowerCase().trim() === currentQuestion.answer.toLowerCase().trim() || currentQuestion.type === 'text';
     const newAnswer: MusicDrillQuestion = {
       prompt: currentQuestion.prompt,
       userAnswer: val,
@@ -78,6 +88,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
     } else {
       setCurrentIndex(prev => prev + 1);
       setSelectedOption(null);
+      setConstructionInput('');
       setIsAnswered(false);
       setQuestionStartTime(Date.now());
       setTapTimestamps([]);
@@ -113,8 +124,8 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
       questions: answers
     });
 
-    syncFromTracker('Communication', drill.name); // Using Comm as generic skill sync trigger
-    toast({ title: "Session Synced", variant: 'success' });
+    syncFromTracker('Communication', drill.name);
+    toast({ title: "Performance Synced", variant: 'success' });
     onClose();
   };
 
@@ -129,7 +140,10 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
           </div>
         </div>
         <div className="flex items-center gap-6">
-          <Progress value={((currentIndex) / 10) * 100} className="w-32 h-1.5" />
+          <div className="hidden sm:flex flex-col items-end">
+            <span className="text-[9px] font-black uppercase opacity-60">Completion</span>
+            <Progress value={((currentIndex) / 10) * 100} className="w-32 h-1.5" />
+          </div>
           <Badge variant="outline" className="h-6 border-primary/20 text-primary uppercase font-black text-[9px]">
             {difficulty}
           </Badge>
@@ -145,8 +159,8 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
                   <div className="p-4 bg-primary/10 rounded-full w-fit mx-auto mb-2">
                     <Music className="w-10 h-10 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl font-black uppercase">Drill Calibration</CardTitle>
-                  <CardDescription>Set parameters for this high-fidelity session.</CardDescription>
+                  <CardTitle className="text-2xl font-black uppercase">Initialize Drill</CardTitle>
+                  <CardDescription>Calibrate difficulty and focus for this protocol.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8 py-6">
                   <div className="space-y-4">
@@ -166,7 +180,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest">Initial Focus (1-5)</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest">Pre-Drill Focus (1-5)</Label>
                       <span className="text-xl font-black text-primary">{focusLevel}</span>
                     </div>
                     <Slider value={[focusLevel]} onValueChange={([v]) => setFocusLevel(v)} min={1} max={5} step={1} />
@@ -174,7 +188,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
                 </CardContent>
                 <CardFooter>
                   <Button className="w-full h-14 text-lg font-black shadow-lg" onClick={handleStart}>
-                    Initialize Drill <Play className="ml-2 w-5 h-5 fill-current" />
+                    Start Session <Play className="ml-2 w-5 h-5 fill-current" />
                   </Button>
                 </CardFooter>
               </Card>
@@ -186,7 +200,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
               <Card className="border-primary/20 shadow-2xl overflow-hidden">
                 <CardHeader className="bg-primary/5">
                   <div className="flex justify-between items-center mb-2">
-                    <Badge variant="outline" className="uppercase font-black text-[9px]">Challenge {currentIndex + 1} of 10</Badge>
+                    <Badge variant="outline" className="uppercase font-black text-[9px]">Step {currentIndex + 1} of 10</Badge>
                     <div className="flex items-center gap-2 text-xs font-mono opacity-60">
                       <Clock className="w-3 h-3" /> {Math.round((Date.now() - questionStartTime)/1000)}s
                     </div>
@@ -214,29 +228,60 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
                     </div>
                   )}
 
+                  {currentQuestion.type === 'construction' && (
+                    <div className="space-y-4">
+                      <Input 
+                        placeholder="Enter the sequence (e.g. C D E F...)" 
+                        value={constructionInput}
+                        onChange={e => setConstructionInput(e.target.value)}
+                        disabled={isAnswered}
+                        className="h-14 text-lg font-bold"
+                        onKeyDown={e => e.key === 'Enter' && handleResponse(constructionInput)}
+                      />
+                      <Button className="w-full h-12" onClick={() => handleResponse(constructionInput)} disabled={isAnswered || !constructionInput}>Verify Sequence</Button>
+                    </div>
+                  )}
+
                   {currentQuestion.type === 'tap' && (
                     <div className="flex flex-col items-center gap-8 py-10">
                       <Button 
                         size="lg" 
+                        disabled={isAnswered}
                         className="w-48 h-48 rounded-full text-3xl font-black bg-primary/10 border-4 border-primary/20 text-primary hover:bg-primary/20 active:scale-90 transition-all"
                         onClick={() => setTapTimestamps(prev => [...prev, Date.now()])}
                       >
-                        TAP
+                        {tapTimestamps.length > 0 ? tapTimestamps.length : 'TAP'}
                       </Button>
-                      <Button onClick={() => handleResponse("target: 90bpm")} className="font-bold">End Session</Button>
+                      <Button onClick={() => handleResponse(`Recorded ${tapTimestamps.length} beats`)} disabled={isAnswered} variant="secondary" className="font-bold">End Rhythmic Sequence</Button>
+                    </div>
+                  )}
+
+                  {currentQuestion.type === 'text' && (
+                    <div className="space-y-4">
+                      <Label className="text-[10px] font-bold uppercase">Self-Evaluation Required</Label>
+                      <Button className="w-full h-14 text-lg font-black" onClick={() => handleResponse("completed")}>Mark Done</Button>
                     </div>
                   )}
 
                   {isAnswered && (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-4 rounded-xl bg-muted/50 border flex gap-4">
-                      {selectedOption === currentQuestion.answer ? <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" /> : <XCircle className="w-5 h-5 text-destructive shrink-0" />}
-                      <p className="text-sm italic leading-relaxed">{currentQuestion.explanation}</p>
+                      {currentQuestion.type === 'text' ? (
+                        <Sparkles className="w-5 h-5 text-primary shrink-0" />
+                      ) : selectedOption?.toLowerCase().trim() === currentQuestion.answer.toLowerCase().trim() ? (
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-destructive shrink-0" />
+                      )}
+                      <div className="space-y-1">
+                        {currentQuestion.type !== 'text' && <p className="text-xs font-bold uppercase">Correct Answer: {currentQuestion.answer}</p>}
+                        <p className="text-sm italic leading-relaxed text-muted-foreground">{currentQuestion.explanation}</p>
+                      </div>
                     </motion.div>
                   )}
                 </CardContent>
                 <CardFooter className="bg-muted/10 p-4 justify-end">
                   <Button disabled={!isAnswered} onClick={handleNext} className="gap-2 font-bold h-12 px-8 shadow-md">
-                    {currentIndex === 9 ? 'Finalize Session' : 'Next Question'} <ArrowRight className="w-4 h-4" />
+                    {currentIndex === 9 ? 'Show Summary' : 'Next Question'} <ArrowRight className="w-4 h-4" />
                   </Button>
                 </CardFooter>
               </Card>
@@ -251,12 +296,12 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
                     <Sparkles className="w-10 h-10 text-primary" />
                   </div>
                   <CardTitle className="text-3xl font-black uppercase">Drill Synopsis</CardTitle>
-                  <CardDescription>Session metrics synchronized successfully.</CardDescription>
+                  <CardDescription>Auditory performance synchronized successfully.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-muted/30 rounded-2xl text-center">
-                      <p className="text-[10px] font-black uppercase text-muted-foreground">Score</p>
+                      <p className="text-[10px] font-black uppercase text-muted-foreground">Accuracy</p>
                       <p className="text-4xl font-black text-foreground">{summaryData.score}/10</p>
                     </div>
                     <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl text-center">
@@ -267,13 +312,13 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-center text-xs font-bold uppercase">
-                      <span className="text-muted-foreground">Avg Response Time</span>
+                      <span className="text-muted-foreground">Average Response</span>
                       <span className="text-foreground">{summaryData.avgTime}ms</span>
                     </div>
                     {summaryData.weakest && (
                       <div className="p-3 bg-destructive/5 rounded-xl border border-destructive/10">
                         <p className="text-[9px] font-black uppercase text-destructive flex items-center gap-2 mb-1">
-                          <XCircle className="w-3 h-3" /> Potential Blindspot
+                          <XCircle className="w-3 h-3" /> Blindspot Flagged
                         </p>
                         <p className="text-xs italic line-clamp-1 opacity-70">"{summaryData.weakest.prompt}"</p>
                       </div>
@@ -281,7 +326,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
                   </div>
 
                   <div className="space-y-4 pt-4 border-t">
-                    <Label className="text-[10px] font-bold uppercase">Rate Session Productivity</Label>
+                    <Label className="text-[10px] font-bold uppercase">Rate Session Effectiveness (1-5)</Label>
                     <div className="flex justify-between gap-1">
                       {[1,2,3,4,5].map(n => (
                         <Button key={n} variant="outline" className="flex-1 h-10 font-bold" onClick={() => finalizeSession(n, 'Midday')}>
