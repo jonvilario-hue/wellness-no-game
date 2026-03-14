@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -8,7 +9,8 @@ import { useMicrophone } from '@/hooks/useMicrophone';
 import { useVolumeLevel } from '@/hooks/useVolumeLevel';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { SlidersHorizontal, Play, CheckCircle2, XCircle, ArrowRight, Zap, Clock } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { SlidersHorizontal, Play, CheckCircle2, XCircle, ArrowRight, Zap, Clock, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -40,7 +42,7 @@ export default function DynamicsPage() {
 
   const generateRound = useCallback(() => {
     const keys = Object.keys(dynamicMarkings);
-    const type: RoundType = Math.random() > 0.7 ? 'jump' : 'match'; // Simplified for MVP
+    const type: RoundType = Math.random() > 0.7 ? 'jump' : 'match'; 
     const target = keys[Math.floor(Math.random() * keys.length)];
     
     setRoundType(type);
