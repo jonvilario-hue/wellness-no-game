@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -23,6 +22,7 @@ interface MusicState {
   getWeeklyVolume: () => number;
   getTopDomain: () => MusicDomain | 'None';
   getGlobalHAR: () => number;
+  getTotalCreations: () => number;
   _hasHydrated: boolean;
 }
 
@@ -103,6 +103,14 @@ export const useMusicStore = create<MusicState>()(
         if (recentLogs.length === 0) return 0;
         const sum = recentLogs.reduce((acc, l) => acc + l.har, 0);
         return Math.round(sum / recentLogs.length);
+      },
+
+      getTotalCreations: () => {
+        return get().logs.filter(l => 
+          l.domain === 'Improvisation & Composition' || 
+          l.drillName.includes('Freestyle') || 
+          l.drillName.includes('Composition')
+        ).length;
       }
     }),
     {

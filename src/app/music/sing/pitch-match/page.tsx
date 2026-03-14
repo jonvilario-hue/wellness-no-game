@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -14,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Volume2, CheckCircle2, AlertCircle, Music, Clock, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTimer } from '@/hooks/useTimer';
-import { initDB } from '@/lib/storage/db';
+import { useMusicStore } from '@/hooks/use-music-store';
 
 type GameState = 'idle' | 'listening' | 'performing' | 'feedback' | 'results';
 
@@ -26,11 +25,13 @@ export default function PitchMatchPage() {
   const [stabilityCounter, setStabilityCounter] = useState(0);
   const [lastRoundResult, setLastResult] = useState<{ correct: boolean; score: number } | null>(null);
   const [totalScore, setTotalScore] = useState(0);
+  const [roundQuestions, setRoundQuestions] = useState<any[]>([]);
 
   const { engine, isReady, init: initAudio } = useAudioEngine();
   const { stream, requestPermission } = useMicrophone();
   const pitchData = useRealtimePitch(stream, 0.9);
   const { timeLeft, startTimer, stopTimer, resetTimer } = useTimer(8);
+  const { logDrill } = useMusicStore();
 
   const generateTarget = useCallback(() => {
     const naturalNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
@@ -48,6 +49,7 @@ export default function PitchMatchPage() {
     if (!stream) await requestPermission();
     setTotalScore(0);
     setRound(1);
+    setRoundQuestions([]);
     setGameState('listening');
     generateTarget();
   };
@@ -72,6 +74,13 @@ export default function PitchMatchPage() {
 
     setTotalScore(s => s + points);
     setLastResult({ correct: true, score: points });
+    setRoundQuestions(prev => [...prev, {
+      prompt: `Match ${targetNoteName}`,
+      userAnswer: pitchData.currentNote,
+      correctAnswer: targetNoteName,
+      isCorrect: true,
+      responseTimeMs: (8 - timeLeft) * 1000
+    }]);
     setGameState('feedback');
 
     setTimeout(() => {
@@ -83,10 +92,17 @@ export default function PitchMatchPage() {
         finishGame();
       }
     }, 2500);
-  }, [round, generateTarget, stopTimer]);
+  }, [round, generateTarget, stopTimer, targetNoteName, pitchData.currentNote, timeLeft]);
 
   const handleTimeout = useCallback(() => {
     setLastResult({ correct: false, score: 0 });
+    setRoundQuestions(prev => [...prev, {
+      prompt: `Match ${targetNoteName}`,
+      userAnswer: 'None',
+      correctAnswer: targetNoteName,
+      isCorrect: false,
+      responseTimeMs: 8000
+    }]);
     setGameState('feedback');
     setTimeout(() => {
       if (round < 10) {
@@ -97,25 +113,26 @@ export default function PitchMatchPage() {
         finishGame();
       }
     }, 2500);
-  }, [round, generateTarget]);
+  }, [round, generateTarget, targetNoteName]);
 
   const finishGame = async () => {
     setGameState('results');
-    try {
-      const db = await initDB();
-      await db.add('sessions', {
-        gameName: 'pitch-match',
-        date: new Date().toISOString(),
-        score: totalScore,
-        accuracy: 0,
-        duration: 0,
-        difficulty: 'Beginner',
-        roundDetails: [],
-        maxStreak: 0
-      });
-    } catch (e) {
-      console.warn("Storage failed", e);
-    }
+    const score = roundQuestions.filter(q => q.isCorrect).length;
+    
+    await logDrill({
+      domain: 'Vocal Mechanics',
+      drillName: 'Pitch Match',
+      difficulty: 'Beginner',
+      difficultyMultiplier: 1.0,
+      focusLevel: 3,
+      score: score,
+      har: Math.round((score / 10) * 100),
+      averageResponseTime: 4000,
+      effectivenessRating: 4,
+      context: 'Midday',
+      durationMinutes: 5,
+      questions: roundQuestions
+    });
   };
 
   useEffect(() => {
@@ -158,13 +175,13 @@ export default function PitchMatchPage() {
       score={totalScore}
       onStart={handleStart}
       onPauseToggle={() => {}}
-      backHref="/music/sing"
+      backHref="/skills?tab=music"
       breadcrumb={["Music", "Sing", "Pitch Match"]}
     >
       <MicPermissionGate>
         <div className="w-full flex flex-col items-center space-y-12">
           {gameState === 'listening' && (
-            <div className="text-center space-y-8 animate-in zoom-in-95">
+            <div className="text-center space-y-8 animate-in zoom-in-95 duration-500">
               <div className="space-y-2">
                 <Badge variant="secondary" className="uppercase font-black tracking-widest text-[10px]">Reference Stage</Badge>
                 <h3 className="text-4xl font-black">Hear the Note</h3>
