@@ -26,7 +26,7 @@ const categories = [
     desc: 'Train your voice with pitch exercises',
     icon: Mic2,
     count: 4,
-    status: 'COMING SOON',
+    status: 'ACTIVE',
     href: '/music/sing'
   },
   {
