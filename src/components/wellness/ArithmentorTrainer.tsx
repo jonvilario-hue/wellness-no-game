@@ -7,13 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Slider } from '@/components/ui/slider';
 import { 
   Zap, Play, Trophy, Target, 
   Brain, Star, ArrowRight, ShieldCheck,
   ChevronRight, Settings2, Clock, CheckCircle2,
   XCircle, RotateCcw
 } from 'lucide-react';
-import { useArithmentorStore, type ArithmentorDifficulty } from '@/hooks/use-arithmentor-store';
+import { useArithmentorStore, type ArithmentorDifficulty, type ArithmentorMode } from '@/hooks/use-arithmentor-store';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
