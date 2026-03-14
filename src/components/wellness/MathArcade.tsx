@@ -10,14 +10,14 @@ import { Label } from '@/components/ui/label';
 import { 
   Zap, Play, Trophy, Target, 
   Star, Flame, ArrowRight, ShieldCheck,
-  Plus, Minus, X, Divide, RotateCcw, Clock, XCircle
+  Plus, Minus, X, Divide, RotateCcw, Clock, XCircle, Sparkles
 } from 'lucide-react';
 import { useMathArcadeStore, type MathOperator } from '@/hooks/use-math-arcade-store';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function MathArcade() {
-  const { totalXP, level, highScores, addXP, saveSession } = useMathArcadeStore();
+  const { totalXP, level, highScores, history, addXP, saveSession } = useMathArcadeStore();
   
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'results'>('idle');
   const [timeLeft, setTimeLeft] = useState(60);
@@ -296,7 +296,7 @@ export function MathArcade() {
             <div className="flex justify-center items-center gap-8">
               <div className="text-center">
                 <p className="text-[10px] font-black uppercase text-muted-foreground">Max Combo PB</p>
-                <p className="text-3xl font-black text-primary">{Math.max(...history.map(h => h.maxCombo), 0)}x</p>
+                <p className="text-3xl font-black text-primary">{Math.max(...(history || []).map(h => h.maxCombo), 0)}x</p>
               </div>
               <div className="w-px h-10 bg-primary/10" />
               <div className="text-center">
