@@ -207,8 +207,9 @@ export default function MusicContent() {
                         <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
                       </div>
                     </CardContent>
-                  </Link>
-                );
+                  </Card>
+                </Link>
+              );
             })}
           </div>
         </TabsContent>
@@ -244,8 +245,9 @@ export default function MusicContent() {
                         <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
                       </div>
                     </CardContent>
-                  </Link>
-                );
+                  </Card>
+                </Link>
+              );
             })}
           </div>
         </TabsContent>
