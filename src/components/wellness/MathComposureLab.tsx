@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Sigma, BrainCircuit, Scale, Calculator, 
   Activity, History, 
-  Plus, Zap, LayoutGrid, Eye, Sparkles
+  Plus, Zap, LayoutGrid, Eye, Sparkles,
+  Gamepad2
 } from 'lucide-react';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
@@ -23,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { MentalMathTrainer } from './MentalMathTrainer';
 import { AnzanTrainer } from './AnzanTrainer';
 import { LunarienMathTrainer } from './LunarienMathTrainer';
+import { MathArcade } from './MathArcade';
 import { cn } from '@/lib/utils';
 
 export type MathDomain = {
@@ -102,17 +104,20 @@ export function MathComposureLab() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-center mb-8">
-          <TabsList className="bg-muted/50 p-1 h-auto grid grid-cols-4 max-w-2xl">
-            <TabsTrigger value="domains" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+          <TabsList className="bg-muted/50 p-1 h-auto grid grid-cols-5 max-w-3xl">
+            <TabsTrigger value="domains" className="gap-2 px-4 font-bold uppercase text-[10px] py-2">
               <LayoutGrid className="w-3.5 h-3.5" /> Domains
             </TabsTrigger>
-            <TabsTrigger value="trainer" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+            <TabsTrigger value="trainer" className="gap-2 px-4 font-bold uppercase text-[10px] py-2">
               <Zap className="w-3.5 h-3.5" /> Velocity
             </TabsTrigger>
-            <TabsTrigger value="lunarien" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+            <TabsTrigger value="lunarien" className="gap-2 px-4 font-bold uppercase text-[10px] py-2">
               <Sparkles className="w-3.5 h-3.5" /> Tiers
             </TabsTrigger>
-            <TabsTrigger value="anzan" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+            <TabsTrigger value="arcade" className="gap-2 px-4 font-bold uppercase text-[10px] py-2">
+              <Gamepad2 className="w-3.5 h-3.5" /> Blitz
+            </TabsTrigger>
+            <TabsTrigger value="anzan" className="gap-2 px-4 font-bold uppercase text-[10px] py-2">
               <Eye className="w-3.5 h-3.5" /> Anzan
             </TabsTrigger>
           </TabsList>
@@ -187,6 +192,10 @@ export function MathComposureLab() {
 
         <TabsContent value="lunarien" className="animate-in slide-in-from-bottom-2 duration-500">
           <LunarienMathTrainer />
+        </TabsContent>
+
+        <TabsContent value="arcade" className="animate-in slide-in-from-bottom-2 duration-500">
+          <MathArcade />
         </TabsContent>
 
         <TabsContent value="anzan" className="animate-in slide-in-from-bottom-2 duration-500">
