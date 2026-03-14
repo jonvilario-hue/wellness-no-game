@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -107,7 +106,7 @@ export default function MusicContent() {
               </TabsTrigger>
             </AssistantTooltip>
             
-            <AssistantTooltip text="Develops the pitch-matching loop and melodic memory. Bridges the gap between hearing a sound and reproducing it accurately with your voice.">
+            <AssistantTooltip text="Develops the pitch-matching loop and melodic memory. Bridges the gap between hearing a sound and accurately reproducing it with your voice.">
               <TabsTrigger value="sing" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
                 <Mic2 className="w-4 h-4" /> Sing
               </TabsTrigger>
@@ -119,7 +118,7 @@ export default function MusicContent() {
               </TabsTrigger>
             </AssistantTooltip>
 
-            <AssistantTooltip text="Integrates instrumental performance with real-time analysis. Practice transcription and rhythmic call-and-response on your physical hardware.">
+            <AssistantTooltip text="Integrates instrumental performance with real-time analysis. Practice technical proficiency and ear-to-instrument transcription on your physical hardware.">
               <TabsTrigger value="play" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
                 <Guitar className="w-4 h-4" /> Play
               </TabsTrigger>
@@ -135,15 +134,6 @@ export default function MusicContent() {
 
         {/* --- LISTEN SUB-TAB --- */}
         <TabsContent value="listen" className="space-y-8 animate-in fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-1">
-              <MusicAccuracyTracker />
-            </div>
-            <div className="md:col-span-3">
-              <MusicAchievementVault filter={['Ear Training', 'Rhythm & Timing', 'Theory & Harmony', 'Sight Reading', 'Critical Listening']} />
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {drillsData.map((drill) => {
               const gameId = drill.id.toLowerCase().replace(/ /g, '-');
@@ -187,6 +177,16 @@ export default function MusicContent() {
               );
             })}
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-1">
+              <MusicAccuracyTracker />
+            </div>
+            <div className="md:col-span-3">
+              <MusicAchievementVault filter={['Ear Training', 'Rhythm & Timing', 'Theory & Harmony', 'Sight Reading', 'Critical Listening']} />
+            </div>
+          </div>
+
           <MusicAnalytics />
         </TabsContent>
 
