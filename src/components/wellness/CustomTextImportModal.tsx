@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
 import { Upload, FileText, CheckCircle2, AlertCircle, X, Loader2, BookOpen, Layers } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { saveCustomPassages } from '@/lib/indexedDBUtils';
