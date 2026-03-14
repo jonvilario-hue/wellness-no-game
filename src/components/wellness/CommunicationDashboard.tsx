@@ -1,14 +1,20 @@
+
 'use client';
 
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { calculateStreak, useCommunicationLogs } from "@/hooks/use-wellness-data";
 import { Flame, Clock, Trophy } from "lucide-react";
-import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function CommunicationDashboard() {
   const communicationLogs = useCommunicationLogs();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const stats = useMemo(() => {
     // We treat communication as a daily ritual for streak purposes
@@ -29,6 +35,10 @@ export function CommunicationDashboard() {
 
     return { streak, weekMinutes, mostPracticed };
   }, [communicationLogs]);
+
+  if (!mounted) {
+    return <div className="h-32 w-full animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="space-y-6">

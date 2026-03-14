@@ -1,14 +1,20 @@
+
 'use client';
 
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { calculateStreak, useMovementLogs } from "@/hooks/use-wellness-data";
 import { Flame, Clock, Trophy } from "lucide-react";
-import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function MovementDashboard() {
   const movementLogs = useMovementLogs();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const stats = useMemo(() => {
     const streak = calculateStreak(movementLogs);
@@ -28,6 +34,10 @@ export function MovementDashboard() {
 
     return { streak, weekMovementMins, mostPracticed };
   }, [movementLogs]);
+
+  if (!mounted) {
+    return <div className="h-32 w-full animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="space-y-6">

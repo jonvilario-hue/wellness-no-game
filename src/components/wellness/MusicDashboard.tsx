@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useMusicStore } from "@/hooks/use-music-store";
 import { Flame, Clock, Target, Trophy, Sparkles } from "lucide-react";
@@ -8,6 +9,11 @@ import { AssistantTooltip } from "../assistant-tooltip";
 
 export function MusicDashboard() {
   const { streak, getWeeklyVolume, getTopDomain, getGlobalHAR, achievements } = useMusicStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const vaultItems = [
     { label: 'Ear Training', key: 'Ear Training' },
@@ -15,6 +21,10 @@ export function MusicDashboard() {
     { label: 'Theory', key: 'Theory & Harmony' },
     { label: 'Sight Reading', key: 'Sight Reading' },
   ];
+
+  if (!mounted) {
+    return <div className="h-32 w-full animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="space-y-6">
@@ -69,7 +79,7 @@ export function MusicDashboard() {
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {vaultItems.map(item => (
-            <AssistantTooltip key={item.key} text={`Your all-time highest Harmonic Accuracy Rate (HAR) achieved in ${item.label}. This represents your peak performance ceiling for this specific discipline.`}>
+            <AssistantTooltip key={item.key} text={`Your all-time highest Harmonic Accuracy Rate (HAR) achieved in ${item.label}. This represents your peak performance snapshot that define your current skill ceiling in the laboratory.`}>
               <Card className="bg-muted/20 border-primary/5 p-3 flex flex-col items-center text-center group hover:border-primary/20 transition-all">
                 <p className="text-[8px] font-black uppercase opacity-60 mb-1">{item.label}</p>
                 <p className="text-lg font-black text-primary group-hover:scale-110 transition-transform">

@@ -1,14 +1,20 @@
+
 'use client';
 
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { calculateStreak, useStillnessLogs } from "@/hooks/use-wellness-data";
 import { Sparkles, Clock, Wind, TrendingDown } from "lucide-react";
-import { useMemo } from "react";
 import { startOfWeek, isAfter } from "date-fns";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function StillnessDashboard() {
   const stillnessLogs = useStillnessLogs();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const stats = useMemo(() => {
     const streak = calculateStreak(stillnessLogs);
@@ -44,6 +50,10 @@ export function StillnessDashboard() {
 
     return { streak, weekMinutes, mostUsed, reliverName, avgReduction };
   }, [stillnessLogs]);
+
+  if (!mounted) {
+    return <div className="h-32 w-full animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="space-y-6">
