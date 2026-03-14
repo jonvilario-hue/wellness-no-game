@@ -15,6 +15,7 @@ import { AssistantTooltip } from '@/components/assistant-tooltip';
 import { CommunicationDashboard } from '@/components/wellness/CommunicationDashboard';
 import { SpeedReadingStats } from '@/components/wellness/SpeedReadingDashboard';
 import { MathDashboard } from '@/components/wellness/MathDashboard';
+import { MusicDashboard } from '@/components/wellness/MusicDashboard';
 import { JourneyPlansSection } from '@/components/wellness/JourneyPlansSection';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CommunicationContent from '@/components/wellness/CommunicationContent';
@@ -111,11 +112,7 @@ function SkillBuilderPageContent() {
                     {activeTab === 'communication' && <CommunicationDashboard />}
                     {activeTab === 'speedreading' && <SpeedReadingStats />}
                     {activeTab === 'math' && <MathDashboard />}
-                    {activeTab === 'music' && (
-                      <div className="p-10 text-center border-2 border-dashed rounded-2xl bg-muted/20 opacity-50 italic text-sm">
-                        Music insights engine initializing...
-                      </div>
-                    )}
+                    {activeTab === 'music' && <MusicDashboard />}
                   </div>
               </CollapsibleContent>
 

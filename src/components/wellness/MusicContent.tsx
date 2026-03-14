@@ -4,7 +4,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { musicDomains, drillsData } from '@/data/music-drills';
 import { useMusicStore } from '@/hooks/use-music-store';
-import { MusicDashboard } from './MusicDashboard';
 import { MusicAnalytics } from './MusicAnalytics';
 import { MusicDrillPlayer } from './MusicDrillPlayer';
 import { JourneyPlansSection } from './JourneyPlansSection';
@@ -41,7 +40,7 @@ const categoryExercises = {
   ],
   voice: [
     { id: 'breath', name: 'Breath Control', desc: 'Sustain and support your vocal output.', difficulty: 'Beginner', icon: Wind },
-    { id: 'dynamics', name: 'Dynamics', desc: 'Master loud, soft & subtle gradients.', difficulty: 'Beginner', icon: SlidersHorizontal },
+    { id: 'dynamics', name: 'Dynamics', desc: 'Master loud, soft & everything between.', difficulty: 'Beginner', icon: SlidersHorizontal },
     { id: 'range', name: 'Range Builder', desc: 'Explore and expand your vocal limits.', difficulty: 'Intermediate', icon: Maximize },
     { id: 'tone', name: 'Tone Shaping', desc: 'Modify vowel shapes for specific timbres.', difficulty: 'Advanced', icon: Palette },
   ],
@@ -97,8 +96,6 @@ export default function MusicContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <MusicDashboard />
-
       <Tabs defaultValue="listen" className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
           <TabsList className="flex w-full max-w-3xl h-auto bg-muted/50 p-1 min-w-max">
@@ -147,7 +144,7 @@ export default function MusicContent() {
                       <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Adaptive</Badge>
                     </div>
                     <CardTitle className="text-base font-bold group-hover:text-primary transition-colors">{drill.name}</CardTitle>
-                    <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{drill.description}</CardDescription>
+                    <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{drill.desc || drill.description}</CardDescription>
                   </CardHeader>
                   <CardFooter className="p-4 pt-4 mt-auto border-t border-primary/5 flex justify-between items-center">
                     <div className="flex flex-col">
