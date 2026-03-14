@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Settings, ArrowLeft, Play, Info, Trophy, ChevronRight } from 'lucide-react';
-import { getPreferences, markInstructionsSeen } from '@/lib/storage/preferences';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -41,23 +40,10 @@ export function GameShell({
   breadcrumb
 }: GameShellProps) {
   const router = useRouter();
-  const [showInstructions, setShowInstructions] = useState(false);
 
   // Auto-detect back link and breadcrumbs if not provided
-  const resolvedBackHref = backHref || "/music/listen";
+  const resolvedBackHref = backHref || "/skills?tab=music";
   const resolvedBreadcrumb = breadcrumb || ["Music", "Listen", gameName];
-
-  useEffect(() => {
-    const prefs = getPreferences();
-    if (!prefs.hasSeenInstructions[gameName]) {
-      setShowInstructions(true);
-    }
-  }, [gameName]);
-
-  const handleDismissInstructions = () => {
-    setShowInstructions(false);
-    markInstructionsSeen(gameName);
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
@@ -66,7 +52,7 @@ export function GameShell({
           {resolvedBreadcrumb.map((crumb, i) => (
             <React.Fragment key={i}>
               {i < resolvedBreadcrumb.length - 1 ? (
-                <Link href={i === 0 ? "/music" : resolvedBackHref} className="hover:text-primary transition-colors">
+                <Link href={i === 0 ? "/skills?tab=music" : resolvedBackHref} className="hover:text-primary transition-colors">
                   {crumb}
                 </Link>
               ) : (
@@ -106,17 +92,35 @@ export function GameShell({
         <Progress value={(currentRound / totalRounds) * 100} className="h-1.5" />
       </div>
 
-      <main className="relative min-h-[400px] flex items-center justify-center bg-card rounded-2xl border shadow-sm overflow-hidden p-8">
+      <main className="relative min-h-[500px] flex items-center justify-center bg-card rounded-2xl border shadow-sm overflow-hidden p-8">
         {gameState === 'idle' && (
-          <div className="text-center space-y-6">
-            <div className="p-6 bg-primary/10 rounded-full w-fit mx-auto">
-              <Play className="w-12 h-12 text-primary fill-current" />
+          <div className="max-w-md mx-auto space-y-8 animate-in fade-in zoom-in-95 duration-500">
+            <div className="text-center space-y-4">
+              <div className="p-6 bg-primary/10 rounded-full w-fit mx-auto">
+                <Play className="w-12 h-12 text-primary fill-current" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black uppercase tracking-tight">Ready to Start?</h3>
+                <p className="text-muted-foreground text-sm">{description}</p>
+              </div>
             </div>
-            <Button size="lg" className="px-12 h-14 text-lg font-bold rounded-2xl shadow-xl" onClick={onStart}>
-              Start Session
-            </Button>
-            <Button variant="ghost" className="gap-2 text-muted-foreground" onClick={() => setShowInstructions(true)}>
-              <Info className="w-4 h-4" /> How to play
+
+            <div className="space-y-4 bg-muted/30 p-6 rounded-2xl border border-primary/5">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
+                <Info className="w-3 h-3" /> Protocol Instructions
+              </h4>
+              <ul className="space-y-3 text-left">
+                {instructions.map((step, i) => (
+                  <li key={i} className="flex gap-3 text-xs leading-relaxed">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-black">{i + 1}</span>
+                    <p className="flex-1 pt-0.5">{step}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <Button size="lg" className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl" onClick={onStart}>
+              Begin Session
             </Button>
           </div>
         )}
@@ -158,34 +162,6 @@ export function GameShell({
           </div>
         )}
       </main>
-
-      {showInstructions && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <Card className="max-w-md w-full shadow-2xl rounded-3xl overflow-hidden border-none">
-            <CardHeader className="bg-primary/5 pb-4">
-              <CardTitle className="flex items-center gap-2">
-                <Info className="w-5 h-5 text-primary" />
-                Instructions: {gameName}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <ul className="space-y-4">
-                {instructions.map((step, i) => (
-                  <li key={i} className="flex gap-4 text-sm leading-relaxed">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-black">{i + 1}</span>
-                    {step}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full font-bold h-12 rounded-2xl" onClick={handleDismissInstructions}>
-                Got it, Let's Play
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }
