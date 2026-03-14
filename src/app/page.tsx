@@ -15,13 +15,13 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button asChild variant="outline" size="lg" className="h-14 px-8 font-bold border-2">
+          <Button asChild variant="outline" size="lg" className="h-14 px-8 font-bold border-2 rounded-2xl">
             <Link href="/profile">
               <History className="mr-2 w-5 h-5" /> Analytics
             </Link>
           </Button>
-          <Button asChild size="lg" className="h-14 px-10 text-lg font-black shadow-xl shadow-primary/20">
-            <Link href="/games">
+          <Button asChild size="lg" className="h-14 px-10 text-lg font-black shadow-xl shadow-primary/20 rounded-2xl">
+            <Link href="/music">
               <Play className="mr-2 w-6 h-6 fill-current" /> Initialize Lab
             </Link>
           </Button>
@@ -29,7 +29,7 @@ export default function DashboardPage() {
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="md:col-span-2 border-primary/10 hover:border-primary/30 transition-all group overflow-hidden">
+        <Card className="md:col-span-2 border-primary/10 hover:border-primary/30 transition-all group overflow-hidden rounded-3xl">
           <CardHeader className="bg-primary/5 pb-8">
             <CardTitle className="text-2xl flex items-center gap-3">
               <Zap className="w-6 h-6 text-primary animate-pulse" /> Daily Neural Circuit
@@ -50,13 +50,13 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-8 h-12 font-bold uppercase tracking-widest">
-              Launch Circuit
+            <Button asChild className="w-full mt-8 h-12 font-bold uppercase tracking-widest rounded-xl">
+              <Link href="/music/listen">Launch Circuit</Link>
             </Button>
           </CardContent>
         </Card>
 
-        <Card className="border-primary/10">
+        <Card className="border-primary/10 rounded-3xl">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <Brain className="w-6 h-6 text-primary" /> Local Skill Map
