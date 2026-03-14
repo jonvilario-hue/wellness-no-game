@@ -16,7 +16,15 @@ import { WellnessLogDialog } from "./WellnessLogDialog";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from '@/hooks/use-toast';
-import { domains } from './MathComposureLab';
+
+// Static mapping for legacy math domains after erasure from main lab file
+const legacyMathDomains: Record<string, string> = {
+  'number-sense': 'Number Sense',
+  'percentage-fluency': 'Ratio Fluency',
+  'arithmetic-composure': 'Arithmetic Composure',
+  'probabilistic-thinking': 'Probabilistic Thinking',
+  'logical-structure': 'Logical Structure'
+};
 
 interface WellnessActivityCalendarProps {
   categoryFilter?: 'Movement' | 'Stillness' | 'Nutrition' | 'Finance' | 'Communication' | 'Speed Reading' | 'Math';
@@ -80,7 +88,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
       logs.push(...(mathSessions || []).filter(s => isSameDay(parseISO(s.timestamp), checkDate)).map(s => ({ 
         ...s, 
         type: 'Math', 
-        label: domains.find(d => d.id === s.domainId)?.name, 
+        label: legacyMathDomains[s.domainId] || 'Math Training', 
         detail: `${s.mode} • ${s.problemsAttempted} reps` 
       })));
     }
@@ -192,7 +200,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
             </Button>
           )}
         </div>
-      </CardHeader>
+      </Header>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex justify-center border rounded-2xl p-4 bg-muted/10">
           <Calendar

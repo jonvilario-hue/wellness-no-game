@@ -8,7 +8,15 @@ import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
 import { format, startOfWeek, subDays, parseISO, isAfter } from 'date-fns';
 import { AssistantTooltip } from '../assistant-tooltip';
-import { domains } from './MathComposureLab';
+
+// Static mapping for legacy math domains after erasure from main lab file
+const legacyMathDomains: Record<string, string> = {
+  'number-sense': 'Number Sense',
+  'percentage-fluency': 'Ratio Fluency',
+  'arithmetic-composure': 'Arithmetic Composure',
+  'probabilistic-thinking': 'Probabilistic Thinking',
+  'logical-structure': 'Logical Structure'
+};
 
 export function MathDashboard() {
   const { user, firestore } = useFirebase();
@@ -49,7 +57,7 @@ export function MathDashboard() {
       domainCounts[s.domainId] = (domainCounts[s.domainId] || 0) + 1;
     });
     const topDomainId = Object.entries(domainCounts).sort((a,b) => b[1] - a[1])[0]?.[0];
-    const topDomain = domains.find(d => d.id === topDomainId)?.name || 'None yet';
+    const topDomain = (topDomainId ? legacyMathDomains[topDomainId] : null) || 'None yet';
 
     return { 
       streak, 
