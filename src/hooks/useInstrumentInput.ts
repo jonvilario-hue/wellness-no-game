@@ -24,12 +24,13 @@ export function useInstrumentInput({ inputMode = 'auto' }: UseInstrumentInputPro
 
   // --- MIDI Setup ---
   useEffect(() => {
-    if (typeof navigator === 'undefined' || !navigator.requestMIDIAccess) return;
-
-    let midiAccess: MIDIAccess;
+    // If user explicitly chose mic, don't even check MIDI
+    if (typeof navigator === 'undefined' || !navigator.requestMIDIAccess || inputMode === 'mic') {
+      setEffectiveMode('mic');
+      return;
+    }
 
     const onMIDISuccess = (access: MIDIAccess) => {
-      midiAccess = access;
       const inputs = Array.from(access.inputs.values());
       setAvailableMidiDevices(inputs.map(i => i.name || 'Unknown MIDI Device'));
 
@@ -46,7 +47,21 @@ export function useInstrumentInput({ inputMode = 'auto' }: UseInstrumentInputPro
       }
     };
 
-    navigator.requestMIDIAccess().then(onMIDISuccess).catch(() => setEffectiveMode('mic'));
+    /**
+     * Some browsers (like Firefox) throw a SecurityError synchronously or 
+     * reject the promise with a SecurityError if MIDI is restricted.
+     */
+    try {
+      navigator.requestMIDIAccess()
+        .then(onMIDISuccess)
+        .catch((err) => {
+          console.warn("MIDI access was denied or failed:", err);
+          setEffectiveMode('mic');
+        });
+    } catch (err) {
+      console.warn("Web MIDI API is blocked by browser security policy:", err);
+      setEffectiveMode('mic');
+    }
 
     return () => {
       if (activeMidiInput) {

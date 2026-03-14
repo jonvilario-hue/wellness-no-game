@@ -16,10 +16,19 @@ export function InputSelector() {
     const saved = localStorage.getItem('music-input-method') as InputMethod;
     if (saved) setMethod(saved);
 
-    if (navigator.requestMIDIAccess) {
-      navigator.requestMIDIAccess().then(access => {
-        setMidiDevices(Array.from(access.inputs.values()).map(i => i.name || 'Unknown MIDI Device'));
-      });
+    // Guard against browsers where requestMIDIAccess is missing or blocked by security
+    if (typeof navigator !== 'undefined' && navigator.requestMIDIAccess) {
+      try {
+        navigator.requestMIDIAccess()
+          .then(access => {
+            setMidiDevices(Array.from(access.inputs.values()).map(i => i.name || 'Unknown MIDI Device'));
+          })
+          .catch(() => {
+            // Silently fail - MIDI options will simply not appear
+          });
+      } catch (err) {
+        // Handle synchronous SecurityErrors (common in Firefox without the MIDI add-on)
+      }
     }
   }, []);
 
