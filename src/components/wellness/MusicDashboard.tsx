@@ -9,7 +9,7 @@ import { AssistantTooltip } from "../assistant-tooltip";
 import { cn } from '@/lib/utils';
 
 export function MusicGlobalHeader() {
-  const { streak, getWeeklyVolume } = useMusicStore();
+  const { streak, getWeeklyVolume, getGlobalHAR, getTotalCreations } = useMusicStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export function MusicGlobalHeader() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <AssistantTooltip text="Measures consecutive days of engagement across any Music module. Consistency is the primary driver of neuroplasticity in the auditory cortex; missing 48 hours results in noticeable regression in pitch sensitivity.">
         <Card className="bg-primary/5 border-primary/10 h-full">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
@@ -41,125 +41,29 @@ export function MusicGlobalHeader() {
           </CardContent>
         </Card>
       </AssistantTooltip>
-    </div>
-  );
-}
 
-export function MusicAccuracyTracker() {
-  const { getGlobalHAR } = useMusicStore();
-  const [mounted, setMounted] = useState(false);
+      <AssistantTooltip text="Weighted Harmonic Accuracy Rate (HAR): calculated as (Correct Answers / Total) * Difficulty Multiplier. A 70% score on 'Advanced' yields a higher HAR than 100% on 'Beginner,' rewarding you for training at your cognitive ceiling.">
+        <Card className="bg-primary/5 border-primary/10 h-full">
+          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+            <div className="flex items-center gap-1.5 mb-1">
+              <Target className="w-5 h-5 text-primary" />
+              <span className="text-[10px] font-black text-primary">HAR</span>
+            </div>
+            <p className="text-2xl font-black">{getGlobalHAR()}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Avg Accuracy</p>
+          </CardContent>
+        </Card>
+      </AssistantTooltip>
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
-  return (
-    <AssistantTooltip text="Weighted Harmonic Accuracy Rate (HAR): calculated as (Correct Answers / Total) * Difficulty Multiplier. A 70% score on 'Advanced' yields a higher HAR than 100% on 'Beginner,' rewarding you for training at your cognitive ceiling.">
-      <Card className="bg-primary/5 border-primary/10 h-full">
-        <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-          <div className="flex items-center gap-1.5 mb-1">
-            <Target className="w-5 h-5 text-primary" />
-            <span className="text-[10px] font-black text-primary">HAR</span>
-          </div>
-          <p className="text-2xl font-black">{getGlobalHAR()}</p>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Avg Accuracy</p>
-        </CardContent>
-      </Card>
-    </AssistantTooltip>
-  );
-}
-
-export function MusicCreationTracker() {
-  const { getTotalCreations } = useMusicStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
-  return (
-    <AssistantTooltip text="A cumulative tally of sessions logged in Vocal Improv, Flow Trainer, Beatbox Lab, and the Freestyle Sandbox. Measures your shift from rote technical practice to spontaneous creative application.">
-      <Card className="bg-primary/5 border-primary/10 h-full">
-        <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-          <Wand2 className="w-5 h-5 text-primary opacity-80 mb-1" />
-          <p className="text-2xl font-black">{getTotalCreations()}</p>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Creative Acts</p>
-        </CardContent>
-      </Card>
-    </AssistantTooltip>
-  );
-}
-
-export function MusicAchievementVault({ filter }: { filter?: string[] }) {
-  const { achievements } = useMusicStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const vaultItems = [
-    { 
-      label: 'Ear Training', 
-      key: 'Ear Training', 
-      desc: "Inputs: Interval Sniper, Chord Detective, Seventh Chord ID. Measures frequency interval discrimination accuracy." 
-    },
-    { 
-      label: 'Rhythm', 
-      key: 'Rhythm & Timing', 
-      desc: "Inputs: Rhythm Tap, Subdivision ID, Polyrhythm Replication. Measures milliseconds of variance from absolute pulse." 
-    },
-    { 
-      label: 'Theory', 
-      key: 'Theory & Harmony', 
-      desc: "Inputs: Scale Builder, Chord Constructor, Key Signature ID, Progression Decoder. Measures symbolic music logic." 
-    },
-    { 
-      label: 'Notation', 
-      key: 'Sight Reading', 
-      desc: "Inputs: Note Flash, Rhythm Reader, Sight-Singing. Measures the latency of reading notation symbols." 
-    },
-    { 
-      label: 'Vocal Mech', 
-      key: 'Vocal Mechanics', 
-      desc: "Inputs: Pitch Match, Interval Sing, Breath Control, Tone Shaping. Measures vocal-fold stability and diaphragmatic support." 
-    },
-    { 
-      label: 'Improvisation', 
-      key: 'Improvisation & Composition', 
-      desc: "Inputs: Vocal Improv, Flow Trainer, Beatbox Lab, Freestyle Sandbox. Measures spontaneous complexity and output volume." 
-    },
-    { 
-      label: 'Critical List', 
-      key: 'Critical Listening', 
-      desc: "Inputs: Instrument ID, Form Mapper, Dynamic Ear. Measures your ability to parse multi-layered sonic environments." 
-    },
-  ].filter(item => !filter || filter.includes(item.key));
-
-  if (!mounted || vaultItems.length === 0) return null;
-
-  return (
-    <div className="space-y-2">
-      <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1 flex items-center gap-2">
-        <Sparkles className="w-3 h-3" /> {filter ? 'Related Achievements' : 'Laboratory Achievement Vault'}
-      </h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-        {vaultItems.map(item => (
-          <AssistantTooltip key={item.key} text={item.desc}>
-            <Card className="bg-muted/20 border-primary/5 p-3 flex flex-col items-center text-center group hover:border-primary/20 transition-all h-full">
-              <p className="text-[8px] font-black uppercase opacity-60 mb-1 leading-tight">{item.label}</p>
-              <p className="text-lg font-black text-primary group-hover:scale-110 transition-transform">
-                {achievements[item.key]?.bestHAR || 0}
-              </p>
-              <p className="text-[7px] font-bold uppercase text-muted-foreground mt-1">BEST HAR</p>
-            </Card>
-          </AssistantTooltip>
-        ))}
-      </div>
+      <AssistantTooltip text="A cumulative tally of sessions logged in Vocal Improv, Flow Trainer, Beatbox Lab, and the Freestyle Sandbox. Measures your shift from rote technical practice to spontaneous creative application.">
+        <Card className="bg-primary/5 border-primary/10 h-full">
+          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+            <Wand2 className="w-5 h-5 text-primary opacity-80 mb-1" />
+            <p className="text-2xl font-black">{getTotalCreations()}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Creative Acts</p>
+          </CardContent>
+        </Card>
+      </AssistantTooltip>
     </div>
   );
 }
@@ -168,11 +72,6 @@ export function MusicDashboard() {
   return (
     <div className="space-y-6">
       <MusicGlobalHeader />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <MusicAccuracyTracker />
-        <MusicCreationTracker />
-      </div>
-      <MusicAchievementVault />
     </div>
   );
 }

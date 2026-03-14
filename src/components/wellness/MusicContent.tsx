@@ -1,11 +1,11 @@
+
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
-import { musicDomains, drillsData } from '@/data/music-drills';
+import { drillsData } from '@/data/music-drills';
 import { useMusicStore } from '@/hooks/use-music-store';
 import { MusicAnalytics } from './MusicAnalytics';
 import { MusicDrillPlayer } from './MusicDrillPlayer';
-import { JourneyPlansSection } from './JourneyPlansSection';
 import { TodayScheduleWidget } from './TodayScheduleWidget';
 import { MusicOpenPractice } from './MusicOpenPractice';
 import { MusicSongAnalysis } from './MusicSongAnalysis';
@@ -16,22 +16,17 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { 
   Music, Headphones, Mic2, Wind, Guitar, Sparkles,
-  Crosshair, Zap, Search, Waves, Brain, Timer, LayoutGrid, 
-  ChevronRight, FileAudio, Disc, Volume2, GitGraph, Target, 
-  BookOpen, SlidersHorizontal, Maximize, Palette, Piano, 
-  History, Mic, Drum, Play
+  Target, BookOpen, SlidersHorizontal, Maximize, Palette, Piano, 
+  Mic, Drum, Play, ChevronRight, Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useWellnessData } from '@/hooks/use-wellness-data';
 import { initDB } from '@/lib/storage/db';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { InputSelector } from '../audio/InputSelector';
 import { InstrumentSelector } from '../audio/InstrumentSelector';
 import { AssistantTooltip } from '../assistant-tooltip';
-import { MusicAccuracyTracker, MusicCreationTracker, MusicAchievementVault } from './MusicDashboard';
 
-// Data for categorized exercises
 const categoryExercises = {
   sing: [
     { id: 'pitch-match', name: 'Pitch Match', desc: 'Match the note you hear using your voice.', difficulty: 'Beginner', icon: Target },
@@ -124,7 +119,7 @@ export default function MusicContent() {
               </TabsTrigger>
             </AssistantTooltip>
 
-            <AssistantTooltip text="Cultivates spontaneous musical expression. Master improvisation, rhythmic flow, and vocal percussion through structured creative sandboxes.">
+            <AssistantTooltip text="Cultivates spontaneous musical expression. Trains improvisation, rhythmic flow, and vocal percussion through structured creative sandboxes.">
               <TabsTrigger value="create" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
                 <Sparkles className="w-4 h-4" /> Create
               </TabsTrigger>
@@ -136,7 +131,6 @@ export default function MusicContent() {
         <TabsContent value="listen" className="space-y-8 animate-in fade-in">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {drillsData.map((drill) => {
-              const gameId = drill.id.toLowerCase().replace(/ /g, '-');
               const gameSessions = logs.filter(l => l.drillName === drill.name);
               const stats = gameSessions.length === 0 
                 ? { lastPlayed: 'New', bestScore: null }
@@ -156,7 +150,14 @@ export default function MusicContent() {
                       <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                         <Music className="w-5 h-5" />
                       </div>
-                      <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Adaptive</Badge>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Adaptive</Badge>
+                        {stats.bestScore !== null && (
+                          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
+                            BEST: {stats.bestScore}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <CardTitle className="text-base font-bold group-hover:text-primary transition-colors">{drill.name}</CardTitle>
                     <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{drill.desc || drill.description}</CardDescription>
@@ -166,25 +167,10 @@ export default function MusicContent() {
                       <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Last Session</span>
                       <span className="text-[10px] font-bold">{stats.lastPlayed}</span>
                     </div>
-                    {stats.bestScore !== null && (
-                      <div className="flex flex-col items-end">
-                        <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Best HAR</span>
-                        <span className="text-[10px] font-bold text-primary">{stats.bestScore}</span>
-                      </div>
-                    )}
                   </CardFooter>
                 </Card>
               );
             })}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-1">
-              <MusicAccuracyTracker />
-            </div>
-            <div className="md:col-span-3">
-              <MusicAchievementVault filter={['Ear Training', 'Rhythm & Timing', 'Theory & Harmony', 'Sight Reading', 'Critical Listening']} />
-            </div>
           </div>
 
           <MusicAnalytics />
@@ -192,7 +178,6 @@ export default function MusicContent() {
 
         {/* --- SING SUB-TAB --- */}
         <TabsContent value="sing" className="space-y-8 animate-in fade-in">
-          <MusicAchievementVault filter={['Vocal Mechanics']} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.sing.map((ex) => {
               const stats = getStats(ex.id);
@@ -207,12 +192,16 @@ export default function MusicContent() {
                         <div className="flex-grow min-w-0">
                           <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-lg font-bold truncate">{ex.name}</h2>
-                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
+                            {stats.bestScore !== null && (
+                              <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
+                                BEST: {stats.bestScore}
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
                           <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
                             <span>Last: {stats.lastPlayed}</span>
-                            {stats.bestScore !== null && <span>Best: {stats.bestScore}</span>}
                           </div>
                         </div>
                         <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
@@ -227,7 +216,6 @@ export default function MusicContent() {
 
         {/* --- VOICE SUB-TAB --- */}
         <TabsContent value="voice" className="space-y-8 animate-in fade-in">
-          <MusicAchievementVault filter={['Vocal Mechanics']} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.voice.map((ex) => {
               const stats = getStats(ex.id, 'voice');
@@ -242,10 +230,15 @@ export default function MusicContent() {
                         <div className="flex-grow min-w-0">
                           <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-lg font-bold truncate">{ex.name}</h2>
-                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
+                            {stats.bestScore !== null && (
+                              <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
+                                PB: {stats.bestScore}
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
                           <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
                             <span>Last: {stats.lastPlayed}</span>
                           </div>
                         </div>
@@ -286,14 +279,19 @@ export default function MusicContent() {
                         <div className="flex-grow min-w-0">
                           <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-lg font-bold truncate">{ex.name}</h2>
-                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
+                            {stats.bestScore !== null && (
+                              <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
+                                PB: {stats.bestScore}
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
                           <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
                             <span>Last: {stats.lastPlayed}</span>
                           </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
+                        <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all" />
                       </div>
                     </CardContent>
                   </Card>
@@ -305,15 +303,6 @@ export default function MusicContent() {
 
         {/* --- CREATE SUB-TAB --- */}
         <TabsContent value="create" className="space-y-8 animate-in fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-1">
-              <MusicCreationTracker />
-            </div>
-            <div className="md:col-span-3">
-              <MusicAchievementVault filter={['Improvisation & Composition']} />
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.create.map((ex) => {
               const stats = getStats(ex.id, 'create');
@@ -327,11 +316,16 @@ export default function MusicContent() {
                         </div>
                         <div className="flex-grow min-w-0">
                           <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-2xl font-bold">{ex.name}</h2>
-                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
+                            <h2 className="text-lg font-bold truncate">{ex.name}</h2>
+                            {stats.bestScore !== null && (
+                              <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
+                                PB: {stats.bestScore}
+                              </Badge>
+                            )}
                           </div>
-                          <p className="text-muted-foreground leading-relaxed">{ex.desc}</p>
+                          <p className="text-muted-foreground leading-relaxed text-xs">{ex.desc}</p>
                           <div className="flex items-center gap-4 mt-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
                             <span>Last: {stats.lastPlayed}</span>
                           </div>
                         </div>
