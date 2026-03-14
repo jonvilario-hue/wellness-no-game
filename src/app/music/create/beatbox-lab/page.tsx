@@ -12,6 +12,7 @@ import { WaveformDisplay } from '@/components/audio/WaveformDisplay';
 import { BrightnessDisplay } from '@/components/audio/BrightnessDisplay';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { drumKit } from '@/lib/audio/drums';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
