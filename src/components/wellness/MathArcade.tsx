@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { 
   Zap, Play, Trophy, Target, 
   Star, Flame, ArrowRight, ShieldCheck,
-  Plus, Minus, X, Divide, RotateCcw, Clock
+  Plus, Minus, X, Divide, RotateCcw, Clock, XCircle
 } from 'lucide-react';
 import { useMathArcadeStore, type MathOperator } from '@/hooks/use-math-arcade-store';
 import { cn } from '@/lib/utils';
@@ -139,9 +139,6 @@ export function MathArcade() {
     );
   };
 
-  const currentOpKey = [...operators].sort().join(',');
-  const highScore = highScores[currentOpKey] || 0;
-
   if (gameState === 'playing') {
     return (
       <div className="flex flex-col items-center justify-center space-y-8 animate-in fade-in duration-500 max-w-2xl mx-auto">
@@ -201,7 +198,7 @@ export function MathArcade() {
         </Card>
 
         <Button variant="ghost" size="sm" onClick={() => setGameState('idle')} className="text-muted-foreground">
-          Exit Blitz
+          <XCircle className="w-4 h-4 mr-2" /> Exit Blitz
         </Button>
       </div>
     );
@@ -298,8 +295,8 @@ export function MathArcade() {
           <div className="p-6 bg-primary/5 rounded-3xl border border-dashed border-primary/20 text-center space-y-4">
             <div className="flex justify-center items-center gap-8">
               <div className="text-center">
-                <p className="text-[10px] font-black uppercase text-muted-foreground">Personal Best</p>
-                <p className="text-3xl font-black text-primary">{highScore}</p>
+                <p className="text-[10px] font-black uppercase text-muted-foreground">Max Combo PB</p>
+                <p className="text-3xl font-black text-primary">{Math.max(...history.map(h => h.maxCombo), 0)}x</p>
               </div>
               <div className="w-px h-10 bg-primary/10" />
               <div className="text-center">
@@ -343,7 +340,7 @@ export function MathArcade() {
           </CardContent>
         </Card>
 
-        <Card className="border-none bg-primary/5">
+        <Card className="border-none bg-primary/5 shadow-none">
           <CardHeader className="pb-2">
             <CardTitle className="text-[10px] font-black uppercase tracking-widest text-primary">Hall of Records</CardTitle>
           </CardHeader>
@@ -359,7 +356,7 @@ export function MathArcade() {
               <p className="text-[10px] italic text-muted-foreground text-center py-4">No records established.</p>
             )}
           </CardContent>
-        </div>
+        </Card>
       </div>
     </div>
   );
