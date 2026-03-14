@@ -26,6 +26,14 @@ const games = [
     difficulty: 'Beginner'
   },
   {
+    id: 'pitch-sharpener',
+    name: 'Pitch Sharpener',
+    desc: 'Match your voice to the target frequency with real-time feedback.',
+    category: 'Vocal/Ear',
+    icon: Mic2,
+    difficulty: 'All Levels'
+  },
+  {
     id: 'chord-detective',
     name: 'Chord Detective',
     desc: 'Deconstruct complex harmonies and voicings.',

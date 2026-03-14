@@ -1,3 +1,4 @@
+
 'use client';
 
 /**
@@ -21,7 +22,7 @@ import {
   Query,
   CollectionReference,
   DocumentData,
-  writeBatch
+  increment
 } from 'firebase/firestore';
 import { getAuth, signInAnonymously, User, onAuthStateChanged } from 'firebase/auth';
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
@@ -103,7 +104,6 @@ export function useSrsUser() {
   return { user, loading };
 }
 
-// Re-implementing simplified hooks to avoid page-level firebase imports
 export function useSrsCollection<T = any>(memoizedQuery: Query<DocumentData> | null) {
   const [data, setData] = useState<T[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -226,7 +226,7 @@ export async function srsUpdateCard(userId: string, deckId: string, cardId: stri
   });
 }
 
-// --- ANKI VAULT (STORAGE) ---
+// --- ANKI VAULT (STORAGE & METADATA) ---
 
 export async function srsUploadAnki(userId: string, file: File, onProgress?: (p: number) => void) {
   const { storage, firestore } = initializeFirebase();
@@ -257,11 +257,22 @@ export async function srsUploadAnki(userId: string, file: File, onProgress?: (p:
   });
 }
 
-export async function srsDeleteAnki(userId: string, deckId: string) {
+export async function srsDeleteAnki(userId: string, deckId: string, fileSize: number) {
   const { storage, firestore } = initializeFirebase();
+  
+  // 1. Delete from Storage
   const storageRef = ref(storage, `users/${userId}/anki-decks/${deckId}.apkg`);
   await deleteObject(storageRef);
+  
+  // 2. Delete Metadata Document
   await deleteDoc(doc(firestore, 'users', userId, 'anki-decks', deckId));
+  
+  // 3. Update User Profile (Optional metadata tracking)
+  const userProfileRef = doc(firestore, 'users', userId);
+  updateDoc(userProfileRef, {
+    storageUsedBytes: increment(-fileSize),
+    deckCount: increment(-1)
+  }).catch(() => {}); // Fallback if user profile doc doesn't exist
 }
 
 // --- QUERY GENERATORS ---

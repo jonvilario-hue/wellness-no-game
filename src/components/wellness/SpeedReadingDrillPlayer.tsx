@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -14,7 +15,6 @@ import {
 } from 'lucide-react';
 import type { ReadingPassage, DrillType, ReadingTier, ReadingDifficulty } from '@/types/speedreading';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
-import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -49,16 +49,8 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
   const containerRef = useRef<HTMLDivElement>(null);
 
   const words = useMemo(() => passage.content.split(/\s+/).filter(w => w.length > 0), [passage]);
-  
-  const estimatedTier = useMemo(() => 
-    isCustomText ? estimateDifficulty(passage.content) : passage.tier, 
-  [isCustomText, passage.content]);
-
-  const units = words;
-
-  const msPerUnit = useMemo(() => {
-    return (60 / currentWpm) * 1000;
-  }, [currentWpm]);
+  const estimatedTier = useMemo(() => isCustomText ? estimateDifficulty(passage.content) : passage.tier, [isCustomText, passage.content]);
+  const msPerUnit = useMemo(() => (60 / currentWpm) * 1000, [currentWpm]);
 
   const handleFinishedReading = useCallback(() => {
     setIsActive(false);
@@ -71,7 +63,6 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     if (activeWordRef.current && containerRef.current) {
       const container = containerRef.current;
       const element = activeWordRef.current;
-      
       const containerRect = container.getBoundingClientRect();
       const elementRect = element.getBoundingClientRect();
       
@@ -86,7 +77,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     if (isActive && gameState === 'reading') {
       timer = setInterval(() => {
         setCurrentIndex(prev => {
-          if (prev >= units.length - 1) {
+          if (prev >= words.length - 1) {
             handleFinishedReading();
             return prev;
           }
@@ -95,7 +86,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       }, msPerUnit);
     }
     return () => clearInterval(timer);
-  }, [isActive, gameState, msPerUnit, units.length, handleFinishedReading]);
+  }, [isActive, gameState, msPerUnit, words.length, handleFinishedReading]);
 
   const handleStart = () => {
     setGameState('reading');
@@ -126,7 +117,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       postFatigue,
       durationSeconds: Math.round(elapsedSeconds),
       isCustomText,
-      isSelfAssessed: isCustomText
+      isSelfAssessed: !!isCustomText
     });
 
     markStudySessionComplete('Speed Reading', passage.id);
@@ -152,14 +143,14 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
             <span className="text-[9px] font-black uppercase opacity-60">Pace</span>
             <span className="text-xs font-bold text-primary">{currentWpm} WPM</span>
           </div>
-          <Progress value={(currentIndex / units.length) * 100} className="w-32 h-1.5" />
+          <Progress value={(currentIndex / words.length) * 100} className="w-32 h-1.5" />
         </div>
       </header>
 
       <main className="flex-1 flex items-center justify-center p-6 bg-muted/5 overflow-hidden">
         <AnimatePresence mode="wait">
           {gameState === 'prep' && (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="max-w-md w-full">
+            <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="max-w-md w-full">
               <Card className="border-primary/20 shadow-2xl">
                 <CardHeader className="text-center space-y-2">
                   <div className="p-4 bg-primary/10 rounded-full w-fit mx-auto mb-2">
@@ -197,7 +188,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
           )}
 
           {gameState === 'reading' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex items-center justify-center">
+            <motion.div key="reading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full h-full flex items-center justify-center">
               <div 
                 ref={containerRef}
                 className={cn(
@@ -209,7 +200,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                   "flex flex-wrap gap-x-2 gap-y-4 text-2xl md:text-3xl font-medium text-muted-foreground",
                   drillType === 'Peripheral Expansion' && "max-w-md mx-auto justify-center text-center"
                 )}>
-                  {units.map((unit, i) => {
+                  {words.map((unit, i) => {
                     const isCurrent = i === currentIndex;
                     const isPast = i < currentIndex;
                     
@@ -244,13 +235,14 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
 
           {gameState === 'quiz' && (
             <SpeedReadingQuiz 
+              key="quiz"
               passage={passage} 
               onComplete={handleQuizComplete} 
             />
           )}
 
           {gameState === 'summary' && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
+            <motion.div key="summary" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
               <Card className="border-primary/20 shadow-2xl">
                 <CardHeader className="text-center">
                   <div className="p-4 bg-emerald-500/10 rounded-full w-fit mx-auto mb-2">

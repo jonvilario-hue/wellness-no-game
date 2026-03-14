@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
@@ -118,7 +119,6 @@ export function CustomTextImportModal({ open, onOpenChange, onImportComplete }: 
   };
 
   const handleTxtParse = (text: string, fileName: string) => {
-    // Split by double newline into chunks
     const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
     const chunks: string[] = [];
     let currentChunk = "";
@@ -174,7 +174,7 @@ export function CustomTextImportModal({ open, onOpenChange, onImportComplete }: 
   return (
     <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if(!o) reset(); }}>
       <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
-        <DialogHeader { ... { className: "p-6 bg-primary/5 border-b shrink-0" } }>
+        <DialogHeader className="p-6 bg-primary/5 border-b shrink-0">
           <DialogTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
             <Upload className="w-5 h-5 text-primary" />
             Import Material
@@ -281,7 +281,7 @@ export function CustomTextImportModal({ open, onOpenChange, onImportComplete }: 
           )}
         </div>
 
-        <DialogFooter { ... { className: "p-4 border-t bg-muted/5 shrink-0" } }>
+        <DialogFooter className="p-4 border-t bg-muted/5 shrink-0">
           <div className="flex justify-between items-center w-full">
             <Button variant="ghost" onClick={() => step === 'config' ? setStep('upload') : onOpenChange(false)}>
               {step === 'config' ? 'Back' : 'Cancel'}

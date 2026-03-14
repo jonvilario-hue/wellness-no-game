@@ -1,12 +1,11 @@
+
 'use client';
 
 import { useState } from 'react';
-import { useFirebase } from '@/firebase';
-import { ref, deleteObject } from 'firebase/storage';
-import { doc, deleteDoc, updateDoc, increment } from 'firebase/firestore';
+import { srsDeleteAnki } from '@/lib/game/srs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileDown, Trash2, Clock, HardDrive, Play, ExternalLink, Download, Loader2 } from 'lucide-react';
+import { FileDown, Trash2, Clock, HardDrive, Play, Download, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
@@ -26,6 +25,7 @@ import {
 interface AnkiDeckCardProps {
   deck: {
     id: string;
+    userId: string;
     displayName: string;
     fileName: string;
     fileSize: number;
@@ -35,7 +35,6 @@ interface AnkiDeckCardProps {
 }
 
 export function AnkiDeckCard({ deck }: AnkiDeckCardProps) {
-  const { user, storage, firestore } = useFirebase();
   const { addDeck, addCards } = useFlashcardStore();
   const { toast } = useToast();
   
@@ -45,21 +44,17 @@ export function AnkiDeckCard({ deck }: AnkiDeckCardProps) {
   const handleImport = async () => {
     setIsImporting(true);
     try {
-      // 1. Fetch file from Cloud Storage
       const response = await fetch(deck.downloadUrl);
       const blob = await response.blob();
       const file = new File([blob], deck.fileName, { type: 'application/octet-stream' });
 
-      // 2. Parse APKG
       const data = await parseImportFile(file);
       
-      // 3. Create Deck & Add Cards
       for (const importDeck of data.decks) {
-        const newDeckId = crypto.randomUUID();
-        addDeck({ name: importDeck.name, description: `Imported from ${deck.fileName}` });
+        addDeck(deck.userId, { name: importDeck.name, description: `Imported from ${deck.fileName}` });
         
-        // We need to wait a tiny bit for the store to update or manually handle the ID
-        // For MVP, we'll assume the last deck added is the target or use a better strategy
+        // Wait for store to update slightly
+        await new Promise(r => setTimeout(r, 500));
         const deckToImportTo = useFlashcardStore.getState().decks.find(d => d.name === importDeck.name) || { id: 'default' };
         
         const cardsToSave = importDeck.cards.map(c => ({
@@ -83,22 +78,9 @@ export function AnkiDeckCard({ deck }: AnkiDeckCardProps) {
   };
 
   const handleDelete = async () => {
-    if (!user || !storage || !firestore) return;
     setIsDeleting(true);
-
     try {
-      const storageRef = ref(storage, `users/${user.uid}/anki-decks/${deck.id}.apkg`);
-      await deleteObject(storageRef);
-
-      const deckRef = doc(firestore, 'users', user.uid, 'anki-decks', deck.id);
-      await deleteDoc(deckRef);
-
-      const userProfileRef = doc(firestore, 'users', user.uid);
-      await updateDoc(userProfileRef, {
-        storageUsedBytes: increment(-deck.fileSize),
-        deckCount: increment(-1)
-      });
-
+      await srsDeleteAnki(deck.userId, deck.id, deck.fileSize);
       toast({ title: "Deck deleted from vault." });
     } catch (err) {
       console.error(err);

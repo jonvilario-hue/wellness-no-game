@@ -7,8 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { format, isSameDay, startOfDay, parseISO } from "date-fns";
 import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLogs } from "@/hooks/use-wellness-data";
 import { useSpeedReadingStore } from "@/hooks/use-speedreading-store";
-import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { useFirebase } from '@/firebase';
+import { initDB } from '@/lib/storage/db';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, HeartPulse, Waves, History, Utensils, Wallet, Trash2, MessageSquare, Zap, Sigma } from "lucide-react";
@@ -33,21 +33,25 @@ interface WellnessActivityCalendarProps {
 export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCalendarProps) {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [mounted, setMounted] = useState(false);
+  const [mathSessions, setMathSessions] = useState<any[]>([]);
   
-  const { user, firestore } = useFirebase();
+  const { user } = useFirebase();
   const movementLogs = useMovementLogs();
   const stillnessLogs = useStillnessLogs();
   const communicationLogs = useCommunicationLogs();
   
-  const sessionsQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.uid) return null;
-    return query(
-      collection(firestore, 'users', user.uid, 'math-sessions'),
-      orderBy('timestamp', 'desc')
-    );
-  }, [firestore, user?.uid]);
-
-  const { data: mathSessions } = useCollection(sessionsQuery);
+  useEffect(() => {
+    async function loadMathHistory() {
+      try {
+        const db = await initDB();
+        const sessions = await db.getAll('math-sessions');
+        setMathSessions(sessions);
+      } catch (e) {
+        console.error("Failed to load math sessions from local storage", e);
+      }
+    }
+    loadMathHistory();
+  }, []);
   
   const { 
     mealLogs = [], 

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ReviewPage() {
   const { user, loading: authLoading } = useSrsUser();
@@ -57,12 +59,12 @@ export default function ReviewPage() {
 
   if (isFinished) {
     return (
-      <div className="max-w-md mx-auto py-20 text-center space-y-6">
+      <div className="max-w-md mx-auto py-20 text-center space-y-6 px-4">
         <div className="p-6 bg-primary/10 rounded-full w-fit mx-auto">
           <Trophy className="w-16 h-16 text-primary" />
         </div>
         <h1 className="text-3xl font-black uppercase tracking-tight">Review Complete!</h1>
-        <p className="text-muted-foreground">You've cleared your queue for this deck. Your cognitive map is up to date.</p>
+        <p className="text-muted-foreground text-sm">You've cleared your queue for this deck. Your cognitive map is up to date.</p>
         <Button asChild size="lg" className="w-full">
           <Link href="/study">Back to Scholar Hub</Link>
         </Button>
@@ -82,8 +84,6 @@ export default function ReviewPage() {
         </div>
 
         <div className="grid gap-4">
-          {/* Deck selection would typically come from another collection, 
-              but for MVP we suggest picking from the Scholar Hub */}
           <Card className="p-8 text-center border-dashed bg-muted/20">
             <Brain className="mx-auto h-12 w-12 text-primary opacity-20 mb-4" />
             <p className="text-sm text-muted-foreground">
@@ -100,10 +100,10 @@ export default function ReviewPage() {
 
   if (!currentCard) {
     return (
-      <div className="max-w-md mx-auto py-20 text-center space-y-4">
+      <div className="max-w-md mx-auto py-20 text-center space-y-4 px-4">
         <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto" />
         <h2 className="text-2xl font-bold">No Cards Due!</h2>
-        <p className="text-muted-foreground">Great job! You've completed all scheduled reviews for this deck.</p>
+        <p className="text-muted-foreground text-sm">Great job! You've completed all scheduled reviews for this deck.</p>
         <Button variant="outline" onClick={() => setActiveDeckId(null)}>Switch Deck</Button>
       </div>
     );
@@ -128,7 +128,7 @@ export default function ReviewPage() {
         )}
         onClick={() => !flipped && setFlipped(true)}
       >
-        <CardContent className="space-y-8">
+        <CardContent className="space-y-8 w-full">
           <div className="text-3xl font-bold leading-tight">
             {currentCard.front}
           </div>

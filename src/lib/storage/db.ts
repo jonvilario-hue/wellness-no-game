@@ -3,6 +3,7 @@
 
 import { openDB, type IDBPDatabase, type DBSchema } from 'idb';
 import type { GameSessionRecord, SkillRating } from '@/types/user';
+import type { MusicDrillLog } from '@/types/music';
 
 interface EarTrainingDB extends DBSchema {
   sessions: {
@@ -20,10 +21,18 @@ interface EarTrainingDB extends DBSchema {
       calibratedAt: string;
     };
   };
+  'math-sessions': {
+    key: string;
+    value: any;
+  };
+  'music-drill-logs': {
+    key: string;
+    value: MusicDrillLog;
+  };
 }
 
 const DB_NAME = 'ear-training-db';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // Incremented version to trigger upgrade
 
 export async function initDB() {
   return openDB<EarTrainingDB>(DB_NAME, DB_VERSION, {
@@ -37,21 +46,12 @@ export async function initDB() {
       if (!db.objectStoreNames.contains('calibration')) {
         db.createObjectStore('calibration', { keyPath: 'key' });
       }
+      if (!db.objectStoreNames.contains('math-sessions')) {
+        db.createObjectStore('math-sessions', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('music-drill-logs')) {
+        db.createObjectStore('music-drill-logs', { keyPath: 'id' });
+      }
     },
   });
-}
-
-export async function saveSession(session: Omit<GameSessionRecord, 'id'>) {
-  const db = await initDB();
-  return db.add('sessions', session as any);
-}
-
-export async function getSkillRating(skillName: string): Promise<SkillRating | undefined> {
-  const db = await initDB();
-  return db.get('skills', skillName);
-}
-
-export async function updateSkillRating(skill: SkillRating) {
-  const db = await initDB();
-  return db.put('skills', skill);
 }

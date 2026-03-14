@@ -12,26 +12,24 @@ import {
   Flame, Calendar, Clock, CheckCircle2, Circle, 
   ArrowRight, Plus, RefreshCw, BarChart3, Target, AlertCircle
 } from 'lucide-react';
-import { format, isToday, parseISO, addDays, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { format, isToday, parseISO } from 'date-fns';
+import Link from 'next/link';
 import { TaskDialog } from './dashboard/task-dialog';
 import { DeadlineDialog } from './dashboard/deadline-dialog';
 import { TodayPlan } from './dashboard/today-view';
 import { ActivityView } from './dashboard/activity-view';
 import { ForecastView } from './dashboard/forecast-view';
-import { AssistantTooltip } from '../assistant-tooltip';
-import { useFirebase } from '@/firebase';
+import { useSrsUser } from '@/lib/game/srs';
 
 export function StudyDashboardView() {
   const { tasks, deadlines, getStreak } = useStudyDashboardStore();
-  const { decks, cards, initializeSync } = useFlashcardStore();
-  const { user } = useFirebase();
+  const { decks, cards } = useFlashcardStore();
+  const { user } = useSrsUser();
   
   const [isTaskOpen, setIsTaskOpen] = useState(false);
   const [isDeadlineOpen, setIsDeadlineOpen] = useState(false);
   const [view, setView] = useState<'today' | 'activity' | 'forecast'>('today');
   
-  // Stabilization for hydration
   const [greeting, setGreeting] = useState('Welcome');
   const [todayDate, setTodayDate] = useState('');
   const [streak, setStreak] = useState({ current: 0, longest: 0 });
@@ -44,14 +42,6 @@ export function StudyDashboardView() {
     setTodayDate(format(new Date(), 'EEEE, MMMM do'));
     setStreak(getStreak());
   }, [getStreak]);
-
-  // Handle Firebase Sync for Flashcards
-  useEffect(() => {
-    if (user?.uid) {
-      const unsub = initializeSync(user.uid);
-      return () => unsub();
-    }
-  }, [user?.uid, initializeSync]);
 
   const upcomingDeadline = useMemo(() => {
     if (!isMounted) return null;
