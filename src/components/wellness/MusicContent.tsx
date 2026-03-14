@@ -29,6 +29,7 @@ import { format } from 'date-fns';
 import Link from 'next/link';
 import { InputSelector } from '../audio/InputSelector';
 import { InstrumentSelector } from '../audio/InstrumentSelector';
+import { AssistantTooltip } from '../assistant-tooltip';
 
 // Data for categorized exercises
 const categoryExercises = {
@@ -99,21 +100,35 @@ export default function MusicContent() {
       <Tabs defaultValue="listen" className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
           <TabsList className="flex w-full max-w-3xl h-auto bg-muted/50 p-1 min-w-max">
-            <TabsTrigger value="listen" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-              <Headphones className="w-4 h-4" /> Listen
-            </TabsTrigger>
-            <TabsTrigger value="sing" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-              <Mic2 className="w-4 h-4" /> Sing
-            </TabsTrigger>
-            <TabsTrigger value="voice" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-              <Wind className="w-4 h-4" /> Voice
-            </TabsTrigger>
-            <TabsTrigger value="play" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-              <Guitar className="w-4 h-4" /> Play
-            </TabsTrigger>
-            <TabsTrigger value="create" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-              <Sparkles className="w-4 h-4" /> Create
-            </TabsTrigger>
+            <AssistantTooltip text="Focuses on auditory discrimination and harmonic awareness. Identify intervals, chords, and rhythmic patterns to sharpen your 'inner ear.'">
+              <TabsTrigger value="listen" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+                <Headphones className="w-4 h-4" /> Listen
+              </TabsTrigger>
+            </AssistantTooltip>
+            
+            <AssistantTooltip text="Develops the pitch-matching loop and melodic memory. Bridges the gap between hearing a sound and reproducing it accurately with your voice.">
+              <TabsTrigger value="sing" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+                <Mic2 className="w-4 h-4" /> Sing
+              </TabsTrigger>
+            </AssistantTooltip>
+
+            <AssistantTooltip text="Exercises the physical engine of communication. Build diaphragmatic support, expand your comfortable range, and master tonal resonance.">
+              <TabsTrigger value="voice" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+                <Wind className="w-4 h-4" /> Voice
+              </TabsTrigger>
+            </AssistantTooltip>
+
+            <AssistantTooltip text="Integrates instrumental performance with real-time analysis. Practice transcription and rhythmic call-and-response on your physical hardware.">
+              <TabsTrigger value="play" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+                <Guitar className="w-4 h-4" /> Play
+              </TabsTrigger>
+            </AssistantTooltip>
+
+            <AssistantTooltip text="Cultivates spontaneous musical expression. Master improvisation, rhythmic flow, and vocal percussion through structured sandboxes.">
+              <TabsTrigger value="create" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+                <Sparkles className="w-4 h-4" /> Create
+              </TabsTrigger>
+            </AssistantTooltip>
           </TabsList>
         </div>
 
@@ -291,15 +306,15 @@ export default function MusicContent() {
                         </div>
                         <div className="flex-grow min-w-0">
                           <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-lg font-bold truncate">{ex.name}</h2>
+                            <h2 className="text-2xl font-bold">{ex.name}</h2>
                             <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
                           </div>
-                          <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
-                          <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                          <p className="text-muted-foreground leading-relaxed">{ex.desc}</p>
+                          <div className="flex items-center gap-4 mt-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                             <span>Last: {stats.lastPlayed}</span>
                           </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
+                        <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all" />
                       </div>
                     </CardContent>
                   </Card>
