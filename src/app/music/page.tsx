@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -43,7 +44,7 @@ const categories = [
     desc: 'Practice your instrument by ear',
     icon: Guitar,
     count: 3,
-    status: 'COMING SOON',
+    status: 'ACTIVE',
     href: '/music/play'
   },
   {
