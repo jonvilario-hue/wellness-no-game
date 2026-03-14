@@ -60,6 +60,13 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     return (60 / currentWpm) * 1000;
   }, [currentWpm]);
 
+  const handleFinishedReading = useCallback(() => {
+    setIsActive(false);
+    const finalElapsed = (Date.now() - startTime) / 1000;
+    setElapsedSeconds(finalElapsed);
+    setGameState((isCustomText || !passage.quiz || passage.quiz.length === 0) ? 'summary' : 'quiz');
+  }, [isCustomText, passage.quiz, startTime]);
+
   useEffect(() => {
     if (activeWordRef.current && containerRef.current) {
       const container = containerRef.current;
@@ -88,20 +95,13 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       }, msPerUnit);
     }
     return () => clearInterval(timer);
-  }, [isActive, gameState, msPerUnit, units.length]);
+  }, [isActive, gameState, msPerUnit, units.length, handleFinishedReading]);
 
   const handleStart = () => {
     setGameState('reading');
     setIsActive(true);
     setStartTime(Date.now());
     setCurrentIndex(0);
-  };
-
-  const handleFinishedReading = () => {
-    setIsActive(false);
-    const finalElapsed = (Date.now() - startTime) / 1000;
-    setElapsedSeconds(finalElapsed);
-    setGameState((isCustomText || !passage.quiz || passage.quiz.length === 0) ? 'summary' : 'quiz');
   };
 
   const handleQuizComplete = (score: number) => {
@@ -132,34 +132,6 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     markStudySessionComplete('Speed Reading', passage.id);
     toast({ title: "Results Synced", variant: 'success' });
     onClose();
-  };
-
-  const renderDrillContent = () => {
-    return (
-      <div className={cn(
-        "flex flex-wrap gap-x-2 gap-y-4 text-2xl md:text-3xl font-medium text-muted-foreground",
-        drillType === 'Peripheral Expansion' && "max-w-md mx-auto justify-center text-center"
-      )}>
-        {units.map((unit, i) => {
-          const isCurrent = i === currentIndex;
-          const isPast = i < currentIndex;
-          
-          return (
-            <span
-              key={i}
-              ref={isCurrent ? activeWordRef : null}
-              className={cn(
-                "transition-all duration-200 rounded px-1",
-                isCurrent && "text-primary bg-primary/10 ring-2 ring-primary/20 scale-110 shadow-sm",
-                isPast && "text-foreground/40"
-              )}
-            >
-              {unit}
-            </span>
-          );
-        })}
-      </div>
-    );
   };
 
   return (
@@ -233,7 +205,29 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                   "justify-start pt-24"
                 )}
               >
-                {renderDrillContent()}
+                <div className={cn(
+                  "flex flex-wrap gap-x-2 gap-y-4 text-2xl md:text-3xl font-medium text-muted-foreground",
+                  drillType === 'Peripheral Expansion' && "max-w-md mx-auto justify-center text-center"
+                )}>
+                  {units.map((unit, i) => {
+                    const isCurrent = i === currentIndex;
+                    const isPast = i < currentIndex;
+                    
+                    return (
+                      <span
+                        key={i}
+                        ref={isCurrent ? activeWordRef : null}
+                        className={cn(
+                          "transition-all duration-200 rounded px-1",
+                          isCurrent && "text-primary bg-primary/10 ring-2 ring-primary/20 scale-110 shadow-sm",
+                          isPast && "text-foreground/40"
+                        )}
+                      >
+                        {unit}
+                      </span>
+                    );
+                  })}
+                </div>
                 <div className="sticky bottom-0 w-full flex justify-center pt-8 pb-4 bg-gradient-to-t from-background via-background to-transparent mt-auto">
                   <div className="flex gap-4">
                     <Button variant="outline" size="icon" className="h-12 w-12 rounded-full shadow-lg bg-background" onClick={() => setIsActive(!isActive)}>
@@ -282,7 +276,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                   {isCustomText ? (
                     <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
                       <div className="flex justify-between items-center">
-                        <Label className="text-[10px] font-bold uppercase flex items-gap-2">
+                        <Label className="text-[10px] font-bold uppercase flex items-center gap-2">
                           <Sparkles className="w-3 h-3" /> Self-Assessed Understanding (1-5)
                         </Label>
                         <span className="text-xl font-black text-primary">{selfComprehensionRating}</span>

@@ -3,13 +3,12 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { 
-  MusicDrillLog, MusicAchievement, MusicJourneyPlan, 
-  MusicDomain, MusicDifficulty 
+import type { 
+  MusicDrillLog, MusicAchievement, 
+  MusicDomain 
 } from '@/types/music';
 import { format, subDays, isAfter, parseISO, startOfWeek, isToday } from 'date-fns';
-import { initializeFirebase } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { initDB } from '@/lib/storage/db';
 
 interface MusicState {
   logs: MusicDrillLog[];
@@ -19,20 +18,11 @@ interface MusicState {
     longest: number;
     lastDate: string | null;
   };
-  journey: {
-    activePlanId: string | null;
-    currentDay: number;
-    completedDays: number[];
-  };
   
-  // Actions
-  logDrill: (log: Omit<MusicDrillLog, 'id' | 'userId' | 'timestamp' | 'syncedToCalendar'>) => void;
-  setActivePlan: (planId: string | null) => void;
-  completePlanDay: (day: number) => void;
+  logDrill: (drillData: Omit<MusicDrillLog, 'id' | 'userId' | 'timestamp' | 'syncedToCalendar'>) => Promise<void>;
   getWeeklyVolume: () => number;
   getTopDomain: () => MusicDomain | 'None';
   getGlobalHAR: () => number;
-  
   _hasHydrated: boolean;
 }
 
@@ -42,11 +32,9 @@ export const useMusicStore = create<MusicState>()(
       logs: [],
       achievements: {},
       streak: { current: 0, longest: 0, lastDate: null },
-      journey: { activePlanId: null, currentDay: 1, completedDays: [] },
       _hasHydrated: false,
 
-      logDrill: (drillData) => {
-        const { firestore, user } = initializeFirebase();
+      logDrill: async (drillData) => {
         const now = new Date();
         const timestamp = now.toISOString();
         const dateStr = format(now, 'yyyy-MM-dd');
@@ -54,18 +42,14 @@ export const useMusicStore = create<MusicState>()(
         const newLog: MusicDrillLog = {
           ...drillData,
           id: crypto.randomUUID(),
-          userId: user?.uid || 'anonymous',
+          userId: 'local-user',
           timestamp,
-          syncedToCalendar: true
+          syncedToCalendar: false
         };
 
-        // 1. Sync to Firestore (non-blocking)
-        if (user) {
-          addDoc(collection(firestore, 'users', user.uid, 'music-drill-logs'), {
-            ...newLog,
-            serverTimestamp: serverTimestamp()
-          });
-        }
+        // 1. Persist to IndexedDB
+        const db = await initDB();
+        await db.put('music-drill-logs', newLog);
 
         set(state => {
           // 2. Update Streak
@@ -99,17 +83,6 @@ export const useMusicStore = create<MusicState>()(
         });
       },
 
-      setActivePlan: (planId) => set(s => ({
-        journey: { ...s.journey, activePlanId: planId, completedDays: [], currentDay: 1 }
-      })),
-
-      completePlanDay: (day) => set(s => {
-        const completed = [...new Set([...s.journey.completedDays, day])];
-        return {
-          journey: { ...s.journey, completedDays: completed, currentDay: day + 1 }
-        };
-      }),
-
       getWeeklyVolume: () => {
         const start = startOfWeek(new Date());
         return get().logs
@@ -133,7 +106,7 @@ export const useMusicStore = create<MusicState>()(
       }
     }),
     {
-      name: 'music-lab-storage-v1',
+      name: 'music-lab-storage-local-v1',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) state._hasHydrated = true;

@@ -1,129 +1,51 @@
-
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useFirebase, useMemoFirebase, useDoc } from '@/firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { doc, collection, setDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { useState } from 'react';
+import { useSrsUser, srsUploadAnki } from '@/lib/game/srs';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Upload, FileDown, CheckCircle2, AlertCircle, Loader2, Info, Music, ImageIcon } from 'lucide-react';
+import { Upload, Loader2, Music, ImageIcon, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 export function AnkiDeckUploader() {
-  const { user, storage, firestore } = useFirebase();
+  const { user } = useSrsUser();
   const { toast } = useToast();
   
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  const userProfileRef = useMemoFirebase(() => {
-    if (!firestore || !user?.uid) return null;
-    return doc(firestore, 'users', user.uid);
-  }, [firestore, user?.uid]);
-
-  const { data: profile } = useDoc(userProfileRef);
-
   const handleUpload = async (file: File) => {
-    if (!user || !storage || !firestore) return;
-
-    // 1. Validation
-    if (!file.name.endsWith('.apkg')) {
-      toast({
-        title: "Invalid File",
-        description: "Please upload Anki deck files in .apkg format.",
-        variant: "destructive"
-      });
+    if (!user) {
+      toast({ title: "Auth Required", description: "Signing you in anonymously...", variant: 'default' });
       return;
     }
 
-    const quota = profile?.storageQuotaBytes || 10485760; // Default 10MB
-    const used = profile?.storageUsedBytes || 0;
-
-    if (used + file.size > quota) {
-      toast({
-        title: "Quota Exceeded",
-        description: `You only have ${Math.round((quota - used) / 1024 / 1024)}MB remaining.`,
-        variant: "destructive"
-      });
+    if (!file.name.endsWith('.apkg')) {
+      toast({ title: "Invalid File", description: "Please upload .apkg files.", variant: "destructive" });
       return;
     }
 
     setIsUploading(true);
-    setProgress(0);
-
-    const deckId = crypto.randomUUID();
-    const storageRef = ref(storage, `users/${user.uid}/anki-decks/${deckId}.apkg`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const p = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setProgress(p);
-      },
-      (error) => {
-        console.error(error);
-        setIsUploading(false);
-        toast({ title: "Upload Failed", description: "Storage rejection. Check rules or connection.", variant: "destructive" });
-      },
-      async () => {
-        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-        
-        // 2. Create Metadata
-        const deckRef = doc(firestore, 'users', user.uid, 'anki-decks', deckId);
-        await setDoc(deckRef, {
-          id: deckId,
-          userId: user.uid,
-          fileName: file.name,
-          displayName: file.name.replace('.apkg', ''),
-          description: "Uploaded Anki Deck",
-          fileSize: file.size,
-          downloadUrl,
-          uploadedAt: new Date().toISOString()
-        });
-
-        // 3. Update User Metrics
-        await updateDoc(userProfileRef!, {
-          storageUsedBytes: increment(file.size),
-          deckCount: increment(1)
-        });
-
-        setIsUploading(false);
-        toast({ title: "Deck Uploaded!", variant: "success" });
-      }
-    );
+    try {
+      await srsUploadAnki(user.uid, file, (p) => setProgress(p));
+      toast({ title: "Deck Uploaded!", variant: "success" });
+    } catch (err) {
+      toast({ title: "Upload Failed", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+      setProgress(0);
+    }
   };
-
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleUpload(file);
-  };
-
-  const usagePercent = profile ? (profile.storageUsedBytes / profile.storageQuotaBytes) * 100 : 0;
 
   return (
     <Card className="border-primary/10">
       <CardHeader className="pb-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <CardTitle className="text-xl">Cloud Anki Vault</CardTitle>
-            <CardDescription>Upload .apkg files for voice acting drills. Supports embedded audio and images.</CardDescription>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Storage Usage</p>
-            <Badge variant="outline" className={cn("font-bold", usagePercent > 90 && "text-destructive border-destructive")}>
-              {Math.round((profile?.storageUsedBytes || 0) / 1024 / 1024)}MB / 10MB
-            </Badge>
-          </div>
-        </div>
-        <Progress value={usagePercent} className="h-1.5 mt-2" />
+        <CardTitle className="text-xl">Cloud Anki Vault</CardTitle>
+        <CardDescription>Upload .apkg files for voice acting drills. Supports embedded audio and images.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div
@@ -133,7 +55,7 @@ export function AnkiDeckUploader() {
           )}
           onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
-          onDrop={onDrop}
+          onDrop={(e) => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files[0]; if(f) handleUpload(f); }}
           onClick={() => !isUploading && document.getElementById('anki-file-input')?.click()}
         >
           <input
@@ -146,10 +68,7 @@ export function AnkiDeckUploader() {
           {isUploading ? (
             <div className="w-full space-y-4 text-center">
               <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
-              <div className="space-y-1">
-                <p className="text-sm font-bold">Syncing with cloud...</p>
-                <Progress value={progress} className="h-2" />
-              </div>
+              <Progress value={progress} className="h-2" />
             </div>
           ) : (
             <div className="text-center space-y-2">
@@ -157,7 +76,6 @@ export function AnkiDeckUploader() {
                 <Upload className="h-8 w-8 text-primary" />
               </div>
               <p className="font-bold">Drop .apkg here</p>
-              <p className="text-xs text-muted-foreground">Max file size: 10MB</p>
             </div>
           )}
         </div>
@@ -165,29 +83,16 @@ export function AnkiDeckUploader() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-4 bg-muted/30 rounded-xl border flex items-start gap-3">
             <Music className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="text-xs font-bold uppercase tracking-tight">Audio Enabled</p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Embedded Anki sound tags are automatically detected and converted into playable controls.
-              </p>
-            </div>
+            <p className="text-[10px] text-muted-foreground leading-relaxed">
+              Audio tags detected and converted into playable controls.
+            </p>
           </div>
           <div className="p-4 bg-muted/30 rounded-xl border flex items-start gap-3">
             <ImageIcon className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="text-xs font-bold uppercase tracking-tight">Image Support</p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Images within the package are extracted and stored as optimized local references for instant recall.
-              </p>
-            </div>
+            <p className="text-[10px] text-muted-foreground leading-relaxed">
+              Images extracted and stored as optimized local references.
+            </p>
           </div>
-        </div>
-
-        <div className="p-3 bg-primary/5 rounded-lg border border-primary/10 flex items-start gap-3">
-          <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-          <p className="text-[10px] text-muted-foreground leading-relaxed">
-            All processing is performed locally in your browser. No AI or external LLM services are used to analyze your study content.
-          </p>
         </div>
       </CardContent>
     </Card>

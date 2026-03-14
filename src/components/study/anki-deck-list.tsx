@@ -1,24 +1,21 @@
 'use client';
 
-import { useFirebase, useMemoFirebase, useCollection } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { useMemo } from 'react';
+import { useSrsUser, useSrsCollection, getDecksQuery, AnkiMetadata } from '@/lib/game/srs';
 import { AnkiDeckCard } from './anki-deck-card';
 import { Layers, Loader2, PackageOpen } from 'lucide-react';
 
 export function AnkiDeckList() {
-  const { user, firestore } = useFirebase();
+  const { user, loading: authLoading } = useSrsUser();
 
-  const ankiQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.uid) return null;
-    return query(
-      collection(firestore, 'users', user.uid, 'anki-decks'),
-      orderBy('uploadedAt', 'desc')
-    );
-  }, [firestore, user?.uid]);
+  const query = useMemo(() => {
+    if (!user?.uid) return null;
+    return getDecksQuery(user.uid);
+  }, [user?.uid]);
 
-  const { data: decks, isLoading } = useCollection(ankiQuery);
+  const { data: decks, isLoading } = useSrsCollection<AnkiMetadata>(query as any);
 
-  if (isLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -47,7 +44,7 @@ export function AnkiDeckList() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {decks.map((deck) => (
-          <AnkiDeckCard key={deck.id} deck={deck} />
+          <AnkiDeckCard key={deck.id} deck={deck as any} />
         ))}
       </div>
     </div>
