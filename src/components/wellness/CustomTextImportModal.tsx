@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Upload, FileText, CheckCircle2, AlertCircle, X, Loader2, BookOpen, Layers } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { saveCustomPassages } from '@/lib/indexedDBUtils';
@@ -173,7 +174,7 @@ export function CustomTextImportModal({ open, onOpenChange, onImportComplete }: 
   return (
     <Dialog open={open} onOpenChange={(o) => { onOpenChange(o); if(!o) reset(); }}>
       <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
-        <DialogHeader className="p-6 bg-primary/5 border-b shrink-0">
+        <DialogHeader { ... { className: "p-6 bg-primary/5 border-b shrink-0" } }>
           <DialogTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
             <Upload className="w-5 h-5 text-primary" />
             Import Material
@@ -221,17 +222,17 @@ export function CustomTextImportModal({ open, onOpenChange, onImportComplete }: 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div className="space-y-1.5">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Global Identity</Label>
+                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Global Identity</Label>
                         <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Book or Article Title" className="font-bold" />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Author</Label>
+                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Author</Label>
                         <Input value={author} onChange={e => setAuthor(e.target.value)} placeholder="Original Author" />
                       </div>
                     </div>
                     <div className="space-y-4">
                       <div className="space-y-1.5">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Content Category</Label>
+                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Content Category</Label>
                         <Select value={tier} onValueChange={(v: ReadingTier) => setTier(v)}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
@@ -243,7 +244,7 @@ export function CustomTextImportModal({ open, onOpenChange, onImportComplete }: 
                         </Select>
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Cognitive Load</Label>
+                        <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Cognitive Load</Label>
                         <Select value={difficulty} onValueChange={(v: ReadingDifficulty) => setDifficulty(v)}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
@@ -280,7 +281,7 @@ export function CustomTextImportModal({ open, onOpenChange, onImportComplete }: 
           )}
         </div>
 
-        <DialogFooter className="p-4 border-t bg-muted/5 shrink-0">
+        <DialogFooter { ... { className: "p-4 border-t bg-muted/5 shrink-0" } }>
           <div className="flex justify-between items-center w-full">
             <Button variant="ghost" onClick={() => step === 'config' ? setStep('upload') : onOpenChange(false)}>
               {step === 'config' ? 'Back' : 'Cancel'}
