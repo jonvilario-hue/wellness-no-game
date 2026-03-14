@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useMemo, useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { useEffect, useState, useMemo } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -10,7 +10,7 @@ import {
   ArrowLeft, Crosshair, Zap, Search, Music, 
   Waves, Brain, Timer, LayoutGrid, 
   ChevronRight, Mic2, FileAudio, Disc, 
-  Volume2, GitGraph, Info
+  Volume2, GitGraph, History
 } from 'lucide-react';
 import { initDB } from '@/lib/storage/db';
 import { format } from 'date-fns';

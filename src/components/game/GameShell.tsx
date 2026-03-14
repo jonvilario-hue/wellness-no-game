@@ -37,11 +37,15 @@ export function GameShell({
   score,
   onStart,
   onPauseToggle,
-  backHref = "/music/listen",
-  breadcrumb = ["Music", "Listen"]
+  backHref,
+  breadcrumb
 }: GameShellProps) {
   const router = useRouter();
   const [showInstructions, setShowInstructions] = useState(false);
+
+  // Auto-detect back link and breadcrumbs if not provided
+  const resolvedBackHref = backHref || "/music/listen";
+  const resolvedBreadcrumb = breadcrumb || ["Music", "Listen", gameName];
 
   useEffect(() => {
     const prefs = getPreferences();
@@ -59,17 +63,23 @@ export function GameShell({
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       <header className="flex flex-col gap-4">
         <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
-          {breadcrumb.map((crumb, i) => (
+          {resolvedBreadcrumb.map((crumb, i) => (
             <React.Fragment key={i}>
-              <span>{crumb}</span>
-              {i < breadcrumb.length - 1 && <ChevronRight className="w-2 h-2" />}
+              {i < resolvedBreadcrumb.length - 1 ? (
+                <Link href={i === 0 ? "/music" : resolvedBackHref} className="hover:text-primary transition-colors">
+                  {crumb}
+                </Link>
+              ) : (
+                <span>{crumb}</span>
+              )}
+              {i < resolvedBreadcrumb.length - 1 && <ChevronRight className="w-2 h-2" />}
             </React.Fragment>
           ))}
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild className="rounded-full">
-              <Link href={backHref}><ArrowLeft className="w-5 h-5" /></Link>
+              <Link href={resolvedBackHref}><ArrowLeft className="w-5 h-5" /></Link>
             </Button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">{gameName}</h1>
@@ -136,12 +146,12 @@ export function GameShell({
               </div>
               <div className="p-4 bg-muted rounded-xl">
                 <p className="text-[10px] font-black uppercase text-muted-foreground">Accuracy</p>
-                <p className="text-3xl font-black">95%</p>
+                <p className="text-3xl font-black">{Math.round((score / totalRounds) * 100) || 0}%</p>
               </div>
             </div>
             <div className="flex gap-3 justify-center pt-4">
               <Button variant="outline" size="lg" asChild className="rounded-2xl px-8 font-bold">
-                <Link href="/music/listen">Menu</Link>
+                <Link href={resolvedBackHref}>Return to Hub</Link>
               </Button>
               <Button size="lg" onClick={onStart} className="rounded-2xl px-10 font-bold">Play Again</Button>
             </div>
@@ -150,7 +160,7 @@ export function GameShell({
       </main>
 
       {showInstructions && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <Card className="max-w-md w-full shadow-2xl rounded-3xl overflow-hidden border-none">
             <CardHeader className="bg-primary/5 pb-4">
               <CardTitle className="flex items-center gap-2">

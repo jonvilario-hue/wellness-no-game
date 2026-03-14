@@ -11,38 +11,13 @@ import {
 } from 'lucide-react';
 import { initDB } from '@/lib/storage/db';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const exercises = [
-  { 
-    id: 'vocal-improv', 
-    name: 'Vocal Improv', 
-    desc: 'Improvise melodies over adaptive chord changes.', 
-    difficulty: 'Intermediate', 
-    icon: Mic 
-  },
-  { 
-    id: 'flow-trainer', 
-    name: 'Flow Trainer', 
-    desc: 'Ride the beat with rhythmic precision.', 
-    difficulty: 'Intermediate', 
-    icon: Zap 
-  },
-  { 
-    id: 'beatbox-lab', 
-    name: 'Beatbox Lab', 
-    desc: 'Create complex drum patterns with your voice.', 
-    difficulty: 'Beginner', 
-    icon: Drum 
-  },
-  { 
-    id: 'freestyle', 
-    name: 'Freestyle Sandbox', 
-    desc: 'Open creative space with real-time analytics.', 
-    difficulty: 'All Levels', 
-    icon: Sparkles 
-  },
+  { id: 'vocal-improv', name: 'Vocal Improv', desc: 'Improvise melodies over chord changes.', difficulty: 'Intermediate', icon: Mic },
+  { id: 'flow-trainer', name: 'Flow Trainer', desc: 'Ride the beat with rhythmic precision.', difficulty: 'Intermediate', icon: Zap },
+  { id: 'beatbox-lab', name: 'Beatbox Lab', desc: 'Create complex drum patterns with your voice.', difficulty: 'Beginner', icon: Drum },
+  { id: 'freestyle', name: 'Freestyle Sandbox', desc: 'Open creative space with real-time feedback.', difficulty: 'All Levels', icon: Sparkles },
 ];
 
 export default function CreateHub() {
@@ -52,20 +27,21 @@ export default function CreateHub() {
     async function load() {
       try {
         const db = await initDB();
-        const sessions = await db.getAll('sessions');
-        setHistory(sessions);
+        const logs = await db.getAll('sessions');
+        setHistory(logs);
       } catch (e) {
-        console.warn("Failed to load session history for hub", e);
+        console.warn("Failed to load creation history", e);
       }
     }
     load();
   }, []);
 
   const getStats = (id: string) => {
-    const sessions = history.filter(s => s.gameName === `create-${id}`);
+    const logs = history.filter(s => s.gameName === `create-${id}`);
+    if (logs.length === 0) return { lastPlayed: 'New', count: 0 };
     return {
-      count: sessions.length,
-      last: sessions.length > 0 ? format(new Date(sessions[sessions.length - 1].date), 'MMM d') : 'New'
+      lastPlayed: format(new Date(logs[logs.length-1].date), 'MMM d'),
+      count: logs.length
     };
   };
 
@@ -92,30 +68,18 @@ export default function CreateHub() {
                     <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                       <ex.icon className="w-8 h-8" />
                     </div>
-                    
                     <div className="flex-grow min-w-0">
                       <div className="flex items-center gap-3 mb-1">
                         <h2 className="text-2xl font-bold">{ex.name}</h2>
-                        <Badge variant="secondary" className={cn(
-                          "text-[10px] font-black px-2",
-                          ex.difficulty === 'Beginner' && "bg-emerald-500/10 text-emerald-600",
-                          ex.difficulty === 'Intermediate' && "bg-amber-500/10 text-amber-600",
-                          ex.difficulty === 'All Levels' && "bg-primary/10 text-primary"
-                        )}>
-                          {ex.difficulty}
-                        </Badge>
+                        <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
                       </div>
                       <p className="text-muted-foreground leading-relaxed">{ex.desc}</p>
-                      
                       <div className="flex items-center gap-4 mt-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                         <span className="flex items-center gap-1"><History className="w-3 h-3" /> {stats.count} Sessions</span>
-                        <span>Last: {stats.last}</span>
+                        <span>Last: {stats.lastPlayed}</span>
                       </div>
                     </div>
-
-                    <div className="shrink-0">
-                      <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                    </div>
+                    <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all" />
                   </div>
                 </CardContent>
               </Card>

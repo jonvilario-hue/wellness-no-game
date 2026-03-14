@@ -16,7 +16,6 @@ const categories = [
     desc: 'Identify intervals, chords, scales & more',
     icon: Headphones,
     count: 14,
-    status: 'ACTIVE',
     href: '/music/listen'
   },
   {
@@ -25,7 +24,6 @@ const categories = [
     desc: 'Train your voice with pitch exercises',
     icon: Mic2,
     count: 4,
-    status: 'ACTIVE',
     href: '/music/sing'
   },
   {
@@ -34,7 +32,6 @@ const categories = [
     desc: 'Build breath, range & vocal control',
     icon: Wind,
     count: 4,
-    status: 'ACTIVE',
     href: '/music/voice'
   },
   {
@@ -43,7 +40,6 @@ const categories = [
     desc: 'Practice your instrument by ear',
     icon: Guitar,
     count: 3,
-    status: 'ACTIVE',
     href: '/music/play'
   },
   {
@@ -52,7 +48,6 @@ const categories = [
     desc: 'Improvise, freestyle & beatbox',
     icon: Sparkles,
     count: 4,
-    status: 'ACTIVE',
     href: '/music/create'
   }
 ];
@@ -66,37 +61,31 @@ export default function MusicHub() {
       </div>
 
       <div className="grid grid-cols-1 gap-4">
-        {categories.map((cat) => {
-          return (
-            <Link key={cat.id} href={cat.href}>
-              <Card className={cn(
-                "relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer"
-              )}>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-6">
-                    <div className={cn(
-                      "p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all"
-                    )}>
-                      <cat.icon className="w-8 h-8" />
-                    </div>
-                    
-                    <div className="flex-grow min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h2 className="text-2xl font-bold">{cat.name}</h2>
-                        <Badge variant="secondary" className="text-[10px] font-black">{cat.count} EXERCISES</Badge>
-                      </div>
-                      <p className="text-muted-foreground leading-relaxed">{cat.desc}</p>
-                    </div>
-
-                    <div className="shrink-0">
-                      <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                    </div>
+        {categories.map((cat) => (
+          <Link key={cat.id} href={cat.href}>
+            <Card className="relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-6">
+                  <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                    <cat.icon className="w-8 h-8" />
                   </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
+                  
+                  <div className="flex-grow min-w-0">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h2 className="text-2xl font-bold">{cat.name}</h2>
+                      <Badge variant="secondary" className="text-[10px] font-black uppercase">{cat.count} Exercises</Badge>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed">{cat.desc}</p>
+                  </div>
+
+                  <div className="shrink-0">
+                    <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </div>
     </div>
   );

@@ -1,7 +1,9 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { 
@@ -12,37 +14,12 @@ import {
 import { initDB } from '@/lib/storage/db';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 
 const exercises = [
-  { 
-    id: 'breath', 
-    name: 'Breath Control', 
-    desc: 'Sustain, control & support your breath for reliable projection.', 
-    difficulty: 'Beginner', 
-    icon: Wind 
-  },
-  { 
-    id: 'dynamics', 
-    name: 'Dynamics', 
-    desc: 'Master loud, soft & the subtle gradients between them.', 
-    difficulty: 'Beginner', 
-    icon: SlidersHorizontal 
-  },
-  { 
-    id: 'range', 
-    name: 'Range Builder', 
-    desc: 'Explore and safely expand your vocal ceiling and basement.', 
-    difficulty: 'Intermediate', 
-    icon: Maximize 
-  },
-  { 
-    id: 'tone', 
-    name: 'Tone Shaping', 
-    desc: 'Modify vowel shapes to change your vocal color and quality.', 
-    difficulty: 'Advanced', 
-    icon: Palette 
-  },
+  { id: 'breath', name: 'Breath Control', desc: 'Sustain and support your vocal output.', difficulty: 'Beginner', icon: Wind },
+  { id: 'dynamics', name: 'Dynamics', desc: 'Master loud, soft & subtle gradients.', difficulty: 'Beginner', icon: SlidersHorizontal },
+  { id: 'range', name: 'Range Builder', desc: 'Explore and expand your vocal limits.', difficulty: 'Intermediate', icon: Maximize },
+  { id: 'tone', name: 'Tone Shaping', desc: 'Modify vowel shapes for specific timbres.', difficulty: 'Advanced', icon: Palette },
 ];
 
 export default function VoiceHub() {
@@ -52,20 +29,21 @@ export default function VoiceHub() {
     async function load() {
       try {
         const db = await initDB();
-        const sessions = await db.getAll('sessions');
-        setHistory(sessions);
+        const logs = await db.getAll('sessions');
+        setHistory(logs);
       } catch (e) {
-        console.warn("Failed to load session history for hub", e);
+        console.warn("Failed to load voice history", e);
       }
     }
     load();
   }, []);
 
   const getStats = (id: string) => {
-    const sessions = history.filter(s => s.gameName === `voice-${id}`);
+    const logs = history.filter(s => s.gameName === `voice-${id}`);
+    if (logs.length === 0) return { lastPlayed: 'New', count: 0 };
     return {
-      count: sessions.length,
-      last: sessions.length > 0 ? format(new Date(sessions[sessions.length - 1].date), 'MMM d') : 'New'
+      lastPlayed: format(new Date(logs[logs.length-1].date), 'MMM d'),
+      count: logs.length
     };
   };
 
@@ -92,30 +70,18 @@ export default function VoiceHub() {
                     <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                       <ex.icon className="w-8 h-8" />
                     </div>
-                    
                     <div className="flex-grow min-w-0">
                       <div className="flex items-center gap-3 mb-1">
                         <h2 className="text-2xl font-bold">{ex.name}</h2>
-                        <Badge variant="secondary" className={cn(
-                          "text-[10px] font-black px-2",
-                          ex.difficulty === 'Beginner' && "bg-emerald-500/10 text-emerald-600",
-                          ex.difficulty === 'Intermediate' && "bg-amber-500/10 text-amber-600",
-                          ex.difficulty === 'Advanced' && "bg-rose-500/10 text-rose-600"
-                        )}>
-                          {ex.difficulty}
-                        </Badge>
+                        <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
                       </div>
                       <p className="text-muted-foreground leading-relaxed">{ex.desc}</p>
-                      
                       <div className="flex items-center gap-4 mt-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                         <span className="flex items-center gap-1"><History className="w-3 h-3" /> {stats.count} Sessions</span>
-                        <span>Last: {stats.last}</span>
+                        <span>Last: {stats.lastPlayed}</span>
                       </div>
                     </div>
-
-                    <div className="shrink-0">
-                      <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                    </div>
+                    <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all" />
                   </div>
                 </CardContent>
               </Card>
