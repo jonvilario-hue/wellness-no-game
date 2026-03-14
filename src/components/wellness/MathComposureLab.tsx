@@ -8,21 +8,21 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Sigma, BrainCircuit, Scale, Calculator, 
-  Activity, CalendarDays, History, 
-  ArrowRight, Info, Sparkles, CheckCircle2,
-  TrendingUp, Clock, Trophy, Plus, Zap
+  Activity, History, 
+  Plus, Zap, LayoutGrid, Eye
 } from 'lucide-react';
 import { useFirebase, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy } from 'firebase/firestore';
-import { format, startOfWeek, isAfter, subDays, parseISO } from 'date-fns';
+import { format, startOfWeek, isAfter, parseISO } from 'date-fns';
 import { MathSessionPlayer } from './MathSessionPlayer';
-import { cn } from '@/lib/utils';
 import { AssistantTooltip } from '../assistant-tooltip';
 import { MathAnalytics } from './MathAnalytics';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
 import { MentalMathTrainer } from './MentalMathTrainer';
+import { AnzanTrainer } from './AnzanTrainer';
+import { cn } from '@/lib/utils';
 
 export type MathDomain = {
   id: string;
@@ -54,7 +54,7 @@ export function MathComposureLab() {
     );
   }, [firestore, user?.uid]);
 
-  const { data: sessions, isLoading } = useCollection(sessionsQuery);
+  const { data: sessions } = useCollection(sessionsQuery);
 
   const handleAddDomainToCalendar = (domain: MathDomain) => {
     addCustomPlan({
@@ -101,17 +101,20 @@ export function MathComposureLab() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-center mb-8">
-          <TabsList className="bg-muted/50 p-1">
-            <TabsTrigger value="domains" className="gap-2 px-6 font-bold uppercase text-[10px]">
-              <LayoutGrid className="w-3.5 h-3.5" /> Conceptual Domains
+          <TabsList className="bg-muted/50 p-1 h-auto grid grid-cols-3 max-w-xl">
+            <TabsTrigger value="domains" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <LayoutGrid className="w-3.5 h-3.5" /> Domains
             </TabsTrigger>
-            <TabsTrigger value="trainer" className="gap-2 px-6 font-bold uppercase text-[10px]">
-              <Zap className="w-3.5 h-3.5" /> Velocity Trainer
+            <TabsTrigger value="trainer" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Zap className="w-3.5 h-3.5" /> Velocity
+            </TabsTrigger>
+            <TabsTrigger value="anzan" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Eye className="w-3.5 h-3.5" /> Anzan
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="domains" className="space-y-8">
+        <TabsContent value="domains" className="space-y-8 animate-in slide-in-from-bottom-2 duration-500">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {domains.map(domain => {
               const domainSessions = sessions?.filter(s => s.domainId === domain.id) || [];
@@ -174,8 +177,12 @@ export function MathComposureLab() {
           </div>
         </TabsContent>
 
-        <TabsContent value="trainer" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <TabsContent value="trainer" className="animate-in slide-in-from-bottom-2 duration-500">
           <MentalMathTrainer />
+        </TabsContent>
+
+        <TabsContent value="anzan" className="animate-in slide-in-from-bottom-2 duration-500">
+          <AnzanTrainer />
         </TabsContent>
       </Tabs>
 
@@ -186,5 +193,3 @@ export function MathComposureLab() {
     </div>
   );
 }
-
-import { LayoutGrid } from 'lucide-react';
