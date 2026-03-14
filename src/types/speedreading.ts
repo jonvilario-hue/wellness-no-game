@@ -21,7 +21,8 @@ export interface ReadingPassage {
   wordCount: number;
   tier: ReadingTier;
   difficulty: ReadingDifficulty;
-  quiz: ComprehensionQuestion[];
+  quiz?: ComprehensionQuestion[];
+  isCustom?: boolean;
 }
 
 export interface ReadingLog {

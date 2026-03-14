@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useSpeedReadingStore } from "@/hooks/use-speedreading-store"
-import { readingPassages } from "@/data/speedreading-passages"
+import { readingPassages as curatedPassages } from "@/data/speedreading-passages"
 import { SpeedReadingStats, SpeedReadingAnalytics } from "./SpeedReadingDashboard"
 import { SpeedReadingDrillPlayer } from "./SpeedReadingDrillPlayer"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
@@ -11,49 +11,60 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
 import { 
-  Zap, BookOpen, Layers, MousePointer2, 
-  Eye, Play, BookCopy, X, Filter
+  Zap, MousePointer2, 
+  Eye, Play, BookCopy, X, Trash2, PlusCircle
 } from "lucide-react"
 import type { ReadingPassage, DrillType, ReadingTier, ReadingDifficulty } from "@/types/speedreading"
-import { AssistantTooltip } from "@/components/assistant-tooltip"
 import { cn } from "@/lib/utils"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { useWellnessData } from "@/hooks/use-wellness-data"
 import { speedReadingCategoryDetails } from "@/data/wellness-categories"
+import { CustomTextImportModal } from "./CustomTextImportModal"
+import { getCustomPassages, deleteCustomPassage } from "@/lib/indexedDBUtils"
+import { useToast } from "@/hooks/use-toast"
 
-const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: string }[] = [
+const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tagline: string }[] = [
   { 
     id: 'Pacer', 
     icon: MousePointer2, 
     title: 'Pacer Drills', 
     desc: 'Keep up with a moving highlight to suppress subvocalization.',
-    tip: 'Trust your peripheral vision. Don\'t try to "hear" every word.'
+    tagline: 'Set the tempo for your brain.'
   },
   { 
     id: 'Peripheral Expansion', 
     icon: Eye, 
     title: 'Peripheral Expansion', 
     desc: 'Widen your fixation span with centered-column text.',
-    tip: 'Keep your eyes in the center. Let the words on the edges bleed in.'
+    tagline: 'Widen your window of focus.'
   }
 ];
 
 export default function SpeedReadingContent() {
-  const { logs } = useSpeedReadingStore();
   const { lowEnergyMode, collapsedCategories, toggleCategoryCollapse } = useWellnessData();
-  const [activeDrill, setActiveDrill] = useState<{ type: DrillType; passage: ReadingPassage; isCustom?: boolean } | null>(null);
+  const [activeDrill, setActiveDrill] = useState<{ type: DrillType; passage: ReadingPassage } | null>(null);
   const [selectedTier, setSelectedTier] = useState<ReadingTier | 'All'>('All');
   const [selectedDifficulty, setSelectedDifficulty] = useState<ReadingDifficulty | 'All'>('All');
-  const [isCustomOpen, setIsCustomOpen] = useState(false);
-  const [customText, setCustomText] = useState("");
-  const [customTitle, setCustomName] = useState("");
+  const [customPassages, setCustomPassages] = useState<ReadingPassage[]>([]);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const { toast } = useToast();
+
+  const hydrateCustom = async () => {
+    const list = await getCustomPassages();
+    setCustomPassages(list);
+  };
+
+  useEffect(() => {
+    hydrateCustom();
+  }, []);
+
+  const allPassages = useMemo(() => [
+    ...curatedPassages,
+    ...customPassages
+  ], [customPassages]);
 
   const filteredPassages = useMemo(() => {
-    let list = [...readingPassages];
+    let list = allPassages;
     if (lowEnergyMode) {
       list = list.filter(p => p.difficulty === 'Beginner');
     }
@@ -64,22 +75,22 @@ export default function SpeedReadingContent() {
       list = list.filter(p => p.difficulty === selectedDifficulty);
     }
     return list;
-  }, [selectedTier, selectedDifficulty, lowEnergyMode]);
+  }, [allPassages, selectedTier, selectedDifficulty, lowEnergyMode]);
 
-  const handleStartCustom = (type: DrillType) => {
-    if (!customText) return;
-    const passage: ReadingPassage = {
-      id: 'custom',
-      title: customTitle || "Personal Text",
-      author: "User",
-      content: customText,
-      wordCount: customText.split(/\s+/).length,
-      tier: 'Casual', 
-      difficulty: 'Intermediate',
-      quiz: []
-    };
-    setActiveDrill({ type, passage, isCustom: true });
-    setIsCustomOpen(false);
+  const handleDeleteCustom = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    await deleteCustomPassage(id);
+    await hydrateCustom();
+    toast({ title: "Custom passage removed" });
+  };
+
+  const getDifficultyColor = (d: ReadingDifficulty) => {
+    switch (d) {
+      case 'Beginner': return 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5';
+      case 'Intermediate': return 'text-amber-500 border-amber-500/20 bg-amber-500/5';
+      case 'Advanced': return 'text-rose-500 border-rose-500/20 bg-rose-500/5';
+      default: return '';
+    }
   };
 
   const openCategories = useMemo(() => {
@@ -91,21 +102,11 @@ export default function SpeedReadingContent() {
     });
   }, [collapsedCategories]);
 
-  const getDifficultyColor = (d: ReadingDifficulty) => {
-    switch (d) {
-      case 'Beginner': return 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5';
-      case 'Intermediate': return 'text-amber-500 border-amber-500/20 bg-amber-500/5';
-      case 'Advanced': return 'text-rose-500 border-rose-500/20 bg-rose-500/5';
-      default: return '';
-    }
-  };
-
   if (activeDrill) {
     return (
       <SpeedReadingDrillPlayer 
         drillType={activeDrill.type}
         passage={activeDrill.passage}
-        isCustomText={activeDrill.isCustom}
         onClose={() => setActiveDrill(null)}
       />
     );
@@ -120,45 +121,9 @@ export default function SpeedReadingContent() {
             <p className="text-sm text-muted-foreground">Select a protocol and passage to begin training.</p>
           </div>
           
-          <div className="flex gap-2">
-            {!lowEnergyMode && (
-              <Dialog open={isCustomOpen} onOpenChange={setIsCustomOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="h-10 gap-2 border-primary/20 font-bold">
-                    <BookCopy className="w-4 h-4" /> Open Drill
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Bring Your Own Text</DialogTitle>
-                    <DialogDescription>Paste an article or snippet to practice with your own material.</DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-[10px] font-bold uppercase">Passage Title</Label>
-                      <Input value={customTitle} onChange={e => setCustomName(e.target.value)} placeholder="e.g. Research Paper Notes" />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[10px] font-bold uppercase">Paste Text</Label>
-                      <Textarea 
-                        className="min-h-[200px]" 
-                        value={customText} 
-                        onChange={e => setCustomText(e.target.value)} 
-                        placeholder="Paste your text here..."
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter className="grid grid-cols-2 gap-2">
-                    {DRILLS.map(d => (
-                      <Button key={d.id} onClick={() => handleStartCustom(d.id)} disabled={!customText} variant="secondary" className="gap-2">
-                        <Play className="w-3 h-3 fill-current" /> {d.title}
-                      </Button>
-                    ))}
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
+          <Button onClick={() => setIsImportOpen(true)} variant="outline" className="h-10 gap-2 border-primary/20 font-bold shadow-sm">
+            <PlusCircle className="w-4 h-4 text-primary" /> Import Custom Text
+          </Button>
         </div>
 
         <div className="space-y-4 p-4 bg-muted/30 rounded-2xl border border-primary/5">
@@ -216,11 +181,9 @@ export default function SpeedReadingContent() {
                       <drill.icon className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-bold uppercase tracking-tight">
-                          {drill.title}
-                        </h3>
-                      </div>
+                      <h3 className="text-sm font-bold uppercase tracking-tight">
+                        {drill.title}
+                      </h3>
                       <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
                     </div>
                   </div>
@@ -257,16 +220,31 @@ export default function SpeedReadingContent() {
                         filteredPassages.map(p => (
                           <button
                             key={p.id}
-                            onClick={() => setActiveDrill({ type: drill.id, passage: p, isCustom: false })}
-                            className="flex flex-col p-4 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn"
+                            onClick={() => setActiveDrill({ type: drill.id, passage: p })}
+                            className="flex flex-col p-4 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn relative overflow-hidden"
                           >
                             <div className="flex justify-between items-start mb-3">
-                              <Badge variant="outline" className={cn("text-[8px] font-black uppercase h-4 px-2", getDifficultyColor(p.difficulty))}>
-                                {p.difficulty}
-                              </Badge>
-                              <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted text-muted-foreground">
-                                {p.tier}
-                              </Badge>
+                              <div className="flex gap-1.5">
+                                <Badge variant="outline" className={cn("text-[8px] font-black uppercase h-4 px-2", getDifficultyColor(p.difficulty))}>
+                                  {p.difficulty}
+                                </Badge>
+                                {p.isCustom && <Badge className="text-[8px] font-black uppercase h-4 px-2 bg-primary text-white border-none">Custom</Badge>}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted text-muted-foreground">
+                                  {p.tier}
+                                </Badge>
+                                {p.isCustom && (
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-6 w-6 text-muted-foreground hover:text-destructive transition-opacity opacity-0 group-hover/btn:opacity-100"
+                                    onClick={(e) => handleDeleteCustom(e, p.id)}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
+                                )}
+                              </div>
                             </div>
                             <div className="flex-1">
                               <p className="text-sm font-bold truncate group-hover/btn:text-primary transition-colors">{p.title}</p>
@@ -287,6 +265,12 @@ export default function SpeedReadingContent() {
           })}
         </Accordion>
       </div>
+
+      <CustomTextImportModal 
+        open={isImportOpen} 
+        onOpenChange={setIsImportOpen} 
+        onImportComplete={hydrateCustom} 
+      />
 
       <TodayScheduleWidget category="Speed Reading" />
 
