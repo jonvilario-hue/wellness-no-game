@@ -12,7 +12,7 @@ import {
   Zap, Play, Trophy, Target, 
   Brain, Star, ArrowRight, ShieldCheck,
   ChevronRight, Settings2, Clock, CheckCircle2,
-  XCircle, RotateCcw
+  XCircle, RotateCcw, Sparkles
 } from 'lucide-react';
 import { useArithmentorStore, type ArithmentorDifficulty, type ArithmentorMode } from '@/hooks/use-arithmentor-store';
 import { cn } from '@/lib/utils';
