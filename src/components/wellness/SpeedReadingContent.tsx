@@ -10,6 +10,7 @@ import { TodayScheduleWidget } from "./TodayScheduleWidget"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { 
   Zap, MousePointer2, 
