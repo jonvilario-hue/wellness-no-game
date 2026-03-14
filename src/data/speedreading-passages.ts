@@ -1,7 +1,7 @@
 import { ReadingPassage } from '@/types/speedreading';
 
 export const readingPassages: ReadingPassage[] = [
-  // --- NARRATIVE (Beginner) ---
+  // --- EXISTING PASSAGES (PRESERVED) ---
   {
     id: 'alice-wonderland-1',
     title: "Down the Rabbit-Hole",
@@ -16,7 +16,6 @@ export const readingPassages: ReadingPassage[] = [
       { question: "What can we infer about Alice's character from her thoughts during the fall?", options: ["She is easily frightened", "She is imaginative and perhaps a bit reckless", "She is very studious and loves maps", "She is worried about her sister"], answerIndex: 1 }
     ]
   },
-  // --- NARRATIVE (Intermediate) ---
   {
     id: 'sherlock-holmes-1',
     title: "A Scandal in Bohemia",
@@ -31,7 +30,6 @@ export const readingPassages: ReadingPassage[] = [
       { question: "What had changed in the narrator's life since he last saw Holmes?", options: ["He had moved to Holland", "He had become a detective", "He had married and started a practice", "He had joined the official police"], answerIndex: 2 }
     ]
   },
-  // --- DENSE DATA (Beginner) ---
   {
     id: 'art-of-war-1',
     title: "Laying Plans",
@@ -46,7 +44,6 @@ export const readingPassages: ReadingPassage[] = [
       { question: "According to Sun Tzu, what is the fundamental basis of all warfare?", options: ["Deception", "Strength", "Preparation", "Aggression"], answerIndex: 0 }
     ]
   },
-  // --- TECHNICAL (Advanced) ---
   {
     id: 'federalist-10-1',
     title: "The Utility of the Union",
@@ -61,7 +58,6 @@ export const readingPassages: ReadingPassage[] = [
       { question: "What does Madison conclude about removing the cause of faction by destroying liberty?", options: ["It is the only effective solution", "It is a remedy worse than the disease", "It is necessary for state security", "It is the goal of the new constitution"], answerIndex: 1 }
     ]
   },
-  // --- CASUAL (Intermediate) ---
   {
     id: 'seneca-letters-1',
     title: "On the Shortness of Life",
@@ -74,6 +70,140 @@ export const readingPassages: ReadingPassage[] = [
       { question: "What is Seneca's main argument regarding life's duration?", options: ["Nature was unkind in giving humans short lives", "We do not have a short life, we make it short by wasting time", "Achieving greatness requires more time than we are given", "Only the wealthy have long lives"], answerIndex: 1 },
       { question: "To what does Seneca compare the management of time?", options: ["A military campaign", "The flow of a river", "The management of wealth", "A shifting storm at sea"], answerIndex: 2 },
       { question: "What does Seneca mean by 'The part of life we really live is small'?", options: ["Most of our time is spent sleeping", "Childhood is the only true life", "Most time is spent on distractions rather than purposeful existence", "Humans are small compared to the universe"], answerIndex: 2 }
+    ]
+  },
+
+  // --- NEW NARRATIVE PASSAGES ---
+  {
+    id: 'treasure-island-1',
+    title: "Treasure Island - The Old Sea-dog",
+    author: "Robert Louis Stevenson",
+    tier: 'Narrative',
+    difficulty: 'Intermediate',
+    wordCount: 505,
+    content: `Squire Trelawney, Dr. Livesey, and the rest of these gentlemen having asked me to write down the whole particulars about Treasure Island, from the beginning to the end, keeping nothing back but the bearings of the island, and that only because there is still treasure not yet lifted, I take up my pen in the year of grace 17__ and go back to the time when my father kept the Admiral Benbow inn and the brown old seaman with the sabre cut first took up his lodging under our roof. I remember him as if it were yesterday, as he came plodding to the inn door, his sea-chest following behind him in a barrow; a tall, strong, heavy, nut-brown man, his tarry pigtail falling over the shoulder of his soiled blue coat, his hands ragged and scarred, with black, broken nails, and the sabre cut across one cheek, a dirty, livid white. I remember him looking round the cove and whistling to himself as he did so, and then breaking out in that old sea-song that he sang so often afterwards: 'Fifteen men on the dead man's chest—Yo-ho-ho, and a bottle of rum!' in a high, old tottering voice that seemed to have been tuned and broken at the capstan bars. Then he rapped on the door with a bit of stick like a handspike that he carried, and when my father appeared, called roughly for a glass of rum. This, when it was brought to him, he drank slowly, like a connoisseur, lingering on the taste and still looking about him at the cliffs and up at our signboard. 'This is a handy cove,' says he at length; 'and a pleasant sittyated grog-shop. Much company, mate?' My father told him no, very little company, the more was the pity. 'Well, then,' said he, 'this is the berth for me. Here you, matey,' he cried to the man who trundled the barrow; 'bring up alongside and help up my chest. I'll stay here a bit,' he continued. 'I'm a plain man; rum and bacon and eggs is what I want, and that head up there for to watch ships off. What you mought call me? You mought call me captain. Oh, I see what you're at—there'; and he threw down three or four gold pieces on the threshold. 'You can tell me when I've worked through that,' says he, looking as fierce as a commander. And indeed bad as his clothes were and coarsely as he spoke, he had none of the appearance of a man who sailed before the mast, but seemed like a mate or skipper accustomed to be obeyed or to strike. The man who came with the barrow told us the mail had set him down the morning before at the Royal George, that he had inquired what inns there were along the coast, and hearing ours well spoken of, I suppose, and described as lonely, had chosen it from the others for his place of residence.`,
+    quiz: [
+      { question: "What is the primary setting established in this passage?", options: ["A ship at sea", "The Admiral Benbow inn", "A treasure cave", "The Royal George hotel"], answerIndex: 1 },
+      { question: "What specific physical detail does the narrator note about the seaman's appearance?", options: ["A wooden leg", "A missing eye", "A sabre cut on his cheek", "A golden earring"], answerIndex: 2 },
+      { question: "Why did the 'captain' likely choose this specific inn?", options: ["He liked the food", "He knew the Squire", "It was described as lonely", "It was cheap"], answerIndex: 2 }
+    ]
+  },
+  {
+    id: 'douglass-narrative-1',
+    title: "Narrative of Frederick Douglass - Learning to Read",
+    author: "Frederick Douglass",
+    tier: 'Narrative',
+    difficulty: 'Intermediate',
+    wordCount: 498,
+    content: `The plan which I adopted, and the one by which I was most successful, was that of making friends of all the little white boys whom I met in the street. As many of these as I could, I converted into teachers. With their kindly aid, obtained at different times and in different places, I finally succeeded in learning to read. When I was sent of errands, I always took my book with me, and by going one part of my errand quickly, I found time to get a lesson before my return. I used also to carry bread with me, enough of which was always in the house, and to which I was always welcome; for I was much better off in this regard than many of the poor white children in our neighborhood. This bread I used to bestow upon the hungry little urchins, who, in return, would give me that more valuable bread of knowledge. I am strongly tempted to give the names of two or three of those little boys, as a testimonial of the gratitude and affection I bear them; but prudence forbids;—not that it would injure me, but it might embarrass them; for it is almost an unpardonable offence to teach slaves to read in this Christian country. It is enough to say of the dear little fellows, that they lived on Philpot Street, very near Durgin and Boyd's ship-yard. I used to talk this matter of slavery over with them. I would sometimes say to them, I wished I could be as free as they would be when they got to be men. 'You will be free as soon as you are twenty-one, but I am a slave for life! Have not I as good a right to be free as you have?' These words used to trouble them; they would express for me the liveliest sympathy, and console me with the hope that something would occur by which I might be free. I was now about twelve years old, and the thought of being a slave for life began to bear heavily upon my heart. Just about this time, I got hold of a book entitled 'The Columbian Orator.' Every opportunity I could get, I used to read this book. Among much of other interesting matter, I found in it a dialogue between a master and his slave. The slave was represented as having run away from his master three times. The dialogue represented the conversation which took place between them, when the slave was retaken the third time. In this dialogue, the whole argument in behalf of slavery was brought forward by the master, all of which was disposed of by the slave. The slave was made to say some very smart as well as impressive things in reply to his master—things which had the desired though unexpected effect; for the conversation resulted in the voluntary emancipation of the slave on the part of the master.`,
+    quiz: [
+      { question: "How did Douglass primarily learn to read after his mistress was forbidden from teaching him?", options: ["He attended a secret school", "He taught himself using only the Bible", "He turned local white children into teachers", "He bribed his master"], answerIndex: 2 },
+      { question: "What was the title of the book that Douglass read during this time?", options: ["The Freedom Journal", "The Columbian Orator", "Common Sense", "The North Star"], answerIndex: 1 },
+      { question: "What was the 'unpardonable offence' mentioned in the text?", options: ["Stealing bread", "Running away from a master", "Teaching slaves to read", "Speaking to white children"], answerIndex: 2 }
+    ]
+  },
+
+  // --- NEW CASUAL PASSAGES ---
+  {
+    id: 'grimm-tales-1',
+    title: "Grimm's Tales - The Golden Bird",
+    author: "Brothers Grimm",
+    tier: 'Casual',
+    difficulty: 'Beginner',
+    wordCount: 485,
+    content: `In times gone by there was a king who had at the back of his castle a beautiful pleasure-garden, in which stood a tree that bore golden apples. As the apples ripened they were counted, but one morning one was missing. Then the King was angry, and ordered that watch should be kept about the tree every night. Now the King had three sons, and he sent the eldest to set watch; but when it drew towards midnight he fell asleep, and in the morning another apple was gone. Then the second son had to watch, and at midnight he too fell asleep, and in the morning another apple was gone. Then the third son helped himself to go; and though the King was not very willing to trust him, for fear bad luck should happen to him too, at last he let him go. The young man laid himself down under the tree to watch; and as it struck twelve he heard a rustling noise in the air, and a bird came flying that was of pure gold; and as it was snapping at one of the apples with its beak, the gardener's son jumped up and shot an arrow at it. But the arrow did the bird no harm; only it dropped a golden feather from its tail, and then flew away. The golden feather was brought to the King in the morning, and all the council was called together. Everyone agreed that it was worth more than all the wealth of the kingdom: but the King said, 'One feather is of no use to me, I must have the whole bird.' Then the eldest son set out, and thought to find the golden bird very easily; and when he had gone but a little way, he came to a wood, and by the side of the wood he saw a fox sitting; so he took his bow and made ready to shoot at it. Then the fox said, 'Do not shoot me, for I will give you good counsel; I know what your business is, and that you want to find the golden bird. You will reach a village in the evening; and when you are there, you will see two inns opposite to each other, one of which is very pleasant and handsome to look at: go not in there, but rest for the night in the other, though it may appear to you to be very poor and mean.' But the son thought to himself, 'What can such a beast as this know about the matter?' So he shot his arrow at the fox; but he missed it, and it set up its tail above its back and ran into the wood. Then he went his way, and in the evening came to the village where the two inns were; and in one of these were people singing, and dancing, and feasting; but the other looked very dirty and wretched.`,
+    quiz: [
+      { question: "What is the initial conflict in the story?", options: ["A dragon is attacking the castle", "Golden apples are being stolen", "The King has lost his crown", "The three sons are fighting"], answerIndex: 1 },
+      { question: "What advice does the fox give the eldest son?", options: ["To shoot the golden bird", "To stay in the mean-looking inn", "To avoid the dark wood", "To return to the castle"], answerIndex: 1 },
+      { question: "What characterizes the third son compared to his brothers?", options: ["He is lazier", "He is the only one who stayed awake", "He is the strongest fighter", "He is the oldest"], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'father-brown-1',
+    title: "Father Brown - The Blue Cross",
+    author: "G.K. Chesterton",
+    tier: 'Casual',
+    difficulty: 'Intermediate',
+    wordCount: 510,
+    content: `Between the silver ribbon of the morning and the green glittering ribbon of the sea, the boat touched Harwich and let loose a swarm of folk like flies, among whom the man we must follow was by no means conspicuous—nor wished to be. There was nothing notable about him, except a slight contrast between the holiday gaiety of his clothes and the official gravity of his face. His name was Valentin, and he was the head of the Paris Police and the most famous investigator of the world; and he was coming from Brussels to London to make the greatest arrest of the century. Flambeau was in England. The great Valentin's work was again before him. Flambeau was a colossus of crime. He was a Gascon of gigantic stature and bodily daring; and the stories of his outbursts of athletic wit were already some of the most current anecdotes of the day. It was he who ran the Tyrolean Mayor in a wheelbarrow round the railings of his own town hall; it was he who stood on one leg on the top of the Vendôme Column to show his contempt for the police. But Valentin was not thinking of these things. He was thinking of the Blue Cross. This was a cross of sapphires of immense size and value, and it was being carried by a very small and very simple-looking priest who had come from a village in the North. This was the Father Brown of whom we have heard. Valentin was a man of the world and a skeptic. He did not believe in miracles, and he did not believe in the special protection of Providence for simple priests. He believed in the human brain, and he believed in the criminal brain. He was following the priest because he believed Flambeau was following the priest. Valentin sat in a corner of a quiet restaurant in London and watched the small priest. The priest was eating a very large and very untidy bowl of soup. He looked as if he had never seen a restaurant before. He looked like a man who would lose his way in his own backyard. But Valentin noticed that the priest's eyes were very bright and very observant. He also noticed that the priest was doing something very strange with the salt and pepper shakers. He was moving them around the table in a specific pattern, as if he were playing a game or working out a puzzle. Valentin smiled. He thought he knew what the priest was doing. He thought the priest was trying to signal someone. But he was wrong. The priest was not signaling anyone. He was simply thinking. And as he thought, he was unconsciously creating a map of the conversation he had just had with a stranger.`,
+    quiz: [
+      { question: "Who is Valentin in this story?", options: ["The thief Flambeau", "A simple priest", "The head of the Paris Police", "A London restaurant owner"], answerIndex: 2 },
+      { question: "What valuable item is Father Brown carrying?", options: ["A bag of gold", "The Blue Cross of sapphires", "A secret map", "The Vendôme Column"], answerIndex: 1 },
+      { question: "What is the primary difference between Valentin and Father Brown's worldview?", options: ["Valentin is religious, Brown is not", "Valentin is a skeptic who relies on logic, Brown relies on faith and observation", "Valentin is a criminal, Brown is a detective", "They share the exact same worldview"], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'oscar-wilde-soul-1',
+    title: "The Soul of Man under Socialism",
+    author: "Oscar Wilde",
+    tier: 'Casual',
+    difficulty: 'Advanced',
+    wordCount: 490,
+    content: `The chief advantage that would result from the establishment of Socialism is, undoubtedly, the fact that Socialism would relieve us from that sordid necessity of living for others which, in the present condition of things, presses so hardly upon almost everybody. In fact, scarcely anyone at all escapes. Now and then, in the course of the century, a great man of science like Darwin; a great poet like Keats; a fine critical spirit like M. Renan; a supreme artist like Flaubert, has been able to isolate himself, to keep himself out of the reach of the clamorous claims of others, to stand ‘under the shelter of the wall,’ as Plato puts it, and so to realise the perfection of what was in him, to his own incomparable gain, and to the incomparable and lasting gain of the whole world. These, however, are exceptions. Most people spoil their lives by an unhealthy and exaggerated altruism—are forced, indeed, so to spoil them. They find themselves surrounded by hideous poverty, by hideous ugliness, by hideous starvation. It is inevitable that they should be strongly moved by all this. The emotions of man are stirred more quickly than man’s intelligence; and, as I pointed out some time ago in an article on the function of criticism, it is much more easy to have sympathy with suffering than it is to have sympathy with thought. Accordingly, with admirable, though misdirected intentions, they very seriously and very sentimentally set themselves to the task of remedying the evils that they see. But their remedies do not cure the disease: they merely prolong it. Indeed, their remedies are part of the disease. They try to solve the problem of poverty, for instance, by keeping the poor alive; or, in the case of a very advanced school, by amusing the poor. But this is not a solution: it is an aggravation of the difficulty. The proper aim is to try and reconstruct society on such a basis that poverty will be impossible. And the altruistic virtues have really prevented the carrying out of this aim. Just as the worst slave-owners were those who were kind to their slaves, and so prevented the horror of the system being realised by those who suffered from it, and understood by those who contemplated it, so, in the present state of things in England, the people who do most harm are the people who try to do most good; and at last we have had the spectacle of men who have really studied the problem and know the life—educated men who live in the East End—coming forward and imploring the community to restrain its altruistic impulses of charity, benevolence, and the like. They do so on the ground that such charity degrades and demoralises. They are perfectly right. Charity creates a multitude of sins.`,
+    quiz: [
+      { question: "According to Wilde, what is the 'chief advantage' of Socialism?", options: ["Equal distribution of wealth", "Relief from the necessity of living for others", "The abolition of private property", "State control of education"], answerIndex: 1 },
+      { question: "What comparison does Wilde make regarding 'kind slave-owners'?", options: ["They were the only good part of slavery", "They were worse because they hid the horror of the system", "They were examples of true altruism", "They eventually abolished slavery"], answerIndex: 1 },
+      { question: "What is Wilde's critique of modern charity?", options: ["It is not generous enough", "It is too difficult to manage", "It prolongs and aggravates the disease of poverty rather than curing it", "It should be handled by the government only"], answerIndex: 2 }
+    ]
+  },
+
+  // --- NEW TECHNICAL PASSAGES ---
+  {
+    id: 'arnold-bennett-24-hours-1',
+    title: "How to Live on 24 Hours a Day - The Daily Miracle",
+    author: "Arnold Bennett",
+    tier: 'Technical',
+    difficulty: 'Beginner',
+    wordCount: 502,
+    content: `"Which of you," says the proverb, "by taking thought can add a cubit to his stature?" It is a question that might well be asked of the person who is forever complaining that he has no time. He cannot add a minute to his day, however much he may wish to. The supply of time is a truly daily miracle, an affair genuinely astonishing when one examines it. You wake up in the morning, and lo! your purse is magically filled with twenty-four hours of the unmanufactured tissue of the universe of your life! It is yours. It is the most precious of possessions. A highly singular commodity, showered upon you in a manner as singular as the commodity itself! For remark! No one can take it from you. It is unstealable. And no one receives either more or less than you receive. Talk about an ideal democracy! In the realm of time there is no aristocracy of intellect, and no aristocracy of wealth. Genius is never rewarded by even an extra five minutes a day. And there is no punishment. Waste your infinitely precious commodity as much as you will, and the supply will never be withheld from you. No philosopher's stone was ever less manageable than time. It is the most rigid of all the laws of nature. Moreover, you cannot draw on the future. It is impossible to get into debt. You can only waste the passing moment. You cannot waste tomorrow; it is kept for you. You cannot waste the next hour; it is kept for you. I said the affair was a miracle. Is it not? You have to live on this twenty-four hours of daily time. Out of it you have to spin health, pleasure, money, content, respect, and the evolution of your immortal soul. Its right use, its most effective use, is a matter of the highest urgency and of the most thrilling actuality. All depends on that. Your happiness—the elusive prize that you are all clutching for, my friends!—depends on that. Strange that the newspapers, so full of all sorts of matters, are never full of the apparition of this daily miracle. If one shall say that I am exaggerating the importance of the time-question, I shall reply that it is impossible to exaggerate the importance of the time-question. It is the question of the very stuff of life.`,
+    quiz: [
+      { question: "What 'daily miracle' is Bennett referring to?", options: ["Earning money", "Waking up healthy", "The consistent supply of 24 hours", "The beauty of nature"], answerIndex: 2 },
+      { question: "According to the author, what is a unique characteristic of time compared to money?", options: ["It can be stolen", "You can get into debt with it", "You cannot draw on the future or get into debt", "Rich people get more of it"], answerIndex: 2 },
+      { question: "What is the author's primary purpose in this passage?", options: ["To complain about the news", "To stress the extreme importance of how one uses their time", "To explain the physics of the universe", "To encourage people to sleep less"], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'hume-understanding-1',
+    title: "An Enquiry Concerning Human Understanding",
+    author: "David Hume",
+    tier: 'Technical',
+    difficulty: 'Advanced',
+    wordCount: 515,
+    content: `Every one will readily allow, that there is a considerable difference between the perceptions of the mind, when a man feels the pain of excessive heat, or the pleasure of moderate warmth, and when he afterwards recalls to his memory this sensation, or anticipates it by his imagination. These faculties may copy or mimic the perceptions of the senses; but they never can entirely reach the force and vivacity of the original sentiment. The utmost we say of them, even when they operate with greatest vigour, is, that they represent their object in so lively a manner, that we could almost say we feel or see it: But, except the mind be disordered by disease or madness, they never can arrive at such a pitch of vivacity, as to render these perceptions altogether undistinguishable. All the colours of poetry, however splendid, can never paint natural objects in such a manner as to make the description be taken for a real object. The most lively thought is still inferior to the dullest sensation. We may observe a like distinction to run through all the other perceptions of the mind. A man in a fit of anger, is actuated in a very different manner from one who only thinks of that emotion. If you tell me, that any person is in love, I easily understand your meaning, and form a just conception of his situation; but never can mistake that conception for the real disorders and agitations of the passion. When we reflect on our past sentiments and affections, our thought is a faithful mirror, and copies its objects truly; but the colours which it employs are faint and dull, in comparison of those in which our original perceptions were clothed. It requires no nice discernment or metaphysical head to mark the distinction between them. Here therefore we may divide all the perceptions of the mind into two classes or species, which are distinguished by their different degrees of force and vivacity. The less forcible and lively are commonly denominated Thoughts or Ideas. The other species want a name in our language, and in most others; I suppose, because it was not requisite for any, but philosophical purposes, to rank them under a general term or appellation. Let us, therefore, use a little freedom, and call them Impressions; employing that word in a sense somewhat different from the usual. By the term impression, then, I mean all our more lively perceptions, when we hear, or see, or feel, or love, or hate, or desire, or will. And impressions are distinguished from ideas, which are the less lively perceptions, of which we are conscious, when we reflect on any of those sensations or movements above mentioned.`,
+    quiz: [
+      { question: "How does Hume distinguish between 'Impressions' and 'Ideas'?", options: ["By their source", "By their moral value", "By their degrees of force and vivacity", "By the time they occur"], answerIndex: 2 },
+      { question: "What does Hume say about the 'most lively thought' compared to 'sensation'?", options: ["It is superior in detail", "It is indistinguishable from sensation", "It is still inferior to the dullest sensation", "It is the source of all sensation"], answerIndex: 2 },
+      { question: "Under what condition might an idea be indistinguishable from a real perception?", options: ["In deep meditation", "When the mind is disordered by disease or madness", "When reading great poetry", "When experiencing strong love"], answerIndex: 1 }
+    ]
+  },
+
+  // --- NEW DENSE DATA PASSAGES ---
+  {
+    id: 'poor-richard-1',
+    title: "Poor Richard's Almanack - Collected Aphorisms",
+    author: "Benjamin Franklin",
+    tier: 'Dense Data',
+    difficulty: 'Beginner',
+    wordCount: 495,
+    content: `He that hath a Trade, hath an Estate; and he that hath a Calling, hath an Office of Profit and Honour; but then the Trade must be worked at, and the Calling well followed, or neither the Estate nor the Office will enable us to pay our Taxes. If we are industrious we shall never starve; for, at the working man's house hunger looks in, but dares not enter. Nor will the Bailiff or the Constable enter, for Industry pays Debts, while Despair encreaseth them. What though you have found no Treasure, nor has any rich Relation left you a Legacy, Diligence is the Mother of Good Luck, and God gives all things to Industry. Then plough deep, while sluggards sleep, and you shall have corn to sell and to keep. Work while it is called To-day, for you know not how much you may be hindered To-morrow. One To-day is worth two To-morrows, as Richard says; and farther, Never leave that till To-morrow, which you can do To-day. If you were a Servant, would you not be ashamed that a good Master should catch you idle? Are you then your own Master? Be ashamed to catch yourself idle, as Poor Dick says. When there is so much to be done for yourself, your Family, your Country, and your King, be up by Peep of Day; Let not the Sun look down and say, Inglorious here he lies. Handle your Tools without Mittens; remember that The Cat in Gloves catches no Mice, as Poor Richard says. 'Tis true there is much to be done, and perhaps you are weak-handed, but stick to it steadily, and you will see great Effects, for Constant Dropping wears away Stones; and by Diligence and Patience the Mouse ate in two the Cable; and Little Strokes fell great Oaks. Methinks I hear some of you say, Must a man afford himself no Leisure? I will tell thee, my friend, what Poor Richard says, Employ thy Time well, if thou meanest to gain Leisure; and, since thou art not sure of a Minute, throw not away an Hour. Leisure, is Time for doing something useful; this Leisure the diligent Man will obtain, but the lazy Man never; for A Life of Leisure and a Life of Laziness are two Things. Do you imagine that Sloth will afford you more Comfort than Labour? No, for as Poor Richard says, Trouble springs from Idleness, and grievous Toil from needless Ease. Many without Labour, would live by their Wits only, but they break for want of Stock. Whereas Industry gives Comfort, and Plenty, and Respect: Fly Pleasures, and they'll follow you. The diligent Spinner has a large Shift; and now I have a Sheep and a Cow, every body bids me Good-morrow.`,
+    quiz: [
+      { question: "What is the recurring theme of this collection of sayings?", options: ["The value of leisure", "The importance of industry and diligence", "The dangers of wealth", "The need for government reform"], answerIndex: 1 },
+      { question: "What does the phrase 'The Cat in Gloves catches no Mice' imply?", options: ["Be kind to animals", "Over-caution or softness prevents achievement", "Wear proper protection at work", "Cats are lazy"], answerIndex: 1 },
+      { question: "How does Franklin distinguish between 'Leisure' and 'Laziness'?", options: ["They are the same thing", "Leisure is earned through hard work for useful activity", "Laziness is for the rich only", "Leisure is a waste of time"], answerIndex: 1 }
+    ]
+  },
+  {
+    id: 'du-bois-souls-1',
+    title: "The Souls of Black Folk - The Veil",
+    author: "W.E.B. Du Bois",
+    tier: 'Dense Data',
+    difficulty: 'Advanced',
+    wordCount: 520,
+    content: `Between me and the other world there is ever an unasked question: unasked by some through feelings of delicacy; by others through the difficulty of rightly framing it. All, nevertheless, flutter round it. They approach me in a half-hesitant sort of way, eye me curiously or compassionately, and then, instead of saying directly, How does it feel to be a problem? they say, I know an excellent colored man in my town; or, I fought at Mechanicsburg; or, Do not these Southern outrages make your blood boil? At these I smile, or am interested, or reduce the boiling to a simmer, as the occasion may require. To the real question, How does it feel to be a problem? I answer seldom a word. And yet, being a problem is a strange experience,—peculiar even for one who has never been anything else, save perhaps in babyhood and in Europe. It is in the early days of rolled-over boy-hood that the revelation first bursts upon one, all in a day, as it were. I remember well when the shadow swept across me. I was a little thing, away up in the hills of New England, where the dark Berkshire’s shoulder the Blue. In a wee wooden schoolhouse, something put it into the boys' and girls' heads to buy gorgeous visiting-cards—ten cents a package—and exchange. The exchange was merry, till one girl, a tall newcomer, refused my card,—refused it peremptorily, with a glance. Then it dawned upon me with a certain suddenness that I was different from the others; or like, mayhap, in heart and life and longing, but shut out from their world by a vast veil. I had thereafter no desire to tear down that veil, to creep through; I held all beyond it in common contempt, and lived above it in a region of blue sky and great wandering shadows. That sky was bluest when I could beat my mates at examination-time, or beat them at a foot-race, or even beat them and their graduating speeches. Alas! with the years all this fine contempt began to fade; for the words I longed for, and all their dazzling opportunities, were theirs, not mine. But they should not keep them, I said; some day I would wrest them from them. How I might do it I could not tell; but I should do it. With other black boys the strife was not so fiercely sunny: their youth shrunk into tasteless sycophancy, or into silent hatred of the pale world about them and mocking distrust of everything white; or wasted itself in a bitter cry, Why did God make me an outcast and a stranger in mine own house? The shades of the prison-house closed round about us all: walls strait and stubborn to the whitest, but relentlessly narrow, tall, and unscalable to sons of night who must plod darkly on in resignation, or beat unavailing palms against the stone, or steadily, log-ically, step by step, whisper Soberly to the world.`,
+    quiz: [
+      { question: "What is the 'unasked question' that people 'flutter round'?", options: ["How can we end poverty?", "How does it feel to be a problem?", "Why are you in New England?", "What was the battle of Mechanicsburg?"], answerIndex: 1 },
+      { question: "What event first made Du Bois realize he was 'different'?", options: ["A foot-race", "Moving to Europe", "A girl refusing his visiting card at school", "His graduation speech"], answerIndex: 2 },
+      { question: "What does the 'Veil' symbolize in this passage?", options: ["A physical mask", "The psychological and social barrier between races", "A religious garment", "The fog in the Berkshire hills"], answerIndex: 1 }
     ]
   }
 ];
