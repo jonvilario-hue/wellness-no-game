@@ -8,6 +8,9 @@ import { TrainingOverrideProvider } from '@/hooks/use-training-override.tsx';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SnapshotManager } from '@/components/snapshot-manager';
 import { FirebaseClientProvider } from '@/firebase';
+import { Header } from '@/components/header';
+import { PageNav } from '@/components/page-nav';
+import { MotivationalMessage } from '@/components/motivational-message';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -33,7 +36,18 @@ export default function RootLayout({
               <TrainingFocusProvider>
                 <TrainingOverrideProvider>
                   <SnapshotManager />
-                  {children}
+                  <div className="flex flex-col min-h-screen">
+                    <div className="sticky top-0 z-20">
+                      <Header />
+                      <PageNav />
+                    </div>
+                    <MotivationalMessage />
+                    <main className="flex-1 p-4 sm:p-6 md:p-8">
+                      <div className="mx-auto max-w-7xl">
+                        {children}
+                      </div>
+                    </main>
+                  </div>
                   <Toaster />
                 </TrainingOverrideProvider>
               </TrainingFocusProvider>

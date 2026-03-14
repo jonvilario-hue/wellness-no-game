@@ -1,13 +1,18 @@
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { GraduationCap, Target, HeartPulse, BookMarked, Calendar, BrainCircuit, Music } from 'lucide-react';
+import { Home, GraduationCap, Target, HeartPulse, BookMarked, Calendar, BrainCircuit, Music } from 'lucide-react';
 import { AssistantTooltip } from './assistant-tooltip';
 
 const navLinks = [
+    { 
+      href: '/', 
+      icon: Home, 
+      label: 'Home',
+      tooltip: 'Sonic Lab Dashboard: Your central neural hub and skill map.'
+    },
     { 
       href: '/exercises', 
       icon: HeartPulse, 

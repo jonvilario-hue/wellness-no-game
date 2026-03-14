@@ -1,10 +1,9 @@
 'use client';
 
-import { Settings, Clock, Library, Moon, Lightbulb, LightbulbOff } from 'lucide-react';
+import { Settings, Clock, Library, Moon, Lightbulb, LightbulbOff, FlaskConical } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
-import { FlaskConical } from 'lucide-react';
 import { DopamineMenu } from './dopamine-menu';
 import { useDashboardSettings } from '@/hooks/use-dashboard-settings';
 import { cn } from '@/lib/utils';
@@ -71,10 +70,10 @@ export function Header() {
             </div>
         </TooltipProvider>
 
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
              <FlaskConical className="h-7 w-7 text-primary" />
              <h1 className="text-xl font-bold text-foreground tracking-tight">Polymath Lab</h1>
-        </div>
+        </Link>
         
         <TooltipProvider>
             <div className="flex-1 flex justify-end items-center gap-1">

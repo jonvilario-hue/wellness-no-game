@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Music, Play, Brain, Zap, History, Target } from 'lucide-react';
 
 export default function DashboardPage() {
   return (
-    <div className="container max-w-6xl mx-auto p-6 space-y-10">
+    <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in duration-700">
       <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b pb-10">
         <div>
           <h1 className="text-5xl font-black tracking-tighter uppercase mb-2">Sonic Lab</h1>
@@ -16,7 +15,7 @@ export default function DashboardPage() {
         </div>
         <div className="flex gap-3">
           <Button asChild variant="outline" size="lg" className="h-14 px-8 font-bold border-2 rounded-2xl">
-            <Link href="/profile">
+            <Link href="/calendar">
               <History className="mr-2 w-5 h-5" /> Analytics
             </Link>
           </Button>
