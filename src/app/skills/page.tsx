@@ -186,7 +186,7 @@ function SkillBuilderPageContent() {
                     <Zap className="w-4 h-4" /> Speed Reading
                   </TabsTrigger>
                   <TabsTrigger value="math" className="gap-2">
-                    <Sigma className="w-4 h-4" /> Math Practice
+                    <Sigma className="w-4 h-4" /> Arithmetic
                   </TabsTrigger>
                 </TabsList>
               </div>
