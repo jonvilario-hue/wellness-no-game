@@ -30,6 +30,7 @@ import Link from 'next/link';
 import { InputSelector } from '../audio/InputSelector';
 import { InstrumentSelector } from '../audio/InstrumentSelector';
 import { AssistantTooltip } from '../assistant-tooltip';
+import { MusicAccuracyTracker, MusicCreationTracker, MusicAchievementVault } from './MusicDashboard';
 
 // Data for categorized exercises
 const categoryExercises = {
@@ -124,7 +125,7 @@ export default function MusicContent() {
               </TabsTrigger>
             </AssistantTooltip>
 
-            <AssistantTooltip text="Cultivates spontaneous musical expression. Master improvisation, rhythmic flow, and vocal percussion through structured sandboxes.">
+            <AssistantTooltip text="Cultivates spontaneous musical expression. Master improvisation, rhythmic flow, and vocal percussion through structured creative sandboxes.">
               <TabsTrigger value="create" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
                 <Sparkles className="w-4 h-4" /> Create
               </TabsTrigger>
@@ -134,6 +135,15 @@ export default function MusicContent() {
 
         {/* --- LISTEN SUB-TAB --- */}
         <TabsContent value="listen" className="space-y-8 animate-in fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-1">
+              <MusicAccuracyTracker />
+            </div>
+            <div className="md:col-span-3">
+              <MusicAchievementVault filter={['Ear Training', 'Rhythm & Timing', 'Theory & Harmony', 'Sight Reading', 'Critical Listening']} />
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {drillsData.map((drill) => {
               const gameId = drill.id.toLowerCase().replace(/ /g, '-');
@@ -182,6 +192,7 @@ export default function MusicContent() {
 
         {/* --- SING SUB-TAB --- */}
         <TabsContent value="sing" className="space-y-8 animate-in fade-in">
+          <MusicAchievementVault filter={['Vocal Mechanics']} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.sing.map((ex) => {
               const stats = getStats(ex.id);
@@ -216,6 +227,7 @@ export default function MusicContent() {
 
         {/* --- VOICE SUB-TAB --- */}
         <TabsContent value="voice" className="space-y-8 animate-in fade-in">
+          <MusicAchievementVault filter={['Vocal Mechanics']} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.voice.map((ex) => {
               const stats = getStats(ex.id, 'voice');
@@ -293,6 +305,15 @@ export default function MusicContent() {
 
         {/* --- CREATE SUB-TAB --- */}
         <TabsContent value="create" className="space-y-8 animate-in fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-1">
+              <MusicCreationTracker />
+            </div>
+            <div className="md:col-span-3">
+              <MusicAchievementVault filter={['Improvisation & Composition']} />
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.create.map((ex) => {
               const stats = getStats(ex.id, 'create');
