@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Meyda from 'meyda';
 
 /**
- * Hook to perform spectral analysis on a microphone stream.
- * Returns spectral centroid (brightness) and frequency distribution data.
+ * Hook to perform spectral analysis using Meyda for high-fidelity timbre metrics.
  */
 export function useSpectralAnalysis(stream: MediaStream | null) {
   const [analysis, setAnalysis] = useState({
@@ -14,8 +15,8 @@ export function useSpectralAnalysis(stream: MediaStream | null) {
   });
 
   const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const requestRef = useRef<number>();
+  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const analyzerRef = useRef<any | null>(null);
 
   useEffect(() => {
     if (!stream) return;
@@ -25,58 +26,33 @@ export function useSpectralAnalysis(stream: MediaStream | null) {
     audioContextRef.current = ctx;
 
     const source = ctx.createMediaStreamSource(stream);
-    const analyser = ctx.createAnalyser();
-    analyser.fftSize = 2048;
-    source.connect(analyser);
-    analyserRef.current = analyser;
+    sourceRef.current = source;
 
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Float32Array(bufferLength);
-    const sampleRate = ctx.sampleRate;
+    const analyzer = Meyda.createMeydaAnalyzer({
+      audioContext: ctx,
+      source: source,
+      bufferSize: 2048,
+      featureExtractors: ['spectralCentroid', 'amplitudeSpectrum'],
+      callback: (features) => {
+        const centroid = features.spectralCentroid;
+        // Normalize centroid for UI: human voice is typically 400Hz to 4000Hz
+        const minC = 400;
+        const maxC = 4000;
+        const brightness = Math.max(0, Math.min(1, (centroid - minC) / (maxC - minC)));
 
-    const update = () => {
-      if (!analyserRef.current) return;
-
-      analyserRef.current.getFloatFrequencyData(dataArray);
-
-      // Spectral Centroid Calculation
-      // Centroid = sum(f * a) / sum(a)
-      let weightedSum = 0;
-      let totalAmplitude = 0;
-
-      for (let i = 0; i < dataArray.length; i++) {
-        // Convert dB amplitude to linear
-        const amplitude = Math.pow(10, dataArray[i] / 20);
-        const frequency = (i * sampleRate) / analyser.fftSize;
-
-        weightedSum += frequency * amplitude;
-        totalAmplitude += amplitude;
+        setAnalysis({
+          spectralCentroid: Math.round(centroid),
+          brightness,
+          frequencyData: features.amplitudeSpectrum
+        });
       }
+    });
 
-      const centroid = totalAmplitude > 0 ? weightedSum / totalAmplitude : 0;
-
-      // Normalize brightness for UI
-      // Human voice brightness (centroid) typically ranges from ~500Hz (dark) to ~3500Hz (bright)
-      const minCentroid = 400;
-      const maxCentroid = 4000;
-      const brightness = Math.max(0, Math.min(1, (centroid - minCentroid) / (maxCentroid - minCentroid)));
-
-      setAnalysis({
-        spectralCentroid: Math.round(centroid),
-        brightness,
-        frequencyData: dataArray
-      });
-
-      // Update at approx 15fps to save resources
-      setTimeout(() => {
-        requestRef.current = requestAnimationFrame(update);
-      }, 1000 / 15);
-    };
-
-    update();
+    analyzerRef.current = analyzer;
+    analyzer.start();
 
     return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      if (analyzerRef.current) analyzerRef.current.stop();
       if (audioContextRef.current) audioContextRef.current.close();
     };
   }, [stream]);

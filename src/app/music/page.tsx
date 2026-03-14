@@ -5,10 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { 
-  Headphones, Mic2, Wind, Guitar, Sparkles, Lock, ChevronRight 
+  Headphones, Mic2, Wind, Guitar, Sparkles, ChevronRight 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const categories = [
   {
@@ -53,7 +52,7 @@ const categories = [
     desc: 'Improvise, freestyle & beatbox',
     icon: Sparkles,
     count: 4,
-    status: 'COMING SOON',
+    status: 'ACTIVE',
     href: '/music/create'
   }
 ];
@@ -68,64 +67,33 @@ export default function MusicHub() {
 
       <div className="grid grid-cols-1 gap-4">
         {categories.map((cat) => {
-          const isSoon = cat.status === 'COMING SOON';
-          const Content = (
-            <Card className={cn(
-              "relative overflow-hidden transition-all group border-primary/10",
-              !isSoon ? "hover:border-primary/30 hover:shadow-lg cursor-pointer" : "opacity-60 grayscale-[0.5]"
-            )}>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-6">
-                  <div className={cn(
-                    "p-4 rounded-2xl transition-all",
-                    !isSoon ? "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground" : "bg-muted text-muted-foreground"
-                  )}>
-                    <cat.icon className="w-8 h-8" />
-                  </div>
-                  
-                  <div className="flex-grow min-w-0">
-                    <div className="flex items-center gap-3 mb-1">
-                      <h2 className="text-2xl font-bold">{cat.name}</h2>
-                      <Badge variant="secondary" className="text-[10px] font-black">{cat.count} EXERCISES</Badge>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed">{cat.desc}</p>
-                  </div>
-
-                  <div className="shrink-0">
-                    {isSoon ? (
-                      <Lock className="w-6 h-6 text-muted-foreground/40" />
-                    ) : (
-                      <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-              {isSoon && (
-                <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] pointer-events-none" />
-              )}
-            </Card>
-          );
-
-          if (isSoon) {
-            return (
-              <TooltipProvider key={cat.id}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link href={cat.href}>
-                      {Content}
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Coming soon to the Laboratory</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            );
-          }
-
           return (
             <Link key={cat.id} href={cat.href}>
-              {Content}
+              <Card className={cn(
+                "relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer"
+              )}>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-6">
+                    <div className={cn(
+                      "p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                    )}>
+                      <cat.icon className="w-8 h-8" />
+                    </div>
+                    
+                    <div className="flex-grow min-w-0">
+                      <div className="flex items-center gap-3 mb-1">
+                        <h2 className="text-2xl font-bold">{cat.name}</h2>
+                        <Badge variant="secondary" className="text-[10px] font-black">{cat.count} EXERCISES</Badge>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed">{cat.desc}</p>
+                    </div>
+
+                    <div className="shrink-0">
+                      <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </Link>
           );
         })}
