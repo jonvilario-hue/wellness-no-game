@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { 
   Zap, Play, Trophy, Target, 
   Star, Flame, ArrowRight, ShieldCheck,
-  Plus, Minus, X, Divide, RotateCcw
+  Plus, Minus, X, Divide, RotateCcw, Clock
 } from 'lucide-react';
 import { useMathArcadeStore, type MathOperator } from '@/hooks/use-math-arcade-store';
 import { cn } from '@/lib/utils';
@@ -359,7 +359,7 @@ export function MathArcade() {
               <p className="text-[10px] italic text-muted-foreground text-center py-4">No records established.</p>
             )}
           </CardContent>
-        </Card>
+        </div>
       </div>
     </div>
   );
