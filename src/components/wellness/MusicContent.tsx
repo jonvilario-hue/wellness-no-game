@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -127,7 +126,6 @@ export default function MusicContent() {
           </TabsList>
         </div>
 
-        {/* --- LISTEN SUB-TAB --- */}
         <TabsContent value="listen" className="space-y-8 animate-in fade-in">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {drillsData.map((drill) => {
@@ -172,11 +170,9 @@ export default function MusicContent() {
               );
             })}
           </div>
-
           <MusicAnalytics />
         </TabsContent>
 
-        {/* --- SING SUB-TAB --- */}
         <TabsContent value="sing" className="space-y-8 animate-in fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.sing.map((ex) => {
@@ -214,7 +210,6 @@ export default function MusicContent() {
           </div>
         </TabsContent>
 
-        {/* --- VOICE SUB-TAB --- */}
         <TabsContent value="voice" className="space-y-8 animate-in fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.voice.map((ex) => {
@@ -252,7 +247,6 @@ export default function MusicContent() {
           </div>
         </TabsContent>
 
-        {/* --- PLAY SUB-TAB --- */}
         <TabsContent value="play" className="space-y-8 animate-in fade-in">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-muted/20 rounded-2xl border border-primary/5">
             <div className="space-y-1 text-center md:text-left">
@@ -301,7 +295,6 @@ export default function MusicContent() {
           </div>
         </TabsContent>
 
-        {/* --- CREATE SUB-TAB --- */}
         <TabsContent value="create" className="space-y-8 animate-in fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.create.map((ex) => {
