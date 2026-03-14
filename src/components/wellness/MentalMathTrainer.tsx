@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -8,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   Zap, Play, RotateCcw, Settings2, 
   CheckCircle2, XCircle, Trophy, Clock,
@@ -29,7 +29,6 @@ export function MentalMathTrainer() {
   const [lastFeedback, setLastFeedback] = useState<'correct' | 'incorrect' | null>(null);
   
   const inputRef = useRef<HTMLInputElement>(null);
-  const timerRef = useRef<NodeJS.Timeout>(null);
 
   const generateProblem = useCallback(() => {
     const { minNumber, maxNumber, operators } = settings;
