@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -16,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { 
   Music, Headphones, Mic2, Wind, Guitar, Sparkles,
   Target, BookOpen, SlidersHorizontal, Maximize, Palette, Piano, 
-  Mic, Drum, Play, ChevronRight, Clock, Waves
+  Mic, Drum, Play, ChevronRight, Clock, Waves, Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
@@ -206,9 +207,8 @@ export default function MusicContent() {
                         <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
                       </div>
                     </CardContent>
-                  </Card>
-                </Link>
-              );
+                  </Link>
+                );
             })}
           </div>
         </TabsContent>
@@ -244,9 +244,8 @@ export default function MusicContent() {
                         <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
                       </div>
                     </CardContent>
-                  </Card>
-                </Link>
-              );
+                  </Link>
+                );
             })}
           </div>
         </TabsContent>
