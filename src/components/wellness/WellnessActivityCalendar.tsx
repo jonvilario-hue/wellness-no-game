@@ -200,7 +200,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
             </Button>
           )}
         </div>
-      </Header>
+      </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex justify-center border rounded-2xl p-4 bg-muted/10">
           <Calendar
