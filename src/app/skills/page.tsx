@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, Suspense } from 'react';
@@ -190,7 +189,7 @@ function SkillBuilderPageContent() {
                     <MessageSquare className="w-4 h-4" /> Communication
                   </TabsTrigger>
                   <TabsTrigger value="speedreading" className="gap-2 flex-1 px-4 font-bold">
-                    <Zap className="w-4 h-4" /> Reading
+                    <Zap className="w-4 h-4" /> Speed Reading
                   </TabsTrigger>
                   <TabsTrigger value="music" className="gap-2 flex-1 px-4 font-bold">
                     <Music className="w-4 h-4" /> Music
