@@ -32,8 +32,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 
-export default function DeckPage({ params }: { params: Promise<{ deckId: string }> }) {
-  const { deckId } = React.use(params);
+export default function DeckPage(props: { params: Promise<{ deckId: string }> }) {
+  const params = React.use(props.params);
+  const deckId = params.deckId;
   const router = useRouter();
   const { decks, cards, deleteDeck, deleteCard } = useFlashcardStore();
   

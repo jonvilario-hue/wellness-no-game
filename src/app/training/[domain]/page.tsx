@@ -13,8 +13,9 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTrainingOverride } from '@/hooks/use-training-override.tsx';
 
-export default function TrainingPage({ params }: { params: Promise<{ domain: string }> }) {
-  const { domain } = React.use(params);
+export default function TrainingPage(props: { params: Promise<{ domain: string }> }) {
+  const params = React.use(props.params);
+  const domain = params.domain;
   const domainKey = domain as CHCDomain;
   const domainInfo = chcDomains.find(d => d.key === domainKey);
   const { focus: globalFocus, isLoaded: isGlobalFocusLoaded } = useTrainingFocus();

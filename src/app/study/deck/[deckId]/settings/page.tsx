@@ -134,8 +134,9 @@ const deckSettingsSchema = z.object({
 
 type DeckSettingsFormValues = z.infer<typeof deckSettingsSchema>;
 
-export default function DeckSettingsPage({ params }: { params: Promise<{ deckId: string }> }) {
-  const { deckId } = React.use(params);
+export default function DeckSettingsPage(props: { params: Promise<{ deckId: string }> }) {
+  const params = React.use(props.params);
+  const deckId = params.deckId;
   const router = useRouter();
   const { decks, updateDeck } = useFlashcardStore();
   const deck = decks.find(d => d.id === deckId);

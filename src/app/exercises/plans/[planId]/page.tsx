@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useMemo } from 'react';
@@ -14,8 +13,9 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { AssistantTooltip } from '@/components/assistant-tooltip';
 
-export default function PlanDetailPage({ params }: { params: Promise<{ planId: string }> }) {
-  const { planId } = React.use(params);
+export default function PlanDetailPage(props: { params: Promise<{ planId: string }> }) {
+  const params = React.use(props.params);
+  const planId = params.planId;
   const router = useRouter();
   const plan = wellnessPlans.find(p => p.id === planId);
 
@@ -46,7 +46,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ planId: s
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-6 space-y-8">
+    <div className="max-w-3xl auto py-6 space-y-8">
       <div className="flex justify-between items-start">
         <Button variant="ghost" size="sm" asChild className="p-0 hover:bg-transparent text-muted-foreground hover:text-primary">
           <Link href={`/exercises?tab=${plan.category.toLowerCase().replace(' ', '')}`}>
