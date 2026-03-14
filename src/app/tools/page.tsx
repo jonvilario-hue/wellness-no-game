@@ -1,10 +1,8 @@
+
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { Header } from '@/components/header';
-import { PageNav } from '@/components/page-nav';
-import { MotivationalMessage } from '@/components/motivational-message';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookMarked, Utensils, Wallet, ChevronUp, ChevronDown } from 'lucide-react';
 import { JournalModule } from '@/components/dashboard/journal-module';
@@ -109,17 +107,8 @@ function ToolsPageContent() {
 
 export default function ToolsPage() {
   return (
-    <>
-      <div className="sticky top-0 z-20">
-        <Header />
-        <PageNav />
-      </div>
-      <MotivationalMessage />
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <Suspense fallback={<div className="w-full h-48 bg-muted animate-pulse rounded-xl" />}>
-          <ToolsPageContent />
-        </Suspense>
-      </main>
-    </>
+    <Suspense fallback={<div className="w-full h-48 bg-muted animate-pulse rounded-xl" />}>
+      <ToolsPageContent />
+    </Suspense>
   );
 }

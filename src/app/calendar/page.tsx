@@ -1,9 +1,7 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { Header } from '@/components/header';
-import { PageNav } from '@/components/page-nav';
-import { MotivationalMessage } from '@/components/motivational-message';
 import { 
   Calendar as CalendarIcon, 
   ChevronDown, 
@@ -265,9 +263,6 @@ export default function CalendarPage() {
     const dStr = format(date, 'yyyy-MM-dd');
     const instances = activityInstances[dStr] || [];
     
-    // Trackers List: Only show what has been explicitly logged or scheduled
-    // Plan templates (planTasks) are removed so the list stays empty by default
-
     const tallyTasks = Object.entries(routineTallies[dStr] || {}).map(([planId, count]) => {
       const plan = availablePlans.find(p => p.id === planId);
       if (!plan) return null;
@@ -474,346 +469,336 @@ export default function CalendarPage() {
   if (!_hasHydrated) return null;
 
   return (
-    <>
-      <div className="sticky top-0 z-20">
-        <Header />
-        <PageNav />
-      </div>
-      <MotivationalMessage />
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-7xl space-y-6">
-          
-          <Collapsible open={plansOpen} onOpenChange={setPlansOpen} className="w-full">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-4">
-                <h2 className="text-xl font-black uppercase tracking-tighter flex items-center gap-2">
-                  <LayoutGrid className="w-5 h-5 text-primary" />
-                  Active Routines
-                </h2>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10" onClick={() => handleOpenBuilder()}>
-                  <PlusCircle className="w-5 h-5" />
-                </Button>
-                {deletedPresetIds.length > 0 && (
-                  <Button variant="outline" size="sm" onClick={resetDefaults} className="h-7 text-[10px] uppercase font-bold">
-                    <RotateCcw className="w-3 h-3 mr-1" /> Reset Defaults
-                  </Button>
-                )}
-              </div>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  {plansOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="h-4 w-4" />}
-                </Button>
-              </CollapsibleTrigger>
-            </div>
-            
-            <CollapsibleContent>
-              <div className="space-y-2 pb-10">
-                <AnimatePresence mode="popLayout">
-                  {availablePlans.map((plan, index) => {
-                    const tally = (routineTallies[dateStr] || {})[plan.id] || 0;
-                    const isDone = tally > 0;
+    <div className="space-y-6">
+      <Collapsible open={plansOpen} onOpenChange={setPlansOpen} className="w-full">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-black uppercase tracking-tighter flex items-center gap-2">
+              <LayoutGrid className="w-5 h-5 text-primary" />
+              Active Routines
+            </h2>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10" onClick={() => handleOpenBuilder()}>
+              <PlusCircle className="w-5 h-5" />
+            </Button>
+            {deletedPresetIds.length > 0 && (
+              <Button variant="outline" size="sm" onClick={resetDefaults} className="h-7 text-[10px] uppercase font-bold">
+                <RotateCcw className="w-3 h-3 mr-1" /> Reset Defaults
+              </Button>
+            )}
+          </div>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm">
+              {plansOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </CollapsibleTrigger>
+        </div>
+        
+        <CollapsibleContent>
+          <div className="space-y-2 pb-10">
+            <AnimatePresence mode="popLayout">
+              {availablePlans.map((plan, index) => {
+                const tally = (routineTallies[dateStr] || {})[plan.id] || 0;
+                const isDone = tally > 0;
 
-                    return (
-                      <motion.div
-                        key={plan.id}
-                        layout
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                      >
-                        <div className="flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-card hover:bg-muted/30 transition-all group">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="flex flex-col items-center -ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <AssistantTooltip text="Move Up">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-5 w-5 text-muted-foreground hover:text-primary" 
-                                  onClick={() => reorderPlan(plan.id, 'up')} 
-                                  disabled={index === 0}
-                                >
-                                  <ChevronUp className="w-3 h-3" />
-                                </Button>
-                              </AssistantTooltip>
-                              <AssistantTooltip text="Move Down">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-5 w-5 text-muted-foreground hover:text-primary" 
-                                  onClick={() => reorderPlan(plan.id, 'down')} 
-                                  disabled={index === availablePlans.length - 1}
-                                >
-                                  <ChevronDown className="w-3 h-3" />
-                                </Button>
-                              </AssistantTooltip>
-                            </div>
-
-                            <div className={cn(
-                              "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all shrink-0",
-                              isDone ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/20 text-muted-foreground/40"
-                            )}>
-                              {isDone ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-4 h-4" />}
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className={cn("text-sm font-bold truncate", isDone && "text-primary")}>{plan.name}</span>
-                                {tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{tally}</Badge>}
-                              </div>
-                              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest truncate">{plan.categories.join(' • ')}</p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            {isDone && (
-                              <AssistantTooltip text="Remove one tally instance">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-8 w-8 text-muted-foreground"
-                                  onClick={() => {
-                                    decrementTally(dateStr, plan.id);
-                                    toast({ title: "Log Removed" });
-                                  }}
-                                >
-                                  <RotateCcw className="w-3.5 h-3.5" />
-                                </Button>
-                              </AssistantTooltip>
-                            )}
-
+                return (
+                  <motion.div
+                    key={plan.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                  >
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-primary/5 bg-card hover:bg-muted/30 transition-all group">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex flex-col items-center -ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <AssistantTooltip text="Move Up">
                             <Button 
-                              size="sm" 
-                              className="h-8 gap-2 font-black uppercase text-[10px] px-4" 
-                              onClick={() => {
-                                handleLogRoutine(plan.id);
-                                toast({ title: "Routine Logged", variant: 'success' });
-                              }}
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-5 w-5 text-muted-foreground hover:text-primary" 
+                              onClick={() => reorderPlan(plan.id, 'up')} 
+                              disabled={index === 0}
                             >
-                              <Zap className="w-3 h-3 fill-current" />
-                              Log
+                              <ChevronUp className="w-3 h-3" />
                             </Button>
-                            
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <MoreHorizontal className="w-4 h-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Options</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handleOpenBuilder(plan)}>
-                                  <Edit className="w-4 h-4 mr-2" /> Edit Configuration
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-destructive" onClick={() => deletePlan(plan.id)}>
-                                  <Trash2 className="w-4 h-4 mr-2" /> Delete Routine
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
+                          </AssistantTooltip>
+                          <AssistantTooltip text="Move Down">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-5 w-5 text-muted-foreground hover:text-primary" 
+                              onClick={() => reorderPlan(plan.id, 'down')} 
+                              disabled={index === availablePlans.length - 1}
+                            >
+                              <ChevronDown className="w-3 h-3" />
+                            </Button>
+                          </AssistantTooltip>
                         </div>
-                      </motion.div>
-                    );
-                  })}
-                  
-                  <motion.div key="add-plan-row" layout>
-                    <button 
-                      className="w-full p-4 border border-dashed border-primary/10 rounded-xl hover:bg-primary/[0.02] flex items-center justify-center gap-3 transition-colors text-muted-foreground hover:text-primary"
-                      onClick={() => handleOpenBuilder()}
-                    >
-                      <PlusCircle className="w-5 h-5" />
-                      <span className="text-xs font-bold uppercase tracking-widest">Initialize New Routine</span>
-                    </button>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <Card className="lg:col-span-4">
-              <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-primary/5">
-                <div>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <CalendarIcon className="w-5 h-5 text-primary" />
-                    {view === 'month' ? format(selectedDate, 'MMMM yyyy') : `Week of ${format(weekDays[0], 'MMM d')}`}
-                  </CardTitle>
-                  <CardDescription>Master schedule: Monthly and Weekly overviews.</CardDescription>
-                </div>
-                <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
-                  <Button variant={view === 'month' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
-                  <Button variant={view === 'week' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('week')}>Week</Button>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                {view === 'month' && (
-                  <div className="space-y-6">
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={handleDayClick}
-                      className="w-full"
-                      components={{
-                        DayContent: ({ date }) => {
-                          const tasks = getTasksForDate(date);
-                          const hasActive = tasks.length > 0;
-                          
-                          return (
-                            <div className="relative w-full h-full flex items-center justify-center">
-                              <span className="relative z-10">{date.getDate()}</span>
-                              {hasActive && (
-                                <div className="absolute bottom-1 flex gap-0.5">
-                                  {tasks.slice(0, 4).map((t, idx) => (
-                                    <div key={idx} className="w-1 h-1 rounded-full" style={{ backgroundColor: (t as any).planColor || 'hsl(var(--primary))' }} />
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-
-                {view === 'week' && (
-                  <div className="p-4 grid grid-cols-1 md:grid-cols-7 gap-4">
-                    {weekDays.map(date => {
-                      const tasks = getTasksForDate(date);
-                      const isToday = isSameDay(date, new Date());
-                      const isSelected = isSameDay(date, selectedDate);
-
-                      return (
-                        <div 
-                          key={date.toISOString()} 
-                          className={cn(
-                            "flex flex-col gap-2 p-3 rounded-xl border transition-all cursor-pointer min-h-[200px]",
-                            isToday ? "border-primary bg-primary/[0.02]" : "border-transparent hover:bg-muted/30",
-                            isSelected && "ring-2 ring-primary ring-offset-2"
-                          )}
-                          onClick={() => setSelectedDate(date)}
-                        >
-                          <div className="flex flex-col items-center border-b border-primary/5 pb-2">
-                            <span className="text-[10px] uppercase font-black text-muted-foreground">{format(date, 'EEE')}</span>
-                            <span className={cn("text-lg font-black", isToday && "text-primary")}>{format(date, 'd')}</span>
-                          </div>
-                          <div className="space-y-1 overflow-y-auto max-h-[150px] scrollbar-none">
-                            {tasks.map(task => (
-                              <div 
-                                key={task.instanceId} 
-                                className={cn(
-                                  "p-1 rounded flex items-center gap-1.5",
-                                  task.status === 'completed' ? "opacity-40" : ""
-                                )}
-                              >
-                                <div className="w-1 h-3 rounded-full shrink-0" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
-                                <span className="text-[9px] font-medium truncate">{task.name}</span>
-                              </div>
-                            ))}
-                          </div>
+                        <div className={cn(
+                          "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all shrink-0",
+                          isDone ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/20 text-muted-foreground/40"
+                        )}>
+                          {isDone ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-4 h-4" />}
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="lg:col-span-4 animate-in fade-in slide-in-from-top-4 duration-700">
-              <CardHeader className="pb-4 border-b border-primary/5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-xl flex items-center gap-2">
-                      <ListChecks className="w-5 h-5 text-primary" />
-                      Daily Agenda: {format(selectedDate, 'EEEE, MMMM do')}
-                    </CardTitle>
-                    <CardDescription>Trackers List: Comprising actual logs and scheduled sessions.</CardDescription>
-                  </div>
-                  <Badge variant="outline" className="h-6 font-black uppercase text-[10px]">
-                    {todaysTasks.length} {todaysTasks.length === 1 ? 'Log' : 'Logs'}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                {todaysTasks.length === 0 ? (
-                  <div className="text-center py-16 text-muted-foreground border-2 border-dashed rounded-2xl bg-muted/10">
-                    <div className="flex flex-col items-center gap-2">
-                      <Activity className="w-8 h-8 opacity-20" />
-                      <p className="text-sm font-bold italic">No trackers active for this date yet.</p>
-                      <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Log a routine above to start your tracker list</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {todaysTasks.map(task => (
-                      <div key={task.instanceId} className={cn(
-                        "flex items-center gap-4 p-4 rounded-2xl border bg-card transition-all group",
-                        task.status === 'completed' && "opacity-60 bg-muted/20"
-                      )}>
-                        <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
-                        <div className="flex-grow">
+                        <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="font-bold text-sm">{task.name}</p>
-                            {task.tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{task.tally}</Badge>}
-                            {task.status === 'completed' && (
-                              <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-none text-[8px] h-4">LOGGED</Badge>
-                            )}
+                            <span className={cn("text-sm font-bold truncate", isDone && "text-primary")}>{plan.name}</span>
+                            {tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{tally}</Badge>}
                           </div>
-                          <div className="flex gap-2 mt-1">
-                            <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
-                            <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {task.status !== 'completed' && (
-                            <div className="flex gap-2">
-                              <AssistantTooltip text="Quickly log baseline metrics.">
-                                <Button 
-                                  size="sm" 
-                                  variant="outline"
-                                  className="rounded-full gap-2 h-10 px-6 font-bold"
-                                  onClick={() => {
-                                    if (task.linkedTracker) {
-                                      logExerciseById(task.linkedTracker);
-                                      updateActivityStatus(dateStr, task.instanceId, 'completed');
-                                      toast({ title: "Quick Log Successful", description: `${task.name} metrics synced to history.` });
-                                    }
-                                  }}
-                                >
-                                  <ClipboardCheck className="w-4 h-4 text-primary" />
-                                  Quick Log
-                                </Button>
-                              </AssistantTooltip>
-                            </div>
-                          )}
-                          {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
-                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {task.tally !== undefined && (
-                              <AssistantTooltip text="Reset this routine's log for today">
-                                <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { (task as any).onReset?.(); toast({ title: "Tally Reset" }); }}>
-                                  <RotateCw className="w-4 h-4" />
-                                </Button>
-                              </AssistantTooltip>
-                            )}
-                            {task.canDelete && (
-                              <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
-                                <Trash2 className="w-5 h-5" />
-                              </Button>
-                            )}
-                          </div>
+                          <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest truncate">{plan.categories.join(' • ')}</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
 
-          <AmalgamatedAnalytics />
-        </div>
-      </main>
+                      <div className="flex items-center gap-2">
+                        {isDone && (
+                          <AssistantTooltip text="Remove one tally instance">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-muted-foreground"
+                              onClick={() => {
+                                decrementTally(dateStr, plan.id);
+                                toast({ title: "Log Removed" });
+                              }}
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                            </Button>
+                          </AssistantTooltip>
+                        )}
+
+                        <Button 
+                          size="sm" 
+                          className="h-8 gap-2 font-black uppercase text-[10px] px-4" 
+                          onClick={() => {
+                            handleLogRoutine(plan.id);
+                            toast({ title: "Routine Logged", variant: 'success' });
+                          }}
+                        >
+                          <Zap className="w-3 h-3 fill-current" />
+                          Log
+                        </Button>
+                        
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Options</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleOpenBuilder(plan)}>
+                              <Edit className="w-4 h-4 mr-2" /> Edit Configuration
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive" onClick={() => deletePlan(plan.id)}>
+                              <Trash2 className="w-4 h-4 mr-2" /> Delete Routine
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+              
+              <motion.div key="add-plan-row" layout>
+                <button 
+                  className="w-full p-4 border border-dashed border-primary/10 rounded-xl hover:bg-primary/[0.02] flex items-center justify-center gap-3 transition-colors text-muted-foreground hover:text-primary"
+                  onClick={() => handleOpenBuilder()}
+                >
+                  <PlusCircle className="w-5 h-5" />
+                  <span className="text-xs font-bold uppercase tracking-widest">Initialize New Routine</span>
+                </button>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <Card className="lg:col-span-4">
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-primary/5">
+            <div>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <CalendarIcon className="w-5 h-5 text-primary" />
+                {view === 'month' ? format(selectedDate, 'MMMM yyyy') : `Week of ${format(weekDays[0], 'MMM d')}`}
+              </CardTitle>
+              <CardDescription>Master schedule: Monthly and Weekly overviews.</CardDescription>
+            </div>
+            <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
+              <Button variant={view === 'month' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('month')}>Month</Button>
+              <Button variant={view === 'week' ? 'default' : 'ghost'} size="sm" className="h-8 text-xs font-bold" onClick={() => setView('week')}>Week</Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {view === 'month' && (
+              <div className="space-y-6">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={handleDayClick}
+                  className="w-full"
+                  components={{
+                    DayContent: ({ date }) => {
+                      const tasks = getTasksForDate(date);
+                      const hasActive = tasks.length > 0;
+                      
+                      return (
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          <span className="relative z-10">{date.getDate()}</span>
+                          {hasActive && (
+                            <div className="absolute bottom-1 flex gap-0.5">
+                              {tasks.slice(0, 4).map((t, idx) => (
+                                <div key={idx} className="w-1 h-1 rounded-full" style={{ backgroundColor: (t as any).planColor || 'hsl(var(--primary))' }} />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+                  }}
+                />
+              </div>
+            )}
+
+            {view === 'week' && (
+              <div className="p-4 grid grid-cols-1 md:grid-cols-7 gap-4">
+                {weekDays.map(date => {
+                  const tasks = getTasksForDate(date);
+                  const isToday = isSameDay(date, new Date());
+                  const isSelected = isSameDay(date, selectedDate);
+
+                  return (
+                    <div 
+                      key={date.toISOString()} 
+                      className={cn(
+                        "flex flex-col gap-2 p-3 rounded-xl border transition-all cursor-pointer min-h-[200px]",
+                        isToday ? "border-primary bg-primary/[0.02]" : "border-transparent hover:bg-muted/30",
+                        isSelected && "ring-2 ring-primary ring-offset-2"
+                      )}
+                      onClick={() => setSelectedDate(date)}
+                    >
+                      <div className="flex flex-col items-center border-b border-primary/5 pb-2">
+                        <span className="text-[10px] uppercase font-black text-muted-foreground">{format(date, 'EEE')}</span>
+                        <span className={cn("text-lg font-black", isToday && "text-primary")}>{format(date, 'd')}</span>
+                      </div>
+                      <div className="space-y-1 overflow-y-auto max-h-[150px] scrollbar-none">
+                        {tasks.map(task => (
+                          <div 
+                            key={task.instanceId} 
+                            className={cn(
+                              "p-1 rounded flex items-center gap-1.5",
+                              task.status === 'completed' ? "opacity-40" : ""
+                            )}
+                          >
+                            <div className="w-1 h-3 rounded-full shrink-0" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
+                            <span className="text-[9px] font-medium truncate">{task.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-4 animate-in fade-in slide-in-from-top-4 duration-700">
+          <CardHeader className="pb-4 border-b border-primary/5">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <ListChecks className="w-5 h-5 text-primary" />
+                  Daily Agenda: {format(selectedDate, 'EEEE, MMMM do')}
+                </CardTitle>
+                <CardDescription>Trackers List: Comprising actual logs and scheduled sessions.</CardDescription>
+              </div>
+              <Badge variant="outline" className="h-6 font-black uppercase text-[10px]">
+                {todaysTasks.length} {todaysTasks.length === 1 ? 'Log' : 'Logs'}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            {todaysTasks.length === 0 ? (
+              <div className="text-center py-16 text-muted-foreground border-2 border-dashed rounded-2xl bg-muted/10">
+                <div className="flex flex-col items-center gap-2">
+                  <Activity className="w-8 h-8 opacity-20" />
+                  <p className="text-sm font-bold italic">No trackers active for this date yet.</p>
+                  <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Log a routine above to start your tracker list</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {todaysTasks.map(task => (
+                  <div key={task.instanceId} className={cn(
+                    "flex items-center gap-4 p-4 rounded-2xl border bg-card transition-all group",
+                    task.status === 'completed' && "opacity-60 bg-muted/20"
+                  )}>
+                    <div className="w-1.5 h-10 rounded-full" style={{ backgroundColor: (task as any).planColor || 'hsl(var(--primary))' }} />
+                    <div className="flex-grow">
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-sm">{task.name}</p>
+                        {task.tally > 1 && <Badge variant="secondary" className="text-[10px] h-4 py-0 font-black">×{task.tally}</Badge>}
+                        {task.status === 'completed' && (
+                          <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-none text-[8px] h-4">LOGGED</Badge>
+                        )}
+                      </div>
+                      <div className="flex gap-2 mt-1">
+                        <Badge variant="secondary" className="text-[9px] h-4 py-0 font-bold uppercase">{task.category}</Badge>
+                        <span className="text-[10px] text-muted-foreground font-medium">{task.scheduledTime || (task as any).timeOfDay || 'Anytime'}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {task.status !== 'completed' && (
+                        <div className="flex gap-2">
+                          <AssistantTooltip text="Quickly log baseline metrics.">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="rounded-full gap-2 h-10 px-6 font-bold"
+                              onClick={() => {
+                                if (task.linkedTracker) {
+                                  logExerciseById(task.linkedTracker);
+                                  updateActivityStatus(dateStr, task.instanceId, 'completed');
+                                  toast({ title: "Quick Log Successful", description: `${task.name} metrics synced to history.` });
+                                }
+                              }}
+                            >
+                              <ClipboardCheck className="w-4 h-4 text-primary" />
+                              Quick Log
+                            </Button>
+                          </AssistantTooltip>
+                        </div>
+                      )}
+                      {task.status === 'completed' && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {task.tally !== undefined && (
+                          <AssistantTooltip text="Reset this routine's log for today">
+                            <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { (task as any).onReset?.(); toast({ title: "Tally Reset" }); }}>
+                              <RotateCw className="w-4 h-4" />
+                            </Button>
+                          </AssistantTooltip>
+                        )}
+                        {task.canDelete && (
+                          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground" onClick={() => { task.onDelete?.(); toast({ title: "Activity Removed" }); }}>
+                            <Trash2 className="w-5 h-5" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <AmalgamatedAnalytics />
 
       <Dialog open={isBuilderOpen} onOpenChange={setIsBuilderOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
@@ -946,6 +931,6 @@ export default function CalendarPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
