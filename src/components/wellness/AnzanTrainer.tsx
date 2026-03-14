@@ -11,7 +11,8 @@ import { Slider } from '@/components/ui/slider';
 import { 
   Zap, Play, Eye, RotateCcw, 
   CheckCircle2, XCircle, Trophy, 
-  Sparkles, Timer, ArrowRight, Activity
+  Sparkles, Timer, ArrowRight, Activity,
+  Info, Settings2
 } from 'lucide-react';
 import { useAnzanStore } from '@/hooks/use-anzan-store';
 import { cn } from '@/lib/utils';
@@ -300,6 +301,3 @@ export function AnzanTrainer() {
     </div>
   );
 }
-
-import { Settings2 } from 'lucide-react';
-import { LayoutGrid } from 'lucide-react';
