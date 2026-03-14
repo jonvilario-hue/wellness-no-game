@@ -10,6 +10,7 @@ export type PlanCategory =
   | 'Study/Learning' 
   | 'Communication'
   | 'Math'
+  | 'Music'
   | 'Custom';
 
 export type RecurrenceType = 'daily' | 'weekly' | 'monthly' | 'custom';

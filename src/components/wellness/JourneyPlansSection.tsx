@@ -16,7 +16,7 @@ import { wellnessPlans } from '@/data/wellness-plans';
 import { cn } from '@/lib/utils';
 
 interface JourneyPlansSectionProps {
-  category: "Movement" | "Stillness" | "Communication" | "Speed Reading" | "Math";
+  category: "Movement" | "Stillness" | "Communication" | "Speed Reading" | "Math" | "Music";
   isExpanded?: boolean;
   onToggle?: () => void;
   mode?: 'trigger' | 'gallery';

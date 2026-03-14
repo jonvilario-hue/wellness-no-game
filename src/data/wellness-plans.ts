@@ -16,7 +16,7 @@ export type WellnessPlan = {
   title: string;
   tagline: string;
   description: string;
-  category: "Movement" | "Stillness" | "Communication" | "Speed Reading" | "Math";
+  category: "Movement" | "Stillness" | "Communication" | "Speed Reading" | "Math" | "Music";
   durationDays: number;
   steps: DailyStep[];
 };
@@ -166,6 +166,73 @@ export const wellnessPlans: WellnessPlan[] = [
     ]
   },
 
+  // --- MUSIC ---
+  {
+    id: "music-0",
+    title: "Music: The Auditory Pulse",
+    tagline: "Establish your baseline.",
+    description: "A single high-intensity tour of the lab to calibrate your pitch and rhythm sensing.",
+    category: "Music",
+    durationDays: 1,
+    steps: [
+      {
+        day: 1,
+        title: "Sonic Diagnostic",
+        estimatedMinutes: 10,
+        actions: [
+          { label: "Start Pitch Match", link: "/music/sing/pitch-match" },
+          { label: "Launch Interval Sniper", link: "/music/listen/interval-sniper" },
+          { label: "Sync Rhythm Tap", link: "/music/listen/rhythm-tap" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "music-3",
+    title: "Music: Ear-Voice Connection",
+    tagline: "Build the melodic bridge.",
+    description: "Three days dedicated to the feedback loop between hearing and vocal reproduction.",
+    category: "Music",
+    durationDays: 3,
+    steps: [
+      { day: 1, title: "Single Notes", estimatedMinutes: 8, actions: [{ label: "Note Flash + Pitch Match", link: "/music/listen/note-flash" }] },
+      { day: 2, title: "The Distance", estimatedMinutes: 10, actions: [{ label: "Interval Sniper + Sing-Back", link: "/music/listen/interval-sniper" }] },
+      { day: 3, title: "Melodic Memory", estimatedMinutes: 12, actions: [{ label: "Melody Echo Protocol", link: "/music/sing/melody-echo" }] }
+    ]
+  },
+  {
+    id: "music-5",
+    title: "Music: Harmonic Architect",
+    tagline: "Structure your sound.",
+    description: "A 5-day deep dive into theory, harmony, and instrumental application.",
+    category: "Music",
+    durationDays: 5,
+    steps: [
+      { day: 1, title: "Chord Qualities", estimatedMinutes: 10, actions: [{ label: "Chord Detective", link: "/music/listen/chord-detective" }] },
+      { day: 2, title: "Scale Degrees", estimatedMinutes: 10, actions: [{ label: "Scale Runner", link: "/music/listen/scale-runner" }] },
+      { day: 3, title: "Progressions", estimatedMinutes: 12, actions: [{ label: "Progression Decoder", link: "/music/listen/progression-decoder" }] },
+      { day: 4, title: "Transcription", estimatedMinutes: 15, actions: [{ label: "Transcription Challenge", link: "/music/play/transcription" }] },
+      { day: 5, title: "Synthesis", estimatedMinutes: 15, actions: [{ label: "Vocal Improv Session", link: "/music/create/vocal-improv" }] }
+    ]
+  },
+  {
+    id: "music-7",
+    title: "Music: Complete Musician Protocol",
+    tagline: "The high-fidelity circuit.",
+    description: "Our most comprehensive weekly rotation, touching every major domain in the laboratory.",
+    category: "Music",
+    durationDays: 7,
+    steps: [
+      { day: 1, title: "Ear Calibration", estimatedMinutes: 10, actions: [{ label: "Interval Identification", link: "/music/listen/interval-sniper" }] },
+      { day: 2, title: "Rhythmic Pulse", estimatedMinutes: 10, actions: [{ label: "Rhythm Reading", link: "/music/listen/rhythm-reader" }] },
+      { day: 3, title: "Vocal Control", estimatedMinutes: 12, actions: [{ label: "Breath + Tone Shaping", link: "/music/voice/tone" }] },
+      { day: 4, title: "Theory Foundations", estimatedMinutes: 15, actions: [{ label: "Scale Builder", link: "/music/play/scale-drill" }] },
+      { day: 5, title: "Instrumental Dialogue", estimatedMinutes: 15, actions: [{ label: "Call & Response", link: "/music/play/call-response" }] },
+      { day: 6, title: "Rhythmic Flow", estimatedMinutes: 15, actions: [{ label: "Flow Trainer", link: "/music/create/flow-trainer" }] },
+      { day: 7, title: "Creative Capstone", estimatedMinutes: 20, actions: [{ label: "Freestyle Sandbox", link: "/music/create/freestyle" }] }
+    ]
+  },
+
   // --- COMMUNICATION ---
   {
     id: "comm-0",
@@ -226,132 +293,6 @@ export const wellnessPlans: WellnessPlan[] = [
       { day: 5, title: "Story", estimatedMinutes: 10, actions: [{ label: "3-Act Arc", link: "/exercises?tab=communication#practice-story_3act" }] },
       { day: 6, title: "Self-Review", estimatedMinutes: 15, actions: [{ label: "Record & Listen Back", link: "/exercises?tab=communication#practice-speaking_mirror_drill" }] },
       { day: 7, title: "Social Rest", estimatedMinutes: 30, actions: [{ label: "Reflective Notebook", link: "/journal" }] }
-    ]
-  },
-
-  // --- SPEED READING ---
-  {
-    id: "read-0",
-    title: "Reading: Intro Session",
-    tagline: "Measure your baseline.",
-    description: "One single pacer drill to determine your starting WPM and ERR.",
-    category: "Speed Reading",
-    durationDays: 1,
-    steps: [
-      {
-        day: 1,
-        title: "Timed Baseline",
-        estimatedMinutes: 7,
-        actions: [{ label: "Start Pacer Drill", link: "/exercises?tab=speedreading" }]
-      }
-    ]
-  },
-  {
-    id: "read-3",
-    title: "Speed Reading: 3-Day Kickstart",
-    tagline: "Suppress the voice.",
-    description: "Three days to minimize subvocalization and increase raw velocity.",
-    category: "Speed Reading",
-    durationDays: 3,
-    steps: [
-      { day: 1, title: "Baseline Test", estimatedMinutes: 5, actions: [{ label: "Simple Pacer", link: "/exercises?tab=speedreading" }] },
-      { day: 2, title: "Chunking Drill", estimatedMinutes: 5, actions: [{ label: "RSVP Training", link: "/exercises?tab=speedreading" }] },
-      { day: 3, title: "Retest WPM", estimatedMinutes: 7, actions: [{ label: "Validation Drill", link: "/exercises?tab=speedreading" }] }
-    ]
-  },
-  {
-    id: "read-5",
-    title: "Speed Reading: 5-Day Foundation",
-    tagline: "Perceptual expansion.",
-    description: "Rotate through pacing, chunking, peripheral vision, and regression reduction.",
-    category: "Speed Reading",
-    durationDays: 5,
-    steps: [
-      { day: 1, title: "Pacing", estimatedMinutes: 5, actions: [{ label: "Pacer Drill", link: "/exercises?tab=speedreading" }] },
-      { day: 2, title: "Chunking", estimatedMinutes: 5, actions: [{ label: "3-Word Chunks", link: "/exercises?tab=speedreading" }] },
-      { day: 3, title: "Expansion", estimatedMinutes: 5, actions: [{ label: "Peripheral Focus", link: "/exercises?tab=speedreading" }] },
-      { day: 4, title: "Elimination", estimatedMinutes: 8, actions: [{ label: "Regression Check", link: "/exercises?tab=speedreading" }] },
-      { day: 5, title: "Comprehension", estimatedMinutes: 10, actions: [{ label: "Quiz Drill", link: "/exercises?tab=speedreading" }] }
-    ]
-  },
-  {
-    id: "read-7",
-    title: "Speed Reading: Week One Protocol",
-    tagline: "Structural reading habit.",
-    description: "An intensive weekly cycle to lock in your new reading velocity.",
-    category: "Speed Reading",
-    durationDays: 7,
-    steps: [
-      { day: 1, title: "Velocity", estimatedMinutes: 5, actions: [{ label: "Rapid Pacer", link: "/exercises?tab=speedreading" }] },
-      { day: 2, title: "Retention", estimatedMinutes: 10, actions: [{ label: "Dense Text Quiz", link: "/exercises?tab=speedreading" }] },
-      { day: 3, title: "Span", estimatedMinutes: 5, actions: [{ label: "Expansion Drill", link: "/exercises?tab=speedreading" }] },
-      { day: 4, title: "Focus", estimatedMinutes: 10, actions: [{ label: "Regression Drill", link: "/exercises?tab=speedreading" }] },
-      { day: 5, title: "Stamina", estimatedMinutes: 15, actions: [{ label: "Long Passage", link: "/exercises?tab=speedreading" }] },
-      { day: 6, title: "Review", estimatedMinutes: 10, actions: [{ label: "Technique Audit", link: "/exercises?tab=speedreading" }] },
-      { day: 7, title: "Leisure", estimatedMinutes: 30, actions: [{ label: "Read a physical book", link: "/calendar" }] }
-    ]
-  },
-
-  // --- MATH ---
-  {
-    id: "math-0",
-    title: "Math: Intro Pulse",
-    tagline: "Just one session. No calculation required.",
-    description: "Break the ice with a single session focused on estimation and number sense.",
-    category: "Math",
-    durationDays: 1,
-    steps: [
-      {
-        day: 1,
-        title: "Numerical Grounding",
-        estimatedMinutes: 5,
-        actions: [
-          { label: "Estimation Drill", link: "/skills?tab=math" }
-        ]
-      }
-    ]
-  },
-  {
-    id: "math-3",
-    title: "Math: 3-Day Composure Kickstart",
-    tagline: "Build a micro-habit of numerical calm.",
-    description: "Three days of low-stakes arithmetic and estimation to build confidence.",
-    category: "Math",
-    durationDays: 3,
-    steps: [
-      { day: 1, title: "Estimation Flow", estimatedMinutes: 5, actions: [{ label: "Number Sense Drill", link: "/skills?tab=math" }] },
-      { day: 2, title: "Arithmetic Rhythm", estimatedMinutes: 5, actions: [{ label: "Arithmetic Drill", link: "/skills?tab=math" }] },
-      { day: 3, title: "Scenario Logic", estimatedMinutes: 8, actions: [{ label: "Real Life Scenario", link: "/skills?tab=math" }] }
-    ]
-  },
-  {
-    id: "math-7-reboot",
-    title: "7-Day Mental Math Reboot",
-    tagline: "Restore your arithmetic hardware.",
-    description: "Daily sessions progressing from single-digit speed drills to chained operations.",
-    category: "Math",
-    durationDays: 7,
-    steps: [
-      { day: 1, title: "Addition Foundations", estimatedMinutes: 5, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
-      { day: 2, title: "Subtraction Composure", estimatedMinutes: 5, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
-      { day: 3, title: "Multiplication Tables", estimatedMinutes: 8, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
-      { day: 4, title: "Division Speed", estimatedMinutes: 8, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
-      { day: 5, title: "Chained Operations", estimatedMinutes: 10, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
-      { day: 6, title: "Complexity Handling", estimatedMinutes: 12, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] },
-      { day: 7, title: "Full Composure Test", estimatedMinutes: 15, actions: [{ label: "Mental Arithmetic Drill", link: "/skills?tab=math" }] }
-    ]
-  },
-  {
-    id: "math-14-sense",
-    title: "14-Day Number Sense Builder",
-    tagline: "Build quantitative intuition.",
-    description: "Focuses on estimation and magnitude. Train your gut to 'feel' the right answer.",
-    category: "Math",
-    durationDays: 14,
-    steps: [
-      { day: 1, title: "Rounding Foundations", estimatedMinutes: 5, actions: [{ label: "Number Sense Drill", link: "/skills?tab=math" }] },
-      { day: 7, title: "Fermi Problems", estimatedMinutes: 10, actions: [{ label: "Number Sense Drill", link: "/skills?tab=math" }] },
-      { day: 14, title: "Instant Estimation", estimatedMinutes: 15, actions: [{ label: "Number Sense Drill", link: "/skills?tab=math" }] }
     ]
   }
 ];

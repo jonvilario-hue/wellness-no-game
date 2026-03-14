@@ -57,7 +57,7 @@ function SkillBuilderPageContent() {
   const currentCategory = useMemo(() => {
     if (activeTab === 'speedreading') return 'Speed Reading';
     if (activeTab === 'math') return 'Math';
-    if (activeTab === 'music') return 'Communication'; // Shared visual structure
+    if (activeTab === 'music') return 'Music';
     return 'Communication';
   }, [activeTab]);
 

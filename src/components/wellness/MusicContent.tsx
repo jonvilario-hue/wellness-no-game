@@ -258,6 +258,7 @@ export default function MusicContent() {
                         <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                           <ex.icon className="w-8 h-8" />
                         </div>
+                        
                         <div className="flex-grow min-w-0">
                           <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-lg font-bold truncate">{ex.name}</h2>
@@ -316,7 +317,7 @@ export default function MusicContent() {
         </TabsContent>
       </Tabs>
 
-      <TodayScheduleWidget category="Communication" />
+      <TodayScheduleWidget category="Music" />
       <WellnessActivityCalendar categoryFilter="Music" />
     </div>
   );
