@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -95,18 +96,20 @@ export function ArithmentorTrainer() {
     });
   }, [sessionScore, sessionTotal, sessionStartTime, settings.difficulty, addSession]);
 
+  // Handle timer countdown
   useEffect(() => {
     if (gameState === 'playing' && settings.mode === 'Sprint' && timeLeft > 0) {
       const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleFinish();
-            return 0;
-          }
-          return prev - 1;
-        });
+        setTimeLeft(prev => prev - 1);
       }, 1000);
       return () => clearInterval(timer);
+    }
+  }, [gameState, timeLeft, settings.mode]);
+
+  // Handle completion when time hits 0
+  useEffect(() => {
+    if (gameState === 'playing' && settings.mode === 'Sprint' && timeLeft === 0) {
+      handleFinish();
     }
   }, [gameState, timeLeft, settings.mode, handleFinish]);
 
@@ -146,7 +149,7 @@ export function ArithmentorTrainer() {
               </div>
             </div>
             {gameState !== 'idle' && (
-              <Button variant="ghost" size="sm" onClick={() => setGameState('idle')} className="text-muted-foreground">
+              <Button variant="ghost" size="icon" onClick={() => setGameState('idle')} className="text-muted-foreground">
                 <XCircle className="w-4 h-4 mr-2" /> Stop
               </Button>
             )}

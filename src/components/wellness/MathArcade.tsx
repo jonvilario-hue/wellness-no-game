@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -34,7 +35,6 @@ export function MathArcade() {
     const op = operators[Math.floor(Math.random() * operators.length)];
     let a, b, answer;
 
-    // Scale difficulty with level
     const range = 10 + (level * 2);
     
     switch (op) {
@@ -91,18 +91,20 @@ export function MathArcade() {
     });
   }, [score, totalAttempted, maxCombo, operators, addXP, saveSession]);
 
+  // Handle timer countdown
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0) {
       const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleFinish();
-            return 0;
-          }
-          return prev - 1;
-        });
+        setTimeLeft(prev => prev - 1);
       }, 1000);
       return () => clearInterval(timer);
+    }
+  }, [gameState, timeLeft]);
+
+  // Handle completion when time hits 0
+  useEffect(() => {
+    if (gameState === 'playing' && timeLeft === 0) {
+      handleFinish();
     }
   }, [gameState, timeLeft, handleFinish]);
 

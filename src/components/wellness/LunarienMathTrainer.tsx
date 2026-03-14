@@ -17,6 +17,7 @@ import {
 import { useLunarienStore, type LunarienDifficulty } from '@/hooks/use-lunarien-store';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { format, parseISO } from 'date-fns';
 
 export function LunarienMathTrainer() {
   const { settings, updateSettings, addSession, stats, history } = useLunarienStore();
@@ -28,8 +29,6 @@ export function LunarienMathTrainer() {
   const [currentProblem, setCurrentProblem] = useState({ text: '', answer: 0 });
   const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  
-  const timerRef = useRef<NodeJS.Timeout>(null);
 
   const generateProblem = useCallback(() => {
     const { difficulty, includeSquares, includePercentages } = settings;
@@ -106,18 +105,20 @@ export function LunarienMathTrainer() {
     addSession({ score, accuracy, ppm, difficulty: settings.difficulty });
   }, [score, total, settings, addSession]);
 
+  // Handle timer countdown
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0) {
       const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleFinish();
-            return 0;
-          }
-          return prev - 1;
-        });
+        setTimeLeft(prev => prev - 1);
       }, 1000);
       return () => clearInterval(timer);
+    }
+  }, [gameState, timeLeft]);
+
+  // Handle completion when time hits 0
+  useEffect(() => {
+    if (gameState === 'playing' && timeLeft === 0) {
+      handleFinish();
     }
   }, [gameState, timeLeft, handleFinish]);
 
@@ -160,7 +161,7 @@ export function LunarienMathTrainer() {
         </div>
 
         <Card className={cn(
-          "w-full border-2 transition-all duration-300 shadow-2xl overflow-hidden",
+          "w-full border-2 transition-all duration-300 shadow-2xl overflow-hidden bg-card",
           feedback === 'correct' ? "border-emerald-500 bg-emerald-500/5" : 
           feedback === 'incorrect' ? "border-destructive bg-destructive/5 shake" : "border-primary/10"
         )}>
@@ -234,7 +235,7 @@ export function LunarienMathTrainer() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in duration-500">
-      <Card className="lg:col-span-2 border-primary/10">
+      <Card className="lg:col-span-2 border-primary/10 bg-card overflow-hidden">
         <CardHeader>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -353,4 +354,3 @@ export function LunarienMathTrainer() {
     </div>
   );
 }
-import { format, parseISO } from 'date-fns';

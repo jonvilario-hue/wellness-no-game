@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -75,21 +76,22 @@ export function MentalMathTrainer() {
     });
   }, [score, totalAttempted, settings, addSession]);
 
+  // Handle timer countdown
   useEffect(() => {
-    if (gameState === 'playing' && settings.duration > 0) {
+    if (gameState === 'playing' && settings.duration > 0 && timeLeft > 0) {
       const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            handleFinish();
-            return 0;
-          }
-          return prev - 1;
-        });
+        setTimeLeft(prev => prev - 1);
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [gameState, settings.duration, handleFinish]);
+  }, [gameState, settings.duration, timeLeft]);
+
+  // Handle completion when time hits 0
+  useEffect(() => {
+    if (gameState === 'playing' && settings.duration > 0 && timeLeft === 0) {
+      handleFinish();
+    }
+  }, [gameState, settings.duration, timeLeft, handleFinish]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -145,7 +147,7 @@ export function MentalMathTrainer() {
         </div>
 
         <Card className={cn(
-          "w-full max-w-xl border-2 transition-all duration-300 shadow-2xl",
+          "w-full max-w-xl border-2 transition-all duration-300 shadow-2xl bg-card",
           lastFeedback === 'correct' ? "border-emerald-500 bg-emerald-500/5 scale-105" : 
           lastFeedback === 'incorrect' ? "border-destructive bg-destructive/5 shake" : "border-primary/20"
         )}>
@@ -226,7 +228,7 @@ export function MentalMathTrainer() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <Card className="lg:col-span-2 border-primary/10">
+      <Card className="lg:col-span-2 border-primary/10 bg-card overflow-hidden">
         <CardHeader>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
