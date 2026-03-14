@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Label } from '@/components/ui/label';
 import { 
   Zap, Play, Trophy, Target, 
   Star, Flame, ArrowRight, ShieldCheck,
@@ -176,7 +176,7 @@ export function MathArcade() {
 
         <Card className={cn(
           "w-full border-2 transition-all duration-200 shadow-2xl overflow-hidden bg-card",
-          feedback === 'correct' ? "border-emerald-500 bg-emerald-500/5" : 
+          feedback === 'correct' ? "border-emerald-500 bg-emerald-500/5 scale-105" : 
           feedback === 'incorrect' ? "border-destructive bg-destructive/5 shake" : "border-primary/10"
         )}>
           <CardContent className="p-16 flex flex-col items-center space-y-8">
