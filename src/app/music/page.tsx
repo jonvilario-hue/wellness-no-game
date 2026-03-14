@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -35,7 +34,7 @@ const categories = [
     desc: 'Build breath, range & vocal control',
     icon: Wind,
     count: 4,
-    status: 'COMING SOON',
+    status: 'ACTIVE',
     href: '/music/voice'
   },
   {
