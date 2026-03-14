@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -10,6 +11,7 @@ import { JourneyPlansSection } from './JourneyPlansSection';
 import { TodayScheduleWidget } from './TodayScheduleWidget';
 import { MusicOpenPractice } from './MusicOpenPractice';
 import { MusicSongAnalysis } from './MusicSongAnalysis';
+import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -315,7 +317,7 @@ export default function MusicContent() {
       </Tabs>
 
       <TodayScheduleWidget category="Communication" />
-      <WellnessActivityCalendar categoryFilter="Math" />
+      <WellnessActivityCalendar categoryFilter="Music" />
     </div>
   );
 }
