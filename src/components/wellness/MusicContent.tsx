@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -17,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { 
   Music, Headphones, Mic2, Wind, Guitar, Sparkles,
   Target, BookOpen, SlidersHorizontal, Maximize, Palette, Piano, 
-  Mic, Drum, Play, ChevronRight, Clock
+  Mic, Drum, Play, ChevronRight, Clock, Waves
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
