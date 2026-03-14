@@ -1,4 +1,3 @@
-
 import type { ReadingTier } from '@/types/speedreading';
 
 /**
@@ -20,15 +19,6 @@ export const getSpeedRank = (wpm: number): { label: string; color: string } => {
   if (wpm >= 500) return { label: 'Advanced', color: 'text-orange-500' };
   if (wpm >= 300) return { label: 'Proficient', color: 'text-green-500' };
   return { label: 'Foundational', color: 'text-muted-foreground' };
-};
-
-export const chunkText = (text: string, chunkSize: number): string[][] => {
-  const words = text.split(/\s+/).filter(w => w.length > 0);
-  const chunks: string[][] = [];
-  for (let i = 0; i < words.length; i += chunkSize) {
-    chunks.push(words.slice(i, i + chunkSize));
-  }
-  return chunks;
 };
 
 /**

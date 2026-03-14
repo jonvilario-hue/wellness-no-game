@@ -1,4 +1,3 @@
-
 import { 
     Dumbbell, StretchHorizontal, Zap, Sunrise, Wind, 
     Brain, Shield, HeartHandshake, type LucideIcon,
@@ -190,14 +189,6 @@ export const communicationCategoryDetails: Record<CommunicationCategory, Wellnes
 };
 
 export const speedReadingCategoryDetails: Record<string, WellnessCategoryDetails> = {
-    'Chunk Training': {
-        title: 'Chunk Training',
-        icon: Layers,
-        purpose: 'Absorb multiple words at once to expand your perceptual span and reduce eye fixations.',
-        useWhen: ['Expanding peripheral vision', 'Reducing fixations per line'],
-        includes: ['RSVP Drills', 'Grouped Word Recognition'],
-        tagline: 'See more, read less.'
-    },
     'Pacer': {
         title: 'Pacer Drills',
         icon: MousePointer2,
@@ -213,13 +204,5 @@ export const speedReadingCategoryDetails: Record<string, WellnessCategoryDetails
         useWhen: ['Developing soft-gaze', 'High-density scanning'],
         includes: ['Column Drills', 'Schulte Tables'],
         tagline: 'Widen your window of focus.'
-    },
-    'Regression Eliminator': {
-        title: 'Regression Eliminator',
-        icon: Zap,
-        purpose: 'Prevent the habit of re-reading text by removing words after they are displayed.',
-        useWhen: ['Improving focus', 'Eliminating second-guessing'],
-        includes: ['Vanishing Text Drills', 'Forward-Only Mode'],
-        tagline: 'No looking back.'
     }
 };

@@ -1,13 +1,10 @@
+'use client';
 
 export type ReadingTier = 'Casual' | 'Technical' | 'Dense Data' | 'Narrative';
 
 export type DrillType = 
-  | 'Chunk Training' 
   | 'Pacer' 
-  | 'Peripheral Expansion' 
-  | 'Regression Eliminator' 
-  | 'Skimming & Scanning'
-  | 'Schulte Table';
+  | 'Peripheral Expansion';
 
 export interface ReadingPassage {
   id: string;

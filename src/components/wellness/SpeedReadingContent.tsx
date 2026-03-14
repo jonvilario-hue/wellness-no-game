@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from "react"
@@ -28,13 +27,6 @@ import { speedReadingCategoryDetails } from "@/data/wellness-categories"
 
 const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: string }[] = [
   { 
-    id: 'Chunk Training', 
-    icon: Layers, 
-    title: 'Chunk Training', 
-    desc: 'Absorb 2-4 words at once to expand your perceptual span.',
-    tip: 'Focus on the white space just above the line to see the whole chunk.'
-  },
-  { 
     id: 'Pacer', 
     icon: MousePointer2, 
     title: 'Pacer Drills', 
@@ -47,13 +39,6 @@ const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tip: stri
     title: 'Peripheral Expansion', 
     desc: 'Widen your fixation span with centered-column text.',
     tip: 'Keep your eyes in the center. Let the words on the edges bleed in.'
-  },
-  { 
-    id: 'Regression Eliminator', 
-    icon: Zap, 
-    title: 'Regression Eliminator', 
-    desc: 'Words disappear after display to break the habit of re-reading.',
-    tip: 'The goal is forward momentum. If you miss a word, keep going.'
   }
 ];
 
@@ -146,7 +131,7 @@ export default function SpeedReadingContent() {
                     </div>
                   </div>
                   <DialogFooter className="grid grid-cols-2 gap-2">
-                    {DRILLS.slice(0, 2).map(d => (
+                    {DRILLS.map(d => (
                       <Button key={d.id} onClick={() => handleStartCustom(d.id)} disabled={!customText} variant="secondary" className="gap-2">
                         <Play className="w-3 h-3 fill-current" /> {d.title}
                       </Button>

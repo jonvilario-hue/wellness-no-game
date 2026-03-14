@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -59,24 +58,11 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     isCustomText ? estimateDifficulty(passage.content) : passage.tier, 
   [isCustomText, passage.content]);
 
-  const chunks = useMemo(() => {
-    const size = 3;
-    const res = [];
-    for (let i = 0; i < words.length; i += size) {
-      res.push(words.slice(i, i + size).join(' '));
-    }
-    return res;
-  }, [words]);
-
-  const units = useMemo(() => {
-    if (drillType === 'Chunk Training') return chunks;
-    return words;
-  }, [drillType, words, chunks]);
+  const units = words;
 
   const msPerUnit = useMemo(() => {
-    const wordsPerUnit = drillType === 'Chunk Training' ? 3 : 1;
-    return (60 / currentWpm) * 1000 * wordsPerUnit;
-  }, [currentWpm, drillType]);
+    return (60 / currentWpm) * 1000;
+  }, [currentWpm]);
 
   // Handle auto-scroll to keep active text centered
   useEffect(() => {
@@ -175,55 +161,31 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
   };
 
   const renderDrillContent = () => {
-    switch (drillType) {
-      case 'Chunk Training':
-        return (
-          <div className="text-center">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.1 }}
-                className="text-4xl md:text-6xl font-bold tracking-tight text-primary leading-tight"
-              >
-                {units[currentIndex]}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        );
-      
-      case 'Pacer':
-      case 'Regression Eliminator':
-      case 'Peripheral Expansion':
-      default:
-        return (
-          <div className={cn(
-            "flex flex-wrap gap-x-2 gap-y-4 text-2xl md:text-3xl font-medium text-muted-foreground",
-            drillType === 'Peripheral Expansion' && "max-w-md mx-auto justify-center text-center"
-          )}>
-            {units.map((unit, i) => {
-              const isCurrent = i === currentIndex;
-              const isPast = i < currentIndex;
-              
-              return (
-                <span
-                  key={i}
-                  ref={isCurrent ? activeWordRef : null}
-                  className={cn(
-                    "transition-all duration-200 rounded px-1",
-                    isCurrent && "text-primary bg-primary/10 ring-2 ring-primary/20 scale-110 shadow-sm",
-                    isPast && drillType === 'Regression Eliminator' && "opacity-0 scale-95",
-                    isPast && drillType !== 'Regression Eliminator' && "text-foreground/40"
-                  )}
-                >
-                  {unit}
-                </span>
-              );
-            })}
-          </div>
-        );
-    }
+    return (
+      <div className={cn(
+        "flex flex-wrap gap-x-2 gap-y-4 text-2xl md:text-3xl font-medium text-muted-foreground",
+        drillType === 'Peripheral Expansion' && "max-w-md mx-auto justify-center text-center"
+      )}>
+        {units.map((unit, i) => {
+          const isCurrent = i === currentIndex;
+          const isPast = i < currentIndex;
+          
+          return (
+            <span
+              key={i}
+              ref={isCurrent ? activeWordRef : null}
+              className={cn(
+                "transition-all duration-200 rounded px-1",
+                isCurrent && "text-primary bg-primary/10 ring-2 ring-primary/20 scale-110 shadow-sm",
+                isPast && "text-foreground/40"
+              )}
+            >
+              {unit}
+            </span>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -296,7 +258,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                 ref={containerRef}
                 className={cn(
                   "relative h-full max-h-[600px] w-full max-w-4xl flex flex-col items-center p-12 bg-background rounded-[40px] shadow-inner border-4 border-muted/20 overflow-y-auto no-scrollbar transition-all",
-                  drillType === 'Chunk Training' ? "justify-center" : "justify-start pt-24"
+                  "justify-start pt-24"
                 )}
               >
                 {renderDrillContent()}
