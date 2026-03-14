@@ -21,6 +21,7 @@ import { usePerformanceStore } from '@/hooks/use-performance-store';
 import { FullStrengthProfile } from '@/components/dashboard/full-strength-profile';
 import { DailyChallenge } from '@/components/dashboard/daily-challenge';
 import { cn } from '@/lib/utils';
+import { isToday, parseISO } from 'date-fns';
 
 export default function PolymathCommandCenter() {
   const [mounted, setMounted] = useState(false);
@@ -43,7 +44,7 @@ export default function PolymathCommandCenter() {
     
     return {
       wellnessStreak: calculateStreak(completions),
-      activeBlueprints: blueprints.filter(p => p.status === 'Active').length,
+      activeBlueprints: blueprints.filter(p => p.status === 'Active' || p.status === 'active').length,
       totalCards: flashcards.length,
       globalHAR: getGlobalHAR()
     };
@@ -146,7 +147,7 @@ export default function PolymathCommandCenter() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6 space-y-4">
-                  {blueprints.filter(p => p.status === 'Active').slice(0, 2).map(p => (
+                  {blueprints.filter(p => p.status === 'Active' || p.status === 'active').slice(0, 2).map(p => (
                     <div key={p.id} className="space-y-2">
                       <div className="flex justify-between text-[10px] font-bold uppercase">
                         <span className="truncate max-w-[70%]">{p.title}</span>
@@ -155,7 +156,7 @@ export default function PolymathCommandCenter() {
                       <Progress value={p.momentumScore} className="h-1" />
                     </div>
                   ))}
-                  {blueprints.filter(p => p.status === 'Active').length === 0 && (
+                  {blueprints.filter(p => p.status === 'Active' || p.status === 'active').length === 0 && (
                     <p className="text-xs text-muted-foreground italic text-center py-4">No active blueprints. Architect your first goal.</p>
                   )}
                 </CardContent>
