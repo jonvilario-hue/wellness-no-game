@@ -16,9 +16,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { 
   Zap, BookOpen, Layers, MousePointer2, 
-  Eye, Play, BookCopy, X
+  Eye, Play, BookCopy, X, Filter
 } from "lucide-react"
-import type { ReadingPassage, DrillType, ReadingTier } from "@/types/speedreading"
+import type { ReadingPassage, DrillType, ReadingTier, ReadingDifficulty } from "@/types/speedreading"
 import { AssistantTooltip } from "@/components/assistant-tooltip"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
@@ -47,26 +47,35 @@ export default function SpeedReadingContent() {
   const { lowEnergyMode, collapsedCategories, toggleCategoryCollapse } = useWellnessData();
   const [activeDrill, setActiveDrill] = useState<{ type: DrillType; passage: ReadingPassage; isCustom?: boolean } | null>(null);
   const [selectedTier, setSelectedTier] = useState<ReadingTier | 'All'>('All');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<ReadingDifficulty | 'All'>('All');
   const [isCustomOpen, setIsCustomOpen] = useState(false);
   const [customText, setCustomText] = useState("");
   const [customTitle, setCustomName] = useState("");
 
   const filteredPassages = useMemo(() => {
-    let list = readingPassages;
+    let list = [...readingPassages];
     if (lowEnergyMode) {
-      list = list.filter(p => p.tier === 'Casual');
+      list = list.filter(p => p.difficulty === 'Beginner');
     }
-    return list.filter(p => selectedTier === 'All' || p.tier === selectedTier);
-  }, [selectedTier, lowEnergyMode]);
+    if (selectedTier !== 'All') {
+      list = list.filter(p => p.tier === selectedTier);
+    }
+    if (selectedDifficulty !== 'All') {
+      list = list.filter(p => p.difficulty === selectedDifficulty);
+    }
+    return list;
+  }, [selectedTier, selectedDifficulty, lowEnergyMode]);
 
   const handleStartCustom = (type: DrillType) => {
     if (!customText) return;
     const passage: ReadingPassage = {
       id: 'custom',
       title: customTitle || "Personal Text",
+      author: "User",
       content: customText,
       wordCount: customText.split(/\s+/).length,
       tier: 'Casual', 
+      difficulty: 'Intermediate',
       quiz: []
     };
     setActiveDrill({ type, passage, isCustom: true });
@@ -81,6 +90,15 @@ export default function SpeedReadingContent() {
       return !isCollapsed;
     });
   }, [collapsedCategories]);
+
+  const getDifficultyColor = (d: ReadingDifficulty) => {
+    switch (d) {
+      case 'Beginner': return 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5';
+      case 'Intermediate': return 'text-amber-500 border-amber-500/20 bg-amber-500/5';
+      case 'Advanced': return 'text-rose-500 border-rose-500/20 bg-rose-500/5';
+      default: return '';
+    }
+  };
 
   if (activeDrill) {
     return (
@@ -140,23 +158,43 @@ export default function SpeedReadingContent() {
                 </DialogContent>
               </Dialog>
             )}
+          </div>
+        </div>
 
-            <AssistantTooltip text="Filter passages by cognitive load tier. Your PBs are tracked separately for each tier.">
-              <div className="flex items-center gap-2 p-1 bg-muted rounded-lg border">
-                {(['Narrative', 'Dense Data', 'Technical', 'Casual', 'All'] as const).map(tier => (
-                  <Button 
-                    key={tier}
-                    variant={selectedTier === tier ? 'secondary' : 'ghost'}
-                    size="sm"
-                    className={cn("h-7 text-[10px] font-black uppercase px-3", selectedTier === tier && "bg-background shadow-sm")}
-                    onClick={() => setSelectedTier(tier)}
-                    disabled={lowEnergyMode && tier !== 'Casual' && tier !== 'All'}
-                  >
-                    {tier}
-                  </Button>
-                ))}
-              </div>
-            </AssistantTooltip>
+        <div className="space-y-4 p-4 bg-muted/30 rounded-2xl border border-primary/5">
+          <div className="space-y-2">
+            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Content Category</Label>
+            <div className="flex flex-wrap gap-2">
+              {(['Narrative', 'Dense Data', 'Technical', 'Casual', 'All'] as const).map(tier => (
+                <Button 
+                  key={tier}
+                  variant={selectedTier === tier ? 'default' : 'outline'}
+                  size="sm"
+                  className={cn("h-8 text-[10px] font-black uppercase px-4 rounded-full", selectedTier === tier ? "shadow-md" : "border-primary/10 bg-background/50")}
+                  onClick={() => setSelectedTier(tier)}
+                >
+                  {tier}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Cognitive Load (Difficulty)</Label>
+            <div className="flex flex-wrap gap-2">
+              {(['Beginner', 'Intermediate', 'Advanced', 'All'] as const).map(diff => (
+                <Button 
+                  key={diff}
+                  variant={selectedDifficulty === diff ? 'default' : 'outline'}
+                  size="sm"
+                  className={cn("h-8 text-[10px] font-black uppercase px-4 rounded-full", selectedDifficulty === diff ? "shadow-md" : "border-primary/10 bg-background/50")}
+                  onClick={() => setSelectedDifficulty(diff)}
+                  disabled={lowEnergyMode && diff !== 'Beginner' && diff !== 'All'}
+                >
+                  {diff}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -211,7 +249,7 @@ export default function SpeedReadingContent() {
                   </div>
 
                   <div className="space-y-2 pb-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Available Passages</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Available Passages ({filteredPassages.length})</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {filteredPassages.length === 0 ? (
                         <div className="col-span-full py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-xs">No passages match filters.</div>
@@ -220,19 +258,24 @@ export default function SpeedReadingContent() {
                           <button
                             key={p.id}
                             onClick={() => setActiveDrill({ type: drill.id, passage: p, isCustom: false })}
-                            className="flex items-center justify-between p-3 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn"
+                            className="flex flex-col p-4 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn"
                           >
-                            <div className="flex items-center gap-3">
-                              <div className={cn(
-                                "w-1.5 h-1.5 rounded-full",
-                                p.tier === 'Narrative' ? 'bg-amber-500' : 'bg-primary/40'
-                              )} />
-                              <div>
-                                <p className="text-sm font-bold">{p.title}</p>
-                                <p className="text-[9px] text-muted-foreground uppercase">{p.wordCount} words • {p.tier}</p>
-                              </div>
+                            <div className="flex justify-between items-start mb-3">
+                              <Badge variant="outline" className={cn("text-[8px] font-black uppercase h-4 px-2", getDifficultyColor(p.difficulty))}>
+                                {p.difficulty}
+                              </Badge>
+                              <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted text-muted-foreground">
+                                {p.tier}
+                              </Badge>
                             </div>
-                            <Play className="w-4 h-4 text-muted-foreground opacity-0 group-hover/btn:opacity-100 transition-all translate-x-[-10px] group-hover/btn:translate-x-0" />
+                            <div className="flex-1">
+                              <p className="text-sm font-bold truncate group-hover/btn:text-primary transition-colors">{p.title}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{p.author}</p>
+                            </div>
+                            <div className="flex items-center justify-between mt-4 pt-3 border-t border-primary/5 w-full">
+                              <span className="text-[9px] font-black text-muted-foreground uppercase">{p.wordCount} WORDS</span>
+                              <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover/btn:opacity-100 transition-all translate-x-[-5px] group-hover/btn:translate-x-0" />
+                            </div>
                           </button>
                         ))
                       )}

@@ -1,22 +1,27 @@
 'use client';
 
 export type ReadingTier = 'Casual' | 'Technical' | 'Dense Data' | 'Narrative';
+export type ReadingDifficulty = 'Beginner' | 'Intermediate' | 'Advanced';
 
 export type DrillType = 
   | 'Pacer' 
   | 'Peripheral Expansion';
 
+export interface ComprehensionQuestion {
+  question: string;
+  options: string[];
+  answerIndex: number;
+}
+
 export interface ReadingPassage {
   id: string;
   title: string;
+  author: string;
   content: string;
   wordCount: number;
   tier: ReadingTier;
-  quiz: {
-    question: string;
-    options: string[];
-    answerIndex: number;
-  }[];
+  difficulty: ReadingDifficulty;
+  quiz: ComprehensionQuestion[];
 }
 
 export interface ReadingLog {
@@ -26,6 +31,7 @@ export interface ReadingLog {
   drillType: DrillType;
   passageId: string;
   tier: ReadingTier;
+  difficulty: ReadingDifficulty;
   wpm: number;
   comprehensionScore: number; // 0-100
   err: number; // Effective Reading Rate: WPM * (Comp / 100)

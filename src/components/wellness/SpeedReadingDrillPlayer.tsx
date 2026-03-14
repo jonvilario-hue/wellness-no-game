@@ -12,7 +12,7 @@ import {
   Target, Zap, Brain, Activity, Clock,
   ArrowRight, Eye, MousePointer2, Sparkles
 } from 'lucide-react';
-import type { ReadingPassage, DrillType, ReadingTier } from '@/types/speedreading';
+import type { ReadingPassage, DrillType, ReadingTier, ReadingDifficulty } from '@/types/speedreading';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
@@ -43,14 +43,10 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
   const [selfComprehensionRating, setSelfRating] = useState(3);
 
   const { addLog } = useSpeedReadingStore();
-  const { trackingEnabled } = useWellnessData();
   const { markStudySessionComplete } = useCalendarPlansStore();
   const { toast } = useToast();
   const activeWordRef = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Permanent Tracking active
-  const trackNumbers = true;
 
   const words = useMemo(() => passage.content.split(/\s+/).filter(w => w.length > 0), [passage]);
   
@@ -64,7 +60,6 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     return (60 / currentWpm) * 1000;
   }, [currentWpm]);
 
-  // Handle auto-scroll to keep active text centered
   useEffect(() => {
     if (activeWordRef.current && containerRef.current) {
       const container = containerRef.current;
@@ -106,29 +101,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     setIsActive(false);
     const finalElapsed = (Date.now() - startTime) / 1000;
     setElapsedSeconds(finalElapsed);
-
-    if (!trackNumbers) {
-      // Immediate log for zero-friction mode
-      const finalWpm = Math.round((words.length / finalElapsed) * 60);
-      addLog({
-        drillType,
-        passageId: passage.id,
-        tier: estimatedTier,
-        wpm: finalWpm,
-        comprehensionScore: 100, // Default for non-tracked
-        err: finalWpm,
-        preFocus: 3,
-        postFatigue: 3,
-        durationSeconds: Math.round(finalElapsed),
-        isCustomText,
-        isSelfAssessed: false
-      });
-      markStudySessionComplete('Speed Reading', passage.id);
-      toast({ title: "Drill Logged!", variant: 'success' });
-      onClose();
-    } else {
-      setGameState((isCustomText || !passage.quiz || passage.quiz.length === 0) ? 'summary' : 'quiz');
-    }
+    setGameState((isCustomText || !passage.quiz || passage.quiz.length === 0) ? 'summary' : 'quiz');
   };
 
   const handleQuizComplete = (score: number) => {
@@ -145,6 +118,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       drillType,
       passageId: passage.id,
       tier: estimatedTier,
+      difficulty: passage.difficulty,
       wpm: finalWpm,
       comprehensionScore: finalComp,
       err,
@@ -221,19 +195,17 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                   </div>
                   <CardTitle className="text-2xl font-black uppercase">Pre-Drill Calibration</CardTitle>
                   <CardDescription>
-                    {isCustomText ? `Difficulty Estimated: ${estimatedTier}` : 'Set your target velocity before we engage the pacer.'}
+                    {isCustomText ? `Difficulty Estimated: ${estimatedTier}` : `Author: ${passage.author}`}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8 py-6">
-                  {trackNumbers && (
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest">Initial Focus (1-5)</Label>
-                        <span className="text-xl font-black text-primary">{preFocus}</span>
-                      </div>
-                      <Slider value={[preFocus]} onValueChange={([v]) => setPreFocus(v)} min={1} max={5} step={1} />
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-[10px] font-bold uppercase tracking-widest">Initial Focus (1-5)</Label>
+                      <span className="text-xl font-black text-primary">{preFocus}</span>
                     </div>
-                  )}
+                    <Slider value={[preFocus]} onValueChange={([v]) => setPreFocus(v)} min={1} max={5} step={1} />
+                  </div>
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">

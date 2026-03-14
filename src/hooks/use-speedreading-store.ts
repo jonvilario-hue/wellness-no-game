@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -97,7 +96,7 @@ export const useSpeedReadingStore = create<SpeedReadingState>()(
       }
     }),
     {
-      name: 'speedreading-storage-v2',
+      name: 'speedreading-storage-v3', // Incremented version
       storage: createJSONStorage(() => localStorage),
     }
   )

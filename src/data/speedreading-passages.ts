@@ -1,96 +1,79 @@
-
 import { ReadingPassage } from '@/types/speedreading';
 
 export const readingPassages: ReadingPassage[] = [
-  // --- CASUAL TIER (High-level cognitive concepts) ---
+  // --- NARRATIVE (Beginner) ---
   {
-    id: 'casual-neuroplasticity',
-    title: 'Your Elastic Brain',
-    tier: 'Casual',
-    wordCount: 245,
-    content: `For decades, scientists believed that the human brain was a fixed organ. Once you reached adulthood, the circuitry was essentially "hard-wired." We now know this is completely false. Neuroplasticity is the brain's ability to reorganize itself by forming new neural connections throughout life. This happens in response to learning, experience, or even following an injury. When you practice a new skill, like speedreading or playing an instrument, your brain physically changes. The neurons that fire together eventually wire together, making the task easier and more efficient over time. This is why consistency is more important than intensity. A short daily practice session is far more effective at triggering long-term structural changes than a massive, one-time effort. By challenging your brain with novel tasks, you are essentially "upgrading" your mental hardware.`,
-    quiz: [
-      { question: "What was the old scientific belief about the adult brain?", options: ["It could always grow", "It was hard-wired and fixed", "It only shrank", "It was powered by electricity"], answerIndex: 1 },
-      { question: "What is neuroplasticity?", options: ["Brain shrinkage", "Ability to reorganize", "Brain surgery", "Genetic condition"], answerIndex: 1 },
-      { question: "Why is daily practice recommended?", options: ["Saves time", "Triggers structural change", "Prevents headaches", "Easier to track"], answerIndex: 1 }
-    ]
-  },
-  {
-    id: 'casual-game-theory',
-    title: 'Game Theory and Everyday Decisions',
-    tier: 'Casual',
-    wordCount: 480,
-    content: `Game theory is the study of mathematical models of strategic interaction among rational agents. While it sounds complex, its applications permeate our daily social and professional interactions. One of the most foundational concepts is the Nash equilibrium—a state in a game where no player can benefit by changing their strategy while the others keep theirs unchanged. Understanding this helps explain why people sometimes stay in suboptimal situations, as any individual move might lead to a worse personal outcome despite a better collective one. Furthermore, the distinction between zero-sum and non-zero-sum games is vital. In a zero-sum game, one person's gain is exactly equal to another's loss. However, many human interactions, like trade or successful relationships, are non-zero-sum, where both parties can emerge better off than they started. By viewing social conflicts through the lens of strategic games, we can identify opportunities for cooperation where others only see competition. This shift in perspective allows us to navigate negotiations with more clarity and less emotional reactive behavior.`,
-    quiz: [
-      { question: "What is a Nash equilibrium?", options: ["Winning at all costs", "A state where no player benefits from changing strategy alone", "A game with no winners", "The starting point of every negotiation"], answerIndex: 1 },
-      { question: "What defines a non-zero-sum game?", options: ["Everyone loses", "One's gain is another's loss", "Both parties can potentially benefit", "There are no rules"], answerIndex: 2 },
-      { question: "What is a benefit of studying game theory?", options: ["Learning to cheat", "Faster math skills", "Identifying cooperation opportunities", "Better card playing"], answerIndex: 2 }
-    ]
-  },
-  {
-    id: 'casual-habits',
-    title: 'The Science of Habit Formation',
-    tier: 'Casual',
-    wordCount: 510,
-    content: `Habits are not simply repetitive behaviors; they are neurological shortcuts designed to save the brain energy. The process begins with the "Habit Loop," a three-step cycle: the cue, the routine, and the reward. The cue is a trigger that tells your brain to go into automatic mode. The routine is the physical, mental, or emotional behavior itself. Finally, the reward helps your brain figure out if this particular loop is worth remembering for the future. Over time, this loop becomes more automatic as the basal ganglia—the brain's habit center—takes over from the prefrontal cortex, which is responsible for deliberate decision-making. This transition from discipline to automaticity is the goal of any behavioral change. Understanding this allows us to "hack" our behavior by identifying the cues that trigger bad habits and inserting new routines that deliver similar rewards. By focusing on the architecture of the loop rather than just raw willpower, we increase our chances of permanent change.`,
-    quiz: [
-      { question: "What are the three parts of the Habit Loop?", options: ["Start, Middle, End", "Cue, Routine, Reward", "Thought, Action, Result", "Focus, Effort, Win"], answerIndex: 1 },
-      { question: "Which part of the brain manages habits?", options: ["Prefrontal Cortex", "Basal Ganglia", "Visual Cortex", "Brainstem"], answerIndex: 1 },
-      { question: "What is the primary benefit of a habit?", options: ["It makes you look busy", "It saves the brain energy", "It increases willpower", "It creates new memories"], answerIndex: 1 }
-    ]
-  },
-
-  // --- TECHNICAL TIER (Complex systems) ---
-  {
-    id: 'tech-crispr',
-    title: 'CRISPR Gene Editing Mechanisms',
-    tier: 'Technical',
-    wordCount: 620,
-    content: `CRISPR-Cas9 has revolutionized molecular biology by providing a precise, programmable tool for genome editing. The system is derived from a bacterial defense mechanism that identifies and cleaves viral DNA. The core components are the Cas9 protein, an endonuclease, and a guide RNA (gRNA). The gRNA is engineered to contain a 20-nucleotide sequence that matches the target genomic site. Once the Cas9-gRNA complex binds to the target DNA via base-pairing and proximity to a Protospacer Adjacent Motif (PAM), Cas9 introduces a double-strand break (DSB). The cell then attempts to repair this break using one of two primary pathways: Non-Homologous End Joining (NHEJ) or Homology-Directed Repair (HDR). NHEJ is an error-prone process that often introduces small insertions or deletions (indels), frequently resulting in gene knockout. Conversely, HDR uses a provided template to precisely rewrite the genetic sequence at the DSB site. This dual capability allows researchers to either disable problematic genes or insert corrective sequences with unprecedented accuracy.`,
-    quiz: [
-      { question: "What is the role of Cas9?", options: ["It carries the RNA", "It acts as a DNA-cutting enzyme", "It builds new cells", "It provides the template"], answerIndex: 1 },
-      { question: "Which repair pathway is most likely to cause a gene knockout?", options: ["HDR", "NHEJ", "PAM", "RNA base-pairing"], answerIndex: 1 },
-      { question: "How does the system find the correct location?", options: ["By random chance", "Via a matching 20-nucleotide gRNA sequence", "By tracking heat", "Through cellular magnetism"], answerIndex: 1 }
-    ]
-  },
-  {
-    id: 'tech-blockchain',
-    title: 'Blockchain Consensus Protocols',
-    tier: 'Technical',
-    wordCount: 580,
-    content: `Consensus protocols are the heartbeat of decentralized ledgers, ensuring that all nodes in a network agree on a single version of the truth without a central authority. The most famous, Proof of Work (PoW), requires participants to solve complex cryptographic puzzles to validate blocks, a process that is computationally expensive but easy to verify. This creates an economic deterrent against attacks. However, the emergence of Proof of Stake (PoS) offers a more energy-efficient alternative, where validators are chosen based on the number of tokens they "stake" or lock up as collateral. All consensus mechanisms must address the Byzantine Fault Tolerance (BFT) problem—the ability of a system to reach agreement even when some participants are malicious or failing. The "Blockchain Trilemma" posits that a network must balance decentralization, security, and scalability, as optimizing for two often compromises the third. For instance, high decentralization and security typically limit the transaction throughput (scalability) due to the overhead of multi-node verification.`,
-    quiz: [
-      { question: "What is the 'Blockchain Trilemma'?", options: ["Profit, Speed, Power", "Decentralization, Security, Scalability", "Math, Logic, Code", "Privacy, Cost, Access"], answerIndex: 1 },
-      { question: "What is Proof of Stake?", options: ["Mining with computers", "Validators chosen by collateral", "Voting by mail", "Guessing passwords"], answerIndex: 1 },
-      { question: "What does Byzantine Fault Tolerance mean?", options: ["Fast transactions", "Resistance to malicious participants", "Low energy use", "Unlimited storage"], answerIndex: 1 }
-    ]
-  },
-
-  // --- DENSE DATA TIER (Statistics heavy) ---
-  {
-    id: 'dense-vc-report',
-    title: 'Global Venture Capital Funding Report Q3',
-    tier: 'Dense Data',
-    wordCount: 450,
-    content: `Global venture capital funding reached $78.4 billion in Q3, representing a 12% quarter-over-year decline and a 28% year-over-year contraction from the $108.9 billion peak. The Artificial Intelligence sector remained the outlier, capturing 34% of total capital, up from 18% in the previous year. Within AI, Generative models accounted for 65% of sub-sector investment. Geographically, the United States maintained its lead with $42.1 billion (54% of total), while the European market showed the most resilience with a mere 4% dip. Median Series A round sizes contracted by 15% to $10.2 million, whereas Seed rounds held steady at $2.4 million. Exit activity remained muted, with only 12 IPOs globally compared to 45 in Q3 of the prior cycle. Secondary market transactions surged by 42% as limited partners sought liquidity. Valuation multiples for SaaS companies compressed from 12x revenue to 6.5x, reflecting a broader shift toward profitability over raw growth metrics. Lead times from term sheet to close extended to an average of 74 days, up from 42 days in the high-velocity 2021 market.`,
-    quiz: [
-      { question: "What percentage of capital did AI capture?", options: ["12%", "18%", "34%", "54%"], answerIndex: 2 },
-      { question: "How much did Series A round sizes contract?", options: ["4%", "15%", "28%", "42%"], answerIndex: 1 },
-      { question: "What is the average lead time to close a deal?", options: ["42 days", "54 days", "74 days", "12 days"], answerIndex: 2 }
-    ]
-  },
-
-  // --- NARRATIVE TIER (Sensory & Inference) ---
-  {
-    id: 'narrative-cartographer',
-    title: "The Cartographer's Dilemma",
+    id: 'alice-wonderland-1',
+    title: "Down the Rabbit-Hole",
+    author: "Lewis Carroll",
     tier: 'Narrative',
-    wordCount: 550,
-    content: `Elias worked by the flickering light of a single tallow candle, the scent of parched vellum and old ink heavy in the air. Outside, the storm lashed against the stone walls of the citadel, a rhythmic, booming sound that shook the very floorboards. His pen, a sharpened goose quill, scratched across the map, tracing the jagged coastlines of a continent that hadn't existed on any chart six months ago. The parchment felt rough beneath his calloused fingertips, and the salt-spray from the window tasted metallic on his tongue. He paused, his gaze fixed on the Great Void—a vast, unmapped expanse in the center of the scroll. Rumors spoke of floating isles and singing tides, but Elias knew only the cold geometry of the stars. His left shoulder ached with a dull, persistent throb, a reminder of the voyage that had nearly claimed his life. He dipped the quill, the ink pot clinking softly against the desk, and prepared to draw the line that would redefine the world. He was not just mapping land; he was mapping the end of an era.`,
+    difficulty: 'Beginner',
+    wordCount: 512,
+    content: `Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, 'and what is the use of a book,' thought Alice 'without pictures or conversations?' So she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid), whether the pleasure of making a daisy-chain would be worth the trouble of getting up and picking the daisies, when suddenly a White Rabbit with pink eyes ran close by her. There was nothing so very remarkable in that; nor did Alice think it so very much out of the way to hear the Rabbit say to itself, 'Oh dear! Oh dear! I shall be late!' (when she thought it over afterwards, it occurred to her that she ought to have wondered at this, but at the time it all seemed quite natural); but when the Rabbit actually took a watch out of its waistcoat-pocket, and looked at it, and then hurried on, Alice started to her feet, for it flashed across her mind that she had never before seen a rabbit with either a waistcoat-pocket, or a watch to take out of it, and burning with curiosity, she ran across the field after it, and fortunately was just in time to see it pop down a large rabbit-hole under the hedge. In another moment down went Alice after it, never once considering how in the world she was to get out again. The rabbit-hole went straight on like a tunnel for some way, and then dipped suddenly down, so suddenly that Alice had not a moment to think about stopping herself before she found herself falling down a very deep well. Either the well was very deep, or she fell very slowly, for she had plenty of time as she went down to look about her and to wonder what was going to happen next. First, she tried to look down and make out what she was coming to, but it was too dark to see anything; then she looked at the sides of the well, and noticed that they were filled with cupboards and book-shelves; here and there she saw maps and pictures hung upon pegs. She took down a jar from one of the shelves as she passed; it was labelled 'ORANGE MARMALADE', but to her great disappointment it was empty: she did not like to drop the jar for fear of killing somebody, so managed to put it into one of the cupboards as she fell past it. 'Well!' thought Alice to herself, 'after such a fall as this, I shall think nothing of tumbling down stairs! How brave they’ll all think me at home! Why, I wouldn’t say anything about it, even if I fell off the top of the house!' (Which was very likely true.)`,
     quiz: [
-      { question: "What was the primary smell mentioned in the room?", options: ["Rain and stone", "Vellum and ink", "Tallow and smoke", "Sea salt"], answerIndex: 1 },
-      { question: "Which physical ailment did Elias suffer from?", options: ["Blurred vision", "Aching shoulder", "Shaking hands", "Headache"], answerIndex: 1 },
-      { question: "What was the weather like outside?", options: ["Quiet and foggy", "A heavy storm", "Light snow", "Heatwave"], answerIndex: 1 }
+      { question: "What is the main reason Alice follows the rabbit?", options: ["She wanted to pick daisies", "She was tired of her sister", "She was curious about its waistcoat and watch", "She was looking for marmalade"], answerIndex: 2 },
+      { question: "What did Alice notice about the sides of the well?", options: ["They were covered in moss", "They were filled with cupboards and shelves", "They were made of brick", "They were glowing with light"], answerIndex: 1 },
+      { question: "What can we infer about Alice's character from her thoughts during the fall?", options: ["She is easily frightened", "She is imaginative and perhaps a bit reckless", "She is very studious and loves maps", "She is worried about her sister"], answerIndex: 1 }
+    ]
+  },
+  // --- NARRATIVE (Intermediate) ---
+  {
+    id: 'sherlock-holmes-1',
+    title: "A Scandal in Bohemia",
+    author: "Arthur Conan Doyle",
+    tier: 'Narrative',
+    difficulty: 'Intermediate',
+    wordCount: 495,
+    content: `To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind. He was, I take it, the most perfect reasoning and observing machine that the world has seen, but as a lover he would have placed himself in a false position. He never spoke of the softer passions, save with a gibe and a sneer. They were admirable things for the observer—excellent for drawing the veil from men's motives and actions. But for the trained reasoner to admit such intrusions into his own delicate and finely adjusted temperament was to introduce a distracting factor which might throw a doubt upon all his mental results. Grit in a sensitive instrument, or a crack in one of his own high-power lenses, would not be more disturbing than a strong emotion in a nature such as his. And yet there was but one woman to him, and that woman was the late Irene Adler, of dubious and questionable memory. I had seen little of Holmes lately. My marriage had drifted us away from each other. My own complete happiness, and the home-centered interests which rise up around the man who first finds himself master of his own establishment, were sufficient to absorb all my attention, while Holmes, who loathed every form of society with his whole Bohemian soul, remained in our lodgings in Baker Street, buried among his old books, and alternating from week to week between cocaine and ambition, the drowsiness of the drug, and the fierce energy of his own keen nature. He was still, as ever, deeply attracted by the study of crime, and occupied his immense faculties and extraordinary powers of observation in following out those clues, and clearing up those mysteries which had been abandoned as hopeless by the official police. From time to time I heard some vague account of his doings: of his summons to Odessa in the case of the Trepoff murder, of his clearing up of the singular tragedy of the Atkinson brothers at Trincomalee, and finally of the mission which he had accomplished so delicately and successfully for the reigning family of Holland. One night—it was on the twentieth of March, 1888—I was returning from a journey to a patient (for I had now returned to civil practice), when my way led me through Baker Street. As I passed the well-remembered door, which must always be associated in my mind with my wooing, and with the dark incidents of the Study in Scarlet, I was seized with a keen desire to see Holmes again, and to know how he was employing his extraordinary powers.`,
+    quiz: [
+      { question: "How does the narrator describe Sherlock Holmes's view of Irene Adler?", options: ["He was deeply in love with her", "She was the only woman who ever outsmarted him", "She eclipsed all other women in his mind", "He found her behavior abhorrent"], answerIndex: 2 },
+      { question: "What distraction does Holmes believe emotions provide to a reasoner?", options: ["They provide essential context", "They act like grit in a sensitive instrument", "They are useful for social navigation", "They help solve crimes"], answerIndex: 1 },
+      { question: "What had changed in the narrator's life since he last saw Holmes?", options: ["He had moved to Holland", "He had become a detective", "He had married and started a practice", "He had joined the official police"], answerIndex: 2 }
+    ]
+  },
+  // --- DENSE DATA (Beginner) ---
+  {
+    id: 'art-of-war-1',
+    title: "Laying Plans",
+    author: "Sun Tzu",
+    tier: 'Dense Data',
+    difficulty: 'Beginner',
+    wordCount: 488,
+    content: `Sun Tzu said: The art of war is of vital importance to the State. It is a matter of life and death, a road either to safety or to ruin. Hence it is a subject of inquiry which can on no account be neglected. The art of war, then, is governed by five constant factors, to be taken into account in one's deliberations, when seeking to determine the conditions obtaining in the field. These are: (1) The Moral Law; (2) Heaven; (3) Earth; (4) The Commander; (5) Method and discipline. The Moral Law causes the people to be in complete accord with their ruler, so that they will follow him regardless of their lives, undismayed by any danger. Heaven signifies night and day, cold and heat, times and seasons. Earth comprises distances, great and small; danger and security; open ground and narrow passes; the chances of life and death. The Commander stands for the virtues of wisdom, sincerely, benevolence, courage and strictness. By method and discipline are to be understood the marshaling of the army in its proper subdivisions, the graduations of rank among the officers, the maintenance of roads by which supplies may reach the army, and the control of military expenditure. These five heads should be familiar to every general: he who knows them will be victorious; he who knows them not will fail. Therefore, in your deliberations, when seeking to determine the military conditions, let them be made the basis of a comparison, in this wise: (1) Which of the two sovereigns is imbued with the Moral Law? (2) Which of the two generals has most ability? (3) With whom lie the advantages derived from Heaven and Earth? (4) On which side is discipline most rigorously enforced? (5) Which army is stronger? (6) On which side are officers and men more highly trained? (7) In which army is there the greater constancy both in reward and punishment? By means of these seven considerations I can forecast victory or defeat. The general that hearkens to my counsel and acts upon it, will conquer: let such a one be retained in command! The general that hearkens not to my counsel nor acts upon it, will suffer defeat:--let such a one be dismissed! While heeding the profit of my counsel, avail yourself also of any unusual circumstances over and beyond the ordinary rules. According as circumstances are favorable, one should modify one's plans. All warfare is based on deception. Hence, when able to attack, we must seem unable; when using our forces, we must seem inactive; when we are near, we must make the enemy believe we are far away; when far away, we must make him believe we are near.`,
+    quiz: [
+      { question: "What are the five constant factors governing the art of war?", options: ["Power, Money, Land, Men, Speed", "Moral Law, Heaven, Earth, Commander, Method", "Deception, Attack, Defense, Retreat, Victory", "Wisdom, Sincerity, Benevolence, Courage, Strictness"], answerIndex: 1 },
+      { question: "What does 'Heaven' signify in this context?", options: ["God's favor", "The moral high ground", "Night and day, cold and heat", "Aerial superiority"], answerIndex: 2 },
+      { question: "According to Sun Tzu, what is the fundamental basis of all warfare?", options: ["Deception", "Strength", "Preparation", "Aggression"], answerIndex: 0 }
+    ]
+  },
+  // --- TECHNICAL (Advanced) ---
+  {
+    id: 'federalist-10-1',
+    title: "The Utility of the Union",
+    author: "James Madison",
+    tier: 'Technical',
+    difficulty: 'Advanced',
+    wordCount: 505,
+    content: `Among the numerous advantages promised by a well-constructed Union, none deserves to be more accurately developed than its tendency to break and control the violence of faction. The friend of popular governments never finds himself so much alarmed for their character and fate, as when he contemplates their propensity to this dangerous vice. He will not fail, therefore, to set a due value on any plan which, without violating the principles to which he is attached, provides a proper cure for it. The instability, injustice, and confusion introduced into the public councils, have, in truth, been the mortal diseases under which popular governments have everywhere perished; as they continue to be the favorite and fruitful topics from which the adversaries to liberty derive their most specious declamations. The valuable improvements made by the American constitutions on the popular models, both ancient and modern, cannot certainly be too much admired; but it would be an unwarrantable partiality, to allege that they have as effectually obviated the danger on this side, as was wished and expected. Complaints are everywhere heard from our most considerate and virtuous citizens, equally the friends of public and private faith, and of public and personal liberty, that our governments are too unstable, that the public good is disregarded in the conflicts of rival parties, and that measures are too often decided, not according to the rules of justice and the rights of the minor party, but by the superior force of an interested and overbearing majority. However anxiously we may wish that these complaints had no foundation, the evidence, of known facts will not permit us to deny that they are in some degree true. By a faction, I understand a number of citizens, whether amounting to a majority or a minority of the whole, who are united and actuated by some common impulse of passion, or of interest, adversed to the rights of other citizens, or to the permanent and aggregate interests of the community. There are two methods of curing the mischiefs of faction: the one, by removing its causes; the other, by controlling its effects. There are again two methods of removing the causes of faction: the one, by destroying the liberty which is essential to its existence; the other, by giving to every citizen the same opinions, the same passions, and the same interests. It could never be more truly said than of the first remedy, that it was worse than the disease. Liberty is to faction what air is to fire, an aliment without which it instantly expires. But it could not be a less folly to abolish liberty, which is essential to political life, because it nourishes faction, than it would be to wish the annihilation of air, because it imparts to fire its destructive agency.`,
+    quiz: [
+      { question: "What is the primary danger Madison addresses in this passage?", options: ["Foreign invasion", "Economic collapse", "The violence of faction", "Monarchical tyranny"], answerIndex: 2 },
+      { question: "How does Madison define a 'faction'?", options: ["Any political party in a democracy", "A majority group that ignores minority rights", "A group united by a common passion adverse to the rights of others", "The legislative branch of government"], answerIndex: 2 },
+      { question: "What does Madison conclude about removing the cause of faction by destroying liberty?", options: ["It is the only effective solution", "It is a remedy worse than the disease", "It is necessary for state security", "It is the goal of the new constitution"], answerIndex: 1 }
+    ]
+  },
+  // --- CASUAL (Intermediate) ---
+  {
+    id: 'seneca-letters-1',
+    title: "On the Shortness of Life",
+    author: "Seneca",
+    tier: 'Casual',
+    difficulty: 'Intermediate',
+    wordCount: 492,
+    content: `It is not that we have a short time to live, but that we waste a lot of it. Life is long enough, and a sufficiently generous amount has been given to us for the highest achievements if it were all well invested. But when it is wasted in heedless luxury and spent on no good activity, we are forced at last by death’s final constraint to realize that it has passed away before we knew it was passing. So it is: we are not given a short life but we make it short, and we are not ill-supplied but wasteful of it. Just as when ample and princely wealth falls to a bad owners it is quickly scattered, but wealth however modest, if it is entrusted to a good custodian, increases with use, so our life sufficiently extends for one who orders it properly. Why do we complain of Nature? She has shown herself kindly; life, if you know how to use it, is long. But one man is gripped by insatiable avarice, another by a laborious dedication to useless tasks; one man is soaked in wine, another numbed by idleness; one man is exhausted by an ambition that always hangs upon the decisions of others, another is driven headlong by a greed for trading over every sea and every land in the hope of gain; some are tormented by a passion for army life and are always either bent on inflicting dangers on others or worried about their own; some are worn out by the voluntary servitude of ungrateful attendance on the great; many are kept busy either in pursuing other men’s fortune or in complaining of their own; most men have no fixed aim, but are hurled into new designs by a fickleness that is shifting, inconstant and dissatisfied with itself; some have no principle by which to guide their course, but are overtaken by fate while they are gaping and yawning. So I cannot doubt the truth of that utterance which the greatest of poets delivered in the manner of an oracle: ‘The part of life we really live is small.’ For all the rest of existence is not life, but merely time. Vices surround us and assail us from every side, and they do not allow us to rise again and lift our eyes to the discernment of the truth, but they keep them downcast and fixed on lust. They never allow us to return to our true selves. If by chance they ever grant a temporary quiet, just as on the deep sea after a storm there is still a tossing, so they continue to puff about, and they never find a complete rest from their desires. Do you think I am speaking only of those whose evils are admitted? Look at those whose prosperity everyone flocks to see; they are choked by their own good things.`,
+    quiz: [
+      { question: "What is Seneca's main argument regarding life's duration?", options: ["Nature was unkind in giving humans short lives", "We do not have a short life, we make it short by wasting time", "Achieving greatness requires more time than we are given", "Only the wealthy have long lives"], answerIndex: 1 },
+      { question: "To what does Seneca compare the management of time?", options: ["A military campaign", "The flow of a river", "The management of wealth", "A shifting storm at sea"], answerIndex: 2 },
+      { question: "What does Seneca mean by 'The part of life we really live is small'?", options: ["Most of our time is spent sleeping", "Childhood is the only true life", "Most time is spent on distractions rather than purposeful existence", "Humans are small compared to the universe"], answerIndex: 2 }
     ]
   }
 ];
