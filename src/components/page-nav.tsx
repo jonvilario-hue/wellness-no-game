@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Home, GraduationCap, Target, HeartPulse, BookMarked, Calendar, BrainCircuit, Music } from 'lucide-react';
+import { Home, GraduationCap, Target, HeartPulse, BookMarked, Calendar, BrainCircuit } from 'lucide-react';
 import { AssistantTooltip } from './assistant-tooltip';
 
 const navLinks = [
@@ -24,12 +24,6 @@ const navLinks = [
       icon: BrainCircuit, 
       label: 'Skill Builder',
       tooltip: 'Cognitive and interpersonal laboratory. Master speed reading, vocal presence, and persuasive dialogue through adaptive drills.'
-    },
-    { 
-      href: '/music', 
-      icon: Music, 
-      label: 'Music',
-      tooltip: 'Auditory and rhythmic laboratory. Develop relative pitch, rhythmic precision, and harmonic intuition.'
     },
     { 
       href: '/study', 

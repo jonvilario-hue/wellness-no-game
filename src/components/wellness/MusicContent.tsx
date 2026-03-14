@@ -1,40 +1,91 @@
-
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { musicDomains, drillsData } from '@/data/music-drills';
 import { useMusicStore } from '@/hooks/use-music-store';
 import { MusicDashboard } from './MusicDashboard';
 import { MusicAnalytics } from './MusicAnalytics';
 import { MusicDrillPlayer } from './MusicDrillPlayer';
 import { JourneyPlansSection } from './JourneyPlansSection';
-import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 import { TodayScheduleWidget } from './TodayScheduleWidget';
 import { MusicOpenPractice } from './MusicOpenPractice';
 import { MusicSongAnalysis } from './MusicSongAnalysis';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { 
-  Music, Sparkles, Brain, Ear, Eye, Headphones, 
-  ChevronRight, Play, Info, ListChecks
+  Music, Headphones, Mic2, Wind, Guitar, Sparkles,
+  Crosshair, Zap, Search, Waves, Brain, Timer, LayoutGrid, 
+  ChevronRight, FileAudio, Disc, Volume2, GitGraph, Target, 
+  BookOpen, SlidersHorizontal, Maximize, Palette, Piano, 
+  History, Mic, Drum, Play
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWellnessData } from '@/hooks/use-wellness-data';
+import { initDB } from '@/lib/storage/db';
+import { format } from 'date-fns';
+import Link from 'next/link';
+import { InputSelector } from '../audio/InputSelector';
+import { InstrumentSelector } from '../audio/InstrumentSelector';
+
+// Data for categorized exercises
+const categoryExercises = {
+  sing: [
+    { id: 'pitch-match', name: 'Pitch Match', desc: 'Match the note you hear using your voice.', difficulty: 'Beginner', icon: Target },
+    { id: 'interval-sing', name: 'Interval Sing-Back', desc: 'Sing the specific interval above a root note.', difficulty: 'Intermediate', icon: Music },
+    { id: 'melody-echo', name: 'Melody Echo', desc: 'Recall and sing back a musical phrase.', difficulty: 'Intermediate', icon: Waves },
+    { id: 'sight-singing', name: 'Sight-Singing', desc: 'Sing from notation without hearing it.', difficulty: 'Advanced', icon: BookOpen },
+  ],
+  voice: [
+    { id: 'breath', name: 'Breath Control', desc: 'Sustain and support your vocal output.', difficulty: 'Beginner', icon: Wind },
+    { id: 'dynamics', name: 'Dynamics', desc: 'Master loud, soft & subtle gradients.', difficulty: 'Beginner', icon: SlidersHorizontal },
+    { id: 'range', name: 'Range Builder', desc: 'Explore and expand your vocal limits.', difficulty: 'Intermediate', icon: Maximize },
+    { id: 'tone', name: 'Tone Shaping', desc: 'Modify vowel shapes for specific timbres.', difficulty: 'Advanced', icon: Palette },
+  ],
+  play: [
+    { id: 'transcription', name: 'Transcription Challenge', desc: 'Hear a phrase, play it back on your instrument.', difficulty: 'Intermediate', icon: BookOpen },
+    { id: 'call-response', name: 'Call & Response', desc: 'Trade musical phrases with the lab in real-time.', difficulty: 'Intermediate', icon: Music },
+    { id: 'scale-drill', name: 'Scale Drill', desc: 'Play scales and chords on demand.', difficulty: 'Beginner', icon: Piano },
+  ],
+  create: [
+    { id: 'vocal-improv', name: 'Vocal Improv', desc: 'Improvise melodies over chord changes.', difficulty: 'Intermediate', icon: Mic },
+    { id: 'flow-trainer', name: 'Flow Trainer', desc: 'Ride the beat with rhythmic precision.', difficulty: 'Intermediate', icon: Zap },
+    { id: 'beatbox-lab', name: 'Beatbox Lab', desc: 'Create complex drum patterns with your voice.', difficulty: 'Beginner', icon: Drum },
+    { id: 'freestyle', name: 'Freestyle Sandbox', desc: 'Open creative space with real-time feedback.', difficulty: 'All Levels', icon: Sparkles },
+  ]
+};
 
 export default function MusicContent() {
   const { logs, _hasHydrated } = useMusicStore();
-  const { collapsedCategories, toggleCategoryCollapse } = useWellnessData();
   const [activeDrillId, setActiveDrillId] = useState<string | null>(null);
+  const [history, setHistory] = useState<any[]>([]);
 
-  const openCategories = useMemo(() => {
-    return musicDomains.map(d => d.name).filter((name, idx) => {
-      const isCollapsed = collapsedCategories[name];
-      if (isCollapsed === undefined) return idx < 1;
-      return !isCollapsed;
+  useEffect(() => {
+    async function load() {
+      try {
+        const db = await initDB();
+        const sessions = await db.getAll('sessions');
+        setHistory(sessions);
+      } catch (e) {}
+    }
+    load();
+  }, []);
+
+  const getStats = (id: string, prefix?: string) => {
+    const gameId = prefix ? `${prefix}-${id}` : id;
+    const gameSessions = history.filter(s => {
+        const sName = s.gameName?.toLowerCase().replace(/ /g, '-');
+        return sName === gameId || s.gameName === id;
     });
-  }, [collapsedCategories]);
+    if (gameSessions.length === 0) return { lastPlayed: 'New', bestScore: null };
+    const sorted = [...gameSessions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const best = Math.max(...gameSessions.map(s => s.score || 0));
+    return {
+      lastPlayed: format(new Date(sorted[0].date), 'MMM d'),
+      bestScore: best
+    };
+  };
 
   if (activeDrillId) {
     return <MusicDrillPlayer drillId={activeDrillId} onClose={() => setActiveDrillId(null)} />;
@@ -46,87 +97,225 @@ export default function MusicContent() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <MusicDashboard />
 
-      <div className="flex flex-col gap-4 py-4 border-y border-primary/5 bg-muted/10 rounded-2xl px-4">
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <JourneyPlansSection category="Communication" mode="trigger" /> {/* Shared UI trigger */}
+      <Tabs defaultValue="listen" className="w-full">
+        <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
+          <TabsList className="flex w-full max-w-3xl h-auto bg-muted/50 p-1 min-w-max">
+            <TabsTrigger value="listen" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Headphones className="w-4 h-4" /> Listen
+            </TabsTrigger>
+            <TabsTrigger value="sing" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Mic2 className="w-4 h-4" /> Sing
+            </TabsTrigger>
+            <TabsTrigger value="voice" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Wind className="w-4 h-4" /> Voice
+            </TabsTrigger>
+            <TabsTrigger value="play" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Guitar className="w-4 h-4" /> Play
+            </TabsTrigger>
+            <TabsTrigger value="create" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Sparkles className="w-4 h-4" /> Create
+            </TabsTrigger>
+          </TabsList>
         </div>
-      </div>
 
-      <div className="space-y-6">
-        <div className="px-1">
-          <h2 className="text-2xl font-black uppercase tracking-tighter">Protocol Library</h2>
-          <p className="text-sm text-muted-foreground">Select a domain to explore specialized auditory and cognitive drills.</p>
-        </div>
+        {/* --- LISTEN SUB-TAB --- */}
+        <TabsContent value="listen" className="space-y-8 animate-in fade-in">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {drillsData.map((drill) => {
+              const gameId = drill.id.toLowerCase().replace(/ /g, '-');
+              const gameSessions = logs.filter(l => l.drillName === drill.name);
+              const stats = gameSessions.length === 0 
+                ? { lastPlayed: 'New', bestScore: null }
+                : { 
+                    lastPlayed: format(new Date(gameSessions[0].timestamp), 'MMM d'),
+                    bestScore: Math.max(...gameSessions.map(l => l.har))
+                  };
 
-        <Accordion type="multiple" value={openCategories} onValueChange={(vals) => {
-          musicDomains.forEach(dom => {
-            const isNowOpen = vals.includes(dom.name);
-            const wasOpen = !collapsedCategories[dom.name];
-            const effectivelyWasOpen = wasOpen || (collapsedCategories[dom.name] === undefined && musicDomains.indexOf(dom) < 1);
-            if (isNowOpen !== effectivelyWasOpen) toggleCategoryCollapse(dom.name);
-          });
-        }}>
-          {musicDomains.map((domain) => {
-            const domainDrills = drillsData.filter(d => d.domain === domain.name);
-            const lastPracticed = logs.find(l => l.domain === domain.name)?.timestamp;
-
-            return (
-              <AccordionItem key={domain.name} value={domain.name} className="border-b border-primary/5">
-                <AccordionTrigger className="hover:no-underline px-1 py-4">
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="p-2 bg-primary/10 rounded-lg shrink-0">
-                      <domain.icon className="w-5 h-5 text-primary" />
+              return (
+                <Card 
+                  key={drill.id} 
+                  className="h-full border-primary/5 hover:border-primary/30 transition-all group flex flex-col cursor-pointer"
+                  onClick={() => setActiveDrillId(drill.id)}
+                >
+                  <CardHeader className="p-4 pb-2">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                        <Music className="w-5 h-5" />
+                      </div>
+                      <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Adaptive</Badge>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-bold uppercase tracking-tight">{domain.name}</h3>
-                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-1">
-                        {domain.drills.length} Drills • {lastPracticed ? `Last: ${new Date(lastPracticed).toLocaleDateString()}` : 'Never Practiced'}
-                      </p>
+                    <CardTitle className="text-base font-bold group-hover:text-primary transition-colors">{drill.name}</CardTitle>
+                    <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{drill.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="p-4 pt-4 mt-auto border-t border-primary/5 flex justify-between items-center">
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Last Session</span>
+                      <span className="text-[10px] font-bold">{stats.lastPlayed}</span>
                     </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-4 pb-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {domain.drills.map((drillName) => {
-                      const drillDef = drillsData.find(d => d.name === drillName);
-                      return (
-                        <Card 
-                          key={drillName} 
-                          className="bg-card border-primary/5 hover:border-primary/30 transition-all cursor-pointer group"
-                          onClick={() => drillDef && setActiveDrillId(drillDef.id)}
-                        >
-                          <CardContent className="p-4 flex items-center justify-between">
-                            <div className="flex flex-col gap-1">
-                              <span className="text-sm font-bold group-hover:text-primary transition-colors">{drillName}</span>
-                              <span className="text-[9px] font-black uppercase text-muted-foreground opacity-60">Adaptive Drill</span>
-                            </div>
-                            <Play className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
-      </div>
+                    {stats.bestScore !== null && (
+                      <div className="flex flex-col items-end">
+                        <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Best HAR</span>
+                        <span className="text-[10px] font-bold text-primary">{stats.bestScore}</span>
+                      </div>
+                    )}
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+          <MusicAnalytics />
+        </TabsContent>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <MusicOpenPractice />
-        <MusicSongAnalysis />
-      </div>
+        {/* --- SING SUB-TAB --- */}
+        <TabsContent value="sing" className="space-y-8 animate-in fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categoryExercises.sing.map((ex) => {
+              const stats = getStats(ex.id);
+              return (
+                <Link key={ex.id} href={`/music/sing/${ex.id}`}>
+                  <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-6">
+                        <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                          <ex.icon className="w-8 h-8" />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h2 className="text-lg font-bold truncate">{ex.name}</h2>
+                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
+                          <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <span>Last: {stats.lastPlayed}</span>
+                            {stats.bestScore !== null && <span>Best: {stats.bestScore}</span>}
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </TabsContent>
 
-      <TodayScheduleWidget category="Communication" /> {/* Shared UI component */}
-      
-      <div className="pt-10">
-        <WellnessActivityCalendar categoryFilter="Math" /> {/* Fallback history view */}
-      </div>
+        {/* --- VOICE SUB-TAB --- */}
+        <TabsContent value="voice" className="space-y-8 animate-in fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categoryExercises.voice.map((ex) => {
+              const stats = getStats(ex.id, 'voice');
+              return (
+                <Link key={ex.id} href={`/music/voice/${ex.id}`}>
+                  <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-6">
+                        <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                          <ex.icon className="w-8 h-8" />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h2 className="text-lg font-bold truncate">{ex.name}</h2>
+                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
+                          <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <span>Last: {stats.lastPlayed}</span>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </TabsContent>
 
-      <div className="pt-6">
-        <MusicAnalytics />
-      </div>
+        {/* --- PLAY SUB-TAB --- */}
+        <TabsContent value="play" className="space-y-8 animate-in fade-in">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-muted/20 rounded-2xl border border-primary/5">
+            <div className="space-y-1 text-center md:text-left">
+              <h3 className="font-bold">Input Calibration</h3>
+              <p className="text-xs text-muted-foreground">Select your instrument and connection method.</p>
+            </div>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <InputSelector />
+              <InstrumentSelector />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categoryExercises.play.map((ex) => {
+              const stats = getStats(ex.id, 'play');
+              return (
+                <Link key={ex.id} href={`/music/play/${ex.id}`}>
+                  <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-6">
+                        <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                          <ex.icon className="w-8 h-8" />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h2 className="text-lg font-bold truncate">{ex.name}</h2>
+                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
+                          <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <span>Last: {stats.lastPlayed}</span>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </TabsContent>
+
+        {/* --- CREATE SUB-TAB --- */}
+        <TabsContent value="create" className="space-y-8 animate-in fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categoryExercises.create.map((ex) => {
+              const stats = getStats(ex.id, 'create');
+              return (
+                <Link key={ex.id} href={`/music/create/${ex.id}`}>
+                  <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-6">
+                        <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                          <ex.icon className="w-8 h-8" />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h2 className="text-lg font-bold truncate">{ex.name}</h2>
+                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
+                          <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            <span>Last: {stats.lastPlayed}</span>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <MusicOpenPractice />
+            <MusicSongAnalysis />
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <TodayScheduleWidget category="Communication" />
+      <WellnessActivityCalendar categoryFilter="Math" />
     </div>
   );
 }
