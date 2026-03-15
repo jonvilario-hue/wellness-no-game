@@ -9,14 +9,14 @@ export default function CreateRedirect() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/skills?tab=music&sub=create');
+    router.replace('/skills?tab=music&sub=freeflow');
   }, [router]);
 
   return (
     <div className="flex h-[70vh] items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Relocating to Skill Builder...</p>
+        <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Relocating to Freeflow Lab...</p>
       </div>
     </div>
   );

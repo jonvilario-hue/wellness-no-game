@@ -135,17 +135,17 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
       questions: answers
     });
 
-    syncFromTracker('Communication', drill.name);
+    syncFromTracker('Music', drill.name);
     toast({ title: "Performance Synced", variant: 'success' });
     onClose();
   };
 
   const subtabDisplay = useMemo(() => {
     const lookup: Record<string, string> = {
-      play: 'Instrumentals',
-      sing: 'Vocals',
+      play: 'Play',
+      sing: 'Sing',
       listen: 'Listen',
-      create: 'Create'
+      freeflow: 'Freeflow'
     };
     return lookup[subtab.toLowerCase()] || subtab;
   }, [subtab]);
@@ -292,7 +292,7 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
                         >
                           {tapTimestamps.length > 0 ? tapTimestamps.length : 'TAP'}
                         </Button>
-                        <Button onClick={() => handleResponse(`Recorded ${tapTimestamps.length} beats`)} disabled={isAnswered} variant="secondary" className="font-bold text-xs h-9">End Sequence</Button>
+                        <Button onClick={handleNext} disabled={isAnswered} variant="secondary" className="font-bold text-xs h-9">End Sequence</Button>
                       </div>
                     )}
 

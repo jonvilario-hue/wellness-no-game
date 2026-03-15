@@ -43,7 +43,7 @@ export function GameShell({
 
   // Auto-detect back link and breadcrumbs if not provided
   const resolvedBackHref = backHref || "/skills?tab=music";
-  const resolvedBreadcrumb = breadcrumb || ["Music", "Listen", gameName];
+  const resolvedBreadcrumb = breadcrumb || ["Music", "Freeflow", gameName];
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">

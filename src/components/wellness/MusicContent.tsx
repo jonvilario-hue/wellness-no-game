@@ -19,7 +19,7 @@ import {
   Music, Headphones, Mic2, Guitar, Sparkles,
   Target, BookOpen, Waves, Zap, History,
   ChevronRight, Play, Clock, Piano, Mic,
-  Library, Book
+  Library, Book, MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
@@ -33,7 +33,11 @@ import { MusicReferenceCard } from './MusicReferenceCard';
 const categoryExercises = {
   listen: [
     ...drillsData.map(d => ({ ...d, type: 'drill' as const })),
-    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases.', difficulty: 'Beginner / Intermediate / Advanced', icon: Waves, type: 'game' as const, path: '/music/sing/melody-echo' },
+  ],
+  sing: [
+    { id: 'pitch-match', name: 'Pitch Match', desc: 'Match the note you hear by ear using your voice.', difficulty: 'Beginner', icon: Music, type: 'game' as const, path: '/music/sing/pitch-match' },
+    { id: 'interval-sing', name: 'Interval Sing-Back', desc: 'Sing specific intervals from a root note.', difficulty: 'Intermediate', icon: Music, type: 'game' as const, path: '/music/sing/interval-sing' },
+    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases.', difficulty: 'Beginner/Int/Adv', icon: Waves, type: 'game' as const, path: '/music/sing/melody-echo' },
     { id: 'sight-singing', name: 'Sight-Singing', desc: 'Perform phrases from notation without hearing it.', difficulty: 'Advanced', icon: BookOpen, type: 'game' as const, path: '/music/sing/sight-singing' },
   ],
   play: [
@@ -41,10 +45,11 @@ const categoryExercises = {
     { id: 'call-response', name: 'Call & Response', desc: 'Trade musical phrases with the lab in real-time.', difficulty: 'Intermediate', icon: Music },
     { id: 'scale-drill', name: 'Scale Drill', desc: 'Play scales and chords on demand.', difficulty: 'Beginner', icon: Piano },
   ],
-  create: [
-    { id: 'vocal-improv', name: 'Vocal Improv', desc: 'Improvise melodies over chord changes.', difficulty: 'Intermediate', icon: Mic },
-    { id: 'flow-trainer', name: 'Flow Trainer', desc: 'Lock your rhythm to the beat grid using your voice, vocal percussion, or body percussion.', difficulty: 'Intermediate', icon: Zap },
-    { id: 'freestyle', name: 'Freestyle Sandbox', desc: 'Open creative space with real-time feedback.', difficulty: 'All Levels', icon: Sparkles },
+  freeflow: [
+    { id: 'lyrical-spontaneity', name: 'Lyrical Spontaneity', desc: 'Respond to random word prompts and rhyme constraints. Drop bars and stay in motion.', difficulty: 'Intermediate', icon: MessageSquare, type: 'game' as const, path: '/music/freeflow/lyrical-spontaneity' },
+    { id: 'vocal-improv', name: 'Melodic Freeflow', desc: 'Improvise melodies or hum freely over chord progressions. The choice is yours—ride the harmony.', difficulty: 'Intermediate', icon: Mic, type: 'game' as const, path: '/music/freeflow/vocal-improv' },
+    { id: 'flow-trainer', name: 'Flow Pattern Lab', desc: 'Master cadences, triplet flows, and double-time. Lock your rhythm to the grid and find your pocket.', difficulty: 'Intermediate', icon: Zap, type: 'game' as const, path: '/music/freeflow/flow-trainer' },
+    { id: 'freestyle', name: 'The Cypher', desc: 'The open sandbox. Grab a beat and flow. No rules, just creative energy.', difficulty: 'All Levels', icon: Sparkles, type: 'game' as const, path: '/music/freeflow/freestyle' },
   ]
 };
 
@@ -106,13 +111,13 @@ export default function MusicContent() {
               <Headphones className="w-4 h-4" /> Listen
             </TabsTrigger>
             <TabsTrigger value="sing" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Mic2 className="w-4 h-4" /> Vocals
+              <Mic2 className="w-4 h-4" /> Sing
             </TabsTrigger>
             <TabsTrigger value="play" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Guitar className="w-4 h-4" /> Instrumentals
+              <Guitar className="w-4 h-4" /> Play
             </TabsTrigger>
-            <TabsTrigger value="create" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Sparkles className="w-4 h-4" /> Create
+            <TabsTrigger value="freeflow" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
+              <Sparkles className="w-4 h-4" /> Freeflow
             </TabsTrigger>
           </TabsList>
         </div>
@@ -120,33 +125,6 @@ export default function MusicContent() {
         <TabsContent value="listen" className="space-y-8 animate-in fade-in">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {categoryExercises.listen.map((item) => {
-              if (item.type === 'game') {
-                const stats = getStats(item.id);
-                return (
-                  <Link key={item.id} href={item.path}>
-                    <Card className="h-full border-primary/5 hover:border-primary/30 transition-all group flex flex-col cursor-pointer bg-primary/[0.02]">
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                            <item.icon className="w-5 h-5" />
-                          </div>
-                          <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Performance</Badge>
-                        </div>
-                        <CardTitle className="text-sm font-bold group-hover:text-primary transition-colors">{item.name}</CardTitle>
-                        <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{item.desc}</CardDescription>
-                      </CardHeader>
-                      <CardFooter className="p-4 pt-4 mt-auto border-t border-primary/5 flex justify-between items-center">
-                        <div className="flex flex-col">
-                          <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Best Score</span>
-                          <span className="text-[10px] font-bold">{stats.bestScore ?? '--'}</span>
-                        </div>
-                        <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-5px] group-hover:translate-x-0" />
-                      </CardFooter>
-                    </Card>
-                  </Link>
-                );
-              }
-
               const gameSessions = logs.filter(l => l.drillName === item.name);
               const stats = gameSessions.length === 0 
                 ? { lastPlayed: 'New', bestScore: null }
@@ -186,17 +164,33 @@ export default function MusicContent() {
         </TabsContent>
 
         <TabsContent value="sing" className="space-y-12 animate-in fade-in">
-          <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 flex flex-col items-center text-center space-y-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Mic2 className="w-8 h-8 text-primary" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-xl font-black uppercase tracking-tighter">Vocal Performance</h3>
-              <p className="text-sm text-muted-foreground max-w-md">Vocal training modules have been relocated to the Listen hub to focus on instrument-agnostic pitch mastery.</p>
-            </div>
-            <Button asChild variant="outline" size="sm" className="font-bold border-primary/20">
-              <Link href="/skills?tab=music&sub=listen">Go to Integrated Modules</Link>
-            </Button>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {categoryExercises.sing.map((item) => {
+              const stats = getStats(item.id);
+              return (
+                <Link key={item.id} href={item.path}>
+                  <Card className="h-full border-primary/5 hover:border-primary/30 transition-all group flex flex-col cursor-pointer bg-primary/[0.02]">
+                    <CardHeader className="p-4 pb-2">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                          <item.icon className="w-5 h-5" />
+                        </div>
+                        <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Performance</Badge>
+                      </div>
+                      <CardTitle className="text-sm font-bold group-hover:text-primary transition-colors">{item.name}</CardTitle>
+                      <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{item.desc}</CardDescription>
+                    </CardHeader>
+                    <CardFooter className="p-4 pt-4 mt-auto border-t border-primary/5 flex justify-between items-center">
+                      <div className="flex flex-col">
+                        <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Best Score</span>
+                        <span className="text-[10px] font-bold">{stats.bestScore ?? '--'}</span>
+                      </div>
+                      <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-5px] group-hover:translate-x-0" />
+                    </CardFooter>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
 
           <div className="space-y-6">
@@ -277,13 +271,13 @@ export default function MusicContent() {
           </div>
         </TabsContent>
 
-        <TabsContent value="create" className="space-y-8 animate-in fade-in">
+        <TabsContent value="freeflow" className="space-y-8 animate-in fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categoryExercises.create.map((ex) => {
-              const stats = getStats(ex.id, 'create');
+            {categoryExercises.freeflow.map((ex) => {
+              const stats = getStats(ex.id, 'freeflow');
               return (
-                <Link key={ex.id} href={`/music/create/${ex.id}`}>
-                  <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
+                <Link key={ex.id} href={ex.path}>
+                  <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer bg-primary/[0.02]">
                     <CardContent className="p-6">
                       <div className="flex items-center gap-6">
                         <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
