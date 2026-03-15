@@ -1,289 +1,497 @@
 
-import { BookOpen, Mic2, Wind, Activity, Clock, ShieldCheck, HeartPulse, Target, Shuffle, Sparkles, LayoutGrid, Brain, ShieldAlert, Ear, SlidersHorizontal, UserCheck } from 'lucide-react';
-
-export type MusicReferenceEntry = {
-  id: string;
-  title: string;
-  summary: string;
-  category: 'Practice Methods' | 'Vocal Techniques';
-  icon: any;
-  body: {
-    what: string;
-    how: string;
-    mistakes: string[];
-    when: string;
-  };
-  audioLabel?: string;
-  visualLabel?: string;
-  relatedModule?: {
-    name: string;
-    hub: string;
-  };
-};
+import { 
+  Clock, Activity, Target, Shuffle, Mic2, Sparkles, LayoutGrid, Brain, 
+  Wind, HeartPulse, SlidersHorizontal, Ear, UserCheck, ShieldAlert, BookOpen 
+} from 'lucide-react';
+import type { MusicReferenceEntry } from '@/types/music';
 
 export const musicReferences: MusicReferenceEntry[] = [
   // --- PRACTICE METHODS (PLAY TAB) ---
   {
     id: 'ref-slow-practice',
-    title: 'Slow Practice & Why It Works',
-    summary: 'How playing at half tempo rewires muscle memory faster than full-speed repetition.',
+    title: 'Slow Practice Mastery',
+    summary: 'Rewire muscle memory by eliminating the "panic response" at high speeds.',
     category: 'Practice Methods',
     icon: Clock,
-    body: {
-      what: 'Slow practice is the primary tool for developing high-level technical accuracy. When you play fast, your brain focuses on "keeping up," often at the expense of precision. Slowing down allows your neural pathways to map every physical movement and pitch relationship without the noise of panic or the constant need for error correction.',
-      how: '1. Identify the passage you want to master.\n2. Set your metronome to 50% of the target tempo, or whatever speed allows you to play the entire section with zero errors.\n3. Play the section perfectly three times in a row. If you miss a note, the count resets to zero.\n4. Increase the tempo by only 2-4 BPM.\n5. If you make an error, drop back down by 5 BPM and clear the passage again.',
+    metadata: {
+      time: '5-10 min',
+      difficulty: 'All Levels',
+      bestFor: 'Technical accuracy and cleaning up messy passages.'
+    },
+    drill: {
+      tryThisNow: 'Play a difficult 2-bar phrase at 50% speed with zero errors.',
+      steps: [
+        'Identify a 1-2 bar passage you keep missing.',
+        'Set metronome to 50% of the target tempo.',
+        'Play the passage 3 times consecutively with zero errors.',
+        'If you make an error, the count resets to zero.',
+        'Increase tempo by 2-4 BPM only after 3 clean reps.'
+      ]
+    },
+    theory: {
+      what: 'Slow practice allows the brain to encode correct motor patterns without the constant interference of error correction. It prevents the "muscle memory of mistakes."',
       mistakes: [
-        'Raising the tempo too quickly before the passage is truly clean.',
-        'Sloppy rhythm: playing "slowly" but with uneven timing. Slow practice must be just as rhythmically strict as performance speed.'
+        'Raising the tempo too quickly (if you miss, you jumped too far).',
+        'Sloppy rhythm (slow practice must be metronomically perfect).'
       ],
-      when: 'Every time you encounter a technical barrier or start learning new material.'
+      when: 'Every time you encounter a technical barrier or start new material.'
     },
     relatedModule: { name: 'Scale Builder', hub: 'Play' }
   },
   {
-    id: 'ref-metronome',
-    title: 'The Metronome as a Training Tool',
-    summary: 'Using a metronome in ways that build internal time rather than dependence on the click.',
+    id: 'ref-metronome-diag',
+    title: 'Metronome as Diagnostic',
+    summary: 'Build internal time by intentionally removing beats from the click.',
     category: 'Practice Methods',
     icon: Activity,
-    body: {
-      what: 'A metronome is not just a clock; it\'s a diagnostic instrument. Most players use it as a crutch to keep them on the beat, but used correctly, it forces you to develop your own internal sense of time. The goal is to make the metronome "disappear" by burying the click under your notes.',
-      how: '1. Standard: Click on every beat (1, 2, 3, 4).\n2. Internal Focus: Set the click only on beats 2 and 4 (the "backbeat"). This forces you to feel 1 and 3 internally.\n3. Offbeat Challenge: Set the click to only the offbeats (the "+" of every beat).\n4. Minimalist: Set the click to one per bar (beat 1) or even one every two bars.\n5. Tempo Pyramid: Build speed by going up 2 BPM, then back 1 (e.g., 60 -> 62 -> 61 -> 63 -> 62).',
+    metadata: {
+      time: '5 min',
+      difficulty: 'Intermediate',
+      bestFor: 'Developing internal pulse and stopping "click-dependency."'
+    },
+    drill: {
+      tryThisNow: 'Set metronome to click only on beats 2 and 4.',
+      steps: [
+        'Start at 80 BPM with a standard 4/4 click.',
+        'Switch settings so the click only sounds on beats 2 and 4.',
+        'Maintain your internal feel for 1 and 3 while playing a simple scale.',
+        'Challenge: Set the click to only beat 1 of every other bar.',
+        'Notice if you rush or drag when the click is absent.'
+      ]
+    },
+    theory: {
+      what: 'Standard clicks can become a crutch. Removing beats forces your internal "internal clock" to work harder, highlighting where your timing is naturally unstable.',
       mistakes: [
-        'Click dependence: letting the metronome "carry" you.',
-        'Ignoring the "gap": not noticing when you are consistently rushing or dragging relative to the click.'
+        'Letting the metronome carry you rather than burying the click under your notes.',
+        'Practicing with the click too loud (it should be a guide, not a lead instrument).'
       ],
-      when: 'Daily for technical exercises and when polishing repertoire.'
+      when: 'Weekly for technical exercises to audit your rhythmic stability.'
     },
     relatedModule: { name: 'Tap-Along', hub: 'Listen' }
   },
   {
     id: 'ref-isolating-bars',
-    title: 'Isolating Problem Bars',
-    summary: 'Stop running the whole piece and zoom in on the two bars that are actually broken.',
+    title: 'Surgical Isolation',
+    summary: 'Stop running the whole piece; fix the broken 10% first.',
     category: 'Practice Methods',
     icon: Target,
-    body: {
-      what: 'Playing a piece from beginning to end repeatedly is the most common form of inefficient practice. The beginning gets mastered while the difficult passages in the middle remain brittle. Isolating "problem bars" allows you to spend 90% of your time on the 10% of the music that actually needs it.',
-      how: '1. Identify the specific 1-2 bars where you stumble.\n2. Extract those bars and treat them as an independent exercise.\n3. Use Slow Practice on just those bars.\n4. Once clean, "bridge" the section: Play starting 2 bars before and ending 2 bars after the isolated section.',
+    metadata: {
+      time: '3-5 min',
+      difficulty: 'All Levels',
+      bestFor: 'Eliminating the "stop-and-start" habit during performance.'
+    },
+    drill: {
+      tryThisNow: 'Isolate the "broken" bar and bridge it with the surrounding measures.',
+      steps: [
+        'Identify exactly where you stumble (usually just 1-2 bars).',
+        'Extract those bars and practice them in isolation until clean.',
+        'Bridge: Start 2 bars before the problem and play through to 2 bars after.',
+        'Expansion: Add 1 bar to the start and end of the bridge until the section is restored.',
+        'Practice entering the isolated section from different beats, not just beat 1.'
+      ]
+    },
+    theory: {
+      what: 'Running a piece from the top every time over-practices the beginning and under-practices the hard part. Isolation ensures your effort is spent where the friction actually lives.',
       mistakes: [
-        'Lead-in dependence: always starting from the same spot. Practice entering the passage from different beats.',
-        'Isolating sections that are too long (keep it to 1-2 bars).'
+        'Isolating sections that are too long (keep it to 1-2 bars).',
+        'Lead-in dependency: only being able to play the hard part if you start from the beginning.'
       ],
-      when: 'When you notice you are "stopping and starting" at the same spot in a piece.'
+      when: 'When you notice you are stopping and restarting at the same spot in a piece.'
     }
   },
   {
-    id: 'ref-interleaving',
-    title: 'Blocked vs Interleaved Practice',
-    summary: 'When to drill one thing on repeat and when to shuffle between multiple things in a single session.',
+    id: 'ref-interleaved',
+    title: 'Interleaved Rotation',
+    summary: 'Shuffle your tasks to trick your brain into better long-term retention.',
     category: 'Practice Methods',
     icon: Shuffle,
-    body: {
-      what: 'Blocked practice is drilling one thing for a long time. Interleaved practice (rotating between topics) is harder and feels messier, but produces much stronger long-term retention because it forces the brain to "reload" information constantly.',
-      how: '1. Choose 3-4 items you need to work on (e.g., a scale, a difficult passage, and an ear-training drill).\n2. Set a timer for 3-5 minutes.\n3. Work on Item A until the timer goes off, then move immediately to Item B.\n4. Cycle through A, B, C, D multiple times in one session.',
+    metadata: {
+      time: '15-20 min',
+      difficulty: 'Intermediate',
+      bestFor: 'Breaking plateaus and improving next-day recall.'
+    },
+    drill: {
+      tryThisNow: 'Rotate between 3 unrelated tasks every 3 minutes.',
+      steps: [
+        'Pick 3 items (e.g., Scale X, Passage Y, Ear Training Z).',
+        'Set a timer for 3 minutes.',
+        'Work on Item A until the timer rings, then move immediately to B.',
+        'After B, move to C. Then back to A.',
+        'Complete 3 full cycles (A-B-C, A-B-C, A-B-C).'
+      ]
+    },
+    theory: {
+      what: 'Blocked practice (one thing for 20 mins) feels productive but retention is lower. Interleaving forces the brain to "reload" info, which builds stronger neural connections.',
       mistakes: [
-        'Over-focusing: staying on one item for too long because you\'re "almost there."',
-        'Thinking the "struggle" of switching is failure (it\'s actually growth).'
+        'Over-focusing: staying on one item too long because you\'re "almost there."',
+        'Interleaving items that are too similar (e.g., two very similar scales).'
       ],
-      when: 'For material you\'ve already introduced to your body but haven\'t yet solidified into long-term memory.'
+      when: 'For material you know basic steps for but haven\'t yet mastered.'
     }
   },
   {
-    id: 'ref-sing-before-play',
-    title: 'Sing Before You Play',
-    summary: 'If you can\'t sing the line away from your instrument, you\'ve memorized finger patterns, not music.',
+    id: 'ref-sing-diagnostic',
+    title: 'Sing-Back Diagnostic',
+    summary: 'If you can\'t sing it, you don\'t truly know it.',
     category: 'Practice Methods',
     icon: Mic2,
-    body: {
-      what: 'Your instrument is a physical interface that can produce sound even if you don\'t "hear" it first. Singing removes the crutch of muscle memory and forces you to confront your actual musical understanding. If you can\'t sing it, you don\'t truly know it.',
-      how: '1. Pick a passage or a solo you are learning.\n2. Put your instrument down.\n3. Sing the passage (humming is fine). Vocal quality doesn\'t matter; pitch and rhythm do.\n4. Wherever you get lost or uncertain is where your musical understanding has a gap.',
+    metadata: {
+      time: '2 min',
+      difficulty: 'All Levels',
+      bestFor: 'Identifying where finger patterns are hiding a lack of musical understanding.'
+    },
+    drill: {
+      tryThisNow: 'Put your instrument down and hum a difficult passage from memory.',
+      steps: [
+        'Choose a melodic line you are currently learning.',
+        'Put the instrument away.',
+        'Sing or hum the line out loud (pitch quality doesn\'t matter, accuracy does).',
+        'Identify where you get lost or fuzzy on the melody.',
+        'Return to the instrument and fix ONLY those specific pitch relationships.'
+      ]
+    },
+    theory: {
+      what: 'Instrumentalists often rely on "finger memory." Singing bypasses the hands and forces the brain to process the actual music. It is the ultimate test of internalization.',
       mistakes: [
-        'Using the instrument to "find" the note while singing.',
-        'Ignoring rhythm during the sing-back.'
+        'Humming vaguely without committing to specific pitches.',
+        'Ignoring the rhythm during the sing-back.'
       ],
-      when: 'For difficult melodic intervals, complex rhythms, or when preparing to improvise.'
+      when: 'For any passage that feels "slippery" or unreliable under pressure.'
     },
     relatedModule: { name: 'Melody Echo', hub: 'Listen' }
   },
   {
-    id: 'ref-improv-vocabulary',
-    title: 'Practicing Improvisation Systematically',
-    summary: 'How to build vocabulary over changes instead of running scales and hoping for the best.',
+    id: 'ref-improv-landmarks',
+    title: 'Harmonic Landmarks',
+    summary: 'Build a roadmap for improvisation using chord tones.',
     category: 'Practice Methods',
     icon: Sparkles,
-    body: {
-      what: 'Improvisation is often treated as "playing by feel," but elite improvisers build a structured vocabulary. Systematic practice builds "landmarks" in the harmony.',
-      how: '1. Limitation Drills: Improvise using ONLY chord tones (1, 3, 5, 7).\n2. Rhythmic Isolation: Choose just one note and improvise purely rhythmically for one minute. Then two notes.\n3. Transcribe and Steal: Learn 2 bars of a solo you love by ear. Play it in all 12 keys.',
+    metadata: {
+      time: '10 min',
+      difficulty: 'Intermediate',
+      bestFor: 'Moving away from random scale-running toward melodic solos.'
+    },
+    drill: {
+      tryThisNow: 'Solo over a track using ONLY the 3rd and 7th of each chord.',
+      steps: [
+        'Pick a 2-chord loop (e.g., Cmaj7 to Fmaj7).',
+        'Identify the 3rd and 7th of both chords.',
+        'Improvise using ONLY those two notes per chord.',
+        'Focus on the voice-leading: how one 3rd moves to the next landmark.',
+        'Slowly add roots and 5ths once the "guide tones" feel like home.'
+      ]
+    },
+    theory: {
+      what: 'Improvisation is often taught as "scales," but chords are built on specific tones. Guide tones (3rds and 7ths) are the markers that define the sound of the harmony.',
       mistakes: [
-        'Wandering: playing too many notes without a clear rhythmic or harmonic intent.',
-        'Scale-running: relying on finger patterns rather than hearing phrases.'
+        'Wandering: playing too many notes without intent.',
+        'Relying on finger patterns rather than hearing the chord change.'
       ],
-      when: 'Every time you sit down to improvise.'
+      when: 'Before practicing free improvisation or learning a new jazz standard.'
     },
     relatedModule: { name: 'Vocal Improv', hub: 'Create' }
   },
   {
-    id: 'ref-session-framework',
-    title: 'Building a Practice Session',
-    summary: 'How to divide your available time so technique, repertoire, and musicianship all move forward.',
+    id: 'ref-thirds-framework',
+    title: 'The Thirds Session',
+    summary: 'Ensure balanced growth by dividing your time into three pillars.',
     category: 'Practice Methods',
     icon: LayoutGrid,
-    body: {
-      what: 'A balanced session ensures you don\'t plateau. Most players spend all their time on one thing—usually repertoire—and neglect the underlying hardware of technique.',
-      how: '1. Divide your time into thirds.\n2. First Third: Technical (Scales, arpeggios, long tones).\n3. Second Third: Repertoire (The pieces or songs you are preparing).\n4. Final Third: Musicianship & Creativity (Ear training, improvisation, sight reading).',
+    metadata: {
+      time: '15-60 min',
+      difficulty: 'All Levels',
+      bestFor: 'General progress and preventing "stagnation" in one area.'
+    },
+    drill: {
+      tryThisNow: 'Divide your next 30-minute session into 10-10-10 blocks.',
+      steps: [
+        'Pillar 1 (Technical): 10 mins of scales, arpeggios, or physical drills.',
+        'Pillar 2 (Repertoire): 10 mins of focused work on your current songs/pieces.',
+        'Pillar 3 (Musicianship): 10 mins of ear training, improv, or sight reading.',
+        'Respect the timer: move to the next pillar even if you feel unfinished.',
+        'Adjust the durations, but keep the 1:1:1 ratio.'
+      ]
+    },
+    theory: {
+      what: 'Most players spend 90% of their time on Repertoire. The Thirds framework ensures the underlying "hardware" (Technique) and "software" (Musicianship) aren\'t neglected.',
       mistakes: [
-        'The "Reward Trap": spending all your time on the parts of a piece you already play well.',
-        'Ignoring the final third (Musicianship) because it feels more like "work."'
+        'The "Just one more time" trap: let the repertoire eat into the other blocks.',
+        'Ignoring the third pillar because it feels less like "playing."'
       ],
-      when: 'The blueprint for every daily session.'
+      when: 'Use as the standard template for every daily practice session.'
     }
   },
   {
-    id: 'ref-mental-rehearsal',
-    title: 'Mental Practice Away From Your Instrument',
-    summary: 'You can improve without touching your instrument by hearing the music in your head with precision.',
+    id: 'ref-mental-practice',
+    title: 'High-Fidelity Rehearsal',
+    summary: 'Reinforce learning away from the instrument through vivid mental imaging.',
     category: 'Practice Methods',
     icon: Brain,
-    body: {
-      what: 'Mental rehearsal activates overlapping neural pathways with actual physical practice. It is a supplement, not a replacement, but it is incredibly powerful for reinforcing memory and managing performance anxiety.',
-      how: '1. Sit quietly and close your eyes.\n2. Imagine holding your instrument. Feel the texture and weight.\n3. "Play" through a passage in your mind. Hear every note with perfect clarity.\n4. Feel the physical motions: the tension in the breath, the finger movement.',
+    metadata: {
+      time: '3 min',
+      difficulty: 'Intermediate',
+      bestFor: 'Memorization and reducing performance anxiety.'
+    },
+    drill: {
+      tryThisNow: 'Close your eyes and "play" 4 bars in your head with 100% detail.',
+      steps: [
+        'Sit in a quiet space and close your eyes.',
+        'Imagine your instrument—feel the texture, weight, and position.',
+        'Hear the music in your head with perfect pitch and rhythm.',
+        'Feel the physical sensation of the movement (fingers, breath, posture).',
+        'If the mental image gets fuzzy, that is where your understanding is weak.'
+      ]
+    },
+    theory: {
+      what: 'Mental rehearsal activates the same neural pathways as physical practice. It is exceptionally efficient for reinforcing memory without physical fatigue.',
       mistakes: [
-        'Vagueness: just "thinking about" the music isn\'t mental practice. You must hear and feel it with 100% precision.',
-        'Impatience: letting the mind drift.'
+        'Vagueness: just "thinking about the song" isn\'t practice. It must be high-fidelity.',
+        'Impatience: letting the mind drift to other topics.'
       ],
-      when: 'Warming up before a show, or when physical fatigue makes playing counterproductive.'
+      when: 'Warming up before a show, during travel, or when physically tired.'
     }
   },
 
   // --- VOCAL TECHNIQUES (SING TAB) ---
   {
     id: 'ref-vocal-breath',
-    title: 'Breath Support Mechanics',
-    summary: 'How to generate consistent airflow from your diaphragm instead of squeezing from your throat.',
+    title: 'Diaphragmatic Support',
+    summary: 'Generate consistent power from your core to protect your throat.',
     category: 'Vocal Techniques',
     icon: Wind,
-    body: {
-      what: 'Breath support is the management of air pressure using the diaphragm. The sensation should be expansion around the lower ribs and belly, not lifting in the chest and shoulders.',
-      how: '1. Lie on your back with a book on your stomach.\n2. Breathe deeply so the book rises on inhale and falls on exhale.\n3. Transfer that sensation to standing.\n4. Apply to sustained tones: sing a note and focus on maintaining steady outward pressure from the abdominal area.',
+    metadata: {
+      time: '3 min',
+      difficulty: 'Beginner',
+      bestFor: 'Vocal power, stability, and preventing throat strain.'
+    },
+    drill: {
+      tryThisNow: 'Use the "Book Method" to feel your core engagement.',
+      steps: [
+        'Lie on your back with a book on your belly.',
+        'Inhale: the book should rise as your lower ribs expand wide.',
+        'Exhale: the book should fall slowly while you "hiss" (ssssss).',
+        'Stand up and replicate the same expansion in your ribs.',
+        'Sing a note, focusing on steady abdominal pressure, not throat tension.'
+      ]
+    },
+    theory: {
+      what: 'Breath support is the management of air pressure. The sensation should be low and wide expansion, never lifting in the chest or shoulders.',
       mistakes: [
-        'Lifting the shoulders during inhalation.',
-        'Confusing "support" with "tension." If the abs are rock-hard, you\'re over-doing it.'
+        'Shoulder lifting: indicates shallow chest breathing.',
+        'Clenching: confusing "support" with "rock-hard abs" (it should be flexible).'
       ],
-      when: 'Practice during every vocal warm-up.'
+      when: 'Every morning and during every vocal warm-up.'
     }
   },
   {
     id: 'ref-vocal-warmup',
-    title: 'Warming Up Without Straining',
-    summary: 'A safe warm-up sequence that wakes up the voice without pushing into dangerous territory.',
+    title: 'The Safe Start',
+    summary: 'A 5-minute sequence to wake up vocal tissue safely.',
     category: 'Vocal Techniques',
     icon: HeartPulse,
-    body: {
-      what: 'The voice is a physical instrument made of delicate soft tissue. Singing "cold" risks strain, fatigue, and injury.',
-      how: '1. Start with gentle humming at a comfortable mid-range pitch.\n2. Progress to lip trills (bubbling the lips while producing pitch) ascending through your range slowly.\n3. Open to vowel sounds: start with "oo" and "ee" which keep the larynx relaxed.',
+    metadata: {
+      time: '5 min',
+      difficulty: 'All Levels',
+      bestFor: 'Preventing vocal injury and improving morning tone.'
+    },
+    drill: {
+      tryThisNow: 'Follow the sequence: Humming → Lip Trills → Open Vowels.',
+      steps: [
+        '1 Min: Gentle humming on a mid-range pitch (focus on the "buzz").',
+        '2 Mins: Lip Trills (bubbling lips) sliding up and down your range.',
+        '2 Mins: Open "oo" and "ee" vowels on descending scales.',
+        'Avoid high-volume or extreme range notes for the first 5 minutes.',
+        'End by gently shaking out your jaw and shoulders.'
+      ]
+    },
+    theory: {
+      what: 'The voice is a soft-tissue instrument. Singing "cold" can cause micro-swelling and fatigue. Warm-ups increase blood flow and flexibility.',
       mistakes: [
-        'Warming up with the hardest song you\'ll sing that day.',
-        'Skipping warm-ups for short sessions.'
+        'Warming up with your hardest song.',
+        'Skipping the hum/trill phase and going straight to loud vowels.'
       ],
-      when: 'Before every practice session or performance.'
+      when: 'Before every practice session, lesson, or performance.'
     }
   },
   {
     id: 'ref-vocal-vowel-mod',
-    title: 'Vowel Modification Across Registers',
-    summary: 'Why the same vowel shape doesn\'t work at every pitch and how to adjust.',
+    title: 'Vowel Modification',
+    summary: 'Adjust your internal mouth shape to keep high notes resonant.',
     category: 'Vocal Techniques',
     icon: SlidersHorizontal,
-    body: {
-      what: 'As pitch rises, the vocal tract resonance must shift to keep the tone open. A pure "ah" vowel that works at a mid-range pitch will cause the voice to squeeze at a high pitch.',
-      how: '1. As you ascend your scale, gradually modify "ah" toward "uh" and then toward "oo".\n2. The modification should be subtle; the audience should still "hear" the original vowel.',
+    metadata: {
+      time: '4 min',
+      difficulty: 'Intermediate',
+      bestFor: 'Singing high notes without shouting or "breaking."'
+    },
+    drill: {
+      tryThisNow: 'Subtly shift "ah" to "uh" as you sing an ascending scale.',
+      steps: [
+        'Sing "ah" on a comfortable low note.',
+        'As you sing higher, subtly round the lips and drop the jaw.',
+        'By the top of the scale, your "ah" should feel more like "uh".',
+        'The audience should still hear "ah," but your throat feels open.',
+        'Practice this on the word "Love" (L-uh-ve) to maintain resonance.'
+      ]
+    },
+    theory: {
+      what: 'As pitch rises, the vocal tract must shift its shape to match the new frequency. If you keep a mid-range "ah" too high, the voice will squeeze or crack.',
       mistakes: [
-        'Refusing to modify and "muscling through" with a pure vowel.',
+        'Muscling through with a pure, wide vowel at high pitches.',
         'Over-modifying so the words become unintelligible.'
       ],
-      when: 'When singing in your upper register or approaching your passaggio.'
+      when: 'When working on your upper register or the bridge (passaggio) of your range.'
     }
   },
   {
     id: 'ref-vocal-resonance',
-    title: 'Resonance Placement',
-    summary: 'How to feel where your sound vibrates and use that awareness to shape your tone.',
+    title: 'Resonance Balance',
+    summary: 'Balance "chest" and "head" vibrations for a rich, consistent tone.',
     category: 'Vocal Techniques',
     icon: Ear,
-    body: {
-      what: 'Resonance refers to where in the head and face you feel sympathetic vibration. Chest resonance dominates lower pitches, while head resonance dominates higher pitches.',
-      how: '1. Hum at a low pitch and feel the "buzz" in your chest.\n2. Slowly slide up and notice the buzz migrate through the throat into the face.\n3. Exercise: Sing "nee" on a descending scale to place resonance forward.',
+    metadata: {
+      time: '3 min',
+      difficulty: 'Intermediate',
+      bestFor: 'Developing a "professional" tone and smoothing vocal breaks.'
+    },
+    drill: {
+      tryThisNow: 'Sing "nee" on a descending scale to feel the "face buzz."',
+      steps: [
+        'Hum a low note and feel the vibration in your sternum (Chest).',
+        'Sing "nee" on a high note and feel the buzz in your sinuses (Head).',
+        'Slowly descend the scale, trying to keep that "face buzz" even as you go low.',
+        'The goal is a "Mix": chest power with head resonance and clarity.',
+        'Maintain a "forward" placement to ensure you aren\'t swallowed by the throat.'
+      ]
+    },
+    theory: {
+      what: 'Resonance placement is about where the sound "sits." Forward placement in the face (the mask) provides clarity and projection without extra effort.',
       mistakes: [
-        'Trying to keep everything in chest voice too high (belting strain).',
-        'Flipping entirely to head voice too early (thin tone).'
+        'Swallowing the sound: resonance sitting too far back in the throat.',
+        'Nasal tone: too much face buzz without enough chest support.'
       ],
-      when: 'When working on tone quality and projection.'
+      when: 'When working on tone quality and smoothing out your vocal transitions.'
     }
   },
   {
-    id: 'ref-vocal-pitch',
-    title: 'Pitch Accuracy From the Body',
-    summary: 'Hitting the note starts before the sound comes out — it starts with hearing it internally.',
+    id: 'ref-vocal-pitch-onset',
+    title: 'Clean Onset Practice',
+    summary: 'Hit the target note immediately without "scooping" from below.',
     category: 'Vocal Techniques',
     icon: Target,
-    body: {
-      what: 'Accurate pitch is a result of coordination between the internal ear and the breath. "Scooping" is often caused by initiating sound before "pre-hearing" the target.',
-      how: '1. Before you sing a note, hear it clearly in your mind first.\n2. Prepare the breath: the airflow should be ready a split second before the note begins.\n3. Exercise: Play a note, listen, internalize it silently for one beat, then sing it with a clean onset.',
+    metadata: {
+      time: '2 min',
+      difficulty: 'Beginner',
+      bestFor: 'Pitch accuracy and confident delivery.'
+    },
+    drill: {
+      tryThisNow: 'Internalize the note for one full beat before you sing it.',
+      steps: [
+        'Play a reference note on the app.',
+        'Listen and "hear" it in your head for 2 seconds (Internalize).',
+        'Prepare your breath a split second before the sound begins.',
+        'Sing the note directly on pitch. Do not slide up to it.',
+        'If you miss, stop instantly. Re-listen, re-internalize, and restart.'
+      ]
+    },
+    theory: {
+      what: 'Scooping is a sign of lack of confidence or poor mental imaging. Pitch accuracy is won or lost in the split second *before* the sound starts.',
       mistakes: [
-        'Always relying on a reference pitch playing simultaneously.',
-        'Scooping: starting flat and sliding up to the note.'
+        'Singing along with the reference note (you must sing *after* it).',
+        'Adjusting the pitch *after* you start (train the onset, not the correction).'
       ],
       when: 'During any pitch-matching or melodic memory drill.'
     },
-    relatedModule: { name: 'Pitch Match', hub: 'Sing' }
+    relatedModule: { name: 'Pitch Match', hub: 'Listen' }
   },
   {
-    id: 'ref-vocal-fatigue',
-    title: 'Managing Vocal Fatigue',
-    summary: 'How to recognize when your voice is tired and what to do about it.',
+    id: 'ref-vocal-fatigue-check',
+    title: 'Fatigue Protocol',
+    summary: 'Recognize the red flags of vocal tiredness to prevent injury.',
     category: 'Vocal Techniques',
     icon: ShieldAlert,
-    body: {
-      what: 'Vocal fatigue is common, but ignoring it risks long-term damage. Recognizing early signals allows you to rest and recover before a minor issue becomes major.',
-      how: '1. Monitor for signs: voice feels effortful, pitch accuracy degrades, or the throat feels scratchy.\n2. Action: When these appear, STOP. Rest for 15-20 minutes.\n3. If it doesn\'t clear, end your practice for the day.',
+    metadata: {
+      time: '1 min',
+      difficulty: 'All Levels',
+      bestFor: 'Vocal health and longevity.'
+    },
+    drill: {
+      tryThisNow: 'Do a 30-second "effort check" on a mid-range note.',
+      steps: [
+        'Sing a comfortable mid-range note at medium volume.',
+        'Check: Does it feel harder to produce than it did 20 mins ago?',
+        'Check: Is the tone airier or "scratchier" than normal?',
+        'If yes: STOP immediately. Rest for 20 minutes.',
+        'If symptoms persist after rest: end your practice for the day.'
+      ]
+    },
+    theory: {
+      what: 'Muscular fatigue is normal; vocal fold strain is dangerous. Pushing through scratchiness or loss of range risks nodules or chronic damage.',
       mistakes: [
-        'Drinking hot tea with honey and continuing to sing (treats symptom, not cause).',
-        'Thinking "no pain, no gain" applies to the vocal folds.'
+        'Drinking hot tea with honey and "powering through" (treats symptoms, not the tissue).',
+        'Ignoring the early signs of a scratchy throat.'
       ],
-      when: 'Any time you practice for longer than 20-30 minutes.'
+      when: 'Every 20 minutes during any extended singing session.'
     }
   },
   {
-    id: 'ref-vocal-vibrato',
-    title: 'Developing Vibrato Naturally',
-    summary: 'Vibrato is a result of relaxed, supported singing — not something you force.',
+    id: 'ref-vocal-vibrato-natural',
+    title: 'Natural Vibrato Release',
+    summary: 'Allow vibrato to emerge from relaxation, not forced movement.',
     category: 'Vocal Techniques',
     icon: Sparkles,
-    body: {
-      what: 'Vibrato is a slight natural oscillation in pitch that occurs when the voice is well-supported and the throat is free of tension.',
-      how: '1. Sing a comfortable sustained note on "ah" with solid breath support.\n2. Focus on releasing tension in your jaw, tongue, and throat.\n3. If vibrato doesn\'t appear, that is fine. It develops over time as technique improves.',
+    metadata: {
+      time: '5 min',
+      difficulty: 'Advanced',
+      bestFor: 'A professional, effortless sound and relieving jaw tension.'
+    },
+    drill: {
+      tryThisNow: 'Alternate between "Straight Tone" and "Released Tone."',
+      steps: [
+        'Sing a sustained "ah" vowel with steady breath support.',
+        'Start with a Straight Tone: perfectly even, no oscillation.',
+        'Consciously relax your jaw, tongue, and throat.',
+        'Transition to a Released Tone: let go of the control and let the sound spin.',
+        'Do not "wobble" your jaw—if vibrato doesn\'t happen, just keep it straight.'
+      ]
+    },
+    theory: {
+      what: 'Vibrato is a byproduct of relaxation and support. Forced vibrato (wobble) creates tension and sounds uneven. It will emerge naturally as your support improves.',
       mistakes: [
-        'Trying to "wobble" the jaw or pulse the abdomen to create vibrato.',
-        'Assuming vibrato should be on every note.'
+        'Pulsing the abs or shaking the larynx to fake the sound.',
+        'Over-applying vibrato to every note (it is an ornament, not a requirement).'
       ],
-      when: 'When practicing long tones or melodic phrases.'
+      when: 'When practicing long tones and sustained melodic endings.'
     }
   },
   {
-    id: 'ref-vocal-registers',
-    title: 'Head Voice, Chest Voice, and Mix',
-    summary: 'Understanding your registers and learning to move between them without a break.',
+    id: 'ref-vocal-registers-blend',
+    title: 'Register Blending',
+    summary: 'Smooth out the "crack" in your voice between low and high.',
     category: 'Vocal Techniques',
     icon: UserCheck,
-    body: {
-      what: 'Vocal registers refer to different ways the vocal folds vibrate. The "passaggio" or break is the transition point between them.',
-      how: '1. Slide upward slowly on an "oo" vowel. Notice where the tone wants to crack.\n2. Aim for a "Mix": keep some chest engagement while allowing head resonance to enter.\n3. Exercise: Practice descending scales starting in head voice and blending in chest resonance.',
+    metadata: {
+      time: '6 min',
+      difficulty: 'Advanced',
+      bestFor: 'Extending range and achieving a consistent sound across the whole voice.'
+    },
+    drill: {
+      tryThisNow: 'Practice descending scales from Head Voice into Chest Voice.',
+      steps: [
+        'Start on a high "oo" in pure Head Voice (light and flute-like).',
+        'Slowly sing a descending 5-note scale.',
+        'As you go lower, try to "thicken" the sound without letting it drop abruptly.',
+        'Reverse: start low and see how high you can take that "mix" resonance.',
+        'Focus on the passaggio (the break) and keep the airflow perfectly steady.'
+      ]
+    },
+    theory: {
+      what: 'The "break" is where the vocal folds shift their vibration mode. Blending involves keeping some "head buzz" in your lows and some "chest power" in your highs.',
       mistakes: [
-        'Avoiding the passaggio by only singing in your comfortable chest range.',
-        'Flipping abruptly to head voice instead of blending.'
+        'Flipping abruptly between registers instead of finding the middle ground.',
+        'Avoiding the break entirely (the only way through is through).'
       ],
-      when: 'When working on extending range and building tone consistency.'
+      when: 'When working on songs that sit right in the middle of your range.'
     }
   }
 ];

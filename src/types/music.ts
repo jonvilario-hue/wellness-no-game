@@ -1,4 +1,6 @@
 
+import { LucideIcon } from "lucide-react";
+
 export type MusicDomain = 
   | 'Ear Training' 
   | 'Rhythm & Timing' 
@@ -54,4 +56,32 @@ export interface MusicJourneyPlan {
     difficulty: MusicDifficulty;
     estimatedMinutes: number;
   }[];
+}
+
+export interface MusicReferenceEntry {
+  id: string;
+  title: string;
+  summary: string;
+  category: 'Practice Methods' | 'Vocal Techniques';
+  icon: LucideIcon;
+  metadata: {
+    time: string;
+    difficulty: 'Beginner' | 'Intermediate' | 'Advanced' | 'All Levels';
+    bestFor: string;
+  };
+  drill: {
+    tryThisNow: string;
+    steps: string[];
+  };
+  theory: {
+    what: string;
+    mistakes: string[];
+    when: string;
+  };
+  audioLabel?: string;
+  visualLabel?: string;
+  relatedModule?: {
+    name: string;
+    hub: string;
+  };
 }
