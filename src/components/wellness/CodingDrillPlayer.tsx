@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -35,17 +34,19 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const { toast } = useToast();
 
   const [gameState, setGameState] = useState<'prep' | 'active' | 'summary'>('prep');
+  const [difficulty, setDifficulty] = useState(languageProgress[activeLanguage]?.level || 1);
+  const [focusRating, setFocusRating] = useState(3);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [startTime, setStartTime] = useState(0);
   const [drillStartTime, setDrillStartTime] = useState(0);
   const [results, setResults] = useState<any[]>([]);
-  const [difficulty, setDifficulty] = useState(languageProgress[activeLanguage]?.level || 1);
-  const [focusRating, setFocusRating] = useState(3);
 
+  // REMOVED DIFFICULTY GATING: We no longer filter by d.difficulty <= difficulty
+  // This allows any drill matching the type and language to be played.
   const filteredDrills = useMemo(() => 
-    codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage && d.difficulty <= difficulty),
-  [protocolId, activeLanguage, difficulty]);
+    codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage),
+  [protocolId, activeLanguage]);
 
   const currentDrill = useMemo(() => 
     filteredDrills.length > 0 ? filteredDrills[currentIndex % filteredDrills.length] : null,
@@ -73,7 +74,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       type: protocolId,
       lane,
       language: activeLanguage,
-      difficulty,
+      difficulty: currentDrill.difficulty, // Use the actual drill difficulty
       durationSeconds: Math.round(res.time),
       accuracy: Math.round(accuracy),
       speedMetric: Math.round(speedMetric),
@@ -118,11 +119,11 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
             </div>
             <CardTitle className="text-xl">Content Unavailable</CardTitle>
             <CardDescription>
-              We currently don't have any <b>{protocolId}</b> drills for <b>{activeLanguage}</b> at Level {difficulty}.
+              We currently don't have any <b>{protocolId}</b> drills for <b>{activeLanguage}</b> in the library.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center text-sm text-muted-foreground">
-            Try switching to <b>JavaScript</b> or <b>Python</b> for full curriculum support, or select a lower difficulty.
+            Please try switching to another language like <b>JavaScript</b> or <b>Python</b> while we expand our <b>{activeLanguage}</b> curriculum.
           </CardContent>
           <CardFooter>
             <Button onClick={onClose} className="w-full font-bold">Return to Lab</Button>
@@ -166,7 +167,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     <CardTitle className="text-xl font-black uppercase">
                       {activeLoop.active ? `Next Phase: ${currentDrill?.lane}` : 'Initialize Drill'}
                     </CardTitle>
-                    <CardDescription>{currentDrill?.lane} Rep — Level {difficulty}</CardDescription>
+                    <CardDescription>{currentDrill?.lane} Rep — Unlocked</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
                     <div className="p-4 bg-muted/30 rounded-xl space-y-2">
@@ -180,7 +181,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     )}
                     {!activeLoop.active && (
                       <div className="space-y-3">
-                        <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Difficulty Level</Label>
+                        <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Focus Tier (Informational)</Label>
                         <div className="grid grid-cols-4 gap-2">
                           {[1, 2, 3, 4].map(l => (
                             <Button 
@@ -298,10 +299,10 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     )}
                     <div className="space-y-4 pt-4 border-t">
                       <div className="flex justify-between items-center">
-                        <Label className="text-[10px] font-bold uppercase">Session Focus</Label>
-                        <span className="text-lg font-black text-primary">{focusRating}</span>
+                        <Label className="text-[9px] font-bold uppercase">Session Focus</Label>
+                        <span className="text-lg font-black text-primary">{focusLevel}</span>
                       </div>
-                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
+                      <Slider value={[focusLevel]} onValueChange={([v]) => setFocusLevel(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">
