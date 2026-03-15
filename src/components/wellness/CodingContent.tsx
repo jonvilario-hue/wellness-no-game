@@ -6,10 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Terminal, Code2, Bug, Brain, Play, 
-  History, Clock, Target, ArrowRight,
-  MousePointer2, Zap, LayoutGrid, Eye, Layers, PenTool,
-  ChevronRight, Sparkles, ShieldCheck, Database, CheckCircle2
+  Code2, Brain, Play, 
+  ChevronRight, Sparkles, Database, CheckCircle2,
+  PenTool, Eye, LayoutGrid
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { CodingDashboard } from './CodingDashboard';
@@ -17,7 +16,6 @@ import { CodingDrillPlayer } from './CodingDrillPlayer';
 import { CodingAnalytics } from './CodingAnalytics';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 import { cn } from '@/lib/utils';
-import { AssistantTooltip } from '../assistant-tooltip';
 import type { CodingLane, CodingDrillType, CodingTrack, CodingLanguage } from '@/types/coding';
 
 const lanes: { id: CodingLane; title: string; subtitle: string; icon: any; drills: { id: CodingDrillType; desc: string }[] }[] = [
@@ -38,7 +36,7 @@ const lanes: { id: CodingLane; title: string; subtitle: string; icon: any; drill
     icon: Eye,
     drills: [
       { id: 'Output Prediction', desc: 'Read code and predict exact output without execution.' },
-      { id: 'Bug Hunt', desc: 'Identify syntax and logic errors across 6 core categories.' }
+      { id: 'Bug Hunt', desc: 'Identify syntax and logic errors across core categories.' }
     ]
   },
   {
@@ -59,7 +57,7 @@ const trackInfo = {
     color: "text-blue-500",
     bg: "bg-blue-500/10",
     border: "border-blue-500/20",
-    description: "The essentials. These are the ubiquitous languages you will read, review, debug, and verify every day. Master the logic that runs everywhere.",
+    description: "The essentials. These are the languages you will read, review, debug, and verify every day. Master the logic that runs everywhere.",
     languages: ['Python', 'JavaScript', 'TypeScript', 'SQL'],
     focus: "Verification & Reading (Read Emphasis)"
   },
@@ -69,7 +67,7 @@ const trackInfo = {
     color: "text-amber-500",
     bg: "bg-amber-500/10",
     border: "border-amber-500/20",
-    description: "High-leverage, precision languages. These demand strict thinking, systems awareness, and real fluency. Mastering these builds mental models that transfer everywhere.",
+    description: "High-leverage, precision languages. These demand strict thinking, systems awareness, and real fluency. Mastering these builds transferrable mental models.",
     languages: ['Rust', 'Bash', 'Swift', 'Go'],
     focus: "Production & Execution (Write/Build Emphasis)"
   }
@@ -94,8 +92,6 @@ export default function CodingContent() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
-      
-      {/* Track Selector Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
           <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">Practice Strategy</h3>

@@ -19,7 +19,7 @@ import {
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
 import { useToast } from '@/hooks/use-toast';
-import { codingDrills } from '@/data/coding-drills';
+import { codingDrills } from '@/data/drills';
 import type { CodingDrillType, CodingLanguage, CodingDrill } from '@/types/coding';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -31,19 +31,15 @@ interface Props {
 
 /**
  * LOGIC-AWARE EVALUATION ENGINE
- * Standardizes inputs and performs structural probing to handle variations in formatting.
  */
 function evaluateSubmission(input: string, drill: CodingDrill): number {
   const clean = (s: string) => s.replace(/\s+/g, ' ').replace(/['"]/g, '"').replace(/;\s*$/g, '').trim().toLowerCase();
   const normalizedInput = clean(input);
 
-  // 1. Output Prediction (Functional Match)
   if (drill.type === 'Output Prediction') {
     return normalizedInput === clean(drill.expectedOutput || "") ? 100 : 0;
   }
 
-  // 2. Structural Probe (AST-lite)
-  // Verifies that required logical tokens exist in the correct relative sequence
   if (drill.requiredTokens && drill.requiredTokens.length > 0) {
     let lastIdx = -1;
     const missingTokens = [];
@@ -57,16 +53,14 @@ function evaluateSubmission(input: string, drill: CodingDrill): number {
     }
     
     if (missingTokens.length === 0) return 100;
-    // Partial credit for partial token sequences
     return Math.max(0, 100 - (missingTokens.length * 20));
   }
 
-  // 3. Fallback: Content Match
   return normalizedInput === clean(drill.content || "") ? 100 : 0;
 }
 
 export function CodingDrillPlayer({ protocolId, onClose }: Props) {
-  const { activeLanguage, languageProgress, addLog, activeLoop, advanceLoop, cancelLoop } = useCodingStore();
+  const { activeLanguage, addLog, activeLoop, advanceLoop, cancelLoop } = useCodingStore();
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
 
@@ -80,8 +74,6 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
   const filteredDrills = useMemo(() => {
     const list = codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage);
-    // If no specific match for this type/language, fallback to ANY drill for this language 
-    // to ensure no "Unavailable" screens appear.
     if (list.length === 0) {
       return codingDrills.filter(d => d.language === activeLanguage);
     }
@@ -94,7 +86,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
   const handleStart = () => {
     if (!currentDrill) {
-      toast({ title: "Drill Unavailable", description: `We're expanding our ${activeLanguage} library. Try another category!`, variant: 'destructive' });
+      toast({ title: "Drill Unavailable", description: `Expansion in progress for ${activeLanguage}.`, variant: 'destructive' });
       onClose();
       return;
     }
@@ -141,23 +133,6 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       setGameState('summary');
     }
   };
-
-  if (!currentDrill && gameState === 'prep') {
-    return (
-      <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-        <Card className="max-w-md w-full border-primary/10 shadow-2xl">
-          <CardHeader className="text-center">
-            <div className="p-3 bg-destructive/10 rounded-full w-fit mx-auto mb-2 text-destructive"><XCircle className="w-8 h-8" /></div>
-            <CardTitle>Content Unavailable</CardTitle>
-            <CardDescription>We're building more drills for {activeLanguage}. Try another category!</CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button onClick={onClose} className="w-full">Return to Lab</Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
