@@ -25,6 +25,10 @@ export function useSpectralAnalysis(stream: MediaStream | null) {
     const ctx = new AudioContextClass();
     audioContextRef.current = ctx;
 
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+
     const source = ctx.createMediaStreamSource(stream);
     sourceRef.current = source;
 

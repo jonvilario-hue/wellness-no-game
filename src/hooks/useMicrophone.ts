@@ -14,7 +14,15 @@ export function useMicrophone() {
         throw new Error('Browser does not support microphone access.');
       }
 
-      const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Disable pre-processing for musical tasks to preserve harmonics and raw pitch
+      const micStream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: false,
+          autoGainControl: false,
+          noiseSuppression: false
+        } 
+      });
+      
       setStream(micStream);
       setIsPermitted(true);
       setError(null);

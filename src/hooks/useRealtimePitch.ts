@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { PitchDetector } from 'pitchy';
 import { frequencyToNote } from '@/lib/audio/pitchUtils';
 
-export function useRealtimePitch(stream: MediaStream | null, clarityThreshold = 0.85) {
+export function useRealtimePitch(stream: MediaStream | null, clarityThreshold = 0.8) {
   const [pitchData, setPitchData] = useState({
     currentFrequency: 0,
     currentNote: '',
@@ -28,6 +28,11 @@ export function useRealtimePitch(stream: MediaStream | null, clarityThreshold = 
     const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
     const ctx = new AudioContextClass();
     audioContextRef.current = ctx;
+
+    // Browser policy requires resume on many browsers
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
 
     const source = ctx.createMediaStreamSource(stream);
     const analyser = ctx.createAnalyser();

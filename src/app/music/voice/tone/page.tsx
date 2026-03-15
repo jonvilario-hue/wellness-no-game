@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { GameShell } from '@/components/game/GameShell';
 import { BrightnessDisplay } from '@/components/audio/BrightnessDisplay';
 import { MicPermissionGate } from '@/components/audio/MicPermissionGate';
@@ -9,7 +10,7 @@ import { useSpectralAnalysis } from '@/hooks/useSpectralAnalysis';
 import { useRealtimePitch } from '@/hooks/useRealtimePitch';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Palette, Play, CheckCircle2, Lightbulb, Clock, Info, ArrowRight } from 'lucide-react';
+import { Palette, Play, CheckCircle2, Lightbulb, Clock, Info, ArrowRight, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,7 +34,16 @@ export default function ToneShapingPage() {
 
   const { stream, requestPermission } = useMicrophone();
   const { brightness } = useSpectralAnalysis(stream);
-  const { isDetecting } = useRealtimePitch(stream);
+  const { isDetecting } = useRealtimePitch(stream, 0.7);
+
+  // Use refs for stable access in the timer interval to prevent hook dependencies from resetting the interval
+  const brightnessRef = useRef(brightness);
+  const isDetectingRef = useRef(isDetecting);
+  const targetRef = useRef(activeTask.target);
+
+  useEffect(() => { brightnessRef.current = brightness; }, [brightness]);
+  useEffect(() => { isDetectingRef.current = isDetecting; }, [isDetecting]);
+  useEffect(() => { targetRef.current = activeTask.target; }, [activeTask.target]);
 
   const generateRound = useCallback(() => {
     const next = instructions[Math.floor(Math.random() * instructions.length)];
@@ -51,37 +61,56 @@ export default function ToneShapingPage() {
     setGameState('running');
   };
 
+  // Stable Game Logic Effect - Interval is not cleared when audio updates
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (gameState === 'running' && !isShowingHint && timer > 0) {
       interval = setInterval(() => {
-        setTimer(t => parseFloat((t - 0.1).toFixed(1)));
+        setTimer(t => {
+          const next = parseFloat((t - 0.1).toFixed(1));
+          return next <= 0 ? 0 : next;
+        });
         
-        if (isDetecting) {
-          const diff = Math.abs(brightness - activeTask.target);
+        if (isDetectingRef.current) {
+          const diff = Math.abs(brightnessRef.current - targetRef.current);
           if (diff <= 0.15) {
             setInZoneTime(prev => prev + 0.1);
           }
         }
       }, 100);
-    } else if (timer <= 0 && gameState === 'running') {
-      handleRoundEnd();
     }
     return () => clearInterval(interval);
-  }, [gameState, isShowingHint, timer, activeTask, brightness, isDetecting]);
+  }, [gameState, isShowingHint]);
 
-  const handleRoundEnd = () => {
+  // Round completion watcher
+  useEffect(() => {
+    if (gameState === 'running' && timer <= 0) {
+      handleRoundEnd();
+    }
+  }, [timer, gameState]);
+
+  const handleRoundEnd = async () => {
     const points = Math.round((inZoneTime / 6) * 100);
-    setScore(s => s + points);
+    const newScore = score + points;
+    setScore(newScore);
     
-    setTimeout(() => {
-      if (round < 6) {
+    if (round < 6) {
+      setTimeout(() => {
         setRound(r => r + 1);
         generateRound();
-      } else {
-        setGameState('results');
-      }
-    }, 2000);
+      }, 2000);
+    } else {
+      setGameState('results');
+      try {
+        const db = await initDB();
+        await db.add('sessions', {
+          gameName: 'voice-tone',
+          date: new Date().toISOString(),
+          score: newScore,
+          difficulty: 'Advanced'
+        });
+      } catch (e) {}
+    }
   };
 
   return (
