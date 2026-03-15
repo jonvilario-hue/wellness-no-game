@@ -228,6 +228,7 @@ export default function MusicContent() {
         </TabsContent>
 
         <TabsContent value="play" className="space-y-12 animate-in fade-in">
+          {/* Active Profile only in Instrumentals (play) */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-muted/30 p-4 rounded-2xl border border-primary/5">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg text-primary"><Music className="w-5 h-5" /></div>
@@ -338,10 +339,10 @@ export default function MusicContent() {
                         <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all" />
                       </div>
                     </CardContent>
-                  </Link>
-                );
-              })}
-            </div>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <AssistantTooltip text="The stopwatch for your unstructured practice. Log duration and focus for any instrument or vocal session.">
