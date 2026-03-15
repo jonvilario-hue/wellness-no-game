@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -30,6 +29,8 @@ import { InstrumentSelector } from '../audio/InstrumentSelector';
 import { musicReferences } from '@/data/music-references';
 import { MusicReferenceCard } from './MusicReferenceCard';
 import { AssistantTooltip } from '../assistant-tooltip';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { useWellnessData } from '@/hooks/use-wellness-data';
 
 const categoryExercises = {
   listen: [
@@ -54,6 +55,7 @@ const categoryExercises = {
 
 export default function MusicContent() {
   const { logs, _hasHydrated } = useMusicStore();
+  const { collapsedCategories, toggleCategoryCollapse } = useWellnessData();
   const [activeDrillId, setActiveDrillId] = useState<string | null>(null);
   const [history, setHistory] = useState<any[]>([]);
   
@@ -94,6 +96,9 @@ export default function MusicContent() {
       bestScore: best
     };
   };
+
+  const openVocalTech = !collapsedCategories['Vocal Techniques'];
+  const openPracticeMethods = !collapsedCategories['Practice Methods'];
 
   if (activeDrillId) {
     return <MusicDrillPlayer drillId={activeDrillId} onClose={() => setActiveDrillId(null)} subtab={activeSubTab} />;
@@ -201,17 +206,25 @@ export default function MusicContent() {
           </div>
 
           <div className="space-y-6">
-            <div className="flex items-center gap-3 px-1">
-              <div className="h-8 w-1 bg-primary rounded-full" />
-              <AssistantTooltip text="Guides for vocal health and resonance. These protocols focus on the physiological side of the instrument.">
-                <h3 className="text-xl font-black uppercase tracking-tight">Vocal Techniques</h3>
-              </AssistantTooltip>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {musicReferences.filter(r => r.category === 'Vocal Techniques').map(ref => (
-                <MusicReferenceCard key={ref.id} entry={ref} />
-              ))}
-            </div>
+            <Accordion type="single" collapsible value={openVocalTech ? 'vocal-tech' : undefined} onValueChange={() => toggleCategoryCollapse('Vocal Techniques')}>
+              <AccordionItem value="vocal-tech" className="border-none">
+                <AccordionTrigger className="hover:no-underline py-0">
+                  <div className="flex items-center gap-3 px-1">
+                    <div className="h-8 w-1 bg-primary rounded-full" />
+                    <AssistantTooltip text="Guides for vocal health and resonance. These protocols focus on the physiological side of the instrument.">
+                      <h3 className="text-xl font-black uppercase tracking-tight">Vocal Techniques</h3>
+                    </AssistantTooltip>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {musicReferences.filter(r => r.category === 'Vocal Techniques').map(ref => (
+                      <MusicReferenceCard key={ref.id} entry={ref} />
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </TabsContent>
 
@@ -270,21 +283,29 @@ export default function MusicContent() {
           </div>
 
           <div className="space-y-6">
-            <div className="flex items-center gap-3 px-1">
-              <div className="h-8 w-1 bg-primary rounded-full" />
-              <AssistantTooltip text="Tactical frameworks for how to learn effectively. These aren't drills, but recipes for high-efficiency practice sessions.">
-                <h3 className="text-xl font-black uppercase tracking-tight">Practice Methods</h3>
-              </AssistantTooltip>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {musicReferences.filter(r => r.category === 'Practice Methods').map(ref => (
-                <MusicReferenceCard key={ref.id} entry={ref} />
-              ))}
-            </div>
+            <Accordion type="single" collapsible value={openPracticeMethods ? 'practice-methods' : undefined} onValueChange={() => toggleCategoryCollapse('Practice Methods')}>
+              <AccordionItem value="practice-methods" className="border-none">
+                <AccordionTrigger className="hover:no-underline py-0">
+                  <div className="flex items-center gap-3 px-1">
+                    <div className="h-8 w-1 bg-primary rounded-full" />
+                    <AssistantTooltip text="Tactical frameworks for how to learn effectively. These aren't drills, but recipes for high-efficiency practice sessions.">
+                      <h3 className="text-xl font-black uppercase tracking-tight">Practice Methods</h3>
+                    </AssistantTooltip>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {musicReferences.filter(r => r.category === 'Practice Methods').map(ref => (
+                      <MusicReferenceCard key={ref.id} entry={ref} />
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
         </TabsContent>
 
-        <TabsContent value="freeflow" className="space-y-8 animate-in fade-in">
+        <TabsContent value="freeflow" className="space-y-8 animate-in fade-in duration-700">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categoryExercises.freeflow.map((ex) => {
               const stats = getStats(ex.id, 'freeflow');

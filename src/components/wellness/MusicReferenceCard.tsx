@@ -1,34 +1,20 @@
-
 'use client';
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { BookOpen, Clock, SlidersHorizontal, Eye } from "lucide-react";
+import { Clock, SlidersHorizontal } from "lucide-react";
 import type { MusicReferenceEntry } from "@/types/music";
 import { MusicReferenceDialog } from "./MusicReferenceDialog";
-import { useState, useEffect } from "react";
-import { Badge } from "../ui/badge";
-import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { AssistantTooltip } from "../assistant-tooltip";
+import { cn } from "@/lib/utils";
 
 export function MusicReferenceCard({ entry }: { entry: MusicReferenceEntry }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isViewed, setIsViewed] = useState(false);
   const Icon = entry.icon;
 
   const handleOpen = () => {
     setIsOpen(true);
-    setIsViewed(true);
-    // Lightweight local state for the session
-    const viewed = JSON.parse(sessionStorage.getItem('music-refs-viewed') || '[]');
-    if (!viewed.includes(entry.id)) {
-      sessionStorage.setItem('music-refs-viewed', JSON.stringify([...viewed, entry.id]));
-    }
   };
-
-  useEffect(() => {
-    const viewed = JSON.parse(sessionStorage.getItem('music-refs-viewed') || '[]');
-    if (viewed.includes(entry.id)) setIsViewed(true);
-  }, [entry.id]);
 
   return (
     <>
@@ -36,7 +22,7 @@ export function MusicReferenceCard({ entry }: { entry: MusicReferenceEntry }) {
         <Card 
           className={cn(
             "flex flex-col h-full border-2 transition-all cursor-pointer group relative overflow-hidden",
-            isViewed ? "border-primary/5 bg-background opacity-80" : "border-primary/10 bg-primary/[0.01] hover:border-primary/30 hover:bg-primary/[0.03]"
+            "border-primary/10 bg-primary/[0.01] hover:border-primary/30 hover:bg-primary/[0.03]"
           )}
           onClick={handleOpen}
         >
@@ -44,13 +30,10 @@ export function MusicReferenceCard({ entry }: { entry: MusicReferenceEntry }) {
             <div className="flex justify-between items-start mb-3">
               <div className={cn(
                 "p-2 rounded-lg transition-all",
-                isViewed ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary group-hover:scale-110"
+                "bg-primary/10 text-primary group-hover:scale-110"
               )}>
                 <Icon className="w-5 h-5" />
               </div>
-              {isViewed && (
-                <Badge variant="outline" className="text-[8px] font-black uppercase h-4 px-1.5 opacity-40">Viewed</Badge>
-              )}
             </div>
             <CardTitle className="text-sm font-bold leading-tight group-hover:text-primary transition-colors">
               {entry.title}
