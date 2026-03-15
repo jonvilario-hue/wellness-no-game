@@ -82,8 +82,9 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     });
 
     if (activeLoop.active) {
+      const stepBeforeAdvance = activeLoop.currentStep;
       advanceLoop(accuracy, speedMetric);
-      if (activeLoop.currentStep >= 2) {
+      if (stepBeforeAdvance >= 2) {
         setGameState('summary');
       } else {
         setGameState('prep');
