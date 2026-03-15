@@ -140,7 +140,15 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
     onClose();
   };
 
-  const subtabDisplay = subtab.toLowerCase() === 'play' ? 'Instrumentals' : subtab;
+  const subtabDisplay = useMemo(() => {
+    const lookup: Record<string, string> = {
+      play: 'Instrumentals',
+      sing: 'Vocals',
+      listen: 'Listen',
+      create: 'Create'
+    };
+    return lookup[subtab.toLowerCase()] || subtab;
+  }, [subtab]);
 
   return (
     <div 
@@ -155,7 +163,7 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60 mb-4">
             <span>Music</span>
             <ChevronRight className="w-2 h-2" />
-            <span className="capitalize">{subtabDisplay}</span>
+            <span>{subtabDisplay}</span>
             <ChevronRight className="w-2 h-2" />
             <span>{drill.name}</span>
           </div>

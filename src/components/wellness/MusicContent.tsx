@@ -106,7 +106,7 @@ export default function MusicContent() {
               <Headphones className="w-4 h-4" /> Listen
             </TabsTrigger>
             <TabsTrigger value="sing" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Mic2 className="w-4 h-4" /> Sing
+              <Mic2 className="w-4 h-4" /> Vocals
             </TabsTrigger>
             <TabsTrigger value="play" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
               <Guitar className="w-4 h-4" /> Instrumentals
