@@ -161,7 +161,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
         <main className="flex-1 overflow-y-auto p-8 bg-muted/5 flex items-center justify-center">
           <AnimatePresence mode="wait">
             {gameState === 'prep' && (
-              <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full">
+              <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="max-w-md w-full">
                 <Card className="border-primary/10 shadow-xl">
                   <CardHeader className="text-center pb-6 bg-primary/5">
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary">
@@ -206,7 +206,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Response</Heading>
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Response</Label>
                   {currentDrill.lane === 'Write' || currentDrill.lane === 'Build' ? (
                     <Textarea 
                       placeholder="Type code here..." 
