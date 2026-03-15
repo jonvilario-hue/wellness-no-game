@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
@@ -47,7 +46,9 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage && d.difficulty <= difficulty),
   [protocolId, activeLanguage, difficulty]);
 
-  const currentDrill = filteredDrills[currentIndex % filteredDrills.length];
+  const currentDrill = useMemo(() => 
+    filteredDrills.length > 0 ? filteredDrills[currentIndex % filteredDrills.length] : null,
+  [filteredDrills, currentIndex]);
 
   const handleStart = () => {
     setGameState('active');
@@ -57,6 +58,8 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   };
 
   const handleCompleteRound = (accuracy: number, speedMetric: number) => {
+    if (!currentDrill) return;
+    
     const lane = currentDrill.lane;
     const res = {
       accuracy,
@@ -103,6 +106,30 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     onClose();
   };
 
+  if (!currentDrill && gameState !== 'summary') {
+    return (
+      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <Card className="max-w-md w-full border-primary/10 shadow-2xl">
+          <CardHeader className="text-center">
+            <div className="p-3 bg-destructive/10 rounded-full w-fit mx-auto mb-2 text-destructive">
+              <XCircle className="w-8 h-8" />
+            </div>
+            <CardTitle className="text-xl">Content Unavailable</CardTitle>
+            <CardDescription>
+              We currently don't have any <b>{protocolId}</b> drills for <b>{activeLanguage}</b> at Level {difficulty}.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center text-sm text-muted-foreground">
+            Try switching to <b>JavaScript</b> or <b>Python</b> for full curriculum support, or select a lower difficulty.
+          </CardContent>
+          <CardFooter>
+            <Button onClick={onClose} className="w-full font-bold">Return to Lab</Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
       <div className="w-full max-w-4xl h-full max-h-[85vh] bg-background border rounded-[2rem] shadow-2xl flex flex-col overflow-hidden">
@@ -130,19 +157,19 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                 <Card className="border-primary/10 shadow-xl">
                   <CardHeader className="text-center pb-6 bg-primary/5">
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary">
-                      {currentDrill.lane === 'Write' ? <PenTool className="w-8 h-8" /> : 
-                       currentDrill.lane === 'Read' ? <Eye className="w-8 h-8" /> : 
+                      {currentDrill?.lane === 'Write' ? <PenTool className="w-8 h-8" /> : 
+                       currentDrill?.lane === 'Read' ? <Eye className="w-8 h-8" /> : 
                        <LayoutGrid className="w-8 h-8" />}
                     </div>
                     <CardTitle className="text-xl font-black uppercase">
-                      {activeLoop.active ? `Next Phase: ${currentDrill.lane}` : 'Initialize Drill'}
+                      {activeLoop.active ? `Next Phase: ${currentDrill?.lane}` : 'Initialize Drill'}
                     </CardTitle>
-                    <CardDescription>{currentDrill.lane} Rep — Level {difficulty}</CardDescription>
+                    <CardDescription>{currentDrill?.lane} Rep — Level {difficulty}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
                     <div className="p-4 bg-muted/30 rounded-xl space-y-2">
                       <p className="text-[10px] font-bold uppercase text-primary">Objective</p>
-                      <p className="text-sm font-medium leading-relaxed">{currentDrill.description || 'Focus on precise execution and speed.'}</p>
+                      <p className="text-sm font-medium leading-relaxed">{currentDrill?.description || 'Focus on precise execution and speed.'}</p>
                     </div>
                     {!activeLoop.active && (
                       <div className="space-y-3">
@@ -257,7 +284,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                         <Label className="text-[10px] font-bold uppercase">Session Focus</Label>
                         <span className="text-lg font-black text-primary">{focusRating}</span>
                       </div>
-                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
+                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusLevel(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">
