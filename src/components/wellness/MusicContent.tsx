@@ -116,7 +116,13 @@ export default function MusicContent() {
             <h3 className="text-sm font-bold uppercase tracking-tight">{selectedInstrument} Configuration</h3>
           </div>
         </div>
-        <InstrumentSelector />
+        <div className="flex items-center gap-4">
+          <AssistantTooltip text="Selecting your instrument and connection method ensures the lab uses the correct mathematical sensitivity for pitch and rhythm detection. This configuration is stored per-instrument.">
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+              <InstrumentSelector />
+            </div>
+          </AssistantTooltip>
+        </div>
       </div>
 
       <Tabs value={activeSubTab} onValueChange={handleSubTabChange} className="w-full">
@@ -127,17 +133,17 @@ export default function MusicContent() {
                 <Headphones className="w-4 h-4" /> Listen
               </TabsTrigger>
             </AssistantTooltip>
-            <AssistantTooltip text="The vocal laboratory. Master pitch matching and melodic recall. Calibration here adjusts the math to handle vocal 'formants' and breathing patterns.">
+            <AssistantTooltip text="The vocal laboratory. Master pitch matching and melodic recall. Voice detection is calibrated separately from physical instruments.">
               <TabsTrigger value="sing" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
                 <Mic2 className="w-4 h-4" /> Vocals
               </TabsTrigger>
             </AssistantTooltip>
-            <AssistantTooltip text="The mechanical hub. Bridge theory and mechanics by practicing specific scales and construction drills on your physical instrument.">
+            <AssistantTooltip text="The mechanical hub. Bridge theory and mechanics by practicing specific scales and construction drills on your physical instrument. Requires one-time Quick Tune per instrument.">
               <TabsTrigger value="play" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
                 <Guitar className="w-4 h-4" /> Instrumentals
               </TabsTrigger>
             </AssistantTooltip>
-            <AssistantTooltip text="The spontaneous hub. Improvise melodies and flow over beats with no 'correct' answers—pure creative generation.">
+            <AssistantTooltip text="The spontaneous hub. Improvise melodies and flow over beats with no 'correct' answers—pure creative generation. No calibration required.">
               <TabsTrigger value="freeflow" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
                 <Sparkles className="w-4 h-4" /> Freeflow
               </TabsTrigger>

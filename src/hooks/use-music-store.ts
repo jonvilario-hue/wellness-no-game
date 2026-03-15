@@ -42,7 +42,10 @@ export const useMusicStore = create<MusicState>()(
       streak: { current: 0, longest: 0, lastDate: null },
       _hasHydrated: false,
 
-      setInstrument: (id) => set({ selectedInstrument: id }),
+      setInstrument: (id) => {
+        set({ selectedInstrument: id });
+        // The UI should prompt calibration next time they hit a live module
+      },
       
       setCalibrated: (id) => set(state => ({
         calibratedInstruments: [...new Set([...state.calibratedInstruments, id])]
