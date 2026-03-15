@@ -36,11 +36,8 @@ const categoryExercises = {
     ...drillsData.map(d => ({ ...d, type: 'drill' as const })),
   ],
   sing: [
-    { id: 'pitch-match', name: 'Pitch Match', desc: 'Match the note you hear by ear using your voice.', difficulty: 'Beginner', icon: Music, type: 'game' as const, path: '/music/sing/pitch-match' },
-    { id: 'interval-sing', name: 'Interval Sing-Back', desc: 'Sing specific intervals from a root note.', difficulty: 'Intermediate', icon: Music, type: 'game' as const, path: '/music/sing/interval-sing' },
-    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases. Start by recalling isolated pitches, then progress to remembering real melodies with rhythm and shape.', difficulty: 'Beginner/Int/Adv', icon: Waves, type: 'game' as const, path: '/music/sing/melody-echo' },
+    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases.', difficulty: 'Beginner/Int/Adv', icon: Waves, type: 'game' as const, path: '/music/sing/melody-echo' },
     { id: 'sight-singing', name: 'Sight-Singing', desc: 'Perform phrases from notation without hearing it.', difficulty: 'Advanced', icon: BookOpen, type: 'game' as const, path: '/music/sing/sight-singing' },
-    { id: 'flow-trainer', name: 'Flow Pattern Lab', desc: 'Match cadences, triplet flows, and syncopation patterns precisely against the grid.', difficulty: 'Intermediate', icon: Zap, type: 'game' as const, path: '/music/freeflow/flow-trainer' },
   ],
   play: [
     { id: 'transcription', name: 'Transcription Challenge', desc: 'Hear a phrase, play it back on your instrument.', difficulty: 'Intermediate', icon: BookOpen },
@@ -51,6 +48,7 @@ const categoryExercises = {
     { id: 'lyrical-spontaneity', name: 'Lyrical Spontaneity', desc: 'Respond to random word prompts and stay in motion. No right answers.', difficulty: 'Intermediate', icon: MessageSquare, type: 'game' as const, path: '/music/freeflow/lyrical-spontaneity' },
     { id: 'vocal-improv', name: 'Melodic Freeflow', desc: 'Improvise melodies or hum freely over chord progressions. Ride the harmony.', difficulty: 'Intermediate', icon: Mic, type: 'game' as const, path: '/music/freeflow/vocal-improv' },
     { id: 'freestyle', name: 'The Cypher', desc: 'The open sandbox. Grab a beat and flow. No scoring, just creative energy.', difficulty: 'All Levels', icon: Sparkles, type: 'game' as const, path: '/music/freeflow/freestyle' },
+    { id: 'flow-trainer', name: 'Flow Pattern Lab', desc: 'Match cadences, triplet flows, and syncopation patterns over a beat.', difficulty: 'Intermediate', icon: Zap, type: 'game' as const, path: '/music/freeflow/flow-trainer' },
   ]
 };
 
@@ -108,22 +106,22 @@ export default function MusicContent() {
       <Tabs value={activeSubTab} onValueChange={handleSubTabChange} className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
           <TabsList className="flex w-full max-w-2xl h-auto bg-muted/50 p-1 min-w-max gap-1">
-            <AssistantTooltip text="Analyze and decode musical structures by ear. Develop your relative pitch and rhythmic detection.">
+            <AssistantTooltip text="The analytical hub. Focus on auditory decoding—identifying intervals, chords, and rhythmic patterns by ear using math-based DSP detection.">
               <TabsTrigger value="listen" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
                 <Headphones className="w-4 h-4" /> Listen
               </TabsTrigger>
             </AssistantTooltip>
-            <AssistantTooltip text="Train your vocal instrument. Master pitch matching, melodic recall, and healthy vocal physiology.">
+            <AssistantTooltip text="The vocal laboratory. Master pitch matching and melodic recall. Calibration here adjusts the math to handle vocal 'formants' and breathing patterns.">
               <TabsTrigger value="sing" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
                 <Mic2 className="w-4 h-4" /> Vocals
               </TabsTrigger>
             </AssistantTooltip>
-            <AssistantTooltip text="Bridge theory and mechanics. Practice specific scales, constructions, and study tactical practice frameworks.">
+            <AssistantTooltip text="The mechanical hub. Bridge theory and mechanics by practicing specific scales and construction drills on your physical instrument.">
               <TabsTrigger value="play" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
                 <Guitar className="w-4 h-4" /> Instrumentals
               </TabsTrigger>
             </AssistantTooltip>
-            <AssistantTooltip text="Spontaneous creative application. Improvise melodies, flow over beats, and deconstruct song structures.">
+            <AssistantTooltip text="The spontaneous hub. Improvise melodies and flow over beats with no 'correct' answers—pure creative generation.">
               <TabsTrigger value="freeflow" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
                 <Sparkles className="w-4 h-4" /> Freeflow
               </TabsTrigger>
@@ -205,7 +203,7 @@ export default function MusicContent() {
           <div className="space-y-6">
             <div className="flex items-center gap-3 px-1">
               <div className="h-8 w-1 bg-primary rounded-full" />
-              <AssistantTooltip text="Instructional guides for vocal health, resonance, and breath support. Use these to build a sustainable foundation.">
+              <AssistantTooltip text="Guides for vocal health and resonance. These protocols focus on the physiological side of the instrument.">
                 <h3 className="text-xl font-black uppercase tracking-tight">Vocal Techniques</h3>
               </AssistantTooltip>
             </div>
@@ -218,7 +216,7 @@ export default function MusicContent() {
         </TabsContent>
 
         <TabsContent value="play" className="space-y-12 animate-in fade-in">
-          <AssistantTooltip text="What does selecting tabs here do? Calibrating your input method and instrument ensures the laboratory's analysis engine is tuned to your specific hardware (e.g., Violin vs Piano) for maximum pitch and onset accuracy.">
+          <AssistantTooltip text="This calibration uses deterministic Digital Signal Processing (DSP)—not AI—to ensure low-latency feedback. Distinguishing between instruments allows the math to adjust for different overtones and 'attacks' (how a note starts), ensuring that a Violin's bow noise or a Piano's sharp strike doesn't confuse the detection engine.">
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-muted/20 rounded-2xl border border-primary/5">
               <div className="space-y-1 text-center md:text-left">
                 <h3 className="font-bold">Input Calibration</h3>
@@ -274,7 +272,7 @@ export default function MusicContent() {
           <div className="space-y-6">
             <div className="flex items-center gap-3 px-1">
               <div className="h-8 w-1 bg-primary rounded-full" />
-              <AssistantTooltip text="Tactical frameworks for effective learning. These guides teach you HOW to practice, not just WHAT to practice.">
+              <AssistantTooltip text="Tactical frameworks for how to learn effectively. These aren't drills, but recipes for high-efficiency practice sessions.">
                 <h3 className="text-xl font-black uppercase tracking-tight">Practice Methods</h3>
               </AssistantTooltip>
             </div>

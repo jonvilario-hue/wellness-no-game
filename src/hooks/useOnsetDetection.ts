@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 /**
  * Hook to detect percussive onsets (peaks) in an audio stream.
  * Uses a sliding window RMS threshold method.
+ * Distinguishing between instrument types allows for different "Attack" sensitivity.
  */
 export function useOnsetDetection(stream: MediaStream | null, sensitivity = 2.5) {
   const [onsets, setOnsets] = useState<{ timestamp: number }[]>([]);
@@ -34,6 +35,14 @@ export function useOnsetDetection(stream: MediaStream | null, sensitivity = 2.5)
 
     const dataArray = new Float32Array(analyser.fftSize);
 
+    // Calibration: Different instruments have different "Attack" profiles.
+    const selectedInstrument = typeof window !== 'undefined' ? localStorage.getItem('music-active-instrument') : 'piano';
+    
+    // Higher sensitivity for sharp attacks (Piano), lower for gradual attacks (Voice/Flute)
+    const adjustedSensitivity = selectedInstrument === 'piano' || selectedInstrument === 'drums' 
+      ? sensitivity * 1.2 
+      : sensitivity;
+
     const update = () => {
       if (!analyserRef.current) return;
       analyserRef.current.getFloatTimeDomainData(dataArray);
@@ -51,7 +60,8 @@ export function useOnsetDetection(stream: MediaStream | null, sensitivity = 2.5)
 
       const now = Date.now();
       // Onset detection: spike > average * sensitivity AND above noise floor
-      if (rms > avgRms * sensitivity && rms > 0.03 && (now - lastDetectionRef.current > 80)) {
+      // We use a refractory period of 80ms to prevent double-triggering on a single note
+      if (rms > avgRms * adjustedSensitivity && rms > 0.03 && (now - lastDetectionRef.current > 80)) {
         const onset = { timestamp: now };
         setOnsets(prev => [...prev, onset].slice(-50)); // Keep last 50 for performance
         setLastOnsetTime(now);

@@ -5,6 +5,11 @@ import { useState, useEffect, useRef } from 'react';
 import { PitchDetector } from 'pitchy';
 import { frequencyToNote } from '@/lib/audio/pitchUtils';
 
+/**
+ * Hook to analyze real-time pitch from a microphone stream.
+ * Uses mathematical Autocorrelation (YIN-like) via the pitchy library.
+ * No AI models are used to ensure sub-millisecond processing.
+ */
 export function useRealtimePitch(stream: MediaStream | null, clarityThreshold = 0.8) {
   const [pitchData, setPitchData] = useState({
     currentFrequency: 0,
@@ -29,19 +34,28 @@ export function useRealtimePitch(stream: MediaStream | null, clarityThreshold = 
     const ctx = new AudioContextClass();
     audioContextRef.current = ctx;
 
-    // Browser policy requires resume on many browsers
     if (ctx.state === 'suspended') {
       ctx.resume();
     }
 
     const source = ctx.createMediaStreamSource(stream);
     const analyser = ctx.createAnalyser();
-    analyser.fftSize = 2048;
+    // FFT size affects resolution vs latency. 2048 is a good middle ground for real-time.
+    analyser.fftSize = 2048; 
     source.connect(analyser);
     analyserRef.current = analyser;
 
     const detector = PitchDetector.forFloat32Array(analyser.fftSize);
     const input = new Float32Array(detector.inputLength);
+
+    // Get selected instrument from localStorage to adjust clarity threshold
+    const selectedInstrument = typeof window !== 'undefined' ? localStorage.getItem('music-active-instrument') : 'piano';
+    
+    // Calibration adjustment: Instruments like Violin have more "noise" (harmonics) 
+    // and need a slightly lower clarity threshold than clean sine-like instruments.
+    const adjustedThreshold = selectedInstrument === 'violin' || selectedInstrument === 'voice' 
+      ? Math.max(0.65, clarityThreshold - 0.1) 
+      : clarityThreshold;
 
     const update = () => {
       if (!analyserRef.current || !audioContextRef.current) return;
@@ -49,7 +63,8 @@ export function useRealtimePitch(stream: MediaStream | null, clarityThreshold = 
       analyserRef.current.getFloatTimeDomainData(input);
       const [freq, clarity] = detector.findPitch(input, audioContextRef.current.sampleRate);
 
-      if (clarity > clarityThreshold && freq > 50 && freq < 2000) {
+      // Filtering out background noise and frequencies outside human musical range
+      if (clarity > adjustedThreshold && freq > 50 && freq < 2000) {
         const noteInfo = frequencyToNote(freq);
         if (noteInfo) {
           setPitchData({
