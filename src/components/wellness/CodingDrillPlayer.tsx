@@ -14,7 +14,7 @@ import {
   X, Play, Zap, Clock, Brain, Check,
   ChevronRight, ArrowRight, Terminal, 
   Target, Sparkles, CheckCircle2, XCircle,
-  SkipForward, LayoutGrid, PenTool, Eye, Database
+  SkipForward, LayoutGrid, PenTool, Eye, Database, Info, Lightbulb
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
@@ -34,7 +34,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
 
-  const [gameState, setGameState] = useState<'prep' | 'active' | 'summary'>('prep');
+  const [gameState, setGameState] = useState<'prep' | 'active' | 'feedback' | 'summary'>('prep');
   const [difficulty, setDifficulty] = useState(languageProgress[activeLanguage]?.level || 1);
   const [focusRating, setFocusRating] = useState(3);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -42,8 +42,8 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const [startTime, setStartTime] = useState(0);
   const [drillStartTime, setDrillStartTime] = useState(0);
   const [results, setResults] = useState<any[]>([]);
+  const [roundAccuracy, setRoundAccuracy] = useState(0);
 
-  // UNLOCKED: We only filter by type and language. Level is tracked but doesn't block content access.
   const filteredDrills = useMemo(() => 
     codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage),
   [protocolId, activeLanguage]);
@@ -59,25 +59,37 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     setUserInput('');
   };
 
-  const handleCompleteRound = (accuracy: number, speedMetric: number) => {
+  const handleVerifyAnswer = () => {
     if (!currentDrill) return;
     
-    const lane = currentDrill.lane;
-    const res = {
-      accuracy,
-      speedMetric,
-      time: (Date.now() - drillStartTime) / 1000
-    };
+    let accuracy = 0;
+    if (currentDrill.lane === 'Read' && currentDrill.type === 'Output Prediction') {
+      accuracy = userInput.trim() === currentDrill.expectedOutput?.trim() ? 100 : 0;
+    } else if (currentDrill.lane === 'Read' && currentDrill.type === 'Bug Hunt') {
+      accuracy = parseInt(userInput) === currentDrill.bugs?.[0].line ? 100 : 0;
+    } else {
+      // Basic fuzzy match for write/build
+      accuracy = userInput.trim() === currentDrill.content.trim() ? 100 : 50;
+    }
+
+    setRoundAccuracy(accuracy);
+    setGameState('feedback');
+  };
+
+  const handleCompleteRound = () => {
+    if (!currentDrill) return;
     
-    // Log individual drill
+    const accuracy = roundAccuracy;
+    const speedMetric = Math.round((Date.now() - drillStartTime) / 1000);
+    
     addLog({
       type: protocolId,
-      lane,
+      lane: currentDrill.lane,
       language: activeLanguage,
       difficulty: currentDrill.difficulty,
-      durationSeconds: Math.round(res.time),
+      durationSeconds: speedMetric,
       accuracy: Math.round(accuracy),
-      speedMetric: Math.round(speedMetric),
+      speedMetric: speedMetric,
       userDifficultyRating: difficulty,
       userFocusRating: focusRating
     });
@@ -92,13 +104,13 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
         setUserInput('');
       }
     } else {
-      setResults(prev => [...prev, res]);
+      setResults(prev => [...prev, { accuracy, speed: speedMetric }]);
       if (results.length >= 2) {
         setGameState('summary');
       } else {
         setCurrentIndex(prev => prev + 1);
         setUserInput('');
-        setDrillStartTime(Date.now());
+        setGameState('prep');
       }
     }
   };
@@ -119,12 +131,9 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
             </div>
             <CardTitle className="text-xl">Content Unavailable</CardTitle>
             <CardDescription>
-              We currently don't have any <b>{protocolId}</b> drills for <b>{activeLanguage}</b> in the library.
+              No drills found for <b>{protocolId}</b> in <b>{activeLanguage}</b>.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center text-sm text-muted-foreground">
-            Please try switching to another language like <b>JavaScript</b> or <b>Python</b> while we expand our <b>{activeLanguage}</b> curriculum.
-          </CardContent>
           <CardFooter>
             <Button onClick={onClose} className="w-full font-bold">Return to Lab</Button>
           </CardFooter>
@@ -141,14 +150,10 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
             <Button variant="ghost" size="icon" onClick={activeLoop.active ? cancelLoop : onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
             <div>
               <h1 className="text-lg font-bold uppercase tracking-tight">{protocolId}</h1>
-              <p className="text-[10px] text-muted-foreground font-bold uppercase">{activeLanguage} • {activeLoop.active ? `Loop Phase ${activeLoop.currentStep + 1}/3` : `Round ${results.length + 1}/3`}</p>
+              <p className="text-[10px] text-muted-foreground font-bold uppercase">{activeLanguage} • Phase {activeLoop.active ? activeLoop.currentStep + 1 : results.length + 1}</p>
             </div>
           </div>
           <div className="w-48 space-y-1">
-            <div className="flex justify-between text-[8px] font-black uppercase opacity-60">
-              <span>{activeLoop.active ? 'Loop Progress' : 'Session Progress'}</span>
-              <span>{activeLoop.active ? `${activeLoop.currentStep + 1}/3` : `${results.length + 1}/3`}</span>
-            </div>
             <Progress value={activeLoop.active ? ((activeLoop.currentStep + 1) / 3) * 100 : ((results.length + 1) / 3) * 100} className="h-1" />
           </div>
         </header>
@@ -164,40 +169,16 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                        currentDrill?.lane === 'Read' ? <Eye className="w-8 h-8" /> : 
                        <LayoutGrid className="w-8 h-8" />}
                     </div>
-                    <CardTitle className="text-xl font-black uppercase">
-                      {activeLoop.active ? `Next Phase: ${currentDrill?.lane}` : 'Initialize Drill'}
-                    </CardTitle>
-                    <CardDescription>{currentDrill?.lane} Rep — Unlocked</CardDescription>
+                    <CardTitle className="text-xl font-black uppercase">{currentDrill?.lane} Rep</CardTitle>
+                    <CardDescription>{currentDrill?.title}</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-6 space-y-6">
+                  <CardContent className="p-6 space-y-4">
                     <div className="p-4 bg-muted/30 rounded-xl space-y-2">
                       <p className="text-[10px] font-bold uppercase text-primary">Objective</p>
-                      <p className="text-sm font-medium leading-relaxed">{currentDrill?.description || 'Focus on precise execution and speed.'}</p>
+                      <p className="text-sm font-medium leading-relaxed">{currentDrill?.description}</p>
                     </div>
-                    {currentDrill?.concurrencyRelevant && (
-                      <Badge variant="outline" className="w-full justify-center border-amber-500/20 text-amber-600 bg-amber-500/5 py-1 gap-2">
-                        <Zap className="w-3 h-3" /> Concurrent Logic Focus
-                      </Badge>
-                    )}
-                    {!activeLoop.active && (
-                      <div className="space-y-3">
-                        <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Focus Tier (Informational)</Label>
-                        <div className="grid grid-cols-4 gap-2">
-                          {[1, 2, 3, 4].map(l => (
-                            <Button 
-                              key={l} 
-                              variant={difficulty === l ? 'default' : 'outline'}
-                              className="h-10 font-bold"
-                              onClick={() => setDifficulty(l)}
-                            >
-                              {l}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </CardContent>
-                  <CardFooter className="bg-muted/10 p-6">
+                  <CardFooter>
                     <Button className="w-full h-12 font-black uppercase shadow-lg gap-2" onClick={handleStart}>
                       <Play className="w-4 h-4 fill-current" /> Begin rep
                     </Button>
@@ -207,8 +188,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
             )}
 
             {gameState === 'active' && currentDrill && (
-              <motion.div key={currentIndex} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="w-full max-w-2xl space-y-6">
-                
+              <motion.div key="active" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="w-full max-w-2xl space-y-6">
                 {currentDrill.language === 'SQL' && currentDrill.tableInput && (
                   <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl space-y-2">
                     <p className="text-[10px] font-black uppercase text-blue-600 flex items-center gap-2">
@@ -218,50 +198,74 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                   </div>
                 )}
 
-                <div className="bg-card border-2 border-primary/10 rounded-2xl p-6 font-mono text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap">
+                <div className="bg-card border-2 border-primary/10 rounded-2xl p-6 font-mono text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap relative group">
                   {currentDrill.content}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-40 transition-opacity">
+                    <Terminal className="w-4 h-4" />
+                  </div>
                 </div>
 
                 <div className="space-y-4">
-                  {currentDrill.lane === 'Write' && (
+                  <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Response</Heading>
+                  {currentDrill.lane === 'Write' || currentDrill.lane === 'Build' ? (
                     <Textarea 
-                      placeholder="Type the code exactly..." 
-                      className="font-mono text-sm h-32 resize-none"
+                      placeholder="Type code here..." 
+                      className="font-mono text-sm h-48 resize-none"
                       value={userInput}
-                      onChange={e => {
-                        setUserInput(e.target.value);
-                        if (e.target.value.trim() === currentDrill.content.trim()) {
-                          handleCompleteRound(100, 450);
-                        }
-                      }}
+                      onChange={e => setUserInput(e.target.value)}
+                      autoFocus
+                    />
+                  ) : (
+                    <Input 
+                      placeholder={currentDrill.type === 'Bug Hunt' ? "Line number of bug..." : "Expected output..."} 
+                      className="font-mono h-12"
+                      value={userInput}
+                      onChange={e => setUserInput(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleVerifyAnswer()}
                       autoFocus
                     />
                   )}
-                  {currentDrill.lane === 'Read' && (
-                    <div className="flex gap-2">
-                      <Input 
-                        placeholder={currentDrill.type === 'Bug Hunt' ? "Line number of bug..." : "Expected output..."} 
-                        className="font-mono h-12"
-                        value={userInput}
-                        onChange={e => setUserInput(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && handleCompleteRound(100, 5)}
-                      />
-                      <Button size="lg" onClick={() => handleCompleteRound(100, 5)}>Verify</Button>
-                    </div>
-                  )}
-                  {currentDrill.lane === 'Build' && (
-                    <Textarea 
-                      placeholder="Implement the solution..." 
-                      className="font-mono text-sm h-48"
-                      value={userInput}
-                      onChange={e => setUserInput(e.target.value)}
-                    />
-                  )}
+                  <Button onClick={handleVerifyAnswer} className="w-full h-12 font-bold uppercase">Submit Rep</Button>
                 </div>
-                
-                {currentDrill.lane === 'Build' && (
-                  <Button onClick={() => handleCompleteRound(100, 120)} className="w-full h-12">Submit Build</Button>
-                )}
+              </motion.div>
+            )}
+
+            {gameState === 'feedback' && currentDrill && (
+              <motion.div key="feedback" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-2xl w-full">
+                <Card className={cn("border-2 shadow-xl overflow-hidden", roundAccuracy === 100 ? "border-emerald-500/30" : "border-amber-500/30")}>
+                  <CardHeader className={cn("text-center py-6", roundAccuracy === 100 ? "bg-emerald-500/5" : "bg-amber-500/5")}>
+                    <div className="flex justify-center mb-2">
+                      {roundAccuracy === 100 ? <CheckCircle2 className="w-12 h-12 text-emerald-500" /> : <XCircle className="w-12 h-12 text-amber-500" />}
+                    </div>
+                    <CardTitle className="text-xl font-black uppercase">{roundAccuracy === 100 ? 'Rep Successful' : 'Learning Opportunity'}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-8">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-primary">
+                        <Lightbulb className="w-5 h-5" />
+                        <h4 className="text-sm font-bold uppercase tracking-tight">The Pattern to Notice</h4>
+                      </div>
+                      <p className="text-sm font-medium leading-relaxed p-4 bg-muted/30 rounded-xl border border-primary/5 italic">
+                        "{currentDrill.patternToNotice}"
+                      </p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Info className="w-5 h-5" />
+                        <h4 className="text-sm font-bold uppercase tracking-tight">Technical Synopsis</h4>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {currentDrill.explanation}
+                      </p>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="bg-muted/10 p-6">
+                    <Button onClick={handleCompleteRound} className="w-full h-12 font-black uppercase">
+                      Continue Loop <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
               </motion.div>
             )}
 
@@ -272,31 +276,20 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary">
                       <Sparkles className="w-8 h-8" />
                     </div>
-                    <CardTitle className="text-xl font-black uppercase">{activeLoop.active ? 'Daily Loop Complete' : 'Drill Synopsis'}</CardTitle>
+                    <CardTitle className="text-xl font-black uppercase">Session Sync</CardTitle>
                     <CardDescription>Fluency metrics calculated and ready for sync.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
-                    {activeLoop.active ? (
-                      <div className="space-y-3">
-                        {activeLoop.results.map((res, i) => (
-                          <div key={i} className="flex justify-between items-center p-3 bg-muted/30 rounded-lg">
-                            <span className="text-xs font-bold uppercase">{res.lane}</span>
-                            <Badge variant="outline" className="text-primary border-primary/20">{res.accuracy}% ACC</Badge>
-                          </div>
-                        ))}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-4 bg-muted/30 rounded-xl text-center">
+                        <p className="text-[8px] font-black uppercase text-muted-foreground">Avg Accuracy</p>
+                        <p className="text-2xl font-black">{Math.round(results.reduce((s,r) => s+r.accuracy, 0) / results.length || 100)}%</p>
                       </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="p-4 bg-muted/30 rounded-xl text-center">
-                          <p className="text-[8px] font-black uppercase text-muted-foreground">Avg Accuracy</p>
-                          <p className="text-2xl font-black">92%</p>
-                        </div>
-                        <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl text-center">
-                          <p className="text-[8px] font-black uppercase text-primary">Velocity Index</p>
-                          <p className="text-2xl font-black text-primary">88</p>
-                        </div>
+                      <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl text-center">
+                        <p className="text-[8px] font-black uppercase text-primary">Volume (Sec)</p>
+                        <p className="text-2xl font-black text-primary">{Math.round((Date.now() - startTime)/1000)}s</p>
                       </div>
-                    )}
+                    </div>
                     <div className="space-y-4 pt-4 border-t">
                       <div className="flex justify-between items-center">
                         <Label className="text-[9px] font-bold uppercase">Session Focus</Label>

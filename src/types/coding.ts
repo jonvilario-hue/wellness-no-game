@@ -2,7 +2,7 @@
 export type CodingLanguage = 'Python' | 'JavaScript' | 'TypeScript' | 'Java' | 'C++' | 'Rust' | 'SQL' | 'Bash' | 'Swift' | 'Go';
 export type CodingDrillType = 'Syntax Sprints' | 'Output Prediction' | 'Bug Hunt' | 'Code Reconstruction' | 'Timed Implementation';
 export type CodingLane = 'Write' | 'Read' | 'Build';
-export type BugCategory = 'Syntax' | 'Logic' | 'Off-by-One' | 'Scope' | 'Type' | 'Missing Return' | 'Concurrency' | 'Memory' | 'Ownership' | 'Database';
+export type BugCategory = 'Syntax' | 'Logic' | 'Off-by-One' | 'Scope' | 'Type' | 'Missing Return' | 'Concurrency' | 'Memory' | 'Ownership' | 'Database' | 'Borrow Checker';
 export type CodingTrack = 'Foundation' | 'Specialist';
 
 export interface CodingDrillLog {
@@ -46,6 +46,8 @@ export interface CodingDrill {
   difficulty: number;
   title: string;
   content: string; // The code snippet or problem spec
+  explanation: string; // The "Why" behind the correct answer
+  patternToNotice: string; // The repeatable idiom or pitfall to recognize
   expectedOutput?: string;
   tableInput?: string; // Specific for SQL prediction
   bugs?: Array<{ line: number; type: BugCategory }>;
