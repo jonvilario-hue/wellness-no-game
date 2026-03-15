@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -139,6 +140,8 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
     onClose();
   };
 
+  const subtabDisplay = subtab.toLowerCase() === 'play' ? 'Instrumentals' : subtab;
+
   return (
     <div 
       className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 cursor-pointer"
@@ -152,7 +155,7 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60 mb-4">
             <span>Music</span>
             <ChevronRight className="w-2 h-2" />
-            <span className="capitalize">{subtab}</span>
+            <span className="capitalize">{subtabDisplay}</span>
             <ChevronRight className="w-2 h-2" />
             <span>{drill.name}</span>
           </div>

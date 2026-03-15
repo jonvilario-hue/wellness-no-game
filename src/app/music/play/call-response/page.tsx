@@ -63,8 +63,8 @@ export default function CallResponsePage() {
       score={score}
       onStart={handleStart}
       onPauseToggle={() => {}}
-      backHref="/music/play"
-      breadcrumb={["Music", "Play", "Call & Response"]}
+      backHref="/skills?tab=music&sub=play"
+      breadcrumb={["Music", "Instrumentals", "Call & Response"]}
     >
       <div className="w-full flex flex-col items-center gap-12">
         <div className="text-center space-y-4">

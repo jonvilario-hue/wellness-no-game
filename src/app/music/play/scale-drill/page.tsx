@@ -66,8 +66,8 @@ export default function ScaleDrillPage() {
       score={score}
       onStart={handleStart}
       onPauseToggle={() => {}}
-      backHref="/music/play"
-      breadcrumb={["Music", "Play", "Scale Drill"]}
+      backHref="/skills?tab=music&sub=play"
+      breadcrumb={["Music", "Instrumentals", "Scale Drill"]}
     >
       <div className="w-full flex flex-col items-center gap-12">
         {state === 'prep' && (

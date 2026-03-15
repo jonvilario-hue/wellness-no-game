@@ -111,8 +111,8 @@ export default function TranscriptionChallengePage() {
       score={score}
       onStart={handleStart}
       onPauseToggle={() => {}}
-      backHref="/music/play"
-      breadcrumb={["Music", "Play", "Transcription"]}
+      backHref="/skills?tab=music&sub=play"
+      breadcrumb={["Music", "Instrumentals", "Transcription"]}
     >
       <div className="w-full flex flex-col items-center space-y-12">
         {gameState === 'listening' && (
