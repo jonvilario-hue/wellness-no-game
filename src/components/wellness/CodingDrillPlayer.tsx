@@ -30,7 +30,8 @@ interface Props {
 }
 
 /**
- * LOGIC-AWARE EVALUATION ENGINE (Stage 1)
+ * LOGIC-AWARE EVALUATION ENGINE
+ * Standardizes inputs and performs structural probing to handle variations in formatting.
  */
 function evaluateSubmission(input: string, drill: CodingDrill): number {
   const clean = (s: string) => s.replace(/\s+/g, ' ').replace(/['"]/g, '"').replace(/;\s*$/g, '').trim().toLowerCase();
@@ -77,9 +78,15 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const [results, setResults] = useState<any[]>([]);
   const [roundAccuracy, setRoundAccuracy] = useState(0);
 
-  const filteredDrills = useMemo(() => 
-    codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage),
-  [protocolId, activeLanguage]);
+  const filteredDrills = useMemo(() => {
+    const list = codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage);
+    // If no specific match for this type/language, fallback to ANY drill for this language 
+    // to ensure no "Unavailable" screens appear.
+    if (list.length === 0) {
+      return codingDrills.filter(d => d.language === activeLanguage);
+    }
+    return list;
+  }, [protocolId, activeLanguage]);
 
   const currentDrill = useMemo(() => 
     filteredDrills.length > 0 ? filteredDrills[currentIndex % filteredDrills.length] : null,
@@ -87,7 +94,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
   const handleStart = () => {
     if (!currentDrill) {
-      toast({ title: "Drill Unavailable", description: `No ${protocolId} drills found for ${activeLanguage}.`, variant: 'destructive' });
+      toast({ title: "Drill Unavailable", description: `We're expanding our ${activeLanguage} library. Try another category!`, variant: 'destructive' });
       onClose();
       return;
     }
@@ -171,7 +178,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
         <main className="flex-1 overflow-y-auto p-8 bg-muted/5 flex items-center justify-center">
           <AnimatePresence mode="wait">
             {gameState === 'prep' && (
-              <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full">
+              <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="max-w-md w-full">
                 <Card className="border-primary/10 shadow-xl">
                   <CardHeader className="text-center pb-6 bg-primary/5">
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary">
@@ -205,7 +212,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Response</Label>
                   {currentDrill.lane === 'Write' || currentDrill.lane === 'Build' ? (
                     <Textarea 
-                      placeholder="Type your implementation..." 
+                      placeholder="Type code here..." 
                       className="font-mono text-sm h-48 resize-none"
                       value={userInput}
                       onChange={e => setUserInput(e.target.value)}
