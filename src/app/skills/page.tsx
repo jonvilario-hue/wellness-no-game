@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma, Music } from 'lucide-react';
+import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma, Music, Code2 } from 'lucide-react';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -16,11 +16,13 @@ import { CommunicationDashboard } from '@/components/wellness/CommunicationDashb
 import { SpeedReadingStats } from '@/components/wellness/SpeedReadingDashboard';
 import { MathDashboard } from '@/components/wellness/MathDashboard';
 import { MusicGlobalHeader } from '@/components/wellness/MusicDashboard';
+import { CodingDashboard } from '@/components/wellness/CodingDashboard';
 import { JourneyPlansSection } from '@/components/wellness/JourneyPlansSection';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CommunicationContent from '@/components/wellness/CommunicationContent';
 import SpeedReadingContent from '@/components/wellness/SpeedReadingContent';
 import MusicContent from '@/components/wellness/MusicContent';
+import CodingContent from '@/components/wellness/CodingContent';
 import { MathComposureLab } from '@/components/wellness/MathComposureLab';
 import { communicationPractices } from '@/data/communication-practices';
 import { readingPassages } from '@/data/speedreading-passages';
@@ -59,30 +61,9 @@ function SkillBuilderPageContent() {
     if (activeTab === 'speedreading') return 'Speed Reading';
     if (activeTab === 'math') return 'Math';
     if (activeTab === 'music') return 'Music';
+    if (activeTab === 'coding') return 'Custom'; // Map to custom for general routine support
     return 'Communication';
   }, [activeTab]);
-
-  const mvdRecommendation = useMemo(() => {
-    if (!lowEnergyMode) return null;
-    
-    if (activeTab === 'communication') {
-      const rec = communicationPractices.find(e => e.tags.includes('quick')) || communicationPractices[0];
-      return { ...rec, type: 'communication' };
-    }
-    if (activeTab === 'speedreading') {
-      const rec = readingPassages.find(p => p.tier === 'Casual') || readingPassages[0];
-      return { ...rec, type: 'speedreading', name: rec.title, description: `A ${rec.tier} drill to maintain velocity.` };
-    }
-    if (activeTab === 'math') {
-      return { 
-        id: 'math-estimation-mvd', 
-        name: 'Number Sense Check-in', 
-        description: 'Maintain your streak with a 2-minute estimation session.', 
-        type: 'math' 
-      };
-    }
-    return null;
-  }, [lowEnergyMode, activeTab]);
 
   return (
     <div className="space-y-8">
@@ -113,6 +94,7 @@ function SkillBuilderPageContent() {
                     {activeTab === 'speedreading' && <SpeedReadingStats />}
                     {activeTab === 'math' && <MathDashboard />}
                     {activeTab === 'music' && <MusicGlobalHeader />}
+                    {activeTab === 'coding' && <CodingDashboard />}
                   </div>
               </CollapsibleContent>
 
@@ -148,12 +130,14 @@ function SkillBuilderPageContent() {
                       </div>
                     </AssistantTooltip>
 
-                    <JourneyPlansSection 
-                      category={currentCategory as any} 
-                      isExpanded={isCurriculaExpanded}
-                      onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
-                      mode="trigger"
-                    />
+                    {activeTab !== 'coding' && (
+                      <JourneyPlansSection 
+                        category={currentCategory as any} 
+                        isExpanded={isCurriculaExpanded}
+                        onToggle={() => setIsCurriculaExpanded(!isCurriculaExpanded)}
+                        mode="trigger"
+                      />
+                    )}
                 </div>
 
                 {isCurriculaExpanded && (
@@ -171,48 +155,24 @@ function SkillBuilderPageContent() {
         
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
-            <TabsList className="flex w-full max-w-2xl bg-muted/50 p-1 gap-1">
-              <TabsTrigger value="communication" className="gap-2 flex-1 px-4 font-bold">
+            <TabsList className="flex w-full max-w-4xl bg-muted/50 p-1 gap-1 min-w-max">
+              <TabsTrigger value="communication" className="gap-2 px-6 font-bold">
                 <MessageSquare className="w-4 h-4" /> Communication
               </TabsTrigger>
-              <TabsTrigger value="speedreading" className="gap-2 flex-1 px-4 font-bold">
+              <TabsTrigger value="speedreading" className="gap-2 px-6 font-bold">
                 <Zap className="w-4 h-4" /> Speed Reading
               </TabsTrigger>
-              <TabsTrigger value="music" className="gap-2 flex-1 px-4 font-bold">
+              <TabsTrigger value="music" className="gap-2 px-6 font-bold">
                 <Music className="w-4 h-4" /> Music
               </TabsTrigger>
-              <TabsTrigger value="math" className="gap-2 flex-1 px-4 font-bold">
+              <TabsTrigger value="math" className="gap-2 px-6 font-bold">
                 <Sigma className="w-4 h-4" /> Arithmetic
+              </TabsTrigger>
+              <TabsTrigger value="coding" className="gap-2 px-6 font-bold">
+                <Code2 className="w-4 h-4" /> Coding
               </TabsTrigger>
             </TabsList>
           </div>
-
-          {lowEnergyMode && mvdRecommendation && (
-            <div className="mb-8 px-1 animate-in fade-in slide-in-from-top-2 duration-500">
-              <Card className="border-amber-500/20 bg-amber-500/5 overflow-hidden shadow-sm">
-                <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="p-3 bg-amber-500/10 rounded-xl shrink-0">
-                      <Lightbulb className="w-5 h-5 text-amber-600" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <Badge className="bg-amber-500 text-white border-none text-[8px] font-black uppercase tracking-widest px-2 h-4">MVD Choice</Badge>
-                        <span className="text-[10px] font-bold text-amber-700 uppercase tracking-tighter">Zero Friction Drill</span>
-                      </div>
-                      <h4 className="font-bold text-sm truncate">{(mvdRecommendation as any).name}</h4>
-                      <p className="text-[10px] text-muted-foreground line-clamp-1 italic">"{(mvdRecommendation as any).description}"</p>
-                    </div>
-                  </div>
-                  <Button asChild size="sm" className="bg-amber-600 hover:bg-amber-700 text-white font-bold h-9 px-6 rounded-full shrink-0 shadow-sm transition-transform hover:scale-105 active:scale-95">
-                    <Link href={activeTab === 'speedreading' ? '/skills?tab=speedreading' : `/skills?tab=${activeTab}#practice-${mvdRecommendation.id}`}>
-                      Execute Now <Play className="ml-2 w-3 h-3 fill-current" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
 
           <TabsContent value="communication" className="animate-in fade-in duration-300">
             <CommunicationContent />
@@ -225,6 +185,9 @@ function SkillBuilderPageContent() {
           </TabsContent>
           <TabsContent value="math" className="animate-in fade-in duration-300">
             <MathComposureLab />
+          </TabsContent>
+          <TabsContent value="coding" className="animate-in fade-in duration-300">
+            <CodingContent />
           </TabsContent>
         </Tabs>
     </div>
