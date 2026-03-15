@@ -1,8 +1,8 @@
+
 import { MusicDomain } from "@/types/music";
 import { 
   Ear, Music, Brain, Eye, 
-  Sparkles, Headphones, 
-  Wind, Mic2
+  Sparkles, Headphones
 } from "lucide-react";
 
 export interface DrillDefinition {
@@ -39,11 +39,6 @@ export const musicDomains: { name: MusicDomain; icon: any; drills: string[] }[] 
     name: 'Sight Reading', 
     icon: Eye, 
     drills: ['Note Flash', 'Rhythm Reading', 'Progressive Notation', 'Bass Clef Training'] 
-  },
-  { 
-    name: 'Vocal Mechanics', 
-    icon: Mic2, 
-    drills: ['Pitch Matching', 'Range Expansion', 'Breath Support', 'Tone Shaping'] 
   },
   { 
     name: 'Improvisation & Composition', 

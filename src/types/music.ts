@@ -1,11 +1,11 @@
+
 export type MusicDomain = 
   | 'Ear Training' 
   | 'Rhythm & Timing' 
   | 'Theory & Harmony' 
   | 'Sight Reading' 
   | 'Improvisation & Composition' 
-  | 'Critical Listening'
-  | 'Vocal Mechanics';
+  | 'Critical Listening';
 
 export type MusicDifficulty = 'Beginner' | 'Intermediate' | 'Advanced';
 

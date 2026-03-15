@@ -16,9 +16,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { 
-  Music, Headphones, Mic2, Wind, Guitar, Sparkles,
-  Target, BookOpen, SlidersHorizontal, Maximize, Palette, Piano, 
-  Mic, Drum, Play, ChevronRight, Clock, Waves, Zap, History
+  Music, Headphones, Mic2, Guitar, Sparkles,
+  Target, BookOpen, Waves, Zap, History,
+  ChevronRight, Play, Clock, Piano, Mic
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
@@ -26,20 +26,12 @@ import { format } from 'date-fns';
 import Link from 'next/link';
 import { InputSelector } from '../audio/InputSelector';
 import { InstrumentSelector } from '../audio/InstrumentSelector';
-import { AssistantTooltip } from '../assistant-tooltip';
 
 const categoryExercises = {
-  sing: [
-    { id: 'pitch-match', name: 'Pitch Match', desc: 'Match the note you hear using your voice.', difficulty: 'Beginner', icon: Target },
-    { id: 'interval-sing', name: 'Interval Sing-Back', desc: 'Sing the specific interval above a root note.', difficulty: 'Intermediate', icon: Music },
-    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases. Start by recalling isolated pitches, then progress to remembering real melodies with rhythm and shape.', difficulty: 'Beginner / Intermediate / Advanced', icon: Waves },
-    { id: 'sight-singing', name: 'Sight-Singing', desc: 'Sing from notation without hearing it.', difficulty: 'Advanced', icon: BookOpen },
-  ],
-  voice: [
-    { id: 'breath', name: 'Breath Control', desc: 'Sustain and support your vocal output.', difficulty: 'Beginner', icon: Wind },
-    { id: 'dynamics', name: 'Dynamics', desc: 'Master loud, soft & everything between.', difficulty: 'Beginner', icon: SlidersHorizontal },
-    { id: 'range', name: 'Range Builder', desc: 'Explore and expand your vocal limits.', difficulty: 'Intermediate', icon: Maximize },
-    { id: 'tone', name: 'Tone Shaping', desc: 'Modify vowel shapes for specific timbres.', difficulty: 'Advanced', icon: Palette },
+  listen: [
+    ...drillsData.map(d => ({ ...d, type: 'drill' as const })),
+    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases.', difficulty: 'Beginner / Intermediate / Advanced', icon: Waves, type: 'game' as const, path: '/music/sing/melody-echo' },
+    { id: 'sight-singing', name: 'Sight-Singing', desc: 'Perform phrases from notation using your voice or instrument.', difficulty: 'Advanced', icon: BookOpen, type: 'game' as const, path: '/music/sing/sight-singing' },
   ],
   play: [
     { id: 'transcription', name: 'Transcription Challenge', desc: 'Hear a phrase, play it back on your instrument.', difficulty: 'Intermediate', icon: BookOpen },
@@ -48,7 +40,7 @@ const categoryExercises = {
   ],
   create: [
     { id: 'vocal-improv', name: 'Vocal Improv', desc: 'Improvise melodies over chord changes.', difficulty: 'Intermediate', icon: Mic },
-    { id: 'flow-trainer', name: 'Flow Trainer', desc: 'Lock your rhythm to the beat grid using your voice, vocal percussion, or body percussion. Standard mode uses pitched sounds. Percussive mode lets you practice rhythmic accuracy with kicks, snaps, claps, and vocal drums.', difficulty: 'Intermediate', icon: Zap },
+    { id: 'flow-trainer', name: 'Flow Trainer', desc: 'Lock your rhythm to the beat grid using your voice, vocal percussion, or body percussion.', difficulty: 'Intermediate', icon: Zap },
     { id: 'freestyle', name: 'Freestyle Sandbox', desc: 'Open creative space with real-time feedback.', difficulty: 'All Levels', icon: Sparkles },
   ]
 };
@@ -106,20 +98,14 @@ export default function MusicContent() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <Tabs value={activeSubTab} onValueChange={handleSubTabChange} className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
-          <TabsList className="flex w-full max-w-3xl h-auto bg-muted/50 p-1 min-w-max">
-            <TabsTrigger value="listen" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+          <TabsList className="flex w-full max-w-xl h-auto bg-muted/50 p-1 min-w-max">
+            <TabsTrigger value="listen" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
               <Headphones className="w-4 h-4" /> Listen
             </TabsTrigger>
-            <TabsTrigger value="sing" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-              <Mic2 className="w-4 h-4" /> Sing
-            </TabsTrigger>
-            <TabsTrigger value="voice" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-              <Wind className="w-4 h-4" /> Voice
-            </TabsTrigger>
-            <TabsTrigger value="play" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+            <TabsTrigger value="play" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
               <Guitar className="w-4 h-4" /> Play
             </TabsTrigger>
-            <TabsTrigger value="create" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+            <TabsTrigger value="create" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
               <Sparkles className="w-4 h-4" /> Create
             </TabsTrigger>
           </TabsList>
@@ -127,8 +113,35 @@ export default function MusicContent() {
 
         <TabsContent value="listen" className="space-y-8 animate-in fade-in">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {drillsData.map((drill) => {
-              const gameSessions = logs.filter(l => l.drillName === drill.name);
+            {categoryExercises.listen.map((item) => {
+              if (item.type === 'game') {
+                const stats = getStats(item.id);
+                return (
+                  <Link key={item.id} href={item.path}>
+                    <Card className="h-full border-primary/5 hover:border-primary/30 transition-all group flex flex-col cursor-pointer bg-primary/[0.02]">
+                      <CardHeader className="p-4 pb-2">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                            <item.icon className="w-5 h-5" />
+                          </div>
+                          <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Performance</Badge>
+                        </div>
+                        <CardTitle className="text-sm font-bold group-hover:text-primary transition-colors">{item.name}</CardTitle>
+                        <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{item.desc}</CardDescription>
+                      </CardHeader>
+                      <CardFooter className="p-4 pt-4 mt-auto border-t border-primary/5 flex justify-between items-center">
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Best Score</span>
+                          <span className="text-[10px] font-bold">{stats.bestScore ?? '--'}</span>
+                        </div>
+                        <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-5px] group-hover:translate-x-0" />
+                      </CardFooter>
+                    </Card>
+                  </Link>
+                );
+              }
+
+              const gameSessions = logs.filter(l => l.drillName === item.name);
               const stats = gameSessions.length === 0 
                 ? { lastPlayed: 'New', bestScore: null }
                 : { 
@@ -138,112 +151,32 @@ export default function MusicContent() {
 
               return (
                 <Card 
-                  key={drill.id} 
+                  key={item.id} 
                   className="h-full border-primary/5 hover:border-primary/30 transition-all group flex flex-col cursor-pointer"
-                  onClick={() => setActiveDrillId(drill.id)}
+                  onClick={() => setActiveDrillId(item.id)}
                 >
                   <CardHeader className="p-4 pb-2">
                     <div className="flex justify-between items-start mb-3">
                       <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                         <Music className="w-5 h-5" />
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Adaptive</Badge>
-                        {stats.bestScore !== null && (
-                          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
-                            BEST HAR: {stats.bestScore}
-                          </Badge>
-                        )}
-                      </div>
+                      <Badge variant="outline" className="uppercase text-[8px] font-black px-2">Drill</Badge>
                     </div>
-                    <CardTitle className="text-base font-bold group-hover:text-primary transition-colors">{drill.name}</CardTitle>
-                    <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{drill.desc || drill.description}</CardDescription>
+                    <CardTitle className="text-sm font-bold group-hover:text-primary transition-colors">{item.name}</CardTitle>
+                    <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{item.description}</CardDescription>
                   </CardHeader>
                   <CardFooter className="p-4 pt-4 mt-auto border-t border-primary/5 flex justify-between items-center">
                     <div className="flex flex-col">
-                      <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Last Session</span>
-                      <span className="text-[10px] font-bold">{stats.lastPlayed}</span>
+                      <span className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Best HAR</span>
+                      <span className="text-[10px] font-bold">{stats.bestScore ?? '--'}</span>
                     </div>
+                    <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-5px] group-hover:translate-x-0" />
                   </CardFooter>
                 </Card>
               );
             })}
           </div>
           <MusicAnalytics />
-        </TabsContent>
-
-        <TabsContent value="sing" className="space-y-8 animate-in fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categoryExercises.sing.map((ex) => {
-              const stats = getStats(ex.id);
-              return (
-                <Link key={ex.id} href={`/music/sing/${ex.id}`}>
-                  <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-6">
-                        <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                          <ex.icon className="w-8 h-8" />
-                        </div>
-                        <div className="flex-grow min-w-0">
-                          <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-lg font-bold truncate">{ex.name}</h2>
-                            {stats.bestScore !== null && (
-                              <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
-                                BEST: {stats.bestScore}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
-                          <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
-                            <span>Last: {stats.lastPlayed}</span>
-                          </div>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="voice" className="space-y-8 animate-in fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categoryExercises.voice.map((ex) => {
-              const stats = getStats(ex.id, 'voice');
-              return (
-                <Link key={ex.id} href={`/music/voice/${ex.id}`}>
-                  <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-6">
-                        <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                          <ex.icon className="w-8 h-8" />
-                        </div>
-                        <div className="flex-grow min-w-0">
-                          <div className="flex items-center gap-3 mb-1">
-                            <h2 className="text-lg font-bold truncate">{ex.name}</h2>
-                            {stats.bestScore !== null && (
-                              <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
-                                PB: {stats.bestScore}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground line-clamp-1">{ex.desc}</p>
-                          <div className="flex items-center gap-4 mt-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-                            <Badge variant="secondary" className="text-[10px] font-black px-2">{ex.difficulty}</Badge>
-                            <span>Last: {stats.lastPlayed}</span>
-                          </div>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
         </TabsContent>
 
         <TabsContent value="play" className="space-y-8 animate-in fade-in">
@@ -268,7 +201,6 @@ export default function MusicContent() {
                         <div className="p-4 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                           <ex.icon className="w-8 h-8" />
                         </div>
-                        
                         <div className="flex-grow min-w-0">
                           <div className="flex items-center gap-3 mb-1">
                             <h2 className="text-lg font-bold truncate">{ex.name}</h2>

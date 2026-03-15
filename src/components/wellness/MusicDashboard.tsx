@@ -22,7 +22,7 @@ export function MusicGlobalHeader() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <AssistantTooltip text="Measures consecutive days of engagement across any Music module. Consistency is the primary driver of neuroplasticity in the auditory cortex; missing 48 hours results in noticeable regression in pitch sensitivity.">
+      <AssistantTooltip text="Measures consecutive days of engagement across any Music module. Consistency is the primary driver of neuroplasticity in the auditory cortex.">
         <Card className="bg-primary/5 border-primary/10 h-full">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
             <Flame className="w-5 h-5 text-orange-500 mb-1" />
@@ -32,7 +32,7 @@ export function MusicGlobalHeader() {
         </Card>
       </AssistantTooltip>
       
-      <AssistantTooltip text="The sum of all minutes spent in active technical drills and creative sandboxes this week. Aggregated from technical time-logs across Listen, Sing, Voice, Play, and Create sub-tabs.">
+      <AssistantTooltip text="The sum of all minutes spent in active technical drills and creative sandboxes this week.">
         <Card className="bg-primary/5 border-primary/10 h-full">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
             <Clock className="w-5 h-5 text-primary mb-1" />
@@ -55,7 +55,7 @@ export function MusicGlobalHeader() {
         </Card>
       </AssistantTooltip>
 
-      <AssistantTooltip text="A cumulative tally of sessions logged in Vocal Improv, Flow Trainer, Beatbox Lab, and the Freestyle Sandbox. Measures your shift from rote technical practice to spontaneous creative application.">
+      <AssistantTooltip text="A cumulative tally of sessions logged in the creative modules. Measures your shift from rote technical practice to spontaneous creative application.">
         <Card className="bg-primary/5 border-primary/10 h-full">
           <CardContent className="p-4 flex flex-col items-center justify-center text-center">
             <Wand2 className="w-5 h-5 text-primary opacity-80 mb-1" />

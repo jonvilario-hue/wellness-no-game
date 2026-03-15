@@ -34,7 +34,7 @@ export function MusicAnalytics() {
       });
     });
     return Object.entries(concepts).slice(0, 8);
-  }, [logs]);
+  }, [concepts]);
 
   const strategyNudge = useMemo(() => {
     if (logs.length < 5) return null;
@@ -52,7 +52,7 @@ export function MusicAnalytics() {
       .sort((a,b) => a.avg - b.avg)[0];
 
     return {
-      text: `Your ${weakest.name} accuracy has dropped. Try an Ear Training session to re-stabilize your harmonic base.`,
+      text: `Your ${weakest.name} accuracy has dropped. Try a training session to re-stabilize your harmonic base.`,
       target: weakest.name
     };
   }, [logs]);
@@ -104,7 +104,7 @@ export function MusicAnalytics() {
         <Card className="border-primary/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <Target className="w-4 h-4 text-primary" /> Interval Map
+              <Target className="w-4 h-4 text-primary" /> Concept Map
             </CardTitle>
             <CardDescription>Accuracy per musical concept.</CardDescription>
           </CardHeader>

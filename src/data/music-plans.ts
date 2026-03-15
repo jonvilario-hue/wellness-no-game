@@ -29,10 +29,12 @@ export const musicPlans: MusicJourneyPlan[] = [
   {
     id: "21-day-complete-musician",
     title: "21-Day Complete Musician",
-    description: "A comprehensive rotation through all 6 domains with increasing complexity.",
+    description: "A comprehensive rotation through all remaining domains with increasing complexity.",
     durationDays: 21,
     steps: [
-      { day: 1, title: "Interval Audit", domain: "Ear Training", drill: "Interval Identification", difficulty: "Beginner", estimatedMinutes: 10 }
+      { day: 1, title: "Interval Audit", domain: "Ear Training", drill: "Interval Identification", difficulty: "Beginner", estimatedMinutes: 10 },
+      { day: 2, title: "Rhythmic Pulse", domain: "Rhythm & Timing", drill: "Tap-Along", difficulty: "Beginner", estimatedMinutes: 10 },
+      { day: 3, title: "Melodic Memory", domain: "Ear Training", drill: "Melody Echo", difficulty: "Beginner", estimatedMinutes: 12 }
     ]
   }
 ];
