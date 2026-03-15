@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -30,32 +30,44 @@ interface Props {
 }
 
 /**
- * Normalizes code for comparison by stripping comments, 
- * standardizing whitespace, and handling common syntax variations.
+ * STRATEGIC EVALUATION ENGINE
+ * Moves beyond simple text matching to logic-aware verification.
  */
-function normalizeCode(code: string): string {
-  return code
-    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') // Strip comments
-    .replace(/['"]/g, '"') // Standardize quotes
-    .replace(/\s+/g, ' ') // Collapse whitespace
-    .replace(/;\s*/g, ';') // Normalize semicolons
-    .replace(/\(\s+/g, '(').replace(/\s+\)/g, ')') // Parens
-    .replace(/\{\s+/g, '{').replace(/\s+\}/g, '}') // Braces
-    .trim();
-}
+function evaluateSubmission(input: string, drill: any): number {
+  const clean = (s: string) => s.replace(/\s+/g, ' ').replace(/['"]/g, '"').replace(/;\s*$/g, '').trim().toLowerCase();
+  const normalizedInput = clean(input);
+  const normalizedTarget = clean(drill.content || "");
 
-/**
- * Structural Probe: Checks if required logical tokens exist in sequence.
- */
-function checkStructuralProbe(input: string, tokens: string[]): boolean {
-  const normalized = normalizeCode(input).toLowerCase();
-  let lastIdx = -1;
-  for (const token of tokens) {
-    const idx = normalized.indexOf(token.toLowerCase(), lastIdx + 1);
-    if (idx === -1) return false;
-    lastIdx = idx;
+  // 1. Output Prediction (Functional)
+  if (drill.type === 'Output Prediction') {
+    return input.trim() === drill.expectedOutput?.trim() ? 100 : 0;
   }
-  return true;
+
+  // 2. Bug Hunt (Functional)
+  if (drill.type === 'Bug Hunt') {
+    // Check if the user identified the right line or the fix contains required tokens
+    const isLineMatch = !isNaN(parseInt(input)) && drill.bugs?.some((b: any) => b.line === parseInt(input));
+    if (isLineMatch) return 100;
+    
+    // Check if the fix logic exists
+    if (drill.requiredTokens?.every((t: string) => normalizedInput.includes(t.toLowerCase()))) return 100;
+    return 0;
+  }
+
+  // 3. Structural Probes (Syntax/Recon/Build)
+  // Handles formatting variations by checking for token presence and relative order
+  if (drill.requiredTokens) {
+    let lastIdx = -1;
+    for (const token of drill.requiredTokens) {
+      const idx = normalizedInput.indexOf(token.toLowerCase());
+      if (idx === -1 || idx < lastIdx) return 0; // Token missing or out of order
+      lastIdx = idx;
+    }
+    return 100;
+  }
+
+  // 4. Fallback (Normalized Equality)
+  return normalizedInput === normalizedTarget ? 100 : 0;
 }
 
 export function CodingDrillPlayer({ protocolId, onClose }: Props) {
@@ -82,6 +94,11 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   [filteredDrills, currentIndex]);
 
   const handleStart = () => {
+    if (!currentDrill) {
+      toast({ title: "Drill Unavailable", description: `No ${protocolId} drills found for ${activeLanguage}.`, variant: 'destructive' });
+      onClose();
+      return;
+    }
     setGameState('active');
     setDrillStartTime(Date.now());
     if (results.length === 0) setStartTime(Date.now());
@@ -90,27 +107,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
   const handleVerifyAnswer = () => {
     if (!currentDrill) return;
-    
-    let accuracy = 0;
-    const cleanInput = userInput.trim();
-    const normalizedInput = normalizeCode(cleanInput);
-    const normalizedContent = normalizeCode(currentDrill.content);
-
-    // CRITICAL UPGRADE: Logic-Aware Evaluation
-    if (currentDrill.type === 'Output Prediction') {
-      // Direct result check
-      accuracy = cleanInput.toLowerCase() === currentDrill.expectedOutput?.trim().toLowerCase() ? 100 : 0;
-    } else if (currentDrill.type === 'Bug Hunt') {
-      // Line number check
-      accuracy = parseInt(cleanInput) === currentDrill.bugs?.[0].line ? 100 : 0;
-    } else if (currentDrill.requiredTokens) {
-      // Structural Probe check (Handles variations in formatting/syntax)
-      accuracy = checkStructuralProbe(cleanInput, currentDrill.requiredTokens) ? 100 : 0;
-    } else {
-      // Fallback: Normalized string match
-      accuracy = normalizedInput === normalizedContent ? 100 : 0;
-    }
-
+    const accuracy = evaluateSubmission(userInput, currentDrill);
     setRoundAccuracy(accuracy);
     setGameState('feedback');
   };
@@ -144,13 +141,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       }
     } else {
       setResults(prev => [...prev, { accuracy, speed: speedMetric }]);
-      if (results.length >= 0) { // For standalone, we allow summary after 1 rep
-        setGameState('summary');
-      } else {
-        setCurrentIndex(prev => prev + 1);
-        setUserInput('');
-        setGameState('prep');
-      }
+      setGameState('summary');
     }
   };
 
@@ -159,6 +150,23 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     if (activeLoop.active) cancelLoop();
     onClose();
   };
+
+  if (!currentDrill && gameState === 'prep') {
+    return (
+      <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <Card className="max-w-md w-full border-primary/10 shadow-2xl">
+          <CardHeader className="text-center">
+            <div className="p-3 bg-destructive/10 rounded-full w-fit mx-auto mb-2 text-destructive"><XCircle className="w-8 h-8" /></div>
+            <CardTitle>Content Unavailable</CardTitle>
+            <CardDescription>We currently don't have any {protocolId} drills for {activeLanguage}.</CardDescription>
+          </CardHeader>
+          <CardFooter>
+            <Button onClick={onClose} className="w-full">Return to Lab</Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
@@ -207,10 +215,10 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
             {gameState === 'active' && currentDrill && (
               <motion.div key="active" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="w-full max-w-2xl space-y-6">
-                {currentDrill.language === 'SQL' && currentDrill.tableInput && (
+                {currentDrill.tableInput && (
                   <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl space-y-2">
                     <p className="text-[10px] font-black uppercase text-blue-600 flex items-center gap-2">
-                      <Database className="w-3 h-3" /> Schema / Context
+                      <Database className="w-3 h-3" /> Context Schema
                     </p>
                     <pre className="text-[10px] font-mono whitespace-pre-wrap">{currentDrill.tableInput}</pre>
                   </div>
@@ -235,7 +243,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     />
                   ) : (
                     <Input 
-                      placeholder={currentDrill.type === 'Bug Hunt' ? "Line number of the bug..." : "Exact expected output..."} 
+                      placeholder={currentDrill.type === 'Bug Hunt' ? "Identify the bug or fix..." : "Expected output..."} 
                       className="font-mono h-12"
                       value={userInput}
                       onChange={e => setUserInput(e.target.value)}
@@ -243,7 +251,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                       autoFocus
                     />
                   )}
-                  <Button onClick={handleVerifyAnswer} className="w-full h-12 font-bold uppercase">Verify Result</Button>
+                  <Button onClick={handleVerifyAnswer} className="w-full h-12 font-bold uppercase">Verify Logic</Button>
                 </div>
               </motion.div>
             )}
@@ -255,7 +263,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     <div className="flex justify-center mb-2">
                       {roundAccuracy === 100 ? <CheckCircle2 className="w-12 h-12 text-emerald-500" /> : <XCircle className="w-12 h-12 text-amber-500" />}
                     </div>
-                    <CardTitle className="text-xl font-black uppercase">{roundAccuracy === 100 ? 'Analysis Correct' : 'Adjustment Needed'}</CardTitle>
+                    <CardTitle className="text-xl font-black uppercase">{roundAccuracy === 100 ? 'Logic Verified' : 'Logic Correction'}</CardTitle>
                   </CardHeader>
                   <CardContent className="p-8 space-y-8">
                     <div className="space-y-4">
@@ -271,7 +279,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Info className="w-5 h-5" />
-                        <h4 className="text-sm font-bold uppercase tracking-tight">Technical Reasoning</h4>
+                        <h4 className="text-sm font-bold uppercase tracking-tight">System Explanation</h4>
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         {currentDrill.explanation}
@@ -294,28 +302,19 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary">
                       <Sparkles className="w-8 h-8" />
                     </div>
-                    <CardTitle className="text-xl font-black uppercase">Session Sync</CardTitle>
-                    <CardDescription>Fluency metrics computed and ready for ledger.</CardDescription>
+                    <CardTitle className="text-xl font-black uppercase">Sync Complete</CardTitle>
+                    <CardDescription>Fluency metrics computed and stored.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
                     <div className="grid grid-cols-2 gap-3">
                       <div className="p-4 bg-muted/30 rounded-xl text-center">
-                        <p className="text-[8px] font-black uppercase text-muted-foreground">Avg Accuracy</p>
-                        <p className="text-2xl font-black">
-                          {Math.round((activeLoop.active ? activeLoop.results.reduce((s,r) => s+r.accuracy, 0) / activeLoop.results.length : results.reduce((s,r) => s+r.accuracy, 0) / results.length) || 100)}%
-                        </p>
+                        <p className="text-[8px] font-black uppercase text-muted-foreground">Accuracy</p>
+                        <p className="text-2xl font-black">{Math.round(roundAccuracy)}%</p>
                       </div>
                       <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl text-center">
-                        <p className="text-[8px] font-black uppercase text-primary">Total Time</p>
+                        <p className="text-[8px] font-black uppercase text-primary">Time</p>
                         <p className="text-2xl font-black text-primary">{Math.round((Date.now() - startTime)/1000)}s</p>
                       </div>
-                    </div>
-                    <div className="space-y-4 pt-4 border-t">
-                      <div className="flex justify-between items-center">
-                        <Label className="text-[9px] font-bold uppercase">Reported Focus (1-5)</Label>
-                        <span className="text-lg font-black text-primary">{focusRating}</span>
-                      </div>
-                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">

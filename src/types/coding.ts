@@ -45,27 +45,23 @@ export interface CodingDrill {
   language: CodingLanguage;
   difficulty: number;
   title: string;
-  content: string; // The code snippet or problem spec
+  content: string; 
   explanation: string; 
   patternToNotice: string; 
   expectedOutput?: string;
-  tableInput?: string; // Specific for SQL prediction
+  tableInput?: string; 
   bugs?: Array<{ line: number; type: BugCategory }>;
-  requiredTokens?: string[]; // For functional evaluation
-  bannedTokens?: string[];   // For anti-cheating/constraint drills
+  requiredTokens?: string[]; 
+  testCases?: Array<{ input: any; output: any }>;
+  logicSteps?: string[]; 
   description?: string;
   concurrencyRelevant?: boolean;
-}
-
-export interface CodingLoopStep {
-  lane: CodingLane;
-  type: CodingDrillType;
 }
 
 export interface ActiveLoop {
   active: boolean;
   currentStep: number;
-  steps: CodingLoopStep[];
+  steps: Array<{ lane: CodingLane; type: CodingDrillType }>;
   startTime: number;
   results: Array<{
     lane: CodingLane;
