@@ -33,7 +33,7 @@ export function MusicReferenceDialog({ entry, open, onOpenChange }: Props) {
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary opacity-70">
-                <BookOpen className="w-3 h-3" />
+                <BookOpen className="w-3" />
                 Instructional Reference
               </div>
               <DialogTitle className="text-2xl font-black uppercase tracking-tight">
