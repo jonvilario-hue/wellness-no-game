@@ -13,6 +13,8 @@ import { initDB } from '@/lib/storage/db';
 interface MusicState {
   logs: MusicDrillLog[];
   achievements: Record<string, MusicAchievement>;
+  selectedInstrument: string;
+  calibratedInstruments: string[]; // List of IDs that have been calibrated
   streak: {
     current: number;
     longest: number;
@@ -20,6 +22,9 @@ interface MusicState {
   };
   
   logDrill: (drillData: Omit<MusicDrillLog, 'id' | 'userId' | 'timestamp' | 'syncedToCalendar'>) => Promise<void>;
+  setInstrument: (id: string) => void;
+  setCalibrated: (id: string) => void;
+  resetCalibration: (id: string) => void;
   getWeeklyVolume: () => number;
   getTopDomain: () => MusicDomain | 'None';
   getGlobalHAR: () => number;
@@ -32,8 +37,20 @@ export const useMusicStore = create<MusicState>()(
     (set, get) => ({
       logs: [],
       achievements: {},
+      selectedInstrument: 'piano',
+      calibratedInstruments: [],
       streak: { current: 0, longest: 0, lastDate: null },
       _hasHydrated: false,
+
+      setInstrument: (id) => set({ selectedInstrument: id }),
+      
+      setCalibrated: (id) => set(state => ({
+        calibratedInstruments: [...new Set([...state.calibratedInstruments, id])]
+      })),
+
+      resetCalibration: (id) => set(state => ({
+        calibratedInstruments: state.calibratedInstruments.filter(i => i !== id)
+      })),
 
       logDrill: async (drillData) => {
         const now = new Date();
@@ -115,7 +132,7 @@ export const useMusicStore = create<MusicState>()(
       }
     }),
     {
-      name: 'music-lab-storage-local-v1',
+      name: 'music-lab-storage-local-v2',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) state._hasHydrated = true;

@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { GameShell } from '@/components/game/GameShell';
+import { CalibrationGate } from '@/components/audio/CalibrationGate';
 import { useInstrumentInput } from '@/hooks/useInstrumentInput';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
 import { Button } from '@/components/ui/button';
@@ -48,47 +49,49 @@ export default function CallResponsePage() {
   }, [engine, exchange]);
 
   return (
-    <GameShell
-      gameName="Call & Response"
-      description="Trade musical phrases with the lab in real-time."
-      instructions={[
-        "Wait for the 'Call' — the lab plays a phrase.",
-        "During the 'Response', play the exact phrase back.",
-        "Stay in rhythm with the visual metronome.",
-        "Scoring depends on both pitch and onset timing."
-      ]}
-      gameState={state === 'complete' ? 'complete' : state === 'idle' ? 'idle' : 'playing'}
-      currentRound={exchange}
-      totalRounds={10}
-      score={score}
-      onStart={handleStart}
-      onPauseToggle={() => {}}
-      backHref="/skills?tab=music&sub=play"
-      breadcrumb={["Music", "Instrumentals", "Call & Response"]}
-    >
-      <div className="w-full flex flex-col items-center gap-12">
-        <div className="text-center space-y-4">
-          <div className={cn(
-            "p-12 rounded-full transition-all duration-500 border-8",
-            state === 'call' ? "bg-primary/5 border-primary scale-110 shadow-2xl shadow-primary/20" : "bg-muted border-transparent"
-          )}>
-            <Music className={cn("w-20 h-20", state === 'call' ? "text-primary animate-pulse" : "text-muted-foreground/20")} />
-          </div>
-          <h2 className="text-4xl font-black uppercase tracking-widest">
-            {state === 'call' ? 'LISTEN' : 'YOUR TURN'}
-          </h2>
-        </div>
-
-        <div className="flex gap-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="w-3 h-3 rounded-full bg-muted overflow-hidden">
-              {state === 'response' && (
-                <div className="h-full bg-primary animate-in slide-in-from-left duration-500" />
-              )}
+    <CalibrationGate>
+      <GameShell
+        gameName="Call & Response"
+        description="Trade musical phrases with the lab in real-time."
+        instructions={[
+          "Wait for the 'Call' — the lab plays a phrase.",
+          "During the 'Response', play the exact phrase back.",
+          "Stay in rhythm with the visual metronome.",
+          "Scoring depends on both pitch and onset timing."
+        ]}
+        gameState={state === 'complete' ? 'complete' : state === 'idle' ? 'idle' : 'playing'}
+        currentRound={exchange}
+        totalRounds={10}
+        score={score}
+        onStart={handleStart}
+        onPauseToggle={() => {}}
+        backHref="/skills?tab=music&sub=play"
+        breadcrumb={["Music", "Instrumentals", "Call & Response"]}
+      >
+        <div className="w-full flex flex-col items-center gap-12">
+          <div className="text-center space-y-4">
+            <div className={cn(
+              "p-12 rounded-full transition-all duration-500 border-8",
+              state === 'call' ? "bg-primary/5 border-primary scale-110 shadow-2xl shadow-primary/20" : "bg-muted border-transparent"
+            )}>
+              <Music className={cn("w-20 h-20", state === 'call' ? "text-primary animate-pulse" : "text-muted-foreground/20")} />
             </div>
-          ))}
+            <h2 className="text-4xl font-black uppercase tracking-widest">
+              {state === 'call' ? 'LISTEN' : 'YOUR TURN'}
+            </h2>
+          </div>
+
+          <div className="flex gap-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="w-3 h-3 rounded-full bg-muted overflow-hidden">
+                {state === 'response' && (
+                  <div className="h-full bg-primary animate-in slide-in-from-left duration-500" />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </GameShell>
+      </GameShell>
+    </CalibrationGate>
   );
 }

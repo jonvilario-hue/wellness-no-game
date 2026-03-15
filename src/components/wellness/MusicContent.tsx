@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -18,13 +19,12 @@ import {
   Music, Headphones, Mic2, Guitar, Sparkles,
   Target, BookOpen, Waves, Zap, History,
   ChevronRight, Play, Clock, Piano, Mic,
-  Library, Book, MessageSquare, Info
+  Library, Book, MessageSquare, Info, Sliders
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
 import { format } from 'date-fns';
 import Link from 'next/link';
-import { InputSelector } from '../audio/InputSelector';
 import { InstrumentSelector } from '../audio/InstrumentSelector';
 import { musicReferences } from '@/data/music-references';
 import { MusicReferenceCard } from './MusicReferenceCard';
@@ -41,9 +41,9 @@ const categoryExercises = {
     { id: 'sight-singing', name: 'Sight-Singing', desc: 'Perform phrases from notation without hearing it.', difficulty: 'Advanced', icon: BookOpen, type: 'game' as const, path: '/music/sing/sight-singing' },
   ],
   play: [
-    { id: 'transcription', name: 'Transcription Challenge', desc: 'Hear a phrase, play it back on your instrument.', difficulty: 'Intermediate', icon: BookOpen },
-    { id: 'call-response', name: 'Call & Response', desc: 'Trade musical phrases with the lab in real-time.', difficulty: 'Intermediate', icon: Music },
-    { id: 'scale-drill', name: 'Scale Drill', desc: 'Play scales and chords on demand.', difficulty: 'Beginner', icon: Piano },
+    { id: 'transcription', name: 'Transcription Challenge', desc: 'Hear a phrase, play it back on your instrument.', difficulty: 'Intermediate', icon: BookOpen, path: '/music/play/transcription' },
+    { id: 'call-response', name: 'Call & Response', desc: 'Trade musical phrases with the lab in real-time.', difficulty: 'Intermediate', icon: Music, path: '/music/play/call-response' },
+    { id: 'scale-drill', name: 'Scale Drill', desc: 'Play scales and chords on demand.', difficulty: 'Beginner', icon: Piano, path: '/music/play/scale-drill' },
   ],
   freeflow: [
     { id: 'lyrical-spontaneity', name: 'Lyrical Spontaneity', desc: 'Respond to random word prompts and stay in motion. No right answers.', difficulty: 'Intermediate', icon: MessageSquare, type: 'game' as const, path: '/music/freeflow/lyrical-spontaneity' },
@@ -54,7 +54,7 @@ const categoryExercises = {
 };
 
 export default function MusicContent() {
-  const { logs, _hasHydrated } = useMusicStore();
+  const { logs, _hasHydrated, selectedInstrument } = useMusicStore();
   const { collapsedCategories, toggleCategoryCollapse } = useWellnessData();
   const [activeDrillId, setActiveDrillId] = useState<string | null>(null);
   const [history, setHistory] = useState<any[]>([]);
@@ -108,6 +108,17 @@ export default function MusicContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-muted/30 p-4 rounded-2xl border border-primary/5">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-lg text-primary"><Music className="w-5 h-5" /></div>
+          <div>
+            <p className="text-[10px] font-black uppercase text-muted-foreground leading-none mb-1">Active Profile</p>
+            <h3 className="text-sm font-bold uppercase tracking-tight">{selectedInstrument} Configuration</h3>
+          </div>
+        </div>
+        <InstrumentSelector />
+      </div>
+
       <Tabs value={activeSubTab} onValueChange={handleSubTabChange} className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
           <TabsList className="flex w-full max-w-2xl h-auto bg-muted/50 p-1 min-w-max gap-1">
@@ -229,19 +240,6 @@ export default function MusicContent() {
         </TabsContent>
 
         <TabsContent value="play" className="space-y-12 animate-in fade-in">
-          <AssistantTooltip text="This calibration uses deterministic Digital Signal Processing (DSP)—not AI—to ensure low-latency feedback. Distinguishing between instruments allows the math to adjust for different overtones and 'attacks' (how a note starts), ensuring that a Violin's bow noise or a Piano's sharp strike doesn't confuse the detection engine.">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-muted/20 rounded-2xl border border-primary/5">
-              <div className="space-y-1 text-center md:text-left">
-                <h3 className="font-bold">Input Calibration</h3>
-                <p className="text-xs text-muted-foreground">Select your instrument and connection method.</p>
-              </div>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <InputSelector />
-                <InstrumentSelector />
-              </div>
-            </div>
-          </AssistantTooltip>
-
           <div className="space-y-6">
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
               <Target className="w-3.5 h-3.5" /> Performance Drills
@@ -250,7 +248,7 @@ export default function MusicContent() {
               {categoryExercises.play.map((ex) => {
                 const stats = getStats(ex.id, 'play');
                 return (
-                  <Link key={ex.id} href={`/music/play/${ex.id}`}>
+                  <Link key={ex.id} href={ex.path}>
                     <Card className="h-full relative overflow-hidden transition-all group border-primary/10 hover:border-primary/30 hover:shadow-lg cursor-pointer">
                       <CardContent className="p-6">
                         <div className="flex items-center gap-6">

@@ -1,16 +1,14 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Music, Piano, Guitar, User, Waves } from 'lucide-react';
+import { useMusicStore } from '@/hooks/use-music-store';
 
-const instruments = [
-  { id: 'voice', name: 'Voice', icon: User },
+export const instruments = [
   { id: 'piano', name: 'Piano / Keyboard', icon: Piano },
   { id: 'guitar', name: 'Guitar', icon: Guitar },
-  { id: 'bass', name: 'Electric Bass', icon: Music },
   { id: 'violin', name: 'Violin', icon: Music },
   { id: 'cello', name: 'Cello', icon: Music },
   { id: 'flute', name: 'Flute', icon: Waves },
@@ -20,22 +18,12 @@ const instruments = [
 ];
 
 export function InstrumentSelector() {
-  const [selected, setSelected] = useState('piano');
-
-  useEffect(() => {
-    const saved = localStorage.getItem('music-active-instrument');
-    if (saved) setSelected(saved);
-  }, []);
-
-  const handleChange = (val: string) => {
-    setSelected(val);
-    localStorage.setItem('music-active-instrument', val);
-  };
+  const { selectedInstrument, setInstrument } = useMusicStore();
 
   return (
     <div className="flex flex-col gap-2">
-      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Instrument Type</Label>
-      <Select value={selected} onValueChange={handleChange}>
+      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Current Instrument</Label>
+      <Select value={selectedInstrument} onValueChange={setInstrument}>
         <SelectTrigger className="w-[200px] h-10 border-primary/10 bg-background/50">
           <SelectValue placeholder="Instrument" />
         </SelectTrigger>

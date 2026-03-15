@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { GameShell } from '@/components/game/GameShell';
-import { MicPermissionGate } from '@/components/audio/MicPermissionGate';
+import { CalibrationGate } from '@/components/audio/CalibrationGate';
 import { useInstrumentInput } from '@/hooks/useInstrumentInput';
 import { useNoteHistory } from '@/hooks/useNoteHistory';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
@@ -96,77 +96,79 @@ export default function TranscriptionChallengePage() {
   };
 
   return (
-    <GameShell
-      gameName="Transcription Challenge"
-      description="Hear a hidden phrase, then play it back on your instrument."
-      instructions={[
-        "Listen to the 4-note phrase played by the lab.",
-        "When ready, tap 'Start Performance' and play the notes back.",
-        "The order and pitch of the notes must match exactly.",
-        "Replays are limited and penalize your score."
-      ]}
-      gameState={gameState === 'results' ? 'complete' : gameState === 'idle' ? 'idle' : 'playing'}
-      currentRound={round}
-      totalRounds={8}
-      score={score}
-      onStart={handleStart}
-      onPauseToggle={() => {}}
-      backHref="/skills?tab=music&sub=play"
-      breadcrumb={["Music", "Instrumentals", "Transcription"]}
-    >
-      <div className="w-full flex flex-col items-center space-y-12">
-        {gameState === 'listening' && (
-          <div className="text-center space-y-8 animate-in zoom-in-95">
-            <div className="space-y-2">
-              <Badge variant="secondary" className="uppercase font-black text-[10px]">Step 1: Internalize</Badge>
-              <h3 className="text-4xl font-black">Hear the Phrase</h3>
-            </div>
-            <div className="flex flex-col items-center gap-4">
-              <Button size="lg" className="h-24 w-24 rounded-full shadow-2xl" onClick={playPhrase} disabled={replaysUsed >= 3}>
-                <Play className="w-10 h-10 fill-current" />
+    <CalibrationGate>
+      <GameShell
+        gameName="Transcription Challenge"
+        description="Hear a hidden phrase, then play it back on your instrument."
+        instructions={[
+          "Listen to the 4-note phrase played by the lab.",
+          "When ready, tap 'Start Performance' and play the notes back.",
+          "The order and pitch of the notes must match exactly.",
+          "Replays are limited and penalize your score."
+        ]}
+        gameState={gameState === 'results' ? 'complete' : gameState === 'idle' ? 'idle' : 'playing'}
+        currentRound={round}
+        totalRounds={8}
+        score={score}
+        onStart={handleStart}
+        onPauseToggle={() => {}}
+        backHref="/skills?tab=music&sub=play"
+        breadcrumb={["Music", "Instrumentals", "Transcription"]}
+      >
+        <div className="w-full flex flex-col items-center space-y-12">
+          {gameState === 'listening' && (
+            <div className="text-center space-y-8 animate-in zoom-in-95">
+              <div className="space-y-2">
+                <Badge variant="secondary" className="uppercase font-black text-[10px]">Step 1: Internalize</Badge>
+                <h3 className="text-4xl font-black">Hear the Phrase</h3>
+              </div>
+              <div className="flex flex-col items-center gap-4">
+                <Button size="lg" className="h-24 w-24 rounded-full shadow-2xl" onClick={playPhrase} disabled={replaysUsed >= 3}>
+                  <Play className="w-10 h-10 fill-current" />
+                </Button>
+                <p className="text-[10px] font-bold uppercase opacity-40">Replays: {replaysUsed}/3</p>
+              </div>
+              <Button size="lg" variant="outline" className="px-12 font-bold border-2" onClick={startPerformance}>
+                I'm Ready to Play <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
-              <p className="text-[10px] font-bold uppercase opacity-40">Replays: {replaysUsed}/3</p>
             </div>
-            <Button size="lg" variant="outline" className="px-12 font-bold border-2" onClick={startPerformance}>
-              I'm Ready to Play <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
-          </div>
-        )}
+          )}
 
-        {gameState === 'playing' && (
-          <div className="w-full flex flex-col items-center space-y-12">
-            <div className="text-center space-y-2">
-              <Badge className="bg-primary text-white uppercase text-[10px] font-black">Performance Active</Badge>
-              <h3 className="text-2xl font-bold uppercase tracking-tighter">Play the notes you heard</h3>
+          {gameState === 'playing' && (
+            <div className="w-full flex flex-col items-center space-y-12">
+              <div className="text-center space-y-2">
+                <Badge className="bg-primary text-white uppercase text-[10px] font-black">Performance Active</Badge>
+                <h3 className="text-2xl font-bold uppercase tracking-tighter">Play the notes you heard</h3>
+              </div>
+
+              <div className="flex gap-4">
+                {Array.from({ length: targetPhrase.length }).map((_, i) => (
+                  <div key={i} className={cn(
+                    "w-16 h-16 rounded-2xl flex items-center justify-center border-4 transition-all",
+                    noteHistory[i] ? "bg-primary/5 border-primary" : "bg-muted border-transparent"
+                  )}>
+                    {noteHistory[i] ? <CheckCircle2 className="text-primary" /> : <Music className="opacity-20" />}
+                  </div>
+                ))}
+              </div>
+
+              <Button size="lg" className="px-12 font-bold h-14" onClick={finalizeRound} disabled={noteHistory.length < targetPhrase.length}>
+                Finalize Sequence
+              </Button>
             </div>
+          )}
 
-            <div className="flex gap-4">
-              {Array.from({ length: targetPhrase.length }).map((_, i) => (
-                <div key={i} className={cn(
-                  "w-16 h-16 rounded-2xl flex items-center justify-center border-4 transition-all",
-                  noteHistory[i] ? "bg-primary/5 border-primary" : "bg-muted border-transparent"
-                )}>
-                  {noteHistory[i] ? <CheckCircle2 className="text-primary" /> : <Music className="opacity-20" />}
-                </div>
-              ))}
+          {gameState === 'feedback' && (
+            <div className="text-center space-y-6">
+              <CheckCircle2 className="w-20 h-20 text-emerald-500 mx-auto" />
+              <div className="space-y-1">
+                <h3 className="text-3xl font-black uppercase">Captured</h3>
+                <p className="text-muted-foreground">Analyzing your melodic accuracy...</p>
+              </div>
             </div>
-
-            <Button size="lg" className="px-12 font-bold h-14" onClick={finalizeRound} disabled={noteHistory.length < targetPhrase.length}>
-              Finalize Sequence
-            </Button>
-          </div>
-        )}
-
-        {gameState === 'feedback' && (
-          <div className="text-center space-y-6">
-            <CheckCircle2 className="w-20 h-20 text-emerald-500 mx-auto" />
-            <div className="space-y-1">
-              <h3 className="text-3xl font-black uppercase">Captured</h3>
-              <p className="text-muted-foreground">Analyzing your melodic accuracy...</p>
-            </div>
-          </div>
-        )}
-      </div>
-    </GameShell>
+          )}
+        </div>
+      </GameShell>
+    </CalibrationGate>
   );
 }

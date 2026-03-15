@@ -3,6 +3,7 @@
 
 import { useState, useCallback } from 'react';
 import { GameShell } from '@/components/game/GameShell';
+import { CalibrationGate } from '@/components/audio/CalibrationGate';
 import { useInstrumentInput } from '@/hooks/useInstrumentInput';
 import { useNoteHistory } from '@/hooks/useNoteHistory';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
@@ -51,53 +52,55 @@ export default function ScaleDrillPage() {
   };
 
   return (
-    <GameShell
-      gameName="Scale Drill"
-      description="Perform specific scales and chords on demand."
-      instructions={[
-        "Observe the requested scale/chord name.",
-        "Tap 'Start Drill' and play the notes in order.",
-        "Accuracy is checked against the standard tuning.",
-        "Advanced tier adds a strict time limit."
-      ]}
-      gameState={state === 'results' ? 'complete' : state === 'idle' ? 'idle' : 'playing'}
-      currentRound={round}
-      totalRounds={8}
-      score={score}
-      onStart={handleStart}
-      onPauseToggle={() => {}}
-      backHref="/skills?tab=music&sub=play"
-      breadcrumb={["Music", "Instrumentals", "Scale Drill"]}
-    >
-      <div className="w-full flex flex-col items-center gap-12">
-        {state === 'prep' && (
-          <div className="text-center space-y-8 animate-in fade-in">
-            <div className="space-y-2">
-              <Badge variant="secondary" className="uppercase font-black">Challenge</Badge>
-              <h3 className="text-5xl font-black text-primary">{targetScale.name}</h3>
+    <CalibrationGate>
+      <GameShell
+        gameName="Scale Drill"
+        description="Perform specific scales and chords on demand."
+        instructions={[
+          "Observe the requested scale/chord name.",
+          "Tap 'Start Drill' and play the notes in order.",
+          "Accuracy is checked against the standard tuning.",
+          "Advanced tier adds a strict time limit."
+        ]}
+        gameState={state === 'results' ? 'complete' : state === 'idle' ? 'idle' : 'playing'}
+        currentRound={round}
+        totalRounds={8}
+        score={score}
+        onStart={handleStart}
+        onPauseToggle={() => {}}
+        backHref="/skills?tab=music&sub=play"
+        breadcrumb={["Music", "Instrumentals", "Scale Drill"]}
+      >
+        <div className="w-full flex flex-col items-center gap-12">
+          {state === 'prep' && (
+            <div className="text-center space-y-8 animate-in fade-in">
+              <div className="space-y-2">
+                <Badge variant="secondary" className="uppercase font-black">Challenge</Badge>
+                <h3 className="text-5xl font-black text-primary">{targetScale.name}</h3>
+              </div>
+              <Button size="lg" className="h-16 px-12 text-xl font-black" onClick={startDrill}>
+                Start Drill
+              </Button>
             </div>
-            <Button size="lg" className="h-16 px-12 text-xl font-black" onClick={startDrill}>
-              Start Drill
-            </Button>
-          </div>
-        )}
+          )}
 
-        {state === 'playing' && (
-          <div className="w-full flex flex-col items-center gap-8">
-            <div className="flex flex-wrap justify-center gap-2 max-w-md">
-              {targetScale.notes.map((n, i) => (
-                <div key={i} className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center border-2",
-                  noteHistory[i] ? "border-primary bg-primary/10" : "border-muted opacity-40"
-                )}>
-                  <span className="text-[10px] font-bold">{noteHistory[i] ? `${noteHistory[i].note}${noteHistory[i].octave}` : n}</span>
-                </div>
-              ))}
+          {state === 'playing' && (
+            <div className="w-full flex flex-col items-center gap-8">
+              <div className="flex flex-wrap justify-center gap-2 max-w-md">
+                {targetScale.notes.map((n, i) => (
+                  <div key={i} className={cn(
+                    "w-12 h-12 rounded-xl flex items-center justify-center border-2",
+                    noteHistory[i] ? "border-primary bg-primary/10" : "border-muted opacity-40"
+                  )}>
+                    <span className="text-[10px] font-bold">{noteHistory[i] ? `${noteHistory[i].note}${noteHistory[i].octave}` : n}</span>
+                  </div>
+                ))}
+              </div>
+              <Button size="lg" onClick={finalize} disabled={noteHistory.length < targetScale.notes.length}>Submit Sequence</Button>
             </div>
-            <Button size="lg" onClick={finalize} disabled={noteHistory.length < targetScale.notes.length}>Submit Sequence</Button>
-          </div>
-        )}
-      </div>
-    </GameShell>
+          )}
+        </div>
+      </GameShell>
+    </CalibrationGate>
   );
 }
