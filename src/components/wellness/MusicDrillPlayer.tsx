@@ -56,6 +56,15 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
 
+  // Exit on Escape key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
   const handleStart = () => {
     setGameState('drill');
     setStartTime(Date.now());
@@ -131,8 +140,14 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
   };
 
   return (
-    <div className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-      <div className="w-full max-w-3xl h-full max-h-[90vh] bg-background border rounded-[2rem] shadow-2xl flex flex-col overflow-hidden relative">
+    <div 
+      className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 cursor-pointer"
+      onClick={onClose}
+    >
+      <div 
+        className="w-full max-w-3xl h-full max-h-[90vh] bg-background border rounded-[2rem] shadow-2xl flex flex-col overflow-hidden relative cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         <header className="p-6 border-b bg-card shrink-0">
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60 mb-4">
             <span>Music</span>
