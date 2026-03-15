@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
@@ -42,8 +43,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const [drillStartTime, setDrillStartTime] = useState(0);
   const [results, setResults] = useState<any[]>([]);
 
-  // REMOVED DIFFICULTY GATING: We no longer filter by d.difficulty <= difficulty
-  // This allows any drill matching the type and language to be played.
+  // UNLOCKED: We only filter by type and language. Level is tracked but doesn't block content access.
   const filteredDrills = useMemo(() => 
     codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage),
   [protocolId, activeLanguage]);
@@ -74,7 +74,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       type: protocolId,
       lane,
       language: activeLanguage,
-      difficulty: currentDrill.difficulty, // Use the actual drill difficulty
+      difficulty: currentDrill.difficulty,
       durationSeconds: Math.round(res.time),
       accuracy: Math.round(accuracy),
       speedMetric: Math.round(speedMetric),
@@ -93,7 +93,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       }
     } else {
       setResults(prev => [...prev, res]);
-      if (results.length >= 2) { // 3 rounds total for solo drill
+      if (results.length >= 2) {
         setGameState('summary');
       } else {
         setCurrentIndex(prev => prev + 1);
@@ -231,7 +231,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                       onChange={e => {
                         setUserInput(e.target.value);
                         if (e.target.value.trim() === currentDrill.content.trim()) {
-                          handleCompleteRound(100, 450); // CPM mock
+                          handleCompleteRound(100, 450);
                         }
                       }}
                       autoFocus
@@ -300,9 +300,9 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     <div className="space-y-4 pt-4 border-t">
                       <div className="flex justify-between items-center">
                         <Label className="text-[9px] font-bold uppercase">Session Focus</Label>
-                        <span className="text-lg font-black text-primary">{focusLevel}</span>
+                        <span className="text-lg font-black text-primary">{focusRating}</span>
                       </div>
-                      <Slider value={[focusLevel]} onValueChange={([v]) => setFocusLevel(v)} min={1} max={5} step={1} />
+                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">
