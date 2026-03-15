@@ -17,7 +17,7 @@ import { format, subDays, isToday, parseISO, startOfWeek, isAfter } from 'date-f
 
 interface CodingState {
   logs: CodingDrillLog[];
-  languageProgress: Record<string, LanguageProgress>; // key: language
+  languageProgress: Record<string, LanguageProgress>;
   laneProgress: Record<CodingLane, LaneProgress>;
   activeLanguage: CodingLanguage;
   activeTrack: CodingTrack;
@@ -37,7 +37,6 @@ interface CodingState {
   
   getFluencyScore: () => number;
   getWeeklyVolume: () => number;
-  getLanguageDistribution: () => Record<string, number>;
   getTopLane: () => CodingLane | 'None';
   _hasHydrated: boolean;
 }
@@ -48,7 +47,8 @@ const DEFAULT_LANG_PROGRESS = (lang: CodingLanguage): LanguageProgress => ({
   consecutiveSuccesses: 0,
   consecutiveFailures: 0,
   avgAccuracy: 0,
-  avgSpeed: 0
+  avgSpeed: 0,
+  conceptWeaknesses: {}
 });
 
 const DEFAULT_LANE_PROGRESS = (lane: CodingLane): LaneProgress => ({
@@ -86,7 +86,6 @@ export const useCodingStore = create<CodingState>()(
       setActiveLanguage: (activeLanguage) => set({ activeLanguage }),
       
       setActiveTrack: (activeTrack) => {
-        // When switching tracks, pick the first available language in that track
         const languages: Record<CodingTrack, CodingLanguage[]> = {
           'Foundation': ['Python', 'TypeScript', 'SQL'],
           'Specialist': ['Rust', 'Bash', 'Swift', 'Go']
@@ -155,30 +154,36 @@ export const useCodingStore = create<CodingState>()(
             }
           }
 
-          // 3. Adaptive Difficulty Engine
+          // 3. ADAPTIVE STATE MACHINE (Stage 5)
           const lang = logData.language;
           const langProg = state.languageProgress[lang] || DEFAULT_LANG_PROGRESS(lang);
-          const laneProg = state.laneProgress[logData.lane] || DEFAULT_LANE_PROGRESS(logData.lane);
-
-          // Language logic
+          
           let lLevel = langProg.level;
           let lSuccess = langProg.consecutiveSuccesses;
-          if (logData.accuracy >= 85) {
-            lSuccess++;
-            if (lSuccess >= 3 && lLevel < 4) { lLevel++; lSuccess = 0; }
-          } else if (logData.accuracy < 60) {
-            lLevel = Math.max(1, lLevel - 1);
-            lSuccess = 0;
-          }
+          let lFail = langProg.consecutiveFailures;
+          let conceptWeaknesses = { ...langProg.conceptWeaknesses };
 
-          // Lane logic
-          const newLaneProg = {
-            ...laneProg,
-            totalSessions: laneProg.totalSessions + 1,
-            lastPracticed: timestamp,
-            avgAccuracy: (laneProg.avgAccuracy * 4 + logData.accuracy) / 5,
-            level: logData.accuracy >= 90 ? Math.min(4, laneProg.level + 1) : laneProg.level
-          };
+          if (logData.accuracy === 100) {
+            lSuccess++;
+            lFail = 0;
+            // Promotion: 3 consecutive correct
+            if (lSuccess >= 3 && lLevel < 4) {
+              lLevel++;
+              lSuccess = 0;
+            }
+          } else if (logData.accuracy < 60) {
+            lFail++;
+            lSuccess = 0;
+            // Demotion: 2 consecutive failures
+            if (lFail >= 2 && lLevel > 1) {
+              lLevel--;
+              lFail = 0;
+            }
+            // Track concept failure
+            if (logData.concept) {
+              conceptWeaknesses[logData.concept] = (conceptWeaknesses[logData.concept] || 0) + 1;
+            }
+          }
 
           return {
             logs: newLogs,
@@ -189,11 +194,13 @@ export const useCodingStore = create<CodingState>()(
             },
             languageProgress: {
               ...state.languageProgress,
-              [lang]: { ...langProg, level: lLevel, consecutiveSuccesses: lSuccess }
-            },
-            laneProgress: {
-              ...state.laneProgress,
-              [logData.lane]: newLaneProg
+              [lang]: { 
+                ...langProg, 
+                level: lLevel, 
+                consecutiveSuccesses: lSuccess, 
+                consecutiveFailures: lFail,
+                conceptWeaknesses 
+              }
             }
           };
         });
@@ -213,16 +220,6 @@ export const useCodingStore = create<CodingState>()(
           .reduce((sum, l) => sum + Math.ceil(l.durationSeconds / 60), 0);
       },
 
-      getLanguageDistribution: () => {
-        const start = startOfWeek(new Date());
-        const weekLogs = get().logs.filter(l => isAfter(parseISO(l.timestamp), start));
-        const dist: Record<string, number> = {};
-        weekLogs.forEach(l => {
-          dist[l.language] = (dist[l.language] || 0) + 1;
-        });
-        return dist;
-      },
-
       getTopLane: () => {
         const counts: Record<string, number> = { 'Write': 0, 'Read': 0, 'Build': 0 };
         get().logs.slice(0, 50).forEach(l => {
@@ -233,7 +230,7 @@ export const useCodingStore = create<CodingState>()(
       }
     }),
     {
-      name: 'coding-fluency-storage-v4',
+      name: 'coding-fluency-storage-v5',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) state._hasHydrated = true;

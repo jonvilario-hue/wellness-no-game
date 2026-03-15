@@ -18,6 +18,7 @@ export interface CodingDrillLog {
   speedMetric: number; 
   userDifficultyRating: number;
   userFocusRating: number;
+  concept?: string; // e.g. "closures", "concurrency"
 }
 
 export interface LanguageProgress {
@@ -27,6 +28,7 @@ export interface LanguageProgress {
   consecutiveFailures: number;
   avgAccuracy: number;
   avgSpeed: number;
+  conceptWeaknesses: Record<string, number>; // concept -> failCount
 }
 
 export interface LaneProgress {
@@ -36,6 +38,12 @@ export interface LaneProgress {
   avgSpeed: number;
   totalSessions: number;
   lastPracticed?: string;
+}
+
+export interface TestCase {
+  input: string;
+  expected: string;
+  description: string;
 }
 
 export interface CodingDrill {
@@ -48,13 +56,12 @@ export interface CodingDrill {
   content: string; 
   explanation: string; 
   patternToNotice: string; 
+  concept: string;
   expectedOutput?: string;
   tableInput?: string; 
-  bugs?: Array<{ line: number; type: BugCategory }>;
   requiredTokens?: string[]; 
-  testCases?: Array<{ input: any; output: any }>;
-  logicSteps?: string[]; 
-  description?: string;
+  testCases?: TestCase[];
+  bugs?: Array<{ line: number; type: BugCategory }>;
   concurrencyRelevant?: boolean;
 }
 

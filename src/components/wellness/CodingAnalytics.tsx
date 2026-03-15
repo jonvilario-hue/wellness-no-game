@@ -5,11 +5,26 @@ import { useMemo } from 'react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar, Cell } from 'recharts';
-import { TrendingUp, Target, Brain, Activity, Layers } from 'lucide-react';
+import { TrendingUp, Target, Brain, Activity, Layers, AlertCircle, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function CodingAnalytics() {
-  const { logs, laneProgress } = useCodingStore();
+  const { logs, languageProgress, activeTrack } = useCodingStore();
+
+  const currentTrackLangs = activeTrack === 'Foundation' 
+    ? ['Python', 'TypeScript', 'SQL'] 
+    : ['Rust', 'Bash', 'Swift', 'Go'];
+
+  const conceptStats = useMemo(() => {
+    const stats: Array<{ concept: string; lang: string; fails: number }> = [];
+    Object.entries(languageProgress).forEach(([lang, prog]) => {
+      if (!currentTrackLangs.includes(lang)) return;
+      Object.entries(prog.conceptWeaknesses).forEach(([concept, count]) => {
+        if (count > 0) stats.push({ concept, lang, fails: count });
+      });
+    });
+    return stats.sort((a, b) => b.fails - a.fails).slice(0, 3);
+  }, [languageProgress, currentTrackLangs]);
 
   const velocityData = useMemo(() => {
     return [...logs].reverse().slice(-20).map((l, i) => ({
@@ -20,28 +35,15 @@ export function CodingAnalytics() {
     }));
   }, [logs]);
 
-  const laneStats = useMemo(() => {
-    return Object.entries(laneProgress).map(([name, data]) => ({
-      name,
-      level: data.level,
-      accuracy: Math.round(data.avgAccuracy),
-      sessions: data.totalSessions
-    }));
-  }, [laneProgress]);
-
-  const strongestLane = useMemo(() => {
-    return laneStats.sort((a, b) => b.accuracy - a.accuracy)[0];
-  }, [laneStats]);
-
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 border-primary/10 overflow-hidden">
           <CardHeader className="bg-primary/5 pb-4">
             <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" /> 3-Lane Fluency Velocity
+              <TrendingUp className="w-4 h-4 text-primary" /> Velocity Trends
             </CardTitle>
-            <CardDescription>Accuracy and throughput trends across Write, Read, and Build.</CardDescription>
+            <CardDescription>Accuracy and throughput trends for the {activeTrack} track.</CardDescription>
           </CardHeader>
           <CardContent className="h-64 pt-8">
             {velocityData.length < 2 ? (
@@ -57,19 +59,6 @@ export function CodingAnalytics() {
                   <YAxis domain={[0, 100]} fontSize={10} axisLine={false} tickLine={false} />
                   <Tooltip 
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="p-3 bg-background border rounded-xl shadow-xl space-y-1">
-                            <p className="text-[10px] font-black uppercase text-muted-foreground">{data.date}</p>
-                            <p className="text-xs font-bold">{data.lane} Phase</p>
-                            <p className="text-xs text-primary font-black">Accuracy: {data.score}%</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
                   />
                   <Area type="monotone" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.1} strokeWidth={3} />
                 </AreaChart>
@@ -81,32 +70,33 @@ export function CodingAnalytics() {
         <Card className="border-primary/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <Layers className="w-4 h-4 text-primary" /> Lane Mastery
+              <AlertCircle className="w-4 h-4 text-primary" /> Structural Weaknesses
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
-            {laneStats.map(lane => (
-              <div key={lane.name} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold uppercase">{lane.name}</span>
-                  <span className="text-[10px] font-black text-primary">LVL {lane.level}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-primary" style={{ width: `${lane.accuracy}%` }} />
+            {conceptStats.length === 0 ? (
+              <div className="py-10 text-center opacity-30 italic text-xs">No specific weaknesses identified yet. Keep drilling.</div>
+            ) : (
+              conceptStats.map((stat, idx) => (
+                <div key={idx} className="p-3 bg-destructive/5 border border-destructive/10 rounded-xl space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase text-destructive">{stat.lang}</span>
+                    <Badge variant="outline" className="text-[8px] h-4 border-destructive/20 text-destructive">{stat.fails} FAILS</Badge>
                   </div>
-                  <span className="text-[8px] font-bold text-muted-foreground uppercase">{lane.accuracy}%</span>
+                  <p className="text-xs font-bold truncate capitalize">{stat.concept.replace('-', ' ')}</p>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
             
             <div className="pt-4 border-t border-primary/5">
               <div className="p-3 bg-primary/5 rounded-xl space-y-2">
                 <h4 className="text-[10px] font-black uppercase text-primary flex items-center gap-2">
-                  <Brain className="w-3 h-3" /> System Strategy
+                  <Sparkles className="w-3 h-3" /> Adaptive Insight
                 </h4>
                 <p className="text-[10px] leading-relaxed text-muted-foreground">
-                  Your strongest lane is <b className="text-foreground">{strongestLane?.name}</b>. The daily loop will prioritize extra friction in the other lanes to balance your profile.
+                  {conceptStats.length > 0 
+                    ? `We've noticed friction with ${conceptStats[0].concept}. Tomorrow's loop will prioritize Level 1 reinforcement drills for this topic.`
+                    : "Your performance is balanced. The system will continue to scale difficulty across all active languages."}
                 </p>
               </div>
             </div>
