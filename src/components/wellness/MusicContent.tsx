@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -108,23 +107,6 @@ export default function MusicContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-muted/30 p-4 rounded-2xl border border-primary/5">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg text-primary"><Music className="w-5 h-5" /></div>
-          <div>
-            <p className="text-[10px] font-black uppercase text-muted-foreground leading-none mb-1">Active Profile</p>
-            <h3 className="text-sm font-bold uppercase tracking-tight">{selectedInstrument} Configuration</h3>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <AssistantTooltip text="Selecting your instrument and connection method ensures the lab uses the correct mathematical sensitivity for pitch and rhythm detection. This configuration is stored per-instrument.">
-            <div className="flex flex-col sm:flex-row gap-4 items-center">
-              <InstrumentSelector />
-            </div>
-          </AssistantTooltip>
-        </div>
-      </div>
-
       <Tabs value={activeSubTab} onValueChange={handleSubTabChange} className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
           <TabsList className="flex w-full max-w-2xl h-auto bg-muted/50 p-1 min-w-max gap-1">
@@ -246,6 +228,23 @@ export default function MusicContent() {
         </TabsContent>
 
         <TabsContent value="play" className="space-y-12 animate-in fade-in">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-muted/30 p-4 rounded-2xl border border-primary/5">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg text-primary"><Music className="w-5 h-5" /></div>
+              <div>
+                <p className="text-[10px] font-black uppercase text-muted-foreground leading-none mb-1">Active Profile</p>
+                <h3 className="text-sm font-bold uppercase tracking-tight">{selectedInstrument} Configuration</h3>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <AssistantTooltip text="Selecting your instrument and connection method ensures the lab uses the correct mathematical sensitivity for pitch and rhythm detection. This configuration is stored per-instrument.">
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <InstrumentSelector />
+                </div>
+              </AssistantTooltip>
+            </div>
+          </div>
+
           <div className="space-y-6">
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
               <Target className="w-3.5 h-3.5" /> Performance Drills
@@ -339,10 +338,10 @@ export default function MusicContent() {
                         <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-all" />
                       </div>
                     </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <AssistantTooltip text="The stopwatch for your unstructured practice. Log duration and focus for any instrument or vocal session.">
