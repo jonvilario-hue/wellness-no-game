@@ -1,8 +1,8 @@
 
-export type CodingLanguage = 'Python' | 'JavaScript' | 'TypeScript' | 'Java' | 'C++' | 'Rust' | 'SQL' | 'Bash' | 'Swift';
+export type CodingLanguage = 'Python' | 'JavaScript' | 'TypeScript' | 'Java' | 'C++' | 'Rust' | 'SQL' | 'Bash' | 'Swift' | 'Go';
 export type CodingDrillType = 'Syntax Sprints' | 'Output Prediction' | 'Bug Hunt' | 'Code Reconstruction' | 'Timed Implementation';
 export type CodingLane = 'Write' | 'Read' | 'Build';
-export type BugCategory = 'Syntax' | 'Logic' | 'Off-by-One' | 'Scope' | 'Type' | 'Missing Return';
+export type BugCategory = 'Syntax' | 'Logic' | 'Off-by-One' | 'Scope' | 'Type' | 'Missing Return' | 'Concurrency' | 'Memory' | 'Ownership' | 'Database';
 export type CodingTrack = 'Foundation' | 'Specialist';
 
 export interface CodingDrillLog {
@@ -45,12 +45,14 @@ export interface CodingDrill {
   language: CodingLanguage;
   difficulty: number;
   title: string;
-  content: string; // The code snippet
+  content: string; // The code snippet or problem spec
   expectedOutput?: string;
+  tableInput?: string; // Specific for SQL prediction
   bugs?: Array<{ line: number; type: BugCategory }>;
   testCases?: Array<{ input: any; output: any }>;
   description?: string;
   studyTimeSeconds?: number;
+  concurrencyRelevant?: boolean;
 }
 
 export interface CodingLoopStep {

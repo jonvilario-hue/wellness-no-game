@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -58,9 +59,9 @@ const trackInfo = {
     color: "text-blue-500",
     bg: "bg-blue-500/10",
     border: "border-blue-500/20",
-    description: "The essentials. These are the ubiquitous languages you will read and debug every day.",
-    languages: ['Python', 'TypeScript', 'JavaScript', 'SQL'],
-    focus: "Mental Compilation (Read Emphasis)"
+    description: "The essentials. These are the ubiquitous languages you will read, review, debug, and verify every day. Master the logic that runs everywhere.",
+    languages: ['Python', 'JavaScript', 'TypeScript', 'SQL'],
+    focus: "Verification & Reading (Read Emphasis)"
   },
   Specialist: {
     title: "Specialist / Edge",
@@ -68,9 +69,9 @@ const trackInfo = {
     color: "text-amber-500",
     bg: "bg-amber-500/10",
     border: "border-amber-500/20",
-    description: "High-leverage, AI-resistant skills requiring strict precision and systems thinking.",
-    languages: ['Rust', 'Bash', 'Swift'],
-    focus: "Structural Execution (Write/Build Emphasis)"
+    description: "High-leverage, precision languages. These demand strict thinking, systems awareness, and real fluency. Mastering these builds mental models that transfer everywhere.",
+    languages: ['Rust', 'Bash', 'Swift', 'Go'],
+    focus: "Production & Execution (Write/Build Emphasis)"
   }
 };
 

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
@@ -13,7 +14,7 @@ import {
   X, Play, Zap, Clock, Brain, Check,
   ChevronRight, ArrowRight, Terminal, 
   Target, Sparkles, CheckCircle2, XCircle,
-  SkipForward, LayoutGrid, PenTool, Eye
+  SkipForward, LayoutGrid, PenTool, Eye, Database
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
@@ -171,6 +172,11 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                       <p className="text-[10px] font-bold uppercase text-primary">Objective</p>
                       <p className="text-sm font-medium leading-relaxed">{currentDrill?.description || 'Focus on precise execution and speed.'}</p>
                     </div>
+                    {currentDrill?.concurrencyRelevant && (
+                      <Badge variant="outline" className="w-full justify-center border-amber-500/20 text-amber-600 bg-amber-500/5 py-1 gap-2">
+                        <Zap className="w-3 h-3" /> Concurrent Logic Focus
+                      </Badge>
+                    )}
                     {!activeLoop.active && (
                       <div className="space-y-3">
                         <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Difficulty Level</Label>
@@ -200,6 +206,16 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
             {gameState === 'active' && currentDrill && (
               <motion.div key={currentIndex} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="w-full max-w-2xl space-y-6">
+                
+                {currentDrill.language === 'SQL' && currentDrill.tableInput && (
+                  <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl space-y-2">
+                    <p className="text-[10px] font-black uppercase text-blue-600 flex items-center gap-2">
+                      <Database className="w-3 h-3" /> Input Schema/Table
+                    </p>
+                    <pre className="text-[10px] font-mono whitespace-pre-wrap">{currentDrill.tableInput}</pre>
+                  </div>
+                )}
+
                 <div className="bg-card border-2 border-primary/10 rounded-2xl p-6 font-mono text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap">
                   {currentDrill.content}
                 </div>
@@ -284,7 +300,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                         <Label className="text-[10px] font-bold uppercase">Session Focus</Label>
                         <span className="text-lg font-black text-primary">{focusRating}</span>
                       </div>
-                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusLevel(v)} min={1} max={5} step={1} />
+                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">

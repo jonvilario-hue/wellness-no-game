@@ -89,7 +89,7 @@ export const useCodingStore = create<CodingState>()(
         // When switching tracks, pick the first available language in that track
         const languages: Record<CodingTrack, CodingLanguage[]> = {
           'Foundation': ['Python', 'TypeScript', 'SQL'],
-          'Specialist': ['Rust', 'Bash', 'Swift']
+          'Specialist': ['Rust', 'Bash', 'Swift', 'Go']
         };
         const defaultLang = languages[activeTrack][0];
         set({ activeTrack, activeLanguage: defaultLang });
@@ -107,6 +107,8 @@ export const useCodingStore = create<CodingState>()(
 
       advanceLoop: (accuracy, speed) => set(state => {
         const loop = state.activeLoop;
+        if (!loop.active) return state;
+        
         const currentStep = loop.steps[loop.currentStep];
         const newResults = [...loop.results, { 
           lane: currentStep.lane, 
@@ -231,7 +233,7 @@ export const useCodingStore = create<CodingState>()(
       }
     }),
     {
-      name: 'coding-fluency-storage-v3',
+      name: 'coding-fluency-storage-v4',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) state._hasHydrated = true;
