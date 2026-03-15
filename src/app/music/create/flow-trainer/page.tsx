@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { drumKit } from '@/lib/audio/drums';
 import * as Tone from 'tone';
 import { initDB } from '@/lib/storage/db';
+import { cn } from '@/lib/utils';
 
 const PATTERNS = {
   Beginner: [
@@ -32,6 +33,7 @@ const PATTERNS = {
 export default function FlowTrainerPage() {
   const [gameState, setGameState] = useState<'idle' | 'listening' | 'performing' | 'results'>('idle');
   const [difficulty, setDifficulty] = useState<'Beginner' | 'Intermediate' | 'Advanced'>('Beginner');
+  const [isPercussiveMode, setIsPercussiveMode] = useState(false);
   const [round, setRound] = useState(1);
   const [score, setScore] = useState(0);
   const [pattern, setPattern] = useState<boolean[]>([]);
@@ -73,7 +75,10 @@ export default function FlowTrainerPage() {
     // 1. Listening Phase
     for (let i = 0; i < 16; i++) {
       setCurrentCell(i);
-      if (pattern[i]) drumKit.hihat();
+      if (pattern[i]) {
+        if (isPercussiveMode) drumKit.kick();
+        else drumKit.hihat();
+      }
       await new Promise(r => setTimeout(r, cellDuration));
     }
 
@@ -120,18 +125,19 @@ export default function FlowTrainerPage() {
       date: new Date().toISOString(),
       score: Math.round(score / 10),
       difficulty,
+      mode: isPercussiveMode ? 'percussive' : 'standard'
     });
   };
 
   return (
     <GameShell
       gameName="Flow Trainer"
-      description="Match the rhythmic pattern using your voice or claps."
+      description="Lock your rhythm to the beat grid using your voice, vocal percussion, or body percussion."
       instructions={[
         "Observe the 16-step grid.",
         "Listen to the pattern during the reference bar.",
         "When the grid highlights, match the pattern in rhythm.",
-        "Hit the marked cells and stay silent on the empty ones."
+        isPercussiveMode ? "Percussive Mode: Use kicks, snaps, claps, or vocal drums." : "Standard Mode: Use your voice or hum the rhythm."
       ]}
       gameState={gameState === 'results' ? 'complete' : gameState === 'idle' ? 'idle' : 'playing'}
       currentRound={round}
@@ -144,14 +150,40 @@ export default function FlowTrainerPage() {
     >
       <MicPermissionGate>
         <div className="w-full flex flex-col items-center space-y-12">
-          <div className="text-center space-y-4">
-            <Badge className="bg-primary text-white uppercase text-[10px] font-black">
-              {gameState === 'listening' ? 'LISTEN' : 'YOUR TURN'}
-            </Badge>
-            {gameState === 'listening' && (
-              <Button size="lg" onClick={runSequence}>Initialize Sequence</Button>
-            )}
-          </div>
+          {gameState === 'idle' && (
+            <div className="flex flex-col gap-6 items-center bg-muted/30 p-8 rounded-[2rem] border border-primary/5 w-full max-w-md">
+              <div className="space-y-2 text-center">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Input Protocol</p>
+                <div className="flex gap-2">
+                  <Button 
+                    variant={!isPercussiveMode ? 'default' : 'outline'} 
+                    className="flex-1 h-12 font-bold"
+                    onClick={() => setIsPercussiveMode(false)}
+                  >
+                    Standard (Voice)
+                  </Button>
+                  <Button 
+                    variant={isPercussiveMode ? 'default' : 'outline'} 
+                    className="flex-1 h-12 font-bold"
+                    onClick={() => setIsPercussiveMode(true)}
+                  >
+                    Percussive Mode
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {gameState !== 'idle' && (
+            <div className="text-center space-y-4">
+              <Badge className="bg-primary text-white uppercase text-[10px] font-black px-4 h-6">
+                {gameState === 'listening' ? 'LISTEN' : 'YOUR TURN'}
+              </Badge>
+              {gameState === 'listening' && (
+                <Button size="lg" onClick={runSequence} className="px-12 h-14 font-black text-lg shadow-xl">Initialize Sequence</Button>
+              )}
+            </div>
+          )}
 
           <BeatGrid 
             pattern={pattern} 

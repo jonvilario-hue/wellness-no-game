@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -31,7 +32,7 @@ const categoryExercises = {
   sing: [
     { id: 'pitch-match', name: 'Pitch Match', desc: 'Match the note you hear using your voice.', difficulty: 'Beginner', icon: Target },
     { id: 'interval-sing', name: 'Interval Sing-Back', desc: 'Sing the specific interval above a root note.', difficulty: 'Intermediate', icon: Music },
-    { id: 'melody-echo', name: 'Melody Echo', desc: 'Recall and sing back a musical phrase.', difficulty: 'Intermediate', icon: Waves },
+    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases. Start by recalling isolated pitches, then progress to remembering real melodies with rhythm and shape.', difficulty: 'Beginner / Intermediate / Advanced', icon: Waves },
     { id: 'sight-singing', name: 'Sight-Singing', desc: 'Sing from notation without hearing it.', difficulty: 'Advanced', icon: BookOpen },
   ],
   voice: [
@@ -47,8 +48,7 @@ const categoryExercises = {
   ],
   create: [
     { id: 'vocal-improv', name: 'Vocal Improv', desc: 'Improvise melodies over chord changes.', difficulty: 'Intermediate', icon: Mic },
-    { id: 'flow-trainer', name: 'Flow Trainer', desc: 'Ride the beat with rhythmic precision.', difficulty: 'Intermediate', icon: Zap },
-    { id: 'beatbox-lab', name: 'Beatbox Lab', desc: 'Create complex drum patterns with your voice.', difficulty: 'Beginner', icon: Drum },
+    { id: 'flow-trainer', name: 'Flow Trainer', desc: 'Lock your rhythm to the beat grid using your voice, vocal percussion, or body percussion. Standard mode uses pitched sounds. Percussive mode lets you practice rhythmic accuracy with kicks, snaps, claps, and vocal drums.', difficulty: 'Intermediate', icon: Zap },
     { id: 'freestyle', name: 'Freestyle Sandbox', desc: 'Open creative space with real-time feedback.', difficulty: 'All Levels', icon: Sparkles },
   ]
 };

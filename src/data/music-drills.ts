@@ -53,7 +53,7 @@ export const musicDomains: { name: MusicDomain; icon: any; drills: string[] }[] 
   { 
     name: 'Critical Listening', 
     icon: Headphones, 
-    drills: ['Instrument Identification', 'Harmonic Direction', 'Form Mapping', 'Dynamic Analysis'] 
+    drills: ['Harmonic Direction', 'Dynamic Analysis'] 
   }
 ];
 
@@ -143,17 +143,6 @@ export const drillsData: DrillDefinition[] = [
     description: 'Plan a phrase using specific parameters.',
     questions: [
       { prompt: "Compose a 4-bar melody using only: G, A, B, D, E (G Pentatonic).", answer: "composition", explanation: "Pentatonic scales provide a safe harmonic landing for improvisation.", type: 'text' }
-    ]
-  },
-
-  // --- Critical Listening ---
-  {
-    id: 'instrument-id',
-    name: 'Instrument Identification',
-    domain: 'Critical Listening',
-    description: 'Identify textures and sounds.',
-    questions: [
-      { prompt: "Identify the lead: Warm, woody, vibrating string with deep resonance.", options: ["Violin", "Cello", "Double Bass", "Viola"], answer: "Cello", explanation: "The Cello sits in the 'tenor' range of strings with a distinctive warm vibration.", type: 'multiple-choice' }
     ]
   }
 ];

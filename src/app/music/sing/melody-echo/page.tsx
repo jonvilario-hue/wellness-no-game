@@ -33,16 +33,32 @@ export default function MelodyEchoPage() {
   const pitchData = useRealtimePitch(stream, 0.85);
 
   const generateMelody = useCallback(() => {
-    const scale = ['C', 'D', 'E', 'F', 'G'];
-    const len = 4;
+    let len = 4;
+    let set = ['C', 'D', 'E', 'F', 'G'];
+    
+    // Integrated Tonal Recall + Melody Echo Progression
+    if (round <= 3) {
+      // Level 1-3: Isolated tones (2-4 notes, no scale safety)
+      len = round + 1; // 2, 3, 4
+      set = ['C', 'Eb', 'Gb', 'A', 'B']; // Non-melodic, wide intervals
+    } else if (round <= 6) {
+      // Level 4-6: Short melodic phrases (3-5 notes with diatonic contour)
+      len = round - 1; // 3, 4, 5
+      set = ['C', 'D', 'E', 'F', 'G'];
+    } else {
+      // Level 7-10: Longer melodic phrases (5-8+ notes)
+      len = round - 2; 
+      set = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C5'];
+    }
+
     const newMelody = Array.from({ length: len }, () => ({
-      note: scale[Math.floor(Math.random() * scale.length)],
+      note: set[Math.floor(Math.random() * set.length)],
       octave: 4
     }));
     setMelody(newMelody);
     setCapturedPitches([]);
     setBeatIndex(-1);
-  }, []);
+  }, [round]);
 
   const handleStart = async () => {
     if (!isReady) await initAudio();
@@ -101,7 +117,7 @@ export default function MelodyEchoPage() {
     const roundCorrect = capturedPitches.filter(p => p.isCorrect).length;
     setTotalScore(s => s + (roundCorrect * 25));
     
-    if (round < 8) {
+    if (round < 10) {
       setRound(r => r + 1);
       setGameState('listening');
       generateMelody();
@@ -119,7 +135,7 @@ export default function MelodyEchoPage() {
       score: totalScore,
       accuracy: 0,
       duration: 0,
-      difficulty: 'Beginner',
+      difficulty: 'Progressive',
       roundDetails: [],
       maxStreak: 0
     });
@@ -128,20 +144,20 @@ export default function MelodyEchoPage() {
   return (
     <GameShell
       gameName="Melody Echo"
-      description="Sing back the melody from memory."
+      description="Recall and reproduce pitch sequences from raw tones to complex melodies."
       instructions={[
-        "Listen to the 4-note melody played by the lab.",
+        "Listen to the note sequence played by the lab.",
+        round <= 3 ? "Building Raw Pitch Memory: Focus on the individual tones." : "Focus on the melodic shape and rhythm.",
         "When ready, tap 'Start Echo' and wait for the metronome clicks.",
-        "Sing each note on the beat.",
-        "Accuracy is tracked per-note based on pitch precision."
+        "Sing each note on the beat. Accuracy is tracked per-note."
       ]}
       gameState={gameState === 'complete' ? 'complete' : gameState === 'idle' ? 'idle' : 'playing'}
       currentRound={round}
-      totalRounds={8}
+      totalRounds={10}
       score={totalScore}
       onStart={handleStart}
       onPauseToggle={() => {}}
-      backHref="/music/sing"
+      backHref="/skills?tab=music&sub=sing"
       breadcrumb={["Music", "Sing", "Melody Echo"]}
     >
       <MicPermissionGate>
@@ -149,7 +165,9 @@ export default function MelodyEchoPage() {
           {gameState === 'listening' && (
             <div className="text-center space-y-8 animate-in fade-in">
               <div className="space-y-2">
-                <Badge variant="secondary" className="uppercase font-black tracking-widest text-[10px]">Phase 1</Badge>
+                <Badge variant="secondary" className="uppercase font-black tracking-widest text-[10px]">
+                  {round <= 3 ? 'Phase A: Raw Pitch' : 'Phase B: Melodic Contour'}
+                </Badge>
                 <h3 className="text-4xl font-black">Listen...</h3>
               </div>
               <div className="flex justify-center gap-4">
@@ -168,7 +186,7 @@ export default function MelodyEchoPage() {
           {gameState === 'ready' && (
             <div className="text-center space-y-8 animate-in zoom-in-95">
               <div className="p-6 bg-primary/5 rounded-3xl border-2 border-primary/10">
-                <h3 className="text-2xl font-black uppercase mb-2">Melody Captured</h3>
+                <h3 className="text-2xl font-black uppercase mb-2">Sequence Captured</h3>
                 <p className="text-muted-foreground text-sm">Tap below to sing it back on the beat.</p>
               </div>
               <Button size="lg" className="h-16 px-12 text-xl font-black shadow-2xl" onClick={startEcho}>
@@ -183,11 +201,11 @@ export default function MelodyEchoPage() {
                 <Badge className="bg-primary text-white border-none uppercase text-[10px] font-black tracking-widest">Recording Echo</Badge>
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-primary animate-pulse" />
-                  <span className="text-[10px] font-black uppercase opacity-40">Beat {beatIndex + 1} / 4</span>
+                  <span className="text-[10px] font-black uppercase opacity-40">Beat {beatIndex + 1} / {melody.length}</span>
                 </div>
               </div>
 
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center gap-4 flex-wrap max-w-lg">
                 {melody.map((m, i) => (
                   <div key={i} className={cn(
                     "w-16 h-16 rounded-2xl flex items-center justify-center transition-all border-4",
@@ -211,7 +229,7 @@ export default function MelodyEchoPage() {
             <div className="w-full max-w-md space-y-8 text-center animate-in slide-in-from-bottom-4">
               <h3 className="text-2xl font-black uppercase tracking-tight">Round Recap</h3>
               <div className="grid grid-cols-4 gap-3">
-                {melody.map((m, i) => {
+                {melody.slice(0, 8).map((m, i) => {
                   const cap = capturedPitches[i];
                   return (
                     <div key={i} className="space-y-2">
@@ -220,7 +238,7 @@ export default function MelodyEchoPage() {
                         cap?.isCorrect ? "bg-emerald-500/10 border-emerald-500 text-emerald-700" : "bg-destructive/5 border-destructive text-destructive"
                       )}>
                         <span className="text-[8px] font-black uppercase opacity-60">Target: {m.note}</span>
-                        <span className="text-xl font-black">{cap?.note}</span>
+                        <span className="text-xl font-black">{cap?.note || '?'}</span>
                         {cap?.isCorrect ? <CheckCircle2 className="w-4 h-4 mt-1" /> : <span className="text-[10px] font-bold mt-1">MISS</span>}
                       </div>
                     </div>
@@ -228,7 +246,7 @@ export default function MelodyEchoPage() {
                 })}
               </div>
               <Button size="lg" className="w-full font-bold h-14" onClick={handleNextRound}>
-                Continue to Round {round + 1}
+                Continue to Level {round + 1}
               </Button>
             </div>
           )}
