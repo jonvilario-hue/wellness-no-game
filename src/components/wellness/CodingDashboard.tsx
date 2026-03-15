@@ -10,7 +10,7 @@ import { useCodingStore } from '@/hooks/use-coding-store';
 import { 
   Flame, Clock, Zap, Trophy, 
   LayoutGrid, ArrowRight, Sparkles,
-  Terminal, Code2, Brain, Play, BookOpen, Layers
+  Terminal, Code2, Brain, Play, BookOpen, Layers, Info
 } from 'lucide-react';
 import { AssistantTooltip } from '../assistant-tooltip';
 import { cn } from '@/lib/utils';
@@ -47,6 +47,15 @@ export function CodingDashboard() {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center px-1">
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">Neural Velocity</h3>
+        <AssistantTooltip text="The drills in this lab are synthetically curated 'gym reps' based on official language specifications and common algorithmic patterns. They are designed to build muscle memory, not teach conceptual theory.">
+          <Badge variant="secondary" className="gap-1.5 h-6 text-[9px] font-black uppercase cursor-help">
+            <Info className="w-3 h-3" /> Content Origin
+          </Badge>
+        </AssistantTooltip>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <AssistantTooltip text="Consecutive days of active code drilling. Consistency builds automaticity.">
           <Card className="bg-primary/5 border-primary/10 h-full">

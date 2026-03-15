@@ -1,3 +1,22 @@
+/**
+ * @fileOverview Synthetic training data for the Coding Lab.
+ * 
+ * SOURCE AND CURATION:
+ * These drills are synthetically curated "gym reps" designed to build automaticity. 
+ * They are not pulled from external proprietary question banks. The content is 
+ * derived from:
+ * 1. Standard Language Specifications: Official documentation for Python, JS, TS, 
+ *    Java, and C++ to ensure accurate syntax.
+ * 2. Common Algorithmic Patterns: "Functional scales" like array manipulation, 
+ *    string parsing, and basic control flow used in industry standards.
+ * 3. Real-world Error Heuristics: The Bug Hunt categories are modeled after 
+ *    the most frequent developer errors (e.g., off-by-one, scope leaks).
+ * 
+ * FOCUS:
+ * The goal is high-frequency repetition of foundational structures, not 
+ * novel problem-solving or conceptual teaching.
+ */
+
 import type { CodingDrill } from '@/types/coding';
 
 export const codingDrills: CodingDrill[] = [
@@ -9,7 +28,8 @@ export const codingDrills: CodingDrill[] = [
     language: 'Python',
     difficulty: 1,
     title: 'Variable & Loop',
-    content: 'for i in range(10):\n    x = i * 2\n    print(f"Value: {x}")'
+    content: 'for i in range(10):\n    x = i * 2\n    print(f"Value: {x}")',
+    description: 'A standard for-loop with f-string formatting.'
   },
   {
     id: 'syntax-js-1',
@@ -18,7 +38,8 @@ export const codingDrills: CodingDrill[] = [
     language: 'JavaScript',
     difficulty: 1,
     title: 'Array Mapping',
-    content: 'const doubled = arr.map(n => n * 2);\nconsole.log(doubled);'
+    content: 'const doubled = arr.map(n => n * 2);\nconsole.log(doubled);',
+    description: 'Basic functional programming pattern using .map()'
   },
   {
     id: 'syntax-ts-1',
@@ -27,7 +48,8 @@ export const codingDrills: CodingDrill[] = [
     language: 'TypeScript',
     difficulty: 1,
     title: 'Interface & Type',
-    content: 'interface User {\n  id: string;\n  name: string;\n}\nconst u: User = { id: "1", name: "Alice" };'
+    content: 'interface User {\n  id: string;\n  name: string;\n}\nconst u: User = { id: "1", name: "Alice" };',
+    description: 'Interface definition and object assignment.'
   },
   {
     id: 'syntax-java-1',
@@ -36,7 +58,8 @@ export const codingDrills: CodingDrill[] = [
     language: 'Java',
     difficulty: 1,
     title: 'Class Main',
-    content: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello");\n    }\n}'
+    content: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello");\n    }\n}',
+    description: 'The standard entry point for a Java application.'
   },
   {
     id: 'syntax-cpp-1',
@@ -45,7 +68,8 @@ export const codingDrills: CodingDrill[] = [
     language: 'C++',
     difficulty: 1,
     title: 'Standard IO',
-    content: '#include <iostream>\nint main() {\n    std::cout << "Hello" << std::endl;\n    return 0;\n}'
+    content: '#include <iostream>\nint main() {\n    std::cout << "Hello" << std::endl;\n    return 0;\n}',
+    description: 'Basic C++ boilerplate for standard input/output.'
   },
 
   // --- WRITE LANE: RECONSTRUCTION ---
@@ -57,7 +81,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Sum Function',
     content: 'function sum(a, b) {\n  return a + b;\n}',
-    studyTimeSeconds: 15
+    studyTimeSeconds: 15,
+    description: 'Simple function with parameter return logic.'
   },
   {
     id: 'recon-py-1',
@@ -67,7 +92,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'List Sum',
     content: 'def sum_list(nums):\n    total = 0\n    for n in nums:\n        total += n\n    return total',
-    studyTimeSeconds: 20
+    studyTimeSeconds: 20,
+    description: 'Iterative accumulation pattern.'
   },
   {
     id: 'recon-ts-1',
@@ -77,7 +103,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Generic Identity',
     content: 'function identity<T>(arg: T): T {\n  return arg;\n}',
-    studyTimeSeconds: 15
+    studyTimeSeconds: 15,
+    description: 'Basic generic function signature.'
   },
 
   // --- READ LANE: OUTPUT PREDICTION ---
@@ -89,7 +116,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Coercion Check',
     content: 'console.log(1 + "2" + 3);',
-    expectedOutput: '123'
+    expectedOutput: '123',
+    description: 'Implicit string coercion in JavaScript.'
   },
   {
     id: 'output-py-1',
@@ -99,7 +127,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'List Slicing',
     content: 'nums = [1, 2, 3, 4, 5]\nprint(nums[1:3])',
-    expectedOutput: '[2, 3]'
+    expectedOutput: '[2, 3]',
+    description: 'Python list slicing indices [start:stop].'
   },
   {
     id: 'output-ts-1',
@@ -109,7 +138,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Basic Logic',
     content: 'let x: number = 5;\nlet y: number = x * 2;\nconsole.log(y + 3);',
-    expectedOutput: '13'
+    expectedOutput: '13',
+    description: 'Basic variable manipulation and arithmetic.'
   },
 
   // --- READ LANE: BUG HUNT ---
@@ -121,7 +151,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Reference Error',
     content: 'function greet(name) {\n  return "Hello " + nme;\n}',
-    bugs: [{ line: 2, type: 'Scope' }]
+    bugs: [{ line: 2, type: 'Scope' }],
+    description: 'Variable name typo causing a scope reference error.'
   },
   {
     id: 'bug-py-1',
@@ -131,7 +162,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Indentation Issue',
     content: 'def add(a, b):\nreturn a + b',
-    bugs: [{ line: 2, type: 'Syntax' }]
+    bugs: [{ line: 2, type: 'Syntax' }],
+    description: 'Incorrect indentation for function return statement.'
   },
   {
     id: 'bug-ts-1',
@@ -141,7 +173,8 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Type Mismatch',
     content: 'let score: number = "100";\nconsole.log(score);',
-    bugs: [{ line: 1, type: 'Type' }]
+    bugs: [{ line: 1, type: 'Type' }],
+    description: 'Attempting to assign a string to a number variable.'
   },
 
   // --- BUILD LANE: TIMED IMPLEMENTATION ---
@@ -167,7 +200,7 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Hello Type',
     description: 'Create a function `greet(name: string)` that returns "Hello " + name.',
-    content: 'function greet(name: string): string {\n  // your code\n}',
+    content: 'function greet(name: string): string {\n  return "Hello " + name;\n}',
     testCases: [
       { input: 'World', output: 'Hello World' }
     ]
@@ -180,7 +213,7 @@ export const codingDrills: CodingDrill[] = [
     difficulty: 1,
     title: 'Square List',
     description: 'Create a function `squares(nums)` that returns a list of squares of the input numbers.',
-    content: 'def squares(nums):\n    # your code',
+    content: 'def squares(nums):\n    return [n*n for n in nums]',
     testCases: [
       { input: [1, 2, 3], output: [1, 4, 9] }
     ]
