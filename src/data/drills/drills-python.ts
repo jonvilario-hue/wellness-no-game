@@ -1,4 +1,3 @@
-import type { CodingDrill } from '@/types/coding';
 
 /**
  * DRILL CONTENT FILE — DO NOT DELETE OR MERGE
@@ -14,18 +13,20 @@ import type { CodingDrill } from '@/types/coding';
  * reorganize without explicit instruction.
  */
 
+import type { CodingDrill } from '@/types/coding';
+
 export const pythonDrills: CodingDrill[] = [
-  // Syntax Sprints (Write)
+  // Syntax Sprints
   {
     id: 'py-syntax-l1',
     type: 'Syntax Sprints',
     lane: 'Write',
     language: 'Python',
     difficulty: 1,
-    title: 'Basic List Comprehension',
-    content: '[x for x in range(5)]',
-    explanation: 'List comprehensions provide a concise way to create lists.',
-    patternToNotice: 'The brackets [] surrounding the expression indicate a list output.',
+    title: 'List Comprehension',
+    content: '[x**2 for x in range(10)]',
+    explanation: 'Basic list comprehension syntax.',
+    patternToNotice: 'Expression comes first, followed by the loop.',
     concept: 'comprehensions',
     requiredTokens: ['[', 'for', 'in', 'range', ']']
   },
@@ -35,12 +36,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Python',
     difficulty: 2,
-    title: 'Conditional Comprehension',
-    content: '[x for x in data if x > 0]',
-    explanation: 'Adding an "if" at the end filters the iteration.',
-    patternToNotice: 'The filter comes after the "in" clause.',
-    concept: 'comprehensions',
-    requiredTokens: ['if', '>', 'for']
+    title: 'F-String Interpolation',
+    content: 'f"Name: {user.name}"',
+    explanation: 'F-strings allow embedding variables directly.',
+    patternToNotice: 'The "f" prefix before quotes is mandatory.',
+    concept: 'strings',
+    requiredTokens: ['f"', '{', '}']
   },
   {
     id: 'py-syntax-l3',
@@ -48,12 +49,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Python',
     difficulty: 3,
-    title: 'Dict Comprehension',
-    content: '{k: v for k, v in pairs if k}',
-    explanation: 'Dict comprehensions use curly braces and k:v pairs.',
-    patternToNotice: 'Colon separates key and value expressions.',
-    concept: 'comprehensions',
-    requiredTokens: ['{', ':', 'for', 'in', '}']
+    title: 'Args and Kwargs',
+    content: 'def fn(*args, **kwargs):',
+    explanation: 'Unpacking arbitrary positional and keyword arguments.',
+    patternToNotice: '* is for list unpacking, ** is for dict unpacking.',
+    concept: 'functions',
+    requiredTokens: ['*', 'args', '**', 'kwargs']
   },
   {
     id: 'py-syntax-l4',
@@ -61,27 +62,27 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Python',
     difficulty: 4,
-    title: 'Nested Comprehension',
-    content: '[col for row in matrix for col in row]',
-    explanation: 'Nested loops in comprehensions read from left to right.',
-    patternToNotice: 'The outer loop comes before the inner loop.',
-    concept: 'comprehensions',
-    requiredTokens: ['for', 'in', 'for', 'in']
+    title: 'Context Manager',
+    content: 'with open("f.txt") as f:',
+    explanation: 'The "with" statement ensures file closure.',
+    patternToNotice: 'Indentation identifies the scope of the file handle.',
+    concept: 'context-managers',
+    requiredTokens: ['with', 'open', 'as', ':']
   },
 
-  // Code Reconstruction (Write)
+  // Code Reconstruction
   {
     id: 'py-recon-l1',
     type: 'Code Reconstruction',
     lane: 'Write',
     language: 'Python',
     difficulty: 1,
-    title: 'Function Definition',
-    content: 'def greet(name):\n    return f"Hello {name}"',
-    explanation: 'Functions use the "def" keyword and indentation.',
-    patternToNotice: 'Python uses whitespace to define blocks, not curly braces.',
-    concept: 'functions',
-    requiredTokens: ['def', ':', 'return']
+    title: 'Conditionals',
+    content: 'if x > 0:\n    print("pos")\nelse:\n    print("neg")',
+    explanation: 'Standard if/else branching with colons.',
+    patternToNotice: 'Indentation defines the block levels.',
+    concept: 'conditionals',
+    requiredTokens: ['if', ':', 'else', ':']
   },
   {
     id: 'py-recon-l2',
@@ -89,12 +90,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Python',
     difficulty: 2,
-    title: 'Context Manager',
-    content: 'with open("log.txt") as f:\n    data = f.read()',
-    explanation: 'The "with" statement ensures resources are cleaned up.',
-    patternToNotice: 'The "as" keyword assigns the object to a local variable.',
-    concept: 'context-managers',
-    requiredTokens: ['with', 'open', 'as', ':', 'read']
+    title: 'Try Except',
+    content: 'try:\n    val = int(s)\nexcept ValueError:\n    val = 0',
+    explanation: 'Catching specific errors prevents crashes.',
+    patternToNotice: 'Only the code likely to fail should be in the try block.',
+    concept: 'exceptions',
+    requiredTokens: ['try', ':', 'except', ':']
   },
   {
     id: 'py-recon-l3',
@@ -102,12 +103,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Python',
     difficulty: 3,
-    title: 'Exception Handling',
-    content: 'try:\n    do_work()\nexcept ValueError as e:\n    log(e)',
-    explanation: 'The "except" block catches specific error types.',
-    patternToNotice: 'Always catch specific exceptions, never a bare "except:".',
-    concept: 'exceptions',
-    requiredTokens: ['try', 'except', 'ValueError', 'as']
+    title: 'List Slicing',
+    content: 'reversed_list = data[::-1]',
+    explanation: '[start:stop:step] syntax for list manipulation.',
+    patternToNotice: '-1 step effectively reverses the sequence.',
+    concept: 'lists',
+    requiredTokens: ['[', ':', ':', '-1', ']']
   },
   {
     id: 'py-recon-l4',
@@ -115,27 +116,27 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Python',
     difficulty: 4,
-    title: 'Decorator Pattern',
-    content: 'def deco(func):\n    def wrap():\n        return func()\n    return wrap',
-    explanation: 'Decorators are functions that return functions.',
-    patternToNotice: 'A closure is used to wrap the original function logic.',
-    concept: 'decorators',
-    requiredTokens: ['def', 'def', 'return', 'return']
+    title: 'Lambda Filter',
+    content: 'list(filter(lambda x: x > 0, nums))',
+    explanation: 'Using functional primitives with anonymous functions.',
+    patternToNotice: 'Filter returns an iterator; list() consumes it.',
+    concept: 'functional',
+    requiredTokens: ['list', 'filter', 'lambda', ':']
   },
 
-  // Output Prediction (Read)
+  // Output Prediction
   {
     id: 'py-read-l1',
     type: 'Output Prediction',
     lane: 'Read',
     language: 'Python',
     difficulty: 1,
-    title: 'Falsiness',
-    content: 'x = []\nif x:\n    print("True")\nelse:\n    print("False")',
-    expectedOutput: 'False',
-    explanation: 'Empty lists are falsy in Python.',
-    patternToNotice: 'None, 0, "", and empty containers []/{} are all False.',
-    concept: 'truthiness'
+    title: 'List Appending',
+    content: 'a = [1]\nb = a\na.append(2)\nprint(b)',
+    expectedOutput: '[1, 2]',
+    explanation: 'Lists are mutable; b refers to the same object as a.',
+    patternToNotice: 'Variables in Python are pointers to memory locations.',
+    concept: 'mutability'
   },
   {
     id: 'py-read-l2',
@@ -143,12 +144,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Python',
     difficulty: 2,
-    title: 'List Referencing',
-    content: 'a = [1]\nb = a\na.append(2)\nprint(b)',
-    expectedOutput: '[1, 2]',
-    explanation: 'b refers to the same object as a. List mutation affects all refs.',
-    patternToNotice: 'Variables are pointers to objects, not copies of data.',
-    concept: 'mutability'
+    title: 'Bool Evaluation',
+    content: 'print(bool([]) or bool(0))',
+    expectedOutput: 'False',
+    explanation: 'Empty containers and zero are falsy in Python.',
+    patternToNotice: 'None, [], {}, 0, and "" are all False.',
+    concept: 'truthiness'
   },
   {
     id: 'py-read-l3',
@@ -156,12 +157,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Python',
     difficulty: 3,
-    title: 'Mutable Default',
-    content: 'def add(n, l=[]):\n    l.append(n)\n    return l\nadd(1)\nprint(add(2))',
-    expectedOutput: '[1, 2]',
-    explanation: 'Default arguments are evaluated once at definition time.',
-    patternToNotice: 'Never use mutable types (lists/dicts) as default arguments.',
-    concept: 'mutability'
+    title: 'Integer Caching',
+    content: 'a = 256\nb = 256\nprint(a is b)',
+    expectedOutput: 'True',
+    explanation: 'Python caches small integers (-5 to 256) for performance.',
+    patternToNotice: '"is" checks memory ID, not just value.',
+    concept: 'caching'
   },
   {
     id: 'py-read-l4',
@@ -169,27 +170,27 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Python',
     difficulty: 4,
-    title: 'Scoping (LEGB)',
-    content: 'x = 1\ndef f():\n    x = 2\n    def g():\n        nonlocal x\n        x = 3\n    g()\n    return x\nprint(f(), x)',
-    expectedOutput: '3 1',
-    explanation: '"nonlocal" modifies the nearest enclosing scope variable.',
-    patternToNotice: 'nonlocal skips the local scope but doesn\'t reach global.',
-    concept: 'scoping'
+    title: 'Mutable Defaults',
+    content: 'def f(x, l=[]):\n    l.append(x)\n    return l\nf(1)\nprint(f(2))',
+    expectedOutput: '[1, 2]',
+    explanation: 'Default arguments are evaluated once at definition.',
+    patternToNotice: 'The list exists once and is shared across calls.',
+    concept: 'functions'
   },
 
-  // Bug Hunt (Read)
+  // Bug Hunt
   {
     id: 'py-bug-l1',
     type: 'Bug Hunt',
     lane: 'Read',
     language: 'Python',
     difficulty: 1,
-    title: 'Syntax Error',
-    content: 'if x == 5\n    print(x)',
-    explanation: 'Conditionals require a colon at the end of the line.',
-    patternToNotice: 'Missing colon ":" after the if statement.',
+    title: 'Indentation Error',
+    content: 'def f():\nprint("hi")',
+    explanation: 'Functions require an indented block.',
+    patternToNotice: 'Python is whitespace-sensitive.',
     concept: 'syntax',
-    requiredTokens: ['if x == 5:']
+    requiredTokens: ['    print']
   },
   {
     id: 'py-bug-l2',
@@ -197,12 +198,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Python',
     difficulty: 2,
-    title: 'Index Error',
-    content: 'items = [1, 2]\nfor i in range(3):\n    print(items[i])',
-    explanation: 'The loop goes out of bounds. The list only has 2 items.',
-    patternToNotice: 'Python is zero-indexed; range(3) produces 0, 1, 2.',
-    concept: 'indices',
-    requiredTokens: ['range(2)', 'range(len(items))']
+    title: 'Tuple Assignment',
+    content: 't = (1, 2)\nt[0] = 3',
+    explanation: 'Tuples are immutable and cannot be modified.',
+    patternToNotice: 'Use [ ] for mutable lists, ( ) for fixed tuples.',
+    concept: 'mutability',
+    requiredTokens: ['list(t)']
   },
   {
     id: 'py-bug-l3',
@@ -210,12 +211,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Python',
     difficulty: 3,
-    title: 'UnboundLocalError',
-    content: 'count = 0\ndef inc():\n    count += 1\ninc()',
-    explanation: 'Attempting to modify a global without "global" keyword fails.',
-    patternToNotice: 'Assignment within a function marks the name as local.',
+    title: 'Global Scoping',
+    content: 'x = 1\ndef f():\n    x += 1',
+    explanation: 'Cannot modify a global variable without the global keyword.',
+    patternToNotice: 'Assignment within a function creates a local variable.',
     concept: 'scoping',
-    requiredTokens: ['global count']
+    requiredTokens: ['global x']
   },
   {
     id: 'py-bug-l4',
@@ -223,27 +224,27 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Python',
     difficulty: 4,
-    title: 'Generator Exhaustion',
+    title: 'Iterator Exhaustion',
     content: 'gen = (x for x in range(3))\nlist(gen)\nprint(list(gen))',
-    explanation: 'Generators can only be iterated over once.',
-    patternToNotice: 'Once a generator is consumed, it remains empty.',
+    explanation: 'Generators can only be consumed once.',
+    patternToNotice: 'Convert to a list early if you need multiple passes.',
     concept: 'generators',
-    requiredTokens: ['[x for x in range(3)]']
+    requiredTokens: ['list(']
   },
 
-  // Build (Build)
+  // Build / Timed Implementation
   {
     id: 'py-build-l1',
     type: 'Timed Implementation',
     lane: 'Build',
     language: 'Python',
     difficulty: 1,
-    title: 'Double Numbers',
-    content: '# Return a list of numbers doubled from input list "nums"',
-    explanation: 'A simple list comprehension handles this efficiently.',
-    patternToNotice: 'x * 2 for x in nums',
+    title: 'Filter Even',
+    content: '# Return a list of even numbers from "nums"',
+    explanation: 'Use [x for x in nums if x % 2 == 0].',
+    patternToNotice: 'Comprehensions are the Pythonic way to filter.',
     concept: 'comprehensions',
-    requiredTokens: ['[', 'for', 'in', '* 2', ']']
+    requiredTokens: ['for', 'in', '% 2 == 0']
   },
   {
     id: 'py-build-l2',
@@ -251,12 +252,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Build',
     language: 'Python',
     difficulty: 2,
-    title: 'Dictionary Filter',
-    content: '# Return dict "d" with only keys where value > 10',
-    explanation: 'Use a dictionary comprehension: {k: v for k, v in d.items() if v > 10}.',
-    patternToNotice: 'Use .items() to get both key and value during iteration.',
-    concept: 'comprehensions',
-    requiredTokens: ['{', '.items()', 'if', 'v > 10', '}']
+    title: 'Merge Dicts',
+    content: '# Merge dict "a" and "b" into a new dict',
+    explanation: 'Use {**a, **b} or a | b (Python 3.9+).',
+    patternToNotice: '| is the union operator for dictionaries.',
+    concept: 'dictionaries',
+    requiredTokens: ['|']
   },
   {
     id: 'py-build-l3',
@@ -264,12 +265,12 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Build',
     language: 'Python',
     difficulty: 3,
-    title: 'List to Dict Frequency',
-    content: '# Count occurrences of strings in list "words"',
-    explanation: 'collections.Counter or a loop with .get() is standard.',
-    patternToNotice: 'The result should be a map of word: count.',
-    concept: 'dictionaries',
-    requiredTokens: ['for', 'in', '.get(', '0) + 1']
+    title: 'Sort by Lambda',
+    content: '# Sort list of dicts "data" by key "age"',
+    explanation: 'Use data.sort(key=lambda x: x["age"]).',
+    patternToNotice: 'The key parameter takes a transformation function.',
+    concept: 'sorting',
+    requiredTokens: ['sort', 'key=', 'lambda']
   },
   {
     id: 'py-build-l4',
@@ -277,11 +278,11 @@ export const pythonDrills: CodingDrill[] = [
     lane: 'Build',
     language: 'Python',
     difficulty: 4,
-    title: 'Debounce Wrapper',
-    content: '# Write a decorator that skips calls if made within 1s',
-    explanation: 'Requires nested functions and timestamp comparison.',
-    patternToNotice: 'Keep state in the outer closure to track last call time.',
+    title: 'Decorator',
+    content: '# Write a decorator "timer" that prints execution time',
+    explanation: 'Requires inner wrapper function and functools.wraps.',
+    patternToNotice: 'Decorators wrap function calls without modifying them.',
     concept: 'decorators',
-    requiredTokens: ['def', 'def', 'time.time()', 'return']
+    requiredTokens: ['def', 'def', 'return', 'return']
   }
 ];
