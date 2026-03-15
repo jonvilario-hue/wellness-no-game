@@ -44,6 +44,8 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const [results, setResults] = useState<any[]>([]);
   const [roundAccuracy, setRoundAccuracy] = useState(0);
 
+  // CRITICAL FIX: The player now filters ONLY by type and language.
+  // This ensures all available content is accessible regardless of the user's progress level.
   const filteredDrills = useMemo(() => 
     codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage),
   [protocolId, activeLanguage]);
@@ -63,13 +65,19 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     if (!currentDrill) return;
     
     let accuracy = 0;
-    if (currentDrill.lane === 'Read' && currentDrill.type === 'Output Prediction') {
-      accuracy = userInput.trim() === currentDrill.expectedOutput?.trim() ? 100 : 0;
-    } else if (currentDrill.lane === 'Read' && currentDrill.type === 'Bug Hunt') {
-      accuracy = parseInt(userInput) === currentDrill.bugs?.[0].line ? 100 : 0;
+    const cleanInput = userInput.trim();
+    const cleanContent = currentDrill.content.trim();
+
+    if (currentDrill.type === 'Output Prediction') {
+      accuracy = cleanInput === currentDrill.expectedOutput?.trim() ? 100 : 0;
+    } else if (currentDrill.type === 'Bug Hunt') {
+      accuracy = parseInt(cleanInput) === currentDrill.bugs?.[0].line ? 100 : 0;
+    } else if (currentDrill.type === 'Syntax Sprints') {
+      // For syntax sprints, we want character accuracy or exact match
+      accuracy = cleanInput === cleanContent ? 100 : 0;
     } else {
-      // Basic fuzzy match for write/build
-      accuracy = userInput.trim() === currentDrill.content.trim() ? 100 : 50;
+      // Fuzzy logic for build/reconstruction: logic match is 100, partial is 50
+      accuracy = cleanInput === cleanContent ? 100 : 50;
     }
 
     setRoundAccuracy(accuracy);
@@ -105,7 +113,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       }
     } else {
       setResults(prev => [...prev, { accuracy, speed: speedMetric }]);
-      if (results.length >= 2) {
+      if (results.length >= 1) { // For standalone drills, 1 rep is often enough for a log
         setGameState('summary');
       } else {
         setCurrentIndex(prev => prev + 1);
@@ -129,9 +137,10 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
             <div className="p-3 bg-destructive/10 rounded-full w-fit mx-auto mb-2 text-destructive">
               <XCircle className="w-8 h-8" />
             </div>
-            <CardTitle className="text-xl">Content Unavailable</CardTitle>
+            <CardTitle className="text-xl">Content Available Soon</CardTitle>
             <CardDescription>
-              No drills found for <b>{protocolId}</b> in <b>{activeLanguage}</b>.
+              We are finalizing the <b>{protocolId}</b> drill set for <b>{activeLanguage}</b>.
+              Try a different language or protocol in the meantime.
             </CardDescription>
           </CardHeader>
           <CardFooter>
@@ -150,11 +159,11 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
             <Button variant="ghost" size="icon" onClick={activeLoop.active ? cancelLoop : onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
             <div>
               <h1 className="text-lg font-bold uppercase tracking-tight">{protocolId}</h1>
-              <p className="text-[10px] text-muted-foreground font-bold uppercase">{activeLanguage} • Phase {activeLoop.active ? activeLoop.currentStep + 1 : results.length + 1}</p>
+              <p className="text-[10px] text-muted-foreground font-bold uppercase">{activeLanguage} • Step {activeLoop.active ? activeLoop.currentStep + 1 : results.length + 1}</p>
             </div>
           </div>
           <div className="w-48 space-y-1">
-            <Progress value={activeLoop.active ? ((activeLoop.currentStep + 1) / 3) * 100 : ((results.length + 1) / 3) * 100} className="h-1" />
+            <Progress value={activeLoop.active ? ((activeLoop.currentStep + 1) / 3) * 100 : ((results.length + 1) / 2) * 100} className="h-1" />
           </div>
         </header>
 
@@ -169,13 +178,13 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                        currentDrill?.lane === 'Read' ? <Eye className="w-8 h-8" /> : 
                        <LayoutGrid className="w-8 h-8" />}
                     </div>
-                    <CardTitle className="text-xl font-black uppercase">{currentDrill?.lane} Rep</CardTitle>
+                    <CardTitle className="text-xl font-black uppercase">{currentDrill?.lane} Practice</CardTitle>
                     <CardDescription>{currentDrill?.title}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-4">
                     <div className="p-4 bg-muted/30 rounded-xl space-y-2">
-                      <p className="text-[10px] font-bold uppercase text-primary">Objective</p>
-                      <p className="text-sm font-medium leading-relaxed">{currentDrill?.description}</p>
+                      <p className="text-[10px] font-bold uppercase text-primary">Drill Objective</p>
+                      <p className="text-sm font-medium leading-relaxed">{currentDrill?.description || currentDrill?.explanation}</p>
                     </div>
                   </CardContent>
                   <CardFooter>
@@ -192,7 +201,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                 {currentDrill.language === 'SQL' && currentDrill.tableInput && (
                   <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-xl space-y-2">
                     <p className="text-[10px] font-black uppercase text-blue-600 flex items-center gap-2">
-                      <Database className="w-3 h-3" /> Input Schema/Table
+                      <Database className="w-3 h-3" /> Schema / Context
                     </p>
                     <pre className="text-[10px] font-mono whitespace-pre-wrap">{currentDrill.tableInput}</pre>
                   </div>
@@ -209,7 +218,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                   <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Your Response</Label>
                   {currentDrill.lane === 'Write' || currentDrill.lane === 'Build' ? (
                     <Textarea 
-                      placeholder="Type code here..." 
+                      placeholder="Type your implementation..." 
                       className="font-mono text-sm h-48 resize-none"
                       value={userInput}
                       onChange={e => setUserInput(e.target.value)}
@@ -217,7 +226,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     />
                   ) : (
                     <Input 
-                      placeholder={currentDrill.type === 'Bug Hunt' ? "Line number of bug..." : "Expected output..."} 
+                      placeholder={currentDrill.type === 'Bug Hunt' ? "Line number of the bug..." : "Exact expected output..."} 
                       className="font-mono h-12"
                       value={userInput}
                       onChange={e => setUserInput(e.target.value)}
@@ -225,7 +234,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                       autoFocus
                     />
                   )}
-                  <Button onClick={handleVerifyAnswer} className="w-full h-12 font-bold uppercase">Submit Rep</Button>
+                  <Button onClick={handleVerifyAnswer} className="w-full h-12 font-bold uppercase">Verify Result</Button>
                 </div>
               </motion.div>
             )}
@@ -237,7 +246,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     <div className="flex justify-center mb-2">
                       {roundAccuracy === 100 ? <CheckCircle2 className="w-12 h-12 text-emerald-500" /> : <XCircle className="w-12 h-12 text-amber-500" />}
                     </div>
-                    <CardTitle className="text-xl font-black uppercase">{roundAccuracy === 100 ? 'Rep Successful' : 'Learning Opportunity'}</CardTitle>
+                    <CardTitle className="text-xl font-black uppercase">{roundAccuracy === 100 ? 'Analysis Correct' : 'Adjustment Needed'}</CardTitle>
                   </CardHeader>
                   <CardContent className="p-8 space-y-8">
                     <div className="space-y-4">
@@ -253,7 +262,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Info className="w-5 h-5" />
-                        <h4 className="text-sm font-bold uppercase tracking-tight">Technical Synopsis</h4>
+                        <h4 className="text-sm font-bold uppercase tracking-tight">Technical Reasoning</h4>
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         {currentDrill.explanation}
@@ -262,7 +271,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">
                     <Button onClick={handleCompleteRound} className="w-full h-12 font-black uppercase">
-                      Continue Loop <ArrowRight className="ml-2 w-4 h-4" />
+                      Continue <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </CardFooter>
                 </Card>
@@ -277,22 +286,24 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                       <Sparkles className="w-8 h-8" />
                     </div>
                     <CardTitle className="text-xl font-black uppercase">Session Sync</CardTitle>
-                    <CardDescription>Fluency metrics calculated and ready for sync.</CardDescription>
+                    <CardDescription>Fluency metrics computed and ready for ledger.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
                     <div className="grid grid-cols-2 gap-3">
                       <div className="p-4 bg-muted/30 rounded-xl text-center">
                         <p className="text-[8px] font-black uppercase text-muted-foreground">Avg Accuracy</p>
-                        <p className="text-2xl font-black">{Math.round(results.reduce((s,r) => s+r.accuracy, 0) / results.length || 100)}%</p>
+                        <p className="text-2xl font-black">
+                          {Math.round((activeLoop.active ? activeLoop.results.reduce((s,r) => s+r.accuracy, 0) / activeLoop.results.length : results.reduce((s,r) => s+r.accuracy, 0) / results.length) || 100)}%
+                        </p>
                       </div>
                       <div className="p-4 bg-primary/5 border border-primary/10 rounded-xl text-center">
-                        <p className="text-[8px] font-black uppercase text-primary">Volume (Sec)</p>
+                        <p className="text-[8px] font-black uppercase text-primary">Total Time</p>
                         <p className="text-2xl font-black text-primary">{Math.round((Date.now() - startTime)/1000)}s</p>
                       </div>
                     </div>
                     <div className="space-y-4 pt-4 border-t">
                       <div className="flex justify-between items-center">
-                        <Label className="text-[9px] font-bold uppercase">Session Focus</Label>
+                        <Label className="text-[9px] font-bold uppercase">Reported Focus (1-5)</Label>
                         <span className="text-lg font-black text-primary">{focusRating}</span>
                       </div>
                       <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
@@ -300,7 +311,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">
                     <Button className="w-full h-12 font-black uppercase shadow-lg" onClick={finalize}>
-                      Finish & Sync History <ArrowRight className="ml-2 w-4 h-4" />
+                      Finish & Sync <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </CardFooter>
                 </Card>
