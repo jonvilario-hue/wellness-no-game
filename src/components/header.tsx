@@ -70,7 +70,7 @@ export function Header() {
             </div>
         </TooltipProvider>
 
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <Link href="/skills" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
              <FlaskConical className="h-7 w-7 text-primary" />
              <h1 className="text-xl font-bold text-foreground tracking-tight">Polymath Lab</h1>
         </Link>

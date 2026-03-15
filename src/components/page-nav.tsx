@@ -3,16 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Home, GraduationCap, Target, HeartPulse, BookMarked, Calendar, BrainCircuit } from 'lucide-react';
+import { GraduationCap, Target, HeartPulse, BookMarked, Calendar, BrainCircuit } from 'lucide-react';
 import { AssistantTooltip } from './assistant-tooltip';
 
 const navLinks = [
-    { 
-      href: '/', 
-      icon: Home, 
-      label: 'Home',
-      tooltip: 'Sonic Lab Dashboard: Your central neural hub and skill map.'
-    },
     { 
       href: '/exercises', 
       icon: HeartPulse, 
@@ -55,9 +49,6 @@ export const PageNav = () => {
     const pathname = usePathname();
     
     const isLinkActive = (href: string) => {
-        if (href === '/') {
-            return pathname === href;
-        }
         return pathname.startsWith(href);
     };
 
