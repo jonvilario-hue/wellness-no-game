@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { drillsData } from '@/data/music-drills';
 import { useMusicStore } from '@/hooks/use-music-store';
@@ -19,7 +19,7 @@ import {
   Music, Headphones, Mic2, Guitar, Sparkles,
   Target, BookOpen, Waves, Zap, History,
   ChevronRight, Play, Clock, Piano, Mic,
-  Library, Book, MessageSquare
+  Library, Book, MessageSquare, Info
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
@@ -115,7 +115,7 @@ export default function MusicContent() {
             </AssistantTooltip>
             <AssistantTooltip text="Train your vocal instrument. Master pitch matching, melodic recall, and healthy vocal physiology.">
               <TabsTrigger value="sing" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-                <Mic2 className="w-4 h-4" /> Sing
+                <Mic2 className="w-4 h-4" /> Vocals
               </TabsTrigger>
             </AssistantTooltip>
             <AssistantTooltip text="Bridge theory and mechanics. Practice specific scales, constructions, and study tactical practice frameworks.">
@@ -218,7 +218,7 @@ export default function MusicContent() {
         </TabsContent>
 
         <TabsContent value="play" className="space-y-12 animate-in fade-in">
-          <AssistantTooltip text="Synchronize your hardware. Select how you will input notes (Mic or MIDI) and specify your primary instrument for tailored feedback.">
+          <AssistantTooltip text="What does selecting tabs here do? Calibrating your input method and instrument ensures the laboratory's analysis engine is tuned to your specific hardware (e.g., Violin vs Piano) for maximum pitch and onset accuracy.">
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-muted/20 rounded-2xl border border-primary/5">
               <div className="space-y-1 text-center md:text-left">
                 <h3 className="font-bold">Input Calibration</h3>
