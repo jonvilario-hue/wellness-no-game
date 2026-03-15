@@ -29,6 +29,7 @@ import { InputSelector } from '../audio/InputSelector';
 import { InstrumentSelector } from '../audio/InstrumentSelector';
 import { musicReferences } from '@/data/music-references';
 import { MusicReferenceCard } from './MusicReferenceCard';
+import { AssistantTooltip } from '../assistant-tooltip';
 
 const categoryExercises = {
   listen: [
@@ -107,18 +108,26 @@ export default function MusicContent() {
       <Tabs value={activeSubTab} onValueChange={handleSubTabChange} className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
           <TabsList className="flex w-full max-w-2xl h-auto bg-muted/50 p-1 min-w-max gap-1">
-            <TabsTrigger value="listen" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Headphones className="w-4 h-4" /> Listen
-            </TabsTrigger>
-            <TabsTrigger value="sing" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Mic2 className="w-4 h-4" /> Sing
-            </TabsTrigger>
-            <TabsTrigger value="play" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Guitar className="w-4 h-4" /> Instrumentals
-            </TabsTrigger>
-            <TabsTrigger value="freeflow" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Sparkles className="w-4 h-4" /> Freeflow
-            </TabsTrigger>
+            <AssistantTooltip text="Analyze and decode musical structures by ear. Develop your relative pitch and rhythmic detection.">
+              <TabsTrigger value="listen" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
+                <Headphones className="w-4 h-4" /> Listen
+              </TabsTrigger>
+            </AssistantTooltip>
+            <AssistantTooltip text="Train your vocal instrument. Master pitch matching, melodic recall, and healthy vocal physiology.">
+              <TabsTrigger value="sing" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
+                <Mic2 className="w-4 h-4" /> Sing
+              </TabsTrigger>
+            </AssistantTooltip>
+            <AssistantTooltip text="Bridge theory and mechanics. Practice specific scales, constructions, and study tactical practice frameworks.">
+              <TabsTrigger value="play" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
+                <Guitar className="w-4 h-4" /> Instrumentals
+              </TabsTrigger>
+            </AssistantTooltip>
+            <AssistantTooltip text="Spontaneous creative application. Improvise melodies, flow over beats, and deconstruct song structures.">
+              <TabsTrigger value="freeflow" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
+                <Sparkles className="w-4 h-4" /> Freeflow
+              </TabsTrigger>
+            </AssistantTooltip>
           </TabsList>
         </div>
 
@@ -196,7 +205,9 @@ export default function MusicContent() {
           <div className="space-y-6">
             <div className="flex items-center gap-3 px-1">
               <div className="h-8 w-1 bg-primary rounded-full" />
-              <h3 className="text-xl font-black uppercase tracking-tight">Vocal Techniques</h3>
+              <AssistantTooltip text="Instructional guides for vocal health, resonance, and breath support. Use these to build a sustainable foundation.">
+                <h3 className="text-xl font-black uppercase tracking-tight">Vocal Techniques</h3>
+              </AssistantTooltip>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {musicReferences.filter(r => r.category === 'Vocal Techniques').map(ref => (
@@ -207,16 +218,18 @@ export default function MusicContent() {
         </TabsContent>
 
         <TabsContent value="play" className="space-y-12 animate-in fade-in">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-muted/20 rounded-2xl border border-primary/5">
-            <div className="space-y-1 text-center md:text-left">
-              <h3 className="font-bold">Input Calibration</h3>
-              <p className="text-xs text-muted-foreground">Select your instrument and connection method.</p>
+          <AssistantTooltip text="Synchronize your hardware. Select how you will input notes (Mic or MIDI) and specify your primary instrument for tailored feedback.">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-muted/20 rounded-2xl border border-primary/5">
+              <div className="space-y-1 text-center md:text-left">
+                <h3 className="font-bold">Input Calibration</h3>
+                <p className="text-xs text-muted-foreground">Select your instrument and connection method.</p>
+              </div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <InputSelector />
+                <InstrumentSelector />
+              </div>
             </div>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <InputSelector />
-              <InstrumentSelector />
-            </div>
-          </div>
+          </AssistantTooltip>
 
           <div className="space-y-6">
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
@@ -261,7 +274,9 @@ export default function MusicContent() {
           <div className="space-y-6">
             <div className="flex items-center gap-3 px-1">
               <div className="h-8 w-1 bg-primary rounded-full" />
-              <h3 className="text-xl font-black uppercase tracking-tight">Practice Methods</h3>
+              <AssistantTooltip text="Tactical frameworks for effective learning. These guides teach you HOW to practice, not just WHAT to practice.">
+                <h3 className="text-xl font-black uppercase tracking-tight">Practice Methods</h3>
+              </AssistantTooltip>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {musicReferences.filter(r => r.category === 'Practice Methods').map(ref => (
@@ -307,8 +322,12 @@ export default function MusicContent() {
             })}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <MusicOpenPractice />
-            <MusicSongAnalysis />
+            <AssistantTooltip text="The stopwatch for your unstructured practice. Log duration and focus for any instrument or vocal session.">
+              <MusicOpenPractice />
+            </AssistantTooltip>
+            <AssistantTooltip text="Deconstruct the harmonic and formal architecture of any track. Paste a chord chart to start the analysis protocol.">
+              <MusicSongAnalysis />
+            </AssistantTooltip>
           </div>
         </TabsContent>
       </Tabs>

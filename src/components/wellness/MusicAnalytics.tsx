@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo } from 'react';
@@ -8,6 +9,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianG
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { AssistantTooltip } from '../assistant-tooltip';
 
 export function MusicAnalytics() {
   const { logs } = useMusicStore();
@@ -61,9 +63,11 @@ export function MusicAnalytics() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 border-primary/10 overflow-hidden">
           <CardHeader className="bg-primary/5 pb-4">
-            <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" /> Sonic Velocity
-            </CardTitle>
+            <AssistantTooltip text="Harmonic Accuracy Rate (HAR) tracks your performance adjusted for difficulty. Higher numbers reflect mastery at higher tiers.">
+              <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" /> Sonic Velocity
+              </CardTitle>
+            </AssistantTooltip>
             <CardDescription>Weighted Harmonic Accuracy Rate (HAR) over your last 10 sessions.</CardDescription>
           </CardHeader>
           <CardContent className="h-64 pt-8">
@@ -102,9 +106,11 @@ export function MusicAnalytics() {
 
         <Card className="border-primary/10">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <Target className="w-4 h-4 text-primary" /> Concept Map
-            </CardTitle>
+            <AssistantTooltip text="Visualization of your accuracy across specific musical topics. Aim for a consistent green streak to indicate consolidation.">
+              <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <Target className="w-4 h-4 text-primary" /> Concept Map
+              </CardTitle>
+            </AssistantTooltip>
             <CardDescription>Accuracy per musical concept.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
