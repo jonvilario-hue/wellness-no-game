@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -70,15 +69,16 @@ export function CodingDashboard() {
             </CardContent>
           </Card>
         </AssistantTooltip>
-
-        <AssistantTooltip text="Total minutes spent in active coding drills this week.">
+        
+        <AssistantTooltip text="Total minutes invested in refining your communication protocols this week. Even 5 minutes of focused vocal warmup can significantly shift your presence in a meeting.">
           <Card className="bg-primary/5 border-primary/10 h-full">
             <CardContent className="p-4 flex flex-col items-center justify-center text-center">
               <Clock className="w-5 h-5 text-primary mb-1" />
               <p className="text-2xl font-black">{weeklyVol}m</p>
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Vol</p>
             </CardContent>
-          </AssistantTooltip>
+          </Card>
+        </AssistantTooltip>
 
         <AssistantTooltip text="Primary growth metric: Calculated as Speed × Accuracy across all lanes.">
           <Card className="bg-primary/5 border-primary/10 h-full">
