@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -9,7 +8,7 @@ import {
   Terminal, Code2, Bug, Brain, Play, 
   History, Clock, Target, ArrowRight,
   MousePointer2, Zap, LayoutGrid, Eye, Layers, PenTool,
-  ChevronRight, Sparkles, ShieldCheck, Database
+  ChevronRight, Sparkles, ShieldCheck, Database, CheckCircle2
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { CodingDashboard } from './CodingDashboard';
