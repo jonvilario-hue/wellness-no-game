@@ -15,9 +15,9 @@ export interface CodingDrillLog {
   difficulty: number;
   durationSeconds: number;
   accuracy: number; // 0-100
-  speedMetric: number; // CPM for syntax, seconds for others
-  userDifficultyRating: number; // 1-5
-  userFocusRating: number; // 1-5
+  speedMetric: number; 
+  userDifficultyRating: number;
+  userFocusRating: number;
 }
 
 export interface LanguageProgress {
@@ -46,14 +46,14 @@ export interface CodingDrill {
   difficulty: number;
   title: string;
   content: string; // The code snippet or problem spec
-  explanation: string; // The "Why" behind the correct answer
-  patternToNotice: string; // The repeatable idiom or pitfall to recognize
+  explanation: string; 
+  patternToNotice: string; 
   expectedOutput?: string;
   tableInput?: string; // Specific for SQL prediction
   bugs?: Array<{ line: number; type: BugCategory }>;
-  testCases?: Array<{ input: any; output: any }>;
+  requiredTokens?: string[]; // For functional evaluation
+  bannedTokens?: string[];   // For anti-cheating/constraint drills
   description?: string;
-  studyTimeSeconds?: number;
   concurrencyRelevant?: boolean;
 }
 

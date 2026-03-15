@@ -29,6 +29,35 @@ interface Props {
   onClose: () => void;
 }
 
+/**
+ * Normalizes code for comparison by stripping comments, 
+ * standardizing whitespace, and handling common syntax variations.
+ */
+function normalizeCode(code: string): string {
+  return code
+    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') // Strip comments
+    .replace(/['"]/g, '"') // Standardize quotes
+    .replace(/\s+/g, ' ') // Collapse whitespace
+    .replace(/;\s*/g, ';') // Normalize semicolons
+    .replace(/\(\s+/g, '(').replace(/\s+\)/g, ')') // Parens
+    .replace(/\{\s+/g, '{').replace(/\s+\}/g, '}') // Braces
+    .trim();
+}
+
+/**
+ * Structural Probe: Checks if required logical tokens exist in sequence.
+ */
+function checkStructuralProbe(input: string, tokens: string[]): boolean {
+  const normalized = normalizeCode(input).toLowerCase();
+  let lastIdx = -1;
+  for (const token of tokens) {
+    const idx = normalized.indexOf(token.toLowerCase(), lastIdx + 1);
+    if (idx === -1) return false;
+    lastIdx = idx;
+  }
+  return true;
+}
+
 export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const { activeLanguage, languageProgress, addLog, activeLoop, advanceLoop, cancelLoop } = useCodingStore();
   const { syncFromTracker } = useCalendarPlansStore();
@@ -44,8 +73,6 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const [results, setResults] = useState<any[]>([]);
   const [roundAccuracy, setRoundAccuracy] = useState(0);
 
-  // CRITICAL FIX: The player now filters ONLY by type and language.
-  // This ensures all available content is accessible regardless of the user's progress level.
   const filteredDrills = useMemo(() => 
     codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage),
   [protocolId, activeLanguage]);
@@ -66,18 +93,22 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     
     let accuracy = 0;
     const cleanInput = userInput.trim();
-    const cleanContent = currentDrill.content.trim();
+    const normalizedInput = normalizeCode(cleanInput);
+    const normalizedContent = normalizeCode(currentDrill.content);
 
+    // CRITICAL UPGRADE: Logic-Aware Evaluation
     if (currentDrill.type === 'Output Prediction') {
-      accuracy = cleanInput === currentDrill.expectedOutput?.trim() ? 100 : 0;
+      // Direct result check
+      accuracy = cleanInput.toLowerCase() === currentDrill.expectedOutput?.trim().toLowerCase() ? 100 : 0;
     } else if (currentDrill.type === 'Bug Hunt') {
+      // Line number check
       accuracy = parseInt(cleanInput) === currentDrill.bugs?.[0].line ? 100 : 0;
-    } else if (currentDrill.type === 'Syntax Sprints') {
-      // For syntax sprints, we want character accuracy or exact match
-      accuracy = cleanInput === cleanContent ? 100 : 0;
+    } else if (currentDrill.requiredTokens) {
+      // Structural Probe check (Handles variations in formatting/syntax)
+      accuracy = checkStructuralProbe(cleanInput, currentDrill.requiredTokens) ? 100 : 0;
     } else {
-      // Fuzzy logic for build/reconstruction: logic match is 100, partial is 50
-      accuracy = cleanInput === cleanContent ? 100 : 50;
+      // Fallback: Normalized string match
+      accuracy = normalizedInput === normalizedContent ? 100 : 0;
     }
 
     setRoundAccuracy(accuracy);
@@ -113,7 +144,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       }
     } else {
       setResults(prev => [...prev, { accuracy, speed: speedMetric }]);
-      if (results.length >= 1) { // For standalone drills, 1 rep is often enough for a log
+      if (results.length >= 0) { // For standalone, we allow summary after 1 rep
         setGameState('summary');
       } else {
         setCurrentIndex(prev => prev + 1);
@@ -128,28 +159,6 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     if (activeLoop.active) cancelLoop();
     onClose();
   };
-
-  if (!currentDrill && gameState !== 'summary') {
-    return (
-      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-        <Card className="max-w-md w-full border-primary/10 shadow-2xl">
-          <CardHeader className="text-center">
-            <div className="p-3 bg-destructive/10 rounded-full w-fit mx-auto mb-2 text-destructive">
-              <XCircle className="w-8 h-8" />
-            </div>
-            <CardTitle className="text-xl">Content Available Soon</CardTitle>
-            <CardDescription>
-              We are finalizing the <b>{protocolId}</b> drill set for <b>{activeLanguage}</b>.
-              Try a different language or protocol in the meantime.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button onClick={onClose} className="w-full font-bold">Return to Lab</Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
