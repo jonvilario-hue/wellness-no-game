@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -34,7 +33,7 @@ export function MusicAnalytics() {
       });
     });
     return Object.entries(concepts).slice(0, 8);
-  }, [concepts]);
+  }, [logs]);
 
   const strategyNudge = useMemo(() => {
     if (logs.length < 5) return null;
