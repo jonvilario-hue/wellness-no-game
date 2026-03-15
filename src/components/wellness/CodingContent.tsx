@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Terminal, Code2, Bug, Brain, Play, 
   History, Clock, Target, ArrowRight,
-  MousePointer2, Zap, LayoutGrid
+  MousePointer2, Zap, LayoutGrid, Eye, Layers, PenTool
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { CodingDashboard } from './CodingDashboard';
@@ -17,56 +17,59 @@ import { CodingAnalytics } from './CodingAnalytics';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 import { cn } from '@/lib/utils';
 import { AssistantTooltip } from '../assistant-tooltip';
+import type { CodingLane, CodingDrillType } from '@/types/coding';
 
-const protocols = [
+const lanes: { id: CodingLane; title: string; subtitle: string; icon: any; drills: { id: CodingDrillType; desc: string }[] }[] = [
   {
-    id: 'Syntax Sprints',
-    icon: Terminal,
-    desc: 'Build muscle memory for code syntax by typing snippets accurately and fast.',
-    est: '2-3 min'
+    id: 'Write',
+    title: 'Write — Produce Code',
+    subtitle: 'Build muscle memory and structural recall.',
+    icon: PenTool,
+    drills: [
+      { id: 'Syntax Sprints', desc: 'Type code snippets exactly to build character-level automaticity.' },
+      { id: 'Code Reconstruction', desc: 'Study a snippet, then rewrite it from memory to build structural recall.' }
+    ]
   },
   {
-    id: 'Output Prediction',
+    id: 'Read',
+    title: 'Read — Understand Code',
+    subtitle: 'Train your mental compiler and bug detection.',
     icon: Eye,
-    desc: 'Train your mental compiler by predicting exact code results without running it.',
-    est: '3-5 min'
+    drills: [
+      { id: 'Output Prediction', desc: 'Read code and predict exact output without execution.' },
+      { id: 'Bug Hunt', desc: 'Identify syntax and logic errors across 6 core categories.' }
+    ]
   },
   {
-    id: 'Bug Hunt',
-    icon: Bug,
-    desc: 'Sharpen pattern recognition for 6 categories of logical and syntax errors.',
-    est: '4-6 min'
-  },
-  {
-    id: 'Code Reconstruction',
-    icon: Brain,
-    desc: 'Strengthen structural memory by rewriting snippets from memory after a brief study.',
-    est: '5-8 min'
-  },
-  {
-    id: 'Timed Implementation',
-    icon: Clock,
-    desc: 'Execute common coding patterns under pressure. Speed up your baseline.',
-    est: '5-10 min'
+    id: 'Build',
+    title: 'Build — Solve from Spec',
+    subtitle: 'Implement logic under time pressure.',
+    icon: LayoutGrid,
+    drills: [
+      { id: 'Timed Implementation', desc: 'Solve algorithm and data pattern problems within a strict time limit.' }
+    ]
   }
 ];
 
-import { Eye } from 'lucide-react';
-
 export default function CodingContent() {
-  const { _hasHydrated, languageProgress, activeLanguage, setActiveLanguage } = useCodingStore();
-  const [activeDrill, setActiveDrill] = useState<string | null>(null);
+  const { _hasHydrated, activeLanguage, setActiveLanguage, activeLoop, startLoop, laneProgress } = useCodingStore();
+  const [activeDrill, setActiveDrill] = useState<CodingDrillType | null>(null);
 
   if (!_hasHydrated) return null;
 
-  if (activeDrill) {
-    return <CodingDrillPlayer protocolId={activeDrill as any} onClose={() => setActiveDrill(null)} />;
+  if (activeDrill || activeLoop.active) {
+    return (
+      <CodingDrillPlayer 
+        protocolId={(activeLoop.active ? activeLoop.steps[activeLoop.currentStep]?.type : activeDrill) as any} 
+        onClose={() => setActiveDrill(null)} 
+      />
+    );
   }
 
-  const langs = ['Python', 'JavaScript', 'TypeScript', 'Java', 'C++'];
+  const languages: any[] = ['Python', 'JavaScript', 'TypeScript', 'Java', 'C++'];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-10 animate-in fade-in duration-700">
       <CodingDashboard />
 
       <div className="space-y-6">
@@ -79,13 +82,13 @@ export default function CodingContent() {
             </div>
           </div>
           <div className="flex flex-wrap gap-2 justify-center">
-            {langs.map(lang => (
+            {languages.map(lang => (
               <Button 
                 key={lang} 
                 variant={activeLanguage === lang ? 'default' : 'outline'}
                 size="sm"
                 className="h-8 text-[10px] font-black uppercase"
-                onClick={() => setActiveLanguage(lang as any)}
+                onClick={() => setActiveLanguage(lang)}
               >
                 {lang}
               </Button>
@@ -93,30 +96,41 @@ export default function CodingContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {protocols.map((p) => {
-            const progress = languageProgress[activeLanguage] || { level: 1 };
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {lanes.map((lane) => {
+            const prog = laneProgress[lane.id];
             return (
-              <Card 
-                key={p.id} 
-                className="group cursor-pointer hover:border-primary/30 transition-all border-primary/5 flex flex-col"
-                onClick={() => setActiveDrill(p.id)}
-              >
-                <CardHeader className="p-5 pb-2">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                      <p.icon className="w-5 h-5" />
+              <Card key={lane.id} className="border-primary/5 flex flex-col h-full bg-card shadow-sm group">
+                <CardHeader className="pb-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="p-3 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                      <lane.icon className="w-6 h-6" />
                     </div>
-                    <div className="flex flex-col items-end">
-                      <Badge variant="outline" className="uppercase text-[8px] font-black px-2">Level {progress.level}</Badge>
-                      <span className="text-[8px] font-bold text-muted-foreground mt-1 uppercase">{p.est}</span>
-                    </div>
+                    <Badge variant="secondary" className="uppercase text-[8px] font-black">Level {prog.level}</Badge>
                   </div>
-                  <CardTitle className="text-sm font-bold group-hover:text-primary transition-colors uppercase tracking-tight">{p.id}</CardTitle>
-                  <CardDescription className="text-[10px] leading-relaxed line-clamp-2 mt-1">{p.desc}</CardDescription>
+                  <CardTitle className="text-lg font-black uppercase tracking-tight">{lane.title}</CardTitle>
+                  <CardDescription className="text-xs leading-relaxed">{lane.subtitle}</CardDescription>
                 </CardHeader>
-                <CardFooter className="p-5 pt-4 mt-auto border-t border-primary/5 justify-end">
-                  <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-5px] group-hover:translate-x-0" />
+                <CardContent className="flex-grow space-y-3">
+                  <div className="grid gap-2">
+                    {lane.drills.map(drill => (
+                      <button 
+                        key={drill.id}
+                        onClick={() => setActiveDrill(drill.id)}
+                        className="w-full text-left p-3 rounded-xl border border-primary/5 bg-muted/20 hover:bg-primary/[0.02] hover:border-primary/20 transition-all group/item"
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-xs font-bold group-hover/item:text-primary transition-colors">{drill.id}</span>
+                          <ChevronRight className="w-3 h-3 text-muted-foreground opacity-0 group-hover/item:opacity-100 transition-all" />
+                        </div>
+                        <p className="text-[10px] text-muted-foreground leading-tight">{drill.desc}</p>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+                <CardFooter className="pt-4 border-t border-primary/5 text-[10px] font-bold text-muted-foreground uppercase flex justify-between">
+                  <span>{prog.totalSessions} sessions</span>
+                  <span className="text-primary">{Math.round(prog.avgAccuracy)}% Accuracy</span>
                 </CardFooter>
               </Card>
             );

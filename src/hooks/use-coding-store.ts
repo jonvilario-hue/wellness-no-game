@@ -3,13 +3,23 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { CodingDrillLog, CodingLanguage, LanguageProgress, CodingDrillType } from '@/types/coding';
+import type { 
+  CodingDrillLog, 
+  CodingLanguage, 
+  LanguageProgress, 
+  CodingDrillType, 
+  CodingLane, 
+  LaneProgress,
+  ActiveLoop
+} from '@/types/coding';
 import { format, subDays, isToday, parseISO, startOfWeek, isAfter } from 'date-fns';
 
 interface CodingState {
   logs: CodingDrillLog[];
   languageProgress: Record<string, LanguageProgress>; // key: language
+  laneProgress: Record<CodingLane, LaneProgress>;
   activeLanguage: CodingLanguage;
+  activeLoop: ActiveLoop;
   streak: {
     current: number;
     longest: number;
@@ -17,15 +27,19 @@ interface CodingState {
   };
   
   setActiveLanguage: (lang: CodingLanguage) => void;
+  startLoop: (steps: any[]) => void;
+  advanceLoop: (accuracy: number, speed: number) => void;
+  cancelLoop: () => void;
   addLog: (log: Omit<CodingDrillLog, 'id' | 'timestamp' | 'date'>) => void;
+  
   getFluencyScore: () => number;
   getWeeklyVolume: () => number;
   getLanguageDistribution: () => Record<CodingLanguage, number>;
-  getTopProtocol: () => CodingDrillType | 'None';
+  getTopLane: () => CodingLane | 'None';
   _hasHydrated: boolean;
 }
 
-const DEFAULT_PROGRESS = (lang: CodingLanguage): LanguageProgress => ({
+const DEFAULT_LANG_PROGRESS = (lang: CodingLanguage): LanguageProgress => ({
   language: lang,
   level: 1,
   consecutiveSuccesses: 0,
@@ -34,16 +48,69 @@ const DEFAULT_PROGRESS = (lang: CodingLanguage): LanguageProgress => ({
   avgSpeed: 0
 });
 
+const DEFAULT_LANE_PROGRESS = (lane: CodingLane): LaneProgress => ({
+  lane,
+  level: 1,
+  avgAccuracy: 0,
+  avgSpeed: 0,
+  totalSessions: 0
+});
+
+const EMPTY_LOOP: ActiveLoop = {
+  active: false,
+  currentStep: 0,
+  steps: [],
+  startTime: 0,
+  results: []
+};
+
 export const useCodingStore = create<CodingState>()(
   persist(
     (set, get) => ({
       logs: [],
       languageProgress: {},
+      laneProgress: {
+        'Write': DEFAULT_LANE_PROGRESS('Write'),
+        'Read': DEFAULT_LANE_PROGRESS('Read'),
+        'Build': DEFAULT_LANE_PROGRESS('Build')
+      },
       activeLanguage: 'TypeScript',
+      activeLoop: EMPTY_LOOP,
       streak: { current: 0, longest: 0, lastDate: null },
       _hasHydrated: false,
 
       setActiveLanguage: (activeLanguage) => set({ activeLanguage }),
+
+      startLoop: (steps) => set({
+        activeLoop: {
+          active: true,
+          currentStep: 0,
+          steps,
+          startTime: Date.now(),
+          results: []
+        }
+      }),
+
+      advanceLoop: (accuracy, speed) => set(state => {
+        const loop = state.activeLoop;
+        const currentStep = loop.steps[loop.currentStep];
+        const newResults = [...loop.results, { 
+          lane: currentStep.lane, 
+          type: currentStep.type, 
+          accuracy, 
+          speed 
+        }];
+
+        return {
+          activeLoop: {
+            ...loop,
+            currentStep: loop.currentStep + 1,
+            results: newResults
+          }
+        };
+      }),
+
+      cancelLoop: () => set({ activeLoop: EMPTY_LOOP }),
 
       addLog: (logData) => {
         const now = new Date();
@@ -74,32 +141,27 @@ export const useCodingStore = create<CodingState>()(
 
           // 3. Adaptive Difficulty Engine
           const lang = logData.language;
-          const progress = state.languageProgress[lang] || DEFAULT_PROGRESS(lang);
-          let { level, consecutiveSuccesses, consecutiveFailures } = progress;
+          const langProg = state.languageProgress[lang] || DEFAULT_LANG_PROGRESS(lang);
+          const laneProg = state.laneProgress[logData.lane] || DEFAULT_LANE_PROGRESS(logData.lane);
 
+          // Language logic
+          let lLevel = langProg.level;
+          let lSuccess = langProg.consecutiveSuccesses;
           if (logData.accuracy >= 85) {
-            consecutiveSuccesses++;
-            consecutiveFailures = 0;
-            if (consecutiveSuccesses >= 3 && level < 4) {
-              level++;
-              consecutiveSuccesses = 0;
-            }
+            lSuccess++;
+            if (lSuccess >= 3 && lLevel < 4) { lLevel++; lSuccess = 0; }
           } else if (logData.accuracy < 60) {
-            consecutiveFailures++;
-            consecutiveSuccesses = 0;
-            if (consecutiveFailures >= 2 && level > 1) {
-              level--;
-              consecutiveFailures = 0;
-            }
+            lLevel = Math.max(1, lLevel - 1);
+            lSuccess = 0;
           }
 
-          const newLangProgress = {
-            ...progress,
-            level,
-            consecutiveSuccesses,
-            consecutiveFailures,
-            avgAccuracy: (progress.avgAccuracy * 4 + logData.accuracy) / 5,
-            avgSpeed: (progress.avgSpeed * 4 + logData.speedMetric) / 5
+          // Lane logic
+          const newLaneProg = {
+            ...laneProg,
+            totalSessions: laneProg.totalSessions + 1,
+            lastPracticed: timestamp,
+            avgAccuracy: (laneProg.avgAccuracy * 4 + logData.accuracy) / 5,
+            level: logData.accuracy >= 90 ? Math.min(4, laneProg.level + 1) : laneProg.level
           };
 
           return {
@@ -111,7 +173,11 @@ export const useCodingStore = create<CodingState>()(
             },
             languageProgress: {
               ...state.languageProgress,
-              [lang]: newLangProgress
+              [lang]: { ...langProg, level: lLevel, consecutiveSuccesses: lSuccess }
+            },
+            laneProgress: {
+              ...state.laneProgress,
+              [logData.lane]: newLaneProg
             }
           };
         });
@@ -120,9 +186,8 @@ export const useCodingStore = create<CodingState>()(
       getFluencyScore: () => {
         const recentLogs = get().logs.slice(0, 20);
         if (recentLogs.length === 0) return 0;
-        // Fluency = Avg Accuracy * Normalized Speed Metric
         const avgAcc = recentLogs.reduce((s, l) => s + l.accuracy, 0) / recentLogs.length;
-        return Math.round(avgAcc); // Simplified for MVP
+        return Math.round(avgAcc);
       },
 
       getWeeklyVolume: () => {
@@ -135,25 +200,23 @@ export const useCodingStore = create<CodingState>()(
       getLanguageDistribution: () => {
         const start = startOfWeek(new Date());
         const weekLogs = get().logs.filter(l => isAfter(parseISO(l.timestamp), start));
-        const dist: Record<string, number> = {};
+        const dist: any = {};
         weekLogs.forEach(l => {
           dist[l.language] = (dist[l.language] || 0) + 1;
         });
-        return dist as any;
+        return dist;
       },
 
-      getTopProtocol: () => {
-        const recentLogs = get().logs.slice(0, 50);
-        if (recentLogs.length === 0) return 'None';
-        const counts: Record<string, number> = {};
-        recentLogs.forEach(l => {
-          counts[l.type] = (counts[l.type] || 0) + 1;
+      getTopLane: () => {
+        const counts: Record<string, number> = { 'Write': 0, 'Read': 0, 'Build': 0 };
+        get().logs.slice(0, 50).forEach(l => {
+          counts[l.lane]++;
         });
         return (Object.entries(counts).sort((a,b) => b[1] - a[1])[0][0] as any);
       }
     }),
     {
-      name: 'coding-fluency-storage',
+      name: 'coding-fluency-storage-v2',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) state._hasHydrated = true;

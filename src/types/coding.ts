@@ -1,6 +1,7 @@
 
 export type CodingLanguage = 'Python' | 'JavaScript' | 'TypeScript' | 'Java' | 'C++';
 export type CodingDrillType = 'Syntax Sprints' | 'Output Prediction' | 'Bug Hunt' | 'Code Reconstruction' | 'Timed Implementation';
+export type CodingLane = 'Write' | 'Read' | 'Build';
 export type BugCategory = 'Syntax' | 'Logic' | 'Off-by-One' | 'Scope' | 'Type' | 'Missing Return';
 
 export interface CodingDrillLog {
@@ -8,6 +9,7 @@ export interface CodingDrillLog {
   timestamp: string;
   date: string; // YYYY-MM-DD
   type: CodingDrillType;
+  lane: CodingLane;
   language: CodingLanguage;
   difficulty: number;
   durationSeconds: number;
@@ -26,9 +28,19 @@ export interface LanguageProgress {
   avgSpeed: number;
 }
 
+export interface LaneProgress {
+  lane: CodingLane;
+  level: number;
+  avgAccuracy: number;
+  avgSpeed: number;
+  totalSessions: number;
+  lastPracticed?: string;
+}
+
 export interface CodingDrill {
   id: string;
   type: CodingDrillType;
+  lane: CodingLane;
   language: CodingLanguage;
   difficulty: number;
   title: string;
@@ -38,4 +50,22 @@ export interface CodingDrill {
   testCases?: Array<{ input: any; output: any }>;
   description?: string;
   studyTimeSeconds?: number;
+}
+
+export interface CodingLoopStep {
+  lane: CodingLane;
+  type: CodingDrillType;
+}
+
+export interface ActiveLoop {
+  active: boolean;
+  currentStep: number;
+  steps: CodingLoopStep[];
+  startTime: number;
+  results: Array<{
+    lane: CodingLane;
+    type: CodingDrillType;
+    accuracy: number;
+    speed: number;
+  }>;
 }
