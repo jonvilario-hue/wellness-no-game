@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -13,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
 import { audioEngine } from '@/lib/audio/engine';
 import { Scale, Note } from '@tonaljs/tonal';
 import { cn } from '@/lib/utils';
@@ -76,7 +76,7 @@ export default function VocalImprovPage() {
       accuracy: Math.round((scoreData.inKeyTime / scoreData.totalTime) * 100) || 0,
       config
     });
-    onClose();
+    // Redirect logic would go here
   };
 
   if (gameState === 'setup') {
@@ -132,6 +132,7 @@ export default function VocalImprovPage() {
       onStart={() => {}}
       onPauseToggle={() => {}}
       backHref="/music/create"
+      breadcrumb={["Music", "Create", "Vocal Improv"]}
     >
       <div className="w-full flex flex-col items-center gap-12">
         <div className="flex flex-wrap justify-center gap-2">

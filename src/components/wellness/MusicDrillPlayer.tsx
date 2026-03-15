@@ -12,7 +12,8 @@ import {
   Play, Pause, X, Check, ArrowRight,
   Music, Target, Brain, Activity, Clock,
   Sparkles, RotateCcw, CheckCircle2, XCircle,
-  Type as TextIcon
+  Type as TextIcon,
+  ChevronRight
 } from 'lucide-react';
 import type { MusicDifficulty, MusicDrillQuestion, MusicDomain } from '@/types/music';
 import { useMusicStore } from '@/hooks/use-music-store';
@@ -21,14 +22,14 @@ import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { drillsData } from '@/data/music-drills';
-import { SpeedReadingQuiz } from './SpeedReadingQuiz';
 
 interface Props {
   drillId: string;
   onClose: () => void;
+  subtab?: string;
 }
 
-export function MusicDrillPlayer({ drillId, onClose }: Props) {
+export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props) {
   const [gameState, setGameState] = useState<'prep' | 'drill' | 'summary'>('prep');
   const [difficulty, setDifficulty] = useState<MusicDifficulty>('Beginner');
   const [focusLevel, setFocusLevel] = useState(3);
@@ -132,22 +133,32 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
   return (
     <div className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
       <div className="w-full max-w-3xl h-full max-h-[90vh] bg-background border rounded-[2rem] shadow-2xl flex flex-col overflow-hidden relative">
-        <header className="p-4 border-b bg-card flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={onClose}><X className="w-5 h-5" /></Button>
-            <div>
-              <h1 className="text-xs font-black uppercase tracking-widest truncate max-w-[150px]">{drill.name}</h1>
-              <p className="text-[9px] text-muted-foreground font-bold uppercase">{drill.domain}</p>
-            </div>
+        <header className="p-6 border-b bg-card shrink-0">
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60 mb-4">
+            <span>Music</span>
+            <ChevronRight className="w-2 h-2" />
+            <span className="capitalize">{subtab}</span>
+            <ChevronRight className="w-2 h-2" />
+            <span>{drill.name}</span>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex flex-col items-end">
-              <span className="text-[8px] font-black uppercase opacity-60">Completion</span>
-              <Progress value={((currentIndex) / 10) * 100} className="w-24 h-1 mt-1" />
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
+              <div>
+                <h1 className="text-lg font-bold tracking-tight truncate max-w-[200px]">{drill.name}</h1>
+                <p className="text-[10px] text-muted-foreground font-bold uppercase">{drill.domain}</p>
+              </div>
             </div>
-            <Badge variant="outline" className="h-5 border-primary/20 text-primary uppercase font-black text-[8px] px-2">
-              {difficulty}
-            </Badge>
+            <div className="flex items-center gap-6">
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="text-[8px] font-black uppercase opacity-60">Session Progress</span>
+                <Progress value={((currentIndex) / 10) * 100} className="w-24 h-1 mt-1" />
+              </div>
+              <Badge variant="outline" className="h-6 border-primary/20 text-primary uppercase font-black text-[10px] px-3">
+                {difficulty}
+              </Badge>
+            </div>
           </div>
         </header>
 
@@ -162,7 +173,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
                     </div>
                     <CardTitle className="text-xl font-black uppercase tracking-tight">Initialize Drill</CardTitle>
                     <CardDescription className="text-xs">
-                      Calibrate difficulty and focus.
+                      Calibrate difficulty and focus for this protocol.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6 py-6">
@@ -183,7 +194,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
                     </div>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Focus (1-5)</Label>
+                        <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Pre-Drill Focus (1-5)</Label>
                         <span className="text-lg font-black text-primary">{focusLevel}</span>
                       </div>
                       <Slider value={[focusLevel]} onValueChange={([v]) => setFocusLevel(v)} min={1} max={5} step={1} />
@@ -293,7 +304,7 @@ export function MusicDrillPlayer({ drillId, onClose }: Props) {
 
             {gameState === 'summary' && summaryData && (
               <motion.div key="summary" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-sm w-full mx-auto">
-                <Card className="border-primary/10 shadow-xl overflow-hidden">
+                <Card className="border-primary/20 shadow-xl overflow-hidden">
                   <CardHeader className="text-center bg-primary/5 py-6">
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2">
                       <Sparkles className="w-8 h-8 text-primary" />

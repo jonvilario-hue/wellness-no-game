@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
@@ -98,7 +97,7 @@ export default function MusicContent() {
   };
 
   if (activeDrillId) {
-    return <MusicDrillPlayer drillId={activeDrillId} onClose={() => setActiveDrillId(null)} />;
+    return <MusicDrillPlayer drillId={activeDrillId} onClose={() => setActiveDrillId(null)} subtab={activeSubTab} />;
   }
 
   if (!_hasHydrated) return null;
