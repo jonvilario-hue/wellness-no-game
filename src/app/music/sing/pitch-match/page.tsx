@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -175,7 +176,7 @@ export default function PitchMatchPage() {
       score={totalScore}
       onStart={handleStart}
       onPauseToggle={() => {}}
-      backHref="/skills?tab=music"
+      backHref="/skills?tab=music&sub=sing"
       breadcrumb={["Music", "Sing", "Pitch Match"]}
     >
       <MicPermissionGate>

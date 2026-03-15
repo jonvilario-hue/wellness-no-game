@@ -1,6 +1,8 @@
+
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { drillsData } from '@/data/music-drills';
 import { useMusicStore } from '@/hooks/use-music-store';
 import { MusicAnalytics } from './MusicAnalytics';
@@ -16,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { 
   Music, Headphones, Mic2, Wind, Guitar, Sparkles,
   Target, BookOpen, SlidersHorizontal, Maximize, Palette, Piano, 
-  Mic, Drum, Play, ChevronRight, Clock, Waves, Zap
+  Mic, Drum, Play, ChevronRight, Clock, Waves, Zap, History
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
@@ -56,6 +58,12 @@ export default function MusicContent() {
   const { logs, _hasHydrated } = useMusicStore();
   const [activeDrillId, setActiveDrillId] = useState<string | null>(null);
   const [history, setHistory] = useState<any[]>([]);
+  
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  
+  const activeSubTab = searchParams.get('sub') || 'listen';
 
   useEffect(() => {
     async function load() {
@@ -67,6 +75,12 @@ export default function MusicContent() {
     }
     load();
   }, []);
+
+  const handleSubTabChange = (val: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('sub', val);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   const getStats = (id: string, prefix?: string) => {
     const gameId = prefix ? `${prefix}-${id}` : id;
@@ -91,38 +105,24 @@ export default function MusicContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <Tabs defaultValue="listen" className="w-full">
+      <Tabs value={activeSubTab} onValueChange={handleSubTabChange} className="w-full">
         <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
           <TabsList className="flex w-full max-w-3xl h-auto bg-muted/50 p-1 min-w-max">
-            <AssistantTooltip text="Focuses on auditory discrimination and harmonic awareness. Identify intervals, chords, and rhythmic patterns to sharpen your 'inner ear.'">
-              <TabsTrigger value="listen" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-                <Headphones className="w-4 h-4" /> Listen
-              </TabsTrigger>
-            </AssistantTooltip>
-            
-            <AssistantTooltip text="Develops the pitch-matching loop and melodic memory. Bridges the gap between hearing a sound and accurately reproducing it with your voice.">
-              <TabsTrigger value="sing" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-                <Mic2 className="w-4 h-4" /> Sing
-              </TabsTrigger>
-            </AssistantTooltip>
-
-            <AssistantTooltip text="Exercises the physical engine of communication. Build diaphragmatic support, expand your comfortable range, and master tonal resonance.">
-              <TabsTrigger value="voice" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-                <Wind className="w-4 h-4" /> Voice
-              </TabsTrigger>
-            </AssistantTooltip>
-
-            <AssistantTooltip text="Integrates instrumental performance with real-time analysis. Practice technical proficiency and ear-to-instrument transcription on your physical hardware.">
-              <TabsTrigger value="play" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-                <Guitar className="w-4 h-4" /> Play
-              </TabsTrigger>
-            </AssistantTooltip>
-
-            <AssistantTooltip text="Cultivates spontaneous musical expression. Trains improvisation, rhythmic flow, and vocal percussion through structured creative sandboxes.">
-              <TabsTrigger value="create" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
-                <Sparkles className="w-4 h-4" /> Create
-              </TabsTrigger>
-            </AssistantTooltip>
+            <TabsTrigger value="listen" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Headphones className="w-4 h-4" /> Listen
+            </TabsTrigger>
+            <TabsTrigger value="sing" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Mic2 className="w-4 h-4" /> Sing
+            </TabsTrigger>
+            <TabsTrigger value="voice" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Wind className="w-4 h-4" /> Voice
+            </TabsTrigger>
+            <TabsTrigger value="play" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Guitar className="w-4 h-4" /> Play
+            </TabsTrigger>
+            <TabsTrigger value="create" className="gap-2 px-6 font-bold uppercase text-[10px] py-2">
+              <Sparkles className="w-4 h-4" /> Create
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -152,7 +152,7 @@ export default function MusicContent() {
                         <Badge variant="secondary" className="uppercase text-[8px] font-black px-2">Adaptive</Badge>
                         {stats.bestScore !== null && (
                           <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black text-[10px] h-5">
-                            BEST: {stats.bestScore}
+                            BEST HAR: {stats.bestScore}
                           </Badge>
                         )}
                       </div>
