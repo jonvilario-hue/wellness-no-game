@@ -142,7 +142,7 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
 
   const subtabDisplay = useMemo(() => {
     const lookup: Record<string, string> = {
-      play: 'Play',
+      play: 'Instrumentals',
       sing: 'Sing',
       listen: 'Listen',
       freeflow: 'Freeflow'
@@ -259,7 +259,7 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
                               "w-full text-left p-4 rounded-xl border-2 transition-all font-bold text-sm",
                               !isAnswered && "hover:border-primary/40 hover:bg-primary/[0.02] border-primary/5",
                               isAnswered && opt === currentQuestion.answer && "bg-emerald-500/10 border-emerald-500 text-emerald-700",
-                              isAnswered && opt === selectedOption && opt !== currentQuestion.answer && "bg-destructive/5 border-destructive text-destructive"
+                              is_answered && opt === selectedOption && opt !== currentQuestion.answer && "bg-destructive/5 border-destructive text-destructive"
                             )}
                           >
                             {opt}

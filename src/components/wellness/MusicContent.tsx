@@ -114,7 +114,7 @@ export default function MusicContent() {
               <Mic2 className="w-4 h-4" /> Sing
             </TabsTrigger>
             <TabsTrigger value="play" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
-              <Guitar className="w-4 h-4" /> Play
+              <Guitar className="w-4 h-4" /> Instrumentals
             </TabsTrigger>
             <TabsTrigger value="freeflow" className="gap-2 px-8 font-bold uppercase text-[10px] py-2 flex-1">
               <Sparkles className="w-4 h-4" /> Freeflow
