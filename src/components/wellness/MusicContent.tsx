@@ -37,8 +37,9 @@ const categoryExercises = {
   sing: [
     { id: 'pitch-match', name: 'Pitch Match', desc: 'Match the note you hear by ear using your voice.', difficulty: 'Beginner', icon: Music, type: 'game' as const, path: '/music/sing/pitch-match' },
     { id: 'interval-sing', name: 'Interval Sing-Back', desc: 'Sing specific intervals from a root note.', difficulty: 'Intermediate', icon: Music, type: 'game' as const, path: '/music/sing/interval-sing' },
-    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases.', difficulty: 'Beginner/Int/Adv', icon: Waves, type: 'game' as const, path: '/music/sing/melody-echo' },
+    { id: 'melody-echo', name: 'Melody Echo', desc: 'Train your pitch memory from raw tone sequences up through full melodic phrases. Start by recalling isolated pitches, then progress to remembering real melodies with rhythm and shape.', difficulty: 'Beginner/Int/Adv', icon: Waves, type: 'game' as const, path: '/music/sing/melody-echo' },
     { id: 'sight-singing', name: 'Sight-Singing', desc: 'Perform phrases from notation without hearing it.', difficulty: 'Advanced', icon: BookOpen, type: 'game' as const, path: '/music/sing/sight-singing' },
+    { id: 'flow-trainer', name: 'Flow Pattern Lab', desc: 'Match cadences, triplet flows, and syncopation patterns precisely against the grid.', difficulty: 'Intermediate', icon: Zap, type: 'game' as const, path: '/music/freeflow/flow-trainer' },
   ],
   play: [
     { id: 'transcription', name: 'Transcription Challenge', desc: 'Hear a phrase, play it back on your instrument.', difficulty: 'Intermediate', icon: BookOpen },
@@ -46,10 +47,9 @@ const categoryExercises = {
     { id: 'scale-drill', name: 'Scale Drill', desc: 'Play scales and chords on demand.', difficulty: 'Beginner', icon: Piano },
   ],
   freeflow: [
-    { id: 'lyrical-spontaneity', name: 'Lyrical Spontaneity', desc: 'Respond to random word prompts and rhyme constraints. Drop bars and stay in motion.', difficulty: 'Intermediate', icon: MessageSquare, type: 'game' as const, path: '/music/freeflow/lyrical-spontaneity' },
-    { id: 'vocal-improv', name: 'Melodic Freeflow', desc: 'Improvise melodies or hum freely over chord progressions. The choice is yours—ride the harmony.', difficulty: 'Intermediate', icon: Mic, type: 'game' as const, path: '/music/freeflow/vocal-improv' },
-    { id: 'flow-trainer', name: 'Flow Pattern Lab', desc: 'Master cadences, triplet flows, and double-time. Lock your rhythm to the grid and find your pocket.', difficulty: 'Intermediate', icon: Zap, type: 'game' as const, path: '/music/freeflow/flow-trainer' },
-    { id: 'freestyle', name: 'The Cypher', desc: 'The open sandbox. Grab a beat and flow. No rules, just creative energy.', difficulty: 'All Levels', icon: Sparkles, type: 'game' as const, path: '/music/freeflow/freestyle' },
+    { id: 'lyrical-spontaneity', name: 'Lyrical Spontaneity', desc: 'Respond to random word prompts and stay in motion. No right answers.', difficulty: 'Intermediate', icon: MessageSquare, type: 'game' as const, path: '/music/freeflow/lyrical-spontaneity' },
+    { id: 'vocal-improv', name: 'Melodic Freeflow', desc: 'Improvise melodies or hum freely over chord progressions. Ride the harmony.', difficulty: 'Intermediate', icon: Mic, type: 'game' as const, path: '/music/freeflow/vocal-improv' },
+    { id: 'freestyle', name: 'The Cypher', desc: 'The open sandbox. Grab a beat and flow. No scoring, just creative energy.', difficulty: 'All Levels', icon: Sparkles, type: 'game' as const, path: '/music/freeflow/freestyle' },
   ]
 };
 

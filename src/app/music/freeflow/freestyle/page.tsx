@@ -43,7 +43,7 @@ export default function FreestyleSandboxPage() {
           <Sparkles className="w-12 h-12" />
         </div>
         <h1 className="text-4xl font-black uppercase tracking-tighter">The Cypher</h1>
-        <p className="text-muted-foreground text-lg">The open creative sandbox. Drop your bars and ride the beat.</p>
+        <p className="text-muted-foreground text-lg">No rules. No scoring. Just your voice and the rhythm.</p>
       </div>
 
       <MicPermissionGate>
@@ -67,10 +67,10 @@ export default function FreestyleSandboxPage() {
                   </div>
                 </div>
                 
-                <p className="text-sm text-muted-foreground max-w-xs mx-auto">No rules. No scoring. Just you and the rhythm.</p>
                 <Button size="lg" className="h-20 w-20 rounded-full shadow-2xl" onClick={handleStart}>
                   <Play className="w-8 h-8 fill-current ml-1" />
                 </Button>
+                <p className="text-xs font-bold uppercase tracking-widest text-primary animate-pulse">Tap to drop in</p>
               </div>
             )}
 
@@ -89,7 +89,7 @@ export default function FreestyleSandboxPage() {
                   <WaveformDisplay stream={stream} className="flex-1 h-64 bg-muted/20 rounded-3xl border border-primary/5" />
                 </div>
 
-                <Button variant="destructive" size="lg" className="w-full h-16 font-bold text-lg rounded-2xl" onClick={handleStop}>
+                <Button variant="destructive" size="lg" className="w-full h-16 font-bold text-lg rounded-2xl shadow-xl shadow-destructive/20" onClick={handleStop}>
                   Stop Session
                 </Button>
               </div>
@@ -103,12 +103,12 @@ export default function FreestyleSandboxPage() {
                 </div>
                 
                 <div className="flex gap-4">
-                  <Button size="lg" onClick={playBack} disabled={isPlaying} className="h-16 px-12 gap-3 font-bold">
+                  <Button size="lg" onClick={playBack} disabled={isPlaying} className="h-16 px-12 gap-3 font-bold shadow-lg">
                     {isPlaying ? <Activity className="animate-pulse" /> : <Play className="fill-current" />}
                     Listen Back
                   </Button>
                   <Button variant="outline" size="lg" onClick={() => setGameState('idle')} className="h-16 px-12 font-bold border-2">
-                    <RotateCcw className="w-5 h-5 mr-2" /> Start New
+                    <RotateCcw className="w-5 h-5 mr-2" /> New Take
                   </Button>
                 </div>
               </div>
