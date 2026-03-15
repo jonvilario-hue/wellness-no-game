@@ -9,7 +9,7 @@ import { useSpectralAnalysis } from '@/hooks/useSpectralAnalysis';
 import { useRealtimePitch } from '@/hooks/useRealtimePitch';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Palette, Play, CheckCircle2, Lightbulb, Clock, Info } from 'lucide-react';
+import { Palette, Play, CheckCircle2, Lightbulb, Clock, Info, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { initDB } from '@/lib/storage/db';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -100,7 +100,7 @@ export default function ToneShapingPage() {
       score={score}
       onStart={handleStart}
       onPauseToggle={() => {}}
-      backHref="/music/voice"
+      backHref="/skills?tab=music&sub=voice"
       breadcrumb={["Music", "Voice", "Tone Shaping"]}
     >
       <MicPermissionGate>
