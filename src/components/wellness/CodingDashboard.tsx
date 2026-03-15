@@ -16,7 +16,7 @@ import { AssistantTooltip } from '../assistant-tooltip';
 import { cn } from '@/lib/utils';
 
 export function CodingDashboard() {
-  const { streak, getWeeklyVolume, getFluencyScore, getTopLane, activeLanguage, activeLoop, startLoop } = useCodingStore();
+  const { streak, getWeeklyVolume, getFluencyScore, getTopLane, activeLanguage, activeTrack, activeLoop, startLoop } = useCodingStore();
   
   const weeklyVol = getWeeklyVolume();
   const fluency = getFluencyScore();
@@ -24,22 +24,26 @@ export function CodingDashboard() {
 
   const recommendation = useMemo(() => {
     const day = new Date().getDay(); // 0-6
+    
+    // Foundation Track logic: heavily emphasize the Read lane
+    if (activeTrack === 'Foundation') {
+      const loop = [
+        { lane: 'Write', type: 'Syntax Sprints' },
+        { lane: 'Read', type: 'Output Prediction' },
+        { lane: 'Read', type: 'Bug Hunt' }
+      ];
+      return { loop, time: 15, label: "Verification Mastery Loop" };
+    } 
+    
+    // Specialist Track logic: emphasize Write and Build lanes
     const loop = [
       { lane: 'Write', type: 'Syntax Sprints' },
-      { lane: 'Read', type: day % 2 === 0 ? 'Output Prediction' : 'Bug Hunt' },
+      { lane: 'Build', type: 'Timed Implementation' },
       { lane: 'Build', type: 'Timed Implementation' }
     ];
+    return { loop, time: 22, label: "Systems Architecture Loop" };
     
-    let time = 18;
-    let label = "Standard Daily Loop";
-
-    if (day === 0) {
-      label = "Sunday Recovery Loop";
-      time = 10;
-    }
-
-    return { loop, time, label };
-  }, []);
+  }, [activeTrack]);
 
   const handleStartLoop = () => {
     startLoop(recommendation.loop);
@@ -74,8 +78,7 @@ export function CodingDashboard() {
               <p className="text-2xl font-black">{weeklyVol}m</p>
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Vol</p>
             </CardContent>
-          </Card>
-        </AssistantTooltip>
+          </AssistantTooltip>
 
         <AssistantTooltip text="Primary growth metric: Calculated as Speed × Accuracy across all lanes.">
           <Card className="bg-primary/5 border-primary/10 h-full">
@@ -128,7 +131,7 @@ export function CodingDashboard() {
                 </div>
                 <div className="flex items-center gap-4 mt-1 text-[10px] font-bold text-muted-foreground uppercase">
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {recommendation.time} Min Estimated</span>
-                  <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> Sequential Flow</span>
+                  <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> {recommendation.label}</span>
                 </div>
               </div>
             </div>

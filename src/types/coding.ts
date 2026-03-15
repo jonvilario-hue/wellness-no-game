@@ -1,8 +1,9 @@
 
-export type CodingLanguage = 'Python' | 'JavaScript' | 'TypeScript' | 'Java' | 'C++';
+export type CodingLanguage = 'Python' | 'JavaScript' | 'TypeScript' | 'Java' | 'C++' | 'Rust' | 'SQL' | 'Bash' | 'Swift';
 export type CodingDrillType = 'Syntax Sprints' | 'Output Prediction' | 'Bug Hunt' | 'Code Reconstruction' | 'Timed Implementation';
 export type CodingLane = 'Write' | 'Read' | 'Build';
 export type BugCategory = 'Syntax' | 'Logic' | 'Off-by-One' | 'Scope' | 'Type' | 'Missing Return';
+export type CodingTrack = 'Foundation' | 'Specialist';
 
 export interface CodingDrillLog {
   id: string;

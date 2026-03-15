@@ -10,7 +10,8 @@ import type {
   CodingDrillType, 
   CodingLane, 
   LaneProgress,
-  ActiveLoop
+  ActiveLoop,
+  CodingTrack
 } from '@/types/coding';
 import { format, subDays, isToday, parseISO, startOfWeek, isAfter } from 'date-fns';
 
@@ -19,6 +20,7 @@ interface CodingState {
   languageProgress: Record<string, LanguageProgress>; // key: language
   laneProgress: Record<CodingLane, LaneProgress>;
   activeLanguage: CodingLanguage;
+  activeTrack: CodingTrack;
   activeLoop: ActiveLoop;
   streak: {
     current: number;
@@ -27,6 +29,7 @@ interface CodingState {
   };
   
   setActiveLanguage: (lang: CodingLanguage) => void;
+  setActiveTrack: (track: CodingTrack) => void;
   startLoop: (steps: any[]) => void;
   advanceLoop: (accuracy: number, speed: number) => void;
   cancelLoop: () => void;
@@ -34,7 +37,7 @@ interface CodingState {
   
   getFluencyScore: () => number;
   getWeeklyVolume: () => number;
-  getLanguageDistribution: () => Record<CodingLanguage, number>;
+  getLanguageDistribution: () => Record<string, number>;
   getTopLane: () => CodingLane | 'None';
   _hasHydrated: boolean;
 }
@@ -75,11 +78,22 @@ export const useCodingStore = create<CodingState>()(
         'Build': DEFAULT_LANE_PROGRESS('Build')
       },
       activeLanguage: 'TypeScript',
+      activeTrack: 'Foundation',
       activeLoop: EMPTY_LOOP,
       streak: { current: 0, longest: 0, lastDate: null },
       _hasHydrated: false,
 
       setActiveLanguage: (activeLanguage) => set({ activeLanguage }),
+      
+      setActiveTrack: (activeTrack) => {
+        // When switching tracks, pick the first available language in that track
+        const languages: Record<CodingTrack, CodingLanguage[]> = {
+          'Foundation': ['Python', 'TypeScript', 'SQL'],
+          'Specialist': ['Rust', 'Bash', 'Swift']
+        };
+        const defaultLang = languages[activeTrack][0];
+        set({ activeTrack, activeLanguage: defaultLang });
+      },
 
       startLoop: (steps) => set({
         activeLoop: {
@@ -200,7 +214,7 @@ export const useCodingStore = create<CodingState>()(
       getLanguageDistribution: () => {
         const start = startOfWeek(new Date());
         const weekLogs = get().logs.filter(l => isAfter(parseISO(l.timestamp), start));
-        const dist: any = {};
+        const dist: Record<string, number> = {};
         weekLogs.forEach(l => {
           dist[l.language] = (dist[l.language] || 0) + 1;
         });
@@ -212,11 +226,12 @@ export const useCodingStore = create<CodingState>()(
         get().logs.slice(0, 50).forEach(l => {
           counts[l.lane]++;
         });
-        return (Object.entries(counts).sort((a,b) => b[1] - a[1])[0][0] as any);
+        const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+        return sorted[0][1] > 0 ? (sorted[0][0] as CodingLane) : 'None';
       }
     }),
     {
-      name: 'coding-fluency-storage-v2',
+      name: 'coding-fluency-storage-v3',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) state._hasHydrated = true;

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -8,7 +9,7 @@ import {
   Terminal, Code2, Bug, Brain, Play, 
   History, Clock, Target, ArrowRight,
   MousePointer2, Zap, LayoutGrid, Eye, Layers, PenTool,
-  ChevronRight
+  ChevronRight, Sparkles, ShieldCheck, Database
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { CodingDashboard } from './CodingDashboard';
@@ -17,7 +18,7 @@ import { CodingAnalytics } from './CodingAnalytics';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 import { cn } from '@/lib/utils';
 import { AssistantTooltip } from '../assistant-tooltip';
-import type { CodingLane, CodingDrillType } from '@/types/coding';
+import type { CodingLane, CodingDrillType, CodingTrack, CodingLanguage } from '@/types/coding';
 
 const lanes: { id: CodingLane; title: string; subtitle: string; icon: any; drills: { id: CodingDrillType; desc: string }[] }[] = [
   {
@@ -51,8 +52,31 @@ const lanes: { id: CodingLane; title: string; subtitle: string; icon: any; drill
   }
 ];
 
+const trackInfo = {
+  Foundation: {
+    title: "Foundation / Core",
+    icon: Database,
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
+    border: "border-blue-500/20",
+    description: "The essentials. These are the ubiquitous languages you will read and debug every day.",
+    languages: ['Python', 'TypeScript', 'JavaScript', 'SQL'],
+    focus: "Mental Compilation (Read Emphasis)"
+  },
+  Specialist: {
+    title: "Specialist / Edge",
+    icon: Sparkles,
+    color: "text-amber-500",
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/20",
+    description: "High-leverage, AI-resistant skills requiring strict precision and systems thinking.",
+    languages: ['Rust', 'Bash', 'Swift'],
+    focus: "Structural Execution (Write/Build Emphasis)"
+  }
+};
+
 export default function CodingContent() {
-  const { _hasHydrated, activeLanguage, setActiveLanguage, activeLoop, startLoop, laneProgress } = useCodingStore();
+  const { _hasHydrated, activeLanguage, setActiveLanguage, activeLoop, activeTrack, setActiveTrack, laneProgress } = useCodingStore();
   const [activeDrill, setActiveDrill] = useState<CodingDrillType | null>(null);
 
   if (!_hasHydrated) return null;
@@ -66,10 +90,61 @@ export default function CodingContent() {
     );
   }
 
-  const languages: any[] = ['Python', 'JavaScript', 'TypeScript', 'Java', 'C++'];
+  const currentTrack = trackInfo[activeTrack];
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
+      
+      {/* Track Selector Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">Practice Strategy</h3>
+          <Badge variant="outline" className={cn("h-6 px-3 uppercase font-black text-[9px]", currentTrack.border, currentTrack.color)}>
+            {activeTrack} Track Active
+          </Badge>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(['Foundation', 'Specialist'] as CodingTrack[]).map((t) => {
+            const info = trackInfo[t];
+            const isActive = activeTrack === t;
+            return (
+              <Card 
+                key={t}
+                onClick={() => setActiveTrack(t)}
+                className={cn(
+                  "cursor-pointer transition-all border-2 relative overflow-hidden group",
+                  isActive ? cn(info.border, info.bg, "ring-1 ring-primary/10") : "border-primary/5 hover:border-primary/20 bg-muted/20 opacity-70"
+                )}
+              >
+                {isActive && <div className="absolute top-0 right-0 p-2"><CheckCircle2 className={cn("w-4 h-4", info.color)} /></div>}
+                <CardHeader className="p-5 pb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={cn("p-2 rounded-lg", isActive ? "bg-background shadow-sm" : "bg-muted")}>
+                      <info.icon className={cn("w-5 h-5", info.color)} />
+                    </div>
+                    <CardTitle className="text-sm font-black uppercase tracking-tight">{info.title}</CardTitle>
+                  </div>
+                  <CardDescription className="text-xs leading-relaxed mt-2">{info.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="p-5 pt-0 space-y-3">
+                  <div className="flex flex-wrap gap-1.5">
+                    {info.languages.map(lang => (
+                      <Badge key={lang} variant="outline" className="text-[8px] font-bold uppercase border-primary/5 bg-background/50">
+                        {lang}
+                      </Badge>
+                    ))}
+                  </div>
+                  <p className="text-[10px] font-bold text-muted-foreground italic">
+                    Emphasis: <span className={cn("font-black uppercase", info.color)}>{info.focus}</span>
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
       <CodingDashboard />
 
       <div className="space-y-6">
@@ -82,13 +157,13 @@ export default function CodingContent() {
             </div>
           </div>
           <div className="flex flex-wrap gap-2 justify-center">
-            {languages.map(lang => (
+            {currentTrack.languages.map(lang => (
               <Button 
                 key={lang} 
                 variant={activeLanguage === lang ? 'default' : 'outline'}
                 size="sm"
                 className="h-8 text-[10px] font-black uppercase"
-                onClick={() => setActiveLanguage(lang)}
+                onClick={() => setActiveLanguage(lang as CodingLanguage)}
               >
                 {lang}
               </Button>

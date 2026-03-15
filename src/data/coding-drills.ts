@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview Synthetic training data for the Coding Lab.
  * 
@@ -52,59 +53,44 @@ export const codingDrills: CodingDrill[] = [
     description: 'Interface definition and object assignment.'
   },
   {
-    id: 'syntax-java-1',
+    id: 'syntax-rust-1',
     type: 'Syntax Sprints',
     lane: 'Write',
-    language: 'Java',
+    language: 'Rust',
     difficulty: 1,
-    title: 'Class Main',
-    content: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello");\n    }\n}',
-    description: 'The standard entry point for a Java application.'
+    title: 'Immutable Binding',
+    content: 'fn main() {\n    let x = 5;\n    println!("Value: {}", x);\n}',
+    description: 'Basic Rust main function and variable binding.'
   },
   {
-    id: 'syntax-cpp-1',
+    id: 'syntax-sql-1',
     type: 'Syntax Sprints',
     lane: 'Write',
-    language: 'C++',
+    language: 'SQL',
     difficulty: 1,
-    title: 'Standard IO',
-    content: '#include <iostream>\nint main() {\n    std::cout << "Hello" << std::endl;\n    return 0;\n}',
-    description: 'Basic C++ boilerplate for standard input/output.'
-  },
-
-  // --- WRITE LANE: RECONSTRUCTION ---
-  {
-    id: 'recon-js-1',
-    type: 'Code Reconstruction',
-    lane: 'Write',
-    language: 'JavaScript',
-    difficulty: 1,
-    title: 'Sum Function',
-    content: 'function sum(a, b) {\n  return a + b;\n}',
-    studyTimeSeconds: 15,
-    description: 'Simple function with parameter return logic.'
+    title: 'Select & Filter',
+    content: 'SELECT name, email FROM users WHERE active = 1 ORDER BY created_at DESC;',
+    description: 'Standard SQL query syntax for data retrieval.'
   },
   {
-    id: 'recon-py-1',
-    type: 'Code Reconstruction',
+    id: 'syntax-bash-1',
+    type: 'Syntax Sprints',
     lane: 'Write',
-    language: 'Python',
+    language: 'Bash',
     difficulty: 1,
-    title: 'List Sum',
-    content: 'def sum_list(nums):\n    total = 0\n    for n in nums:\n        total += n\n    return total',
-    studyTimeSeconds: 20,
-    description: 'Iterative accumulation pattern.'
+    title: 'File Loop',
+    content: 'for file in *.txt; do\n    echo "Processing $file"\n    cat "$file"\ndone',
+    description: 'Bash loop for iterating over files.'
   },
   {
-    id: 'recon-ts-1',
-    type: 'Code Reconstruction',
+    id: 'syntax-swift-1',
+    type: 'Syntax Sprints',
     lane: 'Write',
-    language: 'TypeScript',
+    language: 'Swift',
     difficulty: 1,
-    title: 'Generic Identity',
-    content: 'function identity<T>(arg: T): T {\n  return arg;\n}',
-    studyTimeSeconds: 15,
-    description: 'Basic generic function signature.'
+    title: 'Safe Optional',
+    content: 'if let name = user.name {\n    print("Hello, \\(name)")\n} else {\n    print("Hello, Guest")\n}',
+    description: 'Swift optional binding for safety.'
   },
 
   // --- READ LANE: OUTPUT PREDICTION ---
@@ -120,40 +106,18 @@ export const codingDrills: CodingDrill[] = [
     description: 'Implicit string coercion in JavaScript.'
   },
   {
-    id: 'output-py-1',
+    id: 'output-sql-1',
     type: 'Output Prediction',
     lane: 'Read',
-    language: 'Python',
+    language: 'SQL',
     difficulty: 1,
-    title: 'List Slicing',
-    content: 'nums = [1, 2, 3, 4, 5]\nprint(nums[1:3])',
-    expectedOutput: '[2, 3]',
-    description: 'Python list slicing indices [start:stop].'
-  },
-  {
-    id: 'output-ts-1',
-    type: 'Output Prediction',
-    lane: 'Read',
-    language: 'TypeScript',
-    difficulty: 1,
-    title: 'Basic Logic',
-    content: 'let x: number = 5;\nlet y: number = x * 2;\nconsole.log(y + 3);',
-    expectedOutput: '13',
-    description: 'Basic variable manipulation and arithmetic.'
+    title: 'Count Aggregation',
+    content: 'SELECT COUNT(*) FROM tasks WHERE status = "done";',
+    expectedOutput: 'The number of rows where status is "done".',
+    description: 'Prediction of aggregate function behavior.'
   },
 
   // --- READ LANE: BUG HUNT ---
-  {
-    id: 'bug-js-1',
-    type: 'Bug Hunt',
-    lane: 'Read',
-    language: 'JavaScript',
-    difficulty: 1,
-    title: 'Reference Error',
-    content: 'function greet(name) {\n  return "Hello " + nme;\n}',
-    bugs: [{ line: 2, type: 'Scope' }],
-    description: 'Variable name typo causing a scope reference error.'
-  },
   {
     id: 'bug-py-1',
     type: 'Bug Hunt',
@@ -166,15 +130,15 @@ export const codingDrills: CodingDrill[] = [
     description: 'Incorrect indentation for function return statement.'
   },
   {
-    id: 'bug-ts-1',
+    id: 'bug-rust-1',
     type: 'Bug Hunt',
     lane: 'Read',
-    language: 'TypeScript',
+    language: 'Rust',
     difficulty: 1,
-    title: 'Type Mismatch',
-    content: 'let score: number = "100";\nconsole.log(score);',
-    bugs: [{ line: 1, type: 'Type' }],
-    description: 'Attempting to assign a string to a number variable.'
+    title: 'Ownership Error',
+    content: 'let s1 = String::from("hello");\nlet s2 = s1;\nprintln!("{}", s1);',
+    bugs: [{ line: 3, type: 'Type' }],
+    description: 'Use of moved value in Rust.'
   },
 
   // --- BUILD LANE: TIMED IMPLEMENTATION ---
@@ -193,29 +157,14 @@ export const codingDrills: CodingDrill[] = [
     ]
   },
   {
-    id: 'impl-ts-1',
+    id: 'impl-rust-1',
     type: 'Timed Implementation',
     lane: 'Build',
-    language: 'TypeScript',
+    language: 'Rust',
     difficulty: 1,
-    title: 'Hello Type',
-    description: 'Create a function `greet(name: string)` that returns "Hello " + name.',
-    content: 'function greet(name: string): string {\n  return "Hello " + name;\n}',
-    testCases: [
-      { input: 'World', output: 'Hello World' }
-    ]
-  },
-  {
-    id: 'impl-py-1',
-    type: 'Timed Implementation',
-    lane: 'Build',
-    language: 'Python',
-    difficulty: 1,
-    title: 'Square List',
-    description: 'Create a function `squares(nums)` that returns a list of squares of the input numbers.',
-    content: 'def squares(nums):\n    return [n*n for n in nums]',
-    testCases: [
-      { input: [1, 2, 3], output: [1, 4, 9] }
-    ]
+    title: 'Fibonacci',
+    description: 'Calculate the nth Fibonacci number.',
+    content: 'fn fib(n: u32) -> u32 {\n    match n {\n        0 => 0,\n        1 => 1,\n        _ => fib(n-1) + fib(n-2)\n    }\n}',
+    testCases: [{ input: 5, output: 5 }]
   }
 ];
