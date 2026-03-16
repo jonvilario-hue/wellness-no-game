@@ -14,7 +14,7 @@ import {
   X, Play, Zap, Clock, Check,
   ChevronRight, ArrowRight, CheckCircle2, XCircle,
   PenTool, Eye, LayoutGrid, Sparkles, Info, Star, Loader2, Lightbulb,
-  RotateCcw
+  RotateCcw, AlertTriangle
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
@@ -41,25 +41,24 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
 
-  const [gameState, setGameState] = useState<'prep' | 'active' | 'feedback' | 'summary'>('prep');
+  const [gameState, setGameState] = useState<'prep' | 'active' | 'feedback' | 'summary' | 'error'>('prep');
   const [focusRating, setFocusRating] = useState(3);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [drillStartTime, setDrillStartTime] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
   const [gradingFeedback, setGradingFeedback] = useState<string | undefined>();
   const [currentDrill, setCurrentDrill] = useState<GeneratedDrill | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
 
   const lane = useMemo(() => mapProtocolToLane(protocolId), [protocolId]);
 
   const fetchDrill = useCallback(async () => {
-    // Prevent fetching if protocolId is missing or we are in summary state
     if (!protocolId || gameState === 'summary') return;
     
     setIsGenerating(true);
+    setErrorDetails(null);
     try {
-      // Simulate procedural generation cost
       await new Promise(r => setTimeout(r, 100));
       const drill = getNextDrill(
         activeLanguage.toLowerCase() as any,
@@ -70,9 +69,10 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       setGameState('prep');
       setUserInput('');
       setGradingFeedback(undefined);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Drill generation failure:", e);
-      setCurrentDrill(null);
+      setErrorDetails(e.message || "Unknown error during procedural generation.");
+      setGameState('error');
     } finally {
       setIsGenerating(false);
     }
@@ -138,7 +138,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
   const summaryData = useMemo(() => {
     if (!currentDrill || gameState !== 'summary') return null;
-    const score = isCorrect ? 10 : 0; // Simplified for single-round summary
+    const score = isCorrect ? 10 : 0;
     const multiplier = currentDrill.difficulty === 1 ? 1.0 : currentDrill.difficulty === 2 ? 1.5 : 2.0;
     const har = Math.round((score / 10) * multiplier * 100);
     const avgTime = Math.round(Date.now() - drillStartTime);
@@ -165,7 +165,35 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     );
   }
 
-  // Fallback for unexpected generation errors
+  if (gameState === 'error') {
+    return (
+      <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={activeLoop.active ? cancelLoop : onClose} 
+          className="absolute top-4 left-4 rounded-full"
+        >
+          <X className="w-5 h-5" />
+        </Button>
+        <Card className="max-w-md w-full border-destructive/20 shadow-2xl">
+          <CardHeader className="text-center pb-2">
+            <AlertTriangle className="w-12 h-12 text-destructive mx-auto mb-2" />
+            <CardTitle className="text-xl font-black uppercase">Initialization Error</CardTitle>
+            <CardDescription>{errorDetails}</CardDescription>
+          </CardHeader>
+          <CardContent className="p-6 text-center space-y-4">
+            <p className="text-sm text-muted-foreground">The procedural engine hit a constraint. You can retry the generation or skip this step.</p>
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1 font-bold" onClick={fetchDrill}>Retry</Button>
+              <Button className="flex-1 font-bold" onClick={() => activeLoop.active ? advanceLoop(0, 0) : onClose()}>Skip Step</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (!currentDrill && gameState !== 'summary') {
     return (
       <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">

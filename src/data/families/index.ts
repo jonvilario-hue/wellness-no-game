@@ -1,3 +1,4 @@
+
 'use client';
 
 import { DrillTemplateFamily } from '@/types/drills';
@@ -25,6 +26,7 @@ import { goBugHuntFamily } from './go/bughunt';
 import { goPointerFamily } from './go/pointer';
 import { goInterfaceFamily } from './go/interface';
 import { goBuildStructFamily } from './go/build';
+import { goSyntaxFamily } from './go/syntax';
 
 // Rust
 import { rsOwnershipFamily } from './rust/ownership';
@@ -73,7 +75,7 @@ export const allFamilies: DrillTemplateFamily[] = [
   pyComprehensionFamily, pyDefaultsFamily, pyBugHuntFamily, pyLogicBugFamily, pyDictFamily, pyContextFamily, pyBuildFamily,
 
   // Go
-  goMapFamily, goChannelFamily, goBugHuntFamily, goPointerFamily, goInterfaceFamily, goBuildStructFamily,
+  goMapFamily, goChannelFamily, goBugHuntFamily, goPointerFamily, goInterfaceFamily, goBuildStructFamily, goSyntaxFamily,
 
   // Rust
   rsOwnershipFamily, rsPatternFamily, rsBugHuntFamily, rsTraitFamily, rsIteratorFamily, rsBuildFamily,
