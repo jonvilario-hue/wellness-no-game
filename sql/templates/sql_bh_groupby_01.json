@@ -1,3 +1,4 @@
+
 {
   "template_id": "sql_bh_groupby_01",
   "source_repo": "AlisdairO/pgexercises",
@@ -6,11 +7,15 @@
   "difficulty": "intermediate",
   "schema_id": "facilities",
   "query_type": "SELECT",
-  "prompt_template": "Find the total slots booked per facility. \n\nQuery: \nSELECT facid, SUM(slots) FROM cd.bookings;",
-  "slot_definitions": {},
-  "answer_derivation": "SELECT facid, SUM(slots) FROM cd.bookings GROUP BY facid",
-  "expected_result_shape": { "rows": "variable", "columns": ["facid", "sum"] },
-  "variation_minimum": 1,
+  "prompt_template": "Find the {{AGGR}} of {{FUNC}} per {{COL}}. \n\nQuery: \nSELECT {{COL}}, {{AGGR}}({{FUNC}}) FROM cd.bookings;",
+  "slot_definitions": {
+    "AGGR": { "type": "string_pool", "pool": ["SUM", "AVG", "COUNT"] },
+    "FUNC": { "type": "string_pool", "pool": ["slots"] },
+    "COL": { "type": "string_pool", "pool": ["facid", "memid"] }
+  },
+  "answer_derivation": "SELECT {{COL}}, {{AGGR}}({{FUNC}}) FROM cd.bookings GROUP BY {{COL}}",
+  "expected_result_shape": { "rows": "variable", "columns": ["variable", "variable"] },
+  "variation_minimum": 6,
   "max_prompt_words": 40,
   "max_feedback_words": 30,
   "time_limit_seconds": 90
