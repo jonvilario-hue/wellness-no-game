@@ -49,11 +49,11 @@ export function getNextDrill(language: Language, lane: Lane, type: DrillType): G
   }
 
   // If we reach here, we've failed to find a unique one within attempts.
-  // We return the last valid one we managed to generate to keep the loop going.
   if (lastValidDrill) {
     return lastValidDrill;
   }
 
-  // Extreme fallback if selectFamily fails (e.g. invalid category requested)
-  throw new Error(`Critical: No families found for ${language}/${lane}/${type}`);
+  // Extreme fallback if no families exist at all for this combo
+  console.warn(`[ProceduralEngine] No templates found for: ${language} / ${lane} / ${type}`);
+  throw new Error(`The ${language} ${type} module is currently being populated. Please try another lane or language!`);
 }

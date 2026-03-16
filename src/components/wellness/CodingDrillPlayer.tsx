@@ -54,11 +54,13 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const lane = useMemo(() => mapProtocolToLane(protocolId), [protocolId]);
 
   const fetchDrill = useCallback(async () => {
+    // Protocol must be defined to fetch
     if (!protocolId || gameState === 'summary') return;
     
     setIsGenerating(true);
     setErrorDetails(null);
     try {
+      // Small timeout to allow UI to breathe
       await new Promise(r => setTimeout(r, 100));
       const drill = getNextDrill(
         activeLanguage.toLowerCase() as any,
@@ -334,7 +336,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                       <Sparkles className="w-8 h-8 text-primary" />
                     </div>
                     <CardTitle className="text-xl font-black uppercase">Session Synopsis</CardTitle>
-                    <CardDescription>Metrics synchronized successfully.</CardDescription>
+                    <CardDescription className="text-xs">Metrics synchronized successfully.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
                     <div className="grid grid-cols-2 gap-3">
