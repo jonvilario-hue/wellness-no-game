@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { 
   Zap, MousePointer2, 
-  Eye, Play, BookCopy, X, Trash2, PlusCircle
+  Eye, Play, BookCopy, X, Trash2, PlusCircle, Lightbulb
 } from "lucide-react"
 import type { ReadingPassage, DrillType, ReadingTier, ReadingDifficulty } from "@/types/speedreading"
 import { cn } from "@/lib/utils"
@@ -30,7 +30,7 @@ const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tagline: 
     id: 'Pacer', 
     icon: MousePointer2, 
     title: 'Pacer Drills', 
-    desc: 'Keep up with a moving highlight to suppress subvocalization.',
+    desc: 'Keep up with a moving visual guide to suppress subvocalization and maintain forward momentum.',
     tagline: 'Set the tempo for your brain.'
   },
   { 
@@ -67,9 +67,6 @@ export default function SpeedReadingContent() {
 
   const filteredPassages = useMemo(() => {
     let list = allPassages;
-    if (lowEnergyMode) {
-      list = list.filter(p => p.difficulty === 'Beginner');
-    }
     if (selectedTier !== 'All') {
       list = list.filter(p => p.tier === selectedTier);
     }
@@ -77,7 +74,7 @@ export default function SpeedReadingContent() {
       list = list.filter(p => p.difficulty === selectedDifficulty);
     }
     return list;
-  }, [allPassages, selectedTier, selectedDifficulty, lowEnergyMode]);
+  }, [allPassages, selectedTier, selectedDifficulty]);
 
   const handleDeleteCustom = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -147,7 +144,6 @@ export default function SpeedReadingContent() {
                   size="sm"
                   className={cn("h-8 text-[10px] font-black uppercase px-4 rounded-full", selectedDifficulty === diff ? "shadow-md" : "border-primary/10 bg-background/50")}
                   onClick={() => setSelectedDifficulty(diff)}
-                  disabled={lowEnergyMode && diff !== 'Beginner' && diff !== 'All'}
                 >
                   {diff}
                 </Button>
@@ -156,7 +152,7 @@ export default function SpeedReadingContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {DRILLS.map((drill) => {
             const details = speedReadingCategoryDetails[drill.id];
             return (
@@ -204,45 +200,56 @@ export default function SpeedReadingContent() {
                         {filteredPassages.length === 0 ? (
                           <div className="py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-xs">No passages match filters.</div>
                         ) : (
-                          filteredPassages.map(p => (
-                            <button
-                              key={p.id}
-                              onClick={() => setActiveDrill({ type: drill.id, passage: p })}
-                              className="flex flex-col p-4 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn relative overflow-hidden"
-                            >
-                              <div className="flex justify-between items-start mb-3">
-                                <div className="flex gap-1.5">
-                                  <Badge variant="outline" className={cn("text-[8px] font-black uppercase h-4 px-2", getDifficultyColor(p.difficulty))}>
-                                    {p.difficulty}
-                                  </Badge>
-                                  {p.isCustom && <Badge className="text-[8px] font-black uppercase h-4 px-2 bg-primary text-white border-none">Custom</Badge>}
+                          filteredPassages.map(p => {
+                            const isRecommended = lowEnergyMode && p.difficulty === 'Beginner';
+                            return (
+                              <button
+                                key={p.id}
+                                onClick={() => setActiveDrill({ type: drill.id, passage: p })}
+                                className={cn(
+                                  "flex flex-col p-4 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn relative overflow-hidden",
+                                  isRecommended && "border-amber-500/30 bg-amber-500/5"
+                                )}
+                              >
+                                <div className="flex justify-between items-start mb-3">
+                                  <div className="flex gap-1.5">
+                                    <Badge variant="outline" className={cn("text-[8px] font-black uppercase h-4 px-2", getDifficultyColor(p.difficulty))}>
+                                      {p.difficulty}
+                                    </Badge>
+                                    {p.isCustom && <Badge className="text-[8px] font-black uppercase h-4 px-2 bg-primary text-white border-none">Custom</Badge>}
+                                    {isRecommended && (
+                                      <Badge className="text-[8px] font-black uppercase h-4 px-2 bg-amber-500 text-white border-none flex gap-1">
+                                        <Lightbulb className="w-2.5 h-2.5" /> MVD Choice
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted text-muted-foreground">
+                                      {p.tier}
+                                    </Badge>
+                                    {p.isCustom && (
+                                      <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="h-6 w-6 text-muted-foreground hover:text-destructive transition-opacity opacity-0 group-hover/btn:opacity-100"
+                                        onClick={(e) => handleDeleteCustom(e, p.id)}
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </Button>
+                                    )}
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted text-muted-foreground">
-                                    {p.tier}
-                                  </Badge>
-                                  {p.isCustom && (
-                                    <Button 
-                                      variant="ghost" 
-                                      size="icon" 
-                                      className="h-6 w-6 text-muted-foreground hover:text-destructive transition-opacity opacity-0 group-hover/btn:opacity-100"
-                                      onClick={(e) => handleDeleteCustom(e, p.id)}
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </Button>
-                                  )}
+                                <div className="flex-1">
+                                  <p className="text-sm font-bold truncate group-hover/btn:text-primary transition-colors">{p.title}</p>
+                                  <p className="text-[10px] text-muted-foreground mt-0.5">{p.author}</p>
                                 </div>
-                              </div>
-                              <div className="flex-1">
-                                <p className="text-sm font-bold truncate group-hover/btn:text-primary transition-colors">{p.title}</p>
-                                <p className="text-[10px] text-muted-foreground mt-0.5">{p.author}</p>
-                              </div>
-                              <div className="flex items-center justify-between mt-4 pt-3 border-t border-primary/5 w-full">
-                                <span className="text-[9px] font-black text-muted-foreground uppercase">{p.wordCount} WORDS</span>
-                                <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover/btn:opacity-100 transition-all translate-x-[-5px] group-hover/btn:translate-x-0" />
-                              </div>
-                            </button>
-                          ))
+                                <div className="flex items-center justify-between mt-4 pt-3 border-t border-primary/5 w-full">
+                                  <span className="text-[9px] font-black text-muted-foreground uppercase">{p.wordCount} WORDS</span>
+                                  <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover/btn:opacity-100 transition-all translate-x-[-5px] group-hover/btn:translate-x-0" />
+                                </div>
+                              </button>
+                            );
+                          })
                         )}
                       </div>
                     </ScrollArea>
