@@ -1,9 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Header } from '@/components/header';
-import { PageNav } from '@/components/page-nav';
-import { MotivationalMessage } from '@/components/motivational-message';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -136,128 +133,119 @@ export default function LibraryPage() {
 
 
   return (
-    <>
-      <div className="sticky top-0 z-20">
-        <Header />
-        <PageNav />
-      </div>
-      <MotivationalMessage />
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-7xl space-y-6">
-          <Tabs defaultValue="personal" className="w-full">
-            <div className="flex flex-col items-center text-center space-y-4 mb-8">
-              <TabsList className="grid w-full max-w-md grid-cols-2">
-                <TabsTrigger value="personal" className="gap-2">
-                  <LibraryIcon className="w-4 h-4" />
-                  Personal Vault
-                </TabsTrigger>
-                <TabsTrigger value="wellness" className="gap-2">
-                  <BookMarked className="w-4 h-4" />
-                  Wellness Library
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            <TabsContent value="personal" className="space-y-6 mt-0">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personal Vault</CardTitle>
-                  <CardDescription>
-                    A central place for all your saved articles, notes, and journal reflections.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Tabs defaultValue="all">
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                            <div className="flex flex-col gap-2 w-full max-w-sm">
-                                <div className="relative">
-                                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input placeholder="Search vault..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                                </div>
-                                <Button onClick={() => handleOpenNoteDialog(null)}>
-                                    <PlusCircle className="mr-2 h-4 w-4" /> Add Note
-                                </Button>
-                            </div>
-                            <TabsList className="flex-wrap h-auto">
-                                <TabsTrigger value="all" className="gap-2"><FileText className="w-4 h-4"/>All</TabsTrigger>
-                                <TabsTrigger value="notes" className="gap-2"><FileText className="w-4 h-4"/>Notes</TabsTrigger>
-                                <TabsTrigger value="journal" className="gap-2"><BookUser className="w-4 h-4"/>Journal</TabsTrigger>
-                                <TabsTrigger value="calendar" className="gap-2"><CalendarDays className="w-4 h-4"/>Calendar</TabsTrigger>
-                                <TabsTrigger value="bookmarks" className="gap-2"><Bookmark className="w-4 h-4"/>Bookmarks</TabsTrigger>
-                            </TabsList>
-                        </div>
-                        <TabsContent value="all">
-                            {filteredContent.length === 0 ? (
-                                <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                                    <p className="text-muted-foreground">Your vault is empty.</p>
-                                    <p className="text-sm text-muted-foreground">Click "Add Note" to save your first item.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {filteredContent.map(item => <ItemCard key={item.id} item={item} />)}
-                                </div>
-                            )}
-                        </TabsContent>
-                        <TabsContent value="notes">
-                            {notes.length === 0 ? (
-                                <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                                    <p className="text-muted-foreground">You have no notes.</p>
-                                    <p className="text-sm text-muted-foreground">Click "Add Note" to get started.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {notes.map(item => <ItemCard key={item.id} item={item} />)}
-                                </div>
-                            )}
-                        </TabsContent>
-                        <TabsContent value="journal">
-                            {journalContent.length === 0 ? (
-                                <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                                    <p className="text-muted-foreground">You have no journal entries.</p>
-                                    <p className="text-sm text-muted-foreground">Go to the journal to write an entry.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {journalContent.map(item => <ItemCard key={item.id} item={item} />)}
-                                </div>
-                            )}
-                        </TabsContent>
-                        <TabsContent value="calendar">
-                            <VaultCalendar 
-                              items={allContent} 
-                              onEdit={(item) => handleOpenNoteDialog(item)}
-                              onDelete={(id) => deleteItem(id)}
-                              onToggleBookmark={handleToggleBookmark}
-                            />
-                        </TabsContent>
-                        <TabsContent value="bookmarks">
-                            {bookmarks.length === 0 ? (
-                                <div className="text-center py-16 border-2 border-dashed rounded-lg">
-                                    <p className="text-muted-foreground">You have no bookmarks.</p>
-                                    <p className="text-sm text-muted-foreground">Click the bookmark icon on a note to save it here.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {bookmarks.map(item => <ItemCard key={item.id} item={item} />)}
-                                </div>
-                            )}
-                        </TabsContent>
-                    </Tabs>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="wellness" className="mt-0">
-              <WellnessLibrary />
-            </TabsContent>
-          </Tabs>
+    <div className="space-y-6">
+      <Tabs defaultValue="personal" className="w-full">
+        <div className="flex flex-col items-center text-center space-y-4 mb-8">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="personal" className="gap-2">
+              <LibraryIcon className="w-4 h-4" />
+              Personal Vault
+            </TabsTrigger>
+            <TabsTrigger value="wellness" className="gap-2">
+              <BookMarked className="w-4 h-4" />
+              Wellness Library
+            </TabsTrigger>
+          </TabsList>
         </div>
-      </main>
+
+        <TabsContent value="personal" className="space-y-6 mt-0">
+          <Card>
+            <CardHeader>
+              <CardTitle>Personal Vault</CardTitle>
+              <CardDescription>
+                A central place for all your saved articles, notes, and journal reflections.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Tabs defaultValue="all">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                        <div className="flex flex-col gap-2 w-full max-w-sm">
+                            <div className="relative">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input placeholder="Search vault..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            </div>
+                            <Button onClick={() => handleOpenNoteDialog(null)}>
+                                <PlusCircle className="mr-2 h-4 w-4" /> Add Note
+                            </Button>
+                        </div>
+                        <TabsList className="flex-wrap h-auto">
+                            <TabsTrigger value="all" className="gap-2"><FileText className="w-4 h-4"/>All</TabsTrigger>
+                            <TabsTrigger value="notes" className="gap-2"><FileText className="w-4 h-4"/>Notes</TabsTrigger>
+                            <TabsTrigger value="journal" className="gap-2"><BookUser className="w-4 h-4"/>Journal</TabsTrigger>
+                            <TabsTrigger value="calendar" className="gap-2"><CalendarDays className="w-4 h-4"/>Calendar</TabsTrigger>
+                            <TabsTrigger value="bookmarks" className="gap-2"><Bookmark className="w-4 h-4"/>Bookmarks</TabsTrigger>
+                        </TabsList>
+                    </div>
+                    <TabsContent value="all">
+                        {filteredContent.length === 0 ? (
+                            <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                                <p className="text-muted-foreground">Your vault is empty.</p>
+                                <p className="text-sm text-muted-foreground">Click "Add Note" to save your first item.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {filteredContent.map(item => <ItemCard key={item.id} item={item} />)}
+                            </div>
+                        )}
+                    </TabsContent>
+                    <TabsContent value="notes">
+                        {notes.length === 0 ? (
+                            <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                                <p className="text-muted-foreground">You have no notes.</p>
+                                <p className="text-sm text-muted-foreground">Click "Add Note" to get started.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {notes.map(item => <ItemCard key={item.id} item={item} />)}
+                            </div>
+                        )}
+                    </TabsContent>
+                    <TabsContent value="journal">
+                        {journalContent.length === 0 ? (
+                            <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                                <p className="text-muted-foreground">You have no journal entries.</p>
+                                <p className="text-sm text-muted-foreground">Go to the journal to write an entry.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {journalContent.map(item => <ItemCard key={item.id} item={item} />)}
+                            </div>
+                        )}
+                    </TabsContent>
+                    <TabsContent value="calendar">
+                        <VaultCalendar 
+                          items={allContent} 
+                          onEdit={(item) => handleOpenNoteDialog(item)}
+                          onDelete={(id) => deleteItem(id)}
+                          onToggleBookmark={handleToggleBookmark}
+                        />
+                    </TabsContent>
+                    <TabsContent value="bookmarks">
+                        {bookmarks.length === 0 ? (
+                            <div className="text-center py-16 border-2 border-dashed rounded-lg">
+                                <p className="text-muted-foreground">You have no bookmarks.</p>
+                                <p className="text-sm text-muted-foreground">Click the bookmark icon on a note to save it here.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {bookmarks.map(item => <ItemCard key={item.id} item={item} />)}
+                            </div>
+                        )}
+                    </TabsContent>
+                </Tabs>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="wellness" className="mt-0">
+          <WellnessLibrary />
+        </TabsContent>
+      </Tabs>
       <NoteDialog
         open={isNoteDialogOpen}
         onOpenChange={setIsNoteDialogOpen}
         itemToEdit={itemToEdit}
       />
-    </>
+    </div>
   );
 }

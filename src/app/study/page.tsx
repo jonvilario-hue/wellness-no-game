@@ -1,9 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Header } from '@/components/header';
-import { PageNav } from '@/components/page-nav';
-import { MotivationalMessage } from '@/components/motivational-message';
 import { useScholarStore } from '@/hooks/use-scholar-store';
 import { useFlashcardStore } from '@/hooks/use-flashcard-store';
 import { useStudyDashboardStore } from '@/hooks/use-study-dashboard-store';
@@ -99,175 +96,165 @@ export default function ScholarHub() {
   }, [sessions, getStreak, isMounted]);
 
   return (
-    <>
-      <div className="sticky top-0 z-20">
-        <Header />
-        <PageNav />
-      </div>
-      <MotivationalMessage />
-      <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="mx-auto max-w-7xl space-y-8">
-          
-          <div className="flex flex-col gap-4">
-            <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full relative">
-              <div className="absolute top-0 right-0 z-10">
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
-                    <span className="sr-only">Toggle</span>
-                  </Button>
-                </CollapsibleTrigger>
-              </div>
-
-              <CollapsibleContent className="space-y-8">
-                <div className="flex flex-col items-center text-center pb-4 space-y-4">
-                  <div>
-                    <div className="p-3 bg-primary/10 rounded-full mb-3 mx-auto w-fit">
-                      <GraduationCap className="h-10 w-10 text-primary"/>
-                    </div>
-                    <AssistantTooltip text="Evidence-backed study center. Combine active recall, spaced repetition, and mental models to accelerate your learning.">
-                      <h1 className="text-4xl font-bold font-headline tracking-tight text-foreground">Scholar Hub</h1>
-                    </AssistantTooltip>
-                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Evidence-backed strategies meets interactive learning tools. Train your mind like a polymath.</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-                    <AssistantTooltip text="Consistency is the primary driver of neuroplasticity. Keep your streak alive!">
-                      <Card className="bg-primary/5 border-primary/10">
-                        <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                          <Zap className="w-5 h-5 text-primary mb-1" />
-                          <p className="text-2xl font-black">{aggregateStats.currentStreak}</p>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Study Streak</p>
-                        </CardContent>
-                      </Card>
-                    </AssistantTooltip>
-                    <AssistantTooltip text="Your average focus rating for study sessions. High-intensity focus sessions are more effective for encoding memories than long, distracted blocks.">
-                      <Card className="bg-primary/5 border-primary/10">
-                        <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                          <Target className="w-5 h-5 text-primary mb-1" />
-                          <p className="text-2xl font-black">{aggregateStats.avgFocus}/10</p>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Avg focus rating</p>
-                        </CardContent>
-                      </Card>
-                    </AssistantTooltip>
-                    <AssistantTooltip text="The total number of individual concepts saved in your memory vault. These are cards scheduled for Spaced Repetition review.">
-                      <Card className="bg-primary/5 border-primary/10">
-                        <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                          <Layers className="w-5 h-5 text-primary mb-1" />
-                          <p className="text-2xl font-black">{cards.length}</p>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Flashcards</p>
-                        </CardContent>
-                      </Card>
-                    </AssistantTooltip>
-                  </div>
-                </div>
-              </CollapsibleContent>
-
-              {!isOpen && (
-                <div className="flex flex-col items-center text-center">
-                  <h1 className="text-xl font-bold font-headline tracking-tight">Scholar Hub</h1>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-auto py-1 px-4 text-[10px] uppercase font-black text-muted-foreground hover:text-primary gap-1">
-                      <ChevronDown className="h-3 w-3" /> Expand Insights
-                    </Button>
-                  </CollapsibleTrigger>
-                </div>
-              )}
-            </Collapsible>
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4">
+        <Collapsible open={isOpen} onOpenChange={handleOpenChange} className="w-full relative">
+          <div className="absolute top-0 right-0 z-10">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="icon">
+                {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
+                <span className="sr-only">Toggle</span>
+              </Button>
+            </CollapsibleTrigger>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
-              <TabsList className="flex w-full max-w-3xl h-auto bg-muted/50 p-1 min-w-max">
-                <TabsTrigger value="dashboard" className="gap-2 px-6 font-bold">
-                  <LayoutDashboard className="h-4 w-4" /> Dashboard
-                </TabsTrigger>
-                <TabsTrigger value="decks" className="gap-2 px-6 font-bold">
-                  <Layers className="h-4 w-4" /> Decks
-                </TabsTrigger>
-                <TabsTrigger value="anki" className="gap-2 px-6 font-bold">
-                  <Cloud className="h-4 w-4" /> Anki Vault
-                </TabsTrigger>
-                <TabsTrigger value="tools" className="gap-2 px-6 font-bold">
-                  <Zap className="h-4 w-4" /> Tools
-                </TabsTrigger>
-                <TabsTrigger value="guides" className="gap-2 px-6 font-bold">
-                  <BookOpen className="h-4 w-4" /> Guides
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            <TabsContent value="dashboard" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <StudyDashboardView />
-            </TabsContent>
-
-            <TabsContent value="decks" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <FlashcardDecks />
-            </TabsContent>
-
-            <TabsContent value="anki" className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <AnkiDeckUploader />
-              <AnkiDeckList />
-            </TabsContent>
-
-            <TabsContent value="tools" className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <div className="space-y-20 pt-4">
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div id="notes" className="scroll-mt-24 h-full space-y-6">
-                    <CornellNotesEditor />
-                    <DistractionLog />
-                  </div>
-                  <div id="feynman" className="scroll-mt-24 h-full"><TeachBackRecorder /></div>
-                </section>
-
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div id="mindmap" className="scroll-mt-24 h-full"><MindMapTool /></div>
-                  <div id="goals" className="scroll-mt-24 h-full"><SmartGoalWizard /></div>
-                </section>
-
-                <section id="visual" className="scroll-mt-24">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-10 w-1 bg-primary rounded-full" />
-                    <h2 className="text-2xl font-black tracking-tight uppercase">Visual Pairing Tool</h2>
-                  </div>
-                  <VisualPairingTool />
-                </section>
-
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div id="exam" className="scroll-mt-24 h-full"><ExamSimulator /></div>
-                  <div id="interleaving" className="scroll-mt-24 h-full"><InterleavingPlanner /></div>
-                </section>
-
-                <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div id="highlighter" className="scroll-mt-24 h-full"><SmartHighlightExporter /></div>
-                  <div id="breaks" className="scroll-mt-24 h-full"><StudyBreakOptimizer /></div>
-                </section>
-
-                <section id="curve" className="scroll-mt-24">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-10 w-1 bg-primary rounded-full" />
-                    <h2 className="text-2xl font-black tracking-tight uppercase">Forgetting Curve Visualizer</h2>
-                  </div>
-                  <ForgettingCurveVisualizer />
-                </section>
+          <CollapsibleContent className="space-y-8">
+            <div className="flex flex-col items-center text-center pb-4 space-y-4">
+              <div>
+                <div className="p-3 bg-primary/10 rounded-full mb-3 mx-auto w-fit">
+                  <GraduationCap className="h-10 w-10 text-primary"/>
+                </div>
+                <AssistantTooltip text="Evidence-backed study center. Combine active recall, spaced repetition, and mental models to accelerate your learning.">
+                  <h1 className="text-4xl font-bold font-headline tracking-tight text-foreground">Scholar Hub</h1>
+                </AssistantTooltip>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Evidence-backed strategies meets interactive learning tools. Train your mind like a polymath.</p>
               </div>
-            </TabsContent>
 
-            <TabsContent value="guides" className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <ActiveRecallGuide />
-              <SpacedRepetitionGuide />
-              <CornellNotesGuide />
-              <FeynmanTechniqueGuide />
-              <InterleavingGuide />
-              <EffectiveMindMappingGuide />
-              <SmartGoalSettingGuide />
-              <ActiveReadingStrategiesGuide />
-              <TimeManagementGuide />
-              <ExamPreparationGuide />
-            </TabsContent>
-          </Tabs>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+                <AssistantTooltip text="Consistency is the primary driver of neuroplasticity. Keep your streak alive!">
+                  <Card className="bg-primary/5 border-primary/10">
+                    <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                      <Zap className="w-5 h-5 text-primary mb-1" />
+                      <p className="text-2xl font-black">{aggregateStats.currentStreak}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Study Streak</p>
+                    </CardContent>
+                  </Card>
+                </AssistantTooltip>
+                <AssistantTooltip text="Your average focus rating for study sessions. High-intensity focus sessions are more effective for encoding memories than long, distracted blocks.">
+                  <Card className="bg-primary/5 border-primary/10">
+                    <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                      <Target className="w-5 h-5 text-primary mb-1" />
+                      <p className="text-2xl font-black">{aggregateStats.avgFocus}/10</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Avg focus rating</p>
+                    </CardContent>
+                  </Card>
+                </AssistantTooltip>
+                <AssistantTooltip text="The total number of individual concepts saved in your memory vault. These are cards scheduled for Spaced Repetition review.">
+                  <Card className="bg-primary/5 border-primary/10">
+                    <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                      <Layers className="w-5 h-5 text-primary mb-1" />
+                      <p className="text-2xl font-black">{cards.length}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Flashcards</p>
+                    </CardContent>
+                  </Card>
+                </AssistantTooltip>
+              </div>
+            </div>
+          </CollapsibleContent>
+
+          {!isOpen && (
+            <div className="flex flex-col items-center text-center">
+              <h1 className="text-xl font-bold font-headline tracking-tight">Scholar Hub</h1>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-auto py-1 px-4 text-[10px] uppercase font-black text-muted-foreground hover:text-primary gap-1">
+                  <ChevronDown className="h-3 w-3" /> Expand Insights
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+          )}
+        </Collapsible>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex justify-center mb-8 overflow-x-auto no-scrollbar">
+          <TabsList className="flex w-full max-w-3xl h-auto bg-muted/50 p-1 min-w-max">
+            <TabsTrigger value="dashboard" className="gap-2 px-6 font-bold">
+              <LayoutDashboard className="h-4 w-4" /> Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="decks" className="gap-2 px-6 font-bold">
+              <Layers className="h-4 w-4" /> Decks
+            </TabsTrigger>
+            <TabsTrigger value="anki" className="gap-2 px-6 font-bold">
+              <Cloud className="h-4 w-4" /> Anki Vault
+            </TabsTrigger>
+            <TabsTrigger value="tools" className="gap-2 px-6 font-bold">
+              <Zap className="h-4 w-4" /> Tools
+            </TabsTrigger>
+            <TabsTrigger value="guides" className="gap-2 px-6 font-bold">
+              <BookOpen className="h-4 w-4" /> Guides
+            </TabsTrigger>
+          </TabsList>
         </div>
-      </main>
-    </>
+
+        <TabsContent value="dashboard" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <StudyDashboardView />
+        </TabsContent>
+
+        <TabsContent value="decks" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <FlashcardDecks />
+        </TabsContent>
+
+        <TabsContent value="anki" className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <AnkiDeckUploader />
+          <AnkiDeckList />
+        </TabsContent>
+
+        <TabsContent value="tools" className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="space-y-20 pt-4">
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div id="notes" className="scroll-mt-24 h-full space-y-6">
+                <CornellNotesEditor />
+                <DistractionLog />
+              </div>
+              <div id="feynman" className="scroll-mt-24 h-full"><TeachBackRecorder /></div>
+            </section>
+
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div id="mindmap" className="scroll-mt-24 h-full"><MindMapTool /></div>
+              <div id="goals" className="scroll-mt-24 h-full"><SmartGoalWizard /></div>
+            </section>
+
+            <section id="visual" className="scroll-mt-24">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-10 w-1 bg-primary rounded-full" />
+                <h2 className="text-2xl font-black tracking-tight uppercase">Visual Pairing Tool</h2>
+              </div>
+              <VisualPairingTool />
+            </section>
+
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div id="exam" className="scroll-mt-24 h-full"><ExamSimulator /></div>
+              <div id="interleaving" className="scroll-mt-24 h-full"><InterleavingPlanner /></div>
+            </section>
+
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div id="highlighter" className="scroll-mt-24 h-full"><SmartHighlightExporter /></div>
+              <div id="breaks" className="scroll-mt-24 h-full"><StudyBreakOptimizer /></div>
+            </section>
+
+            <section id="curve" className="scroll-mt-24">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-10 w-1 bg-primary rounded-full" />
+                <h2 className="text-2xl font-black tracking-tight uppercase">Forgetting Curve Visualizer</h2>
+              </div>
+              <ForgettingCurveVisualizer />
+            </section>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="guides" className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <ActiveRecallGuide />
+          <SpacedRepetitionGuide />
+          <CornellNotesGuide />
+          <FeynmanTechniqueGuide />
+          <InterleavingGuide />
+          <EffectiveMindMappingGuide />
+          <SmartGoalSettingGuide />
+          <ActiveReadingStrategiesGuide />
+          <TimeManagementGuide />
+          <ExamPreparationGuide />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
