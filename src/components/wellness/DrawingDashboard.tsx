@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useDrawingStore } from '@/hooks/use-drawing-store';
 import { 
   Flame, Clock, Target, 
-  Sparkles, Palette, BarChart3 
+  Sparkles, Palette, BarChart3, Trophy
 } from 'lucide-react';
 import { 
   ResponsiveContainer, RadarChart, PolarGrid, 
@@ -17,18 +17,24 @@ import { AssistantTooltip } from '../assistant-tooltip';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { DrawingDiscipline } from '@/types/drawing';
+import { format, startOfWeek, parseISO, isAfter } from 'date-fns';
 
 export function DrawingDashboard() {
   const [mounted, setMounted] = useState(false);
-  const { streak, getWeeklyVolume, getTopDiscipline, getDisciplineBalance, getDaysSinceLastPractice } = useDrawingStore();
+  const { logs, streak, getTopDiscipline, getDisciplineBalance, getDaysSinceLastPractice } = useDrawingStore();
   
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const radarData = useMemo(() => getDisciplineBalance(), [getDisciplineBalance]);
-  const weeklyVol = getWeeklyVolume();
   const topDiscipline = getTopDiscipline();
+
+  const weeklySessions = useMemo(() => {
+    if (!mounted) return 0;
+    const start = startOfWeek(new Date());
+    return logs.filter(l => isAfter(parseISO(l.timestamp), start)).length;
+  }, [logs, mounted]);
 
   const disciplineInsight = useMemo(() => {
     const disciplines: DrawingDiscipline[] = [
@@ -59,8 +65,8 @@ export function DrawingDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <AssistantTooltip text="Consecutive days of active practice. 10 minutes of daily recalibration beats a 3-hour session once a month.">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <AssistantTooltip text="Your current consecutive days of drawing practice. Motor-perceptual skills degrade without daily hand-eye recalibration.">
           <Card className="bg-primary/5 border-primary/10 h-full">
             <CardContent className="p-4 flex flex-col items-center justify-center text-center">
               <Flame className="w-5 h-5 text-orange-500 mb-1" />
@@ -70,32 +76,22 @@ export function DrawingDashboard() {
           </Card>
         </AssistantTooltip>
         
-        <AssistantTooltip text="Total minutes spent in structured drills and studio sessions this week.">
+        <AssistantTooltip text="Total drawing sessions completed this week. Consistent volume builds technical automaticity.">
           <Card className="bg-primary/5 border-primary/10 h-full">
             <CardContent className="p-4 flex flex-col items-center justify-center text-center">
               <Clock className="w-5 h-5 text-primary mb-1" />
-              <p className="text-2xl font-black">{weeklyVol}m</p>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Vol</p>
+              <p className="text-2xl font-black">{weeklySessions}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Weekly Sessions</p>
             </CardContent>
           </Card>
         </AssistantTooltip>
 
-        <AssistantTooltip text="The foundational discipline where you have invested the most reps.">
+        <AssistantTooltip text="The drawing discipline where you have invested the most deliberate practice.">
           <Card className="bg-primary/5 border-primary/10 h-full">
             <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-              <Target className="w-5 h-5 text-primary opacity-80 mb-1" />
-              <p className="text-[10px] font-bold truncate w-full">{topDiscipline}</p>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Skill</p>
-            </CardContent>
-          </Card>
-        </AssistantTooltip>
-
-        <AssistantTooltip text="Overall studio health score. Maintains high focus and accuracy across the skill wheel.">
-          <Card className="bg-primary/5 border-primary/10 h-full">
-            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-              <BarChart3 className="w-5 h-5 text-primary opacity-80 mb-1" />
-              <p className="text-2xl font-black">74</p>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Studio Rank</p>
+              <Trophy className="w-5 h-5 text-primary opacity-80 mb-1" />
+              <p className="text-sm font-bold truncate w-full text-center">{topDiscipline}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Top Discipline</p>
             </CardContent>
           </Card>
         </AssistantTooltip>
@@ -141,7 +137,7 @@ export function DrawingDashboard() {
               </p>
             </div>
             <Button variant="outline" className="w-full h-10 font-bold border-primary/20 hover:bg-primary/5">
-              Sync Studio Data
+              Refresh Analysis
             </Button>
           </div>
         </Card>
