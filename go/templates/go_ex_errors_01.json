@@ -7,7 +7,7 @@
   "difficulty": "intermediate",
   "requires_goroutine_runtime": false,
   "output_deterministic": true,
-  "prompt_template": "func Process(val {{TYPE}}) error {\n    err := validate(val)\n    if err != nil {\n        // Goal: Return a new error that wraps 'err' with the message \"failed to process: %w\"\n        {{SLOT_IMPLEMENTATION}}\n    }\n    return nil\n}",
+  "prompt_template": "func Process(val {{TYPE}}) error {\n    err := validate(val)\n    if err != nil {\n        {{SLOT_IMPLEMENTATION}}\n    }\n    return nil\n}",
   "slot_definitions": {
     "TYPE": { "type": "string_pool", "pool": ["string", "int", "float64"] }
   },

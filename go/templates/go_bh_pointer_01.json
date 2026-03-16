@@ -7,10 +7,12 @@
   "difficulty": "beginner",
   "requires_goroutine_runtime": false,
   "output_deterministic": true,
-  "prompt_template": "type Counter struct {\n    val int\n}\n\nfunc (c Counter) Increment() {\n    c.val++\n}\n\nfunc main() {\n    count := Counter{val: 0}\n    count.Increment()\n    fmt.Println(count.val) // Output is 0, but goal is 1\n}",
-  "slot_definitions": {},
-  "answer_derivation": "Change the receiver from (c Counter) to (c *Counter) to modify the struct by reference.",
-  "variation_minimum": 1,
+  "prompt_template": "type Counter struct {\n    val int\n}\n\nfunc (c {{RECEIVER_TYPE}}) Increment() {\n    c.val++\n}\n\nfunc main() {\n    count := Counter{val: 0}\n    count.Increment()\n    fmt.Println(count.val)\n}",
+  "slot_definitions": {
+    "RECEIVER_TYPE": { "type": "string_pool", "pool": ["Counter", "*Counter"] }
+  },
+  "answer_derivation": "*Counter",
+  "variation_minimum": 2,
   "max_prompt_words": 40,
   "max_feedback_words": 20,
   "time_limit_seconds": 60
