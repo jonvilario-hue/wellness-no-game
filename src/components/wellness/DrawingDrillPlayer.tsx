@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -221,9 +220,9 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <Label className="text-[10px] font-bold uppercase tracking-widest">Focus Intensity (1-5)</Label>
-                        <span className="text-lg font-black text-primary">{focusLevel}</span>
+                        <span className="text-lg font-black text-primary">{focusRating}</span>
                       </div>
-                      <Slider value={[focusLevel]} onValueChange={([v]) => setFocusLevel(v)} min={1} max={5} step={1} />
+                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
                     </div>
 
                     <div className="space-y-2">
