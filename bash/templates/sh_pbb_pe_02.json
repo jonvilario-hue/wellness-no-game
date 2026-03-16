@@ -10,7 +10,7 @@
     "FILE": { "type": "string_pool", "pool": ["bash", "grep", "sed", "awk", "python"] },
     "OP": { "type": "string_pool", "pool": ["#", "##"] }
   },
-  "answer_derivation": "Shortest (#) or longest (##) prefix removal of '/*/'",
+  "answer_derivation": "OP == '#' ? path[after first /] : path[after last /]",
   "requires_stdin_input": false,
   "stdin_data": null,
   "expected_exit_code": 0,

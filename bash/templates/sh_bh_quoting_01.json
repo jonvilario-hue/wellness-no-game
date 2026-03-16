@@ -5,11 +5,11 @@
   "drill_type": "bug_hunt",
   "concept_tags": ["quoting", "conditionals"],
   "difficulty": "intermediate",
-  "prompt_template": "NAME=\"{{NAME}}\"; if [ $NAME == \"Admin\" ]; then echo \"Access Granted\"; fi",
+  "prompt_template": "NAME=\"{{NAME}}\"; if [ $NAME == \"Admin\" ]; then echo 1; fi",
   "slot_definitions": {
     "NAME": { "type": "string_pool", "pool": ["John Doe", "Jane Smith", "Root User"] }
   },
-  "answer_derivation": "Add double quotes around $NAME to handle spaces",
+  "answer_derivation": "if [ \"$NAME\" == \"Admin\" ]; then echo 1; fi",
   "requires_stdin_input": false,
   "stdin_data": null,
   "expected_exit_code": 0,
