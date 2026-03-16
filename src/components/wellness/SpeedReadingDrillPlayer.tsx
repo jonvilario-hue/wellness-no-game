@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -95,6 +94,14 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
     setCurrentIndex(0);
   };
 
+  const handleRestart = () => {
+    setGameState('prep');
+    setCurrentIndex(0);
+    setIsActive(false);
+    setStartTime(0);
+    setElapsedSeconds(0);
+  };
+
   const handleQuizComplete = (score: number) => {
     setComprehensionScore(score);
     setGameState('summary');
@@ -130,6 +137,7 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
       <header className="p-4 border-b bg-card flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={onClose}><X className="w-5 h-5" /></Button>
+          <Button variant="ghost" size="icon" onClick={handleRestart} className="text-muted-foreground hover:text-primary"><RotateCcw className="w-4 h-4" /></Button>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-sm font-black uppercase tracking-widest">{drillType}</h1>
@@ -290,9 +298,12 @@ export function SpeedReadingDrillPlayer({ drillType, passage, isCustomText, onCl
                     <Slider value={[postFatigue]} onValueChange={([v]) => setPostFatigue(v)} min={1} max={5} step={1} />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button className="w-full h-14 text-lg font-black shadow-lg" onClick={handleSaveAndExit}>
-                    Sync to History <ArrowRight className="ml-2 w-5 h-5" />
+                <CardFooter className="flex gap-3">
+                  <Button variant="outline" className="flex-1 h-14 font-bold uppercase" onClick={handleRestart}>
+                    <RotateCcw className="mr-2 h-4 w-4" /> Try Again
+                  </Button>
+                  <Button className="flex-[2] h-14 text-lg font-black shadow-lg" onClick={handleSaveAndExit}>
+                    Sync & Exit <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </CardFooter>
               </Card>

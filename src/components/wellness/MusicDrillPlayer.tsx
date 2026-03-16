@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -72,6 +71,15 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
     setQuestionStartTime(Date.now());
     setCurrentIndex(0);
     setAnswers([]);
+  };
+
+  const handleRestart = () => {
+    setGameState('prep');
+    setCurrentIndex(0);
+    setAnswers([]);
+    setSelectedOption(null);
+    setConstructionInput('');
+    setIsAnswered(false);
   };
 
   const handleResponse = (val: string) => {
@@ -171,6 +179,7 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
+              <Button variant="ghost" size="icon" onClick={handleRestart} className="rounded-full text-muted-foreground hover:text-primary"><RotateCcw className="w-4 h-4" /></Button>
               <div>
                 <h1 className="text-lg font-bold tracking-tight truncate max-w-[200px]">{drill.name}</h1>
                 <p className="text-[10px] text-muted-foreground font-bold uppercase">{drill.domain}</p>
@@ -259,7 +268,7 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
                               "w-full text-left p-4 rounded-xl border-2 transition-all font-bold text-sm",
                               !isAnswered && "hover:border-primary/40 hover:bg-primary/[0.02] border-primary/5",
                               isAnswered && opt === currentQuestion.answer && "bg-emerald-500/10 border-emerald-500 text-emerald-700",
-                              is_answered && opt === selectedOption && opt !== currentQuestion.answer && "bg-destructive/5 border-destructive text-destructive"
+                              isAnswered && opt === selectedOption && opt !== currentQuestion.answer && "bg-destructive/5 border-destructive text-destructive"
                             )}
                           >
                             {opt}
@@ -376,6 +385,14 @@ export function MusicDrillPlayer({ drillId, onClose, subtab = 'Listen' }: Props)
                       </div>
                     </div>
                   </CardContent>
+                  <CardFooter className="bg-muted/10 p-6 flex gap-3">
+                    <Button variant="outline" className="flex-1 h-12 font-bold uppercase" onClick={handleRestart}>
+                      <RotateCcw className="mr-2 h-4 w-4" /> Try Again
+                    </Button>
+                    <Button className="flex-1 h-12 font-black uppercase shadow-lg" onClick={() => { syncFromTracker('Music', drill.name); onClose(); }}>
+                      Finish <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </CardFooter>
                 </Card>
               </motion.div>
             )}

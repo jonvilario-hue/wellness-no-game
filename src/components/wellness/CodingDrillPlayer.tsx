@@ -12,7 +12,8 @@ import { Label } from '@/components/ui/label';
 import { 
   X, Play, Zap, Clock, Check,
   ChevronRight, ArrowRight, CheckCircle2, XCircle,
-  PenTool, Eye, LayoutGrid, Sparkles, Info, Star, Loader2, Lightbulb
+  PenTool, Eye, LayoutGrid, Sparkles, Info, Star, Loader2, Lightbulb,
+  RotateCcw
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
@@ -35,7 +36,7 @@ const mapProtocolToLane = (id: string): Lane => {
 };
 
 export function CodingDrillPlayer({ protocolId, onClose }: Props) {
-  const { activeLanguage, addLog, activeLoop, advanceLoop, cancelLoop } = useCodingStore();
+  const { activeLanguage, addLog, activeLoop, advanceLoop, cancelLoop, startLoop } = useCodingStore();
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
 
@@ -88,6 +89,15 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     setIsCorrect(result.isCorrect);
     setGradingFeedback(result.feedback);
     setGameState('feedback');
+  };
+
+  const handleRestart = () => {
+    if (activeLoop.active) {
+      const steps = [...activeLoop.steps];
+      cancelLoop();
+      startLoop(steps);
+    }
+    fetchDrill();
   };
 
   const handleCompleteRound = () => {
@@ -167,6 +177,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
         <header className="p-6 border-b bg-card shrink-0 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={activeLoop.active ? cancelLoop : onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
+            <Button variant="ghost" size="icon" onClick={handleRestart} className="rounded-full text-muted-foreground hover:text-primary"><RotateCcw className="w-4 h-4" /></Button>
             <div>
               <h1 className="text-lg font-bold uppercase tracking-tight">{protocolId}</h1>
               <p className="text-[10px] text-muted-foreground font-bold uppercase">{activeLanguage} • Procedural</p>
@@ -274,7 +285,9 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
               <motion.div key="summary" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
                 <Card className="border-primary/20 shadow-xl overflow-hidden">
                   <CardHeader className="text-center bg-primary/5 py-6">
-                    <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary"><Sparkles className="w-8 h-8" /></div>
+                    <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2">
+                      <Sparkles className="w-8 h-8 text-primary" />
+                    </div>
                     <CardTitle className="text-xl font-black uppercase">Session Synopsis</CardTitle>
                     <CardDescription>Metrics synchronized successfully.</CardDescription>
                   </CardHeader>
@@ -295,8 +308,13 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                       <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
-                  <CardFooter className="bg-muted/10 p-6">
-                    <Button className="w-full h-12 font-black uppercase shadow-lg" onClick={() => { syncFromTracker('Custom', `Coding: ${protocolId}`); onClose(); }}>Return to Lab <ArrowRight className="ml-2 w-4 h-4" /></Button>
+                  <CardFooter className="bg-muted/10 p-6 flex gap-3">
+                    <Button variant="outline" className="flex-1 h-12 font-black uppercase" onClick={handleRestart}>
+                      <RotateCcw className="mr-2 h-4 w-4" /> Try Again
+                    </Button>
+                    <Button className="flex-1 h-12 font-black uppercase shadow-lg" onClick={() => { syncFromTracker('Custom', `Coding: ${protocolId}`); onClose(); }}>
+                      Finish <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
                   </CardFooter>
                 </Card>
               </motion.div>
