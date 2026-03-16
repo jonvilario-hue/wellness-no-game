@@ -97,7 +97,7 @@ export default function DrawingContent() {
                       </Card>
                     ))}
                     {drills.length === 0 && (
-                      <div className="col-span-full py-10 text-center border-2 border-dashed rounded-2xl opacity-20 italic text-xs">
+                      <div className="col-span-full py-10 text-center border-2 border-dashed rounded-xl opacity-20 italic text-xs">
                         Select a different discipline to view available drills.
                       </div>
                     )}
@@ -109,10 +109,7 @@ export default function DrawingContent() {
         </Accordion>
       </div>
 
-      {/* 2. Studio Dashboard */}
-      <DrawingDashboard />
-
-      {/* 3. Today's Focus */}
+      {/* 2. Today's Focus (Recommendation row moved up) */}
       <div className="space-y-4">
         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Today's Focus</h3>
         <Card className="border-primary/20 bg-primary/5 shadow-md overflow-hidden group hover:border-primary/40 transition-all">
@@ -141,6 +138,9 @@ export default function DrawingContent() {
           </CardContent>
         </Card>
       </div>
+
+      {/* 3. Studio Dashboard (Streaks row moved down) */}
+      <DrawingDashboard />
 
       {/* 4. Journey Plans */}
       <div className="space-y-6">
