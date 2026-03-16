@@ -1,0 +1,21 @@
+
+{
+  "template_id": "sh_cmd_grep_01",
+  "source_repo": "jarv/cmdchallenge",
+  "drill_type": "oneliner_challenge",
+  "concept_tags": ["regex_matching", "pipelines"],
+  "difficulty": "beginner",
+  "prompt_template": "Print all lines in the file \"{{FILE}}\" that contain the word \"{{WORD}}\".",
+  "slot_definitions": {
+    "FILE": { "type": "string_pool", "pool": ["access.log", "error.log", "data.csv"] },
+    "WORD": { "type": "string_pool", "pool": ["ERROR", "WARN", "INFO", "USER"] }
+  },
+  "answer_derivation": "grep '{{WORD}}' {{FILE}}",
+  "requires_stdin_input": true,
+  "stdin_data": "USER login\nINFO sync\nERROR database\nWARN slow",
+  "expected_exit_code": 0,
+  "variation_minimum": 12,
+  "max_prompt_words": 25,
+  "max_feedback_words": 15,
+  "time_limit_seconds": 60
+}

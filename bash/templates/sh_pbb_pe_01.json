@@ -1,0 +1,22 @@
+
+{
+  "template_id": "sh_pbb_pe_01",
+  "source_repo": "dylanaraps/pure-bash-bible",
+  "drill_type": "output_prediction",
+  "concept_tags": ["parameter_expansion", "string_manipulation"],
+  "difficulty": "beginner",
+  "prompt_template": "var=\"{{STR}}\"; echo ${var:{{START}}:{{LEN}}}",
+  "slot_definitions": {
+    "STR": { "type": "string_pool", "pool": ["CognitiveCrucible", "BashBible", "ShellScripting", "LinuxSystem"] },
+    "START": { "type": "int_range", "pool": { "min": 0, "max": 5 } },
+    "LEN": { "type": "int_range", "pool": { "min": 2, "max": 6 } }
+  },
+  "answer_derivation": "STR[START:START+LEN]",
+  "requires_stdin_input": false,
+  "stdin_data": null,
+  "expected_exit_code": 0,
+  "variation_minimum": 20,
+  "max_prompt_words": 15,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 45
+}

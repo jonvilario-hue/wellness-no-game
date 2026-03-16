@@ -1,7 +1,21 @@
+
 {
   "language": "bash",
-  "total_seeds": 0,
-  "total_templates": 0,
-  "concept_coverage": {},
-  "sources": []
+  "total_seeds": 125,
+  "total_templates": 105,
+  "concept_coverage": {
+    "parameter_expansion": { "template_count": 22, "drill_types": ["output_prediction", "syntax_sprint"], "variation_count": 330 },
+    "quoting": { "template_count": 12, "drill_types": ["output_prediction", "bug_hunt"], "variation_count": 180 },
+    "regex_matching": { "template_count": 15, "drill_types": ["oneliner_challenge"], "variation_count": 225 },
+    "pipelines": { "template_count": 18, "drill_types": ["oneliner_challenge", "reconstruction"], "variation_count": 270 },
+    "arrays": { "template_count": 10, "drill_types": ["output_prediction", "syntax_sprint"], "variation_count": 150 },
+    "conditionals": { "template_count": 12, "drill_types": ["bug_hunt", "reconstruction"], "variation_count": 180 },
+    "file_tests": { "template_count": 8, "drill_types": ["syntax_sprint", "output_prediction"], "variation_count": 120 },
+    "arithmetic": { "template_count": 8, "drill_types": ["output_prediction"], "variation_count": 120 }
+  },
+  "sources": [
+    { "repo": "dylanaraps/pure-bash-bible", "exercises_ingested": 82, "exercises_rejected": 4 },
+    { "repo": "jarv/cmdchallenge", "exercises_ingested": 28, "exercises_rejected": 2 },
+    { "repo": "exercism/bash", "exercises_ingested": 15, "exercises_rejected": 10 }
+  ]
 }

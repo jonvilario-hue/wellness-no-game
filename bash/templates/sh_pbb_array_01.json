@@ -1,0 +1,20 @@
+
+{
+  "template_id": "sh_pbb_array_01",
+  "source_repo": "dylanaraps/pure-bash-bible",
+  "drill_type": "output_prediction",
+  "concept_tags": ["arrays"],
+  "difficulty": "intermediate",
+  "prompt_template": "list=({{ITEMS}}); echo ${#list[@]}",
+  "slot_definitions": {
+    "ITEMS": { "type": "string_pool", "pool": ["a b c", "1 2 3 4 5", "apple orange", "x y z w"] }
+  },
+  "answer_derivation": "Count of elements in the array",
+  "requires_stdin_input": false,
+  "stdin_data": null,
+  "expected_exit_code": 0,
+  "variation_minimum": 15,
+  "max_prompt_words": 15,
+  "max_feedback_words": 15,
+  "time_limit_seconds": 45
+}

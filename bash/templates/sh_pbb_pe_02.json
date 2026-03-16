@@ -1,0 +1,21 @@
+
+{
+  "template_id": "sh_pbb_pe_02",
+  "source_repo": "dylanaraps/pure-bash-bible",
+  "drill_type": "output_prediction",
+  "concept_tags": ["parameter_expansion", "string_manipulation"],
+  "difficulty": "intermediate",
+  "prompt_template": "path=\"/usr/local/bin/{{FILE}}\"; echo ${path{{OP}}/*/}",
+  "slot_definitions": {
+    "FILE": { "type": "string_pool", "pool": ["bash", "grep", "sed", "awk", "python"] },
+    "OP": { "type": "string_pool", "pool": ["#", "##"] }
+  },
+  "answer_derivation": "Shortest (#) or longest (##) prefix removal of '/*/'",
+  "requires_stdin_input": false,
+  "stdin_data": null,
+  "expected_exit_code": 0,
+  "variation_minimum": 10,
+  "max_prompt_words": 20,
+  "max_feedback_words": 25,
+  "time_limit_seconds": 60
+}
