@@ -1,18 +1,20 @@
 
 {
   "language": "go",
-  "total_seeds": 0,
-  "total_templates": 0,
+  "total_seeds": 145,
+  "total_templates": 145,
   "concept_coverage": {
-    "basics": 0,
-    "structs": 0,
-    "interfaces": 0,
-    "channels": 0,
-    "concurrency": 0,
-    "errors": 0,
-    "slices": 0,
-    "maps": 0,
-    "pointers": 0
+    "concurrency": { "template_count": 18, "drill_types": ["output_prediction", "bug_hunt"], "variation_count": 270 },
+    "interfaces": { "template_count": 22, "drill_types": ["interface_challenge", "reconstruction"], "variation_count": 330 },
+    "error_handling": { "template_count": 12, "drill_types": ["reconstruction", "syntax_sprint"], "variation_count": 180 },
+    "pointers": { "template_count": 15, "drill_types": ["bug_hunt", "output_prediction"], "variation_count": 225 },
+    "slices_maps": { "template_count": 25, "drill_types": ["output_prediction", "syntax_sprint"], "variation_count": 375 },
+    "structs_methods": { "template_count": 20, "drill_types": ["reconstruction", "bug_hunt"], "variation_count": 300 },
+    "basics": { "template_count": 33, "drill_types": ["syntax_sprint", "output_prediction"], "variation_count": 495 }
   },
-  "sources": []
+  "sources": [
+    { "repo": "exercism/go", "exercises_ingested": 82, "exercises_rejected": 14 },
+    { "repo": "mmcgrana/gobyexample", "exercises_ingested": 45, "exercises_rejected": 5 },
+    { "repo": "quii/learn-go-with-tests", "exercises_ingested": 18, "exercises_rejected": 2 }
+  ]
 }

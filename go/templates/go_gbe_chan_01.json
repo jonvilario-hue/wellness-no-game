@@ -1,0 +1,19 @@
+
+{
+  "template_id": "go_gbe_chan_01",
+  "source_repo": "mmcgrana/gobyexample",
+  "drill_type": "output_prediction",
+  "concept_tags": ["channels", "select", "concurrency"],
+  "difficulty": "advanced",
+  "requires_goroutine_runtime": true,
+  "output_deterministic": true,
+  "prompt_template": "c1 := make(chan string, 1)\nc1 <- \"{{V1}}\"\n\nselect {\ncase msg := <-c1:\n    fmt.Println(\"received\", msg)\ndefault:\n    fmt.Println(\"no activity\")\n}",
+  "slot_definitions": {
+    "V1": { "type": "string_pool", "pool": ["ping", "data", "signal"] }
+  },
+  "answer_derivation": "received {{V1}}",
+  "variation_minimum": 15,
+  "max_prompt_words": 40,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 45
+}

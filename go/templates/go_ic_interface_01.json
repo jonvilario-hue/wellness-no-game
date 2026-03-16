@@ -1,0 +1,22 @@
+
+{
+  "template_id": "go_ic_interface_01",
+  "source_repo": "mmcgrana/gobyexample",
+  "drill_type": "interface_challenge",
+  "concept_tags": ["interfaces", "methods", "pointers"],
+  "difficulty": "intermediate",
+  "requires_goroutine_runtime": false,
+  "output_deterministic": true,
+  "prompt_template": "type {{INTERFACE}} interface {\n    {{METHOD}}() {{RET}}\n}\n\ntype T1 struct{}\nfunc (t T1) {{METHOD}}() {{RET}} { return {{VAL}} }\n\ntype T2 struct{}\nfunc (t *T2) {{METHOD}}() {{RET}} { return {{VAL}} }\n\n// Which of the following can be assigned to a variable of type {{INTERFACE}}?",
+  "slot_definitions": {
+    "INTERFACE": { "type": "string_pool", "pool": ["Sizer", "Shaper", "Worker"] },
+    "METHOD": { "type": "string_pool", "pool": ["Area", "Volume", "Run"] },
+    "RET": { "type": "string_pool", "pool": ["int", "float64"] },
+    "VAL": { "type": "string_pool", "pool": ["0", "1.0"] }
+  },
+  "answer_derivation": "T1, *T1, and *T2. (Note: T2 does not satisfy because the method has a pointer receiver)",
+  "variation_minimum": 20,
+  "max_prompt_words": 50,
+  "max_feedback_words": 30,
+  "time_limit_seconds": 90
+}

@@ -1,0 +1,19 @@
+
+{
+  "template_id": "go_ex_errors_01",
+  "source_repo": "exercism/go",
+  "drill_type": "reconstruction",
+  "concept_tags": ["errors", "error_wrapping", "fmt"],
+  "difficulty": "intermediate",
+  "requires_goroutine_runtime": false,
+  "output_deterministic": true,
+  "prompt_template": "func Process(val {{TYPE}}) error {\n    err := validate(val)\n    if err != nil {\n        // Goal: Return a new error that wraps 'err' with the message \"failed to process: %w\"\n        {{SLOT_IMPLEMENTATION}}\n    }\n    return nil\n}",
+  "slot_definitions": {
+    "TYPE": { "type": "string_pool", "pool": ["string", "int", "float64"] }
+  },
+  "answer_derivation": "return fmt.Errorf(\"failed to process: %w\", err)",
+  "variation_minimum": 10,
+  "max_prompt_words": 30,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 60
+}
