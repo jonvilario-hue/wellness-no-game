@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -30,7 +31,7 @@ interface Props {
 
 export function DrawingDrillPlayer({ drill, onClose }: Props) {
   const [gameState, setGameState] = useState<'prep' | 'active' | 'survey' | 'summary'>('prep');
-  const [difficulty, setDifficulty] = useState<DrawingDifficulty>('Developing');
+  const [difficulty, setDifficulty] = useState<DrawingDifficulty>(drill.difficulty || 'Developing');
   const [timeLeft, setTimeLeft] = useState(drill.defaultTimerSeconds || 0);
   const [isActive, setIsActive] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState(0);
@@ -128,8 +129,8 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
               <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex-1 flex items-center justify-center p-8">
                 <Card className="max-w-md w-full border-primary/10 shadow-xl overflow-hidden">
                   <CardHeader className="text-center pb-6 bg-primary/5">
-                    <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2">
-                      <Target className="w-8 h-8 text-primary" />
+                    <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary">
+                      {drill.inputTag === 'Reference Needed' ? <Eye className="w-8 h-8" /> : <Pencil className="w-8 h-8" />}
                     </div>
                     <CardTitle className="text-xl font-black uppercase tracking-tight">The Brief</CardTitle>
                     <CardDescription className="text-xs">Objective: {drill.description}</CardDescription>

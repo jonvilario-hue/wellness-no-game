@@ -9,7 +9,7 @@ export type DrawingDiscipline =
   | 'Value'
   | 'Form'
   | 'Composition'
-  | 'Construction'; // Added for Drawabox later lessons
+  | 'Construction';
 
 export type DrawingDifficulty = 'Foundation' | 'Developing' | 'Advanced';
 export type DrawingMedium = 'Pencil' | 'Pen' | 'Charcoal' | 'Digital' | 'Other';
@@ -33,6 +33,10 @@ export interface DrawingDrill {
   id: string;
   name: string;
   discipline: DrawingDiscipline;
+  originTag: string;
+  useCaseTag: 'Warm-Up' | 'Session Drill' | 'Study';
+  inputTag: 'Timed' | 'Static' | 'Reference Needed';
+  difficulty: DrawingDifficulty;
   description: string;
   brief: string[];
   referenceCategory: 'Still Life' | 'Figure' | 'Environment' | 'Abstract' | 'None';

@@ -1,12 +1,53 @@
-
 import type { DrawingDrill } from '@/types/drawing';
 
 export const drawingDrills: DrawingDrill[] = [
-  // --- Line Control ---
+  // --- Group 1: Seeing & Motion ---
+  {
+    id: 'gesture-30s',
+    name: '30s Gesture',
+    discipline: 'Gesture',
+    originTag: 'Gesture',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Timed',
+    difficulty: 'Foundation',
+    description: 'Capture essential energy and the "line of action."',
+    brief: [
+      'Identify the longest curved line from the head to the feet.',
+      'Do not draw outlines. Draw the movement.',
+      'Use fast, sweeping strokes.',
+      'Ignore all details like fingers, faces, or muscle definitions.'
+    ],
+    referenceCategory: 'Figure',
+    displayMode: 'Static',
+    defaultTimerSeconds: 60
+  },
+  {
+    id: 'gesture-2m',
+    name: '2m Construction',
+    discipline: 'Gesture',
+    originTag: 'Gesture',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Timed',
+    difficulty: 'Foundation',
+    description: 'Move from energy to basic anatomical masses.',
+    brief: [
+      'First 30s: Line of action.',
+      'Next 60s: Add basic boxes for torso and hips.',
+      'Final 30s: Connect limbs with simple lines.',
+      'Balance the weight over the center of gravity.'
+    ],
+    referenceCategory: 'Figure',
+    displayMode: 'Static',
+    defaultTimerSeconds: 120
+  },
   {
     id: 'line-ghosting',
     name: 'Ghosting Lines',
     discipline: 'Line Control',
+    originTag: 'Line Control',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
     description: 'Build confidence and accuracy in your straight marks.',
     brief: [
       'Place two dots on your paper about 4-6 inches apart.',
@@ -21,6 +62,10 @@ export const drawingDrills: DrawingDrill[] = [
     id: 'line-ellipses',
     name: 'Funnelling Ellipses',
     discipline: 'Line Control',
+    originTag: 'Line Control',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
     description: 'Control circles and ellipses in spatial perspective.',
     brief: [
       'Draw a long horizontal line.',
@@ -31,44 +76,14 @@ export const drawingDrills: DrawingDrill[] = [
     referenceCategory: 'Abstract',
     displayMode: 'Static'
   },
-
-  // --- Gesture ---
-  {
-    id: 'gesture-30s',
-    name: '30s Gesture',
-    discipline: 'Gesture',
-    description: 'Capture essential energy and the "line of action."',
-    brief: [
-      'Identify the longest curved line from the head to the feet.',
-      'Do not draw outlines. Draw the movement.',
-      'Use fast, sweeping strokes.',
-      'Ignore all details like fingers, faces, or muscle definitions.'
-    ],
-    referenceCategory: 'Figure',
-    displayMode: 'Static',
-    defaultTimerSeconds: 30
-  },
-  {
-    id: 'gesture-2m',
-    name: '2m Construction',
-    discipline: 'Gesture',
-    description: 'Move from energy to basic anatomical masses.',
-    brief: [
-      'First 30s: Line of action.',
-      'Next 60s: Add basic boxes for torso and hips.',
-      'Final 30s: Connect limbs with simple lines.',
-      'Balance the weight over the center of gravity.'
-    ],
-    referenceCategory: 'Figure',
-    displayMode: 'Static',
-    defaultTimerSeconds: 120
-  },
-
-  // --- Observation ---
   {
     id: 'contour-blind',
     name: 'Blind Contour',
     discipline: 'Observation',
+    originTag: 'Observation',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Timed',
+    difficulty: 'Developing',
     description: 'Synchronize your eye and hand without the filter of symbols.',
     brief: [
       'DO NOT LOOK AT YOUR PAPER. Not even once.',
@@ -78,12 +93,17 @@ export const drawingDrills: DrawingDrill[] = [
       'Speed does not matter. The connection between your eye and hand is the only goal.'
     ],
     referenceCategory: 'Still Life',
-    displayMode: 'Static'
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   {
     id: 'contour-modified',
     name: 'Modified Contour',
     discipline: 'Observation',
+    originTag: 'Observation',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Timed',
+    difficulty: 'Developing',
     description: 'Balance intense observation with occasional spatial checks.',
     brief: [
       'Spend 90% of the time looking at the reference.',
@@ -92,14 +112,19 @@ export const drawingDrills: DrawingDrill[] = [
       'Imagine your pencil is actually touching the surface of the object.'
     ],
     referenceCategory: 'Still Life',
-    displayMode: 'Static'
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
 
-  // --- Proportion ---
+  // --- Group 2: Construction & Space ---
   {
     id: 'prop-sight-sizing',
     name: 'Sight-Sizing Basics',
     discipline: 'Proportion',
+    originTag: 'Proportion',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Reference Needed',
+    difficulty: 'Foundation',
     description: 'Compare relative sizes using a pencil at arm\'s length.',
     brief: [
       'Hold your pencil at arm’s length with your elbow locked.',
@@ -115,6 +140,10 @@ export const drawingDrills: DrawingDrill[] = [
     id: 'prop-landmark-mapping',
     name: 'Landmark Mapping',
     discipline: 'Proportion',
+    originTag: 'Proportion',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Reference Needed',
+    difficulty: 'Foundation',
     description: 'Identify and mark key midpoints and alignment lines.',
     brief: [
       'Identify the vertical and horizontal midpoints of the figure.',
@@ -126,12 +155,14 @@ export const drawingDrills: DrawingDrill[] = [
     displayMode: 'Static',
     defaultTimerSeconds: 900
   },
-
-  // --- Perspective ---
   {
     id: 'persp-one-point',
     name: 'One-Point Grid',
     discipline: 'Perspective',
+    originTag: 'Perspective',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
     description: 'Construct a hallway or road using convergence lines.',
     brief: [
       'Draw a horizontal line across the center of your paper (Horizon Line).',
@@ -147,6 +178,10 @@ export const drawingDrills: DrawingDrill[] = [
     id: 'persp-two-point',
     name: 'Two-Point Room Sketch',
     discipline: 'Perspective',
+    originTag: 'Perspective',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Static',
+    difficulty: 'Developing',
     description: 'Construct a corner using two vanishing points.',
     brief: [
       'Place two vanishing points at opposite ends of your horizon line.',
@@ -158,44 +193,14 @@ export const drawingDrills: DrawingDrill[] = [
     displayMode: 'Static',
     defaultTimerSeconds: 900
   },
-
-  // --- Value ---
-  {
-    id: 'value-mapping',
-    name: 'Shadow Mapping',
-    discipline: 'Value',
-    description: 'Simplify complex lighting into light and dark shapes.',
-    brief: [
-      'Squint at the reference until details disappear.',
-      'Identify the boundary between light and shadow (the Terminator).',
-      'Outline the shadow shapes only.',
-      'Fill in all shadow shapes with a flat, mid-gray value.',
-      'Leave everything else white.'
-    ],
-    referenceCategory: 'Still Life',
-    displayMode: 'Static'
-  },
-  {
-    id: 'value-five-step',
-    name: 'Five-Value Scale Study',
-    discipline: 'Value',
-    description: 'Render form using a discrete 5-step scale.',
-    brief: [
-      'Draw 5 adjacent boxes and fill them from White (1) to Black (5).',
-      'Pick a reference of a simple round object (sphere or egg).',
-      'Map the light and shadow using ONLY those 5 discrete values.',
-      'Do not blend the edges; focus on identifying the shape of each value zone.'
-    ],
-    referenceCategory: 'Still Life',
-    displayMode: 'Static',
-    defaultTimerSeconds: 720
-  },
-
-  // --- Form ---
   {
     id: 'form-draw-through',
     name: 'Draw-Through Boxes',
     discipline: 'Form',
+    originTag: 'Form',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Developing',
     description: 'Draw transparent 3D boxes from various angles.',
     brief: [
       'Draw a standard 3D box in perspective.',
@@ -211,6 +216,10 @@ export const drawingDrills: DrawingDrill[] = [
     id: 'form-cylinder',
     name: 'Cylinder Construction',
     discipline: 'Form',
+    originTag: 'Form',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Developing',
     description: 'Construct cylinders using ellipses and contours.',
     brief: [
       'Draw a central axis line for the cylinder.',
@@ -223,11 +232,53 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 720
   },
 
-  // --- Composition ---
+  // --- Group 3: Rendering & Design ---
+  {
+    id: 'value-mapping',
+    name: 'Shadow Mapping',
+    discipline: 'Value',
+    originTag: 'Value',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Reference Needed',
+    difficulty: 'Foundation',
+    description: 'Simplify complex lighting into light and dark shapes.',
+    brief: [
+      'Squint at the reference until details disappear.',
+      'Identify the boundary between light and shadow (the Terminator).',
+      'Outline the shadow shapes only.',
+      'Fill in all shadow shapes with a flat, mid-gray value.',
+      'Leave everything else white.'
+    ],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static'
+  },
+  {
+    id: 'value-five-step',
+    name: 'Five-Value Scale Study',
+    discipline: 'Value',
+    originTag: 'Value',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    description: 'Render form using a discrete 5-step scale.',
+    brief: [
+      'Draw 5 adjacent boxes and fill them from White (1) to Black (5).',
+      'Pick a reference of a simple round object (sphere or egg).',
+      'Map the light and shadow using ONLY those 5 discrete values.',
+      'Do not blend the edges; focus on identifying the shape of each value zone.'
+    ],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 720
+  },
   {
     id: 'comp-thumbnail-value',
     name: 'Thumbnail Value Sketch',
     discipline: 'Composition',
+    originTag: 'Composition',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Static',
+    difficulty: 'Developing',
     description: 'Explore visual weight with small value-shape frames.',
     brief: [
       'Draw three small 2x3 inch rectangles on your paper.',
@@ -243,6 +294,10 @@ export const drawingDrills: DrawingDrill[] = [
     id: 'comp-focal-point',
     name: 'Focal Point Placement',
     discipline: 'Composition',
+    originTag: 'Composition',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Developing',
     description: 'Control eye movement using the rule of thirds.',
     brief: [
       'Draw a "Rule of Thirds" grid (two vertical and two horizontal lines).',
