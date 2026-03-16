@@ -5,7 +5,7 @@ import { useDrawingStore } from '@/hooks/use-drawing-store';
 import { useDrawaboxStore } from '@/hooks/use-drawabox-store';
 import { drawingDrills } from '@/data/drawing-drills';
 import { drawaboxDrills } from '@/data/drawabox-drills';
-import { DrawingDashboard } from './DrawingDashboard';
+import { DrawingDashboard, DrawingAnalytics } from './DrawingDashboard';
 import { DrawingDrillPlayer } from './DrawingDrillPlayer';
 import { DrawaboxSection } from './DrawaboxSection';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
@@ -18,21 +18,72 @@ import { Label } from '@/components/ui/label';
 import { 
   Palette, Play, ChevronRight, Sparkles, 
   Layers, Target, Pencil, Eye, LayoutGrid,
-  Clock, CheckCircle2, Circle, Activity, Info
+  Clock, CheckCircle2, Circle, Activity, Info,
+  History
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { AssistantTooltip } from '../assistant-tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import type { DrawingDrill, DrawingDiscipline } from '@/types/drawing';
+import { format, parseISO } from 'date-fns';
 
-const disciplines: DrawingDiscipline[] = [
-  'Line Control', 'Gesture', 'Observation', 'Proportion',
-  'Perspective', 'Value', 'Form', 'Composition'
+const groups = [
+  { 
+    id: 'Looseness', 
+    label: 'Looseness', 
+    desc: 'Focus on energy, speed, and raw observation.',
+    disciplines: ['Gesture', 'Observation'] 
+  },
+  { 
+    id: 'Rendering', 
+    label: 'Rendering', 
+    desc: 'Focus on light, value, and visual balance.',
+    disciplines: ['Value', 'Composition'] 
+  },
+  { 
+    id: 'Construction', 
+    label: 'Construction', 
+    desc: 'Focus on spatial reasoning, form, and precision.',
+    disciplines: ['Proportion', 'Perspective', 'Form'] 
+  },
 ];
 
+const RecentSessions = ({ logs }: { logs: any[] }) => (
+  <div className="space-y-3">
+    <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1 flex items-center gap-2">
+      <History className="w-3.5 h-3.5" /> Recent Studio Logs
+    </h4>
+    <div className="grid grid-cols-1 gap-2">
+      {logs.slice(0, 5).map(log => (
+        <Card key={log.id} className="border-primary/5 hover:border-primary/10 transition-all">
+          <CardContent className="p-3 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-muted rounded-lg text-muted-foreground"><Pencil className="w-3.5 h-3.5" /></div>
+              <div>
+                <p className="text-sm font-bold truncate">{log.drillName}</p>
+                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-tighter">
+                  {format(parseISO(log.timestamp), 'MMM d, p')}
+                </p>
+              </div>
+            </div>
+            <Badge variant="outline" className="h-5 text-[9px] font-black uppercase border-primary/10">
+              {log.durationMinutes}m
+            </Badge>
+          </CardContent>
+        </Card>
+      ))}
+      {logs.length === 0 && (
+        <div className="py-10 text-center border-2 border-dashed rounded-2xl opacity-20 italic text-xs">
+          No sessions recorded in this lab yet.
+        </div>
+      )}
+    </div>
+  </div>
+);
+
 export default function DrawingContent() {
-  const { _hasHydrated, getDaysSinceLastPractice } = useDrawingStore();
+  const { _hasHydrated, logs } = useDrawingStore();
   const { mvdMode, toggleMvd, completeExercise } = useDrawaboxStore();
   const [activeDrill, setActiveDrill] = useState<DrawingDrill | null>(null);
 
@@ -51,19 +102,6 @@ export default function DrawingContent() {
       />
     );
   }
-
-  // Recommendation logic: find a drill in a neglected discipline
-  const recommendedDrill = (() => {
-    const neglected = disciplines
-      .map(d => ({ name: d, days: getDaysSinceLastPractice(d) }))
-      .filter(d => d.days !== null)
-      .sort((a, b) => (b.days || 0) - (a.days || 0))[0];
-    
-    if (neglected) {
-      return drawingDrills.find(d => d.discipline === neglected.name) || drawingDrills[0];
-    }
-    return drawingDrills[0];
-  })();
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
@@ -84,74 +122,42 @@ export default function DrawingContent() {
 
       {/* 1. Drawabox Section (Pinned to Top) */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2 px-1">
-          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">Procedural Focus</h3>
-        </div>
         <DrawaboxSection onStartDrill={setActiveDrill} />
       </div>
 
       {!mvdMode && (
         <>
-          {/* 2. Today's Focus Recommendation */}
-          <div className="space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Laboratory Insight</h3>
-            <Card className="border-primary/20 bg-primary/5 shadow-md overflow-hidden group hover:border-primary/40 transition-all">
-              <CardContent className="p-0">
-                <div className="flex flex-col md:flex-row items-stretch">
-                  <div className="p-6 md:w-2/3 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span className="p-1.5 bg-primary/10 rounded text-primary"><Sparkles className="w-4 h-4 animate-pulse" /></span>
-                      <h3 className="text-sm font-black uppercase tracking-widest text-primary">Recommended Practice</h3>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <h4 className="text-xl font-black">{recommendedDrill.name}</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{recommendedDrill.description}</p>
-                      <div className="flex items-center gap-4 mt-2 text-[10px] font-bold text-muted-foreground uppercase">
-                        <span className="flex items-center gap-1.5"><LayoutGrid className="w-3 h-3" /> {recommendedDrill.discipline}</span>
-                        {recommendedDrill.defaultTimerSeconds && <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {recommendedDrill.defaultTimerSeconds}s Duration</span>}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="md:w-1/3 bg-primary/10 p-6 flex items-center justify-center border-l border-primary/5 group-hover:bg-primary/20 transition-colors">
-                    <Button onClick={() => setActiveDrill(recommendedDrill)} className="w-full h-12 font-black uppercase tracking-widest gap-2 shadow-lg">
-                      <Play className="w-4 h-4 fill-current" /> Start Focus Drill
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* 3. Studio Dashboard */}
+          {/* 3. Studio Dashboard (Stats) */}
           <DrawingDashboard />
 
-          {/* 4. Discipline Library */}
+          {/* 4. Supplemental Practice */}
           <div className="space-y-6">
-            <div className="flex items-center justify-between px-1">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">Discipline Library</h3>
+            <div className="space-y-1 px-1">
+              <h3 className="text-xl font-black uppercase tracking-tight">Supplemental Practice</h3>
+              <p className="text-xs text-muted-foreground">Extra drills for skills Drawabox doesn't focus on.</p>
             </div>
 
-            <Accordion type="multiple" defaultValue={[disciplines[0]]}>
-              {disciplines.map(discipline => {
-                const drills = drawingDrills.filter(d => d.discipline === discipline);
-                return (
-                  <AccordionItem key={discipline} value={discipline} className="border-b border-primary/5">
-                    <AccordionTrigger className="hover:no-underline py-4 px-1">
-                      <div className="flex items-center gap-4 text-left">
-                        <div className="p-2 bg-primary/10 rounded-lg text-primary"><Pencil className="w-4 h-4" /></div>
-                        <div>
-                          <h4 className="text-sm font-bold uppercase tracking-tight">{discipline}</h4>
-                          <p className="text-[10px] text-muted-foreground">{drills.length} Drills Available</p>
-                        </div>
+            <Accordion type="multiple" className="space-y-2">
+              {groups.map(group => (
+                <AccordionItem key={group.id} value={group.id} className="border-b-0">
+                  <AccordionTrigger className="hover:no-underline py-4 px-6 bg-muted/20 hover:bg-muted/40 rounded-2xl border border-primary/5 transition-all">
+                    <div className="flex items-center gap-4 text-left">
+                      <div className="p-2 bg-primary/10 rounded-xl text-primary"><Layers className="w-4 h-4" /></div>
+                      <div>
+                        <h4 className="text-sm font-bold uppercase tracking-tight">{group.label}</h4>
+                        <p className="text-[10px] text-muted-foreground">{group.desc}</p>
                       </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-2 pb-6">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {drills.map(drill => (
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-4 pb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {drawingDrills
+                        .filter(d => group.disciplines.includes(d.discipline))
+                        .map(drill => (
                           <Card key={drill.id} className="border-primary/5 hover:border-primary/20 transition-all group cursor-pointer" onClick={() => setActiveDrill(drill)}>
                             <CardHeader className="p-4">
                               <div className="flex justify-between items-start mb-2">
-                                <Badge variant="outline" className="text-[8px] font-black uppercase h-4 px-2">{drill.displayMode}</Badge>
+                                <Badge variant="outline" className="text-[8px] font-black uppercase h-4 px-2">Drill</Badge>
                                 {drill.defaultTimerSeconds && (
                                   <div className="flex items-center gap-1 text-[8px] font-bold text-primary">
                                     <Clock className="w-2.5 h-2.5" /> {Math.round(drill.defaultTimerSeconds/60)}m
@@ -168,15 +174,19 @@ export default function DrawingContent() {
                             </CardFooter>
                           </Card>
                         ))}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                );
-              })}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
             </Accordion>
           </div>
 
-          <TodayScheduleWidget category="Custom" />
+          {/* 5. Recent Sessions */}
+          <RecentSessions logs={logs} />
+
+          {/* 6. Drawing Analytics (Moved to bottom) */}
+          <DrawingAnalytics />
+
           <WellnessActivityCalendar categoryFilter="Custom" />
         </>
       )}
