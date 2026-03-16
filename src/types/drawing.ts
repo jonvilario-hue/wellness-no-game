@@ -1,4 +1,3 @@
-
 import { LucideIcon } from "lucide-react";
 
 export type DrawingDiscipline = 
@@ -9,7 +8,8 @@ export type DrawingDiscipline =
   | 'Perspective'
   | 'Value'
   | 'Form'
-  | 'Composition';
+  | 'Composition'
+  | 'Construction'; // Added for Drawabox later lessons
 
 export type DrawingDifficulty = 'Foundation' | 'Developing' | 'Advanced';
 export type DrawingMedium = 'Pencil' | 'Pen' | 'Charcoal' | 'Digital' | 'Other';
@@ -35,9 +35,11 @@ export interface DrawingDrill {
   discipline: DrawingDiscipline;
   description: string;
   brief: string[];
-  referenceCategory: 'Still Life' | 'Figure' | 'Environment' | 'Abstract';
+  referenceCategory: 'Still Life' | 'Figure' | 'Environment' | 'Abstract' | 'None';
   displayMode: 'Static' | 'Timed Flash' | 'Hidden';
   defaultTimerSeconds?: number;
+  lesson?: number;
+  isWarmup?: boolean;
 }
 
 export interface DrawingJourneyPlan {

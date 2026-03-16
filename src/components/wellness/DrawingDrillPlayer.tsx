@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -13,7 +12,7 @@ import {
   X, Play, Pause, RotateCcw, Clock, 
   Target, Zap, Sparkles, CheckCircle2,
   ChevronRight, ArrowRight, Eye, Info,
-  Camera, SlidersHorizontal, Star
+  Camera, SlidersHorizontal, Star, Pencil
 } from 'lucide-react';
 import { useDrawingStore } from '@/hooks/use-drawing-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
@@ -47,6 +46,7 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
   const { toast } = useToast();
 
   const referenceImage = useMemo(() => {
+    if (drill.referenceCategory === 'None') return null;
     const cat = drill.referenceCategory.toLowerCase().replace(' ', '_') as keyof typeof placeholderData.drawing_references;
     const pool = (placeholderData.drawing_references as any)[cat] || placeholderData.drawing_references.abstract;
     return pool[Math.floor(Math.random() * pool.length)];
@@ -169,15 +169,22 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
             )}
 
             {gameState === 'active' && (
-              <motion.div key="active" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col md:flex-row min-h-0">
+              <motion.div key="active" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col md:flex-row min-h-0">
                 <div className="flex-1 relative bg-black flex items-center justify-center p-4">
-                  <Image 
-                    src={referenceImage.url} 
-                    alt="Reference" 
-                    fill 
-                    className="object-contain" 
-                    data-ai-hint={referenceImage.hint}
-                  />
+                  {referenceImage ? (
+                    <Image 
+                      src={referenceImage.url} 
+                      alt="Reference" 
+                      fill 
+                      className="object-contain" 
+                      data-ai-hint={referenceImage.hint}
+                    />
+                  ) : (
+                    <div className="text-white opacity-20 flex flex-col items-center gap-4">
+                       <Pencil className="w-20 h-20" />
+                       <p className="text-xl font-black uppercase tracking-widest">Construction Mode</p>
+                    </div>
+                  )}
                   <div className="absolute bottom-4 left-4">
                     <Badge className="bg-black/60 backdrop-blur-md text-white border-none uppercase text-[8px] font-black tracking-widest px-3">
                       Reference: {drill.referenceCategory}
