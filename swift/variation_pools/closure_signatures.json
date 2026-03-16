@@ -1,0 +1,8 @@
+[
+  "(Int) -> Void",
+  "(String) -> Bool",
+  "() -> Int",
+  "(T) -> T",
+  "(Result<T, Error>) -> Void",
+  "@escaping () -> Void"
+]

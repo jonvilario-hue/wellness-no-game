@@ -1,0 +1,12 @@
+[
+  "Int",
+  "String",
+  "Bool",
+  "Double",
+  "Float",
+  "Character",
+  "Any",
+  "AnyObject",
+  "Void",
+  "Never"
+]

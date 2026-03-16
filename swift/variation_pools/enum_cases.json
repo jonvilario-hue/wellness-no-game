@@ -1,0 +1,8 @@
+[
+  "case success(T)",
+  "case failure(Error)",
+  "case loading",
+  "case idle",
+  "case some(T)",
+  "case none"
+]

@@ -1,0 +1,19 @@
+{
+  "language": "swift",
+  "total_seeds": 0,
+  "total_templates": 0,
+  "concept_coverage": {
+    "basics": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "optionals": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "enums": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "structs": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "classes": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "protocols": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "extensions": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "closures": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "generics": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "arc": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "error_handling": { "template_count": 0, "drill_types": [], "variation_count": 0 }
+  },
+  "sources": []
+}

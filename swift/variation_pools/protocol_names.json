@@ -1,0 +1,11 @@
+[
+  "Equatable",
+  "Comparable",
+  "Codable",
+  "Identifiable",
+  "Sequence",
+  "IteratorProtocol",
+  "CustomStringConvertible",
+  "Hashable",
+  "Error"
+]

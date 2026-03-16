@@ -1,0 +1,9 @@
+[
+  "val?",
+  "val!",
+  "if let x = val { }",
+  "guard let x = val else { return }",
+  "val ?? defaultValue",
+  "val?.property",
+  "val?.method()"
+]
