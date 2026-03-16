@@ -5,8 +5,8 @@ import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma, Music, Code2, Pencil } from 'lucide-react';
-import { useWellnessData } from '@/hooks/use-wellness-data';
+import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma, Music, Code2, Pencil, Flame } from 'lucide-react';
+import { useWellnessData, calculateStreak } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -38,7 +38,7 @@ function SkillBuilderPageContent() {
   const pathname = usePathname();
   
   const activeTab = searchParams.get('tab') || 'communication';
-  const { lowEnergyMode, setLowEnergyMode } = useWellnessData();
+  const { lowEnergyMode, setLowEnergyMode, completions } = useWellnessData();
 
   useEffect(() => {
     const savedState = localStorage.getItem('skill-builder-collapsible-state');
@@ -57,6 +57,13 @@ function SkillBuilderPageContent() {
     params.set('tab', value);
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
+
+  const streak = useMemo(() => calculateStreak(completions), [completions]);
+  const filledTallies = useMemo(() => {
+    if (streak === 0) return 0;
+    const remainder = streak % 7;
+    return remainder === 0 ? 7 : remainder;
+  }, [streak]);
 
   const currentCategory = useMemo(() => {
     if (activeTab === 'speedreading') return 'Speed Reading';
@@ -113,6 +120,31 @@ function SkillBuilderPageContent() {
 
             {/* Global Action Bar */}
             <div className="flex flex-col gap-4 py-4 border-y border-primary/5 bg-muted/10 rounded-2xl">
+                {/* Row 1: Streak (Pinned to top of action bar) */}
+                <div className="flex justify-center px-4">
+                    <AssistantTooltip text="Your Global Skill Streak tracks consecutive days where you completed at least one full drill or practice. Indicators reset every 7 days.">
+                      <Card className="bg-primary/5 border-primary/10 rounded-3xl py-3 px-8 shadow-sm w-fit flex flex-col items-center gap-2">
+                          <div className="flex items-center gap-2">
+                              <Flame className="w-5 h-5 text-orange-500" />
+                              <span className="text-xl font-black">{streak}</span>
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Skill Streak</span>
+                          </div>
+                          <div className="flex gap-1.5">
+                              {[...Array(7)].map((_, i) => (
+                                  <div 
+                                      key={i} 
+                                      className={cn(
+                                          "w-3 h-1 rounded-full transition-all duration-500",
+                                          i < filledTallies ? "bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.4)]" : "bg-muted"
+                                      )} 
+                                  />
+                              ))}
+                          </div>
+                      </Card>
+                    </AssistantTooltip>
+                </div>
+
+                {/* Row 2: Controls (MVD + Curricula Trigger) */}
                 <div className="flex flex-wrap items-center justify-center gap-4 px-4">
                     <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your library to show only 'zero-friction' drills.">
                       <div className={cn(
@@ -141,6 +173,7 @@ function SkillBuilderPageContent() {
                     )}
                 </div>
 
+                {/* Row 3: Inline Curricula Gallery Expansion */}
                 {isCurriculaExpanded && (
                   <div className="w-full pt-2 animate-in fade-in slide-in-from-top-2 duration-500">
                     <JourneyPlansSection 
@@ -156,7 +189,7 @@ function SkillBuilderPageContent() {
         
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <div className="flex justify-center mb-6">
-            <TabsList className="grid grid-cols-2 w-full max-w-2xl h-auto bg-muted/50 p-1 gap-1">
+            <TabsList className="grid grid-rows-3 grid-cols-2 w-full max-w-2xl h-auto bg-muted/50 p-1 gap-1">
               {/* Row 1: Perception & Interaction */}
               <TabsTrigger value="communication" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
                 <MessageSquare className="w-4 h-4" /> Communication

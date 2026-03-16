@@ -8,11 +8,10 @@ import { SpeedReadingStats, SpeedReadingAnalytics } from "./SpeedReadingDashboar
 import { SpeedReadingDrillPlayer } from "./SpeedReadingDrillPlayer"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { TodayScheduleWidget } from "./TodayScheduleWidget"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { 
   Zap, MousePointer2, 
   Eye, Play, BookCopy, X, Trash2, PlusCircle
@@ -24,6 +23,7 @@ import { speedReadingCategoryDetails } from "@/data/wellness-categories"
 import { CustomTextImportModal } from "./CustomTextImportModal"
 import { getCustomPassages, deleteCustomPassage } from "@/lib/indexedDBUtils"
 import { useToast } from "@/hooks/use-toast"
+import { ScrollArea } from "../ui/scroll-area"
 
 const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tagline: string }[] = [
   { 
@@ -43,7 +43,7 @@ const DRILLS: { id: DrillType; icon: any; title: string; desc: string; tagline: 
 ];
 
 export default function SpeedReadingContent() {
-  const { lowEnergyMode, collapsedCategories, toggleCategoryCollapse } = useWellnessData();
+  const { lowEnergyMode } = useWellnessData();
   const [activeDrill, setActiveDrill] = useState<{ type: DrillType; passage: ReadingPassage } | null>(null);
   const [selectedTier, setSelectedTier] = useState<ReadingTier | 'All'>('All');
   const [selectedDifficulty, setSelectedDifficulty] = useState<ReadingDifficulty | 'All'>('All');
@@ -94,15 +94,6 @@ export default function SpeedReadingContent() {
       default: return '';
     }
   };
-
-  const openCategories = useMemo(() => {
-    const drillIds = DRILLS.map(d => d.id);
-    return drillIds.filter((id, idx) => {
-      const isCollapsed = collapsedCategories[id];
-      if (isCollapsed === undefined) return idx < 1;
-      return !isCollapsed;
-    });
-  }, [collapsedCategories]);
 
   if (activeDrill) {
     return (
@@ -165,20 +156,13 @@ export default function SpeedReadingContent() {
           </div>
         </div>
 
-        <Accordion type="multiple" value={openCategories} onValueChange={(vals) => {
-          DRILLS.forEach(drill => {
-            const isNowOpen = vals.includes(drill.id);
-            const wasOpen = !collapsedCategories[drill.id];
-            const effectivelyWasOpen = wasOpen || (collapsedCategories[drill.id] === undefined && DRILLS.indexOf(drill) < 1);
-            if (isNowOpen !== effectivelyWasOpen) toggleCategoryCollapse(drill.id);
-          });
-        }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {DRILLS.map((drill) => {
             const details = speedReadingCategoryDetails[drill.id];
             return (
-              <AccordionItem key={drill.id} value={drill.id} className="border-b border-primary/5">
-                <AccordionTrigger className="hover:no-underline px-1 py-4 items-center">
-                  <div className="flex items-center gap-4 text-left">
+              <Card key={drill.id} className="border-primary/5 bg-card overflow-hidden flex flex-col">
+                <CardHeader className="p-5 pb-3 bg-primary/[0.02] border-b border-primary/5">
+                  <div className="flex items-center gap-4">
                     <div className="p-2 bg-primary/10 rounded-lg shrink-0">
                       <drill.icon className="w-5 h-5 text-primary" />
                     </div>
@@ -189,9 +173,9 @@ export default function SpeedReadingContent() {
                       <p className="text-[10px] text-muted-foreground italic mt-1">"{details.tagline}"</p>
                     </div>
                   </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-0">
-                  <div className="mb-8 p-4 bg-primary/[0.02] border-b border-primary/5 space-y-4 animate-in fade-in duration-500">
+                </CardHeader>
+                <CardContent className="p-5 space-y-6">
+                  <div className="space-y-4 animate-in fade-in duration-500">
                     <p className="text-xs text-muted-foreground leading-relaxed">{details.purpose}</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                       <div>
@@ -213,59 +197,61 @@ export default function SpeedReadingContent() {
                     </div>
                   </div>
 
-                  <div className="space-y-2 pb-4">
+                  <div className="space-y-2">
                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Available Passages ({filteredPassages.length})</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {filteredPassages.length === 0 ? (
-                        <div className="col-span-full py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-xs">No passages match filters.</div>
-                      ) : (
-                        filteredPassages.map(p => (
-                          <button
-                            key={p.id}
-                            onClick={() => setActiveDrill({ type: drill.id, passage: p })}
-                            className="flex flex-col p-4 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn relative overflow-hidden"
-                          >
-                            <div className="flex justify-between items-start mb-3">
-                              <div className="flex gap-1.5">
-                                <Badge variant="outline" className={cn("text-[8px] font-black uppercase h-4 px-2", getDifficultyColor(p.difficulty))}>
-                                  {p.difficulty}
-                                </Badge>
-                                {p.isCustom && <Badge className="text-[8px] font-black uppercase h-4 px-2 bg-primary text-white border-none">Custom</Badge>}
+                    <ScrollArea className="h-[300px] -mr-2 pr-2">
+                      <div className="grid grid-cols-1 gap-3">
+                        {filteredPassages.length === 0 ? (
+                          <div className="py-10 text-center border-2 border-dashed rounded-xl opacity-30 italic text-xs">No passages match filters.</div>
+                        ) : (
+                          filteredPassages.map(p => (
+                            <button
+                              key={p.id}
+                              onClick={() => setActiveDrill({ type: drill.id, passage: p })}
+                              className="flex flex-col p-4 rounded-xl bg-card border border-primary/5 hover:border-primary/20 hover:bg-primary/[0.02] transition-all text-left group/btn relative overflow-hidden"
+                            >
+                              <div className="flex justify-between items-start mb-3">
+                                <div className="flex gap-1.5">
+                                  <Badge variant="outline" className={cn("text-[8px] font-black uppercase h-4 px-2", getDifficultyColor(p.difficulty))}>
+                                    {p.difficulty}
+                                  </Badge>
+                                  {p.isCustom && <Badge className="text-[8px] font-black uppercase h-4 px-2 bg-primary text-white border-none">Custom</Badge>}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted text-muted-foreground">
+                                    {p.tier}
+                                  </Badge>
+                                  {p.isCustom && (
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-6 w-6 text-muted-foreground hover:text-destructive transition-opacity opacity-0 group-hover/btn:opacity-100"
+                                      onClick={(e) => handleDeleteCustom(e, p.id)}
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted text-muted-foreground">
-                                  {p.tier}
-                                </Badge>
-                                {p.isCustom && (
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-6 w-6 text-muted-foreground hover:text-destructive transition-opacity opacity-0 group-hover/btn:opacity-100"
-                                    onClick={(e) => handleDeleteCustom(e, p.id)}
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
-                                )}
+                              <div className="flex-1">
+                                <p className="text-sm font-bold truncate group-hover/btn:text-primary transition-colors">{p.title}</p>
+                                <p className="text-[10px] text-muted-foreground mt-0.5">{p.author}</p>
                               </div>
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm font-bold truncate group-hover/btn:text-primary transition-colors">{p.title}</p>
-                              <p className="text-[10px] text-muted-foreground mt-0.5">{p.author}</p>
-                            </div>
-                            <div className="flex items-center justify-between mt-4 pt-3 border-t border-primary/5 w-full">
-                              <span className="text-[9px] font-black text-muted-foreground uppercase">{p.wordCount} WORDS</span>
-                              <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover/btn:opacity-100 transition-all translate-x-[-5px] group-hover/btn:translate-x-0" />
-                            </div>
-                          </button>
-                        ))
-                      )}
-                    </div>
+                              <div className="flex items-center justify-between mt-4 pt-3 border-t border-primary/5 w-full">
+                                <span className="text-[9px] font-black text-muted-foreground uppercase">{p.wordCount} WORDS</span>
+                                <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover/btn:opacity-100 transition-all translate-x-[-5px] group-hover/btn:translate-x-0" />
+                              </div>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </ScrollArea>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
+                </CardContent>
+              </Card>
             );
           })}
-        </Accordion>
+        </div>
       </div>
 
       <CustomTextImportModal 
