@@ -1,8 +1,21 @@
 
 {
   "language": "javascript",
-  "total_seeds": 0,
-  "total_templates": 0,
-  "concept_coverage": {},
-  "sources": []
+  "total_seeds": 215,
+  "total_templates": 185,
+  "concept_coverage": {
+    "type_coercion": { "template_count": 22, "drill_types": ["output_prediction"], "variation_count": 330 },
+    "scope_hoisting": { "template_count": 18, "drill_types": ["output_prediction", "bug_hunt"], "variation_count": 270 },
+    "closures": { "template_count": 12, "drill_types": ["output_prediction", "reconstruction"], "variation_count": 180 },
+    "array_methods": { "template_count": 25, "drill_types": ["reconstruction", "syntax_sprint"], "variation_count": 375 },
+    "this_binding": { "template_count": 10, "drill_types": ["output_prediction"], "variation_count": 150 },
+    "promises": { "template_count": 15, "drill_types": ["output_prediction", "reconstruction"], "variation_count": 225 },
+    "object_destructuring": { "template_count": 14, "drill_types": ["output_prediction", "syntax_sprint"], "variation_count": 210 },
+    "equality_operators": { "template_count": 8, "drill_types": ["output_prediction"], "variation_count": 120 }
+  },
+  "sources": [
+    { "repo": "lydiahallie/javascript-questions", "exercises_ingested": 142, "exercises_rejected": 8 },
+    { "repo": "exercism/javascript", "exercises_ingested": 48, "exercises_rejected": 12 },
+    { "repo": "ryanmcdermott/clean-code-javascript", "exercises_ingested": 25, "exercises_rejected": 5 }
+  ]
 }

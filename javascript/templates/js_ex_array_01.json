@@ -1,0 +1,20 @@
+
+{
+  "template_id": "js_ex_array_01",
+  "source_repo": "exercism/javascript",
+  "drill_type": "reconstruction",
+  "concept_tags": ["array_methods", "map_filter_reduce"],
+  "difficulty": "beginner",
+  "prompt_template": "export function transform(arr) {\n  // Return a new array where each number is {{ACTION}} by {{VAL}}\n  return arr.{{METHOD}}(n => n {{OP}} {{VAL}});\n}",
+  "slot_definitions": {
+    "ACTION": { "type": "string_pool", "pool": ["multiplied", "added to", "subtracted by"] },
+    "METHOD": { "type": "string_pool", "pool": ["map", "filter"] },
+    "OP": { "type": "operator", "pool": ["*", "+", "-"] },
+    "VAL": { "type": "int_range", "pool": { "min": 2, "max": 10 } }
+  },
+  "answer_derivation": "Matches the logical combination of METHOD and OP",
+  "variation_minimum": 25,
+  "max_prompt_words": 30,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 90
+}

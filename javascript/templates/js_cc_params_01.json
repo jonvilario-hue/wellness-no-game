@@ -1,0 +1,22 @@
+
+{
+  "template_id": "js_cc_params_01",
+  "source_repo": "ryanmcdermott/clean-code-javascript",
+  "drill_type": "bug_hunt",
+  "concept_tags": ["functions", "naming"],
+  "difficulty": "intermediate",
+  "prompt_template": "function {{FUNC}}({{P1}}, {{P2}}, {{P3}}, {{P4}}, {{P5}}) {\n  // ... implementation\n}\n\n{{FUNC}}({{V1}}, {{V2}}, {{V3}}, {{V4}}, {{V5}});",
+  "slot_definitions": {
+    "FUNC": { "type": "variable_name", "pool": ["createUser", "updateSettings", "processOrder"] },
+    "P1": { "type": "variable_name", "pool": ["name", "id", "email"] },
+    "P2": { "type": "variable_name", "pool": ["age", "token", "role"] },
+    "P3": { "type": "variable_name", "pool": ["address", "zip", "city"] },
+    "P4": { "type": "variable_name", "pool": ["phone", "country", "state"] },
+    "P5": { "type": "variable_name", "pool": ["active", "verified", "subscribed"] }
+  },
+  "answer_derivation": "Refactor to use a single options object instead of 5+ positional parameters",
+  "variation_minimum": 15,
+  "max_prompt_words": 40,
+  "max_feedback_words": 30,
+  "time_limit_seconds": 120
+}

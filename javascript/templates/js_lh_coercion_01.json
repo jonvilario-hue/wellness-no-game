@@ -1,0 +1,19 @@
+
+{
+  "template_id": "js_lh_coercion_01",
+  "source_repo": "lydiahallie/javascript-questions",
+  "drill_type": "output_prediction",
+  "concept_tags": ["type_coercion", "equality_operators"],
+  "difficulty": "intermediate",
+  "prompt_template": "const val1 = {{VAL1}};\nconst val2 = {{VAL2}};\nconsole.log(val1 {{OP}} val2);",
+  "slot_definitions": {
+    "VAL1": { "type": "data_structure", "pool": ["[]", "{}", "0", "''", "false", "null"] },
+    "VAL2": { "type": "data_structure", "pool": ["[]", "{}", "0", "''", "true", "undefined"] },
+    "OP": { "type": "operator", "pool": ["+", "==", "==="] }
+  },
+  "answer_derivation": "eval(`${VAL1} ${OP} ${VAL2}`)",
+  "variation_minimum": 20,
+  "max_prompt_words": 15,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 45
+}

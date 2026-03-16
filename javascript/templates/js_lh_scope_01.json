@@ -1,0 +1,19 @@
+
+{
+  "template_id": "js_lh_scope_01",
+  "source_repo": "lydiahallie/javascript-questions",
+  "drill_type": "output_prediction",
+  "concept_tags": ["scope_hoisting"],
+  "difficulty": "intermediate",
+  "prompt_template": "function test() {\n  console.log({{VAR_NAME}});\n  {{DECLARATION}} {{VAR_NAME}} = {{VALUE}};\n}\ntest();",
+  "slot_definitions": {
+    "VAR_NAME": { "type": "variable_name", "pool": ["name", "age", "status", "data"] },
+    "DECLARATION": { "type": "string_pool", "pool": ["var", "let", "const"] },
+    "VALUE": { "type": "int_range", "pool": { "min": 1, "max": 100 } }
+  },
+  "answer_derivation": "undefined if DECLARATION == 'var' else 'ReferenceError'",
+  "variation_minimum": 15,
+  "max_prompt_words": 20,
+  "max_feedback_words": 30,
+  "time_limit_seconds": 60
+}
