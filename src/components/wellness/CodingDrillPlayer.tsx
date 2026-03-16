@@ -46,18 +46,7 @@ function evaluateSubmission(input: string, drill: CodingDrill): number {
     return normalizedInput === clean(drill.expectedOutput || "") ? 100 : 0;
   }
 
-  // 2. JS Execution (Functional Verification)
-  if ((drill.language === 'JavaScript' || drill.language === 'TypeScript') && drill.type === 'Timed Implementation') {
-    try {
-      // In this environment we check for logic tokens first
-      if (drill.requiredTokens) {
-        const foundTokens = drill.requiredTokens.filter(t => normalizedInput.includes(t.toLowerCase()));
-        return Math.round((foundTokens.length / drill.requiredTokens.length) * 100);
-      }
-    } catch (e) { return 0; }
-  }
-
-  // 3. Structural Probes (Token-Sequence Verification)
+  // 2. Structural Probes (Token-Sequence Verification)
   if (drill.requiredTokens && drill.requiredTokens.length > 0) {
     let score = 0;
     const tokens = drill.requiredTokens.map(t => t.toLowerCase());
@@ -82,7 +71,7 @@ function evaluateSubmission(input: string, drill: CodingDrill): number {
   return normalizedInput === clean(drill.content || "") ? 100 : 0;
 }
 
-export function SpeedReadingDrillPlayer({ protocolId, onClose }: Props) {
+export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const { activeLanguage, addLog, activeLoop, advanceLoop, cancelLoop } = useCodingStore();
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
@@ -94,11 +83,6 @@ export function SpeedReadingDrillPlayer({ protocolId, onClose }: Props) {
   const [drillStartTime, setDrillStartTime] = useState(0);
   const [roundAccuracy, setRoundAccuracy] = useState(0);
 
-  /**
-   * RESILIENT DRILL SELECTION
-   * Tries to find a level match, but falls back to ANY drill for the language/type
-   * to ensure "Content Unavailable" is never triggered if data exists.
-   */
   const filteredDrills = useMemo(() => {
     const list = codingDrills.filter(d => d.type === protocolId && d.language === activeLanguage);
     return list.length > 0 ? list : null;
@@ -107,14 +91,6 @@ export function SpeedReadingDrillPlayer({ protocolId, onClose }: Props) {
   const currentDrill = useMemo(() => 
     filteredDrills ? filteredDrills[currentIndex % filteredDrills.length] : null,
   [filteredDrills, currentIndex]);
-
-  const summaryData = useMemo(() => {
-    if (activeLoop.active) {
-      if (activeLoop.results.length === 0) return null;
-      return { accuracy: roundAccuracy }; // Basic existence check for summary state
-    }
-    return { accuracy: roundAccuracy };
-  }, [activeLoop.active, activeLoop.results, roundAccuracy]);
 
   const handleStart = () => {
     if (!currentDrill) {
@@ -239,7 +215,7 @@ export function SpeedReadingDrillPlayer({ protocolId, onClose }: Props) {
                   {currentDrill.content}
                   {currentDrill.tableInput && (
                     <div className="mt-4 p-3 bg-muted rounded-lg border text-[10px] uppercase font-black tracking-widest">
-                      <Database className="w-3 h-3 inline mr-2" /> Schema context:
+                      <Database className="w-3 h-3 inline mr-2" /> Context:
                       <pre className="mt-2 text-primary font-mono">{currentDrill.tableInput}</pre>
                     </div>
                   )}
@@ -302,7 +278,7 @@ export function SpeedReadingDrillPlayer({ protocolId, onClose }: Props) {
               </motion.div>
             )}
 
-            {gameState === 'summary' && summaryData && (
+            {gameState === 'summary' && (
               <motion.div key="summary" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
                 <Card className="border-primary/10 shadow-xl overflow-hidden">
                   <CardHeader className="text-center bg-primary/5 py-6">
@@ -323,7 +299,7 @@ export function SpeedReadingDrillPlayer({ protocolId, onClose }: Props) {
                     </div>
                     <div className="space-y-3 pt-4 border-t">
                       <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Rate Focus Intensity (1-5)</Label>
-                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
+                      <Slider value={[focusLevel]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">
@@ -337,8 +313,4 @@ export function SpeedReadingDrillPlayer({ protocolId, onClose }: Props) {
       </div>
     </div>
   );
-}
-
-export function CodingDrillPlayer({ protocolId, onClose }: Props) {
-  return <SpeedReadingDrillPlayer protocolId={protocolId} onClose={onClose} />;
 }
