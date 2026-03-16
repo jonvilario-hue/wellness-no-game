@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { 
   X, Play, Zap, Clock, Check,
   ChevronRight, ArrowRight, CheckCircle2, XCircle,
-  PenTool, Eye, LayoutGrid, Sparkles, Info, Star, Loader2
+  PenTool, Eye, LayoutGrid, Sparkles, Info, Star, Loader2, Lightbulb
 } from 'lucide-react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
@@ -120,6 +120,16 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       setGameState('summary');
     }
   };
+
+  const summaryData = useMemo(() => {
+    if (!currentDrill || !gameState.includes('summary')) return null;
+    const score = isCorrect ? 10 : 0; // Simplified for single-round summary
+    const multiplier = currentDrill.difficulty === 1 ? 1.0 : currentDrill.difficulty === 2 ? 1.5 : 2.0;
+    const har = Math.round((score / 10) * multiplier * 100);
+    const avgTime = Math.round(Date.now() - drillStartTime);
+
+    return { score, har, avgTime, multiplier };
+  }, [currentDrill, gameState, isCorrect, drillStartTime]);
 
   if (isGenerating) {
     return (
@@ -262,7 +272,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
             {gameState === 'summary' && summaryData && (
               <motion.div key="summary" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
-                <Card className="border-primary/10 shadow-xl overflow-hidden">
+                <Card className="border-primary/20 shadow-xl overflow-hidden">
                   <CardHeader className="text-center bg-primary/5 py-6">
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary"><Sparkles className="w-8 h-8" /></div>
                     <CardTitle className="text-xl font-black uppercase">Session Synopsis</CardTitle>
@@ -282,7 +292,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
                     <div className="space-y-3 pt-4 border-t">
                       <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Rate Focus Intensity (1-5)</Label>
-                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusLevel(v)} min={1} max={5} step={1} />
+                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">
