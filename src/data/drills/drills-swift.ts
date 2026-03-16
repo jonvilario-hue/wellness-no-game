@@ -7,12 +7,25 @@ export const swiftDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Swift',
     difficulty: 1,
-    title: 'Guard Statement',
-    content: 'guard let name = name else { return }',
-    explanation: 'Guard ensures conditions are met before proceeding.',
-    patternToNotice: 'Guard requires an "else" block that exits the scope.',
+    title: 'Guard Let',
+    content: 'guard let value = optionalValue else { return }',
+    explanation: 'Guard ensures early exit if an optional is nil.',
+    patternToNotice: 'The unwrapped "value" is available in the scope AFTER the guard.',
     concept: 'optionals',
-    requiredTokens: ['guard', 'let', 'else', 'return']
+    requiredTokens: ['guard', 'let', '=', 'else', '{', 'return', '}']
+  },
+  {
+    id: 'swift-recon-1',
+    type: 'Code Reconstruction',
+    lane: 'Write',
+    language: 'Swift',
+    difficulty: 2,
+    title: 'Immutable Struct',
+    content: 'struct User {\n  let id: Int;\n  var name: String\n}',
+    explanation: 'Swift structs use "let" for constants and "var" for variables.',
+    patternToNotice: 'Structs are value types by default in Swift.',
+    concept: 'syntax',
+    requiredTokens: ['struct', 'let', 'Int', 'var', 'String']
   },
   {
     id: 'swift-read-1',
@@ -20,12 +33,11 @@ export const swiftDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Swift',
     difficulty: 2,
-    title: 'Optional Chaining',
-    content: `let res = user?.address?.city
-print(type(of: res))`,
-    expectedOutput: 'Optional<String>',
-    explanation: 'Optional chaining always results in an optional value.',
-    patternToNotice: 'The chain breaks and returns nil if any link is nil.',
+    title: 'Nil Coalescing',
+    content: 'let x: Int? = 10; print(x ?? 0)',
+    expectedOutput: '10',
+    explanation: 'The ?? operator returns the value if it exists, else the default.',
+    patternToNotice: 'Nil coalescing is a concise alternative to force unwrapping.',
     concept: 'optionals'
   },
   {
@@ -34,29 +46,12 @@ print(type(of: res))`,
     lane: 'Read',
     language: 'Swift',
     difficulty: 2,
-    title: 'Force Unwrapping',
-    content: `var name: String?
-print(name!)`,
-    explanation: 'Force unwrapping (!) a nil value causes a runtime crash.',
-    patternToNotice: 'Use if-let or nil-coalescing instead of !.',
+    title: 'Non-Optional Nil',
+    content: 'var str: String = nil',
+    explanation: 'In Swift, only Optional types (marked with ?) can store nil.',
+    patternToNotice: 'Non-optional variables must have a valid value assigned.',
     concept: 'optionals',
-    requiredTokens: ['if let', 'name ?? ""']
-  },
-  {
-    id: 'swift-recon-1',
-    type: 'Code Reconstruction',
-    lane: 'Write',
-    language: 'Swift',
-    difficulty: 2,
-    title: 'Protocol Conformance',
-    content: `protocol Drivable {
-  func drive()
-}
-struct Car: Drivable { }`,
-    explanation: 'Protocols define blueprints of methods.',
-    patternToNotice: 'Structs "adopt" protocols using colon syntax.',
-    concept: 'protocols',
-    requiredTokens: ['protocol', 'struct', ':', 'Drivable']
+    requiredTokens: ['String?']
   },
   {
     id: 'swift-build-1',
@@ -64,11 +59,11 @@ struct Car: Drivable { }`,
     lane: 'Build',
     language: 'Swift',
     difficulty: 2,
-    title: 'Computed Property',
-    content: '// Add a computed property "isAdult" to User (age >= 18)',
-    explanation: 'Computed properties use get { } or just { } for read-only.',
-    patternToNotice: 'No "func" keyword is used for properties.',
-    concept: 'syntax',
-    requiredTokens: ['var isAdult: Bool', '{', 'age >= 18', '}']
+    title: 'Protocol Definition',
+    content: '// Define a Drivable protocol with a drive() method',
+    explanation: 'Protocols define requirements that types can conform to.',
+    patternToNotice: 'Protocol methods define the signature, not the body.',
+    concept: 'protocols',
+    requiredTokens: ['protocol', 'Drivable', 'func', 'drive()']
   }
 ];

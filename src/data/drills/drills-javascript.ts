@@ -7,12 +7,25 @@ export const javascriptDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'JavaScript',
     difficulty: 1,
-    title: 'Arrow Function',
-    content: 'const add = (a, b) => a + b;',
-    explanation: 'Implicit return syntax for single-expression arrow functions.',
-    patternToNotice: 'No "return" or curly braces needed for single lines.',
+    title: 'Rest Parameters',
+    content: 'const sum = (...args) => args.reduce((a, b) => a + b, 0);',
+    explanation: 'Use the rest operator (...) to capture any number of arguments into an array.',
+    patternToNotice: 'Rest parameters must be the last argument in a function signature.',
     concept: 'functions',
-    requiredTokens: ['=>', 'const']
+    requiredTokens: ['...', '=>', 'reduce', '0']
+  },
+  {
+    id: 'js-recon-1',
+    type: 'Code Reconstruction',
+    lane: 'Write',
+    language: 'JavaScript',
+    difficulty: 2,
+    title: 'Deep Destructuring',
+    content: 'const { data: { id } } = response;',
+    explanation: 'Extract nested properties in a single line using colon syntax.',
+    patternToNotice: 'Nested braces map to the structure of the source object.',
+    concept: 'syntax',
+    requiredTokens: ['const', '{', ':', '}', '=', 'response']
   },
   {
     id: 'js-read-1',
@@ -20,11 +33,11 @@ export const javascriptDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'JavaScript',
     difficulty: 2,
-    title: 'Type Coercion',
-    content: 'console.log(1 + "2" + 3);',
-    expectedOutput: '123',
-    explanation: 'Number + String causes string concatenation.',
-    patternToNotice: 'JavaScript coerces to string if any operand is a string during +.',
+    title: 'Null Type Pitfall',
+    content: 'console.log(typeof null);',
+    expectedOutput: 'object',
+    explanation: 'A long-standing bug in JS where null is categorized as an object.',
+    patternToNotice: 'Always use strict equality (=== null) to check for nullity.',
     concept: 'coercion'
   },
   {
@@ -33,40 +46,24 @@ export const javascriptDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'JavaScript',
     difficulty: 2,
-    title: 'Closure Scope',
-    content: `for (var i = 0; i < 3; i++) {
-  setTimeout(() => console.log(i), 1);
-}`,
-    explanation: 'var is function-scoped; all callbacks see the final value (3).',
-    patternToNotice: 'Use "let" for block-scoping in loops.',
-    concept: 'closures',
-    requiredTokens: ['let i = 0']
-  },
-  {
-    id: 'js-recon-1',
-    type: 'Code Reconstruction',
-    lane: 'Write',
-    language: 'JavaScript',
-    difficulty: 2,
-    title: 'Destructuring',
-    content: `const { name, age } = user;
-console.log(name);`,
-    explanation: 'Extracting properties directly into variables.',
-    patternToNotice: 'The curly braces on the left side indicate object destructuring.',
-    concept: 'syntax',
-    requiredTokens: ['const', '{', '}', '=', 'user']
+    title: 'Comparison vs Assignment',
+    content: 'if (user.role = "admin") {\n  grantAccess();\n}',
+    explanation: 'Using = instead of === performs an assignment, which often evaluates to truthy.',
+    patternToNotice: 'Logic errors in conditionals often stem from accidental assignments.',
+    concept: 'logic',
+    requiredTokens: ['===']
   },
   {
     id: 'js-build-1',
     type: 'Timed Implementation',
     lane: 'Build',
     language: 'JavaScript',
-    difficulty: 2,
-    title: 'Array Mapping',
-    content: '// Map an array "arr" to only their lengths',
-    explanation: '.map() creates a new array by applying a function to each item.',
-    patternToNotice: 'Arrow functions are ideal for map callbacks.',
-    concept: 'arrays',
-    requiredTokens: ['arr.map', '=>', '.length']
+    difficulty: 3,
+    title: 'Sequential Async',
+    content: '// Fetch IDs 1, 2, 3 sequentially using async/await',
+    explanation: 'A for...of loop with await ensures serial execution.',
+    patternToNotice: 'Array.forEach does NOT wait for promises; use a standard loop.',
+    concept: 'async',
+    requiredTokens: ['async', 'for', 'await', 'fetch']
   }
 ];

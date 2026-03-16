@@ -7,12 +7,25 @@ export const goDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Go',
     difficulty: 1,
-    title: 'Map Initialization',
-    content: 'm := make(map[string]int)',
-    explanation: 'Basic map creation using make.',
-    patternToNotice: 'Maps must be initialized with make before use.',
-    concept: 'maps',
-    requiredTokens: ['make', 'map', '[string]', 'int']
+    title: 'Struct Type',
+    content: 'type Vertex struct {\n  X, Y int\n}',
+    explanation: 'Go uses structs to group fields together.',
+    patternToNotice: 'Fields of the same type can be declared on one line.',
+    concept: 'structs',
+    requiredTokens: ['type', 'struct', 'int']
+  },
+  {
+    id: 'go-recon-1',
+    type: 'Code Reconstruction',
+    lane: 'Write',
+    language: 'Go',
+    difficulty: 3,
+    title: 'Panic Recovery',
+    content: 'defer func() {\n  if r := recover(); r != nil {\n    fmt.Println(r)\n  }\n}()',
+    explanation: 'The defer/recover pattern is the Go way to handle panics.',
+    patternToNotice: 'Recover only works inside a deferred function.',
+    concept: 'errors',
+    requiredTokens: ['defer', 'func()', 'recover()', '!= nil']
   },
   {
     id: 'go-read-1',
@@ -20,18 +33,11 @@ export const goDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Go',
     difficulty: 2,
-    title: 'Channel Select',
-    content: `c1 := make(chan string, 1)
-c1 <- "ping"
-select {
-case msg := <-c1:
-    fmt.Println(msg)
-default:
-    fmt.Println("no activity")
-}`,
-    expectedOutput: 'ping',
-    explanation: 'The select statement chooses the first ready channel operation.',
-    patternToNotice: 'Case is preferred over default if data is ready.',
+    title: 'Buffered Channel',
+    content: 'ch := make(chan int, 1); ch <- 1; fmt.Println(<-ch)',
+    expectedOutput: '1',
+    explanation: 'A buffered channel allows sending without an active receiver.',
+    patternToNotice: 'The buffer size is the second argument to make(chan...).',
     concept: 'channels'
   },
   {
@@ -40,31 +46,12 @@ default:
     lane: 'Read',
     language: 'Go',
     difficulty: 2,
-    title: 'Pointer Receiver',
-    content: `type Counter struct { val int }
-func (c Counter) Inc() { c.val++ }
-func main() {
-    count := Counter{val: 0}
-    count.Inc()
-    fmt.Println(count.val)
-}`,
-    explanation: 'A value receiver operates on a copy. To modify the original, use a pointer receiver (*Counter).',
-    patternToNotice: 'Methods that change state require pointer receivers.',
-    concept: 'pointers',
-    requiredTokens: ['*Counter']
-  },
-  {
-    id: 'go-recon-1',
-    type: 'Code Reconstruction',
-    lane: 'Write',
-    language: 'Go',
-    difficulty: 2,
-    title: 'Error Wrapping',
-    content: 'return fmt.Errorf("failed to process: %w", err)',
-    explanation: 'Go 1.13+ error wrapping using %w.',
-    patternToNotice: 'The %w verb allows for error inspection via errors.Is/As.',
-    concept: 'errors',
-    requiredTokens: ['fmt.Errorf', '%w', 'err']
+    title: 'Nil Map Assignment',
+    content: 'var m map[string]int\nm["key"] = 1',
+    explanation: 'Declaring a map doesn\'t initialize it. Assigning to a nil map panics.',
+    patternToNotice: 'Maps must be initialized with make() before use.',
+    concept: 'maps',
+    requiredTokens: ['make(map[string]int)']
   },
   {
     id: 'go-build-1',
@@ -72,11 +59,11 @@ func main() {
     lane: 'Build',
     language: 'Go',
     difficulty: 2,
-    title: 'Slice Filter',
-    content: '// Filter slice "s" to keep even numbers',
-    explanation: 'Iterate and append to a new slice.',
-    patternToNotice: 'Appending to a new slice is the standard way to filter.',
-    concept: 'slices',
-    requiredTokens: ['for', 'range', 'if', '% 2 == 0', 'append']
+    title: 'Variadic Sum',
+    content: '// Implement sum(nums ...int) int',
+    explanation: 'The ... operator allows a function to accept any number of trailing arguments.',
+    patternToNotice: 'Variadic arguments are received as a slice inside the function.',
+    concept: 'functions',
+    requiredTokens: ['func sum', '...int', 'range', 'return']
   }
 ];

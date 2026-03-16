@@ -7,12 +7,25 @@ export const bashDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Bash',
     difficulty: 1,
-    title: 'Variable Expansion',
-    content: 'echo "Current user is: ${USER}"',
-    explanation: 'Braces around variables protect them from adjacent characters.',
-    patternToNotice: 'Always use double quotes to prevent word splitting.',
-    concept: 'variables',
-    requiredTokens: ['echo', '"', '${', '}']
+    title: 'File Test',
+    content: 'if [[ -f "$FILE" ]]; then echo "Exists"; fi',
+    explanation: 'Double brackets [[ ]] are the modern, safer way to perform tests.',
+    patternToNotice: 'Variables in tests should almost always be quoted.',
+    concept: 'conditionals',
+    requiredTokens: ['if', '[[', '-f', ']]', 'then', 'fi']
+  },
+  {
+    id: 'bash-recon-1',
+    type: 'Code Reconstruction',
+    lane: 'Write',
+    language: 'Bash',
+    difficulty: 3,
+    title: 'Unique Sorted Count',
+    content: 'cat file.txt | sort | uniq -c | sort -nr',
+    explanation: 'A classic pipeline to find the frequency of occurrences.',
+    patternToNotice: 'uniq only works on sorted input.',
+    concept: 'pipelines',
+    requiredTokens: ['cat', '|', 'sort', '|', 'uniq -c', '-nr']
   },
   {
     id: 'bash-read-1',
@@ -20,12 +33,12 @@ export const bashDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Bash',
     difficulty: 2,
-    title: 'Pipeline Output',
-    content: 'echo -e "a\\nb\\nc" | grep "b" | wc -l',
-    expectedOutput: '1',
-    explanation: 'grep filters for "b", wc -l counts that one line.',
-    patternToNotice: 'Pipelines flow data left-to-right through standard streams.',
-    concept: 'pipelines'
+    title: 'String Slicing',
+    content: 'VAR="hello"; echo ${VAR:1:2}',
+    expectedOutput: 'el',
+    explanation: 'Bash parameter expansion supports ${var:offset:length}.',
+    patternToNotice: 'Offset starts at 0; length is the number of characters.',
+    concept: 'variables'
   },
   {
     id: 'bash-bug-1',
@@ -33,28 +46,12 @@ export const bashDrills: CodingDrill[] = [
     lane: 'Read',
     language: 'Bash',
     difficulty: 2,
-    title: 'Missing Quotes',
-    content: `NAME="John Doe"
-if [ $NAME == "John" ]; then`,
-    explanation: 'Unquoted variables with spaces cause "too many arguments" errors.',
-    patternToNotice: 'Always quote variable expansions in [ ] tests.',
-    concept: 'quoting',
-    requiredTokens: ['"$NAME"']
-  },
-  {
-    id: 'bash-recon-1',
-    type: 'Code Reconstruction',
-    lane: 'Write',
-    language: 'Bash',
-    difficulty: 2,
-    title: 'Loop Through Files',
-    content: `for f in *.txt; do
-  mv "$f" "\${f%.txt}.md"
-done`,
-    explanation: 'Iterating over globs and using parameter expansion to rename.',
-    patternToNotice: '${f%.txt} removes the extension suffix.',
+    title: 'Loop Syntax',
+    content: 'for i in 1 2 3 do echo $i done',
+    explanation: 'Loops require semicolons or newlines after the list and the command.',
+    patternToNotice: 'Missing ";" before "do" and "done".',
     concept: 'loops',
-    requiredTokens: ['for', 'in', '; do', 'done']
+    requiredTokens: ['; do', '; done']
   },
   {
     id: 'bash-build-1',
@@ -62,11 +59,11 @@ done`,
     lane: 'Build',
     language: 'Bash',
     difficulty: 2,
-    title: 'Log Parsing',
-    content: '# Extract lines from "app.log" containing "ERROR" and count them',
-    explanation: 'grep and wc are the fundamental text processing tools.',
-    patternToNotice: 'The pipe operator | connects the filter to the counter.',
-    concept: 'pipelines',
-    requiredTokens: ['grep "ERROR"', 'app.log', '|', 'wc -l']
+    title: 'Recursive Delete',
+    content: '# Find and delete all .log files in the current directory',
+    explanation: 'find is the most powerful tool for recursive file operations.',
+    patternToNotice: 'The -delete flag is more efficient than piping to rm.',
+    concept: 'io',
+    requiredTokens: ['find', '.', '-name', '"*.log"', '-delete']
   }
 ];

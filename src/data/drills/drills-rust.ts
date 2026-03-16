@@ -7,30 +7,25 @@ export const rustDrills: CodingDrill[] = [
     lane: 'Write',
     language: 'Rust',
     difficulty: 1,
-    title: 'Option Match',
-    content: `match val {
-  Some(x) => x,
-  None => 0,
-}`,
-    explanation: 'Safe handling of optional values via pattern matching.',
-    patternToNotice: 'Rust match arms must be exhaustive.',
+    title: 'Result Enum',
+    content: 'let result: Result<i32, String> = Ok(42);',
+    explanation: 'Rust uses Enums for error handling rather than exceptions.',
+    patternToNotice: 'The Result type takes two generics: Success and Error.',
     concept: 'enums',
-    requiredTokens: ['match', 'Some', '=>', 'None']
+    requiredTokens: ['Result', '<', '>', 'Ok', '42']
   },
   {
-    id: 'rust-bug-1',
-    type: 'Bug Hunt',
-    lane: 'Read',
+    id: 'rust-recon-1',
+    type: 'Code Reconstruction',
+    lane: 'Write',
     language: 'Rust',
     difficulty: 3,
-    title: 'Borrow Checker: Move',
-    content: `let s1 = String::from("hi");
-let s2 = s1;
-println!("{}", s1);`,
-    explanation: 'String does not implement Copy. Assigning to s2 moves ownership.',
-    patternToNotice: 'Ownership transfer invalidates the original variable.',
-    concept: 'ownership',
-    requiredTokens: ['.clone()']
+    title: 'Explicit Lifetimes',
+    content: "fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {\n    if x.len() > y.len() { x } else { y }\n}",
+    explanation: 'Lifetimes ensure the returned reference is valid as long as the inputs.',
+    patternToNotice: 'The generic lifetime name begins with a tick (e.g., \'a).',
+    concept: 'lifetimes',
+    requiredTokens: ["<'a>", "&'a", "-> &'a", "if", "else"]
   },
   {
     id: 'rust-read-1',
@@ -38,42 +33,37 @@ println!("{}", s1);`,
     lane: 'Read',
     language: 'Rust',
     difficulty: 2,
-    title: 'Result Unwrapping',
-    content: `let r: Result<i32, &str> = Ok(10);
-println!("{}", r.unwrap_or(5));`,
-    expectedOutput: '10',
-    explanation: 'unwrap_or returns the success value if present.',
-    patternToNotice: 'Only defaults to the provided value on Err.',
-    concept: 'errors'
+    title: 'Reference Dereferencing',
+    content: 'let x = 5;\nlet y = &x;\nprintln!("{}", *y);',
+    expectedOutput: '5',
+    explanation: 'The asterisk (*) is used to access the value at a reference address.',
+    patternToNotice: 'Rust often handles dereferencing automatically, but explicit use is vital for primitives.',
+    concept: 'ownership'
   },
   {
-    id: 'rust-recon-1',
-    type: 'Code Reconstruction',
-    lane: 'Write',
+    id: 'rust-bug-1',
+    type: 'Bug Hunt',
+    lane: 'Read',
     language: 'Rust',
-    difficulty: 2,
-    title: 'Struct Methods',
-    content: `impl User {
-  fn new(name: String) -> Self {
-    Self { name }
-  }
-}`,
-    explanation: 'Methods are defined in an impl block, separate from data.',
-    patternToNotice: 'Self refers to the implementor type.',
-    concept: 'structs',
-    requiredTokens: ['impl', 'fn', '-> Self', '{', '}']
+    difficulty: 3,
+    title: 'Move Semantics',
+    content: 'let s1 = String::from("hi");\nlet s2 = s1;\nprintln!("{}", s1);',
+    explanation: 'String is moved to s2. s1 is no longer valid.',
+    patternToNotice: 'Variable usage after a move triggers a compiler error.',
+    concept: 'ownership',
+    requiredTokens: ['.clone()']
   },
   {
     id: 'rust-build-1',
     type: 'Timed Implementation',
     lane: 'Build',
     language: 'Rust',
-    difficulty: 2,
-    title: 'Vector Filter',
-    content: '// Keep only even numbers in vec "v"',
-    explanation: 'Iterators are the idiomatic way to transform collections.',
-    patternToNotice: 'Call .into_iter() followed by .filter() and .collect().',
-    concept: 'iterators',
-    requiredTokens: ['v.into_iter', '.filter', '|x|', '% 2 == 0', '.collect']
+    difficulty: 3,
+    title: 'Message Enum',
+    content: '// Implement a Message enum with Quit, Move(x,y), and Write(String) variants',
+    explanation: 'Rust enums can store data within their variants.',
+    patternToNotice: 'Variants can be unit-like, tuple-like, or struct-like.',
+    concept: 'enums',
+    requiredTokens: ['enum', 'Quit', 'Move', '{', '}', 'Write', 'String']
   }
 ];
