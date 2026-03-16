@@ -58,9 +58,10 @@ export default function CodingContent() {
   if (!_hasHydrated) return null;
 
   if (activeLoop.active) {
+    const currentStep = activeLoop.steps[activeLoop.currentStep];
     return (
       <CodingDrillPlayer 
-        protocolId={(activeLoop.steps[activeLoop.currentStep]?.type) as any} 
+        protocolId={currentStep?.type as any} 
         onClose={() => {}} 
       />
     );

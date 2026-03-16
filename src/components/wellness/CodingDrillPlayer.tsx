@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -25,11 +26,11 @@ import { gradeAnswer } from '@/engine/grading';
 import { GeneratedDrill, Lane } from '@/types/drills';
 
 interface Props {
-  protocolId: string;
+  protocolId?: string;
   onClose: () => void;
 }
 
-const mapProtocolToLane = (id: string): Lane => {
+const mapProtocolToLane = (id: string | undefined): Lane => {
   if (id === 'Syntax Sprints' || id === 'Code Reconstruction') return 'Write';
   if (id === 'Output Prediction' || id === 'Bug Hunt') return 'Read';
   return 'Build';
@@ -53,6 +54,9 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const lane = useMemo(() => mapProtocolToLane(protocolId), [protocolId]);
 
   const fetchDrill = useCallback(async () => {
+    // Prevent fetching if protocolId is missing or we are in summary state
+    if (!protocolId || gameState === 'summary') return;
+    
     setIsGenerating(true);
     try {
       // Simulate procedural generation cost
@@ -72,7 +76,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     } finally {
       setIsGenerating(false);
     }
-  }, [activeLanguage, lane, protocolId]);
+  }, [activeLanguage, lane, protocolId, gameState]);
 
   useEffect(() => {
     fetchDrill();
@@ -133,7 +137,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   };
 
   const summaryData = useMemo(() => {
-    if (!currentDrill || !gameState.includes('summary')) return null;
+    if (!currentDrill || gameState !== 'summary') return null;
     const score = isCorrect ? 10 : 0; // Simplified for single-round summary
     const multiplier = currentDrill.difficulty === 1 ? 1.0 : currentDrill.difficulty === 2 ? 1.5 : 2.0;
     const har = Math.round((score / 10) * multiplier * 100);
@@ -154,7 +158,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   }
 
   // Fallback for unexpected generation errors
-  if (!currentDrill) {
+  if (!currentDrill && gameState !== 'summary') {
     return (
       <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
         <div className="text-center space-y-4">
@@ -173,7 +177,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
             <Button variant="ghost" size="icon" onClick={activeLoop.active ? cancelLoop : onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
             <Button variant="ghost" size="icon" onClick={handleRestart} className="rounded-full text-muted-foreground hover:text-primary"><RotateCcw className="w-4 h-4" /></Button>
             <div>
-              <h1 className="text-lg font-bold uppercase tracking-tight">{protocolId}</h1>
+              <h1 className="text-lg font-bold uppercase tracking-tight">{protocolId || 'Review'}</h1>
               <p className="text-[10px] text-muted-foreground font-bold uppercase">{activeLanguage} • Procedural</p>
             </div>
           </div>
@@ -184,7 +188,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
         <main className="flex-1 overflow-y-auto p-8 bg-muted/5 flex items-center justify-center">
           <AnimatePresence mode="wait">
-            {gameState === 'prep' && (
+            {gameState === 'prep' && currentDrill && (
               <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="max-w-md w-full">
                 <Card className="border-primary/10 shadow-xl">
                   <CardHeader className="text-center pb-6 bg-primary/5">
@@ -217,7 +221,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
               </motion.div>
             )}
 
-            {gameState === 'active' && (
+            {gameState === 'active' && currentDrill && (
               <motion.div key="active" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="w-full max-w-2xl space-y-6">
                 <div className="bg-card border-2 border-primary/10 rounded-2xl p-6 font-mono text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap relative">
                   <div className="absolute top-2 right-4 text-[10px] font-bold text-muted-foreground opacity-40 uppercase tracking-tighter">Compiler View</div>
@@ -248,7 +252,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
               </motion.div>
             )}
 
-            {gameState === 'feedback' && (
+            {gameState === 'feedback' && currentDrill && (
               <motion.div key="feedback" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-2xl w-full">
                 <Card className={cn("border-2 shadow-xl", isCorrect ? "border-emerald-500/30" : "border-amber-500/30")}>
                   <CardHeader className={cn("text-center py-6", isCorrect ? "bg-emerald-500/5" : "bg-amber-500/5")}>
