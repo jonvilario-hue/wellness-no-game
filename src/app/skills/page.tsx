@@ -242,7 +242,7 @@ function SkillBuilderPageContent() {
 export default function SkillBuilderPage() {
   return (
     <Suspense fallback={<div>Loading Lab...</div>}>
-      <ExercisesPageContent />
+      <SkillBuilderPageContent />
     </Suspense>
   )
 }
