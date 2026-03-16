@@ -40,6 +40,11 @@ export interface StructuralAnswer {
 
 export type GeneratedAnswer = MultipleChoiceAnswer | ExactAnswer | TokenProbeAnswer | StructuralAnswer;
 
+export interface GradingResult {
+  isCorrect: boolean;
+  feedback?: string;
+}
+
 export interface FamilyRenderContext {
   language: Language;
   lane: Lane;
