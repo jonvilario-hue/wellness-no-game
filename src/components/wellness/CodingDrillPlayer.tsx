@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -149,6 +149,14 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   if (isGenerating) {
     return (
       <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={activeLoop.active ? cancelLoop : onClose} 
+          className="absolute top-4 left-4 rounded-full"
+        >
+          <X className="w-5 h-5" />
+        </Button>
         <div className="text-center space-y-4">
           <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground animate-pulse">Compiling Procedural Rep...</p>
@@ -161,9 +169,20 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   if (!currentDrill && gameState !== 'summary') {
     return (
       <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={activeLoop.active ? cancelLoop : onClose} 
+          className="absolute top-4 left-4 rounded-full"
+        >
+          <X className="w-5 h-5" />
+        </Button>
         <div className="text-center space-y-4">
           <p className="text-sm font-bold text-muted-foreground">Initializing engine...</p>
-          <Button onClick={fetchDrill}>Retry Generation</Button>
+          <div className="flex gap-2">
+            <Button onClick={fetchDrill}>Retry Generation</Button>
+            <Button variant="outline" onClick={activeLoop.active ? cancelLoop : onClose}>Exit Lab</Button>
+          </div>
         </div>
       </div>
     );

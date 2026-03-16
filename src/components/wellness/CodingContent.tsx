@@ -52,7 +52,7 @@ const trackInfo = {
 };
 
 export default function CodingContent() {
-  const { _hasHydrated, activeLanguage, setActiveLanguage, activeLoop, activeTrack, setActiveTrack, languageProgress, startLoop } = useCodingStore();
+  const { _hasHydrated, activeLanguage, setActiveLanguage, activeLoop, activeTrack, setActiveTrack, languageProgress, startLoop, cancelLoop } = useCodingStore();
   const [showLocalAnalytics, setShowLocalAnalytics] = useState(false);
 
   if (!_hasHydrated) return null;
@@ -62,7 +62,7 @@ export default function CodingContent() {
     return (
       <CodingDrillPlayer 
         protocolId={currentStep?.type as any} 
-        onClose={() => {}} 
+        onClose={cancelLoop} 
       />
     );
   }
