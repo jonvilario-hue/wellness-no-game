@@ -6,7 +6,7 @@
   "concept_tags": ["optionals", "force_unwrapping"],
   "difficulty": "beginner",
   "swift_version_minimum": "5.0",
-  "prompt_template": "var {{VAR}}: String? = nil\nif {{VAR}} != nil {\n    print({{VAR}}!)\n} else {\n    // Intent: Print a fallback message safely\n    print({{VAR}}!)\n}",
+  "prompt_template": "var {{VAR}}: String? = nil\nif {{VAR}} != nil {\n    print({{VAR}}!)\n} else {\n    print({{VAR}}!)\n}",
   "slot_definitions": {
     "VAR": { "type": "variable_name", "pool": ["username", "email", "token"] }
   },

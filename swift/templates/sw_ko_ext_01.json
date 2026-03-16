@@ -6,7 +6,7 @@
   "concept_tags": ["extensions", "computed_properties"],
   "difficulty": "beginner",
   "swift_version_minimum": "5.0",
-  "prompt_template": "extension {{TYPE}} {\n    var {{PROP}}: {{RESULT_TYPE}} {\n        return {{LOGIC}}\n    }\n}\n\n// Usage: {{VAL}}.{{PROP}}",
+  "prompt_template": "extension {{TYPE}} {\n    var {{PROP}}: {{RESULT_TYPE}} {\n        return {{LOGIC}}\n    }\n}",
   "slot_definitions": {
     "TYPE": { "type": "string_pool", "pool": ["Int", "String", "Double"] },
     "PROP": { "type": "string_pool", "pool": ["isEven", "shouted", "squared"] },
