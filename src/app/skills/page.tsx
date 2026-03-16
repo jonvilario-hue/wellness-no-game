@@ -156,24 +156,29 @@ function SkillBuilderPageContent() {
         
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <div className="flex justify-center mb-6">
-            <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 w-full max-w-5xl h-auto bg-muted/50 p-1 gap-1">
+            <TabsList className="grid grid-cols-2 w-full max-w-2xl h-auto bg-muted/50 p-1 gap-1">
+              {/* Row 1: Perception & Interaction */}
               <TabsTrigger value="communication" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
                 <MessageSquare className="w-4 h-4" /> Communication
               </TabsTrigger>
               <TabsTrigger value="speedreading" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
                 <Zap className="w-4 h-4" /> Speed Reading
               </TabsTrigger>
+              
+              {/* Row 2: Artistic & Auditory */}
               <TabsTrigger value="music" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
                 <Music className="w-4 h-4" /> Music
               </TabsTrigger>
+              <TabsTrigger value="drawing" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
+                <Pencil className="w-4 h-4" /> Drawing
+              </TabsTrigger>
+
+              {/* Row 3: Logical & Numerical */}
               <TabsTrigger value="math" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
                 <Sigma className="w-4 h-4" /> Arithmetic
               </TabsTrigger>
               <TabsTrigger value="coding" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
                 <Code2 className="w-4 h-4" /> Coding
-              </TabsTrigger>
-              <TabsTrigger value="drawing" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
-                <Pencil className="w-4 h-4" /> Drawing
               </TabsTrigger>
             </TabsList>
           </div>
