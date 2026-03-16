@@ -9,8 +9,8 @@ import { startOfWeek, isAfter } from "date-fns";
 import { AssistantTooltip } from "../assistant-tooltip";
 
 export function CommunicationDashboard() {
-  const communicationLogs = useCommunicationLogs();
   const [mounted, setMounted] = useState(false);
+  const communicationLogs = useCommunicationLogs();
 
   useEffect(() => {
     setMounted(true);

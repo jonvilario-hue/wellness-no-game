@@ -82,7 +82,7 @@ function evaluateSubmission(input: string, drill: CodingDrill): number {
   return normalizedInput === clean(drill.content || "") ? 100 : 0;
 }
 
-export function CodingDrillPlayer({ protocolId, onClose }: Props) {
+export function SpeedReadingDrillPlayer({ protocolId, onClose }: Props) {
   const { activeLanguage, addLog, activeLoop, advanceLoop, cancelLoop } = useCodingStore();
   const { syncFromTracker } = useCalendarPlansStore();
   const { toast } = useToast();
@@ -107,6 +107,14 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   const currentDrill = useMemo(() => 
     filteredDrills ? filteredDrills[currentIndex % filteredDrills.length] : null,
   [filteredDrills, currentIndex]);
+
+  const summaryData = useMemo(() => {
+    if (activeLoop.active) {
+      if (activeLoop.results.length === 0) return null;
+      return { accuracy: roundAccuracy }; // Basic existence check for summary state
+    }
+    return { accuracy: roundAccuracy };
+  }, [activeLoop.active, activeLoop.results, roundAccuracy]);
 
   const handleStart = () => {
     if (!currentDrill) {
@@ -147,7 +155,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
     if (activeLoop.active) {
       advanceLoop(accuracy, speedMetric);
-      if (activeLoop.currentStep >= 2) {
+      if (activeLoop.currentStep >= activeLoop.steps.length - 1) {
         setGameState('summary');
       } else {
         setGameState('prep');
@@ -294,7 +302,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
               </motion.div>
             )}
 
-            {gameState === 'summary' && (
+            {gameState === 'summary' && summaryData && (
               <motion.div key="summary" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
                 <Card className="border-primary/10 shadow-xl overflow-hidden">
                   <CardHeader className="text-center bg-primary/5 py-6">
@@ -329,4 +337,8 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       </div>
     </div>
   );
+}
+
+export function CodingDrillPlayer({ protocolId, onClose }: Props) {
+  return <SpeedReadingDrillPlayer protocolId={protocolId} onClose={onClose} />;
 }

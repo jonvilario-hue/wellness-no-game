@@ -9,9 +9,9 @@ import { AssistantTooltip } from "../assistant-tooltip";
 import { cn } from '@/lib/utils';
 
 export function MusicGlobalHeader() {
-  const { streak, getWeeklyVolume, getGlobalHAR, getTotalCreations } = useMusicStore();
   const [mounted, setMounted] = useState(false);
-
+  const { streak, getWeeklyVolume, getGlobalHAR, getTotalCreations } = useMusicStore();
+  
   useEffect(() => {
     setMounted(true);
   }, []);

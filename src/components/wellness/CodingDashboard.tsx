@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,8 +15,13 @@ import { AssistantTooltip } from '../assistant-tooltip';
 import { cn } from '@/lib/utils';
 
 export function CodingDashboard() {
+  const [mounted, setMounted] = useState(false);
   const { streak, getWeeklyVolume, getFluencyScore, getTopLane, activeLanguage, activeTrack, activeLoop, startLoop } = useCodingStore();
   
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const weeklyVol = getWeeklyVolume();
   const fluency = getFluencyScore();
   const topLane = getTopLane();
@@ -51,6 +56,10 @@ export function CodingDashboard() {
   const handleStartLoop = () => {
     startLoop(recommendation.loop);
   };
+
+  if (!mounted) {
+    return <div className="h-32 w-full animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="space-y-6">

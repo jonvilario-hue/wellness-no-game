@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useCodingStore } from '@/hooks/use-coding-store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar, Cell } from 'recharts';
@@ -9,7 +10,12 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
 export function CodingAnalytics() {
+  const [mounted, setMounted] = useState(false);
   const { logs, languageProgress, activeTrack } = useCodingStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const currentTrackLangs = activeTrack === 'Foundation' 
     ? ['Python', 'TypeScript', 'SQL'] 
@@ -34,6 +40,10 @@ export function CodingAnalytics() {
       date: l.date
     }));
   }, [logs]);
+
+  if (!mounted) {
+    return <div className="h-64 w-full animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">

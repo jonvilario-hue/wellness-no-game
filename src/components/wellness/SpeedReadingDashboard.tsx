@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useSpeedReadingStore } from '@/hooks/use-speedreading-store';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -14,7 +15,13 @@ import { AssistantTooltip } from '../assistant-tooltip';
 import { cn } from '@/lib/utils';
 
 export function SpeedReadingStats() {
+  const [mounted, setMounted] = useState(false);
   const { logs, getStreak } = useSpeedReadingStore();
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const streak = getStreak();
 
   const aggregateStats = useMemo(() => {
@@ -36,6 +43,10 @@ export function SpeedReadingStats() {
       topDrill
     };
   }, [logs]);
+
+  if (!mounted) {
+    return <div className="h-32 w-full animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="space-y-6">
@@ -77,7 +88,12 @@ export function SpeedReadingStats() {
 }
 
 export function SpeedReadingAnalytics() {
+  const [mounted, setMounted] = useState(false);
   const { logs, achievements } = useSpeedReadingStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const chartData = useMemo(() => {
     return [...logs].reverse().slice(-10).map(l => ({
@@ -92,6 +108,10 @@ export function SpeedReadingAnalytics() {
     if (entries.length === 0) return ['Casual', { highestERR: 0 }] as const;
     return entries.sort((a, b) => b[1].highestERR - a[1].highestERR)[0];
   }, [achievements]);
+
+  if (!mounted) {
+    return <div className="h-64 w-full animate-pulse bg-muted/20 rounded-xl" />;
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
