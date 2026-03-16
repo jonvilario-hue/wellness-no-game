@@ -1,4 +1,3 @@
-
 import type { DrawingDrill } from '@/types/drawing';
 
 export const drawingDrills: DrawingDrill[] = [
@@ -311,7 +310,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 600
   },
 
-  // --- DRAWABOX PROTOCOLS ---
+  // --- DRAWABOX CORE MODULE ---
   // LINES
   {
     id: 'db-superimposed-lines',
@@ -322,6 +321,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Lines',
+    lesson: 'L1',
     isWarmup: true,
     description: 'Draw over the same line repeatedly to build arm confidence.',
     brief: ['Ghost the movement 3 times.', 'Draw a single confident stroke.', 'Repeat on top 8 times.'],
@@ -338,6 +338,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Lines',
+    lesson: 'L1',
     isWarmup: true,
     description: 'Ghost the motion before committing to each line.',
     brief: ['Plot two dots.', 'Ghost the line between them.', 'Commit in one stroke.'],
@@ -354,6 +355,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Lines',
+    lesson: 'L1',
     isWarmup: true,
     description: 'Connect ghosted lines into flat quadrilaterals.',
     brief: ['Plot four points.', 'Connect using ghosted lines.', 'Check for straightness.'],
@@ -371,6 +373,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Ellipses',
+    lesson: 'L1',
     isWarmup: true,
     description: 'Fill framed rows with ellipses drawn from the shoulder.',
     brief: ['Draw a box frame.', 'Fill with tightly packed ellipses.', 'Draw through each twice.'],
@@ -387,6 +390,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Ellipses',
+    lesson: 'L1',
     isWarmup: true,
     description: 'Fit ellipses inside ghosted planes.',
     brief: ['Draw a ghosted plane.', 'Fit an ellipse inside, touching all sides.', 'Draw through twice.'],
@@ -403,6 +407,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Ellipses',
+    lesson: 'L1',
     isWarmup: true,
     description: 'Nest ellipses inside funnels aligned to a minor axis.',
     brief: ['Draw a funnel shape.', 'Add a central minor axis.', 'Bisect ellipses perfectly.'],
@@ -412,7 +417,7 @@ export const drawingDrills: DrawingDrill[] = [
   },
   // BOXES
   {
-    id: 'db-plotted-persp',
+    id: 'db-plotted-perspective',
     name: 'Plotted Perspective',
     discipline: 'Drawabox',
     originTag: 'Drawabox',
@@ -420,6 +425,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Boxes',
+    lesson: 'L1',
     description: 'Construct boxes with a ruler and vanishing points.',
     brief: ['Plot two vanishing points.', 'Use a ruler for all lines.', 'Build perfect boxes.'],
     referenceCategory: 'None',
@@ -427,7 +433,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 720
   },
   {
-    id: 'db-rough-persp',
+    id: 'db-rough-perspective',
     name: 'Rough Perspective',
     discipline: 'Drawabox',
     originTag: 'Drawabox',
@@ -435,6 +441,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Developing',
     dbGroup: 'Boxes',
+    lesson: 'L1',
     isWarmup: true,
     description: 'Freehand boxes converging to a single vanishing point.',
     brief: ['One VP on the horizon.', 'Freehand boxes.', 'Extend lines to check errors.'],
@@ -451,6 +458,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Developing',
     dbGroup: 'Boxes',
+    lesson: 'L1',
     description: 'Draw a grid of boxes rotating in 3D using neighbor edges.',
     brief: ['Start with center box.', 'Rotate neighbors slightly.', 'Use adjacent vertices.'],
     referenceCategory: 'None',
@@ -458,7 +466,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 2700
   },
   {
-    id: 'db-organic-persp',
+    id: 'db-organic-perspective',
     name: 'Organic Perspective',
     discipline: 'Drawabox',
     originTag: 'Drawabox',
@@ -466,6 +474,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Developing',
     dbGroup: 'Boxes',
+    lesson: 'L1',
     description: 'Scatter boxes in space to imply depth without VP on page.',
     brief: ['Vary box size.', 'Overlap for depth.', 'Implied convergence.'],
     referenceCategory: 'None',
@@ -474,7 +483,7 @@ export const drawingDrills: DrawingDrill[] = [
   },
   // CONTOUR & FORM
   {
-    id: 'db-organic-contour-lines',
+    id: 'db-organic-forms-lines',
     name: 'Organic Forms — Contour Lines',
     discipline: 'Drawabox',
     originTag: 'Drawabox',
@@ -482,6 +491,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Contour & Form',
+    lesson: 'L2',
     description: 'Wrap ellipses around sausage forms to show volume.',
     brief: ['Draw a sausage form.', 'Add wrapping ellipses.', 'Mind the degree change.'],
     referenceCategory: 'None',
@@ -489,7 +499,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 600
   },
   {
-    id: 'db-organic-contour-curves',
+    id: 'db-organic-forms-curves',
     name: 'Organic Forms — Contour Curves',
     discipline: 'Drawabox',
     originTag: 'Drawabox',
@@ -497,6 +507,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Contour & Form',
+    lesson: 'L2',
     description: 'Same forms with partial contour curves instead.',
     brief: ['Draw a sausage form.', 'Add contour hooks.', 'Hook over the edge.'],
     referenceCategory: 'None',
@@ -512,6 +523,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Developing',
     dbGroup: 'Contour & Form',
+    lesson: 'L2',
     description: 'Draw clustered primitives occupying the same space.',
     brief: ['Draw 10+ primitives.', 'Show intersections.', 'Maintain consistent scale.'],
     referenceCategory: 'None',
@@ -527,6 +539,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Developing',
     dbGroup: 'Contour & Form',
+    lesson: 'L2',
     description: 'Pile sausage forms with gravity and cast shadow.',
     brief: ['Pile sausages.', 'Show weight.', 'Add cast shadows between forms.'],
     referenceCategory: 'None',
@@ -543,6 +556,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Developing',
     dbGroup: 'Texture',
+    lesson: 'L2',
     description: 'Observe reference and draw cast shadow shapes only.',
     brief: ['Observe small area.', 'Find shadow shapes.', 'Don\'t draw lines.'],
     referenceCategory: 'Still Life',
@@ -558,6 +572,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Developing',
     dbGroup: 'Texture',
+    lesson: 'L2',
     description: 'Apply observed textures to surfaces of organic forms.',
     brief: ['Draw a sausage.', 'Apply high-detail texture.', 'Warp texture to surface.'],
     referenceCategory: 'Still Life',
@@ -574,6 +589,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Static',
     difficulty: 'Foundation',
     dbGroup: 'Construction',
+    lesson: 'L2',
     description: 'Draw ribboning arrows to practice flow and compression.',
     brief: ['Flowing lines.', 'Add thickness.', 'Scale for depth.'],
     referenceCategory: 'None',
@@ -589,6 +605,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Developing',
     dbGroup: 'Construction',
+    lesson: 'L3',
     description: 'Construct flat and bending leaf forms from flow lines.',
     brief: ['Flow line first.', 'Outer edges next.', 'Add detail last.'],
     referenceCategory: 'Still Life',
@@ -604,6 +621,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Developing',
     dbGroup: 'Construction',
+    lesson: 'L3',
     description: 'Build branches using overlapping cylinder segments.',
     brief: ['Chain cylinders.', 'Overlap joints.', 'Maintain center axis.'],
     referenceCategory: 'Still Life',
@@ -619,6 +637,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Developing',
     dbGroup: 'Construction',
+    lesson: 'L3',
     description: 'Full plant drawings built from construction with reference.',
     brief: ['Find a plant.', 'Simplify to forms.', 'Build complexity.'],
     referenceCategory: 'Still Life',
@@ -634,6 +653,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Developing',
     dbGroup: 'Construction',
+    lesson: 'L4',
     description: 'Build insects from sausage forms at joints. Use reference.',
     brief: ['Massive forms first.', 'Construct legs.', 'Joint logic.'],
     referenceCategory: 'Still Life',
@@ -649,6 +669,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Advanced',
     dbGroup: 'Construction',
+    lesson: 'L5',
     description: 'Build animals using sausage legs and organic masses.',
     brief: ['Ribcage & Pelvis.', 'Sausage legs.', 'Head construction.'],
     referenceCategory: 'Figure',
@@ -664,6 +685,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Advanced',
     dbGroup: 'Construction',
+    lesson: 'L6',
     description: 'Build everyday objects by subdividing boxes. Use reference.',
     brief: ['Box scaffolding.', 'Subdivide.', 'Curves from straight lines.'],
     referenceCategory: 'Still Life',
@@ -679,6 +701,7 @@ export const drawingDrills: DrawingDrill[] = [
     inputTag: 'Reference Needed',
     difficulty: 'Advanced',
     dbGroup: 'Construction',
+    lesson: 'L7',
     description: 'Construct vehicles from subdivided boxes and grids.',
     brief: ['Perspective grid.', 'Wheel construction.', 'Compound forms.'],
     referenceCategory: 'Still Life',

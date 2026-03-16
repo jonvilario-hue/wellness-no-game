@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -10,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { 
   Play, RotateCcw, Box, Plus, Info, 
-  ChevronRight, Sparkles, LayoutGrid, Layers
+  ChevronRight, Sparkles, LayoutGrid, Layers, Clock
 } from 'lucide-react';
 import { useDrawaboxStore } from '@/hooks/use-drawabox-store';
 import { drawingDrills } from '@/data/drawing-drills';
@@ -40,24 +41,25 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
   const handleWarmup = () => {
     const warmupPool = drawingDrills.filter(d => d.isWarmup && (d.dbGroup === 'Lines' || d.dbGroup === 'Ellipses'));
     const selected = [...warmupPool].sort(() => 0.5 - Math.random()).slice(0, 3);
-    onStartDrill(selected[0]); // For now, starts the first one. Future: queue them.
+    // Queue logic omitted for MVP - starts the first randomly selected
+    if (selected.length > 0) onStartDrill(selected[0]);
   };
 
   return (
     <Card className="border-primary/10 shadow-xl overflow-hidden bg-background">
-      <CardHeader className="bg-primary/5 p-6 flex flex-row items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-primary/10 rounded-2xl text-primary">
-            <PerspectiveBoxIcon className="w-8 h-8" />
+      <CardHeader className="bg-primary/5 p-6">
+        <div className="flex flex-row items-center justify-between w-full">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary/10 rounded-2xl text-primary">
+              <PerspectiveBoxIcon className="w-8 h-8" />
+            </div>
+            <div>
+              <CardTitle className="text-3xl font-black uppercase tracking-tighter">Drawabox</CardTitle>
+              <CardDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-1">Fundamentals you never stop practicing.</CardDescription>
+            </div>
           </div>
-          <div>
-            <CardTitle className="text-2xl font-black uppercase tracking-tighter">Drawabox</CardTitle>
-            <CardDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Fundamentals you never stop practicing.</CardDescription>
-          </div>
-        </div>
-        <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-3 px-4 py-2 bg-background rounded-full border border-primary/10">
-            <AssistantTooltip text="Minimal Viable Day — Hides everything except Drawabox drills to ensure consistency on busy days.">
+            <AssistantTooltip text="Minimal Viable Day — Drawabox only. Hides supplemental modules.">
               <div className="flex items-center gap-2">
                 <Label htmlFor="mvd-toggle" className="text-[10px] font-black uppercase tracking-widest cursor-pointer">MVD</Label>
                 <Switch id="mvd-toggle" checked={mvdMode} onCheckedChange={toggleMvd} />
@@ -89,9 +91,16 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
                       <Card key={drill.id} className="border-primary/5 hover:border-primary/20 transition-all cursor-pointer group flex flex-col" onClick={() => onStartDrill(drill)}>
                         <CardHeader className="p-4 pb-2">
                           <div className="flex justify-between items-start mb-2">
-                            <Badge variant="outline" className="text-[8px] font-black uppercase h-4 px-2">
-                              {drill.difficulty}
-                            </Badge>
+                            <div className="flex gap-1.5">
+                              {drill.lesson && (
+                                <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted/50 text-muted-foreground border-none">
+                                  {drill.lesson}
+                                </Badge>
+                              )}
+                              <Badge variant="outline" className="text-[8px] font-black uppercase h-4 px-2">
+                                {drill.difficulty}
+                              </Badge>
+                            </div>
                             {drill.defaultTimerSeconds && (
                               <div className="text-[8px] font-bold text-primary flex items-center gap-1">
                                 <Clock className="w-2.5 h-2.5" /> {Math.round(drill.defaultTimerSeconds/60)}m
@@ -111,12 +120,15 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
 
                     {/* Challenges embedded in groups */}
                     {group === 'Boxes' && (
-                      <Card className="border-primary/10 bg-primary/5 p-4 flex flex-col justify-between min-h-[140px]">
+                      <Card className="border-primary/10 bg-primary/5 p-4 flex flex-col justify-between min-h-[140px] relative overflow-hidden">
+                        <div className="absolute top-2 right-2">
+                          <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted/50 text-muted-foreground border-none">L1–L2</Badge>
+                        </div>
                         <div className="space-y-1">
                           <h4 className="text-[10px] font-black uppercase tracking-widest">250 Box Challenge</h4>
-                          <p className="text-[9px] text-muted-foreground italic leading-tight">Draw a box. Extend lines to VP. Repeat.</p>
+                          <p className="text-[9px] text-muted-foreground italic leading-tight">Draw a box. Extend all lines to vanishing points. Check convergence. Repeat.</p>
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-3 mt-4">
                           <div className="space-y-1">
                             <div className="flex justify-between text-[10px] font-black">
                               <span>Progress</span>
@@ -133,12 +145,15 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
                     )}
 
                     {group === 'Contour & Form' && (
-                      <Card className="border-primary/10 bg-primary/5 p-4 flex flex-col justify-between min-h-[140px]">
+                      <Card className="border-primary/10 bg-primary/5 p-4 flex flex-col justify-between min-h-[140px] relative overflow-hidden">
+                        <div className="absolute top-2 right-2">
+                          <Badge variant="secondary" className="text-[8px] font-black uppercase h-4 bg-muted/50 text-muted-foreground border-none">L5–L6</Badge>
+                        </div>
                         <div className="space-y-1">
                           <h4 className="text-[10px] font-black uppercase tracking-widest">250 Cylinder Challenge</h4>
-                          <p className="text-[9px] text-muted-foreground italic leading-tight">Train ellipse consistency and minor axis alignment.</p>
+                          <p className="text-[9px] text-muted-foreground italic leading-tight">Half in boxes, half freehand. Train ellipse consistency and minor axis alignment.</p>
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-3 mt-4">
                           <div className="space-y-1">
                             <div className="flex justify-between text-[10px] font-black">
                               <span>Progress</span>
@@ -148,7 +163,7 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
                           </div>
                           <div className="flex gap-2">
                             <Input type="number" value={cylLog} onChange={e => setCylLog(e.target.value)} className="h-8 w-16 text-[10px] font-bold text-center" />
-                            <Button size="sm" className="flex-1 h-8 text-[9px] font-black uppercase" onClick={(e) => { e.stopPropagation(); addCylinders(parseInt(cylLog)); }}>Log Cyls</Button>
+                            <Button size="sm" className="flex-1 h-8 text-[9px] font-black uppercase" onClick={(e) => { e.stopPropagation(); addCylinders(parseInt(cylLog)); }}>Log Cylinders</Button>
                           </div>
                         </div>
                       </Card>
@@ -170,5 +185,3 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
     </Card>
   );
 }
-
-import { Clock } from 'lucide-react';

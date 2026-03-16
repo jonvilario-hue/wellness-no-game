@@ -13,7 +13,7 @@ import {
   X, Play, Pause, RotateCcw, Clock, 
   Target, Zap, Sparkles, CheckCircle2,
   ChevronRight, ArrowRight, Eye, Info,
-  Camera, SlidersHorizontal, Star, Pencil
+  Camera, SlidersHorizontal, Star, Pencil, BookOpen
 } from 'lucide-react';
 import { useDrawingStore } from '@/hooks/use-drawing-store';
 import { useCalendarPlansStore } from '@/hooks/use-calendar-plans-store';
@@ -123,19 +123,26 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
           </div>
         </header>
 
-        <main className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
+        <main className="flex-1 flex items-center justify-center p-4 sm:p-8 overflow-y-auto bg-muted/5">
           <AnimatePresence mode="wait">
             {gameState === 'prep' && (
-              <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex-1 flex items-center justify-center p-8">
-                <Card className="max-w-md w-full border-primary/10 shadow-xl overflow-hidden">
-                  <CardHeader className="text-center pb-6 bg-primary/5">
+              <motion.div key="prep" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="max-w-md w-full mx-auto">
+                <Card className="border-primary/10 shadow-xl overflow-hidden">
+                  <CardHeader className="text-center space-y-1 bg-primary/5 pb-6">
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary">
                       {drill.inputTag === 'Reference Needed' ? <Eye className="w-8 h-8" /> : <Pencil className="w-8 h-8" />}
                     </div>
-                    <CardTitle className="text-xl font-black uppercase tracking-tight">The Brief</CardTitle>
+                    <CardTitle className="text-xl font-black uppercase tracking-tight">Initialize Drill</CardTitle>
                     <CardDescription className="text-xs">Objective: {drill.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
+                    {drill.lesson && (
+                      <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-xl border border-primary/5">
+                        <BookOpen className="w-4 h-4 text-primary" />
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Parallels Drawabox {drill.lesson}</p>
+                      </div>
+                    )}
+                    
                     <div className="space-y-3">
                       <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
                         <Info className="w-3.5 h-3.5" /> Instructions
@@ -162,7 +169,7 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                   </CardContent>
                   <CardFooter>
                     <Button className="w-full h-12 font-black uppercase shadow-lg gap-2" onClick={handleStart}>
-                      <Play className="w-4 h-4 fill-current" /> Initialize Drill
+                      <Play className="w-4 h-4 fill-current" /> Begin Session
                     </Button>
                   </CardFooter>
                 </Card>
@@ -170,8 +177,8 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
             )}
 
             {gameState === 'active' && (
-              <motion.div key="active" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col md:flex-row min-h-0">
-                <div className="flex-1 relative bg-black flex items-center justify-center p-4">
+              <motion.div key="active" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col md:flex-row min-h-0 w-full h-full">
+                <div className="flex-1 relative bg-black flex items-center justify-center p-4 min-h-[300px]">
                   {referenceImage ? (
                     <div className="relative w-full h-full">
                       <Image 
@@ -194,10 +201,13 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                     </Badge>
                   </div>
                 </div>
-                <div className="w-full md:w-80 border-l bg-card p-6 flex flex-col gap-6">
-                  <div className="space-y-2">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Protocol Active</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed italic">"Sync your hand to your eye. Speed is secondary to accurate observation."</p>
+                <div className="w-full md:w-80 border-l bg-card p-6 flex flex-col gap-6 overflow-y-auto">
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Protocol Active</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed italic">"Sync your hand to your eye. Speed is secondary to accurate observation."</p>
+                    </div>
+                    {drill.lesson && <Badge variant="secondary" className="text-[8px] uppercase">{drill.lesson} Technique</Badge>}
                   </div>
                   
                   <div className="flex-grow" />

@@ -46,6 +46,7 @@ export interface DrawingDrill {
   displayMode: 'Static' | 'Timed Flash' | 'Hidden';
   defaultTimerSeconds?: number;
   dbGroup?: DrawaboxGroup;
+  lesson?: string;
   isWarmup?: boolean;
 }
 
