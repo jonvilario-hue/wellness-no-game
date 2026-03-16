@@ -1,0 +1,22 @@
+
+{
+  "template_id": "ts_ex_class_readonly",
+  "source_repo": "exercism/typescript",
+  "drill_type": "syntax_sprint",
+  "concept_tags": ["classes", "access_modifiers"],
+  "requires_type_checker": true,
+  "difficulty": "beginner",
+  "prompt_template": "class {{CLASS}} {\n  {{MODIFIER}} {{PROP}}: {{TYPE}};\n\n  constructor({{PROP}}: {{TYPE}}) {\n    this.{{PROP}} = {{PROP}};\n  }\n}\n\nconst instance = new {{CLASS}}({{VAL}});\n// Goal: Attempting to reassign 'instance.{{PROP}}' should throw a compiler error.",
+  "slot_definitions": {
+    "CLASS": { "type": "string_pool", "pool": ["Robot", "Car", "User", "Account"] },
+    "MODIFIER": { "type": "string_pool", "pool": ["readonly", "private readonly", "public readonly"] },
+    "PROP": { "type": "string_pool", "pool": ["id", "serial", "model", "email"] },
+    "TYPE": { "type": "type_primitives" },
+    "VAL": { "type": "string_pool", "pool": ["123", "'X-1'", "true"] }
+  },
+  "answer_derivation": "Use the 'readonly' modifier",
+  "variation_minimum": 15,
+  "max_prompt_words": 40,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 60
+}

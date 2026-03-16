@@ -1,16 +1,23 @@
+
 {
   "language": "typescript",
-  "total_seeds": 0,
-  "total_templates": 0,
+  "total_seeds": 162,
+  "total_templates": 155,
   "concept_coverage": {
-    "primitives": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "interfaces": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "unions": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "generics": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "conditional_types": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "utility_types": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "mapped_types": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "inference": { "template_count": 0, "drill_types": [], "variation_count": 0 }
+    "primitives": { "template_count": 18, "drill_types": ["syntax_sprint", "bug_hunt"], "variation_count": 270 },
+    "interfaces": { "template_count": 22, "drill_types": ["syntax_sprint", "bug_hunt", "reconstruction"], "variation_count": 330 },
+    "unions": { "template_count": 20, "drill_types": ["syntax_sprint", "type_challenge"], "variation_count": 300 },
+    "generics": { "template_count": 25, "drill_types": ["type_challenge", "reconstruction"], "variation_count": 375 },
+    "mapped_types": { "template_count": 15, "drill_types": ["type_challenge"], "variation_count": 225 },
+    "conditional_types": { "template_count": 12, "drill_types": ["type_challenge"], "variation_count": 180 },
+    "utility_types": { "template_count": 15, "drill_types": ["reconstruction", "syntax_sprint"], "variation_count": 225 },
+    "inference": { "template_count": 8, "drill_types": ["type_challenge", "output_prediction"], "variation_count": 120 }
   },
-  "sources": []
+  "sources": [
+    { "repo": "type-challenges/type-challenges", "exercises_ingested": 84, "exercises_rejected": 12 },
+    { "repo": "exercism/typescript", "exercises_ingested": 32, "exercises_rejected": 8 },
+    { "repo": "typescript-exercises/typescript-exercises", "exercises_ingested": 20, "exercises_rejected": 5 },
+    { "repo": "total-typescript/beginners-typescript-tutorial", "exercises_ingested": 15, "exercises_rejected": 2 },
+    { "repo": "ts-essentials/ts-essentials", "exercises_ingested": 11, "exercises_rejected": 0 }
+  ]
 }

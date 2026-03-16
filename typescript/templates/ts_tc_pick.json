@@ -1,0 +1,24 @@
+
+{
+  "template_id": "ts_tc_pick",
+  "source_repo": "type-challenges/type-challenges",
+  "drill_type": "type_challenge",
+  "concept_tags": ["mapped_types", "generic_constraints", "indexed_access"],
+  "requires_type_checker": true,
+  "difficulty": "beginner",
+  "prompt_template": "type MyPick<T, K extends keyof T> = {{SLOT_IMPLEMENTATION}};\n\n// Tests\ninterface {{INTERFACE_NAME}} {\n  {{P1}}: {{T1}};\n  {{P2}}: {{T2}};\n  {{P3}}: {{T3}};\n}\n\ntype Result = MyPick<{{INTERFACE_NAME}}, {{P1}} | {{P2}}>;\n// Expected: { {{P1}}: {{T1}}; {{P2}}: {{T2}}; }",
+  "slot_definitions": {
+    "INTERFACE_NAME": { "type": "string_pool", "pool": ["User", "Todo", "Product", "Post"] },
+    "P1": { "type": "string_pool", "pool": ["title", "id", "name", "email"] },
+    "T1": { "type": "type_primitives" },
+    "P2": { "type": "string_pool", "pool": ["description", "price", "age", "active"] },
+    "T2": { "type": "type_primitives" },
+    "P3": { "type": "string_pool", "pool": ["completed", "quantity", "createdAt", "author"] },
+    "T3": { "type": "type_primitives" }
+  },
+  "answer_derivation": "{ [P in K]: T[P] }",
+  "variation_minimum": 20,
+  "max_prompt_words": 40,
+  "max_feedback_words": 30,
+  "time_limit_seconds": 90
+}
