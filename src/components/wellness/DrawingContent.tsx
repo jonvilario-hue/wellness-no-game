@@ -4,7 +4,6 @@
 import { useState, useMemo } from 'react';
 import { useDrawingStore } from '@/hooks/use-drawing-store';
 import { drawingDrills } from '@/data/drawing-drills';
-import { drawingPlans } from '@/data/drawing-plans';
 import { DrawingDashboard } from './DrawingDashboard';
 import { DrawingDrillPlayer } from './DrawingDrillPlayer';
 import { WellnessActivityCalendar } from './WellnessActivityCalendar';
@@ -109,7 +108,7 @@ export default function DrawingContent() {
         </Accordion>
       </div>
 
-      {/* 2. Today's Focus (Recommendation row moved up) */}
+      {/* 2. Today's Focus */}
       <div className="space-y-4">
         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Today's Focus</h3>
         <Card className="border-primary/20 bg-primary/5 shadow-md overflow-hidden group hover:border-primary/40 transition-all">
@@ -139,48 +138,8 @@ export default function DrawingContent() {
         </Card>
       </div>
 
-      {/* 3. Studio Dashboard (Streaks row moved down) */}
+      {/* 3. Studio Dashboard */}
       <DrawingDashboard />
-
-      {/* 4. Journey Plans */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">Journey Plans</h3>
-          <Badge variant="outline" className="text-[10px] font-bold uppercase border-primary/20">Progressive Curricula</Badge>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {drawingPlans.map((plan) => {
-            const progress = planProgress[plan.id] || {};
-            const done = Object.values(progress).filter(Boolean).length;
-            const isFinished = done === plan.durationDays;
-
-            return (
-              <Link key={plan.id} href={`/exercises/plans/${plan.id}`}>
-                <Card className={cn(
-                  "hover:border-primary/50 transition-all h-full group border-primary/5",
-                  isFinished && "opacity-60 grayscale-[0.5]"
-                )}>
-                  <CardHeader className="p-5 pb-2">
-                    <div className="flex justify-between items-start mb-3">
-                      <Badge variant="secondary" className="uppercase font-black text-[8px] tracking-widest px-2 h-4">
-                        {plan.durationDays} Days
-                      </Badge>
-                      {isFinished && <CheckCircle2 className="w-4 h-4 text-green-500" />}
-                    </div>
-                    <CardTitle className="text-base font-bold group-hover:text-primary transition-colors">{plan.title}</CardTitle>
-                    <CardDescription className="text-xs line-clamp-2 mt-1">{plan.tagline}</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="p-5 pt-0 mt-auto flex justify-between items-center text-[10px] font-black uppercase text-muted-foreground">
-                    <span>{done} / {plan.durationDays} Steps</span>
-                    <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-5px] group-hover:translate-x-0" />
-                  </CardFooter>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
 
       <TodayScheduleWidget category="Custom" />
       <WellnessActivityCalendar categoryFilter="Custom" />

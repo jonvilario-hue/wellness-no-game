@@ -69,7 +69,8 @@ function SkillBuilderPageContent() {
     if (activeTab === 'speedreading') return 'Speed Reading';
     if (activeTab === 'math') return 'Math';
     if (activeTab === 'music') return 'Music';
-    if (activeTab === 'coding' || activeTab === 'drawing') return 'Custom'; 
+    if (activeTab === 'drawing') return 'Drawing';
+    if (activeTab === 'coding') return 'Custom'; 
     return 'Communication';
   }, [activeTab]);
 
@@ -163,7 +164,7 @@ function SkillBuilderPageContent() {
                       </div>
                     </AssistantTooltip>
 
-                    {activeTab !== 'coding' && activeTab !== 'drawing' && (
+                    {activeTab !== 'coding' && (
                       <JourneyPlansSection 
                         category={currentCategory as any} 
                         isExpanded={isCurriculaExpanded}

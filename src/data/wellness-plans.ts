@@ -16,7 +16,7 @@ export type WellnessPlan = {
   title: string;
   tagline: string;
   description: string;
-  category: "Movement" | "Stillness" | "Communication" | "Speed Reading" | "Math" | "Music";
+  category: "Movement" | "Stillness" | "Communication" | "Speed Reading" | "Math" | "Music" | "Drawing";
   durationDays: number;
   steps: DailyStep[];
 };
@@ -293,6 +293,47 @@ export const wellnessPlans: WellnessPlan[] = [
       { day: 5, title: "Story", estimatedMinutes: 10, actions: [{ label: "3-Act Arc", link: "/exercises?tab=communication#practice-story_3act" }] },
       { day: 6, title: "Self-Review", estimatedMinutes: 15, actions: [{ label: "Record & Listen Back", link: "/exercises?tab=communication#practice-speaking_mirror_drill" }] },
       { day: 7, title: "Social Rest", estimatedMinutes: 30, actions: [{ label: "Reflective Notebook", link: "/journal" }] }
+    ]
+  },
+
+  // --- DRAWING ---
+  {
+    id: "plan-seeing-reset",
+    title: "Drawing: 14-Day Seeing Reset",
+    tagline: "Retrain your eyes to see the world as it is.",
+    description: "Based on the principles of 'Drawing on the Right Side of the Brain,' this program kills the habit of drawing mental symbols.",
+    category: "Drawing",
+    durationDays: 14,
+    steps: [
+      { day: 1, title: "Upside-Down Drawing", estimatedMinutes: 15, actions: [{ label: "Blind Contour Drill", link: "/skills?tab=drawing#practice-contour-blind" }] },
+      { day: 2, title: "Blind Contour: The Hand", estimatedMinutes: 10, actions: [{ label: "Blind Contour Drill", link: "/skills?tab=drawing#practice-contour-blind" }] },
+      { day: 3, title: "Negative Space Basics", estimatedMinutes: 15, actions: [{ label: "Modified Contour Drill", link: "/skills?tab=drawing#practice-contour-modified" }] }
+    ]
+  },
+  {
+    id: "plan-line-confidence",
+    title: "Drawing: 7-Day Line Confidence",
+    tagline: "Kill the 'hairy' line and draw with authority.",
+    description: "A mechanical boot camp for your shoulder and arm to build professional mark-making skills.",
+    category: "Drawing",
+    durationDays: 7,
+    steps: [
+      { day: 1, title: "The Shoulder Pivot", estimatedMinutes: 10, actions: [{ label: "Ghosting Lines Drill", link: "/skills?tab=drawing#practice-line-ghosting" }] },
+      { day: 2, title: "Precision Ghosting", estimatedMinutes: 10, actions: [{ label: "Ghosting Lines Drill", link: "/skills?tab=drawing#practice-line-ghosting" }] },
+      { day: 3, title: "Controlled Ellipses", estimatedMinutes: 15, actions: [{ label: "Funnelling Ellipses Drill", link: "/skills?tab=drawing#practice-line-ellipses" }] }
+    ]
+  },
+  {
+    id: "plan-figure-foundations",
+    title: "Drawing: 21-Day Figure Fundamentals",
+    tagline: "Master the dynamic human form.",
+    description: "Progressive program from fast gestures to full anatomical construction.",
+    category: "Drawing",
+    durationDays: 21,
+    steps: [
+      { day: 1, title: "Line of Action", estimatedMinutes: 15, actions: [{ label: "30s Gesture Drill", link: "/skills?tab=drawing#practice-gesture-30s" }] },
+      { day: 2, title: "The Torso Bean", estimatedMinutes: 15, actions: [{ label: "2m Construction Drill", link: "/skills?tab=drawing#practice-gesture-2m" }] },
+      { day: 3, title: "Proportion Landmarks", estimatedMinutes: 20, actions: [{ label: "Landmark Mapping Drill", link: "/skills?tab=drawing#practice-prop-landmark-mapping" }] }
     ]
   }
 ];
