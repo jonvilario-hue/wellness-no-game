@@ -1,3 +1,4 @@
+
 import { DrillTemplateFamily } from '@/types/drills';
 import { jsClosureFamily } from './javascript/closure';
 import { jsCoercionFamily } from './javascript/coercion';
@@ -26,6 +27,34 @@ import { rsBugHuntFamily } from './rust/bughunt';
 import { rsTraitFamily } from './rust/trait';
 import { rsIteratorFamily } from './rust/iterator';
 
+// TypeScript
+import { tsNarrowingFamily } from './typescript/narrowing';
+import { tsGenericFamily } from './typescript/generic';
+import { tsMappedFamily } from './typescript/mapped';
+import { tsBugHuntFamily } from './typescript/bughunt';
+import { tsAssertionFamily } from './typescript/assertion';
+
+// Swift
+import { swiftOptionalFamily } from './swift/optional';
+import { swiftSyntaxFamily } from './swift/syntax';
+import { swiftBugHuntFamily } from './swift/bughunt';
+import { swiftProtocolFamily } from './swift/protocol';
+import { swiftEnumFamily } from './swift/enum';
+
+// SQL
+import { sqlJoinFamily } from './sql/joins';
+import { sqlAggregateFamily } from './sql/aggregate';
+import { sqlBugHuntFamily } from './sql/bughunt';
+import { sqlRewriteFamily } from './sql/rewrite';
+import { sqlWindowFamily } from './sql/window';
+
+// Bash
+import { bashQuotingFamily } from './bash/quoting';
+import { bashExitFamily } from './bash/exitcode';
+import { bashBugHuntFamily } from './bash/bughunt';
+import { bashRedirectFamily } from './bash/redirection';
+import { bashCondFamily } from './bash/conditional';
+
 export const allFamilies: DrillTemplateFamily[] = [
   // JS
   jsClosureFamily,
@@ -53,5 +82,33 @@ export const allFamilies: DrillTemplateFamily[] = [
   rsPatternFamily,
   rsBugHuntFamily,
   rsTraitFamily,
-  rsIteratorFamily
+  rsIteratorFamily,
+
+  // TypeScript
+  tsNarrowingFamily,
+  tsGenericFamily,
+  tsMappedFamily,
+  tsBugHuntFamily,
+  tsAssertionFamily,
+
+  // Swift
+  swiftOptionalFamily,
+  swiftSyntaxFamily,
+  swiftBugHuntFamily,
+  swiftProtocolFamily,
+  swiftEnumFamily,
+
+  // SQL
+  sqlJoinFamily,
+  sqlAggregateFamily,
+  sqlBugHuntFamily,
+  sqlRewriteFamily,
+  sqlWindowFamily,
+
+  // Bash
+  bashQuotingFamily,
+  bashExitFamily,
+  bashBugHuntFamily,
+  bashRedirectFamily,
+  bashCondFamily
 ];
