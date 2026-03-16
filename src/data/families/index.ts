@@ -1,5 +1,8 @@
+'use client';
 
 import { DrillTemplateFamily } from '@/types/drills';
+
+// JavaScript
 import { jsClosureFamily } from './javascript/closure';
 import { jsCoercionFamily } from './javascript/coercion';
 import { jsArrowFamily } from './javascript/arrow';
@@ -10,7 +13,7 @@ import { jsBuildFamily } from './javascript/build';
 // Python
 import { pyComprehensionFamily } from './python/comprehension';
 import { pyDefaultsFamily } from './python/defaults';
-import { pyBugHuntFamily } from './python/bughunt';
+import { pyBugHuntFamily, pyLogicBugFamily } from './python/bughunt';
 import { pyDictFamily } from './python/dictionary';
 import { pyContextFamily } from './python/context';
 import { pyBuildFamily } from './python/build';
@@ -21,6 +24,7 @@ import { goChannelFamily } from './go/channel';
 import { goBugHuntFamily } from './go/bughunt';
 import { goPointerFamily } from './go/pointer';
 import { goInterfaceFamily } from './go/interface';
+import { goBuildStructFamily } from './go/build';
 
 // Rust
 import { rsOwnershipFamily } from './rust/ownership';
@@ -66,10 +70,10 @@ export const allFamilies: DrillTemplateFamily[] = [
   jsClosureFamily, jsCoercionFamily, jsArrowFamily, jsArrayFamily, jsBugHuntFamily, jsBuildFamily,
   
   // Python
-  pyComprehensionFamily, pyDefaultsFamily, pyBugHuntFamily, pyDictFamily, pyContextFamily, pyBuildFamily,
+  pyComprehensionFamily, pyDefaultsFamily, pyBugHuntFamily, pyLogicBugFamily, pyDictFamily, pyContextFamily, pyBuildFamily,
 
   // Go
-  goMapFamily, goChannelFamily, goBugHuntFamily, goPointerFamily, goInterfaceFamily,
+  goMapFamily, goChannelFamily, goBugHuntFamily, goPointerFamily, goInterfaceFamily, goBuildStructFamily,
 
   // Rust
   rsOwnershipFamily, rsPatternFamily, rsBugHuntFamily, rsTraitFamily, rsIteratorFamily, rsBuildFamily,

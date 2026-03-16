@@ -22,7 +22,7 @@ export function addHistory(entry: DrillHistoryEntry): void {
   } catch {}
 }
 
-export function recentlySeenHashes(windowSize = 60): Set<string> {
+export function recentlySeenHashes(windowSize = 20): Set<string> {
   const history = getHistory().slice(0, windowSize);
   return new Set(history.map(h => h.hash));
 }
@@ -31,7 +31,7 @@ export function recentlySeenConcepts(
   language: Language, 
   lane: Lane, 
   type: DrillType, 
-  windowSize = 20
+  windowSize = 10
 ): Set<string> {
   const history = getHistory()
     .filter(h => h.language === language && h.lane === lane && h.type === type)

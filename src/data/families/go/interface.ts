@@ -9,11 +9,17 @@ export const goInterfaceFamily: DrillTemplateFamily = {
   conceptTags: ['polymorphism', 'types'],
   difficulty: 3,
   slots: [
-    { id: 'NAME', kind: 'identifier', values: ['Sizer', 'Stringer'] },
-    { id: 'METHOD', kind: 'identifier', values: ['Size', 'String'] },
-    { id: 'RET', kind: 'keyword', values: ['int', 'string'] }
+    { id: 'NAME', kind: 'identifier', values: ['Sizer', 'Stringer', 'Closer', 'Reader', 'Writer'] },
+    { id: 'METHOD', kind: 'identifier', values: ['Size', 'String', 'Close', 'Read', 'Write'] },
+    { id: 'RET', kind: 'keyword', values: ['int', 'string', 'error', '[]byte'] }
   ],
-  validate: () => ({ ok: true, reasons: [] }),
+  validate: (ctx) => {
+    // Basic logic mapping for sensible interfaces
+    if (ctx.values.METHOD === 'Size' && ctx.values.RET !== 'int') return { ok: false, reasons: [] };
+    if (ctx.values.METHOD === 'String' && ctx.values.RET !== 'string') return { ok: false, reasons: [] };
+    if (ctx.values.METHOD === 'Close' && ctx.values.RET !== 'error') return { ok: false, reasons: [] };
+    return { ok: true, reasons: [] };
+  },
   generatePrompt: (ctx) => `Define an interface '${ctx.values.NAME}' with a method '${ctx.values.METHOD}' returning '${ctx.values.RET}'.`,
   generateCode: () => `type _____ interface {\n    _____\n}`,
   generateAnswer: (ctx) => ({
