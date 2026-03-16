@@ -12,7 +12,7 @@
       "pool": ["count = 0", "count = 1", "count = None"]
     }
   },
-  "answer_derivation": "The logic requires initializing the counter to zero.",
+  "answer_derivation": "SLOT_START == 'count = 0'",
   "variation_minimum": 15,
   "max_prompt_words": 40,
   "max_feedback_words": 20,

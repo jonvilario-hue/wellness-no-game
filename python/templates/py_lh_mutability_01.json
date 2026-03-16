@@ -2,14 +2,16 @@
 {
   "template_id": "py_lh_mutability_01",
   "source_repo": "lydiahallie/javascript-questions",
-  "drill_type": "bug_hunt",
+  "drill_type": "output_prediction",
   "concept_tags": ["mutability", "function_signatures"],
   "difficulty": "advanced",
-  "prompt_template": "def add_to_list(val, items={{DEFAULT}}):\n    items.append(val)\n    return items\n\nlist1 = add_to_list(1)\nlist2 = add_to_list(2)\nprint(list2)",
+  "prompt_template": "def add_to_list(val, items={{DEFAULT}}):\n    items.append(val)\n    return items\n\nlist1 = add_to_list({{V1}})\nlist2 = add_to_list({{V2}})\nprint(list2)",
   "slot_definitions": {
-    "DEFAULT": { "type": "data_structure", "pool": ["[]", "None"] }
+    "DEFAULT": { "type": "data_structure", "pool": ["[]"] },
+    "V1": { "type": "int_range", "pool": {"min": 1, "max": 10} },
+    "V2": { "type": "int_range", "pool": {"min": 11, "max": 20} }
   },
-  "answer_derivation": "[1, 2] if DEFAULT == [] else [2]",
+  "answer_derivation": "[V1, V2]",
   "variation_minimum": 15,
   "max_prompt_words": 50,
   "max_feedback_words": 30,
