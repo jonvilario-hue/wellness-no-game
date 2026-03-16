@@ -47,7 +47,7 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
   const { toast } = useToast();
 
   const referenceImage = useMemo(() => {
-    if (drill.referenceCategory === 'None') return null;
+    if (!drill.referenceCategory || drill.referenceCategory === 'None') return null;
     const cat = drill.referenceCategory.toLowerCase().replace(' ', '_') as keyof typeof placeholderData.drawing_references;
     const pool = (placeholderData.drawing_references as any)[cat] || placeholderData.drawing_references.abstract;
     return pool[Math.floor(Math.random() * pool.length)];
@@ -173,13 +173,15 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
               <motion.div key="active" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col md:flex-row min-h-0">
                 <div className="flex-1 relative bg-black flex items-center justify-center p-4">
                   {referenceImage ? (
-                    <Image 
-                      src={referenceImage.url} 
-                      alt="Reference" 
-                      fill 
-                      className="object-contain" 
-                      data-ai-hint={referenceImage.hint}
-                    />
+                    <div className="relative w-full h-full">
+                      <Image 
+                        src={referenceImage.url} 
+                        alt="Reference" 
+                        fill 
+                        className="object-contain" 
+                        data-ai-hint={referenceImage.hint}
+                      />
+                    </div>
                   ) : (
                     <div className="text-white opacity-20 flex flex-col items-center gap-4">
                        <Pencil className="w-20 h-20" />
@@ -188,7 +190,7 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                   )}
                   <div className="absolute bottom-4 left-4">
                     <Badge className="bg-black/60 backdrop-blur-md text-white border-none uppercase text-[8px] font-black tracking-widest px-3">
-                      Reference: {drill.referenceCategory}
+                      Reference: {drill.referenceCategory || 'None'}
                     </Badge>
                   </div>
                 </div>

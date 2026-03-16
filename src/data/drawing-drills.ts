@@ -1,3 +1,4 @@
+
 import type { DrawingDrill } from '@/types/drawing';
 
 export const drawingDrills: DrawingDrill[] = [
@@ -323,7 +324,10 @@ export const drawingDrills: DrawingDrill[] = [
     dbGroup: 'Lines',
     isWarmup: true,
     description: 'Draw over the same line repeatedly to build arm confidence.',
-    brief: ['Ghost the movement 3 times.', 'Draw a single confident stroke.', 'Repeat on top 8 times.']
+    brief: ['Ghost the movement 3 times.', 'Draw a single confident stroke.', 'Repeat on top 8 times.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 480
   },
   {
     id: 'db-ghosted-lines',
@@ -336,7 +340,10 @@ export const drawingDrills: DrawingDrill[] = [
     dbGroup: 'Lines',
     isWarmup: true,
     description: 'Ghost the motion before committing to each line.',
-    brief: ['Plot two dots.', 'Ghost the line between them.', 'Commit in one stroke.']
+    brief: ['Plot two dots.', 'Ghost the line between them.', 'Commit in one stroke.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   {
     id: 'db-ghosted-planes',
@@ -349,7 +356,10 @@ export const drawingDrills: DrawingDrill[] = [
     dbGroup: 'Lines',
     isWarmup: true,
     description: 'Connect ghosted lines into flat quadrilaterals.',
-    brief: ['Plot four points.', 'Connect using ghosted lines.', 'Check for straightness.']
+    brief: ['Plot four points.', 'Connect using ghosted lines.', 'Check for straightness.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   // ELLIPSES
   {
@@ -363,7 +373,10 @@ export const drawingDrills: DrawingDrill[] = [
     dbGroup: 'Ellipses',
     isWarmup: true,
     description: 'Fill framed rows with ellipses drawn from the shoulder.',
-    brief: ['Draw a box frame.', 'Fill with tightly packed ellipses.', 'Draw through each twice.']
+    brief: ['Draw a box frame.', 'Fill with tightly packed ellipses.', 'Draw through each twice.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   {
     id: 'db-ellipses-planes',
@@ -376,7 +389,10 @@ export const drawingDrills: DrawingDrill[] = [
     dbGroup: 'Ellipses',
     isWarmup: true,
     description: 'Fit ellipses inside ghosted planes.',
-    brief: ['Draw a ghosted plane.', 'Fit an ellipse inside, touching all sides.', 'Draw through twice.']
+    brief: ['Draw a ghosted plane.', 'Fit an ellipse inside, touching all sides.', 'Draw through twice.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   {
     id: 'db-funnels',
@@ -389,7 +405,10 @@ export const drawingDrills: DrawingDrill[] = [
     dbGroup: 'Ellipses',
     isWarmup: true,
     description: 'Nest ellipses inside funnels aligned to a minor axis.',
-    brief: ['Draw a funnel shape.', 'Add a central minor axis.', 'Bisect ellipses perfectly.']
+    brief: ['Draw a funnel shape.', 'Add a central minor axis.', 'Bisect ellipses perfectly.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   // BOXES
   {
@@ -402,7 +421,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Foundation',
     dbGroup: 'Boxes',
     description: 'Construct boxes with a ruler and vanishing points.',
-    brief: ['Plot two vanishing points.', 'Use a ruler for all lines.', 'Build perfect boxes.']
+    brief: ['Plot two vanishing points.', 'Use a ruler for all lines.', 'Build perfect boxes.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 720
   },
   {
     id: 'db-rough-persp',
@@ -415,7 +437,10 @@ export const drawingDrills: DrawingDrill[] = [
     dbGroup: 'Boxes',
     isWarmup: true,
     description: 'Freehand boxes converging to a single vanishing point.',
-    brief: ['One VP on the horizon.', 'Freehand boxes.', 'Extend lines to check errors.']
+    brief: ['One VP on the horizon.', 'Freehand boxes.', 'Extend lines to check errors.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 900
   },
   {
     id: 'db-rotated-boxes',
@@ -427,7 +452,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Boxes',
     description: 'Draw a grid of boxes rotating in 3D using neighbor edges.',
-    brief: ['Start with center box.', 'Rotate neighbors slightly.', 'Use adjacent vertices.']
+    brief: ['Start with center box.', 'Rotate neighbors slightly.', 'Use adjacent vertices.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 2700
   },
   {
     id: 'db-organic-persp',
@@ -439,7 +467,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Boxes',
     description: 'Scatter boxes in space to imply depth without VP on page.',
-    brief: ['Vary box size.', 'Overlap for depth.', 'Implied convergence.']
+    brief: ['Vary box size.', 'Overlap for depth.', 'Implied convergence.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 900
   },
   // CONTOUR & FORM
   {
@@ -452,7 +483,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Foundation',
     dbGroup: 'Contour & Form',
     description: 'Wrap ellipses around sausage forms to show volume.',
-    brief: ['Draw a sausage form.', 'Add wrapping ellipses.', 'Mind the degree change.']
+    brief: ['Draw a sausage form.', 'Add wrapping ellipses.', 'Mind the degree change.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   {
     id: 'db-organic-contour-curves',
@@ -464,7 +498,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Foundation',
     dbGroup: 'Contour & Form',
     description: 'Same forms with partial contour curves instead.',
-    brief: ['Draw a sausage form.', 'Add contour hooks.', 'Hook over the edge.']
+    brief: ['Draw a sausage form.', 'Add contour hooks.', 'Hook over the edge.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   {
     id: 'db-form-intersections',
@@ -476,7 +513,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Contour & Form',
     description: 'Draw clustered primitives occupying the same space.',
-    brief: ['Draw 10+ primitives.', 'Show intersections.', 'Maintain consistent scale.']
+    brief: ['Draw 10+ primitives.', 'Show intersections.', 'Maintain consistent scale.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 1500
   },
   {
     id: 'db-organic-intersections',
@@ -488,7 +528,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Contour & Form',
     description: 'Pile sausage forms with gravity and cast shadow.',
-    brief: ['Pile sausages.', 'Show weight.', 'Add cast shadows between forms.']
+    brief: ['Pile sausages.', 'Show weight.', 'Add cast shadows between forms.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 1200
   },
   // TEXTURE
   {
@@ -501,7 +544,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Texture',
     description: 'Observe reference and draw cast shadow shapes only.',
-    brief: ['Observe small area.', 'Find shadow shapes.', 'Don\'t draw lines.']
+    brief: ['Observe small area.', 'Find shadow shapes.', 'Don\'t draw lines.'],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 900
   },
   {
     id: 'db-dissections',
@@ -513,7 +559,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Texture',
     description: 'Apply observed textures to surfaces of organic forms.',
-    brief: ['Draw a sausage.', 'Apply high-detail texture.', 'Warp texture to surface.']
+    brief: ['Draw a sausage.', 'Apply high-detail texture.', 'Warp texture to surface.'],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 1200
   },
   // CONSTRUCTION
   {
@@ -526,7 +575,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Foundation',
     dbGroup: 'Construction',
     description: 'Draw ribboning arrows to practice flow and compression.',
-    brief: ['Flowing lines.', 'Add thickness.', 'Scale for depth.']
+    brief: ['Flowing lines.', 'Add thickness.', 'Scale for depth.'],
+    referenceCategory: 'None',
+    displayMode: 'Static',
+    defaultTimerSeconds: 600
   },
   {
     id: 'db-leaves',
@@ -538,7 +590,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Construction',
     description: 'Construct flat and bending leaf forms from flow lines.',
-    brief: ['Flow line first.', 'Outer edges next.', 'Add detail last.']
+    brief: ['Flow line first.', 'Outer edges next.', 'Add detail last.'],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 900
   },
   {
     id: 'db-branches',
@@ -550,7 +605,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Construction',
     description: 'Build branches using overlapping cylinder segments.',
-    brief: ['Chain cylinders.', 'Overlap joints.', 'Maintain center axis.']
+    brief: ['Chain cylinders.', 'Overlap joints.', 'Maintain center axis.'],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 900
   },
   {
     id: 'db-plants',
@@ -562,7 +620,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Construction',
     description: 'Full plant drawings built from construction with reference.',
-    brief: ['Find a plant.', 'Simplify to forms.', 'Build complexity.']
+    brief: ['Find a plant.', 'Simplify to forms.', 'Build complexity.'],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 1800
   },
   {
     id: 'db-insects',
@@ -574,7 +635,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Developing',
     dbGroup: 'Construction',
     description: 'Build insects from sausage forms at joints. Use reference.',
-    brief: ['Massive forms first.', 'Construct legs.', 'Joint logic.']
+    brief: ['Massive forms first.', 'Construct legs.', 'Joint logic.'],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 1800
   },
   {
     id: 'db-animals',
@@ -586,7 +650,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Advanced',
     dbGroup: 'Construction',
     description: 'Build animals using sausage legs and organic masses.',
-    brief: ['Ribcage & Pelvis.', 'Sausage legs.', 'Head construction.']
+    brief: ['Ribcage & Pelvis.', 'Sausage legs.', 'Head construction.'],
+    referenceCategory: 'Figure',
+    displayMode: 'Static',
+    defaultTimerSeconds: 1800
   },
   {
     id: 'db-objects',
@@ -598,7 +665,10 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Advanced',
     dbGroup: 'Construction',
     description: 'Build everyday objects by subdividing boxes. Use reference.',
-    brief: ['Box scaffolding.', 'Subdivide.', 'Curves from straight lines.']
+    brief: ['Box scaffolding.', 'Subdivide.', 'Curves from straight lines.'],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 1800
   },
   {
     id: 'db-vehicles',
@@ -610,6 +680,9 @@ export const drawingDrills: DrawingDrill[] = [
     difficulty: 'Advanced',
     dbGroup: 'Construction',
     description: 'Construct vehicles from subdivided boxes and grids.',
-    brief: ['Perspective grid.', 'Wheel construction.', 'Compound forms.']
+    brief: ['Perspective grid.', 'Wheel construction.', 'Compound forms.'],
+    referenceCategory: 'Still Life',
+    displayMode: 'Static',
+    defaultTimerSeconds: 2700
   }
 ];
