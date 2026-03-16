@@ -67,6 +67,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       setUserInput('');
       setGradingFeedback(undefined);
     } catch (e) {
+      console.error("Drill generation failure:", e);
       setCurrentDrill(null);
     } finally {
       setIsGenerating(false);
@@ -152,21 +153,14 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     );
   }
 
+  // Fallback for unexpected generation errors
   if (!currentDrill) {
     return (
       <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-        <Card className="max-w-md w-full border-primary/10 shadow-2xl">
-          <CardHeader className="text-center">
-            <XCircle className="w-12 h-12 text-destructive mx-auto mb-2" />
-            <CardTitle>Library Expansion Required</CardTitle>
-            <CardDescription>
-              We're currently populating the {protocolId} modules for {activeLanguage}. Try another category or language!
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button onClick={onClose} className="w-full">Return to Lab</Button>
-          </CardFooter>
-        </Card>
+        <div className="text-center space-y-4">
+          <p className="text-sm font-bold text-muted-foreground">Initializing engine...</p>
+          <Button onClick={fetchDrill}>Retry Generation</Button>
+        </div>
       </div>
     );
   }
