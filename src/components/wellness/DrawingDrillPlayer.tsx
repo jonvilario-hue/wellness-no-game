@@ -99,8 +99,14 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-      <div className="w-full max-w-5xl h-full max-h-[90vh] bg-background border rounded-[2rem] shadow-2xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+    <div 
+      className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 cursor-pointer"
+      onClick={onClose}
+    >
+      <div 
+        className="w-full max-w-5xl h-full max-h-[90vh] bg-background border rounded-[2rem] shadow-2xl flex flex-col overflow-hidden relative cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         <header className="p-6 border-b bg-card shrink-0 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
