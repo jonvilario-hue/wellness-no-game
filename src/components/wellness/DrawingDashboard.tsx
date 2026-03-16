@@ -3,6 +3,7 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useDrawingStore } from '@/hooks/use-drawing-store';
 import { 
   Flame, Clock, Trophy, Target, 
@@ -84,7 +85,7 @@ export function DrawingDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 border-primary/10">
+        <Card className="lg:col-span-2 border-primary/10 overflow-hidden">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
               <Palette className="w-4 h-4 text-primary" /> Skill Wheel
