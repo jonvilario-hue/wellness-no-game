@@ -1,59 +1,23 @@
 
 {
   "language": "rust",
-  "total_seeds": 0,
-  "total_templates": 0,
+  "total_seeds": 165,
+  "total_templates": 142,
   "concept_coverage": {
-    "ownership": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "borrowing": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "lifetimes": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "pattern_matching": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "traits": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "generics": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "smart_pointers": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "error_handling": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "closures": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    },
-    "unsafe": {
-      "template_count": 0,
-      "drill_types": [],
-      "variation_count": 0
-    }
+    "move_semantics": { "template_count": 22, "drill_types": ["bug_hunt", "compiler_error_prediction"], "variation_count": 330 },
+    "references_borrowing": { "template_count": 25, "drill_types": ["bug_hunt", "compiler_error_prediction"], "variation_count": 375 },
+    "lifetimes": { "template_count": 18, "drill_types": ["compiler_error_prediction", "syntax_sprint"], "variation_count": 270 },
+    "generics": { "template_count": 15, "drill_types": ["reconstruction", "syntax_sprint"], "variation_count": 225 },
+    "traits": { "template_count": 14, "drill_types": ["reconstruction", "bug_hunt"], "variation_count": 210 },
+    "pattern_matching": { "template_count": 12, "drill_types": ["syntax_sprint", "output_prediction"], "variation_count": 180 },
+    "error_handling": { "template_count": 16, "drill_types": ["reconstruction", "bug_hunt"], "variation_count": 240 },
+    "vecs": { "template_count": 10, "drill_types": ["syntax_sprint", "output_prediction"], "variation_count": 150 },
+    "smart_pointers": { "template_count": 10, "status": "UNDERCOVERED" }
   },
-  "sources": []
+  "sources": [
+    { "repo": "rust-lang/rustlings", "exercises_ingested": 82, "exercises_rejected": 4 },
+    { "repo": "dtolnay/rust-quiz", "exercises_ingested": 25, "exercises_rejected": 12 },
+    { "repo": "exercism/rust", "exercises_ingested": 35, "exercises_rejected": 15 },
+    { "repo": "sunface/rust-by-practice", "exercises_ingested": 23, "exercises_rejected": 5 }
+  ]
 }

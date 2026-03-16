@@ -1,0 +1,20 @@
+
+{
+  "template_id": "rs_rq_borrow_01",
+  "source_repo": "dtolnay/rust-quiz",
+  "drill_type": "compiler_error_prediction",
+  "concept_tags": ["references_borrowing"],
+  "difficulty": "advanced",
+  "prompt_template": "fn main() {\n    let mut x = {{NUM}};\n    let y = &x;\n    let z = {{REF_TYPE}}x;\n    println!(\"{} {}\", y, z);\n}",
+  "slot_definitions": {
+    "NUM": { "type": "int_range", "pool": { "min": 1, "max": 100 } },
+    "REF_TYPE": { "type": "string_pool", "pool": ["&", "&mut "] }
+  },
+  "compiles": false,
+  "expected_compiler_error_category": "borrow",
+  "answer_derivation": "cannot borrow `x` as mutable because it is also borrowed as immutable",
+  "variation_minimum": 20,
+  "max_prompt_words": 40,
+  "max_feedback_words": 30,
+  "time_limit_seconds": 60
+}

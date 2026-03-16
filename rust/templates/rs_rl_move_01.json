@@ -1,0 +1,20 @@
+
+{
+  "template_id": "rs_rl_move_01",
+  "source_repo": "rust-lang/rustlings",
+  "drill_type": "compiler_error_prediction",
+  "concept_tags": ["move_semantics", "ownership"],
+  "difficulty": "beginner",
+  "prompt_template": "fn main() {\n    let s1 = String::from(\"{{VAL}}\");\n    let s2 = {{ACTION}}(s1);\n    println!(\"{}\", s1);\n}",
+  "slot_definitions": {
+    "VAL": { "type": "string_pool", "pool": ["hello", "rust", "ferris"] },
+    "ACTION": { "type": "string_pool", "pool": ["id", "consume", "take_ownership"] }
+  },
+  "compiles": false,
+  "expected_compiler_error_category": "move",
+  "answer_derivation": "Borrow of moved value: s1",
+  "variation_minimum": 15,
+  "max_prompt_words": 30,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 45
+}

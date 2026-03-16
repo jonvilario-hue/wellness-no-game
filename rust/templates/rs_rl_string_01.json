@@ -1,0 +1,20 @@
+
+{
+  "template_id": "rs_rl_string_01",
+  "source_repo": "rust-lang/rustlings",
+  "drill_type": "bug_hunt",
+  "concept_tags": ["strings", "type_conversions"],
+  "difficulty": "intermediate",
+  "prompt_template": "fn main() {\n    let s: &str = \"{{VAL}}\";\n    take_string({{SLOT_CONV}}(s));\n}\n\nfn take_string(s: String) { }",
+  "slot_definitions": {
+    "VAL": { "type": "string_pool", "pool": ["blue", "red", "green"] },
+    "SLOT_CONV": { "type": "string_pool", "pool": ["String::from", "to_string", "into"] }
+  },
+  "compiles": true,
+  "expected_compiler_error_category": "none",
+  "answer_derivation": ".to_string()",
+  "variation_minimum": 15,
+  "max_prompt_words": 30,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 60
+}

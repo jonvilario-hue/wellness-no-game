@@ -1,0 +1,19 @@
+
+{
+  "template_id": "rs_bp_mut_01",
+  "source_repo": "sunface/rust-by-practice",
+  "drill_type": "syntax_sprint",
+  "concept_tags": ["variables", "mutability"],
+  "difficulty": "beginner",
+  "prompt_template": "fn main() {\n    let {{MUT}} x = 5;\n    x += 1;\n    assert_eq!(x, 6);\n}",
+  "slot_definitions": {
+    "MUT": { "type": "string_pool", "pool": ["mut", "", "ref", "ref mut"] }
+  },
+  "compiles": true,
+  "expected_compiler_error_category": "none",
+  "answer_derivation": "mut",
+  "variation_minimum": 15,
+  "max_prompt_words": 20,
+  "max_feedback_words": 15,
+  "time_limit_seconds": 30
+}

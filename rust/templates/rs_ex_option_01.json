@@ -1,0 +1,18 @@
+
+{
+  "template_id": "rs_ex_option_01",
+  "source_repo": "exercism/rust",
+  "drill_type": "reconstruction",
+  "concept_tags": ["pattern_matching", "options"],
+  "difficulty": "beginner",
+  "prompt_template": "/// Returns the value inside {{VAL}} multiplied by 2, or 0 if it is None.\nfn maybe_double(val: Option<i32>) -> i32 {\n    {{SLOT_MATCH}}\n}",
+  "slot_definitions": {
+    "VAL": { "type": "variable_name", "pool": ["input", "num", "opt"] },
+    "SLOT_MATCH": { "type": "data_structure", "pool": ["match val { ... }", "val.map(|x| x * 2).unwrap_or(0)"] }
+  },
+  "answer_derivation": "val.unwrap_or(0) * 2",
+  "variation_minimum": 15,
+  "max_prompt_words": 40,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 90
+}
