@@ -5,14 +5,14 @@
   "drill_type": "bug_hunt",
   "concept_tags": ["strings", "type_conversions"],
   "difficulty": "intermediate",
-  "prompt_template": "fn main() {\n    let s: &str = \"{{VAL}}\";\n    take_string({{SLOT_CONV}}(s));\n}\n\nfn take_string(s: String) { }",
+  "prompt_template": "fn main() {\n    let s: &str = \"{{VAL}}\";\n    take_string({{CONVERSION}});\n}\n\nfn take_string(s: String) { }",
   "slot_definitions": {
     "VAL": { "type": "string_pool", "pool": ["blue", "red", "green"] },
-    "SLOT_CONV": { "type": "string_pool", "pool": ["String::from", "to_string", "into"] }
+    "CONVERSION": { "type": "string_pool", "pool": ["String::from(s)", "s.to_string()", "s.into()"] }
   },
   "compiles": true,
   "expected_compiler_error_category": "none",
-  "answer_derivation": ".to_string()",
+  "answer_derivation": "s.to_string()",
   "variation_minimum": 15,
   "max_prompt_words": 30,
   "max_feedback_words": 20,
