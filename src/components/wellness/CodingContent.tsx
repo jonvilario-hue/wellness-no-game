@@ -180,7 +180,7 @@ export default function CodingContent() {
         <CodingAnalytics />
       </div>
 
-      <WellnessActivityCalendar categoryFilter="Custom" />
+      <WellnessActivityCalendar categoryFilter="Coding" />
     </div>
   );
 }
