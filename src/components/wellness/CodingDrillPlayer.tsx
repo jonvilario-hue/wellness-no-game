@@ -55,7 +55,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
 
   const fetchDrill = useCallback(async () => {
     // Protocol must be defined to fetch
-    if (!protocolId || gameState === 'summary') return;
+    if (!protocolId) return;
     
     setIsGenerating(true);
     setErrorDetails(null);
@@ -78,11 +78,14 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     } finally {
       setIsGenerating(false);
     }
-  }, [activeLanguage, lane, protocolId, gameState]);
+  }, [activeLanguage, lane, protocolId]);
 
   useEffect(() => {
-    fetchDrill();
-  }, [fetchDrill]);
+    // Only fetch if we have no drill and aren't in a terminal state
+    if (!currentDrill && gameState !== 'summary' && gameState !== 'error' && !isGenerating) {
+      fetchDrill();
+    }
+  }, [fetchDrill, currentDrill, gameState, isGenerating]);
 
   const handleStart = () => {
     if (!currentDrill) return;
@@ -104,7 +107,8 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       cancelLoop();
       startLoop(steps);
     }
-    fetchDrill();
+    setCurrentDrill(null);
+    setGameState('prep');
   };
 
   const handleCompleteRound = () => {
@@ -131,7 +135,9 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
       if (activeLoop.currentStep >= activeLoop.steps.length - 1) {
         setGameState('summary');
       } else {
-        fetchDrill();
+        // Clear drill to trigger the useEffect re-fetch for the next step
+        setCurrentDrill(null);
+        setGameState('prep');
       }
     } else {
       setGameState('summary');
@@ -148,7 +154,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
     return { score, har, avgTime, multiplier };
   }, [currentDrill, gameState, isCorrect, drillStartTime]);
 
-  if (isGenerating) {
+  if (isGenerating && !currentDrill) {
     return (
       <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
         <Button 
@@ -208,11 +214,8 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
           <X className="w-5 h-5" />
         </Button>
         <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
           <p className="text-sm font-bold text-muted-foreground">Initializing engine...</p>
-          <div className="flex gap-2">
-            <Button onClick={fetchDrill}>Retry Generation</Button>
-            <Button variant="outline" onClick={activeLoop.active ? cancelLoop : onClose}>Exit Lab</Button>
-          </div>
         </div>
       </div>
     );
