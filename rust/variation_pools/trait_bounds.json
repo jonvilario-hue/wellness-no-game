@@ -1,0 +1,12 @@
+
+[
+  "Display",
+  "Debug",
+  "Clone",
+  "Copy",
+  "PartialEq",
+  "PartialOrd",
+  "Default",
+  "Send",
+  "Sync"
+]

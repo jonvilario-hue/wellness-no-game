@@ -1,0 +1,59 @@
+
+{
+  "language": "rust",
+  "total_seeds": 0,
+  "total_templates": 0,
+  "concept_coverage": {
+    "ownership": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "borrowing": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "lifetimes": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "pattern_matching": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "traits": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "generics": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "smart_pointers": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "error_handling": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "closures": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    },
+    "unsafe": {
+      "template_count": 0,
+      "drill_types": [],
+      "variation_count": 0
+    }
+  },
+  "sources": []
+}

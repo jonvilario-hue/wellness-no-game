@@ -1,0 +1,15 @@
+
+[
+  "i32",
+  "u32",
+  "f64",
+  "bool",
+  "String",
+  "&str",
+  "&String",
+  "Vec<i32>",
+  "Option<i32>",
+  "Result<i32, &str>",
+  "Box<i32>",
+  "&mut i32"
+]

@@ -1,0 +1,10 @@
+
+[
+  "move",
+  "borrow",
+  "mutable_borrow",
+  "clone",
+  "copy",
+  "rebind",
+  "shadowing"
+]
