@@ -26,11 +26,20 @@ interface DrawaboxSectionProps {
   onStartDrill: (drill: DrawingDrill) => void;
 }
 
-const PerspectiveBoxIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-    <path d="M2 7v10M12 12v10M22 7v10" />
-  </svg>
+const DrawaboxBrandIcon = ({ className }: { className?: string }) => (
+  <div className={cn("w-16 h-16 bg-zinc-950 rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-2xl", className)}>
+    <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10 text-amber-500" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      {/* Visible Front Edges */}
+      <path d="M12 12L2 7.5L12 3L22 7.5L12 12Z" fill="currentColor" fillOpacity="0.05" />
+      <path d="M12 12L2 7.5L12 3L22 7.5L12 12Z" />
+      <path d="M2 7.5V17.5L12 22V12L2 7.5Z" />
+      <path d="M22 7.5V17.5L12 22V12L22 7.5Z" />
+      
+      {/* Draw-through Rear Edges */}
+      <path d="M2 7.5L7 9.5M22 7.5L17 9.5M12 3L12 10" strokeOpacity="0.3" strokeDasharray="1 1" />
+      <path d="M7 9.5V19.5M17 9.5V19.5M12 22L7 19.5M12 22L17 19.5" strokeOpacity="0.3" strokeDasharray="1 1" />
+    </svg>
+  </div>
 );
 
 export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
@@ -41,39 +50,43 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
   const handleWarmup = () => {
     const warmupPool = drawingDrills.filter(d => d.isWarmup && (d.dbGroup === 'Lines' || d.dbGroup === 'Ellipses'));
     const selected = [...warmupPool].sort(() => 0.5 - Math.random()).slice(0, 3);
-    // Queue logic omitted for MVP - starts the first randomly selected
     if (selected.length > 0) onStartDrill(selected[0]);
   };
 
   return (
     <Card className="border-primary/10 shadow-xl overflow-hidden bg-background">
-      <CardHeader className="bg-primary/5 p-6">
-        <div className="flex flex-row items-center justify-between w-full">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary/10 rounded-2xl text-primary">
-              <PerspectiveBoxIcon className="w-8 h-8" />
+      <CardHeader className="bg-primary/5 p-8 pb-10 relative">
+        {/* MVD Toggle absolute top right */}
+        <div className="absolute top-6 right-6 z-10">
+          <AssistantTooltip text="Minimal Viable Day — Drawabox only. Hides supplemental modules.">
+            <div className="flex items-center gap-2 px-4 py-2 bg-background rounded-full border border-primary/10">
+              <Label htmlFor="mvd-toggle" className="text-[10px] font-black uppercase tracking-widest cursor-pointer">MVD</Label>
+              <Switch id="mvd-toggle" checked={mvdMode} onCheckedChange={toggleMvd} />
             </div>
-            <div>
-              <CardTitle className="text-3xl font-black uppercase tracking-tighter">Drawabox</CardTitle>
-              <CardDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-1">Fundamentals you never stop practicing.</CardDescription>
-            </div>
+          </AssistantTooltip>
+        </div>
+
+        {/* Centered Brand Stack */}
+        <div className="flex flex-col items-center text-center space-y-6 w-full max-w-2xl mx-auto">
+          <DrawaboxBrandIcon />
+          
+          <div className="space-y-1.5">
+            <CardTitle className="text-4xl font-black uppercase tracking-tighter">Drawabox</CardTitle>
+            <CardDescription className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              Fundamentals you never stop practicing.
+            </CardDescription>
           </div>
-          <div className="flex items-center gap-3 px-4 py-2 bg-background rounded-full border border-primary/10">
-            <AssistantTooltip text="Minimal Viable Day — Drawabox only. Hides supplemental modules.">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="mvd-toggle" className="text-[10px] font-black uppercase tracking-widest cursor-pointer">MVD</Label>
-                <Switch id="mvd-toggle" checked={mvdMode} onCheckedChange={toggleMvd} />
-              </div>
-            </AssistantTooltip>
-          </div>
+
+          <Button 
+            onClick={handleWarmup} 
+            className="w-full h-14 text-lg font-black uppercase shadow-lg shadow-primary/20 gap-3 rounded-2xl"
+          >
+            <RotateCcw className="w-5 h-5" /> Start Warm-Up
+          </Button>
         </div>
       </CardHeader>
 
       <CardContent className="p-6 space-y-8">
-        <Button onClick={handleWarmup} className="w-full h-14 text-lg font-black uppercase shadow-lg shadow-primary/20 gap-3">
-          <RotateCcw className="w-5 h-5" /> Start Warm-Up
-        </Button>
-
         <Accordion type="multiple" defaultValue={DRAWABOX_GROUPS} className="space-y-4">
           {DRAWABOX_GROUPS.map(group => {
             const drills = drawingDrills.filter(d => d.dbGroup === group);
