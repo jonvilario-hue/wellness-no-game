@@ -1,0 +1,24 @@
+{
+  "template_id": "sql_pg_select_01",
+  "source_repo": "AlisdairO/pgexercises",
+  "drill_type": "reconstruction",
+  "concept_tags": ["select", "where"],
+  "difficulty": "beginner",
+  "schema_id": "facilities",
+  "query_type": "SELECT",
+  "prompt_template": "Retrieve the {{COL1}} and {{COL2}} of all {{TABLE}} where the {{COL3}} is {{OP}} {{VAL}}.",
+  "slot_definitions": {
+    "TABLE": { "type": "string_pool", "pool": ["cd.facilities"] },
+    "COL1": { "type": "string_pool", "pool": ["name"] },
+    "COL2": { "type": "string_pool", "pool": ["membercost"] },
+    "COL3": { "type": "string_pool", "pool": ["membercost"] },
+    "OP": { "type": "operator", "pool": [">", "<", "!="] },
+    "VAL": { "type": "int_range", "pool": { "min": 0, "max": 50 } }
+  },
+  "answer_derivation": "SELECT {{COL1}}, {{COL2}} FROM {{TABLE}} WHERE {{COL3}} {{OP}} {{VAL}}",
+  "expected_result_shape": { "rows": "variable", "columns": ["name", "membercost"] },
+  "variation_minimum": 15,
+  "max_prompt_words": 30,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 60
+}

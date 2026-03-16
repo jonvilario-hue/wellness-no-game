@@ -1,0 +1,17 @@
+{
+  "template_id": "sql_bh_groupby_01",
+  "source_repo": "AlisdairO/pgexercises",
+  "drill_type": "bug_hunt",
+  "concept_tags": ["aggregation", "group_by"],
+  "difficulty": "intermediate",
+  "schema_id": "facilities",
+  "query_type": "SELECT",
+  "prompt_template": "Find the total slots booked per facility. \n\nQuery: \nSELECT facid, SUM(slots) FROM cd.bookings;",
+  "slot_definitions": {},
+  "answer_derivation": "SELECT facid, SUM(slots) FROM cd.bookings GROUP BY facid",
+  "expected_result_shape": { "rows": "variable", "columns": ["facid", "sum"] },
+  "variation_minimum": 1,
+  "max_prompt_words": 40,
+  "max_feedback_words": 30,
+  "time_limit_seconds": 90
+}

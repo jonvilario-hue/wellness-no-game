@@ -1,0 +1,20 @@
+{
+  "template_id": "sql_pg_join_01",
+  "source_repo": "AlisdairO/pgexercises",
+  "drill_type": "reconstruction",
+  "concept_tags": ["joins_inner", "where"],
+  "difficulty": "intermediate",
+  "schema_id": "facilities",
+  "query_type": "SELECT",
+  "prompt_template": "Get the start times for bookings by members named '{{VAL1}}' '{{VAL2}}'.",
+  "slot_definitions": {
+    "VAL1": { "type": "string_pool", "pool": ["David", "Tim", "Janice"] },
+    "VAL2": { "type": "string_pool", "pool": ["Farrell", "Rownam", "Joplette"] }
+  },
+  "answer_derivation": "SELECT bks.starttime FROM cd.bookings bks JOIN cd.members mems ON mems.memid = bks.memid WHERE mems.firstname='{{VAL1}}' AND mems.surname='{{VAL2}}'",
+  "expected_result_shape": { "rows": "variable", "columns": ["starttime"] },
+  "variation_minimum": 10,
+  "max_prompt_words": 40,
+  "max_feedback_words": 30,
+  "time_limit_seconds": 120
+}

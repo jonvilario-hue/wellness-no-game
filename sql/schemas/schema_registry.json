@@ -1,3 +1,19 @@
 {
-  "schemas": {}
+  "schemas": {
+    "facilities": {
+      "ddl_file": "facilities.sql",
+      "description": "Club facilities, members, and bookings system.",
+      "tables": ["cd.members", "cd.facilities", "cd.bookings"]
+    },
+    "ecommerce": {
+      "ddl_file": "ecommerce.sql",
+      "description": "Store customers, products, and order flow.",
+      "tables": ["customers", "products", "orders", "order_items"]
+    },
+    "hr": {
+      "ddl_file": "hr.sql",
+      "description": "Corporate hierarchy, departments, and project tracking.",
+      "tables": ["employees", "departments", "projects", "employee_projects"]
+    }
+  }
 }

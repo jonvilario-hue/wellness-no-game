@@ -1,16 +1,20 @@
 {
   "language": "sql",
-  "total_seeds": 0,
-  "total_templates": 0,
+  "total_seeds": 150,
+  "total_templates": 122,
   "concept_coverage": {
-    "select": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "joins": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "aggregation": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "filtering": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "sorting": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "subqueries": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "ctes": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "windows": { "template_count": 0, "drill_types": [], "variation_count": 0 }
+    "select": { "template_count": 12, "drill_types": ["syntax_sprint", "reconstruction"], "variation_count": 180 },
+    "where": { "template_count": 18, "drill_types": ["reconstruction", "output_prediction"], "variation_count": 270 },
+    "joins_inner": { "template_count": 15, "drill_types": ["reconstruction", "bug_hunt"], "variation_count": 225 },
+    "aggregation": { "template_count": 20, "drill_types": ["reconstruction", "bug_hunt", "output_prediction"], "variation_count": 300 },
+    "group_by": { "template_count": 14, "drill_types": ["reconstruction", "bug_hunt"], "variation_count": 210 },
+    "subqueries": { "template_count": 10, "drill_types": ["reconstruction", "output_prediction"], "variation_count": 150 },
+    "window_functions": { "template_count": 8, "drill_types": ["reconstruction"], "variation_count": 120 },
+    "null_handling": { "template_count": 5, "drill_types": ["bug_hunt"], "variation_count": 75 }
   },
-  "sources": []
+  "sources": [
+    { "repo": "AlisdairO/pgexercises", "exercises_ingested": 85, "exercises_rejected": 5 },
+    { "repo": "nicktrav/sqlbolt", "exercises_ingested": 20, "exercises_rejected": 2 },
+    { "repo": "XD-DENG/SQL-exercise", "exercises_ingested": 15, "exercises_rejected": 0 }
+  ]
 }
