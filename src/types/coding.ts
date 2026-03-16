@@ -1,6 +1,6 @@
 
 export type CodingLanguage = 'Python' | 'JavaScript' | 'TypeScript' | 'Java' | 'C++' | 'Rust' | 'SQL' | 'Bash' | 'Swift' | 'Go';
-export type CodingDrillType = 'Syntax Sprints' | 'Output Prediction' | 'Bug Hunt' | 'Code Reconstruction' | 'Timed Implementation';
+export type CodingDrillType = 'Syntax Sprints' | 'Output Prediction' | 'Bug Hunt' | 'Code Reconstruction' | 'Timed Implementation' | 'oneliner_challenge';
 export type CodingLane = 'Write' | 'Read' | 'Build';
 export type BugCategory = 'Syntax' | 'Logic' | 'Off-by-One' | 'Scope' | 'Type' | 'Missing Return' | 'Concurrency' | 'Memory' | 'Ownership' | 'Database' | 'Borrow Checker';
 export type CodingTrack = 'Foundation' | 'Specialist';

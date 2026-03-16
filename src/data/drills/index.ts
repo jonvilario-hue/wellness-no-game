@@ -1,6 +1,6 @@
 /**
  * @fileOverview Master Coding Drill Registry.
- * Python, JavaScript, and TypeScript drills have been cleared for a destructive rebuild.
+ * Python, JavaScript, TypeScript, and Bash drills have been cleared for a destructive rebuild.
  * Other languages remain in active rotation.
  */
 
@@ -18,7 +18,7 @@ import type { CodingDrill } from '@/types/coding';
 export const codingDrills: CodingDrill[] = [
   ...pythonDrills,
   ...javascriptDrills,
-  ...typescriptDrills, // Currently empty following the migration teardown
+  ...typescriptDrills,
   ...sqlDrills,
   ...rustDrills,
   ...bashDrills,

@@ -1,0 +1,13 @@
+[
+  "grep",
+  "awk",
+  "sed",
+  "sort",
+  "uniq",
+  "cut",
+  "tr",
+  "wc",
+  "head",
+  "tail",
+  "xargs"
+]
