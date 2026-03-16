@@ -284,7 +284,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                   <CardHeader className="text-center bg-primary/5 py-6">
                     <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-2 text-primary"><Sparkles className="w-8 h-8" /></div>
                     <CardTitle className="text-xl font-black uppercase">Session Synopsis</CardTitle>
-                    <CardDescription>Fluency metrics synchronized locally.</CardDescription>
+                    <CardDescription>Fluency metrics synchronized successfully.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
                     <div className="grid grid-cols-2 gap-3">
@@ -299,7 +299,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
                     </div>
                     <div className="space-y-3 pt-4 border-t">
                       <Label className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Rate Focus Intensity (1-5)</Label>
-                      <Slider value={[focusLevel]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
+                      <Slider value={[focusRating]} onValueChange={([v]) => setFocusRating(v)} min={1} max={5} step={1} />
                     </div>
                   </CardContent>
                   <CardFooter className="bg-muted/10 p-6">
