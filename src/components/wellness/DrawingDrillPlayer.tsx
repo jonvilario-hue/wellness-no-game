@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -105,6 +104,7 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
         <header className="p-6 border-b bg-card shrink-0 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
+            <Button variant="ghost" size="icon" onClick={handleRestart} className="rounded-full text-muted-foreground hover:text-primary"><RotateCcw className="w-4 h-4" /></Button>
             <div>
               <h1 className="text-lg font-bold uppercase tracking-tight">{drill.name}</h1>
               <p className="text-[10px] text-muted-foreground font-bold uppercase">{drill.discipline}</p>
@@ -190,14 +190,17 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                       />
                     </div>
                   ) : (
-                    <div className="text-white opacity-20 flex flex-col items-center gap-4">
+                    <div className="text-white opacity-20 flex flex-col items-center gap-4 text-center">
                        <Pencil className="w-20 h-20" />
-                       <p className="text-xl font-black uppercase tracking-widest">Construction Mode</p>
+                       <div className="space-y-1">
+                         <p className="text-xl font-black uppercase tracking-widest">No Reference Required</p>
+                         <p className="text-xs font-bold uppercase tracking-tight">Follow the protocol steps on the right</p>
+                       </div>
                     </div>
                   )}
                   <div className="absolute bottom-4 left-4">
                     <Badge className="bg-black/60 backdrop-blur-md text-white border-none uppercase text-[8px] font-black tracking-widest px-3">
-                      Reference: {drill.referenceCategory || 'None'}
+                      Reference: {drill.referenceCategory === 'None' ? 'Not Required' : (drill.referenceCategory || 'None')}
                     </Badge>
                   </div>
                 </div>
@@ -272,4 +275,8 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
       </div>
     </div>
   );
+}
+
+function handleRestart() {
+  window.location.reload();
 }
