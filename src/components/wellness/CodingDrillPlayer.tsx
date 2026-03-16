@@ -177,8 +177,14 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl h-full max-h-[85vh] bg-background border rounded-[2rem] shadow-2xl flex flex-col overflow-hidden">
+    <div 
+      className="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 cursor-pointer"
+      onClick={onClose}
+    >
+      <div 
+        className="w-full max-w-4xl h-full max-h-[85vh] bg-background border rounded-[2rem] shadow-2xl flex flex-col overflow-hidden cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         <header className="p-6 border-b bg-card shrink-0 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={activeLoop.active ? cancelLoop : onClose} className="rounded-full"><X className="w-5 h-5" /></Button>
@@ -288,7 +294,7 @@ export function CodingDrillPlayer({ protocolId, onClose }: Props) {
               </motion.div>
             )}
 
-            {gameState === 'summary' && summaryData && (
+            {gameState === 'summary' && (
               <motion.div key="summary" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
                 <Card className="border-primary/10 shadow-xl overflow-hidden">
                   <CardHeader className="text-center bg-primary/5 py-6">
