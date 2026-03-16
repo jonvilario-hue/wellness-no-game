@@ -1,7 +1,7 @@
 import type { DrawingDrill } from '@/types/drawing';
 
 export const drawingDrills: DrawingDrill[] = [
-  // --- Group 1: Seeing & Motion ---
+  // --- Supplemental Group 1: Seeing & Motion ---
   {
     id: 'gesture-30s',
     name: '30s Gesture',
@@ -41,7 +41,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 120
   },
   {
-    id: 'line-ghosting',
+    id: 'line-ghosting-supp',
     name: 'Ghosting Lines',
     discipline: 'Line Control',
     originTag: 'Line Control',
@@ -59,7 +59,7 @@ export const drawingDrills: DrawingDrill[] = [
     displayMode: 'Static'
   },
   {
-    id: 'line-ellipses',
+    id: 'line-ellipses-supp',
     name: 'Funnelling Ellipses',
     discipline: 'Line Control',
     originTag: 'Line Control',
@@ -116,7 +116,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 600
   },
 
-  // --- Group 2: Construction & Space ---
+  // --- Supplemental Group 2: Construction & Space ---
   {
     id: 'prop-sight-sizing',
     name: 'Sight-Sizing Basics',
@@ -194,7 +194,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 900
   },
   {
-    id: 'form-draw-through',
+    id: 'form-draw-through-supp',
     name: 'Draw-Through Boxes',
     discipline: 'Form',
     originTag: 'Form',
@@ -213,7 +213,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 600
   },
   {
-    id: 'form-cylinder',
+    id: 'form-cylinder-supp',
     name: 'Cylinder Construction',
     discipline: 'Form',
     originTag: 'Form',
@@ -232,7 +232,7 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 720
   },
 
-  // --- Group 3: Rendering & Design ---
+  // --- Supplemental Group 3: Rendering & Design ---
   {
     id: 'value-mapping',
     name: 'Shadow Mapping',
@@ -308,5 +308,308 @@ export const drawingDrills: DrawingDrill[] = [
     referenceCategory: 'Environment',
     displayMode: 'Static',
     defaultTimerSeconds: 600
+  },
+
+  // --- DRAWABOX PROTOCOLS ---
+  // LINES
+  {
+    id: 'db-superimposed-lines',
+    name: 'Superimposed Lines',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Lines',
+    isWarmup: true,
+    description: 'Draw over the same line repeatedly to build arm confidence.',
+    brief: ['Ghost the movement 3 times.', 'Draw a single confident stroke.', 'Repeat on top 8 times.']
+  },
+  {
+    id: 'db-ghosted-lines',
+    name: 'Ghosted Lines',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Lines',
+    isWarmup: true,
+    description: 'Ghost the motion before committing to each line.',
+    brief: ['Plot two dots.', 'Ghost the line between them.', 'Commit in one stroke.']
+  },
+  {
+    id: 'db-ghosted-planes',
+    name: 'Ghosted Planes',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Lines',
+    isWarmup: true,
+    description: 'Connect ghosted lines into flat quadrilaterals.',
+    brief: ['Plot four points.', 'Connect using ghosted lines.', 'Check for straightness.']
+  },
+  // ELLIPSES
+  {
+    id: 'db-tables-ellipses',
+    name: 'Tables of Ellipses',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Ellipses',
+    isWarmup: true,
+    description: 'Fill framed rows with ellipses drawn from the shoulder.',
+    brief: ['Draw a box frame.', 'Fill with tightly packed ellipses.', 'Draw through each twice.']
+  },
+  {
+    id: 'db-ellipses-planes',
+    name: 'Ellipses in Planes',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Ellipses',
+    isWarmup: true,
+    description: 'Fit ellipses inside ghosted planes.',
+    brief: ['Draw a ghosted plane.', 'Fit an ellipse inside, touching all sides.', 'Draw through twice.']
+  },
+  {
+    id: 'db-funnels',
+    name: 'Funnels',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Warm-Up',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Ellipses',
+    isWarmup: true,
+    description: 'Nest ellipses inside funnels aligned to a minor axis.',
+    brief: ['Draw a funnel shape.', 'Add a central minor axis.', 'Bisect ellipses perfectly.']
+  },
+  // BOXES
+  {
+    id: 'db-plotted-persp',
+    name: 'Plotted Perspective',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Boxes',
+    description: 'Construct boxes with a ruler and vanishing points.',
+    brief: ['Plot two vanishing points.', 'Use a ruler for all lines.', 'Build perfect boxes.']
+  },
+  {
+    id: 'db-rough-persp',
+    name: 'Rough Perspective',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Session Drill',
+    inputTag: 'Static',
+    difficulty: 'Developing',
+    dbGroup: 'Boxes',
+    isWarmup: true,
+    description: 'Freehand boxes converging to a single vanishing point.',
+    brief: ['One VP on the horizon.', 'Freehand boxes.', 'Extend lines to check errors.']
+  },
+  {
+    id: 'db-rotated-boxes',
+    name: 'Rotated Boxes',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Developing',
+    dbGroup: 'Boxes',
+    description: 'Draw a grid of boxes rotating in 3D using neighbor edges.',
+    brief: ['Start with center box.', 'Rotate neighbors slightly.', 'Use adjacent vertices.']
+  },
+  {
+    id: 'db-organic-persp',
+    name: 'Organic Perspective',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Developing',
+    dbGroup: 'Boxes',
+    description: 'Scatter boxes in space to imply depth without VP on page.',
+    brief: ['Vary box size.', 'Overlap for depth.', 'Implied convergence.']
+  },
+  // CONTOUR & FORM
+  {
+    id: 'db-organic-contour-lines',
+    name: 'Organic Forms — Contour Lines',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Contour & Form',
+    description: 'Wrap ellipses around sausage forms to show volume.',
+    brief: ['Draw a sausage form.', 'Add wrapping ellipses.', 'Mind the degree change.']
+  },
+  {
+    id: 'db-organic-contour-curves',
+    name: 'Organic Forms — Contour Curves',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Contour & Form',
+    description: 'Same forms with partial contour curves instead.',
+    brief: ['Draw a sausage form.', 'Add contour hooks.', 'Hook over the edge.']
+  },
+  {
+    id: 'db-form-intersections',
+    name: 'Form Intersections',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Developing',
+    dbGroup: 'Contour & Form',
+    description: 'Draw clustered primitives occupying the same space.',
+    brief: ['Draw 10+ primitives.', 'Show intersections.', 'Maintain consistent scale.']
+  },
+  {
+    id: 'db-organic-intersections',
+    name: 'Organic Intersections',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Developing',
+    dbGroup: 'Contour & Form',
+    description: 'Pile sausage forms with gravity and cast shadow.',
+    brief: ['Pile sausages.', 'Show weight.', 'Add cast shadows between forms.']
+  },
+  // TEXTURE
+  {
+    id: 'db-texture-analysis',
+    name: 'Texture Analysis',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Developing',
+    dbGroup: 'Texture',
+    description: 'Observe reference and draw cast shadow shapes only.',
+    brief: ['Observe small area.', 'Find shadow shapes.', 'Don\'t draw lines.']
+  },
+  {
+    id: 'db-dissections',
+    name: 'Dissections',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Developing',
+    dbGroup: 'Texture',
+    description: 'Apply observed textures to surfaces of organic forms.',
+    brief: ['Draw a sausage.', 'Apply high-detail texture.', 'Warp texture to surface.']
+  },
+  // CONSTRUCTION
+  {
+    id: 'db-arrows',
+    name: 'Arrows in Space',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Static',
+    difficulty: 'Foundation',
+    dbGroup: 'Construction',
+    description: 'Draw ribboning arrows to practice flow and compression.',
+    brief: ['Flowing lines.', 'Add thickness.', 'Scale for depth.']
+  },
+  {
+    id: 'db-leaves',
+    name: 'Leaves',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Developing',
+    dbGroup: 'Construction',
+    description: 'Construct flat and bending leaf forms from flow lines.',
+    brief: ['Flow line first.', 'Outer edges next.', 'Add detail last.']
+  },
+  {
+    id: 'db-branches',
+    name: 'Branches',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Developing',
+    dbGroup: 'Construction',
+    description: 'Build branches using overlapping cylinder segments.',
+    brief: ['Chain cylinders.', 'Overlap joints.', 'Maintain center axis.']
+  },
+  {
+    id: 'db-plants',
+    name: 'Plant Constructions',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Developing',
+    dbGroup: 'Construction',
+    description: 'Full plant drawings built from construction with reference.',
+    brief: ['Find a plant.', 'Simplify to forms.', 'Build complexity.']
+  },
+  {
+    id: 'db-insects',
+    name: 'Insect Constructions',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Developing',
+    dbGroup: 'Construction',
+    description: 'Build insects from sausage forms at joints. Use reference.',
+    brief: ['Massive forms first.', 'Construct legs.', 'Joint logic.']
+  },
+  {
+    id: 'db-animals',
+    name: 'Animal Constructions',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Advanced',
+    dbGroup: 'Construction',
+    description: 'Build animals using sausage legs and organic masses.',
+    brief: ['Ribcage & Pelvis.', 'Sausage legs.', 'Head construction.']
+  },
+  {
+    id: 'db-objects',
+    name: 'Object Constructions',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Advanced',
+    dbGroup: 'Construction',
+    description: 'Build everyday objects by subdividing boxes. Use reference.',
+    brief: ['Box scaffolding.', 'Subdivide.', 'Curves from straight lines.']
+  },
+  {
+    id: 'db-vehicles',
+    name: 'Vehicle Constructions',
+    discipline: 'Drawabox',
+    originTag: 'Drawabox',
+    useCaseTag: 'Study',
+    inputTag: 'Reference Needed',
+    difficulty: 'Advanced',
+    dbGroup: 'Construction',
+    description: 'Construct vehicles from subdivided boxes and grids.',
+    brief: ['Perspective grid.', 'Wheel construction.', 'Compound forms.']
   }
 ];

@@ -9,10 +9,13 @@ export type DrawingDiscipline =
   | 'Value'
   | 'Form'
   | 'Composition'
-  | 'Construction';
+  | 'Construction'
+  | 'Drawabox';
 
 export type DrawingDifficulty = 'Foundation' | 'Developing' | 'Advanced';
 export type DrawingMedium = 'Pencil' | 'Pen' | 'Charcoal' | 'Digital' | 'Other';
+
+export type DrawaboxGroup = 'Lines' | 'Ellipses' | 'Boxes' | 'Contour & Form' | 'Texture' | 'Construction';
 
 export interface DrawingLog {
   id: string;
@@ -42,7 +45,7 @@ export interface DrawingDrill {
   referenceCategory: 'Still Life' | 'Figure' | 'Environment' | 'Abstract' | 'None';
   displayMode: 'Static' | 'Timed Flash' | 'Hidden';
   defaultTimerSeconds?: number;
-  lesson?: number;
+  dbGroup?: DrawaboxGroup;
   isWarmup?: boolean;
 }
 

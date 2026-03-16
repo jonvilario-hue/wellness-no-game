@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -12,8 +11,6 @@ import { WellnessActivityCalendar } from './WellnessActivityCalendar';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { 
   Palette, Play, ChevronRight, Sparkles, 
   Layers, Target, Pencil, Eye, LayoutGrid,
@@ -23,6 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
 import type { DrawingDrill } from '@/types/drawing';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 const groups = [
   { 
@@ -78,11 +76,9 @@ const RecentSessions = ({ logs }: { logs: any[] }) => (
   </div>
 );
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-
 export default function DrawingContent() {
   const { _hasHydrated, logs } = useDrawingStore();
-  const { mvdMode, toggleMvd, completeExercise } = useDrawaboxStore();
+  const { mvdMode } = useDrawaboxStore();
   const [activeDrill, setActiveDrill] = useState<DrawingDrill | null>(null);
 
   if (!_hasHydrated) return null;
@@ -91,44 +87,23 @@ export default function DrawingContent() {
     return (
       <DrawingDrillPlayer 
         drill={activeDrill} 
-        onClose={() => {
-          if (activeDrill.id.startsWith('db-')) {
-            completeExercise(activeDrill.id);
-          }
-          setActiveDrill(null);
-        }} 
+        onClose={() => setActiveDrill(null)} 
       />
     );
   }
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
-      {/* 0. Top Bar: MVD Toggle */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-muted/30 p-4 rounded-3xl border border-primary/5">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg text-primary"><Activity className="w-5 h-5" /></div>
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-tight">Drawing Protocol Control</h3>
-            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Procedural Mode</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 px-4 py-2 bg-background rounded-full border border-primary/10">
-          <Label htmlFor="drawing-mvd" className="text-[10px] font-black uppercase tracking-widest cursor-pointer">Minimal Viable Day</Label>
-          <Switch id="drawing-mvd" checked={mvdMode} onCheckedChange={toggleMvd} />
-        </div>
-      </div>
+      {/* 1. Drawabox Module (Always First) */}
+      <DrawaboxSection onStartDrill={setActiveDrill} />
 
-      {/* 1. Drawabox Section (Pinned to Top) */}
-      <div className="space-y-4">
-        <DrawaboxSection onStartDrill={setActiveDrill} />
-      </div>
-
+      {/* Hide everything else in MVD mode */}
       {!mvdMode && (
         <>
-          {/* 3. Studio Dashboard (Stats) */}
+          {/* 2. Quick Stats Bar */}
           <DrawingDashboard />
 
-          {/* 4. Supplemental Practice */}
+          {/* 3. Supplemental Drills */}
           <div className="space-y-6">
             <div className="space-y-1 px-1">
               <h3 className="text-xl font-black uppercase tracking-tight">Supplemental Practice</h3>
@@ -155,7 +130,11 @@ export default function DrawingContent() {
                           <Card key={drill.id} className="border-primary/5 hover:border-primary/20 transition-all group cursor-pointer flex flex-col" onClick={() => setActiveDrill(drill)}>
                             <CardHeader className="p-4 pb-2">
                               <div className="flex justify-between items-start mb-2">
-                                <Badge variant="outline" className="text-[8px] font-black uppercase h-4 px-2">
+                                <Badge variant="outline" className={cn("text-[8px] font-black uppercase h-4 px-2", 
+                                  drill.difficulty === 'Foundation' ? 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' : 
+                                  drill.difficulty === 'Developing' ? 'text-amber-500 border-amber-500/20 bg-amber-500/5' :
+                                  'text-rose-500 border-rose-500/20 bg-rose-500/5'
+                                )}>
                                   {drill.difficulty}
                                 </Badge>
                                 {drill.defaultTimerSeconds && (
@@ -194,10 +173,10 @@ export default function DrawingContent() {
             </Accordion>
           </div>
 
-          {/* 5. Recent Sessions */}
+          {/* 4. Recent Sessions */}
           <RecentSessions logs={logs} />
 
-          {/* 6. Drawing Analytics */}
+          {/* 5. Drawing Analytics */}
           <DrawingAnalytics />
 
           <WellnessActivityCalendar categoryFilter="Custom" />
