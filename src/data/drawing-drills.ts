@@ -5,9 +5,9 @@ export const drawingDrills: DrawingDrill[] = [
   // --- Line Control ---
   {
     id: 'line-ghosting',
-    name: 'Ghosting & Mark Making',
+    name: 'Ghosting Lines',
     discipline: 'Line Control',
-    description: 'Build confidence and accuracy in your straight lines.',
+    description: 'Build confidence and accuracy in your straight marks.',
     brief: [
       'Place two dots on your paper about 4-6 inches apart.',
       'Ghost the stroke (move your arm without touching the paper) between the dots 3 times.',
@@ -19,9 +19,9 @@ export const drawingDrills: DrawingDrill[] = [
   },
   {
     id: 'line-ellipses',
-    name: 'Converging Ellipses',
+    name: 'Funnelling Ellipses',
     discipline: 'Line Control',
-    description: 'Control your circles and ellipses in perspective.',
+    description: 'Control circles and ellipses in spatial perspective.',
     brief: [
       'Draw a long horizontal line.',
       'Draw a series of ellipses that fit exactly inside a tapering funnel shape.',
@@ -32,14 +32,14 @@ export const drawingDrills: DrawingDrill[] = [
     displayMode: 'Static'
   },
 
-  // --- Gesture & Movement ---
+  // --- Gesture ---
   {
     id: 'gesture-30s',
-    name: '30-Second Life Gestures',
-    discipline: 'Gesture & Movement',
-    description: 'Capture the "line of action" and essential energy.',
+    name: '30s Gesture',
+    discipline: 'Gesture',
+    description: 'Capture essential energy and the "line of action."',
     brief: [
-      'Identify the longest curved line from the head to the feet (Line of Action).',
+      'Identify the longest curved line from the head to the feet.',
       'Do not draw outlines. Draw the movement.',
       'Use fast, sweeping strokes.',
       'Ignore all details like fingers, faces, or muscle definitions.'
@@ -50,8 +50,8 @@ export const drawingDrills: DrawingDrill[] = [
   },
   {
     id: 'gesture-2m',
-    name: '2-Minute Construction Gesture',
-    discipline: 'Gesture & Movement',
+    name: '2m Construction',
+    discipline: 'Gesture',
     description: 'Move from energy to basic anatomical masses.',
     brief: [
       'First 30s: Line of action.',
@@ -64,11 +64,11 @@ export const drawingDrills: DrawingDrill[] = [
     defaultTimerSeconds: 120
   },
 
-  // --- Contour & Observation ---
+  // --- Observation ---
   {
     id: 'contour-blind',
-    name: 'Pure Blind Contour',
-    discipline: 'Contour & Observation',
+    name: 'Blind Contour',
+    discipline: 'Observation',
     description: 'Synchronize your eye and hand without the filter of symbols.',
     brief: [
       'DO NOT LOOK AT YOUR PAPER. Not even once.',
@@ -82,8 +82,8 @@ export const drawingDrills: DrawingDrill[] = [
   },
   {
     id: 'contour-modified',
-    name: 'Modified Contour Study',
-    discipline: 'Contour & Observation',
+    name: 'Modified Contour',
+    discipline: 'Observation',
     description: 'Balance intense observation with occasional spatial checks.',
     brief: [
       'Spend 90% of the time looking at the reference.',
@@ -95,11 +95,11 @@ export const drawingDrills: DrawingDrill[] = [
     displayMode: 'Static'
   },
 
-  // --- Value & Light ---
+  // --- Value ---
   {
     id: 'value-mapping',
-    name: 'Shadow Mapping (2-Value)',
-    discipline: 'Value & Light',
+    name: 'Shadow Mapping',
+    discipline: 'Value',
     description: 'Simplify complex lighting into light and dark shapes.',
     brief: [
       'Squint at the reference until details disappear.',

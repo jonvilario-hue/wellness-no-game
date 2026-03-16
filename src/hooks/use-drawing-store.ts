@@ -4,7 +4,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { DrawingLog, DrawingDiscipline, DrawingAchievement } from '@/types/drawing';
-import { format, subDays, isAfter, parseISO, startOfWeek, isToday } from 'date-fns';
+import { format, subDays, isAfter, parseISO, startOfWeek, isToday, differenceInDays } from 'date-fns';
 
 interface DrawingState {
   logs: DrawingLog[];
@@ -22,6 +22,7 @@ interface DrawingState {
   getWeeklyVolume: () => number;
   getTopDiscipline: () => DrawingDiscipline | 'None';
   getDisciplineBalance: () => { name: string; value: number }[];
+  getDaysSinceLastPractice: (discipline: DrawingDiscipline) => number | null;
   _hasHydrated: boolean;
 }
 
@@ -61,7 +62,7 @@ export const useDrawingStore = create<DrawingState>()(
 
           // Update Achievements
           const current = state.achievements[logData.discipline] || { 
-            discipline: logData.discipline, totalMinutes: 0, sessions: 0, bestSatisfaction: 0 
+            discipline: logData.discipline, totalMinutes: 0, sessions: 0 
           };
           
           const newAchievements = {
@@ -70,7 +71,7 @@ export const useDrawingStore = create<DrawingState>()(
               ...current,
               totalMinutes: current.totalMinutes + logData.durationMinutes,
               sessions: current.sessions + 1,
-              bestSatisfaction: Math.max(current.bestSatisfaction, logData.satisfactionRating)
+              lastPracticed: timestamp
             }
           };
 
@@ -113,8 +114,8 @@ export const useDrawingStore = create<DrawingState>()(
 
       getDisciplineBalance: () => {
         const disciplines: DrawingDiscipline[] = [
-          'Line Control', 'Gesture & Movement', 'Contour & Observation', 'Proportion & Measurement',
-          'Perspective & Space', 'Value & Light', 'Form & Construction', 'Composition & Thumbnails'
+          'Line Control', 'Gesture', 'Observation', 'Proportion',
+          'Perspective', 'Value', 'Form', 'Composition'
         ];
         
         const totals: Record<string, number> = {};
@@ -123,13 +124,19 @@ export const useDrawingStore = create<DrawingState>()(
         });
 
         return disciplines.map(d => ({
-          name: d.split(' ')[0], // Compact name
+          name: d,
           value: totals[d] || 0
         }));
+      },
+
+      getDaysSinceLastPractice: (discipline) => {
+        const ach = get().achievements[discipline];
+        if (!ach?.lastPracticed) return null;
+        return differenceInDays(new Date(), parseISO(ach.lastPracticed));
       }
     }),
     {
-      name: 'drawing-studio-storage-v1',
+      name: 'drawing-studio-storage-v2',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         if (state) state._hasHydrated = true;

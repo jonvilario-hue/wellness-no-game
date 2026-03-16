@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -36,10 +37,10 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
   const [sessionStartTime, setSessionStartTime] = useState(0);
   
   // Survey State
-  const [satisfaction, setSatisfaction] = useState(3);
   const [focusRating, setFocusRating] = useState(3);
   const [difficultyFelt, setDifficultyFelt] = useState<'Too Easy' | 'Just Right' | 'Too Hard'>('Just Right');
   const [medium, setMedium] = useState<DrawingMedium>('Pencil');
+  const [notes, setNotes] = useState('');
 
   const { addLog } = useDrawingStore();
   const { syncFromTracker } = useCalendarPlansStore();
@@ -80,14 +81,14 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
       drillName: drill.name,
       difficulty,
       durationMinutes: duration,
-      satisfactionRating: satisfaction,
       focusRating,
       difficultyFelt,
-      medium
+      medium,
+      notes: notes.trim() || undefined
     });
 
     syncFromTracker('Custom', `Drawing: ${drill.name}`);
-    toast({ title: "Session Synchronized", variant: 'success' });
+    toast({ title: "Neural Sync Complete", variant: 'success' });
     onClose();
   };
 
@@ -148,7 +149,7 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                       </ol>
                     </div>
                     <div className="pt-4 border-t space-y-4">
-                      <Label className="text-[9px] font-bold uppercase tracking-widest">Select Starting Tier</Label>
+                      <Label className="text-[9px] font-bold uppercase tracking-widest">Training Tier</Label>
                       <div className="grid grid-cols-3 gap-2">
                         {(['Foundation', 'Developing', 'Advanced'] as DrawingDifficulty[]).map(d => (
                           <Button key={d} variant={difficulty === d ? 'default' : 'outline'} size="sm" className="text-[8px] h-8 uppercase font-bold" onClick={() => setDifficulty(d)}>
@@ -186,16 +187,16 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                 <div className="w-full md:w-80 border-l bg-card p-6 flex flex-col gap-6">
                   <div className="space-y-2">
                     <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Protocol Active</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed italic">"Focus on the connection between your eyes and hand. Speed and accuracy are secondary to the quality of observation."</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed italic">"Sync your hand to your eye. Speed is secondary to accurate observation."</p>
                   </div>
                   
                   <div className="flex-grow" />
                   
                   <div className="space-y-2">
                     <Button className="w-full h-14 text-lg font-black uppercase shadow-lg" onClick={handleFinish}>
-                      Finalize Study <CheckCircle2 className="ml-2 w-5 h-5" />
+                      Finalize Rep <CheckCircle2 className="ml-2 w-5 h-5" />
                     </Button>
-                    <p className="text-[9px] text-center text-muted-foreground uppercase font-bold">Press ESC to cancel at any time</p>
+                    <p className="text-[9px] text-center text-muted-foreground uppercase font-bold">Press ESC to cancel</p>
                   </div>
                 </div>
               </motion.div>
@@ -206,17 +207,9 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                 <Card className="max-w-md w-full border-primary/10 shadow-xl overflow-hidden">
                   <CardHeader className="bg-primary/5 text-center py-6">
                     <CardTitle className="text-xl font-black uppercase tracking-tight">Perceptual Audit</CardTitle>
-                    <CardDescription>Metrics feed the adaptive strategy engine.</CardDescription>
+                    <CardDescription>Calibrate the engine with your feedback.</CardDescription>
                   </CardHeader>
                   <CardContent className="p-8 space-y-8">
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <Label className="text-[10px] font-bold uppercase tracking-widest">Satisfaction (1-5)</Label>
-                        <span className="text-lg font-black text-primary">{satisfaction}</span>
-                      </div>
-                      <Slider value={[satisfaction]} onValueChange={([v]) => setSatisfaction(v)} min={1} max={5} step={1} />
-                    </div>
-
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <Label className="text-[10px] font-bold uppercase tracking-widest">Focus Intensity (1-5)</Label>
@@ -237,9 +230,9 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest">Medium Used</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest">Medium</Label>
                       <Select value={medium} onValueChange={(v: DrawingMedium) => setMedium(v)}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-10 text-sm font-bold"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {['Pencil', 'Pen', 'Charcoal', 'Digital', 'Other'].map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
                         </SelectContent>
@@ -248,7 +241,7 @@ export function DrawingDrillPlayer({ drill, onClose }: Props) {
                   </CardContent>
                   <CardFooter className="bg-muted/10">
                     <Button className="w-full h-12 font-black uppercase shadow-lg" onClick={handleSaveAndExit}>
-                      Sync Session <ArrowRight className="ml-2 w-4 h-4" />
+                      Sync & Finalize <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                   </CardFooter>
                 </Card>

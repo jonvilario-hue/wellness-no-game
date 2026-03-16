@@ -3,13 +3,13 @@ import { LucideIcon } from "lucide-react";
 
 export type DrawingDiscipline = 
   | 'Line Control'
-  | 'Gesture & Movement'
-  | 'Contour & Observation'
-  | 'Proportion & Measurement'
-  | 'Perspective & Space'
-  | 'Value & Light'
-  | 'Form & Construction'
-  | 'Composition & Thumbnails';
+  | 'Gesture'
+  | 'Observation'
+  | 'Proportion'
+  | 'Perspective'
+  | 'Value'
+  | 'Form'
+  | 'Composition';
 
 export type DrawingDifficulty = 'Foundation' | 'Developing' | 'Advanced';
 export type DrawingMedium = 'Pencil' | 'Pen' | 'Charcoal' | 'Digital' | 'Other';
@@ -22,10 +22,10 @@ export interface DrawingLog {
   drillName: string;
   difficulty: DrawingDifficulty;
   durationMinutes: number;
-  satisfactionRating: number; // 1-5
   focusRating: number; // 1-5
   difficultyFelt: 'Too Easy' | 'Just Right' | 'Too Hard';
   medium: DrawingMedium;
+  notes?: string;
   photoUrl?: string; // local blob/data uri
 }
 
@@ -59,5 +59,5 @@ export interface DrawingAchievement {
   discipline: DrawingDiscipline;
   totalMinutes: number;
   sessions: number;
-  bestSatisfaction: number;
+  lastPracticed?: string;
 }

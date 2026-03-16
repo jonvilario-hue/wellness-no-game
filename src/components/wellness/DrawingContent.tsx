@@ -24,12 +24,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '..
 import type { DrawingDrill, DrawingDiscipline } from '@/types/drawing';
 
 const disciplines: DrawingDiscipline[] = [
-  'Line Control', 'Gesture & Movement', 'Contour & Observation', 'Proportion & Measurement',
-  'Perspective & Space', 'Value & Light', 'Form & Construction', 'Composition & Thumbnails'
+  'Line Control', 'Gesture', 'Observation', 'Proportion',
+  'Perspective', 'Value', 'Form', 'Composition'
 ];
 
 export default function DrawingContent() {
-  const { _hasHydrated, planProgress } = useDrawingStore();
+  const { _hasHydrated, planProgress, getTopDiscipline, getDaysSinceLastPractice } = useDrawingStore();
   const [activeDrill, setActiveDrill] = useState<DrawingDrill | null>(null);
 
   if (!_hasHydrated) return null;
@@ -38,14 +38,56 @@ export default function DrawingContent() {
     return <DrawingDrillPlayer drill={activeDrill} onClose={() => setActiveDrill(null)} />;
   }
 
+  // Recommendation logic: find a drill in a neglected discipline
+  const recommendedDrill = (() => {
+    const neglected = disciplines
+      .map(d => ({ name: d, days: getDaysSinceLastPractice(d) }))
+      .filter(d => d.days !== null)
+      .sort((a, b) => (b.days || 0) - (a.days || 0))[0];
+    
+    if (neglected) {
+      return drawingDrills.find(d => d.discipline === neglected.name) || drawingDrills[0];
+    }
+    return drawingDrills[0];
+  })();
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       <DrawingDashboard />
 
+      <div className="space-y-4">
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Today's Focus</h3>
+        <Card className="border-primary/20 bg-primary/5 shadow-md overflow-hidden group hover:border-primary/40 transition-all">
+          <CardContent className="p-0">
+            <div className="flex flex-col md:flex-row items-stretch">
+              <div className="p-6 md:w-2/3 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+                  <h3 className="text-sm font-black uppercase tracking-widest text-primary">Recommended Practice</h3>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h4 className="text-xl font-black">{recommendedDrill.name}</h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{recommendedDrill.description}</p>
+                  <div className="flex items-center gap-4 mt-2 text-[10px] font-bold text-muted-foreground uppercase">
+                    <span className="flex items-center gap-1.5"><LayoutGrid className="w-3 h-3" /> {recommendedDrill.discipline}</span>
+                    {recommendedDrill.defaultTimerSeconds && <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {recommendedDrill.defaultTimerSeconds}s Duration</span>}
+                  </div>
+                </div>
+              </div>
+              <div className="md:w-1/3 bg-primary/10 p-6 flex items-center justify-center border-l border-primary/5 group-hover:bg-primary/20 transition-colors">
+                <Button onClick={() => setActiveDrill(recommendedDrill)} className="w-full h-12 font-black uppercase tracking-widest gap-2 shadow-lg">
+                  <Play className="w-4 h-4 fill-current" /> Start Focus Drill
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="space-y-6">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">Guided Curricula</h3>
-          <Badge variant="outline" className="text-[10px] font-bold uppercase border-primary/20">5 Journey Plans Available</Badge>
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">Journey Plans</h3>
+          <Badge variant="outline" className="text-[10px] font-bold uppercase border-primary/20">Progressive Curricula</Badge>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -56,10 +98,13 @@ export default function DrawingContent() {
 
             return (
               <Link key={plan.id} href={`/exercises/plans/${plan.id}`}>
-                <Card className="hover:border-primary/50 transition-all h-full group border-primary/5">
+                <Card className={cn(
+                  "hover:border-primary/50 transition-all h-full group border-primary/5",
+                  isFinished && "opacity-60 grayscale-[0.5]"
+                )}>
                   <CardHeader className="p-5 pb-2">
                     <div className="flex justify-between items-start mb-3">
-                      <Badge variant="secondary" className="uppercase font-black text-[8px] tracking-widest px-2">
+                      <Badge variant="secondary" className="uppercase font-black text-[8px] tracking-widest px-2 h-4">
                         {plan.durationDays} Days
                       </Badge>
                       {isFinished && <CheckCircle2 className="w-4 h-4 text-green-500" />}
@@ -69,7 +114,7 @@ export default function DrawingContent() {
                   </CardHeader>
                   <CardFooter className="p-5 pt-0 mt-auto flex justify-between items-center text-[10px] font-black uppercase text-muted-foreground">
                     <span>{done} / {plan.durationDays} Steps</span>
-                    <Play className="w-3 h-3 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-5px] group-hover:translate-x-0" />
+                    <Play className="w-3.5 h-3.5 text-primary opacity-0 group-hover:opacity-100 transition-all translate-x-[-5px] group-hover:translate-x-0" />
                   </CardFooter>
                 </Card>
               </Link>
@@ -122,7 +167,7 @@ export default function DrawingContent() {
                     ))}
                     {drills.length === 0 && (
                       <div className="col-span-full py-10 text-center border-2 border-dashed rounded-2xl opacity-20 italic text-xs">
-                        Expanding library...
+                        Select a different discipline to view available drills.
                       </div>
                     )}
                   </div>
