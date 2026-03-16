@@ -1,0 +1,6 @@
+[
+  "T extends string ? true : false",
+  "T extends any[] ? T[number] : T",
+  "T extends (...args: any[]) => infer R ? R : any",
+  "T extends { [K in keyof T]: any } ? T : never"
+]

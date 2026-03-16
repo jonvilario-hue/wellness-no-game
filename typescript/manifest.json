@@ -1,0 +1,16 @@
+{
+  "language": "typescript",
+  "total_seeds": 0,
+  "total_templates": 0,
+  "concept_coverage": {
+    "primitives": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "interfaces": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "unions": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "generics": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "conditional_types": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "utility_types": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "mapped_types": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "inference": { "template_count": 0, "drill_types": [], "variation_count": 0 }
+  },
+  "sources": []
+}

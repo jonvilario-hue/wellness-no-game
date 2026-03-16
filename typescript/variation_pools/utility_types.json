@@ -1,0 +1,15 @@
+[
+  "Partial",
+  "Required",
+  "Readonly",
+  "Record",
+  "Pick",
+  "Omit",
+  "Exclude",
+  "Extract",
+  "NonNullable",
+  "ReturnType",
+  "InstanceType",
+  "Parameters",
+  "ConstructorParameters"
+]
