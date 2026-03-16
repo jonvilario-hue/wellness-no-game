@@ -1,0 +1,45 @@
+
+{
+  "drawing_references": {
+    "still_life": [
+      {
+        "url": "https://picsum.photos/seed/art1/800/600",
+        "hint": "kettle fruit"
+      },
+      {
+        "url": "https://picsum.photos/seed/art2/800/600",
+        "hint": "book lamp"
+      }
+    ],
+    "figure": [
+      {
+        "url": "https://picsum.photos/seed/art3/800/600",
+        "hint": "pose model"
+      },
+      {
+        "url": "https://picsum.photos/seed/art4/800/600",
+        "hint": "portrait face"
+      }
+    ],
+    "environment": [
+      {
+        "url": "https://picsum.photos/seed/art5/800/600",
+        "hint": "arch building"
+      },
+      {
+        "url": "https://picsum.photos/seed/art6/800/600",
+        "hint": "forest path"
+      }
+    ],
+    "abstract": [
+      {
+        "url": "https://picsum.photos/seed/art7/800/600",
+        "hint": "shapes geometry"
+      },
+      {
+        "url": "https://picsum.photos/seed/art8/800/600",
+        "hint": "texture pattern"
+      }
+    ]
+  }
+}

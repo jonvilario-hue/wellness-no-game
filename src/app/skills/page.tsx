@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma, Music, Code2 } from 'lucide-react';
+import { ChevronUp, ChevronDown, BrainCircuit, Lightbulb, Play, MessageSquare, Zap, ZapOff, Sigma, Music, Code2, Pencil } from 'lucide-react';
 import { useWellnessData } from '@/hooks/use-wellness-data';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -23,6 +23,7 @@ import CommunicationContent from '@/components/wellness/CommunicationContent';
 import SpeedReadingContent from '@/components/wellness/SpeedReadingContent';
 import MusicContent from '@/components/wellness/MusicContent';
 import CodingContent from '@/components/wellness/CodingContent';
+import DrawingContent from '@/components/wellness/DrawingContent';
 import { MathComposureLab } from '@/components/wellness/MathComposureLab';
 import { communicationPractices } from '@/data/communication-practices';
 import { readingPassages } from '@/data/speedreading-passages';
@@ -61,7 +62,7 @@ function SkillBuilderPageContent() {
     if (activeTab === 'speedreading') return 'Speed Reading';
     if (activeTab === 'math') return 'Math';
     if (activeTab === 'music') return 'Music';
-    if (activeTab === 'coding') return 'Custom'; // Map to custom for general routine support
+    if (activeTab === 'coding' || activeTab === 'drawing') return 'Custom'; 
     return 'Communication';
   }, [activeTab]);
 
@@ -130,7 +131,7 @@ function SkillBuilderPageContent() {
                       </div>
                     </AssistantTooltip>
 
-                    {activeTab !== 'coding' && (
+                    {activeTab !== 'coding' && activeTab !== 'drawing' && (
                       <JourneyPlansSection 
                         category={currentCategory as any} 
                         isExpanded={isCurriculaExpanded}
@@ -155,7 +156,7 @@ function SkillBuilderPageContent() {
         
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <div className="flex justify-center mb-6">
-            <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 w-full max-w-4xl h-auto bg-muted/50 p-1 gap-1">
+            <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 w-full max-w-5xl h-auto bg-muted/50 p-1 gap-1">
               <TabsTrigger value="communication" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
                 <MessageSquare className="w-4 h-4" /> Communication
               </TabsTrigger>
@@ -170,6 +171,9 @@ function SkillBuilderPageContent() {
               </TabsTrigger>
               <TabsTrigger value="coding" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
                 <Code2 className="w-4 h-4" /> Coding
+              </TabsTrigger>
+              <TabsTrigger value="drawing" className="gap-2 px-4 py-2 font-bold whitespace-nowrap">
+                <Pencil className="w-4 h-4" /> Drawing
               </TabsTrigger>
             </TabsList>
           </div>
@@ -188,6 +192,9 @@ function SkillBuilderPageContent() {
           </TabsContent>
           <TabsContent value="coding" className="animate-in fade-in duration-300">
             <CodingContent />
+          </TabsContent>
+          <TabsContent value="drawing" className="animate-in fade-in duration-300">
+            <DrawingContent />
           </TabsContent>
         </Tabs>
     </div>
