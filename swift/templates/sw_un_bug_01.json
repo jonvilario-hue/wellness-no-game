@@ -1,0 +1,18 @@
+
+{
+  "template_id": "sw_un_bug_01",
+  "source_repo": "twostraws/Unwrap",
+  "drill_type": "bug_hunt",
+  "concept_tags": ["optionals", "force_unwrapping"],
+  "difficulty": "beginner",
+  "swift_version_minimum": "5.0",
+  "prompt_template": "var {{VAR}}: String? = nil\nif {{VAR}} != nil {\n    print({{VAR}}!)\n} else {\n    // Intent: Print a fallback message safely\n    print({{VAR}}!)\n}",
+  "slot_definitions": {
+    "VAR": { "type": "variable_name", "pool": ["username", "email", "token"] }
+  },
+  "answer_derivation": "Replace force unwrap '!' with a safe string constant in the else block.",
+  "variation_minimum": 10,
+  "max_prompt_words": 30,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 60
+}

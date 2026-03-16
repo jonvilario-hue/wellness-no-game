@@ -1,0 +1,22 @@
+
+{
+  "template_id": "sw_ko_ext_01",
+  "source_repo": "mokagio/Swift-Koans",
+  "drill_type": "syntax_sprint",
+  "concept_tags": ["extensions", "computed_properties"],
+  "difficulty": "beginner",
+  "swift_version_minimum": "5.0",
+  "prompt_template": "extension {{TYPE}} {\n    var {{PROP}}: {{RESULT_TYPE}} {\n        return {{LOGIC}}\n    }\n}\n\n// Usage: {{VAL}}.{{PROP}}",
+  "slot_definitions": {
+    "TYPE": { "type": "string_pool", "pool": ["Int", "String", "Double"] },
+    "PROP": { "type": "string_pool", "pool": ["isEven", "shouted", "squared"] },
+    "RESULT_TYPE": { "type": "string_pool", "pool": ["Bool", "String", "Int"] },
+    "LOGIC": { "type": "string_pool", "pool": ["self % 2 == 0", "self.uppercased()", "self * self"] },
+    "VAL": { "type": "string_pool", "pool": ["4", "\"hello\"", "10"] }
+  },
+  "answer_derivation": "Computed property implementation within extension",
+  "variation_minimum": 12,
+  "max_prompt_words": 25,
+  "max_feedback_words": 15,
+  "time_limit_seconds": 45
+}

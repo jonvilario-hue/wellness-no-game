@@ -1,19 +1,21 @@
+
 {
   "language": "swift",
-  "total_seeds": 0,
-  "total_templates": 0,
+  "total_seeds": 135,
+  "total_templates": 115,
   "concept_coverage": {
-    "basics": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "optionals": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "enums": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "structs": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "classes": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "protocols": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "extensions": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "closures": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "generics": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "arc": { "template_count": 0, "drill_types": [], "variation_count": 0 },
-    "error_handling": { "template_count": 0, "drill_types": [], "variation_count": 0 }
+    "optionals": { "template_count": 22, "drill_types": ["output_prediction", "bug_hunt", "syntax_sprint"], "variation_count": 330 },
+    "protocols": { "template_count": 15, "drill_types": ["reconstruction", "syntax_sprint"], "variation_count": 225 },
+    "generics": { "template_count": 12, "drill_types": ["reconstruction", "type_challenge"], "variation_count": 180 },
+    "closures": { "template_count": 18, "drill_types": ["output_prediction", "reconstruction"], "variation_count": 270 },
+    "value_semantics": { "template_count": 14, "drill_types": ["output_prediction", "bug_hunt"], "variation_count": 210 },
+    "error_handling": { "template_count": 10, "drill_types": ["syntax_sprint", "reconstruction"], "variation_count": 150 },
+    "functional_patterns": { "template_count": 12, "drill_types": ["reconstruction", "syntax_sprint"], "variation_count": 180 },
+    "enums": { "template_count": 12, "drill_types": ["output_prediction", "reconstruction"], "variation_count": 180 }
   },
-  "sources": []
+  "sources": [
+    { "repo": "exercism/swift", "exercises_ingested": 82, "exercises_rejected": 14 },
+    { "repo": "twostraws/Unwrap", "exercises_ingested": 45, "exercises_rejected": 5 },
+    { "repo": "mokagio/Swift-Koans", "exercises_ingested": 22, "exercises_rejected": 2 }
+  ]
 }

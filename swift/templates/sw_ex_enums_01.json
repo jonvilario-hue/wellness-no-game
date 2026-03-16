@@ -1,0 +1,22 @@
+
+{
+  "template_id": "sw_ex_enums_01",
+  "source_repo": "exercism/swift",
+  "drill_type": "reconstruction",
+  "concept_tags": ["enums", "associated_values", "pattern_matching"],
+  "difficulty": "intermediate",
+  "swift_version_minimum": "5.0",
+  "prompt_template": "enum {{ENUM_NAME}} {\n    case {{CASE1}}({{T1}})\n    case {{CASE2}}({{T2}})\n}\n\nfunc describe(item: {{ENUM_NAME}}) -> String {\n    // Use a switch statement to return a string describing the item\n    // Format: \"{{CASE1}} is \\(value)\" or \"{{CASE2}} is \\(value)\"\n    {{SLOT_IMPLEMENTATION}}\n}",
+  "slot_definitions": {
+    "ENUM_NAME": { "type": "string_pool", "pool": ["Result", "State", "Message"] },
+    "CASE1": { "type": "string_pool", "pool": ["success", "active", "text"] },
+    "T1": { "type": "string_pool", "pool": ["Int", "String", "Bool"] },
+    "CASE2": { "type": "string_pool", "pool": ["failure", "inactive", "error"] },
+    "T2": { "type": "string_pool", "pool": ["Int", "String", "Bool"] }
+  },
+  "answer_derivation": "switch item { case .{{CASE1}}(let x): return \"{{CASE1}} is \\(x)\" ... }",
+  "variation_minimum": 15,
+  "max_prompt_words": 40,
+  "max_feedback_words": 25,
+  "time_limit_seconds": 90
+}
