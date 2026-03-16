@@ -1,0 +1,7 @@
+[
+  "INNER JOIN",
+  "LEFT JOIN",
+  "RIGHT JOIN",
+  "FULL OUTER JOIN",
+  "CROSS JOIN"
+]

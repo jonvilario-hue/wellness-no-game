@@ -1,0 +1,16 @@
+{
+  "language": "sql",
+  "total_seeds": 0,
+  "total_templates": 0,
+  "concept_coverage": {
+    "select": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "joins": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "aggregation": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "filtering": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "sorting": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "subqueries": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "ctes": { "template_count": 0, "drill_types": [], "variation_count": 0 },
+    "windows": { "template_count": 0, "drill_types": [], "variation_count": 0 }
+  },
+  "sources": []
+}
