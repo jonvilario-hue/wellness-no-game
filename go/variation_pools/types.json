@@ -1,0 +1,16 @@
+
+[
+  "int",
+  "string",
+  "bool",
+  "float64",
+  "byte",
+  "error",
+  "interface{}",
+  "any",
+  "map[string]int",
+  "[]int",
+  "chan int",
+  "chan<- string",
+  "<-chan bool"
+]

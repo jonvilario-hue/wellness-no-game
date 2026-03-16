@@ -1,0 +1,11 @@
+
+[
+  "ch <- val",
+  "<-ch",
+  "val, ok := <-ch",
+  "close(ch)",
+  "select { case ... }",
+  "range ch",
+  "make(chan int, 1)",
+  "make(chan string)"
+]

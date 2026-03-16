@@ -1,0 +1,13 @@
+
+[
+  "Read(p []byte) (n int, err error)",
+  "Write(p []byte) (n int, err error)",
+  "Close() error",
+  "String() string",
+  "Error() string",
+  "ServeHTTP(w http.ResponseWriter, r *http.Request)",
+  "Len() int",
+  "Less(i, j int) bool",
+  "Swap(i, j int)",
+  "Next() (any, bool)"
+]

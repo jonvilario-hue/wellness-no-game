@@ -1,0 +1,18 @@
+
+{
+  "language": "go",
+  "total_seeds": 0,
+  "total_templates": 0,
+  "concept_coverage": {
+    "basics": 0,
+    "structs": 0,
+    "interfaces": 0,
+    "channels": 0,
+    "concurrency": 0,
+    "errors": 0,
+    "slices": 0,
+    "maps": 0,
+    "pointers": 0
+  },
+  "sources": []
+}

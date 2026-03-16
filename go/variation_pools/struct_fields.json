@@ -1,0 +1,15 @@
+
+[
+  "ID",
+  "Name",
+  "Value",
+  "Active",
+  "CreatedAt",
+  "Metadata",
+  "Data",
+  "Status",
+  "Size",
+  "Capacity",
+  "Owner",
+  "Payload"
+]

@@ -1,0 +1,9 @@
+
+[
+  "if err != nil { return err }",
+  "errors.New(\"failed\")",
+  "fmt.Errorf(\"wrap: %w\", err)",
+  "errors.Is(err, io.EOF)",
+  "errors.As(err, &target)",
+  "panic(err)"
+]
