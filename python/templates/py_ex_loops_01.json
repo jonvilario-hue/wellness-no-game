@@ -1,0 +1,20 @@
+
+{
+  "template_id": "py_ex_loops_01",
+  "source_repo": "exercism/python",
+  "drill_type": "reconstruction",
+  "concept_tags": ["loops", "function_signatures"],
+  "difficulty": "intermediate",
+  "prompt_template": "def count_occurrences(items, target):\n    {{SLOT_START}}\n    for item in items:\n        if item == target:\n            count += 1\n    return count",
+  "slot_definitions": {
+    "SLOT_START": {
+      "type": "string_pool",
+      "pool": ["count = 0", "count = 1", "count = None"]
+    }
+  },
+  "answer_derivation": "The logic requires initializing the counter to zero.",
+  "variation_minimum": 15,
+  "max_prompt_words": 40,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 60
+}

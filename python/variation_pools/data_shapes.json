@@ -1,1 +1,7 @@
-[]
+
+{
+  "lists": [[1, 2, 3], [10, 20, 30], ["a", "b", "c"], [true, false, true], []],
+  "dicts": [{"id": 1}, {"key": "val"}, {"a": 10, "b": 20}, {}],
+  "tuples": [(1, 2), (0, 0), ("x", "y"), (100, 200, 300)],
+  "strings": ["hello", "python", "drill", "fluency", "logic"]
+}

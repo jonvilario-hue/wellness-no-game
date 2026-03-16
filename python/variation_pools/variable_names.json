@@ -1,1 +1,6 @@
-[]
+
+[
+  "items", "data", "records", "mapping", "buffer", "values", "points", "nodes", "stack", "queue",
+  "result", "output", "temp", "cache", "payload", "stream", "collection", "sequence", "target", "source",
+  "account", "user", "profile", "session", "config", "settings", "params", "args", "kwargs", "meta"
+]

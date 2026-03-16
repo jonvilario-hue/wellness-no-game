@@ -1,1 +1,6 @@
-[]
+
+{
+  "list_methods": ["append", "pop", "extend", "insert", "remove", "clear", "sort", "reverse"],
+  "dict_methods": ["get", "keys", "values", "items", "update", "popitem"],
+  "string_methods": ["strip", "split", "join", "upper", "lower", "replace", "find", "count"]
+}

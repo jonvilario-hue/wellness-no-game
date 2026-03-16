@@ -1,1 +1,7 @@
-[]
+
+{
+  "arithmetic": ["+", "-", "*", "//", "%", "**"],
+  "comparison": ["==", "!=", ">", "<", ">=", "<="],
+  "logical": ["and", "or", "not"],
+  "identity": ["is", "is not", "in", "not in"]
+}

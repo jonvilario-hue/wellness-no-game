@@ -1,0 +1,22 @@
+
+{
+  "template_id": "py_lh_truthy_01",
+  "source_repo": "lydiahallie/javascript-questions",
+  "drill_type": "output_prediction",
+  "concept_tags": ["truthy_falsy", "conditionals"],
+  "difficulty": "beginner",
+  "prompt_template": "val = {{VAL}}\nif val:\n    print('{{TRUE_WORD}}')\nelse:\n    print('{{FALSE_WORD}}')",
+  "slot_definitions": {
+    "VAL": {
+      "type": "data_structure",
+      "pool": [0, 1, "", " ", [], [0], {}, {"a": 1}, "None", "False"]
+    },
+    "TRUE_WORD": { "type": "string_pool", "pool": ["Alpha", "Yes", "Pass", "Active"] },
+    "FALSE_WORD": { "type": "string_pool", "pool": ["Omega", "No", "Fail", "Idle"] }
+  },
+  "answer_derivation": "'TRUE_WORD' if bool(VAL) else 'FALSE_WORD'",
+  "variation_minimum": 20,
+  "max_prompt_words": 20,
+  "max_feedback_words": 15,
+  "time_limit_seconds": 30
+}

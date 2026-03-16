@@ -1,0 +1,21 @@
+
+{
+  "template_id": "py_zw_dict_01",
+  "source_repo": "zhiwehu/Python-programming-exercises",
+  "drill_type": "syntax_sprint",
+  "concept_tags": ["dict_ops", "comprehensions"],
+  "difficulty": "intermediate",
+  "prompt_template": "{{VAR}} = {x: x{{OP}}{{VAL}} for x in range({{RANGE}})}\nprint({{VAR}}[{{KEY}}])",
+  "slot_definitions": {
+    "VAR": { "type": "variable_name", "pool": ["mapping", "table", "results"] },
+    "OP": { "type": "operator", "pool": ["*", "**", "+"] },
+    "VAL": { "type": "int_range", "pool": {"min": 2, "max": 5} },
+    "RANGE": { "type": "int_range", "pool": {"min": 5, "max": 10} },
+    "KEY": { "type": "int_range", "pool": {"min": 1, "max": 4} }
+  },
+  "answer_derivation": "eval(f'{KEY}{OP}{VAL}')",
+  "variation_minimum": 50,
+  "max_prompt_words": 30,
+  "max_feedback_words": 20,
+  "time_limit_seconds": 45
+}

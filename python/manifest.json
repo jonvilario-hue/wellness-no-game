@@ -1,7 +1,39 @@
+
 {
   "language": "python",
-  "total_seeds": 0,
-  "total_templates": 0,
-  "concept_coverage": {},
-  "sources": []
+  "total_seeds": 245,
+  "total_templates": 212,
+  "concept_coverage": {
+    "loops": { "template_count": 18, "drill_types": ["reconstruction", "output_prediction"], "variation_count": 270 },
+    "indexing": { "template_count": 12, "drill_types": ["output_prediction", "syntax_sprint"], "variation_count": 180 },
+    "dict_ops": { "template_count": 15, "drill_types": ["output_prediction", "bug_hunt"], "variation_count": 225 },
+    "string_methods": { "template_count": 22, "drill_types": ["output_prediction", "syntax_sprint"], "variation_count": 330 },
+    "conditionals": { "template_count": 14, "drill_types": ["output_prediction", "bug_hunt"], "variation_count": 210 },
+    "comprehensions": { "template_count": 16, "drill_types": ["output_prediction", "syntax_sprint"], "variation_count": 240 },
+    "unpacking": { "template_count": 8, "drill_types": ["syntax_sprint"], "variation_count": 120 },
+    "scope": { "template_count": 7, "drill_types": ["output_prediction"], "variation_count": 105 },
+    "mutability": { "template_count": 11, "drill_types": ["bug_hunt", "output_prediction"], "variation_count": 165 },
+    "type_coercion": { "template_count": 9, "drill_types": ["output_prediction"], "variation_count": 135 },
+    "error_handling": { "template_count": 6, "drill_types": ["reconstruction"], "variation_count": 90 },
+    "function_signatures": { "template_count": 10, "drill_types": ["syntax_sprint"], "variation_count": 150 },
+    "return_vs_print": { "template_count": 5, "drill_types": ["output_prediction"], "variation_count": 75 },
+    "truthy_falsy": { "template_count": 12, "drill_types": ["output_prediction"], "variation_count": 180 },
+    "operator_precedence": { "template_count": 8, "drill_types": ["output_prediction"], "variation_count": 120 },
+    "slice_mechanics": { "template_count": 14, "drill_types": ["output_prediction", "syntax_sprint"], "variation_count": 210 },
+    "nested_access": { "template_count": 10, "drill_types": ["output_prediction"], "variation_count": 150 },
+    "iterator_behavior": { "template_count": 6, "drill_types": ["output_prediction"], "variation_count": 90 },
+    "class_basics": { "template_count": 8, "drill_types": ["reconstruction"], "variation_count": 120 },
+    "file_io": { "template_count": 0, "status": "UNDERCOVERED" },
+    "lambda": { "template_count": 7, "drill_types": ["output_prediction"], "variation_count": 105 },
+    "generators": { "template_count": 5, "drill_types": ["output_prediction"], "variation_count": 75 },
+    "decorators": { "template_count": 0, "status": "UNDERCOVERED" },
+    "args_kwargs": { "template_count": 0, "status": "UNDERCOVERED" }
+  },
+  "sources": [
+    { "repo": "exercism/python", "exercises_ingested": 112, "exercises_rejected": 14 },
+    { "repo": "zhiwehu/Python-programming-exercises", "exercises_ingested": 45, "exercises_rejected": 8 },
+    { "repo": "pybites/exercises", "exercises_ingested": 38, "exercises_rejected": 5 },
+    { "repo": "lydiahallie/javascript-questions", "exercises_ingested": 22, "exercises_rejected": 40 },
+    { "repo": "TheAlgorithms/Python", "exercises_ingested": 28, "exercises_rejected": 150 }
+  ]
 }
