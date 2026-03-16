@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 import { 
   Play, CheckCircle2, Circle, ChevronRight, Sparkles, 
   Layers, Lock, Info, RotateCcw, Box, Plus, InfoIcon
