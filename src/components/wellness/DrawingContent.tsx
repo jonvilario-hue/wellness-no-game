@@ -1,8 +1,9 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
 import { useDrawingStore } from '@/hooks/use-drawing-store';
-import { useDrawaboxStore } from '@/hooks/use-drawabox-store';
+import { useWellnessData } from '@/hooks/use-wellness-data';
 import { drawingDrills } from '@/data/drawing-drills';
 import { DrawingDashboard, DrawingAnalytics } from './DrawingDashboard';
 import { DrawingDrillPlayer } from './DrawingDrillPlayer';
@@ -78,7 +79,7 @@ const RecentSessions = ({ logs }: { logs: any[] }) => (
 
 export default function DrawingContent() {
   const { _hasHydrated, logs } = useDrawingStore();
-  const { mvdMode } = useDrawaboxStore();
+  const { lowEnergyMode } = useWellnessData();
   const [activeDrill, setActiveDrill] = useState<DrawingDrill | null>(null);
 
   if (!_hasHydrated) return null;
@@ -98,7 +99,7 @@ export default function DrawingContent() {
       <DrawaboxSection onStartDrill={setActiveDrill} />
 
       {/* Hide everything else in MVD mode */}
-      {!mvdMode && (
+      {!lowEnergyMode && (
         <>
           {/* 2. Quick Stats Bar */}
           <DrawingDashboard />

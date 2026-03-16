@@ -147,7 +147,7 @@ function SkillBuilderPageContent() {
 
                 {/* Row 2: Controls (MVD + Curricula Trigger) */}
                 <div className="flex flex-wrap items-center justify-center gap-4 px-4">
-                    <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your library to show only 'zero-friction' drills.">
+                    <AssistantTooltip text="MVD (Minimum Viable Day) Mode filters your library to show only 'zero-friction' drills. In Drawing mode, it focuses exclusively on Drawabox.">
                       <div className={cn(
                           "flex items-center gap-3 px-4 py-2 rounded-full border transition-all h-11",
                           lowEnergyMode ? "bg-amber-500/10 border-amber-500/30" : "bg-background border-primary/10"
@@ -176,7 +176,7 @@ function SkillBuilderPageContent() {
 
                 {/* Row 3: Inline Curricula Gallery Expansion */}
                 {isCurriculaExpanded && (
-                  <div className="w-full pt-2 animate-in fade-in slide-in-from-top-2 duration-500">
+                  <div className="w-full pt-2 animate-in fade-in slide-in-from-top-2 duration-500 px-4 sm:px-6">
                     <JourneyPlansSection 
                       category={currentCategory as any} 
                       isExpanded={isCurriculaExpanded}

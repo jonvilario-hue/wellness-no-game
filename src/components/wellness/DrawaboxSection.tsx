@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { 
   Play, RotateCcw, Box, Plus, Info, 
@@ -43,7 +42,7 @@ const DrawaboxBrandIcon = ({ className }: { className?: string }) => (
 );
 
 export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
-  const { mvdMode, toggleMvd, boxCount, addBoxes, cylinderCount, addCylinders } = useDrawaboxStore();
+  const { boxCount, addBoxes, cylinderCount, addCylinders } = useDrawaboxStore();
   const [boxLog, setBoxLog] = useState("5");
   const [cylLog, setCylLog] = useState("5");
 
@@ -56,16 +55,6 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
   return (
     <Card className="border-primary/10 shadow-xl overflow-hidden bg-background">
       <CardHeader className="bg-primary/5 p-8 pb-10 relative">
-        {/* MVD Toggle absolute top right */}
-        <div className="absolute top-6 right-6 z-10">
-          <AssistantTooltip text="Minimal Viable Day — Drawabox only. Hides supplemental modules.">
-            <div className="flex items-center gap-2 px-4 py-2 bg-background rounded-full border border-primary/10">
-              <Label htmlFor="mvd-toggle" className="text-[10px] font-black uppercase tracking-widest cursor-pointer">MVD</Label>
-              <Switch id="mvd-toggle" checked={mvdMode} onCheckedChange={toggleMvd} />
-            </div>
-          </AssistantTooltip>
-        </div>
-
         {/* Centered Brand Stack */}
         <div className="flex flex-col items-center text-center space-y-6 w-full max-w-2xl mx-auto">
           <DrawaboxBrandIcon />
