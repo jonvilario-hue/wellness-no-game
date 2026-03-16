@@ -6,7 +6,7 @@
   "concept_tags": ["interfaces", "optional_properties"],
   "requires_type_checker": true,
   "difficulty": "beginner",
-  "prompt_template": "interface {{TYPE}} {\n  {{P1}}: {{T1}};\n  {{P2}}: {{T2}};\n}\n\nconst item: {{TYPE}} = {\n  {{P1}}: {{VAL1}},\n  // Error: Property '{{P2}}' is missing in type '{ {{P1}}: {{T1}} }' but required in type '{{TYPE}}'.\n};\n\n// Goal: Fix the interface definition to make {{P2}} optional.",
+  "prompt_template": "interface {{TYPE}} {\n  {{P1}}: {{T1}};\n  {{P2}}: {{T2}};\n}\n\nconst item: {{TYPE}} = {\n  {{P1}}: {{VAL1}}\n};",
   "slot_definitions": {
     "TYPE": { "type": "string_pool", "pool": ["Person", "Item", "Config", "Settings"] },
     "P1": { "type": "string_pool", "pool": ["id", "name", "key"] },
@@ -17,7 +17,7 @@
   },
   "answer_derivation": "Add '?' to {{P2}} in the interface",
   "variation_minimum": 15,
-  "max_prompt_words": 50,
+  "max_prompt_words": 20,
   "max_feedback_words": 20,
   "time_limit_seconds": 60
 }
