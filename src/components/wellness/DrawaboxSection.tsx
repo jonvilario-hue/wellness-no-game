@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
   Play, RotateCcw, Box, Plus, Info, 
-  ChevronRight, Sparkles, LayoutGrid, Layers, Clock
+  ChevronRight, Sparkles, LayoutGrid, Layers, Clock, ExternalLink
 } from 'lucide-react';
 import { useDrawaboxStore } from '@/hooks/use-drawabox-store';
 import { useWellnessData } from '@/hooks/use-wellness-data';
@@ -44,7 +44,7 @@ const DrawaboxBrandIcon = ({ className }: { className?: string }) => (
 
 export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
   const { boxCount, addBoxes, cylinderCount, addCylinders } = useDrawaboxStore();
-  const { collapsedCategories, toggleCategoryCollapse } = useWellnessData();
+  const { lowEnergyMode, collapsedCategories, toggleCategoryCollapse } = useWellnessData();
   const [boxLog, setBoxLog] = useState("5");
   const [cylLog, setCylLog] = useState("5");
 
@@ -73,6 +73,13 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
             <CardDescription className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
               Fundamentals you never stop practicing.
             </CardDescription>
+            <div className="pt-2">
+              <Button variant="link" asChild className="h-auto p-0 text-[9px] font-black uppercase tracking-widest text-primary/60 hover:text-primary gap-1">
+                <a href="https://drawabox.com/lesson/1" target="_blank" rel="noopener noreferrer">
+                  View Official Lesson 1 <ExternalLink className="w-2.5 h-2.5" />
+                </a>
+              </Button>
+            </div>
           </div>
 
           <Button 
