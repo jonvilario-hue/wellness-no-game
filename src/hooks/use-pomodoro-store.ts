@@ -1,4 +1,3 @@
-
 'use client';
 
 import { create } from 'zustand';
@@ -34,7 +33,7 @@ export const usePomodoroStore = create<PomodoroState>()(
             cycles: 0,
             isActive: false,
             showGameSuggestion: false,
-            suggestGameEnabled: true,
+            suggestGameEnabled: false,
 
             setSuggestGameEnabled: (enabled) => set({ suggestGameEnabled: enabled }),
 
