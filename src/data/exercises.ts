@@ -704,6 +704,26 @@ export const movementExercises: Exercise[] = [
     completionCue: 'Body feels awake? You’re ready.'
   },
   {
+    id: 'wakeup_flow',
+    name: 'Morning Mobility Flow',
+    description: 'Wake up your spine, ankles, and shoulders.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Sunrise,
+    category: 'Wakeup & Wind-Down',
+    tags: ['morning', 'low-energy'],
+    intention: 'Gently activate your body for the day.',
+    setup: ['Stand or sit comfortably.', 'Roll out wrists, shoulders, ankles.'],
+    steps: [
+        'Do neck rolls → shoulder circles → spine twists.',
+        'Stretch arms overhead and side to side.',
+        'Do ankle circles and toe touches.',
+        'Breathe slowly the whole time.'
+    ],
+    modifications: ['Do seated if still groggy.', 'Use gentle music.'],
+    completionCue: 'Body feels awake? You’re ready.'
+  },
+  {
     id: 'wind_down_stretch',
     name: 'Pre-Bedtime Stretch',
     description: 'Release the day\'s tension from hamstrings and neck.',
@@ -974,5 +994,176 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     ],
     modifications: ["Write it on a sticky note.", "Turn it into a lock screen or mantra."],
     completionCue: "When your voice feels a touch kinder, stop there."
+  },
+  {
+    id: 'breath_nadi_shodhana',
+    name: 'Nadi Shodhana (Alternate Nostril Breathing)',
+    description: 'Balance brain hemispheres and calm the mind.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Wind,
+    category: 'Breathwork',
+    tags: ['balancing', 'calming', 'focus'],
+    intention: 'Balance the left and right hemispheres of the brain and calm the nervous system.',
+    setup: ['Sit upright with spine straight.', 'Use right hand in Vishnu Mudra.'],
+    steps: [
+      'Close right nostril with thumb, inhale left for 4 seconds.',
+      'Close both, hold 4 seconds.',
+      'Release right, exhale 4 seconds.',
+      'Inhale right 4 seconds.',
+      'Close both, hold 4 seconds.',
+      'Release left, exhale 4 seconds.',
+      'That is one round. Repeat 5–10 rounds.'
+    ],
+    modifications: ['Drop the hold phase if it feels uncomfortable.', 'Shorten to 3-second phases for beginners.'],
+    completionCue: 'Feeling more balanced? Take a final deep breath.'
+  },
+  {
+    id: 'breath_bhramari',
+    name: 'Bhramari (Humming Bee Breath)',
+    description: 'Release tension through internal vibration.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Wind,
+    category: 'Breathwork',
+    tags: ['stress-relief', 'vibration', 'calming'],
+    intention: 'Quickly discharge mental tension and activate the parasympathetic response through vibration.',
+    setup: ['Sit comfortably.', 'Optionally close ears gently with thumbs.'],
+    steps: [
+      'Inhale deeply through the nose for 4 seconds.',
+      'Exhale slowly while making a steady humming sound with lips closed for 6–8 seconds.',
+      'Feel the vibration in the skull and chest.',
+      'Repeat 5–7 rounds.'
+    ],
+    modifications: ['If humming feels awkward, start with a quiet hum.', 'Extend exhale duration as comfort grows.'],
+    completionCue: 'Nervous system quieted. Take a slow, natural breath.'
+  },
+  {
+    id: 'breath_kapalabhati',
+    name: 'Kapalabhati (Skull Shining Breath)',
+    description: 'Clear mental fog and energize the body.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Zap,
+    category: 'Breathwork',
+    tags: ['energizing', 'morning', 'clearing'],
+    intention: 'Energize the body, clear mental fog, and activate the sympathetic nervous system in a controlled way.',
+    setup: ['Empty stomach recommended.', 'Sit on floor or chair with upright posture.'],
+    steps: [
+      'Sit tall. Take a passive inhale.',
+      'Exhale sharply and forcefully through the nose by contracting the abdomen.',
+      'Let the inhale happen naturally.',
+      'Repeat at a pace of roughly 1 exhale per second for 20–30 reps.',
+      'Rest and breathe normally for 30 seconds.',
+      'Do 2–3 rounds.'
+    ],
+    modifications: ['Slow the pace to 1 exhale every 2 seconds if dizzy.', 'Reduce to 10–15 reps for beginners.', 'Avoid if pregnant or with high blood pressure.'],
+    completionCue: 'Mind clear and body alert? Done.'
+  },
+  {
+    id: 'breath_sitali',
+    name: 'Sitali (Cooling Breath)',
+    description: 'Lower body temperature and reduce agitation.',
+    duration: 240,
+    estimatedMinutes: 4,
+    icon: Wind,
+    category: 'Breathwork',
+    tags: ['cooling', 'calming', 'anger-relief'],
+    intention: 'Lower body temperature, reduce agitation, and soothe the nervous system.',
+    setup: ['Works best in a warm environment.', 'Sit upright.'],
+    steps: [
+      'Curl the tongue into a tube and extend it slightly past the lips.',
+      'Inhale slowly through the curled tongue for 4–6 seconds.',
+      'Close mouth.',
+      'Exhale through the nose for 6–8 seconds.',
+      'Repeat 8–12 rounds.'
+    ],
+    modifications: ['If you cannot curl your tongue, inhale through gently clenched teeth (Sitkari).', 'Shorten rounds if lightheaded.'],
+    completionCue: 'Feeling cooler and calmer? You have finished.'
+  },
+  {
+    id: 'breath_bhastrika',
+    name: 'Bhastrika (Bellows Breath)',
+    description: 'Rapidly increase alertness and oxygen intake.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Zap,
+    category: 'Breathwork',
+    tags: ['energizing', 'alertness', 'oxygenation'],
+    intention: 'Rapidly increase energy, oxygen intake, and alertness through vigorous rhythmic breathing.',
+    setup: ['Empty stomach.', 'Upright seated position.', 'Not recommended before sleep.'],
+    steps: [
+      'Sit tall.',
+      'Inhale forcefully through the nose while expanding the belly.',
+      'Exhale forcefully through the nose while contracting the belly.',
+      'Both inhale and exhale are active and equal in force.',
+      'Do 15–20 cycles at a pace of roughly 1 full breath per second.',
+      'Rest for 30 seconds.',
+      'Repeat 2–3 rounds.'
+    ],
+    modifications: ['Slow to 1 breath every 2 seconds if new.', 'Reduce to 10 cycles per round.', 'Avoid with high blood pressure or heart conditions.'],
+    completionCue: 'System fully oxygenated and alert. Done.'
+  },
+  {
+    id: 'breath_2_4',
+    name: '2-4 Breathing (Extended Exhale)',
+    description: 'Double your exhale to shift into rest mode.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Wind,
+    category: 'Breathwork',
+    tags: ['sleep', 'vagus-nerve', 'calming'],
+    intention: 'Activate the vagus nerve and shift the body into rest mode by doubling exhale length relative to inhale.',
+    setup: ['Lie down or recline.', 'Place a hand on the belly.'],
+    steps: [
+      'Inhale gently through the nose for 3 seconds.',
+      'Exhale slowly through the nose or mouth for 6 seconds.',
+      'Repeat for 2–5 minutes without forcing.',
+      'Focus on the feeling of release during the long exhale.'
+    ],
+    modifications: ['Start with 2-second inhale and 4-second exhale if needed.', 'Gradually increase to 4-8 as capacity builds.'],
+    completionCue: 'Body entering a restful state. You are done.'
+  },
+  {
+    id: 'focus_counting',
+    name: 'Breath Counting Meditation',
+    description: 'Build concentration using breath as an anchor.',
+    duration: 300,
+    estimatedMinutes: 5,
+    icon: Brain,
+    category: 'Clarity & Focus',
+    tags: ['focus', 'meditation', 'attention'],
+    intention: 'Build concentration and present-moment awareness using breath as an anchor.',
+    setup: ['Sit in a quiet space.', 'Close eyes.'],
+    steps: [
+      'Breathe naturally.',
+      'On each exhale, count silently — 1, 2, 3, up to 10.',
+      'After reaching 10, restart at 1.',
+      'If you lose count, gently return to 1 without judgment.',
+      'Continue for the duration of the timer.'
+    ],
+    modifications: ['Count to 5 instead of 10 if attention drifts frequently.', 'Add inhale counting once exhale counting is stable.'],
+    completionCue: 'Awareness anchored. Take a moment to notice your focus.'
+  },
+  {
+    id: 'grounding_sigh',
+    name: 'Physiological Sigh',
+    description: 'The fastest method to reduce acute stress.',
+    duration: 60,
+    estimatedMinutes: 1,
+    icon: Shield,
+    category: 'Grounding & Safety',
+    tags: ['quick', 'stress-relief', 'grounding'],
+    intention: 'The fastest known single-breath method to reduce acute stress in real time.',
+    setup: ['Can be done anywhere — standing, sitting, walking.', 'No preparation needed.'],
+    steps: [
+      'Take a normal inhale through the nose.',
+      'Immediately take a second short inhale on top of it to fully expand the lungs.',
+      'Exhale slowly and fully through the mouth.',
+      'That is one cycle.',
+      'Repeat 1–3 times.'
+    ],
+    modifications: ['None needed. This is a minimal, high-impact technique.'],
+    completionCue: 'Acute stress response dampened. Done.'
   },
 ];
