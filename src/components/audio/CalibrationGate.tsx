@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -12,6 +11,7 @@ import { Mic, Music, CheckCircle2, Sliders, ChevronDown, Info, ShieldAlert, Volu
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { AnimatePresence } from 'framer-motion';
 
 interface CalibrationGateProps {
   children: React.ReactNode;
