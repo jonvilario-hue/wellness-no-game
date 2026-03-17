@@ -100,11 +100,10 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
   };
 
   const openCategories = useMemo(() => {
-    const list = [...categories];
-    return list.filter((cat, idx) => {
-      const isCollapsed = collapsedCategories[cat];
-      if (isCollapsed === undefined) return idx < 2;
-      return !isCollapsed;
+    return categories.filter((cat, idx) => {
+      const state = collapsedCategories[cat];
+      if (state === undefined) return idx < 2;
+      return !state;
     });
   }, [collapsedCategories]);
 
@@ -114,14 +113,19 @@ export default function MovementContent({ filterTags = [] }: { filterTags?: stri
           <h2 className="text-2xl font-black uppercase tracking-tighter">Movement Library</h2>
         </div>
 
-        <Accordion type="multiple" value={openCategories} onValueChange={(vals) => {
-          categories.forEach(cat => {
-            const isNowOpen = vals.includes(cat);
-            const wasOpen = !collapsedCategories[cat];
-            const effectivelyWasOpen = wasOpen || (collapsedCategories[cat] === undefined && categories.indexOf(cat) < 2);
-            if (isNowOpen !== effectivelyWasOpen) toggleCategoryCollapse(cat);
-          });
-        }}>
+        <Accordion 
+          type="multiple" 
+          value={openCategories} 
+          onValueChange={(newOpenVals) => {
+            categories.forEach((cat) => {
+              const isCurrentlyOpen = openCategories.includes(cat);
+              const willBeOpen = newOpenVals.includes(cat);
+              if (isCurrentlyOpen !== willBeOpen) {
+                toggleCategoryCollapse(cat);
+              }
+            });
+          }}
+        >
           {categories.map(category => {
             const exercises = filteredExercises.filter(e => e.category === category);
             const details = movementCategoryDetails[category];

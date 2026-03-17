@@ -79,8 +79,16 @@ const RecentSessions = ({ logs }: { logs: any[] }) => (
 
 export default function DrawingContent() {
   const { _hasHydrated, logs } = useDrawingStore();
-  const { lowEnergyMode } = useWellnessData();
+  const { lowEnergyMode, collapsedCategories, toggleCategoryCollapse } = useWellnessData();
   const [activeDrill, setActiveDrill] = useState<DrawingDrill | null>(null);
+
+  const openGroups = useMemo(() => {
+    return groups.map(g => g.id).filter(id => {
+      const state = collapsedCategories[id];
+      if (state === undefined) return true; // All expanded by default for supplemental
+      return !state;
+    });
+  }, [collapsedCategories]);
 
   if (!_hasHydrated) return null;
 
@@ -111,7 +119,20 @@ export default function DrawingContent() {
               <p className="text-xs text-muted-foreground">Extra drills for skills Drawabox doesn't focus on.</p>
             </div>
 
-            <Accordion type="multiple" defaultValue={['seeing-motion', 'construction-space', 'rendering-design']} className="space-y-2">
+            <Accordion 
+              type="multiple" 
+              value={openGroups} 
+              onValueChange={(newOpenVals) => {
+                groups.forEach((group) => {
+                  const wasOpen = openGroups.includes(group.id);
+                  const isNowOpen = newOpenVals.includes(group.id);
+                  if (wasOpen !== isNowOpen) {
+                    toggleCategoryCollapse(group.id);
+                  }
+                });
+              }}
+              className="space-y-2"
+            >
               {groups.map(group => (
                 <AccordionItem key={group.id} value={group.id} className="border-b-0">
                   <AccordionTrigger className="hover:no-underline py-4 px-6 bg-muted/20 hover:bg-muted/40 rounded-2xl border border-primary/5 transition-all">

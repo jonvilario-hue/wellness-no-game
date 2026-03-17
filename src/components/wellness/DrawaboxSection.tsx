@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +13,7 @@ import {
   ChevronRight, Sparkles, LayoutGrid, Layers, Clock
 } from 'lucide-react';
 import { useDrawaboxStore } from '@/hooks/use-drawabox-store';
+import { useWellnessData } from '@/hooks/use-wellness-data';
 import { drawingDrills } from '@/data/drawing-drills';
 import { cn } from '@/lib/utils';
 import { AssistantTooltip } from '../assistant-tooltip';
@@ -43,8 +44,17 @@ const DrawaboxBrandIcon = ({ className }: { className?: string }) => (
 
 export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
   const { boxCount, addBoxes, cylinderCount, addCylinders } = useDrawaboxStore();
+  const { collapsedCategories, toggleCategoryCollapse } = useWellnessData();
   const [boxLog, setBoxLog] = useState("5");
   const [cylLog, setCylLog] = useState("5");
+
+  const openGroups = useMemo(() => {
+    return DRAWABOX_GROUPS.filter(group => {
+      const state = collapsedCategories[`db-${group}`];
+      if (state === undefined) return true; // Expanded by default
+      return !state;
+    });
+  }, [collapsedCategories]);
 
   const handleWarmup = () => {
     const warmupPool = drawingDrills.filter(d => d.isWarmup && (d.dbGroup === 'Lines' || d.dbGroup === 'Ellipses'));
@@ -55,7 +65,6 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
   return (
     <Card className="border-primary/10 shadow-xl overflow-hidden bg-background">
       <CardHeader className="bg-primary/5 p-8 pb-10 relative">
-        {/* Centered Brand Stack */}
         <div className="flex flex-col items-center text-center space-y-6 w-full max-w-2xl mx-auto">
           <DrawaboxBrandIcon />
           
@@ -76,7 +85,20 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
       </CardHeader>
 
       <CardContent className="p-6 space-y-8">
-        <Accordion type="multiple" defaultValue={DRAWABOX_GROUPS} className="space-y-4">
+        <Accordion 
+          type="multiple" 
+          value={openGroups} 
+          onValueChange={(newOpenVals) => {
+            DRAWABOX_GROUPS.forEach((group) => {
+              const wasOpen = openGroups.includes(group);
+              const isNowOpen = newOpenVals.includes(group);
+              if (wasOpen !== isNowOpen) {
+                toggleCategoryCollapse(`db-${group}`);
+              }
+            });
+          }}
+          className="space-y-4"
+        >
           {DRAWABOX_GROUPS.map(group => {
             const drills = drawingDrills.filter(d => d.dbGroup === group);
             return (
@@ -120,7 +142,6 @@ export function DrawaboxSection({ onStartDrill }: DrawaboxSectionProps) {
                       </Card>
                     ))}
 
-                    {/* Challenges embedded in groups */}
                     {group === 'Boxes' && (
                       <Card className="border-primary/10 bg-primary/5 p-4 flex flex-col justify-between min-h-[140px] relative overflow-hidden">
                         <div className="absolute top-2 right-2">
