@@ -1,10 +1,10 @@
 
 import type { LucideIcon } from 'lucide-react';
-import { Dumbbell, StretchHorizontal, Brain, Wind, Waves, PersonStanding, Cat, Mountain, Bird, TreeDeciduous, Zap, Shield, HeartHandshake, Eye, Sunrise, Moon, Activity } from 'lucide-react';
+import { Dumbbell, StretchHorizontal, Brain, Wind, Waves, PersonStanding, Cat, Mountain, Bird, TreeDeciduous, Zap, Shield, HeartHandshake, Eye, Sunrise, Moon, Activity, Sparkles, Smile } from 'lucide-react';
 
 // --- CATEGORY TYPES ---
 export type ExerciseCategory = 'Stretching' | 'Strength' | 'Energizer' | 'Wakeup & Wind-Down' | 'Mind-Body';
-export type MindfulnessCategory = 'Breathwork' | 'Clarity & Focus' | 'Grounding & Safety' | 'Self-Compassion';
+export type MindfulnessCategory = 'Breathwork' | 'Clarity & Focus' | 'Grounding & Safety' | 'Self-Compassion' | 'Appreciation & Gratitude';
 
 type BasePractice = {
   id: string;
@@ -704,26 +704,6 @@ export const movementExercises: Exercise[] = [
     completionCue: 'Body feels awake? You’re ready.'
   },
   {
-    id: 'wakeup_flow',
-    name: 'Morning Mobility Flow',
-    description: 'Wake up your spine, ankles, and shoulders.',
-    duration: 180,
-    estimatedMinutes: 3,
-    icon: Sunrise,
-    category: 'Wakeup & Wind-Down',
-    tags: ['morning', 'low-energy'],
-    intention: 'Gently activate your body for the day.',
-    setup: ['Stand or sit comfortably.', 'Roll out wrists, shoulders, ankles.'],
-    steps: [
-        'Do neck rolls → shoulder circles → spine twists.',
-        'Stretch arms overhead and side to side.',
-        'Do ankle circles and toe touches.',
-        'Breathe slowly the whole time.'
-    ],
-    modifications: ['Do seated if still groggy.', 'Use gentle music.'],
-    completionCue: 'Body feels awake? You’re ready.'
-  },
-  {
     id: 'wind_down_stretch',
     name: 'Pre-Bedtime Stretch',
     description: 'Release the day\'s tension from hamstrings and neck.',
@@ -1048,7 +1028,7 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     category: 'Breathwork',
     tags: ['energizing', 'morning', 'clearing'],
     intention: 'Energize the body, clear mental fog, and activate the sympathetic nervous system in a controlled way.',
-    setup: ['Empty stomach recommended.', 'Sit on floor or chair with upright posture.'],
+    setup: ['Empty stomach recommended.', 'Sit tall. Take a passive inhale.'],
     steps: [
       'Sit tall. Take a passive inhale.',
       'Exhale sharply and forcefully through the nose by contracting the abdomen.',
@@ -1166,4 +1146,45 @@ export const mindfulnessPractices: MindfulnessPractice[] = [
     modifications: ['None needed. This is a minimal, high-impact technique.'],
     completionCue: 'Acute stress response dampened. Done.'
   },
+  {
+    id: 'gratitude_triple',
+    name: 'Triple Appreciation Anchor',
+    description: 'A structured scan of three levels of gratitude.',
+    duration: 180,
+    estimatedMinutes: 3,
+    icon: Sparkles,
+    category: 'Appreciation & Gratitude',
+    tags: ['gratitude', 'perspective', 'quick'],
+    intention: "Shift your brain's bias toward noticing what is working and valuable.",
+    setup: ["Sit or stand comfortably.", "Take two slow, deep breaths."],
+    steps: [
+      "Identify one physical object near you that you appreciate (e.g., your chair, a pen, a plant). Mentally thank it for its function.",
+      "Think of one person you are grateful for. Briefly recall a specific kind act or trait they possess.",
+      "Identify one trait or choice of yours from the last 24 hours that you appreciate.",
+      "Pause and let the feeling of 'enoughness' settle in for 30 seconds."
+    ],
+    modifications: ["If you're in a dark place, find something as small as 'breath' or 'gravity' to appreciate.", "Say the appreciations out loud to increase their impact."],
+    completionCue: "Heart and mind primed for positivity. Done."
+  },
+  {
+    id: 'savoring_senses',
+    name: 'Savoring the Senses',
+    description: 'Deeply appreciate a single sensory experience to build present-moment joy.',
+    duration: 120,
+    estimatedMinutes: 2,
+    icon: Smile,
+    category: 'Appreciation & Gratitude',
+    tags: ['savoring', 'mindfulness', 'quick'],
+    intention: "Combat 'hedonic adaptation' by intentionally noticing the details of a pleasant experience.",
+    setup: ["Choose a pleasant sensation: a sip of water, the sun on your skin, a sound.", "Focus your attention fully on it."],
+    steps: [
+      "Notice the initial contact of the sensation.",
+      "Identify 3 distinct details (e.g., temperature, texture, rhythm).",
+      "Imagine the sensation expanding to fill your awareness.",
+      "Acknowledge the pleasure it provides without trying to hold onto it.",
+      "End with a gentle internal smile."
+    ],
+    modifications: ["Try this with your next meal or drink.", "Use this during a walk to notice small natural details."],
+    completionCue: "Experience savored. Done."
+  }
 ];

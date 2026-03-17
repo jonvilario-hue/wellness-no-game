@@ -1,3 +1,4 @@
+
 import { 
     Dumbbell, StretchHorizontal, Zap, Sunrise, Wind, 
     Brain, Shield, HeartHandshake, type LucideIcon,
@@ -5,7 +6,7 @@ import {
     Mic2, MessageSquare, User, Eye, ArrowLeftRight, 
     Target, Sparkles, BookOpen, Presentation, 
     Mail, Video, ClipboardList, Heart, Briefcase, MonitorSmartphone,
-    PenTool, Layers, MousePointer2
+    PenTool, Layers, MousePointer2, Smile
 } from "lucide-react";
 import type { ExerciseCategory, MindfulnessCategory } from "./exercises";
 import type { CommunicationCategory } from "./communication-practices";
@@ -94,6 +95,14 @@ export const stillnessCategoryDetails: Record<MindfulnessCategory, WellnessCateg
         useWhen: ['Burnout', 'Inner critic'],
         includes: ['Loving-Kindness Meditation', 'Journaling Prompts'],
         tagline: 'Be gentle with the one inside.'
+    },
+    'Appreciation & Gratitude': {
+        title: 'Appreciation & Gratitude',
+        icon: Smile,
+        purpose: 'Train your brain to notice and savor positive experiences and connections.',
+        useWhen: ['Feeling pessimistic', 'End of day review', 'Building resilience'],
+        includes: ['Triple Appreciation', 'Savoring Drills'],
+        tagline: 'Notice the good. Let it land.'
     }
 };
 

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { WellnessActivityCalendar } from "./WellnessActivityCalendar"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils"
 import { StillnessAnalytics } from "./StillnessAnalytics"
 import { Badge } from "@/components/ui/badge"
 
-const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'];
+const categories: MindfulnessCategory[] = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion', 'Appreciation & Gratitude'];
 
 export default function StillnessContent({ filterTags = [] }: { filterTags?: string[] }) {
     const { 
@@ -40,7 +40,7 @@ export default function StillnessContent({ filterTags = [] }: { filterTags?: str
 
     const allPractices = useMemo(() => [
       ...mindfulnessPractices,
-      ...customPractices.filter(p => ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(p.category))
+      ...customPractices.filter(p => ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion', 'Appreciation & Gratitude'].includes(p.category))
     ], [customPractices]);
 
     const filteredPractices = useMemo(() => {
