@@ -1,4 +1,3 @@
-
 'use client';
 
 import { 
@@ -12,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { 
   BookOpen, Info, ListChecks, 
-  AlertTriangle, Clock, Star, 
+  AlertTriangle, Clock, 
   Volume2, Eye, Link as LinkIcon,
   Zap, Target, SlidersHorizontal
 } from "lucide-react";
@@ -45,9 +44,6 @@ export function MusicReferenceDialog({ entry, open, onOpenChange }: Props) {
                 {entry.summary}
               </DialogDescription>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Star className="w-5 h-5 text-muted-foreground hover:text-primary" />
-            </Button>
           </div>
           
           <div className="flex flex-wrap gap-2 mt-4">
