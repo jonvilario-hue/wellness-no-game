@@ -298,42 +298,67 @@ export const wellnessPlans: WellnessPlan[] = [
 
   // --- DRAWING ---
   {
-    id: "plan-seeing-reset",
-    title: "Drawing: 14-Day Seeing Reset",
-    tagline: "Retrain your eyes to see the world as it is.",
-    description: "Based on the principles of 'Drawing on the Right Side of the Brain,' this program kills the habit of drawing mental symbols.",
+    id: "draw-0",
+    title: "Drawing: Day Zero Intro",
+    tagline: "Just try this once. Focus on the shoulder.",
+    description: "Break the 'symbol drawing' habit with foundational mark-making and observation.",
     category: "Drawing",
-    durationDays: 14,
+    durationDays: 1,
     steps: [
-      { day: 1, title: "Upside-Down Drawing", estimatedMinutes: 15, actions: [{ label: "Blind Contour Drill", link: "/skills?tab=drawing#practice-contour-blind" }] },
-      { day: 2, title: "Blind Contour: The Hand", estimatedMinutes: 10, actions: [{ label: "Blind Contour Drill", link: "/skills?tab=drawing#practice-contour-blind" }] },
-      { day: 3, title: "Negative Space Basics", estimatedMinutes: 15, actions: [{ label: "Modified Contour Drill", link: "/skills?tab=drawing#practice-contour-modified" }] }
+      {
+        day: 1,
+        title: "The Perceptual Reset",
+        estimatedMinutes: 15,
+        actions: [
+          { label: "Superimposed Lines", link: "/skills?tab=drawing#practice-db-superimposed-lines" },
+          { label: "Blind Contour", link: "/skills?tab=drawing#practice-contour-blind" }
+        ]
+      }
     ]
   },
   {
-    id: "plan-line-confidence",
-    title: "Drawing: 7-Day Line Confidence",
-    tagline: "Kill the 'hairy' line and draw with authority.",
-    description: "A mechanical boot camp for your shoulder and arm to build professional mark-making skills.",
+    id: "draw-3",
+    title: "Drawing: 3-Day Kickstart",
+    tagline: "Build foundational momentum.",
+    description: "Three days to recalibrate your arm and eyes for spatial accuracy and confidence.",
+    category: "Drawing",
+    durationDays: 3,
+    steps: [
+      { day: 1, title: "Line Confidence", estimatedMinutes: 10, actions: [{ label: "Ghosted Lines", link: "/skills?tab=drawing#practice-db-ghosted-lines" }] },
+      { day: 2, title: "Rotational Control", estimatedMinutes: 10, actions: [{ label: "Tables of Ellipses", link: "/skills?tab=drawing#practice-db-tables-ellipses" }] },
+      { day: 3, title: "3D Space", estimatedMinutes: 15, actions: [{ label: "Rough Perspective", link: "/skills?tab=drawing#practice-db-rough-perspective" }] }
+    ]
+  },
+  {
+    id: "draw-5",
+    title: "Drawing: 5-Day Foundation",
+    tagline: "Breadth and consistency.",
+    description: "Explore the core building blocks of the Drawabox curriculum and visual rendering.",
+    category: "Drawing",
+    durationDays: 5,
+    steps: [
+      { day: 1, title: "The Mark", estimatedMinutes: 10, actions: [{ label: "Ghosted Planes", link: "/skills?tab=drawing#practice-db-ghosted-planes" }] },
+      { day: 2, title: "The Curve", estimatedMinutes: 10, actions: [{ label: "Funnels", link: "/skills?tab=drawing#practice-db-funnels" }] },
+      { day: 3, title: "The Box", estimatedMinutes: 15, actions: [{ label: "Plotted Perspective", link: "/skills?tab=drawing#practice-db-plotted-perspective" }] },
+      { day: 4, title: "The Form", estimatedMinutes: 15, actions: [{ label: "Organic Forms - Lines", link: "/skills?tab=drawing#practice-db-organic-forms-lines" }] },
+      { day: 5, title: "The Value", estimatedMinutes: 20, actions: [{ label: "Shadow Mapping", link: "/skills?tab=drawing#practice-value-mapping" }] }
+    ]
+  },
+  {
+    id: "draw-7",
+    title: "Drawing: Week One Protocol",
+    tagline: "Establish a sustainable studio rhythm.",
+    description: "A comprehensive weekly cycle covering mark-making, space, construction, and design.",
     category: "Drawing",
     durationDays: 7,
     steps: [
-      { day: 1, title: "The Shoulder Pivot", estimatedMinutes: 10, actions: [{ label: "Ghosting Lines Drill", link: "/skills?tab=drawing#practice-line-ghosting" }] },
-      { day: 2, title: "Precision Ghosting", estimatedMinutes: 10, actions: [{ label: "Ghosting Lines Drill", link: "/skills?tab=drawing#practice-line-ghosting" }] },
-      { day: 3, title: "Controlled Ellipses", estimatedMinutes: 15, actions: [{ label: "Funnelling Ellipses Drill", link: "/skills?tab=drawing#practice-line-ellipses" }] }
-    ]
-  },
-  {
-    id: "plan-figure-foundations",
-    title: "Drawing: 21-Day Figure Fundamentals",
-    tagline: "Master the dynamic human form.",
-    description: "Progressive program from fast gestures to full anatomical construction.",
-    category: "Drawing",
-    durationDays: 21,
-    steps: [
-      { day: 1, title: "Line of Action", estimatedMinutes: 15, actions: [{ label: "30s Gesture Drill", link: "/skills?tab=drawing#practice-gesture-30s" }] },
-      { day: 2, title: "The Torso Bean", estimatedMinutes: 15, actions: [{ label: "2m Construction Drill", link: "/skills?tab=drawing#practice-gesture-2m" }] },
-      { day: 3, title: "Proportion Landmarks", estimatedMinutes: 20, actions: [{ label: "Landmark Mapping Drill", link: "/skills?tab=drawing#practice-prop-landmark-mapping" }] }
+      { day: 1, title: "Mechanics", estimatedMinutes: 10, actions: [{ label: "Superimposed Lines", link: "/skills?tab=drawing#practice-db-superimposed-lines" }] },
+      { day: 2, title: "Accuracy", estimatedMinutes: 10, actions: [{ label: "Ellipses in Planes", link: "/skills?tab=drawing#practice-db-ellipses-planes" }] },
+      { day: 3, title: "Perspective", estimatedMinutes: 20, actions: [{ label: "Rotated Boxes", link: "/skills?tab=drawing#practice-db-rotated-boxes" }] },
+      { day: 4, title: "Volume", estimatedMinutes: 15, actions: [{ label: "Form Intersections", link: "/skills?tab=drawing#practice-db-form-intersections" }] },
+      { day: 5, title: "Observation", estimatedMinutes: 20, actions: [{ label: "Texture Analysis", link: "/skills?tab=drawing#practice-db-texture-analysis" }] },
+      { day: 6, title: "Construction", estimatedMinutes: 20, actions: [{ label: "Leaves", link: "/skills?tab=drawing#practice-db-leaves" }] },
+      { day: 7, title: "Design", estimatedMinutes: 25, actions: [{ label: "Thumbnail Sketches", link: "/skills?tab=drawing#practice-comp-thumbnail-value" }] }
     ]
   }
 ];

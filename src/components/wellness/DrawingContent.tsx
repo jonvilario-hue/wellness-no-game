@@ -201,7 +201,7 @@ export default function DrawingContent() {
           {/* 5. Drawing Analytics */}
           <DrawingAnalytics />
 
-          <WellnessActivityCalendar categoryFilter="Custom" />
+          <WellnessActivityCalendar categoryFilter="Drawing" />
         </>
       )}
     </div>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { create } from 'zustand';
@@ -6,7 +7,9 @@ import { format, subDays, isAfter, parseISO, startOfWeek } from 'date-fns';
 import { movementExercises, mindfulnessPractices, type Exercise } from '@/data/exercises';
 import { communicationPractices } from '@/data/communication-practices';
 import { readingPassages } from '@/data/speedreading-passages';
+import { drawingDrills } from '@/data/drawing-drills';
 import { useSpeedReadingStore } from './use-speedreading-store';
+import { useDrawingStore } from './use-drawing-store';
 import { useMemo } from 'react';
 
 export type LogEntry = {
@@ -286,14 +289,16 @@ export const useWellnessData = create<WellnessState>()(
           ...movementExercises, 
           ...mindfulnessPractices, 
           ...communicationPractices,
-          ...readingPassages
+          ...readingPassages,
+          ...drawingDrills
         ].find(e => e.id === id);
         
         if (!exercise) return;
 
         const isMovement = ['Stretching', 'Strength', 'Energizer', 'Wakeup & Wind-Down', 'Mind-Body'].includes(exercise.category);
         const isStillness = ['Breathwork', 'Clarity & Focus', 'Grounding & Safety', 'Self-Compassion'].includes(exercise.category);
-        const isReading = !isMovement && !isStillness && 'tier' in exercise;
+        const isDrawing = ['Line Control', 'Gesture', 'Observation', 'Proportion', 'Perspective', 'Value', 'Form', 'Composition', 'Construction', 'Drawabox'].includes(exercise.category);
+        const isReading = !isMovement && !isStillness && !isDrawing && 'tier' in exercise;
         
         const timestamp = new Date().toISOString();
 
@@ -316,8 +321,18 @@ export const useWellnessData = create<WellnessState>()(
             postCalm: 7,
             trigger: 'Proactive'
           });
+        } else if (isDrawing) {
+          const drawingStore = useDrawingStore.getState();
+          drawingStore.addLog({
+            discipline: (exercise as any).discipline,
+            drillName: exercise.name,
+            difficulty: (exercise as any).difficulty,
+            durationMinutes: exercise.estimatedMinutes,
+            focusRating: 3,
+            difficultyFelt: 'Just Right',
+            medium: 'Pencil'
+          });
         } else if (isReading) {
-          // Cross-hook dispatch for speed reading
           const speedStore = useSpeedReadingStore.getState();
           speedStore.addLog({
             drillType: 'Pacer',

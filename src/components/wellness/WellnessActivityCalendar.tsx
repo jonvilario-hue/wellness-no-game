@@ -9,11 +9,12 @@ import { useWellnessData, useMovementLogs, useStillnessLogs, useCommunicationLog
 import { useSpeedReadingStore } from "@/hooks/use-speedreading-store";
 import { useMusicStore } from "@/hooks/use-music-store";
 import { useCodingStore } from "@/hooks/use-coding-store";
+import { useDrawingStore } from "@/hooks/use-drawing-store";
 import { useFirebase } from '@/firebase';
 import { initDB } from '@/lib/storage/db';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, HeartPulse, Waves, History, Utensils, Wallet, Trash2, MessageSquare, Zap, Sigma, Music, Code2 } from "lucide-react";
+import { Plus, HeartPulse, Waves, History, Utensils, Wallet, Trash2, MessageSquare, Zap, Sigma, Music, Code2, Pencil } from "lucide-react";
 import { WellnessLogDialog } from "./WellnessLogDialog";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -29,7 +30,7 @@ const legacyMathDomains: Record<string, string> = {
 };
 
 interface WellnessActivityCalendarProps {
-  categoryFilter?: 'Movement' | 'Stillness' | 'Nutrition' | 'Finance' | 'Communication' | 'Speed Reading' | 'Math' | 'Music' | 'Coding';
+  categoryFilter?: 'Movement' | 'Stillness' | 'Nutrition' | 'Finance' | 'Communication' | 'Speed Reading' | 'Math' | 'Music' | 'Coding' | 'Drawing';
 }
 
 export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCalendarProps) {
@@ -44,6 +45,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
   const { logs: readingLogs = [] } = useSpeedReadingStore();
   const { logs: musicLogs = [] } = useMusicStore();
   const { logs: codingLogs = [] } = useCodingStore();
+  const { logs: drawingLogs = [] } = useDrawingStore();
   
   useEffect(() => {
     async function loadMathHistory() {
@@ -108,6 +110,14 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
         detail: `${l.har} HAR • ${l.durationMinutes}m` 
       })));
     }
+    if (!categoryFilter || categoryFilter === 'Drawing') {
+      logs.push(...(drawingLogs || []).filter(l => isSameDay(new Date(l.timestamp), checkDate)).map(l => ({ 
+        ...l, 
+        type: 'Drawing', 
+        label: l.drillName, 
+        detail: `${l.durationMinutes}m • ${l.difficulty}` 
+      })));
+    }
     if (!categoryFilter || categoryFilter === 'Nutrition') {
       logs.push(...(mealLogs || []).filter(l => isSameDay(new Date(l.date + 'T12:00:00'), checkDate)).map(l => ({ ...l, type: 'Nutrition', label: l.mealType, detail: `${l.calories} kcal` })));
     }
@@ -136,7 +146,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
       const timeB = 'timestamp' in b ? new Date(b.timestamp).getTime() : 0;
       return timeB - timeA;
     });
-  }, [date, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, mathSessions, musicLogs, codingLogs, categoryFilter]);
+  }, [date, movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, mathSessions, musicLogs, codingLogs, drawingLogs, categoryFilter]);
 
   const activityDateStrings = useMemo(() => {
     const dates = new Set<string>();
@@ -154,13 +164,14 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
     if (!categoryFilter || categoryFilter === 'Communication') process(communicationLogs || [], 'timestamp');
     if (!categoryFilter || categoryFilter === 'Math') process(mathSessions || [], 'timestamp');
     if (!categoryFilter || categoryFilter === 'Music') process(musicLogs || [], 'timestamp');
+    if (!categoryFilter || categoryFilter === 'Drawing') process(drawingLogs || [], 'timestamp');
     if (!categoryFilter || categoryFilter === 'Nutrition') process(mealLogs || [], 'date');
     if (!categoryFilter || categoryFilter === 'Finance') process(transactions || [], 'date');
     if (!categoryFilter || categoryFilter === 'Speed Reading') process(readingLogs || [], 'timestamp');
     if (!categoryFilter || categoryFilter === 'Coding') process(codingLogs || [], 'timestamp');
     
     return dates;
-  }, [movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, mathSessions, musicLogs, codingLogs, categoryFilter]);
+  }, [movementLogs, stillnessLogs, mealLogs, transactions, communicationLogs, readingLogs, mathSessions, musicLogs, codingLogs, drawingLogs, categoryFilter]);
 
   const modifiers = {
     hasLog: (d: Date) => activityDateStrings.has(format(d, 'yyyy-MM-dd'))
@@ -177,7 +188,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
 
   if (!mounted) return null;
 
-  const defaultType = categoryFilter === 'Speed Reading' || categoryFilter === 'Music' || categoryFilter === 'Coding' ? 'movement' : (categoryFilter?.toLowerCase() as any || 'movement');
+  const defaultType = categoryFilter === 'Speed Reading' || categoryFilter === 'Music' || categoryFilter === 'Coding' || categoryFilter === 'Math' || categoryFilter === 'Drawing' ? 'movement' : (categoryFilter?.toLowerCase() as any || 'movement');
 
   const handleDelete = (log: any) => {
     switch (log.type) {
@@ -200,6 +211,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
       case 'Music':
       case 'Speed Reading':
       case 'Coding':
+      case 'Drawing':
         toast({ title: `${log.type} logs cannot be deleted from here.`, variant: 'destructive' });
         return;
     }
@@ -217,7 +229,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
             </CardTitle>
             <CardDescription>View your synchronized activity history.</CardDescription>
           </div>
-          {(categoryFilter !== 'Communication' && categoryFilter !== 'Speed Reading' && categoryFilter !== 'Math' && categoryFilter !== 'Music' && categoryFilter !== 'Coding') && (
+          {(categoryFilter !== 'Communication' && categoryFilter !== 'Speed Reading' && categoryFilter !== 'Math' && categoryFilter !== 'Music' && categoryFilter !== 'Coding' && categoryFilter !== 'Drawing') && (
             <Button size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => {
               setLogType(defaultType);
               setIsLogOpen(true);
@@ -264,6 +276,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
                         log.type === 'Communication' ? 'bg-purple-400/10 text-purple-500' :
                         log.type === 'Math' ? 'bg-cyan-400/10 text-cyan-500' :
                         log.type === 'Music' ? 'bg-indigo-400/10 text-indigo-500' :
+                        log.type === 'Drawing' ? 'bg-amber-600/10 text-amber-600' :
                         log.type === 'Nutrition' ? 'bg-orange-400/10 text-orange-500' :
                         log.type === 'Speed Reading' ? 'bg-amber-400/10 text-amber-600' :
                         log.type === 'Coding' ? 'bg-blue-600/10 text-blue-600' :
@@ -274,6 +287,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
                          log.type === 'Communication' ? <MessageSquare className="w-4" /> :
                          log.type === 'Math' ? <Sigma className="w-4" /> :
                          log.type === 'Music' ? <Music className="w-4" /> :
+                         log.type === 'Drawing' ? <Pencil className="w-4" /> :
                          log.type === 'Nutrition' ? <Utensils className="w-4" /> :
                          log.type === 'Speed Reading' ? <Zap className="w-4" /> :
                          log.type === 'Coding' ? <Code2 className="w-4" /> :
@@ -288,7 +302,7 @@ export function WellnessActivityCalendar({ categoryFilter }: WellnessActivityCal
                         </p>
                       </div>
                     </div>
-                    {log.type !== 'Speed Reading' && log.type !== 'Math' && log.type !== 'Music' && log.type !== 'Coding' && (
+                    {log.type !== 'Speed Reading' && log.type !== 'Math' && log.type !== 'Music' && log.type !== 'Coding' && log.type !== 'Drawing' && (
                       <Button 
                         variant="ghost" 
                         size="icon" 
