@@ -143,7 +143,7 @@ export default function LibraryPage() {
             </TabsTrigger>
             <TabsTrigger value="wellness" className="gap-2">
               <BookMarked className="w-4 h-4" />
-              Wellness Library
+              Wellness Catalogue
             </TabsTrigger>
           </TabsList>
         </div>
