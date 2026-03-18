@@ -1,6 +1,6 @@
 'use client';
 
-import { Settings, Clock, Library, Moon, Lightbulb, LightbulbOff, FlaskConical } from 'lucide-react';
+import { Settings, Clock, Vault, Moon, Lightbulb, LightbulbOff, FlaskConical } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
@@ -40,12 +40,12 @@ export function Header() {
                   <TooltipTrigger asChild>
                     <Button asChild variant="ghost" size="icon">
                       <Link href="/library">
-                        <Library className="h-5 w-5" />
+                        <Vault className="h-5 w-5" />
                       </Link>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Library</p>
+                    <p>Vault</p>
                   </TooltipContent>
                 </Tooltip>
                 <DopamineMenu />

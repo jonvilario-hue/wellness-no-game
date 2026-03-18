@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { FileText, Bookmark, Search, PlusCircle, Edit, Trash2, BookUser, Library as LibraryIcon, BookMarked, CalendarDays } from 'lucide-react';
+import { FileText, Bookmark, Search, PlusCircle, Edit, Trash2, BookUser, Vault as VaultIcon, BookMarked, CalendarDays } from 'lucide-react';
 import { useLibraryStore } from '@/hooks/use-library-store';
 import { useHydratedJournalStore } from '@/hooks/use-journal';
 import { NoteDialog } from '@/components/library/note-dialog';
@@ -50,7 +50,7 @@ export default function LibraryPage() {
           source: 'Journal',
           tags: entry.tags,
       }))
-  ].sort((a,b) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime());
+  ].sort((a,b) => new Date(b.createdAt || b.date).getTime() - new Date(a.date || a.createdAt).getTime());
 
   const filteredContent = allContent.filter(item => {
     const term = searchTerm.toLowerCase();
@@ -138,7 +138,7 @@ export default function LibraryPage() {
         <div className="flex flex-col items-center text-center space-y-4 mb-8">
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="personal" className="gap-2">
-              <LibraryIcon className="w-4 h-4" />
+              <VaultIcon className="w-4 h-4" />
               Personal Vault
             </TabsTrigger>
             <TabsTrigger value="wellness" className="gap-2">
